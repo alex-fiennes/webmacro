@@ -12,7 +12,7 @@ public class ProfileSystem
       return _instance; 
    }  
 
-   final private LinkedList _children = new LinkedList();;
+   final private LinkedList _children = new LinkedList();
 
    /**
      * Return a ProfileCategory for the category 'name'. If a null
