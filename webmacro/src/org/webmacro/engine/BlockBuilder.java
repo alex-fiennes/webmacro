@@ -36,7 +36,7 @@ import org.webmacro.Context;
  */
 public class BlockBuilder implements Builder {
 
-   private static final int INITIAL_SIZE = 65;
+   private static final int INITIAL_SIZE = 64;
 
    private static Macro[] mArray = new Macro[0];
    private static String[] sArray = new String[0];
