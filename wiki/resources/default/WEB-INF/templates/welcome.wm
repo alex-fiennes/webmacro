@@ -1,0 +1,8 @@
+#set $PageName = "Welcome to Wiki"
+
+#parse "header.wm"
+
+Welcome to Wiki. This will be the nice welcome page to get you started with
+your Wiki.
+
+#parse "footer.wm"

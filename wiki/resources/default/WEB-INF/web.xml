@@ -1,6 +1,21 @@
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+  "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
 <web-app>
-   <servlet-mapping url-regexp='^[^\.]+$' servlet-name='WikiServlet' />
-   <servlet servlet-name='WikiServlet' servlet-class='org.tcdi.opensource.wiki.servlet.WikiServlet'>
-      <init-param properties='@INSTALL_DIR@/deploy/WEB-INF/Wiki.properties' />
+   <display-name>wiki</display-name>
+   <description>Web based content management</description>
+   <servlet>
+		<servlet-name>WikiServlet</servlet-name>
+		<display-name>Main wiki servlet</display-name>
+		<servlet-class>org.tcdi.opensource.wiki.servlet.WikiServlet</servlet-class>
+      <init-param>
+			<param-name>properties</param-name>
+			<param-value>/WEB-INF/Wiki.properties</param-value>
+		</init-param>
+      <load-on-startup>1</load-on-startup>
    </servlet>
+   <servlet-mapping>
+		<servlet-name>WikiServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
 </web-app>
