@@ -411,17 +411,34 @@ public class Broker
             }
         }
 
-        // initialize global macros
-        _config.processListSetting("Macros.Include",new Settings.ListSettingHandler() {
-            public void processSetting(String settingKey, String settingValue) {
-                try {
-                    Template t = (Template) getProvider("template").get(settingValue);
-                    _macros.putAll(t.getMacros());
-                } catch (ResourceException e) {
-                    _log.warning("Error loading macro library '"+settingValue+"', ignoring it",e);
-                }
+        MacroIncludeSettingHandler macroHandler = new MacroIncludeSettingHandler();
+
+        // parse all macro libraries
+        _config.processListSetting("Macros.Include",macroHandler);
+
+        // handle exceptions if any
+        if (macroHandler.e != null) {
+            throw new InitException("Error loading one or more macro libraries",macroHandler.e);
+        }
+
+    }
+
+    /** This class is necessary as we cannot throw an exception directly from
+     * processSetting(String,String)
+     */
+    private class MacroIncludeSettingHandler extends Settings.ListSettingHandler {
+        Exception e;
+
+        public void processSetting(String settingKey, String settingValue) {
+            try {
+                Template t = (Template) getProvider("template").get(settingValue);
+                _macros.putAll(t.getMacros());
+            } catch (ResourceException e) {
+                _log.error("Error loading macro library '"+settingValue+"', ignoring it",e);
+                // store exception
+                if (this.e == null) this.e = e;
             }
-        });
+        }
 
     }
 
