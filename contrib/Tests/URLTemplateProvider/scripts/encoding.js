@@ -1,29 +1,21 @@
 var org = Packages.org;
-
-var config = new org.log4j.BasicConfigurator();
-config.configure();
+var CWD="./contrib/Tests/URLTemplateProvider/";
 
 var wm = new org.webmacro.WM();
 var broker = wm.getBroker();
+var context = wm.getContext();
 
-function printTemplate(path, enc) {
-    var url = new java.net.URL("file",null,path);
-    var template = broker.getValue("template",":"+enc+":"+url.toString());
-    var context = wm.getContext();
-    
-    var w = java.lang.System.out; // new java.io.PrintWriter(java.lang.System.out);
-    var fw = new org.webmacro.FastWriter(w,"ISO8859_1");
-    fw.write(template+"\n");
-    fw.write("===============\n");
-    template.write(fw,context);
-    fw.write("===============\n");
-    fw.flush();
+function getTemplate(url) {
+    var url = new java.net.URL("file",null,CWD+url);
+    var t = broker.getValue("template",url.toString());
+    print(t+" "+t.hashCode());
+
+    var w = new org.webmacro.FastWriter(java.lang.System.out,"ISO8859-1");
+    t.write(w,context);
+    w.flush();
 }
 
-printTemplate("templates/webmacro/encoding_iso8859_1.wm","ISO8859_1");
-printTemplate("templates/webmacro/encoding_utf8.wm","UTF-8");
-printTemplate("out.txt","utf-8");
-
-
-
-
+getTemplate("templates/encoding_utf8.wm");
+getTemplate("templates/encoding_iso8859_1.wm");
+getTemplate("templates/encoding_utf8.wm");
+getTemplate("templates/encoding_native_ascii.wm");

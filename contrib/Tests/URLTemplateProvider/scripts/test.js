@@ -4,11 +4,18 @@ var org = Packages.org;
 //config.configure();
 
 var CWD="./contrib/Tests/URLTemplateProvider/";
-
-var wm = new org.webmacro.WM();
+var url = new java.net.URL("file",null,CWD+"templates/include.wm");
+var cl = url.getClass().getClassLoader();
+print ("URL: classloader="+cl);
+var wm;
+if (cl == null) {
+    wm = new org.webmacro.WM();
+}
+else {
+    wm = new org.webmacro.WM(cl);
+}
 var broker = wm.getBroker();
 
-var url = new java.net.URL("file",null,CWD+"templates/include.wm");
 var template = broker.getValue("template",url.toString());
 
 var context = wm.getContext();
