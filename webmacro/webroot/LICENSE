@@ -16,8 +16,9 @@
  *
  * 3. Products derived from this software must include the following 
  *    acknowledgement with every notice of copyright: "This product 
- *    includes software developed by Justin Wells at Semiotek Inc. as 
- *    part of the WebMacro Servlet Framework (http://www.webmacro.org)."
+ *    includes software developed by Justin Wells at Semiotek Inc. and
+ *    others in the WebMacro community as part of the WebMacro Project
+ *    (http://www.webmacro.org)."
  *
  * 4. The names "Semiotek Inc." and "WebMacro" must not be used to
  *    endorse or promote products derived from this software without
@@ -30,8 +31,8 @@
  *
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment: "This product includes software developed by 
- *    Justin Wells at Semiotek Inc. as part of the WebMacro Servlet
- *    Framework (http://www.webmacro.org)."
+ *    Justin Wells at Semiotek Inc. and others in the WebMacro community 
+ *    as part of the WebMacro Project (http://www.webmacro.org)."
  *
  * THIS SOFTWARE IS PROVIDED BY SEMIOTEK INC. ``AS IS'' AND ANY EXPRESSED 
  * OR IMPLIED WARRANTIES OR CONDITIONS, INCLUDING, BUT NOT LIMITED TO, THE
@@ -46,8 +47,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  *
- * For more information on Semiotek Inc. and the WebMacro Servlet 
- * Framework project, please see <http://www.webmacro.org/>.
- *
+ * For more information on the WebMacro Servlet Framework, the 
+ * complete list of contributors, or to learn how to become a 
+ * contributor, please see <http://www.webmacro.org/>.
  */
 
