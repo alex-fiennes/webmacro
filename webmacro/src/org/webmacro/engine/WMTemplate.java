@@ -38,8 +38,13 @@ import org.webmacro.*;
   * never alters its data. The intent is to allow a Template to be parsed
   * once (somewhat expensive) and then used many times; and also not to 
   * incur any parsing costs at all if the Template is never actually used.
+  * <p>
+  * CONCURRENCY: You must parse() the template before making it available
+  * to other threads. After a template has been parsed it is immutable and
+  * can be shared between threads without synchronization. This class 
+  * performs no synchronization itself but instead relies on the 
+  * TemplateProvider/Broker to synchronize access.
   */
-
 abstract public class WMTemplate implements Template
 {
 
@@ -125,21 +130,6 @@ abstract public class WMTemplate implements Template
      */
    public final void parse() throws IOException, TemplateException
    {
-
-      // thread policy:
-      //
-      // unsynchronized code elsewhere will access _content. We must
-      // ensure that any data copied into _content is ready for public 
-      // use--which means dealing with two subtle issues. First, the Block
-      // created by this method must be written back to main memory BEFORE
-      // being referenced by _content. Second, once we add it to _content,
-      // our copy of _content has to be copied back to main memory as well.
-      //
-      // Therefore we synchronize around the access to _content so as to 
-      // accomplish both these things. newContent will be written to main 
-      // memory at the start of the synchronized block, and _content will
-      // be written to main memory at the close.
-
       Block newContent = null;
       Map newParameters = null;
       Reader in = null;
@@ -161,10 +151,8 @@ abstract public class WMTemplate implements Template
          throw e;
       } finally {
          try { in.close(); } catch (Exception e) { }
-         synchronized(this) {
-            _parameters = newParameters;
-            _content = newContent; 
-         }
+         _parameters = newParameters;
+         _content = newContent; 
       }
    }
 
@@ -203,32 +191,9 @@ abstract public class WMTemplate implements Template
    public final void write(FastWriter out, Context data) 
       throws IOException
    {
-
-      // thread policy: Access to _content is unsynchronized here at 
-      // the cost of having a slightly stale copy. This is OK, because 
-      // you might have requested it slightly earlier anyway. You will 
-      // always get a consistent copy--either the current one, or one 
-      // that was the current one a few milliseconds ago. This is because
-      // a thread setting _content may not update main memory immediately,
-      // and this thread may not update its copy of _content immediately
-      // (it may have a stale copy it read earlier).
-
-      Block content = _content; // copy to a local var in case it changes
-
-      // Make sure that all the contents of "content" are up to date--that
-      // our thread is fully synchronized with main memory, so that we don't
-      // have a half-created version. Synchronize on anything to do this: 
-      // we will use an object we don't share with any other thread.
-      synchronized(data) { } 
-
-      if (content == null) {
          try {
-            synchronized(this) {
-               // double check under the lock
-               if (_content == null) {
-                  parse();   
-               }
-               content = _content;
+            if (_content == null) {
+               parse();   
             }
          } catch (Exception e) {
             _log.error("Template: Unable to read template: " + this, e);
@@ -260,17 +225,11 @@ abstract public class WMTemplate implements Template
    public Object getParam(String key) 
       throws IOException, TemplateException 
    {
-
-      // perform double checked lock in case template has not yet 
-      // been parsed.
-
       try {
          return _parameters.get(key);
       } catch (NullPointerException e) {
-         synchronized(this) {
-            parse();
-            return _parameters.get(key);
-         }
+         parse();
+         return _parameters.get(key);
       }
    }
 
