@@ -23,7 +23,9 @@
 package org.webmacro.util;
 
 import org.webmacro.*;
-import org.webmacro.engine.StreamTemplate;
+import org.webmacro.servlet.*;
+import org.webmacro.engine.*;
+
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -41,9 +43,10 @@ import java.io.OutputStream;
  * Its main benefit are a number of convenience methods for evaluating a template
  * and directing output either to a supplied output stream or to a file.
  * <p>
- * It can parse a single template stream and then evaluate that rule
+ * It can parse a single template stream and then evaluate that template
  * over a number of different contexts. And, it can maintain a single context
- * and evaluate different templates over the same context.
+ * and evaluate different templates over the same context. Each time a context
+ * or a template is provided, it is retained as state.
  * <p>
  * The context can therefore be preserved over multiple "writes" of different
  * templates.
@@ -51,16 +54,10 @@ import java.io.OutputStream;
  * The template stream can be any text stream but is often a rule stream containing
  * wm script directives.
  * <p>
- * A template, once parsed, can be preserved and made available using setRule()
- * and getRule().
- * <p>
  * This helper class is useful for evaluating WebMacro templates for which
  * flexibility in managing the evaluation options is key.
- * <p>
- * <b>Note</b>: All uses of the method assert(argList) should be converted
- * to eval(argList) in anticipation of jdk 1.4.
  * @author Lane Sharman
- * @version 2.0
+ * @version 3.0
  */
 public class WMEval
 {
@@ -69,7 +66,7 @@ public class WMEval
 
     //-------private and protected members-----
     private WebMacro wm;
-    private Template rule;
+    private Template currentTemplate;
     private OutputStream out = System.out;
     private Context context;
     /**
@@ -84,7 +81,7 @@ public class WMEval
      */
     public WMEval (Servlet servlet)
     {
-        // Build a web macro environment for rule execution.
+        // Build a web macro environment for currentTemplate execution.
         try
         {
             if (servlet == null)
@@ -104,32 +101,42 @@ public class WMEval
     {
         this(null);
     }
+    
+    /**
+     * Return the settings associated with this WebMacro instance.
+     */
+    public Settings getSettings()
+    {
+      return wm.getBroker().getSettings();
+    }
 
 
     //-------public initializers/destroyers-----
     /**
-     * Initializes WMEval so that it can perform rule evaluation
-     * on multiple contexts. Init parses the rule supplied.
+     * Initializes WMEval so that it can perform currentTemplate evaluation
+     * on multiple contexts. Init parses the currentTemplate supplied.
      * <p>
-     * The argument to init() is the rule as a stream allowing the rule
+     * The argument to init() is the currentTemplate as a stream allowing the currentTemplate
      * to come from pretty much anywhere such as a url, a file, or a db field.
      * <p>
-     * Care must be given to the fact that in parsing the rule, th current vm is able
-     * to resolve locations of other rules referenced within the supplied rule.
+     * Care must be given to the fact that in parsing the currentTemplate, th current vm is able
+     * to resolve locations of other currentTemplates referenced within the supplied currentTemplate.
      * <p>
-     * Note, once this is complete, the parsed rule can be applied to successive
+     * Note, once this is complete, the parsed currentTemplate can be applied to successive
      * new object contexts. In other words, the application context
-     * can assert new objects for rule application and remove others.
-     * @param unparsedRule The stream containing the top-level, unparsed rule.
+     * can assert new objects for currentTemplate application and remove others.
+     * @param template The stream containing the top-level, unparsed currentTemplate.
      *
      */
-    public Template init (InputStream unparsedRule) throws Exception
+    public Template init (InputStream template) throws Exception
     {
         //
-        rule = new StreamTemplate(wm.getBroker(), new InputStreamReader(unparsedRule));
-        rule.parse();
-        return rule;
+        Template t = new StreamTemplate(wm.getBroker(), new InputStreamReader(template));
+        t.parse();
+        this.currentTemplate = t;
+        return t;
     }
+    
 
     public void error (String msg, Exception e)
     {
@@ -141,8 +148,16 @@ public class WMEval
      */
     public Context getNewContext ()
     {
-        context = wm.getContext();
-        return context;
+        Context c = wm.getContext();
+        this.context = c;
+        return c;
+    }
+
+    public WebContext getNewContext (HttpServletRequest req, HttpServletResponse resp)
+    {
+        WebContext c = wm.getWebContext(req, resp);
+        this.context = c;
+        return c;
     }
 
     /**
@@ -150,7 +165,15 @@ public class WMEval
      */
     public Context getCurrentContext ()
     {
-        return context;
+        return this.context;
+    }
+
+    /**
+     * Gets the current template.
+     */
+    public Template getCurrentTemplate()
+    {
+        return this.currentTemplate;
     }
 
     /**
@@ -158,31 +181,32 @@ public class WMEval
      */
     public Template parseLocalTemplate (String templateName) throws Exception
     {
-        rule = wm.getTemplate(templateName);
-        return rule;
+        Template t = wm.getTemplate(templateName);
+        this.currentTemplate = t;
+        return t;
     }
 
     /**
-     * Supplies the parsed rule directly.
-     * @param parsedTemplate The rule parsed possibly from a previous run.
+     * Supplies the parsed currentTemplate directly.
+     * @param parsedTemplate The currentTemplate parsed possibly from a previous run.
      */
-    public void setParsedTemplate (Template parsedTemplate)
+    public void setCurrentTemplate (Template parsedTemplate)
     {
-        rule = parsedTemplate;
+        this.currentTemplate = parsedTemplate;
     }
 
     /**
-     * Obtain the parsed rule possibly for reuse in another run.
-     * @return The rule parsed which can be resupplied in another run.
+     * Supplies a context to be  parsed currentTemplate directly.
+     * @param parsedTemplate The currentTemplate parsed possibly from a previous run.
      */
-    public Template getRule ()
+    public void setCurrentContext (Context c)
     {
-        return rule;
+        this.context = c;
     }
 
     /**
      * Sets the output stream to be different than the default, System.out.
-     * @param out The new output stream for any output during rule evaluation.
+     * @param out The new output stream for any output during currentTemplate evaluation.
      */
     public void setOutputStream (OutputStream out)
     {
@@ -192,52 +216,33 @@ public class WMEval
     /**
      * Evaluates the context of this instance and the instance's
      * current template and current output stream using UTF8.
-     * @deprecated
      */
-    public void eval () throws Exception
+    public void eval() throws Exception
     {
-        eval(context, rule, out, "UTF8");
+      eval(context, currentTemplate);
     }
 
 
     /**
-     * Evaluate the context supplied against the current rule.
-     * @param context The map containing the referents to assertable, rule-driven objects.
+     * Evaluate the context supplied against the current template.
+     * @param context The WebMacro context.
      */
-    public void eval (Context context) throws Exception
+    public String eval (Context context) throws Exception
     {
-        eval(context, rule, out, "UTF8");
-    }
-
-    /**
-     * Evaluate the supplied context and template to the provided output.
-     * @ rule the template provided.
-     * @ out an output stream.
-     * @ encoding the encoding for the output.
-     */
-    public void eval (Context context, Template rule, OutputStream out, String encoding) throws Exception
-    {
-        // context.put("FastWriter", w); // allow template writers to access the output stream!
-        rule.write(out, encoding, context);
+      return eval(context, currentTemplate);
     }
 
     /**
      * Evaluates the string template against the current context
-     * and returns the value. If an output file is specified, the value
-     * is written out as well.
+     * and returns the value. If an output stream is specified, the value
+     * is written out as well to this stream.
      * @param templateName The name of the template.
      * @param out An optional output stream.
      * @return The output from the evaluated template
      */
-    public String eval (String templateName, OutputStream out) throws Exception
+    public String eval (Context context, String templateName, OutputStream out) throws Exception
     {
-        Template t = wm.getTemplate(templateName);
-        String val = t.evaluateAsString(context);
-        if (out != null)
-        {
-            out.write(val.getBytes());
-        }
-        return val;
+      return eval(context, templateName, out, null);
     }
 
     /**
@@ -248,7 +253,7 @@ public class WMEval
      */
     public String eval (String templateName) throws Exception
     {
-        return eval(templateName, null);
+        return eval(context, templateName, null, null);
     }
 
     /**
@@ -258,80 +263,94 @@ public class WMEval
      * This is an exceptionally useful method for a servlet to use to
      * write out a template.
      * <p>
-     * <b>Note:</b> This method places "FastWriter" in the context
-     * so you can write out to the stream.
+     * @param context The WM context to use.
      * @param templateName The name of the template.
-     * @param resp The servlet response object and its output stream
+     * @param resp The servlet response from which the encoding will be derived.
+     * @returns The string value sent to the user agent.
      */
-    public void eval (String templateName, HttpServletRequest req,
+    public String eval (WebContext context, String templateName,
                       HttpServletResponse resp) throws ServletException
     {
-        try
-        {
-            context = wm.getWebContext(req, resp);
-            String encoding = wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
-            if (encoding == null)
-            {
-                encoding = resp.getCharacterEncoding();
-            }
-            Template t = wm.getTemplate(templateName);
-            // context.put("FastWriter", w); // allow template writers to access the output stream!
-            t.write(resp.getOutputStream(), encoding, context);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            throw new ServletException(e.toString());
-        }
+      String value = null;
+      try
+      {
+          resp.setContentType("text/html");
+          String encoding = wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+          if (encoding == null)
+          {
+              encoding = resp.getCharacterEncoding();
+          }
+          value = eval(context, templateName, resp.getOutputStream(), encoding);
+      }
+      catch (Exception e)
+      {
+          e.printStackTrace(System.err);
+          throw new ServletException(e.toString());
+      }
+      return value;
     }
 
     /**
      * Evaluate the supplied context and template and return the result as a
      * as a string.
      */
-    public String eval (Context context, Template rule) throws Exception
+    public String eval (Context context, Template template) throws Exception
     {
-        return rule.evaluateAsString(context);
+        return template.evaluateAsString(context);
     }
 
     /**
      * Evaluates the context using a file template sending the output to a disk file.
+     * <p>
+     * This method is the preferred method when an output stream is to be written
+     * as well as the value of the string is to be returned.
      * @param context The context to use.
      * @param templateResourceFile The input template file in the resource path.
-     * @param outputFileName The absolute path to a file. If null, the context
-     * key OutputFileName must be present.
+     * @param out The output stream. If null, an attempt will be
+     * made to locate the outputstream in the context using the output stream key if
+     * in the context. If no output stream can be resolved, the method does not
+     * throw an exception.
      * @param append If true, the file will be opened for appending the output.
      * @param encoding If null, the platform's encoding will be used.
      * @return The output is also returned as a convenience.
      */
-    public String eval (Context context, String templateResourceFile,
-                        String outputFileName, boolean append, String encoding) throws Exception
+    public String eval (Context context, String templateName,
+                        OutputStream out, String encoding) throws Exception
     {
-        Template rule = wm.getTemplate(templateResourceFile);
-        String value = rule.evaluateAsString(context);
-        // output the file
-        if (outputFileName == null)
-            outputFileName = (String) context.get(outputContextKey);
-        OutputStream out = new FileOutputStream(outputFileName, append);
+      Template t = wm.getTemplate(templateName);
+      String value = t.evaluateAsString(context);
+      // output the file
+      if (out == null) 
+      {
+        String outputFileName = (String) context.get(outputContextKey);
+        if (outputFileName != null)
+        {
+          out = new FileOutputStream(outputFileName);
+        }
+      }
+      if (out != null) // write it to out
+      {
         if (encoding == null)
-            out.write(value.getBytes());
-        else
-            out.write(value.getBytes(encoding));
+        {
+          out.write(value.getBytes());
+        }
+        else {
+          out.write(value.getBytes(encoding));
+        }
         out.close();
-        return value;
+      }
+      this.currentTemplate = t;
+      this.context = context;
+      return value;
     }
 
     /**
      *  Evaluates the current context for the input file and writes it to the output file.
      */
-    public String eval (String templateResourceFile, String outputFileName, boolean append) throws Exception
+    public String eval (Context context, String templateName, String outputFileName, boolean append) throws Exception
     {
-      Template t = wm.getTemplate(templateResourceFile);
-      String val = t.evaluateAsString(context);
       OutputStream out = new FileOutputStream(outputFileName, append);
-      out.write(val.getBytes());
-      out.close();
-      return val;
+      return eval(context, templateName, out, null);
     }      
 
 
@@ -341,6 +360,6 @@ public class WMEval
     public void destroy ()
     {
         wm = null;
-        rule = null;
+        currentTemplate = null;
     }
 }
