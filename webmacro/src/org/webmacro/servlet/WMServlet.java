@@ -519,6 +519,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     * stream.
     */
     final protected void execute (Template tmpl, WebContext c)
+        throws IOException
     {
         FastWriter fw = null;
         boolean timing = Flags.PROFILE && c.isTiming ();
@@ -565,6 +566,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             } finally { 
                if (timing) c.stopTiming (); 
             }
+        } catch (UnsupportedEncodingException e) {
+            // can be thrown by FastWriter.getInstance
+            // rethrow it, because otherwise it would be ignored
+            // as an IOException
+            _log.error("tried to use an unsupported encoding",e);
+            throw e;
         } catch (IOException e) {
             // ignore disconnect
         } catch (Exception e) {
