@@ -113,19 +113,18 @@ final public class TemplateProvider extends CachingProvider
       return new TimedReference(t, _cacheDuration);   
    }
 
-	/**
-	  * if the cached last modified value of the template file
-	  * differs from the current last modified value of the template file
-	  * return true.  Otherwise, return false
-	  *
-	  * @return true if template should be reloaded
-	  */
-	final public boolean shouldReload (String fileName)
-	{
-		File tFile = findTemplate (fileName);
-		Long lm = (Long) _lastModifiedCache.get (fileName);
-		return (lm == null || lm.longValue() != tFile.lastModified());
-	}
+   /**
+     * if the cached last modified value of the template file
+     * differs from the current last modified value of the template file
+     * return true.  Otherwise, return false
+     *
+     * @return true if template should be reloaded
+     */
+   final public boolean shouldReload (String fileName) {
+      File tFile = findTemplate (fileName);
+      Long lm = (Long) _lastModifiedCache.get (fileName);
+      return (lm == null || lm.longValue() != tFile.lastModified());
+   }
 
    // IMPLEMENTATION
 
@@ -137,48 +136,45 @@ final public class TemplateProvider extends CachingProvider
      * @param fileName relative to the current directory fo the store
      * @return a template matching that name, or null if one cannot be found
      */
-   final public Template getTemplate(String fileName) 
-	{
-		File tFile = findTemplate (fileName);
-		Template t = null;
+   final public Template getTemplate(String fileName) {
+      File tFile = findTemplate (fileName);
+      Template t = null;
 		
-		try
-		{
-			t = new FileTemplate (_broker, tFile);
-			t.parse ();
-			_lastModifiedCache.put (fileName, new Long (tFile.lastModified()));
-		}
-		catch (NullPointerException npe)
-		{
-			_log.warning ("TemplateProvider: Template not found: " + fileName, npe);
-		}
-		catch (Exception e)
-		{  // this probably occured b/c of a parsing error.
-			// should throw some kind of ParseErrorException here instead
-			_log.warning ("TemplateProvider: Error occured while getting " + fileName, e);
-		}
-		
-		return t;
+      try {
+         t = new FileTemplate (_broker, tFile);
+         t.parse ();
+         _lastModifiedCache.put (fileName, new Long (tFile.lastModified()));
+      }
+      catch (NullPointerException npe) {
+         _log.warning ("TemplateProvider: Template not found: " + fileName, npe);
+      }
+      catch (Exception e) {  
+         // this probably occured b/c of a parsing error.
+         // should throw some kind of ParseErrorException here instead
+         _log.warning ("TemplateProvider: Error occured while getting " + fileName, e);
+      }
+
+      return t;
    }
    
    /**
     * @param fileName the template filename to find, relative to the TemplatePath
     * @return a File object that represents the specified template file.
-	 * @return null if template file cannot be found.
-	 */
+    * @return null if template file cannot be found.
+    */
    final private File findTemplate (String fileName)
    {
-	   _log.debug("Looking for template: " + fileName);
-	   for (int i=0; i < _templateDirectory.length; i++) {
-    		Template t;
-      	String dir = _templateDirectory[i];
-	      File tFile  = new File(dir,fileName);
-      	if (tFile.canRead()) {
-				_log.debug("TemplateProvider: Found " + fileName + " in " + dir);
-            return tFile;
-      	}
+      _log.debug("Looking for template: " + fileName);
+      for (int i=0; i <_templateDirectory.length; i++) {
+         Template t;
+         String dir = _templateDirectory[i];
+         File tFile  = new File(dir,fileName);
+         if (tFile.canRead()) {
+            _log.debug("TemplateProvider: Found " + fileName + " in " + dir);
+             return tFile;
+         }      
       }
-		return null;
+      return null;
    }
 }
 
