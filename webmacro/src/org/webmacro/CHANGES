@@ -1,3 +1,11 @@
+-- Oct-2000 fergus: added URLTemplate+Provider (moved by Justin into 
+   org.webmacro.resource, see below).  URLTemplateProvider is a
+   replacement for TemplateProvider which allows templates to be
+   specified my a full URL. Loading from the system CLASSPATH is also
+   supported (including within JARs). TemplatePath prefixes are
+   'ignore:', 'classpath:<subpath>', '<url>'.   Encoding prefixes 
+   (":<encoding>:") are also supported.
+
 -- Oct-2000 justin: reworked CachingProvider so that it does some 
    more sensible locking. This is likely to make it a bit slower, 
    but hopefully it scales well with these changes. 
