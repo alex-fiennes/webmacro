@@ -25,8 +25,6 @@ package org.webmacro.servlet;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 import org.webmacro.Context;
 import org.webmacro.ContextTool;

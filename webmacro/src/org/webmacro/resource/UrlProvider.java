@@ -118,7 +118,7 @@ final public class UrlProvider extends CachingProvider {
          if (length == -1) {
             length = 1024;
          }
-
+/**
          long now = System.currentTimeMillis();
          long timeout = uc.getExpiration();
          if (timeout != 0) {
@@ -130,6 +130,7 @@ final public class UrlProvider extends CachingProvider {
          if (timeout > MAX_TIMEOUT)
             timeout = MAX_TIMEOUT;
          else if (timeout < MIN_TIMEOUT) timeout = MIN_TIMEOUT;
+**/
 
          char buf[] = new char[1024];
          StringWriter sw = new StringWriter(length);

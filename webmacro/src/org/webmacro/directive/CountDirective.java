@@ -1,10 +1,23 @@
 /*
- * Created by IntelliJ IDEA.
- * User: e_ridge
- * Date: Oct 18, 2002
- * Time: 4:44:50 PM
- * To change template for new class use
- * Code Style | Class Templates options (Tools | IDE Options).
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted under the terms of either of the following
+ * Open Source licenses:
+ *
+ * The GNU General Public License, version 2, or any later version, as
+ * published by the Free Software Foundation
+ * (http://www.fsf.org/copyleft/gpl.html);
+ *
+ *  or
+ *
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
+ *
+ * This software is provided "as is", with NO WARRANTY, not even the
+ * implied warranties of fitness to purpose, or merchantability. You
+ * assume all risks and liabilities associated with its use.
+ *
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 package org.webmacro.directive;
 
@@ -16,6 +29,9 @@ import java.io.IOException;
 
 /**
  * #count $i from 1 to 100 [step 1]
+ *
+ * @author Eric B. Ridge (ebr@tcdi.com)
+ * @since 1.1b1
  */
 public class CountDirective extends org.webmacro.directive.Directive {
 

@@ -37,10 +37,7 @@ public final class VoidMacro implements Macro {
    }
 
    /**
-    * Returns null.
-    *
-    * @return null
-    * @exception PropertyException if required data was missing from context
+    * Always throws a new <code>PropertyException.VoidValueException</code>
     */
    public Object evaluate(Context context)
          throws PropertyException {

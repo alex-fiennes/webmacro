@@ -135,7 +135,7 @@ public class WMEval {
 
    /**
     * Supplies the parsed rule directly.
-    * @param parsedRule The rule parsed possibly from a previous run.
+    * @param parsedTemplate The rule parsed possibly from a previous run.
     */
    public void setParsedTemplate(Template parsedTemplate) {
       rule = parsedTemplate;
@@ -232,7 +232,7 @@ public class WMEval {
    /**
     * Evaluates the context using a file template sending the output to a disk file.
     * @param context The context to use.
-    * @param inputTemplateFileName The input template file in the resource path.
+    * @param templateResourceFile The input template file in the resource path.
     * @param outputFileName The absolute path to a file. If null, the context
     * key OutputFileName must be present.
     * @param append If true, the file will be opened for appending the output.

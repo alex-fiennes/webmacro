@@ -108,7 +108,7 @@ public class AlternateDirective extends Directive {
 
          Iterator itr = context.getBroker()._propertyOperators.getIterator(l);
 
-         target.setValue(context, (Object) new IteratorAlternator(itr));
+         target.setValue(context, new IteratorAlternator(itr));
       }
       catch (Exception e) {
          String warning = "#alternate: list argument is not a list: " + l;

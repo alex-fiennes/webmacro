@@ -23,7 +23,6 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.webmacro.Context;

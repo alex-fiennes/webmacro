@@ -19,16 +19,6 @@
  *
  * See www.webmacro.org for more information on the WebMacro project.
  */
-
-
-/**
- *
- * Implementation of AbstractLogFile which directs log information to
- * the servlet log.
- * @since 0.96
- * @author Brian Goetz
- */
-
 package org.webmacro.servlet;
 
 import java.text.MessageFormat;
@@ -40,6 +30,13 @@ import org.webmacro.util.Clock;
 import org.webmacro.util.LogSystem;
 import org.webmacro.util.Settings;
 
+/**
+ *
+ * Implementation of AbstractLogFile which directs log information to
+ * the servlet log.
+ * @since 0.96
+ * @author Brian Goetz
+ */
 public class ServletLog extends AbstractLogFile {
 
    private static String servletDefaultFormat = "WebMacro:{1}\t{2}\t{3}";

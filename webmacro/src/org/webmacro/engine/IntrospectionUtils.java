@@ -1,14 +1,30 @@
 /*
- * IntrospectionUtils.java
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
  *
- * Created on May 25, 2002, 5:42 PM
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted under the terms of either of the following
+ * Open Source licenses:
+ *
+ * The GNU General Public License, version 2, or any later version, as
+ * published by the Free Software Foundation
+ * (http://www.fsf.org/copyleft/gpl.html);
+ *
+ *  or
+ *
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
+ *
+ * This software is provided "as is", with NO WARRANTY, not even the
+ * implied warranties of fitness to purpose, or merchantability. You
+ * assume all risks and liabilities associated with its use.
+ *
+ * See www.webmacro.org for more information on the WebMacro project.
  */
-
 package org.webmacro.engine;
 
 /**
  *
  * @author  Keats
+ * @since May 25, 2002
  */
 public class IntrospectionUtils {
     
@@ -72,7 +88,6 @@ public class IntrospectionUtils {
         else {
             // try each constructor with the right number of args,
             // untill one works or all have failed
-            Exception lastException = null;
             java.lang.reflect.Constructor[] cons = c.getConstructors();
             for (int i=0; i<cons.length; i++){
                 if (cons[i].getParameterTypes().length == args.length){
@@ -81,7 +96,7 @@ public class IntrospectionUtils {
                         o = cons[i].newInstance(args);
                         break; // if successful, we're done!
                     } catch (Exception e){
-                        lastException = e;
+
                     }
                 }
             }

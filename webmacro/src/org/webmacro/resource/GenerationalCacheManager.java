@@ -19,6 +19,18 @@
   *
   * See www.webmacro.org for more information on the WebMacro project.
   */
+package org.webmacro.resource;
+
+import org.opendoors.cache.UpdateableCache;
+import org.opendoors.cache.immutable.CacheFactory;
+import org.opendoors.cache.immutable.CacheImpl;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.ResourceException;
+import org.webmacro.util.Settings;
+import org.webmacro.util.SubSettings;
 
 /**
  * An implementation of CacheManager which uses the "VFC" cache manager
@@ -35,28 +47,15 @@
  * <p>
  * This cache manager supports reloadability
  * of a cache entry provided the cache element knows how
- * to test itself for having become stale.
- * <a href="mailto:lane@opendoors.com">Architecture Support</a>
- * @since 0.96
- */
-package org.webmacro.resource;
-
-import org.opendoors.cache.UpdateableCache;
-import org.opendoors.cache.immutable.CacheFactory;
-import org.opendoors.cache.immutable.CacheImpl;
-
-import org.webmacro.Broker;
-import org.webmacro.InitException;
-import org.webmacro.Log;
-import org.webmacro.ResourceException;
-import org.webmacro.util.Settings;
-import org.webmacro.util.SubSettings;
-
-/**
+ * to test itself for having become stale.<p>
+ *
  * The GenerationalCacheManager implements the CacheManager
  * interface for WebMacro providers which extend the CachingProvider
  * base class. This implementation encapsulates the use of VFC
  * provided by Open Doors Software and incorporated into WM.
+ *
+ * @author Lane Sharman (lane@opendoors.com)
+ * @since 0.96
  */
 public class GenerationalCacheManager implements CacheManager {
 

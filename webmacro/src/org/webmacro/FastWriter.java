@@ -456,7 +456,7 @@ public class FastWriter extends Writer {
 	public static FastWriter getInstance( Broker broker, OutputStream out,
 													  String encoding )
 		throws UnsupportedEncodingException {
-		FastWriter fw = null;
+		FastWriter fw;
 		Pool p = ( Pool ) WRITERCACHE.get( encoding );
 		if ( p != null ) {
 			fw = ( FastWriter ) p.get();

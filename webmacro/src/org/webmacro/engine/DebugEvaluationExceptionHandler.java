@@ -128,7 +128,7 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
          _log.warning(strError, propEx);
       }
       // and rethrow it
-      throw (PropertyException) propEx;
+      throw propEx;
    }
 
 

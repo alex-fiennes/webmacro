@@ -389,7 +389,6 @@ final public class URLTemplateProvider extends CachingProvider {
             }
          }
          else if (tPart.startsWith(CONTEXT_PREFIX)) {
-            tPart = tPart.substring(CONTEXT_PREFIX_LENGTH);
             throw new IllegalStateException("Not implemented");
          }
          else if (tPart.startsWith(IGNORE_PREFIX)) {

@@ -471,14 +471,9 @@ public class IncludeDirective extends Directive {
       }
       catch (ResourceException re) {
          try {
-            java.net.URL url = b.getResource(name);
             try {
-               // this does not work for me, because
-               // getContent() returns an instance of
-               // a BufferedInputStream() on my platform.
                // The UrlProvider knows, how to do this,
                // so let him do the work for us
-               //return url.getContent ().toString();
                return b.get("url", name).toString();
             }
             catch (NullPointerException npe) {
