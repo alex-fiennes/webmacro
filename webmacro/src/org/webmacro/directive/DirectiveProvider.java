@@ -33,24 +33,27 @@ public final class DirectiveProvider implements Provider
       } catch (Exception e) {
          throw new IntrospectionException("No class " + dirClassName);
       }
-      try {
-        descriptor = (DirectiveDescriptor) 
-          directive.getMethod("getDescriptor", null).invoke(null, null);
-      } 
-      catch (Exception e) {
+
+      // Make sure this class is an instance of o.w.directive.Directive
+      if (Directive.class.isAssignableFrom(directive)) {
+        try {
+          descriptor = (DirectiveDescriptor) 
+            directive.getMethod("getDescriptor", null).invoke(null, null);
+        } 
+        catch (Exception e) {
           throw new IntrospectionException("Class " + dirClassName 
             + " does not have a getDescriptor() method");
-      }
-      oldDesc = (DirectiveDescriptor) 
-        _descriptors.get(descriptor.name);
-      if (oldDesc == null) {
-        _descriptors.put(descriptor.name, descriptor);
-        _log.info("Registered directive: " + descriptor.name);
-      } else if (descriptor.dirClass != oldDesc.dirClass) {
-         throw new InitException(
-               "Attempt to register directive " + directive
-               + " failed because " + oldDesc.dirClass.getName() 
-               + " is already registered for type " + descriptor.name);
+        }
+        oldDesc = (DirectiveDescriptor) 
+          _descriptors.get(descriptor.name);
+        if (oldDesc == null) {
+          _descriptors.put(descriptor.name, descriptor);
+          _log.info("Registered directive: " + descriptor.name);
+        } else if (descriptor.dirClass != oldDesc.dirClass) {
+          throw new InitException("Attempt to register directive " + directive
+             + " failed because " + oldDesc.dirClass.getName() 
+             + " is already registered for type " + descriptor.name);
+        }
       }
    }
 
@@ -74,14 +77,14 @@ public final class DirectiveProvider implements Provider
    // RESOURCE PROVIDER API
 
    public String getType() {
-      return "new-directive";
+      return "org.webmacro.directive.Directive";
    }
 
    public void init(Broker broker, Properties config) throws InitException
    {
       _log = broker.getLog("directive");
       try {
-         String directives = config.getProperty("NewDirectives");
+         String directives = config.getProperty("Directives");
          Enumeration denum = new StringTokenizer(directives);
          while (denum.hasMoreElements()) {
             String dir = (String) denum.nextElement();
