@@ -204,6 +204,8 @@ public class IncludeDirective extends Directive {
    private String TEMPLATE_EXTENSIONS_NAME = ".TemplateExtensions";
 
 
+   /** Logging can be good */
+   protected Log _log;
    /** the included file type.  one of TYPE_TEMPLATE, TYPE_STATIC, TYPE_MACRO, or TYPE_DYNAMIC */
    protected int _type;
    /** the filename as a Macro, if the filename arg is a Macro */
@@ -235,7 +237,7 @@ public class IncludeDirective extends Directive {
     */
    public final Object build(DirectiveBuilder builder, BuildContext bc) throws BuildException {
       Broker broker = bc.getBroker();
-
+      _log = bc.getLog("IncludeDirective");
       // build configuration key names, since they're based
       // on the configured name of this directive
       _directiveName = builder.getName();
@@ -330,17 +332,25 @@ public class IncludeDirective extends Directive {
          }
       }
 
-       // make sure we're not trying to include ourself.
-       // maybe there is a better way to handle this?
-       if (context.getCurrentLocation().indexOf(_strFilename) > -1) {
-           String warning = context.getCurrentLocation() + " includes itself.";
-           writeWarning(warning, context, out);
+       if (_log.loggingDebug() && context.getCurrentLocation().indexOf(_strFilename) > -1) {
+           // when in debug mode, output a warning if a template tries to include itself
+           // there are situtations where this is desired, but it's good to make
+           // the user aware of what they're doing
+           _log.warning(context.getCurrentLocation() + " includes itself.");
        }
 
       // this should only be true if StrictCompatibility is set to false
       // and "as <something>" wasn't specified in the arg list
       if (_type == TYPE_DYNAMIC)
          _type = guessType(broker, _strFilename);
+
+      if (_log.loggingDebug()) {
+         _log.debug("Including '" + _strFilename + "' as "
+                 + (_type == TYPE_MACRO)    ? "MACRO"
+                 : (_type == TYPE_TEMPLATE) ? "TEMPLATE"
+                 : (_type == TYPE_TEXT)     ? "TEXT"
+                 : "UNKNOWN.  Throwing exceptin");
+      }
 
       Object toInclude = getThingToInclude(broker, _type, _strFilename);
       switch (_type) {
