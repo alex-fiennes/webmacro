@@ -172,9 +172,9 @@ public class WMEval {
 	public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
 		FastWriter w;
 		if (out == null)
-			w = new FastWriter(context.getBroker(), System.out, "UTF8");
+			w = context.getBroker().getFastWriter (System.out, "UTF8");
 		else
-			w = new FastWriter(context.getBroker(), out, encoding);
+                	w = context.getBroker().getFastWriter (System.out, encoding);
 		context.put("FastWriter", w); // allow template writers to access the output stream!
 		rule.write(w, context);
 		w.flush();
