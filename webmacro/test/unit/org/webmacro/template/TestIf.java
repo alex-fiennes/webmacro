@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.webmacro.*;
 import org.webmacro.engine.StringTemplate;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
+import org.webmacro.engine.CrankyEvaluationExceptionHandler;
 
 import junit.framework.*;
 
@@ -13,6 +14,7 @@ public class TestIf extends TemplateTestCase {
 
    public TestIf (String name) {
       super (name);
+      System.setProperty("org.webmacro.LogLevel", "DEBUG");
    }
 
    public void stuffContext (Context context) throws Exception {
@@ -33,6 +35,14 @@ public class TestIf extends TemplateTestCase {
       assertStringTemplateEquals("#if ($a==$b) #begin pass #end #else #begin fail #end", "pass");
       assertStringTemplateEquals("#if (!($a==$b)) #begin fail #end #else #begin pass #end", "pass");
       assertStringTemplateEquals("#if ($a!=$b) #begin fail #end #else #begin pass #end", "pass");
+   }
+
+   public void test3() throws Exception {
+       _context.setEvaluationExceptionHandler(new CrankyEvaluationExceptionHandler(_context.getBroker()));
+       assertStringTemplateThrows("#if ($foo.size() == 1){fail}#else{pass}", PropertyException.NoSuchMethodException.class);
+
+       _context.setEvaluationExceptionHandler(new DefaultEvaluationExceptionHandler(_context.getBroker()));
+       assertStringTemplateThrows("#if ($foo.size() == 1){fail}#else{pass}", PropertyException.NoSuchMethodException.class);
    }
 
 }

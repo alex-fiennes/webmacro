@@ -187,13 +187,7 @@ class IfDirective extends Directive {
       for (int i = 0; i < nConditions; i++) {
          boolean b = false;
 
-         try {
-            b = Expression.isTrue(conditions[i].evaluate(context));
-         }
-         catch (Exception e) {
-            String warning = "#if: Error evaluating condition: " + e;
-            writeWarning(warning, context, out);
-         }
+         b = Expression.isTrue(conditions[i].evaluate(context));
          if (b) {
             blocks[i].write(out, context);
             return;

@@ -89,18 +89,8 @@ public abstract class Expression {
             throws PropertyException {
          Object l, r;
 
-         try {
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-         }
-         catch (Exception e) {
-            l = null;
-         }
-         try {
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-         }
-         catch (Exception e) {
-            r = null;
-         }
+         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
 
          return operate(l, r);
       }
@@ -149,20 +139,11 @@ public abstract class Expression {
             throws PropertyException {
          Object l, r;
 
-         try {
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-         }
-         catch (Exception e) {
-            l = null;
-         }
+         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
          if (!isTrue(l))
             return FALSE;
-         try {
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-         }
-         catch (Exception e) {
-            r = null;
-         }
+
+         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
          if (!isTrue(r))
             return FALSE;
 
@@ -187,20 +168,11 @@ public abstract class Expression {
             throws PropertyException {
          Object l, r;
 
-         try {
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-         }
-         catch (Exception e) {
-            l = null;
-         }
+         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
          if (isTrue(l))
             return TRUE;
-         try {
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-         }
-         catch (Exception e) {
-            r = null;
-         }
+
+         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
          if (isTrue(r))
             return TRUE;
 
