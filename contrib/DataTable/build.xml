@@ -85,7 +85,7 @@
   <target name="jar" depends="prepare,compile">
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
-         includes="src/**,build.xml"/>
+         includes="src/**,build.xml,**.wm,**.html,**.txt"/>
   </target>
 
 
@@ -95,12 +95,6 @@
   </target>
 
   <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
-    <mkdir dir="${app.name}/api" />
-<!--
-    <copy todir="${app.name}/api">
-      <fileset dir="${javadoc}"/>
-    </copy>
--->
     <copy todir="${dist}" file="${src.jar}"/>
     <copy todir="${dist}" file="${jar}"/>
     <copy todir="${dist}" file="${doc.jar}"/>
@@ -110,6 +104,13 @@
   </target>
 
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+
+  <target name="war" depends="dist">
+    <war warfile="datatable.war" webxml="${app.name}/WEB-INF/web.xml">
+      <classes dir="${classes}"/>
+      <lib dir="${lib}"/>
+    </war>
+  </target>
 
 <!--  NOTE: Unit tests not implemented 
 
