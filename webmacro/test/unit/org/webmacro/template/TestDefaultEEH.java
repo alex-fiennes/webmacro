@@ -17,7 +17,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void stuffContext (Context context) throws Exception {
       context.setEvaluationExceptionHandler (
-                new DefaultEvaluationExceptionHandler ());
+                new DefaultEvaluationExceptionHandler (_wm.getBroker()));
 
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());

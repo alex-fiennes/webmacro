@@ -37,11 +37,17 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.Context;
+import org.webmacro.*;
+import org.webmacro.util.Settings;
 import org.webmacro.PropertyException;
 
 public interface EvaluationExceptionHandler {
   
+   /** 
+    * Initialize the EEH 
+    */
+   public void init(Broker b, Settings config);
+
    /**
     * When an exception is detected in the process of expanding (writing)
     * a variable reference, this method is consulted.  It either throws

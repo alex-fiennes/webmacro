@@ -20,7 +20,7 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
 
    public void stuffContext (Context context) throws Exception {
       context.setEvaluationExceptionHandler (
-                new CrankyEvaluationExceptionHandler ());
+                new CrankyEvaluationExceptionHandler(_wm.getBroker()));
 
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());

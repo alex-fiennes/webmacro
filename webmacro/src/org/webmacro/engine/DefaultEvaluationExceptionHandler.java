@@ -36,22 +36,39 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.PropertyException;
-import org.webmacro.Context;
+import org.webmacro.*;
+import org.webmacro.util.Settings;
 
 public class DefaultEvaluationExceptionHandler 
   implements EvaluationExceptionHandler {
+   private Log _log;
+
+   public DefaultEvaluationExceptionHandler() {
+   }
+
+   public DefaultEvaluationExceptionHandler(Broker b) {
+      init(b, b.getSettings());
+   }
+
+   public void init(Broker b, Settings config) {
+      _log = b.getLog("engine");
+   }
 
    public void evaluate(Variable variable, 
                         Context context, 
                         Exception problem) 
    throws PropertyException {
+     if (_log != null)
+       _log.warning("Error evaluating variable " + variable.getVariableName()
+                    + ": " + problem, problem);
       if (problem instanceof PropertyException.NoSuchVariableException
           || problem instanceof PropertyException.NullValueException
-          || problem instanceof PropertyException.NullToStringException)
+          || problem instanceof PropertyException.NullToStringException) {
          return;
-      else if (problem instanceof PropertyException)
+      }
+      else if (problem instanceof PropertyException) {
          throw (PropertyException) problem;
+      }
       else 
          throw new PropertyException("Error evaluating variable " 
                                      + variable.getVariableName() + ": " 
@@ -62,6 +79,9 @@ public class DefaultEvaluationExceptionHandler
                         Context context, 
                         Exception problem) 
    throws PropertyException {
+     if (_log != null)
+       _log.warning("Error expanding variable " + variable.getVariableName()
+                    + ": " + problem, problem);
       if (problem instanceof PropertyException.NoSuchVariableException) {
          return errorString("Attempt to access nonexistent variable $" 
                             + variable.getVariableName());
@@ -76,12 +96,14 @@ public class DefaultEvaluationExceptionHandler
                             + variable.getVariableName()
                             + ".toString() returns null");
       }
-      else if (problem instanceof PropertyException)
+      else if (problem instanceof PropertyException) {
          throw (PropertyException) problem;
-      else 
+      }
+      else {
          throw new PropertyException("Error evaluating variable " 
                                      + variable.getVariableName() + ": " 
                                      + problem, problem);
+      }
    }
 
 

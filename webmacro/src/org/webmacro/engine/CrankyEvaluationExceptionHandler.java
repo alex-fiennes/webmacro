@@ -23,8 +23,8 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.PropertyException;
-import org.webmacro.Context;
+import org.webmacro.*;
+import org.webmacro.util.Settings;
 
 /**
  * CrankyEvaluationExceptionHandler
@@ -40,10 +40,27 @@ import org.webmacro.Context;
 public class CrankyEvaluationExceptionHandler 
   implements EvaluationExceptionHandler {
 
+   private Log _log;
+
+   public CrankyEvaluationExceptionHandler() {
+   }
+
+   public CrankyEvaluationExceptionHandler(Broker b) {
+      init(b, b.getSettings());
+   }
+
+   public void init(Broker b, Settings config) {
+      _log = b.getLog("engine");
+   }
+
    public void evaluate(Variable variable, 
                         Context context, 
                         Exception problem) 
    throws PropertyException {
+     if (_log != null)
+       _log.warning("Error evaluating variable " + variable.getVariableName()
+                    + ": " + problem, problem);
+
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
      else 
@@ -56,6 +73,9 @@ public class CrankyEvaluationExceptionHandler
                         Context context, 
                         Exception problem) 
    throws PropertyException {
+     if (_log != null)
+       _log.warning("Error expanding variable " + variable.getVariableName()
+                    + ": " + problem, problem);
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
      else 

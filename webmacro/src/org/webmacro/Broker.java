@@ -217,6 +217,8 @@ public class Broker
       }
       if (_eeHandler == null)
         _eeHandler = new DefaultEvaluationExceptionHandler();
+
+      _eeHandler.init(this, _config);
    }
 
    /* Factory methods -- the supported way of getting a Broker */

@@ -158,17 +158,12 @@ public abstract class Variable implements Macro, Visitable
          context.getEvaluationExceptionHandler()
            .evaluate(this, context, 
                      new PropertyException.NullValueException(_vname));
-         context.getLog("engine")
-           .warning("Variable: $" + _vname + " does not exist");
          return null;
       } 
       catch (PropertyException e) {
          // May throw
          context.getEvaluationExceptionHandler()
            .evaluate(this, context, e);
-         context.getLog("engine")
-           .warning("Variable: exception evaluating $" + _vname + ":\n" + e, 
-                    e);
          return null;
       }
       catch (Exception e) {
@@ -177,8 +172,6 @@ public abstract class Variable implements Macro, Visitable
            .evaluate(this, context, 
                      new PropertyException("Variable: exception evaluating " 
                                            + _vname, e));
-         context.getLog("engine")
-           .warning("Variable: exception evaluating " + _vname + ":\n" + e, e);
          return null;
       }
    }
@@ -205,8 +198,6 @@ public abstract class Variable implements Macro, Visitable
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
                                    new PropertyException.NullToStringException(_vname)));
-                  context.getLog("engine")
-                     .warning("Variable: $" + _vname + " evaluated to null");
                }
             } 
             else {
@@ -216,18 +207,12 @@ public abstract class Variable implements Macro, Visitable
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
                                     new PropertyException.NoSuchVariableException(_vname)));
-                  context.getLog("engine")
-                     .warning("Variable: $" + _vname + 
-                              " does not exist in context");
-                  
                } 
                else {
                   // user accessed a valid property who's value is null
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
                                     new PropertyException.NullValueException(_vname)));
-                  context.getLog("engine")
-                     .warning("Variable: $" + _vname + " evaluated to null");
                }
             }
          }
@@ -235,18 +220,12 @@ public abstract class Variable implements Macro, Visitable
       catch (PropertyException e) {
          out.write(context.getEvaluationExceptionHandler()
                    .expand(this, context, e));
-         String message = "Variable: PropertyException exception evaluating " 
-            + _vname + ":\n" + e; 
-         context.getLog("engine").warning(message, e);
       }
       catch (Exception e) {
           // something we weren't expecting happened!
           // I wonder if we would ever get here?  --eric
          out.write(context.getEvaluationExceptionHandler()
                    .expand(this, context, e));
-         String message = "Variable: unexpected exception evaluating " 
-            + _vname + ":\n" + e; 
-         context.getLog("engine").error(message, e);
       }
    }
 
