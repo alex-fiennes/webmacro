@@ -30,11 +30,6 @@ public class HandlerException extends WebMacroException
 {
 
    /**
-     * Where they should be sent instead
-     */
-   private String redirectURL;
-
-   /**
      * Declare a handler exception with a reason 
      * @param reason why the handler failed
      */
