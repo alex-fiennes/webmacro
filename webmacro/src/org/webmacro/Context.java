@@ -292,7 +292,12 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Get the named property via introspection 
+     * Get the named property via introspection. If there is no bean 
+     * in this context, then try accessing the value as a local variable.
+     * If there is no bean, and no local variable, try it as a tool. This
+     * fallback to local and tool is to make property variable access
+     * backward compatible with older WebMacro implementations for the
+     * top level template, where there is no bean.
      */
    public final Object getProperty(final Object[] names) 
       throws PropertyException, InvalidContextException
@@ -300,7 +305,11 @@ public class Context implements Cloneable {
       if (names.length == 0) {
          return null;
       } else if (_bean == null) {
-         return getLocal(names);
+         Object ret = getLocal(names);
+         if (ret == null) {
+            ret = getTool(names);
+         }
+         return ret;
       } else {
          return PropertyOperator.getProperty(this,_bean,names);
       }
