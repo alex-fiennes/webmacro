@@ -81,7 +81,13 @@ public abstract class TemplateTestCase extends TestCase {
 	 	in.close();
 	 	return value.toString();
 	}
-  
+
+	/**
+	 * Executes a file template.
+	 */
+	public String executeFileTemplate(String fileReference) throws Exception {
+	  return executeStringTemplate(templateFileToString(fileReference));
+	}
 
   public String executeStringTemplate(String templateText) throws Exception {
     Template template = new StringTemplate(_wm.getBroker(), templateText);
