@@ -11,13 +11,15 @@
   <property name="dist"           value="mgmt"/>
   <property name="javadoc"        value="javadoc"/>
   <property name="jar"            value="${app.name}.jar"/>
-  <property name="dir.templates" value="templates" />
+  <property name="templates"      value="templates" />
+  <property name="designs"        value="designs" />
+  <property name="targets"        value="targets" />
   <property name="file.resources" value="resources.jar" />
   
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-  <property name="test.root" value="test"/>
+  <property name="test.root"      value="test"/>
   <property name="unit.reports" value="${test.root}/unit-reports"/>
   <property name="unit.src" value="${test.root}/unit"/>
 
@@ -28,6 +30,8 @@
       <include name="lib/servlet-2.2.jar" />
     </fileset>
     <pathelement location="${classes}" />
+    <pathelement location="${templates}" />
+    <pathelement location="${designs}" />
     <pathelement path="${java.class.path}" />
   </path>
   <property name="classpath.resolved" refid="class.path"/>
@@ -66,7 +70,7 @@
   
   <target name="resources" >
       <jar jarfile="${file.resources}"
-             basedir="${dir.templates}" />
+             basedir="${templates}" />
   </target>
 
   <target name="jar" depends="prepare,compile,resources">
@@ -110,6 +114,8 @@
     </junit>
   </target>
   
+  <!-- the targets for code generation for mgmt -->
+
  
   <taskdef name="wmtemplates" 
    classname="org.webmacro.tools.WMTemplateAntTask" >
@@ -123,13 +129,23 @@
 
   <target name="templates">
     <wmtemplates>
-      <fileset dir="templates" includes="**/*.jdl"/>
+      <fileset dir="${designs}">
+        <include name="test/MemoJavaClass.tml"/>
+        <include name="test/DataTypeJavaClass.tml"/>
+      </fileset>
       <classpath refid="class.path" />
     </wmtemplates>
     <wmevaltemplates>
-      <fileset dir="templates" includes="**/*.jdl"/>
+      <fileset dir="${designs}">
+        <include name="test/MemoJavaClass.tml"/>
+        <include name="test/DataTypeJavaClass.tml"/>
+      </fileset>
       <classpath refid="class.path" />
     </wmevaltemplates>
+    <javac srcdir="${targets}/javasrc" destdir="${classes}"
+          debug="on" optimize="off" deprecation="off">
+       <classpath refid="class.path" />
+    </javac>
   </target>
  
 
