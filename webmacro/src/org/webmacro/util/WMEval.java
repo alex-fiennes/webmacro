@@ -24,7 +24,7 @@ package org.webmacro.util;
 
 import java.io.*;
 import javax.servlet.http.*;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import org.webmacro.*;
 import org.webmacro.engine.StreamTemplate;
 
@@ -75,12 +75,13 @@ public class WMEval {
 
    //-------constructor(s)-----
    /**
-    * The constructor which creates the environment for evaluating a rule.
+    * The constructor for WebMacro decorator in a servlet context.
     */
-   public WMEval(HttpServlet servlet) {
+   public WMEval(Servlet servlet) {
       // Build a web macro environment for rule execution.
       try {
-         wm = new WM(servlet);
+         if (servlet == null) wm = new WM();
+         else wm = new WM(servlet);
          context = wm.getContext();
       }
       catch (Exception e) {
@@ -170,13 +171,6 @@ public class WMEval {
    }
 
    /**
-    * @deprecated
-    */
-   public void assert() throws Exception {
-      eval(context, rule, out, "UTF8");
-   }
-
-   /**
     * Evaluates the context of this instance and the instance's
     * current template and current output stream using UTF8.
     * @deprecated
@@ -185,12 +179,6 @@ public class WMEval {
       eval(context, rule, out, "UTF8");
    }
 
-   /**
-    * @deprecated
-    */
-   public void assert(Context context) throws Exception {
-      eval(context, rule, out, "UTF8");
-   }
 
    /**
     * Evaluate the context supplied against the current rule.
@@ -198,17 +186,6 @@ public class WMEval {
     */
    public void eval(Context context) throws Exception {
       eval(context, rule, out, "UTF8");
-   }
-
-   /**
-    * @deprecated
-    */
-   public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
-      FastWriter w;
-      w = context.getBroker().getFastWriter(out, encoding);
-      context.put("FastWriter", w); // allow template writers to access the output stream!
-      rule.write(w, context);
-      w.flush();
    }
 
    /**
@@ -240,6 +217,16 @@ public class WMEval {
         out.write(val.getBytes());
       }
       return val;
+   }
+
+   /**
+    * Evaluates the string template against the current context
+    * and returns the value.
+    * @param templateName The name of the template.
+    * @return The output from the evaluated template
+    */
+   public String eval(String templateName) throws Exception {
+     return eval(templateName, null);
    }
 
    /**
@@ -275,14 +262,6 @@ public class WMEval {
        e.printStackTrace(System.err);
        throw new ServletException(e.toString());
      }
-   }
-
-   /**
-    * Evaluate the supplied context and template and return the result as a
-    * as a string.
-    */
-   public String assert(Context context, Template rule) throws Exception {
-      return rule.evaluate(context).toString();
    }
 
    /**
