@@ -60,6 +60,18 @@ final public class Form implements Bag
       }
    }
 
+
+   /**
+     * Get a form value as an array
+     */
+   final public Object[] getList(String field) {
+      try {
+         return _request.getParameterValues(field);
+      } catch (NullPointerException ne) {
+         return null;
+      }
+   }
+
    /**
      * Unsupported
      */
