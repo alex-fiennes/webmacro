@@ -146,11 +146,11 @@ abstract public class WMTemplate implements Template
 
       Block newContent = null;
       Map newParameters = null;
-      Reader source = null;
+      Reader in = null;
       Map newFilters = null;
       try {
          Parser parser = getParser();
-         source = getReader();
+         in = getReader();
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
@@ -166,7 +166,7 @@ abstract public class WMTemplate implements Template
          _log.error("Template: Could not read template: " + this);
          throw e;
       } finally {
-         try { source.close(); } catch (Exception e) { }
+         try { in.close(); } catch (Exception e) { }
          synchronized(this) {
             _parameters = newParameters;
             _filters = newFilters;
