@@ -19,9 +19,9 @@ final public class QueueWriter extends Writer
 {
 
    /**
-     * The array of buffers where written data is stored. Nulls in this 
-     * array indicate that storage in local[] is used instead.
-     */
+    * The array of buffers where written data is stored. Nulls in this 
+    * array indicate that storage in local[] is used instead.
+    */
    private char buffer[][];
 
    /**
@@ -53,7 +53,7 @@ final public class QueueWriter extends Writer
      */
    private int size;
 
-   /**
+    /**
      * The current position in the local buffer
      */
    private int localPos;
@@ -62,7 +62,7 @@ final public class QueueWriter extends Writer
      * Create a new Writer
      */
    public QueueWriter() {
-      this(1024);
+   this(1024);
    }
 
    /**
@@ -70,9 +70,9 @@ final public class QueueWriter extends Writer
      * of bytes locally written
      */
    public QueueWriter(int defaultSize) {
-      buffer = new char[64][];
-      offset = new int[64];
-      length = new int[64];
+      buffer = new char[32][];
+      offset = new int[32];
+      length = new int[32];
       local  = new char[defaultSize];
       localPos = 0;
       count = -1;
@@ -112,17 +112,9 @@ final public class QueueWriter extends Writer
    /**
      * This increases the size of the local buffer.
      */
-   private void ensureLocalCapacity(int size) {
-      if (count < 0 || buffer[count] != null) {
-         count++;
-         offset[count] = localPos;
-         length[count] = 0;
-         if (count >= buffer.length) {
-            increaseCapacity();
-         }
-      }
-      if ((localPos + size) >= local.length) {
-         char[] tmpLocal = new char[local.length * 2 + size];
+   private void ensureLocalCapacity(int len) {
+      if ((localPos + len) >= local.length) {
+         char[] tmpLocal = new char[local.length * 2 + len];
          System.arraycopy(local,0,tmpLocal,0,local.length);  
          local = tmpLocal;
       }
@@ -134,6 +126,7 @@ final public class QueueWriter extends Writer
      * reflected in the output.
      */
    public void write(char c[], int off, int len) { 
+      if (len == 0) return;
       count++;
       if (count >= buffer.length) {
          increaseCapacity();
@@ -143,7 +136,6 @@ final public class QueueWriter extends Writer
       length[count] = len;
 
       // update statistics 
-
       size += len;
    }
 
@@ -151,18 +143,33 @@ final public class QueueWriter extends Writer
      * Write a character to the buffer
      */
    public void write(final int c) { 
+      count++;
+      if (count >= buffer.length)
+                   increaseCapacity();
       ensureLocalCapacity(1);
       local[localPos++] = (char)c;
-      length[count]++;
+      buffer[count] = null;
+      offset[count]=0;
+      length[count]=1;
+
+      // update statistics 
       size++;
    }
 
    public void write(final String str, int off, int len) 
    { 
+      if (len == 0) return;
+      count++;
+      if (count >= buffer.length)
+                   increaseCapacity();
       ensureLocalCapacity(len);
-      str.getChars(off,off + len,local,localPos);
+      str.getChars(off, off+len, local, localPos);
+      buffer[count] = null;
+      offset[count] = localPos;
+      length[count] = len;
       localPos += len;
-      length[count] += len;
+
+      // update statistics 
       size += len;
    }
 
@@ -171,8 +178,8 @@ final public class QueueWriter extends Writer
       StringBuffer buf = new StringBuffer(size);
       char[] b;
       for (int i = 0; i <= count; i++) {
-         b = (buffer[i] == null) ? local : buffer[i];
-         buf.append(b,offset[i],length[i]);
+                   b = (buffer[i] == null) ? local : buffer[i];
+                   buf.append(b,offset[i],length[i]);
       }
       return buf.toString();
    }
@@ -182,8 +189,8 @@ final public class QueueWriter extends Writer
    {
       char[] b;
       for (int i = 0; i <= count; i++) {
-         b = (buffer[i] == null) ? local : buffer[i];
-         out.write(b,offset[i],length[i]);
+   		b = (buffer[i] == null) ? local : buffer[i];
+   		out.write(b,offset[i],length[i]);
       }
    }
 
@@ -199,12 +206,12 @@ final public class QueueWriter extends Writer
      */
    public void reset() {
       for (int i = 0; i <= count; i++) {
-         buffer[i] = null;
-         offset[i] = 0;
-         length[i] = 0;
-         localPos = 0;
-         count = -1;
-         size = 0;
+   		buffer[i] = null;
+   		offset[i] = 0;
+   		length[i] = 0;
+   		localPos = 0;
+   		count = -1;
+   		size = 0;
       }
       
    }
@@ -221,26 +228,32 @@ final public class QueueWriter extends Writer
    public void close() { }
 
 
-
-   public static void main(String arg[]) throws Exception {
+   public static void main(String arg[]) throws Exception 
+   {
 
       QueueWriter qw = new QueueWriter(3);
 
       char cary[] = "Hello, brave new world".toCharArray();
 
       for (int j = 0; j < 2; j++) {
-         for (int i = 0; i < arg.length; i++) {
-            qw.write(arg[i],1,arg[i].length() - 2);
-            // qw.write(arg[i]);
-            qw.write(' ');
-            qw.write(cary,7,6);
-         }
-
-         System.out.println("Count: " + qw.count);
-         System.out.println("- - - - Output - - - -");
-         System.out.println(qw.toString());
-         qw.reset();
-      } 
+         for (int l = 0; l < 20; l++) {
+            for (int i = 0; i < arg.length; i++) {
+               qw.write(new String(arg[i]));
+               qw.write(new String(arg[i]),0,arg[i].length());
+               qw.write(' ');
+               qw.write(cary,7,6);
+             }
+             System.out.println("\ncount: " + qw.count);
+             System.out.println("buffer: " + qw.buffer.length);
+             System.out.println("local: " + qw.local.length);
+             System.out.println("offset: " + qw.offset.length);
+             System.out.println("length: " + qw.length.length);
+             System.out.println("- - - - Output - - - -");
+             PrintWriter pw = new PrintWriter(System.err);
+             qw.writeTo(pw);
+             pw.flush();
+             qw.reset();
+         } 
+      }
    }
-
 }
