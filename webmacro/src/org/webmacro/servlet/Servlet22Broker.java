@@ -43,6 +43,11 @@ import javax.servlet.*;
 public class Servlet22Broker extends ServletBroker {
    protected final ClassLoader _servletClassLoader;
 
+   /**
+    * Creates the broker looking in WEB-INF first
+    * for WebMacro.properties before looking
+    * in the application root.
+    */
    protected Servlet22Broker(ServletContext sc, 
                              ClassLoader cl) throws InitException {
       super(sc);
@@ -50,7 +55,8 @@ public class Servlet22Broker extends ServletBroker {
       String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
         + ", (WAR file)" +  ", " + "(System Properties)";
       loadDefaultSettings();
-      loadSettings(WEBMACRO_PROPERTIES, true);
+      if (! loadSettings("WEB-INF/" + WEBMACRO_PROPERTIES, true) )
+        loadSettings(WEBMACRO_PROPERTIES, true);
       loadServletSettings(Broker.SETTINGS_PREFIX);
       loadSystemSettings();
       initLog(_config);
