@@ -28,7 +28,7 @@ public class URLTemplate extends WMTemplate
         URL templateURL, 
         String encoding)
     {
-        super(broker, encoding);
+        super(broker);
         _url = templateURL;
         _encoding = encoding;
     }

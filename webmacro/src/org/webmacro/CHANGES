@@ -1,3 +1,7 @@
+
+-- Nov-2000 justin: dropped the ugly ":encoding:template.wm" syntax 
+   since FastWriter is now responsible for output encoding. 
+
 -- Nov-2000 justin: StringMacro adapter and builder process modified so 
    that they no longer know about output encoding
 

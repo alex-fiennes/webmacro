@@ -42,12 +42,6 @@ import java.net.*;
  *        servlet context)
  * </ul>
  * 
- * <h3>Charset encodings</h3>
- * In common with TemplateProvider, resource requests can be prefixed with 
- * :<i>encoding</i>:
- * <p>
- * e.g., :utf8:file:/path/to/template.wm
- * 
  * <h3>Locale support</h3>
  *
  * There is a limited locale based implemention here.  Template paths can contain
@@ -178,12 +172,7 @@ final public class URLTemplateProvider extends CachingProvider
 
    /**
      * Grab a template based on its name, setting the request event to 
-     * contain it if we found it. The template will be parsed using 
-     * the specified encoding, or UTF8 if the encoding is left off. 
-     * The rest of the name is the filename to be loaded. For example,
-     * the template name :EUC-KR:/view.wm loads the "view.wm" template 
-     * and encodes it with the EUC-KR encoding.
-     * @param name has the format :encoding:path (:encoding: is optional)
+     * contain it if we found it.
      */
 
     final public TimedReference load(String name) throws NotFoundException 

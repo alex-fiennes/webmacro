@@ -104,23 +104,11 @@ final public class TemplateProvider extends CachingProvider
    }
 
    /**
-     * Grab a template based on its name, setting the request event to 
-     * contain it if we found it. The template will be parsed using 
-     * the specified encoding, or UTF8 if the encoding is left off. 
-     * The rest of the name is the filename to be loaded. For example,
-     * the template name :EUC-KR:/view.wm loads the "view.wm" template 
-     * and encodes it with the EUC-KR encoding.
-     * @param name has the format :encodign:name (:encoding: is optional)
+     * Grab a template based on its name.
      */
    final public TimedReference load(String name) throws NotFoundException 
    {
-      String encoding = "UTF8";
-      if (name.charAt(0) == ':') {
-         int fstart = name.indexOf(':', 1);
-         encoding = name.substring(1,fstart);
-         name = name.substring(fstart + 1);
-      }
-      Template t = get(name,encoding);
+      Template t = getTemplate(name);
       if (t == null) {
          throw new NotFoundException(
             this + " could not locate " + name + " on path " + _templatePath);
@@ -139,7 +127,7 @@ final public class TemplateProvider extends CachingProvider
      * @param fileName relative to the current directory fo the store
      * @return a template matching that name, or null if one cannot be found
      */
-   final public Template get(String fileName, String encoding) {
+   final public Template getTemplate(String fileName) {
       for (int i=0; i < _templateDirectory.length; i++) {
          Template t;
          String dir = _templateDirectory[i];
