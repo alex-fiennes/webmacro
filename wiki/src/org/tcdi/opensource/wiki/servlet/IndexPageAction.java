@@ -55,9 +55,11 @@ public class IndexPageAction implements PageAction {
     }
 
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
-        String letter = wc.getForm("LETTER");
-        if (letter != null)
-            user.setAttribute("LastIndexPageLetter", letter);
+        if (user !=  null) {
+            String letter = wc.getForm("LETTER");
+            if (letter != null) 
+                user.setAttribute("LastIndexPageLetter", letter);
+        }
     }
     public String getTemplateName(WikiSystem wiki, WikiPage page) {
         return wiki.getProperties().getProperty("IndexPageAction.Template");
