@@ -214,7 +214,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     * @exception ServletException if we can't get our configuration
     * @exception IOException if we can't read/write to the streams we got
     */
-    final protected void doPost (HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost (HttpServletRequest req, HttpServletResponse resp)
     throws ServletException, IOException
     {
         doRequest (req,resp);
@@ -521,11 +521,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     {
         FastWriter fw = null;
         boolean timing = Flags.PROFILE && c.isTiming ();
-        try
-        {
+        try {
             if (timing) c.startTiming ("Template.write", tmpl);
-            try
-            {
+            try {
                 HttpServletResponse resp= c.getResponse ();
                 
                 Locale locale = (Locale) tmpl.getParam (
@@ -546,34 +544,36 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 
                 if (_log.loggingDebug ())
                    _log.debug ("Using output encoding "+encoding);
-                fw = FastWriter.getInstance (_broker, 
-                                             resp.getOutputStream (), 
-                                             encoding);
+                
+                // get a fastwriter with no output stream, forcing
+                // fastwriter to buffer the output internally.
+                // this is necessary to be compatible with JSDK 2.3
+                // where you can't call setContentType() after getOutputStream(),
+                // which could be happening during the template evaluation
+                fw = FastWriter.getInstance (_broker, encoding);
                 tmpl.write (fw, c);
-            } finally
-            {
+                
+                // now write the FW buffer to the response output stream
+                fw.writeTo (c.getResponse().getOutputStream ());
+            } finally {
                if (timing) c.stopTiming ();
             }
             if (timing) c.startTiming ("FastWriter.close()");
             try { 
                fw.close (); fw = null; 
-            }
-            finally { 
+            } finally { 
                if (timing) c.stopTiming (); 
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             // ignore disconnect
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             String error =
             "WebMacro encountered an error while executing a template:\n"
             + ((tmpl != null) ?  (tmpl  + ": " + e + "\n") :
                 ("The template failed to load; double check the "
                 + "TemplatePath in your webmacro.properties file."));
                 _log.warning (error,e);
-                try
-                {
+                try {
                     Template errorTemplate = error (c,
                     "WebMacro encountered an error while executing a template:\n"
                     + ((tmpl != null) ?  (tmpl  + ": ")
@@ -582,21 +582,19 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     + "\n<pre>" + e + "</pre>\n");
                     fw.reset (fw.getOutputStream ());
                     errorTemplate.write (fw, c);
+                } catch (Exception ignore) { 
+                    // ignored
                 }
-                catch (Exception ignore) { }
-        } 
-        finally {
+        } finally {
            try {
-              if (fw != null)
-                 {
-                    fw.flush ();
-                    fw.close ();
-                    fw = null;
-                 }
-           } catch (Exception e3)
-              {
-                 // ignore disconnect
+              if (fw != null) {
+                 fw.flush ();
+                 fw.close ();
+                 fw = null;
               }
+           } catch (Exception e3) {
+              // ignore disconnect
+           }
         }
     }
     
