@@ -64,7 +64,7 @@
 
   <target name="javadoc" depends="prepare">
     <javadoc sourcepath="src" destdir="${javadoc}"  
-             packagenames="org.webmacro.*" author="true" version="true" 
+             packagenames="org.*" author="true" version="true" 
              use="true">
       <classpath refid="class.path" />
     </javadoc>
