@@ -19,7 +19,7 @@ import org.webmacro.util.*;
  * type.<p>
  *
  * Syntax:<pre>
- *    #type var-reference quoted-string [ required ]
+ *    #type [ required ] var-reference quoted-string 
  * </pre>
  *
  * Examples:<pre>
@@ -27,9 +27,9 @@ import org.webmacro.util.*;
  *    #type $MyName "java.lang.String"
  *
  *    $Today <b>must</b> exist in the context and <b>must</b> be a java.util.Date
- *    #type $Today "java.util.Date" required
+ *    #type required $Today "java.util.Date" 
  *
- *    $Addresses, if it exists in the context, <b>must</b> a org.mycompany.til.Address array
+ *    $Addresses, if it exists in the context, <b>must</b> be an org.mycompany.til.Address array
  *    #type $Addresses "org.mycompany.util.Address[]"
  * </pre>
  *
@@ -44,7 +44,7 @@ import org.webmacro.util.*;
  * Simply append matching square brackets to the end of the classname.<p>
  *
  * If a Variable is <b>not</b> of the specified type, TypeDirective will
- * throw a <code>org.webmacro.directive.TypeDirective.InvalidTypeException</code>,
+ * throw a <code>org.webmacro.PropertyException.InvalidTypeException</code>,
  * which one can catch in their servlet code if necessary.<p>
  *
  * TypeDirective is <b>enabled by default</b>, however, it can be disabled 
@@ -58,15 +58,15 @@ import org.webmacro.util.*;
  */
 public class TypeDirective extends Directive {
 
-    public static final int TYPE_OBJECT = 0;
-    public static final int TYPE_CLASSNAME = 1;
-    public static final int TYPE_REQUIRED = 2;
+    public static final int TYPE_REQUIRED = 0;
+    public static final int TYPE_OBJECT = 1;
+    public static final int TYPE_CLASSNAME = 2;
     
     public static final ArgDescriptor[] _args = new ArgDescriptor[] {
-        new RValueArg (TYPE_OBJECT),
-        new QuotedStringArg (TYPE_CLASSNAME),
         new OptionalGroup (1),
             new KeywordArg (TYPE_REQUIRED, "required"),
+        new RValueArg (TYPE_OBJECT),
+        new QuotedStringArg (TYPE_CLASSNAME),
     };
     
     public static final DirectiveDescriptor _dd = 
@@ -80,20 +80,6 @@ public class TypeDirective extends Directive {
         return _dd;
     }
 
-    /**
-     * Exception thrown when a Variable isn't of the specified class type
-     */
-    public static class InvalidTypeException extends PropertyException {
-        public InvalidTypeException (Variable v, Class clazz) { 
-            super ("$" + v.getName() + " is not a " + clazz.getName()); 
-        }
-    }
-    
-    
-    /** cache of classnames and their class instances. */
-    private static final Map _classCache = Collections
-                                              .synchronizedMap (new HashMap ());
-    
     /** has this directive been configured via the .properties file? */
     private static volatile boolean _configured = false;
     
@@ -115,9 +101,8 @@ public class TypeDirective extends Directive {
      * configure directive for this run and return 'this'
      */
     public Object build (DirectiveBuilder builder,  BuildContext bc) throws BuildException {
-        // we're not enabled, so don't do anything
-        if (!_enabled)
-            return null;
+        if (!TypeDirective._enabled)
+            return null; 
 
         String classname;
 
@@ -147,16 +132,16 @@ public class TypeDirective extends Directive {
      *         specified classname arg
      */
     public Object evaluate (Context context) throws PropertyException {
-        if (!_configured) {
+        if (!TypeDirective._configured) {
             TypeDirective.configure (context.getBroker ());
             
-            if (!_enabled) // configure says we're not enabled
+            if (!TypeDirective._enabled) // configure says we're not enabled
                 return null;
         }
         
         Object o = _object;
         
-        // evaluate the _object reference down to it's base object
+        // evaluate the _object reference down to its base object
         while (o instanceof Macro) 
             o = ((Macro) o).evaluate (context);
             
@@ -175,8 +160,9 @@ public class TypeDirective extends Directive {
         
         // check it and throw if requried class isn't compatible
         // with class of specified object
-        if (!_class.isAssignableFrom (o.getClass()))
-            throw new InvalidTypeException (_object, _class);
+        if (!_class.isAssignableFrom (o.getClass())) 
+            throw new PropertyException.InvalidTypeException (_object.getName(),
+                                                              _class);
 
         return null;
     }
@@ -211,30 +197,28 @@ public class TypeDirective extends Directive {
     }
     
     /** 
-     * helper class for keeping our cache of classes current
+     * Use specified class name to return it's Class instance.  special support
+     * for an alternate syntax for object arrays:<pre>
+     *    java.util.Date[]   -- a 1d array of Date objects
+     *    java.util.Data[][] -- a 2d array of Date objects
+     * </pre>
      */
     private static final Class getClass (final String classname) throws ClassNotFoundException {
-        Class clazz = (Class) _classCache.get (classname);
+        Class clazz;
         
-        if (clazz == null) {
-            // not in cache, so load it and cache it
-            // taking into consideration our special syntax for
-            // an array of the class
-            if (classname.endsWith ("[]")) {
-                // wants to check an array
-                String newName = classname.substring (0, classname.length()-2);
-                clazz = Class.forName (newName);
-                clazz = java.lang.reflect.Array
-                                         .newInstance (clazz, 0).getClass();
-            } else {
-                // wants to check a normal object
-                clazz = Class.forName (classname);
-            }
+        if (classname.endsWith ("[]")) {
+            // an object array of some kind
+            String newName = "[L" + classname.substring (0, classname.length()-2);
+            if (classname.endsWith ("[][]")) // support 2d arrays
+                newName = "[" + newName.substring (0, newName.length()-2);    
+            newName += ";";
             
-            _classCache.put (classname, clazz);
+            clazz = Class.forName (newName);
+        } else {
+            // a normal object
+            clazz = Class.forName (classname);
         }
 
         return clazz;
-    }
-    
+    }    
 }
