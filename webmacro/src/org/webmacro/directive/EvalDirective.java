@@ -166,7 +166,7 @@ public class EvalDirective extends org.webmacro.directive.Directive
         }
         catch (Exception e)
         {
-            if (e instanceof PropertyException) throw e;
+            if (e instanceof PropertyException) throw (PropertyException)e;
             throw new PropertyException("#eval: Unable to evaluate macro.", e);
         }
     }
