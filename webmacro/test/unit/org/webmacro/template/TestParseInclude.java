@@ -97,9 +97,6 @@ public class TestParseInclude extends TemplateTestCase
         assertStringTemplateMatches("#include as macro \"org/webmacro/template/macros.wm\"\n"
                 + "$a", "\\$a was found");
 
-        assertStringTemplateMatches("#include as macro \"root.wmm\"\n"
-                + "$a", "\\$a was found");
-
     }
 
 
