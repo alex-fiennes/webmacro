@@ -360,7 +360,8 @@ public class Context implements Cloneable {
       } else if (_bean == null) {
          return setLocal(names, value) || setTool(names, value);
       } else {
-         return PropertyOperator.setProperty(this,_bean,names,value);      
+         // 28-Sep-2000 - keats - added the setTool clause, same fix as previous fix for getProperties
+         return PropertyOperator.setProperty(this,_bean,names,value) || setTool(names, value);      
       }
    }
 
