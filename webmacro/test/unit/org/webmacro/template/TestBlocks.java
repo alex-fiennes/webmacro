@@ -33,12 +33,12 @@ public class TestBlocks extends TemplateTestCase {
   
    public void testBeginEnd () throws Exception {
       String tmpl = "#if (true) #begin pass #end #else #begin fail #end";
-      assertStringTemplateEquals (tmpl, "pass ");
+      assertStringTemplateEquals (tmpl, "pass");
    }
 
    public void testOnlyEnd () throws Exception {
       String tmpl = "#if (true) pass #end";
-      assertStringTemplateEquals (tmpl, "pass ");
+      assertStringTemplateEquals (tmpl, "pass");
    }
 
    /**
@@ -52,8 +52,18 @@ public class TestBlocks extends TemplateTestCase {
       String tmpl = "#if ($foo)\n"
                   + "pass\n"
                   + "#elseif ($foo2)\n"
-                  + "pass\n"
+                  + "fail\n"
                   + "#else\n"
+                  + "fail\n"
+                  + "#end";
+
+
+      _context.put ("foo", "foo");
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+   
+   public void testIfEnd () throws Exception {
+      String tmpl = "#if ($foo)\n"
                   + "pass\n"
                   + "#end";
 

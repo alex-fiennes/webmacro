@@ -110,6 +110,7 @@ public abstract class TemplateTestCase extends TestCase {
       System.err.println("Execution of /" + templateText + "/" 
                          + " threw " + e.getClass() + "/, expecting /" 
                          + resultText + "/");
+      e.printStackTrace();
       assert(false);
     }
     if (result == null)

@@ -72,6 +72,13 @@ public class TestAbuse extends TemplateTestCase {
                      + "   } else {\n"
                      + "      alert (\"Goodbye, World\");\n"
                      + "   }\n"
+                     + "</script>";
+      String jscriptnl = "<script>\n"
+                     + "   if (true) {\n"
+                     + "      alert (\"Hello, World\");\n"
+                     + "   } else {\n"
+                     + "      alert (\"Goodbye, World\");\n"
+                     + "   }\n"
                      + "</script>\n";
 
       // check it with #begin and #end

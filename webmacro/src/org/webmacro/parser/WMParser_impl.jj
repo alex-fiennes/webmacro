@@ -28,6 +28,7 @@ public class WMParser_impl {
 
   private Broker broker;
   private BackupCharStream stream;
+  private Stack blockStack = new Stack();
 
   public WMParser_impl(Broker broker, BackupCharStream stream) {
     this(stream);
@@ -90,6 +91,28 @@ public class WMParser_impl {
       token_source.SwitchTo(state); 
     }
   }
+
+  private boolean lookahead_not_breaking_subd() {
+    int entryState = token_source.curLexState;
+    boolean retVal = true;
+    Object o = blockStack.peek();
+    if (o == null)
+      return true;
+    Subdirective[] subdirectives = (Subdirective[]) o;
+
+    if (getToken(1).kind == POUND
+        && getToken(2).kind == STUFF) {
+      String word = getToken(2).image;
+      for (int i=0; i<subdirectives.length; i++) 
+        if (subdirectives[i].isBreaking 
+            && word.startsWith(subdirectives[i].name)) {
+          retVal = false;
+          break;
+        }
+    } 
+    return retVal;
+  } 
+
 
   private static String SEMI_FEATURE = 
     "Use of semicolon to delimit property reference -- use $( ) instead";
@@ -245,7 +268,7 @@ TOKEN_MGR_DECLS : {
 /* ********************* */
 
 /* Used by JAVACODE productions to do lookahead.  
-   All lookahead productions assume state WM */
+   All lookahead productions assume state WM unless otherwise stated */
 
 // is the next thing a subdirective? 
 JAVACODE
@@ -277,7 +300,6 @@ boolean lookahead_keyword(String keyword) {
     return false;
 }
 
-
 /* ************************** */
 /* Directive Argument Parsing */
 /* ************************** */
@@ -289,7 +311,7 @@ boolean lookahead_keyword(String keyword) {
 // throw a parse exception
 
 JAVACODE 
-Object parse_arg(ArgDescriptor arg) {
+Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   switch (arg.type) {
   case Directive.ArgType_CONDITION:
     return Conditional();
@@ -297,7 +319,9 @@ Object parse_arg(ArgDescriptor arg) {
   case Directive.ArgType_BLOCK: {
     OptionalWsNlWs();
     SetState(DEFAULT);
-    BlockBuilder b = Block();
+    BlockBuilder b;
+    b = Block(descriptor.hasBreakingSubdirectives
+              ? descriptor.subdirectives : null);
     SetState(WM);
     OptionalWs();
     return b;
@@ -344,8 +368,9 @@ Object parse_arg(ArgDescriptor arg) {
 // group is not seen.  
 
 JAVACODE
-boolean parse_arg_group(ArgDescriptor[] args, int i, 
-                         DirectiveArgs da) 
+boolean parse_arg_group(DirectiveDescriptor descriptor,
+                        ArgDescriptor[] args, int i, 
+                        DirectiveArgs da) 
   throws BuildException {
   if (args[i].optional) 
     if (!lookahead_keyword(args[args[i].children[0]].keyword))
@@ -353,10 +378,10 @@ boolean parse_arg_group(ArgDescriptor[] args, int i,
   for (int j=0; j<args[i].subordinateArgs; j++) {
     ArgDescriptor child = args[args[i].children[j]];
     if (child.type == Directive.ArgType_GROUP) {
-      parse_arg_group(args, args[i].children[j], da);
+      parse_arg_group(descriptor, args, args[i].children[j], da);
     }
     else {
-      Object o = parse_arg(child);
+      Object o = parse_arg(descriptor, child);
       da.setArg(child.id, o);
     }
   }
@@ -366,23 +391,24 @@ boolean parse_arg_group(ArgDescriptor[] args, int i,
 //parse_args -- parse a whole directive's worth of arguments 
 
 JAVACODE 
-void parse_args(ArgDescriptor[] args, DirectiveArgs da) {
+void parse_args(DirectiveDescriptor descriptor, 
+                ArgDescriptor[] args, DirectiveArgs da) {
   try {
     for (int i=0; i < args.length; ) {
       ArgDescriptor arg = args[i];
 
       if (arg.type == Directive.ArgType_GROUP) 
-        parse_arg_group(args, i, da);
+        parse_arg_group(descriptor, args, i, da);
       else if (arg.type == Directive.ArgType_CHOICE) {
         for (int j=0; j<arg.subordinateArgs; j++) {
           // Each child is a GROUP, so we want to look at child's first child
           ArgDescriptor child = args[arg.children[j]];
           if (lookahead_keyword(args[child.children[0]].keyword)) 
-            parse_arg_group(args, arg.children[j], da);
+            parse_arg_group(descriptor, args, arg.children[j], da);
         }
       }
       else {
-        Object o = parse_arg(arg);
+        Object o = parse_arg(descriptor, arg);
         da.setArg(arg.id, o);
       }
       i = arg.nextArg;
@@ -419,7 +445,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
                              + System.getProperty("line.separator"), e); 
   }
   db = new DirectiveBuilder(descriptor);
-  parse_args(descriptor.args, db);
+  parse_args(descriptor, descriptor.args, db);
 
   if (descriptor.subdirectives != null 
       && descriptor.subdirectives.length > 0) {
@@ -432,7 +458,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
       } catch (BuildException e) {
         throw new ParseException("BuildException", e);
       };
-      parse_args(subd.args, da);
+      parse_args(descriptor, subd.args, da);
     }
   }
   OptionalWs();
@@ -765,14 +791,11 @@ Object Expression() : {
 
 /* All of the following operate in the DEFAULT state */
 
-void EatWsNl() : {
+JAVACODE void EatWsNl() {
   int entryState = token_source.curLexState;
-  Object o;
-}
-{
-  { SetState(WM); } 
-  OptionalWsNl()
-  { SetState(entryState); }
+  SetState(WM);
+  OptionalWsNl();
+  SetState(entryState); 
 }
 
 // Parses an entire directive.  Treats # as text if the previous character
@@ -780,6 +803,7 @@ void EatWsNl() : {
 void Directive(ParserBlockBuilder b) : {
   Token t;
   Object o;
+  Subdirective s;
 }
 {
   <POUND>
@@ -833,6 +857,19 @@ void WMContent(ParserBlockBuilder b) : {
   ) 
 }
 
+void WMContentNoDirective(ParserBlockBuilder b) : {
+  Token t;
+  Object o;
+}
+{
+  ( t=<STUFF>       { b.addElement(t.image); }
+    | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
+    | t=<SLASH>     { b.addElement(t.image); }
+    | Comment(b)
+    | LOOKAHEAD(<DOLLAR>) DollarReference(b)
+  ) 
+}
+
 void LiteralWMContent(ParserBlockBuilder b) : {
   Token t;
 }
@@ -865,13 +902,13 @@ BlockBuilder LiteralBlock() : {
   { return block; }
 }
 
-BlockBuilder Block() : {
+BlockBuilder Block(Subdirective[] subdirectives) : {
   ParserBlockBuilder block = new ParserBlockBuilder();
   Token t;
 }
 { 
+  { blockStack.push(subdirectives); }
   ( 
-    LOOKAHEAD(<LBRACE>) 
     ( <LBRACE> EatWsNl()
       ( 
         WMContent(block) 
@@ -879,12 +916,15 @@ BlockBuilder Block() : {
       ) * 
       <RBRACE> EatWsNl()
     )
-  | ( [ <BEGIN> ] 
-      ( WMContent(block) EatWsNl()
+  | ( [ <BEGIN> ] EatWsNl()
+      ( WMContentNoDirective(block) 
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
-      ) * <END> EatWsNl() 
+        | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() }) 
+          Directive(block)
+      ) * [ <END> ] { block.eatTrailingWsNl(); } EatWsNl() 
     )
   )
+  { blockStack.pop(); }
   { return block; }
 }
 

@@ -269,15 +269,23 @@ public abstract class Directive implements Macro, Visitable {
    * argument list.  
    */
   public static class Subdirective extends ArgDescriptor {
+    public final static int BREAKING = 1;
+
     public final String name; 
     public final ArgDescriptor[] args;
-    public boolean repeating = false;
+    public boolean repeating = false, isBreaking = false;
     
     public Subdirective(int id, String name,
                         ArgDescriptor[] args) {
       super(id, ArgType_SUBDIRECTIVE);
       this.name = name;
       this.args = args;
+    }
+
+    public Subdirective(int id, String name, ArgDescriptor[] args, 
+                        int flags) {
+      this(id, name, args);
+      isBreaking = ((flags & BREAKING) != 0);
     }
   }
 
@@ -291,6 +299,12 @@ public abstract class Directive implements Macro, Visitable {
       super(id, name, args);
       setOptional();
     }
+
+    public OptionalSubdirective(int id, String name,
+                                ArgDescriptor[] args, int flags) {
+      super(id, name, args, flags);
+      setOptional();
+    }
   }
 
   /**
@@ -302,6 +316,12 @@ public abstract class Directive implements Macro, Visitable {
     public OptionalRepeatingSubdirective(int id, String name,
                                          ArgDescriptor[] args) {
       super(id, name, args);
+      repeating = true;
+    }
+
+    public OptionalRepeatingSubdirective(int id, String name,
+                                         ArgDescriptor[] args, int flags) {
+      super(id, name, args, flags);
       repeating = true;
     }
   }

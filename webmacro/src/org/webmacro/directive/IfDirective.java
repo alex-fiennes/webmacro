@@ -69,8 +69,10 @@ class IfDirective extends Directive {
     };
   private static final Subdirective[] 
     ifSubdirectives = new Subdirective[] {
-      new OptionalRepeatingSubdirective(IF_ELSEIF, "elseif", elseifArgs), 
-      new OptionalSubdirective(IF_ELSE, "else", elseArgs)
+      new OptionalRepeatingSubdirective(IF_ELSEIF, "elseif", elseifArgs, 
+                                        Subdirective.BREAKING), 
+      new OptionalSubdirective(IF_ELSE, "else", elseArgs, 
+                               Subdirective.BREAKING)
     };
 
   private static final DirectiveDescriptor 
