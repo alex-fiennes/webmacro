@@ -175,6 +175,7 @@ abstract public class WMTemplate implements Template
       }
    }
 
+
    /**
      * Parse the Template against the supplied context data and 
      * return it as a string. If the operation fails for some reason, 
@@ -186,16 +187,15 @@ abstract public class WMTemplate implements Template
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(512); 
          FastWriter fw = new FastWriter(os, "UTF8");
-         fw.flush();
          write(fw,data);
-         return os.toString("UTF8");
+			fw.flush();
+   	   return os.toString("UTF8");
       } catch (IOException e) {
          _log.exception(e);
          _log.error("Template: Could not write to ByteArrayOutputStream!");
          return null;
       }
    }
-
 
    /**
      * A macro has a write method which takes a context and applies
