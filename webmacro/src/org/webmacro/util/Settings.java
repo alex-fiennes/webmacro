@@ -51,6 +51,20 @@ public class Settings {
    }
 
    /**
+     * Instantaite a new Settings object using the supplied 
+     * Settings as the defaults
+     */
+   public Settings(Settings defaults) {
+      Properties p = new Properties();
+      String keys[] = defaults.keys();
+      for (int i = 0; i < keys.length; i++) {
+         p.setProperty(keys[i], defaults.getSetting(keys[i]));
+      }
+      _props = new Properties(p);
+      _prefix = null;
+   }
+
+   /**
      * Instantiate a new Settings object using the properties 
      * supplied as the settings values. Only properties begining
      * with the supplied prefix are considered, and they are 
@@ -120,23 +134,39 @@ public class Settings {
    }
 
    /**
+     * Prefix the key for use with the underlying Properties
+     */
+   private String prefix(String key) {
+      return (_prefix == null) ? key : (_prefix + "." + key);
+   }
+
+   /**
+     * Find out if a setting is defined
+     */
+   public boolean containsKey(String key) {
+      return _props.containsKey(prefix(key));
+   }
+
+   /**
      * Get a setting
      */
-   public String get(String key) {
-      String lookup;
-      if (_prefix == null) {
-         lookup = key;
-      } else {
-         lookup = _prefix + "." + key;
-      }
-      return _props.getProperty(lookup);
+   public String getSetting(String key) {
+      return _props.getProperty(prefix(key));
+   }
+
+   /**
+     * Get a setting with a default value in case it is not set
+     */
+   public String getSetting(String key, String defaultValue) {
+      String ret = getSetting(key);
+      return (ret != null) ? ret : defaultValue;
    }
 
    /**
      * Get a setting and convert it to an int 
      */
-   public int getInt(String key) {
-      String snum = get(key);
+   public int getIntSetting(String key) {
+      String snum = getSetting(key);
       try {
          return Integer.parseInt(key);
       } catch (Exception e) {
@@ -145,16 +175,39 @@ public class Settings {
    }
 
    /**
+     * Get a setting with a default value in case it is not set
+     */
+   public int getIntSetting(String key, int defaultValue) {
+      if (containsKey(key)) {
+         return getIntSetting(key);
+      } else {
+         return defaultValue;
+      }
+   }
+
+   /**
      * Get a setting and convert it to a boolean. The 
      * values "on", "true", and "yes" are considered to 
      * be TRUE values, everything else is FALSE.
      */
-   public boolean getBoolean(String key) {
-      String setting = get(key);
+   public boolean getBooleanSetting(String key) {
+      String setting = getSetting(key);
       return ((setting != null) &&
               ((setting.equalsIgnoreCase("on"))
               || (setting.equalsIgnoreCase("true"))
               || (setting.equalsIgnoreCase("yes")) ));
+   }
+
+   /**
+     * Get a setting with a default value in case it is not set
+     */
+   public boolean getBooleanSetting(String key, boolean defaultValue) 
+   {
+      if (containsKey(key)) {
+         return getBooleanSetting(key);
+      } else {
+         return defaultValue;
+      }
    }
 
    /**
@@ -208,10 +261,10 @@ public class Settings {
       Settings sb = s.getSettings("b");
       String[] keys = sb.keys();
       for (int i = 0; i < keys.length; i++) {
-         System.out.println("prop " + keys[i] + " = " + sb.get(keys[i]));
+         System.out.println("prop " + keys[i] + " = " + sb.getSetting(keys[i]));
       }
 
-      System.out.println("LogTraceExceptions is: " + s.getBoolean("LogTraceExceptions"));
+      System.out.println("LogTraceExceptions is: " + s.getBooleanSetting("LogTraceExceptions"));
 
    }
 }
