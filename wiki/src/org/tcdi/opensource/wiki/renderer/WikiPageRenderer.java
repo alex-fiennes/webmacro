@@ -49,8 +49,8 @@ import org.tcdi.opensource.wiki.*;
  * WikiPageRenderers can transform a WikiPage into a certain text format.
  * Default implementes for rendering to Text and HTML are provided.
  *
- * @see com.tcdi.opensource.wiki.renderer.TextPageRenderer
- * @see com.tcdi.opensource.wiki.renderer.HTMLPageRenderer
+ * @see org.tcdi.opensource.wiki.renderer.TextPageRenderer
+ * @see org.tcdi.opensource.wiki.renderer.HTMLPageRenderer
  * @author  e_ridge
  */
 public abstract class WikiPageRenderer {
@@ -156,7 +156,19 @@ public abstract class WikiPageRenderer {
                 case WikiDataTypes.URL:
                     str = _urlRenderer.renderURL (data);
                     break;
-                    
+
+                case WikiDataTypes.START_LIST:
+                    str = renderStartList();
+                    break;
+
+                case WikiDataTypes.LI:
+                    str = renderListItem();
+                    break;
+
+                case WikiDataTypes.END_LIST:
+                    str = renderEndList();
+                    break;
+
                 // @deprecated "image" is now a URL type.
                 case WikiDataTypes.IMAGE:
                     str = renderImage (data);
@@ -226,8 +238,11 @@ public abstract class WikiPageRenderer {
     protected abstract String renderLT ();
     protected abstract String renderGT ();
     protected abstract String renderUnknown (WikiData data);
- 
-    
+
+    protected abstract String renderStartList();
+    protected abstract String renderListItem();
+    protected abstract String renderEndList();
+
     protected abstract String renderBoldStart ();
     protected abstract String renderBoldEnd ();
     protected abstract String renderUnderlineStart ();

@@ -105,7 +105,10 @@ public interface WikiPageBuilder extends WikiTermMatcher {
     
     /** add the greater-than (&gt;) symbol */
     public void gt ();
-    
+
+    /** a bulleted list item */
+    public void li ();
+
     /** add a URL */
     public void url (String url);
     

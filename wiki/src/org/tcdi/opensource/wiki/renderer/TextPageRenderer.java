@@ -158,7 +158,19 @@ public class TextPageRenderer extends WikiPageRenderer {
     protected String renderBoldStart() {
         return "";        
     }
-    
+
+    protected String renderStartList() {
+        return "\n";
+    }
+
+    protected String renderListItem() {
+        return "*   ";
+    }
+
+    protected String renderEndList() {
+        return "";
+    }
+
     protected String renderLineBreak() {
         return System.getProperty ("line.separator");        
     }

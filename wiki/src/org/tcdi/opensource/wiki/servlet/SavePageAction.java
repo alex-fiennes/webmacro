@@ -96,11 +96,10 @@ public class SavePageAction implements PageAction {
         String pageName = wc.getForm ("save");
         
         // create the page
-        System.err.println ("pageName: " + pageName);
         WikiPage newPage = wiki.createPage (pageName, editor, text);
         newPage.setRelatedTitles (keywordsToStringArray(keywords));
         newPage.setIsModerated(moderated);
-        System.err.println ("pageName: " + newPage.getTitle());
+
         // make sure to save the page
         wiki.savePage (newPage);
         

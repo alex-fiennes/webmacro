@@ -254,15 +254,27 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     
     protected String renderParagraphBreak() {
         return "<br><br>";
-    }    
-    
+    }
+
+    protected String renderStartList() {
+        return "<ul>";
+    }
+
+    protected String renderListItem() {
+        return "<li>";
+    }
+
+    protected String renderEndList() {
+        return "</ul>";
+    }
+
     /**
     * replace all occurrences of 'from' to 'to' in 'src'
     *
     * @param src String to perform replace on
     * @param from substring that needs to be replaced
     * @param to string to replace 'from' with
-    * @returns String with all occurrences of 'from' replaced with 'to' or 'src' if 'from' not found
+    * @return String with all occurrences of 'from' replaced with 'to' or 'src' if 'from' not found
     */
     private static final String replace (String src, String from, String to)
     {

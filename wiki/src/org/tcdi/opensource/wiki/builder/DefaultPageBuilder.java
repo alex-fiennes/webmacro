@@ -50,7 +50,7 @@ import org.tcdi.opensource.wiki.*;
  */
 public class DefaultPageBuilder implements WikiPageBuilder {
     protected WikiTermMatcher _matcher;
-    protected boolean _bold, _underline, _italic, _color, _header, _space;
+    protected boolean _bold, _underline, _italic, _color, _header, _space, _list;
     protected String _currentHeader = null;
     protected StringBuffer _text = new StringBuffer ();
     protected List _data = new ArrayList ();
@@ -90,7 +90,17 @@ public class DefaultPageBuilder implements WikiPageBuilder {
         newData ();
         _currentData.setType (WikiDataTypes.LT);
     }
-    
+
+    public void li() {
+		if (!_list) {
+			newData();
+			_currentData.setType(WikiDataTypes.START_LIST);
+			_list = true;
+		}
+		newData();
+		_currentData.setType(WikiDataTypes.LI);
+    }
+
     public void underline() {
         newData ();
         if (!_underline)
@@ -158,6 +168,12 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     
     public void paragraph() {
         finishFormatting ();
+        if (_list) {
+            newData();
+            _currentData.setType(WikiDataTypes.END_LIST);
+            _list = false;
+
+        }
         newData ();
         _currentData.setType (WikiDataTypes.PARAGRAPH_BREAK);
     }
@@ -226,9 +242,11 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     }
     
     public void indent(int many) {
-        newData();
-        _currentData.setType (WikiDataTypes.INDENT);
-        _currentData.setData (""+many);
+        if (!_list) {
+            newData();
+            _currentData.setType (WikiDataTypes.INDENT);
+            _currentData.setData (""+many);
+        }
     }
     
     /** is the specified string a valid WikiTerm?  */

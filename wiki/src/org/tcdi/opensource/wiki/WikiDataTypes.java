@@ -97,7 +97,11 @@ public interface WikiDataTypes
    
    public static final int START_QUOTE = 100;
    public static final int END_QUOTE = 101;
-   
+
+	public final static int START_LIST = 110;
+	public final static int LI = 111;
+	public final static int END_LIST = 112;
+
    public static final int EMAIL = 200;
    public static final int QUOTED_BLOCK = 201;
    public static final int SPACE = 202;
