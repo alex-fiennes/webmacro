@@ -1,5 +1,5 @@
 package org.webmacro.tools;
-
+import org.webmacro.Context;
 import org.webmacro.util.WMEval;
 
 /**
@@ -34,6 +34,39 @@ public class EvalTemplates {
          e.printStackTrace();
       }
    }
+
+  /**
+   * Evaluates a single template file argument.
+   * Exceptions are reported to standard error, not thrown.
+   * <p>This method provides programmer control
+   * over the evaluation options.
+   * @param inputTemplate A template in the resource path.
+   * @param outFile An output file for the template output. If
+   * null, the template must set the output.
+   * @param append If true, output will be appended to existing file.
+   * @param encoding The encoding to use on the output file, null allowed.
+   */
+  public Context run(String inputTemplate, String outFile, boolean append, 
+  										String encoding) {
+    try {
+      wm.eval(wm.getNewContext(), inputTemplate, outFile, append, encoding); 
+      return wm.getCurrentContext();
+    }
+    catch (Exception e) {
+      System.err.println("Unable to evaluate input.");
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  /**
+   * After a template has been run, this method
+   * will return an object in the context by name.
+   */
+  public Object getContextElement(String key) {
+    Context context = wm.getCurrentContext();
+    return context.get(key);
+  }
 
    /**
     * Normally this main is invoked from an ant task but it can
