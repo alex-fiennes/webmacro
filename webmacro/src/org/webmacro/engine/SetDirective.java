@@ -54,7 +54,7 @@ final class SetDirective implements Directive, Visitable
    {
 
       if ((args.length != 1) || (! args[0].getName().equals("="))) {
-         throw new BuildException("SetDirective requites an = argument");
+         throw new BuildException("SetDirective requires an '=' argument");
       }
       Object rhs = args[0].getValue();
 
