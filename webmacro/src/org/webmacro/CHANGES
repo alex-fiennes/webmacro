@@ -1,4 +1,11 @@
 
+-- UrlProvider fixed so that it automatically adds the "file" protocol if 
+   no protocol is specified. This means that #include "/tmp/foo" will work
+   again. 
+-- Standalone example provided (Standalone.java) demonstrating use of 
+   the standalone WebMacro interface
+-- Standalone mode improved so that you do not need to deal with the broker. 
+
 -- WMTemplate has an overridable getParser() method to support alternates
 -- switched to com.sun.java.util.collections in JDK1.1
 -- InvalidContextException is deprecated, now ContextException
