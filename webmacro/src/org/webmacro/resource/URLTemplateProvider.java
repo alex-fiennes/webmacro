@@ -213,7 +213,7 @@ final public class URLTemplateProvider extends CachingProvider
      * to the directory managed by the template store.
      * <p>
      * @param path relative to the current directory fo the store
-     * @returns a template matching that name, or null if one cannot be found
+     * @return a template matching that name, or null if one cannot be found
      */
 
     final private Template loadTemplate(String path, URL base) throws IOException
