@@ -158,6 +158,44 @@ public class PropertyException extends ContextException
         }
     }
    
+
+   /**
+    * RestrictedPropertyException indicates that the requested property may
+    * not be invoked from a template due to security constraints
+    */
+   public static class RestrictedPropertyException extends PropertyException {
+      String propertyName, className, variableName;
+
+      public RestrictedPropertyException(String propertyName, 
+                                     String variableName, 
+                                     String className) {
+         super("The property " + propertyName + " on variable $" 
+               + variableName + " of class " + className + " may not be accessed from a template.");
+         this.variableName = variableName;
+         this.className = className;
+         this.propertyName = propertyName;
+      }
+   }
+
+
+   /**
+    * RestrictedMethodException indicates that the requested method may
+    * not be invoked from a template due to security constraints
+    */
+   public static class RestrictedMethodException extends PropertyException {
+      String propertyName, className, variableName;
+
+      public RestrictedMethodException(String propertyName, 
+                                     String variableName, 
+                                     String className) {
+         super("The method " + propertyName + " on variable $" 
+               + variableName + " of class " + className + " may not be accessed from a template.");
+         this.variableName = variableName;
+         this.className = className;
+         this.propertyName = propertyName;
+      }
+   }
+
    
 }
 
