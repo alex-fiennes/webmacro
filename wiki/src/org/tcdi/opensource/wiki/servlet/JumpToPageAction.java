@@ -53,7 +53,7 @@ import org.tcdi.opensource.wiki.*;
 public class JumpToPageAction implements PageAction {
 
     /**
-     * can only log out if "?logout=true" is specified in the request
+     * accept if ?jump=<anything> 
      */
     public boolean accept(WikiSystem wiki, WebContext wc, WikiUser user) {
         return wc.getForm ("jump") != null;

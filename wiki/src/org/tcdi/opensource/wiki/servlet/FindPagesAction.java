@@ -65,7 +65,7 @@ public class FindPagesAction implements PageAction {
     /**
      * Use <code>wiki</code>'s WikiPageFinder to find pages that match
      * the query found in the <i>find</i> request parameter.  Stuffs the
-     * WebContext with an array of <code>WikiPageFInder.FindResult</code>
+     * WebContext with an array of <code>WikiPageFinder.FindResult</code>
      * objects as $Results
      */
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
