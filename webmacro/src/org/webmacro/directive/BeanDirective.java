@@ -212,8 +212,9 @@ public class BeanDirective extends Directive {
                         throw new PropertyException("#bean usage error: session scope is only valid with servlets!");
                     }
                     break;
-                    
-                case BEAN_SCOPE_PAGE:
+                default:    
+                // make "page" the default scope
+                //case BEAN_SCOPE_PAGE:
                     // NOTE: page beans always overwrite anything in the context 
                     // with the same name
                     o = instantiate(_className, initArgs);
