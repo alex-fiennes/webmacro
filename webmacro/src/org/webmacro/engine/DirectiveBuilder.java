@@ -17,7 +17,7 @@ final class DirectiveBuilder implements Cloneable, Builder
 
    // PROTOTYPE PROPERTIES
 
-   private String[]  _verbs = null;
+   private String[]  _argNames = null;
    private String[]  _dependents = null;
    private boolean _isContainer = false;
    private boolean _hasCondition = false;
@@ -25,11 +25,9 @@ final class DirectiveBuilder implements Cloneable, Builder
    private boolean _isSubDirective;
    private boolean _isParser = false;
    private Method _build = null;
-   private Method _marker = null;
    private int _buildArgs = 0;
    private final String _name;
    private Class _directiveClass;
-   private Vector _predicates;
 
    /**
      * Construct a new DirectiveBuilder prototype
@@ -39,6 +37,7 @@ final class DirectiveBuilder implements Cloneable, Builder
    {
 
       boolean isMulti = false;
+      boolean hasArguments = false;
 
       _name = name;
       _directiveClass = directive;
@@ -90,9 +89,9 @@ final class DirectiveBuilder implements Cloneable, Builder
       } else if (params[arg] == Object.class) {
          arg++;
          _hasTarget = true;
-         if ((arg < params.length) && (params[arg] == Predicate[].class)) {
+         if ((arg < params.length) && (params[arg] == Argument[].class)) {
             arg++;
-            _predicates = new Vector();
+            hasArguments = true;
          }
       }
 
@@ -102,12 +101,6 @@ final class DirectiveBuilder implements Cloneable, Builder
       } else if ((arg < params.length) && (params[arg] == String.class)) {
          arg++;
          _isParser = true;
-         try {
-            _marker = directive.getMethod("getMarker",_markerArgs);
-         } catch (NoSuchMethodException nsm) {
-            throw new IntrospectionException("Directive claims to be parser "
-                  + " but does not have a getMarker() method.");
-         }
       }
 
       if ((arg < params.length) && (params[arg] == Object.class)) {
@@ -124,18 +117,18 @@ final class DirectiveBuilder implements Cloneable, Builder
 
       // extract additional values
 
-      if (_predicates != null) {
-         // extract verb
+      if (hasArguments) {
+         // extract argument
          try {
-            Method m = directive.getMethod("getVerbs",_nullSig);
-            _verbs = (String[]) m.invoke(null,_nullArg);
+            Method m = directive.getMethod("getArgumentNames",_nullSig);
+            _argNames = (String[]) m.invoke(null,_nullArg);
          } catch (Exception e) {
             throw new IntrospectionException("Directive " + directive +
-                  " build() requires a source object, but the getVerbs " +
-                  " method failed: " + e);
+                  " build() requires a source object, but getArgumentNames " +
+                  " failed: " + e);
          }
-         if (_verbs == null) {
-            throw new IntrospectionException("getVerbs returned a null.");
+         if (_argNames == null) {
+            throw new IntrospectionException("getArgumentNames returned null.");
          }
       }
 
@@ -165,38 +158,16 @@ final class DirectiveBuilder implements Cloneable, Builder
    }
 
    public final Class getDirectiveClass() { return _directiveClass; }
-   public final String[] getVerbs() { return _verbs; }
+   public final String[] getArgumentNames() { return _argNames; }
    public final String[] getSubDirectives() { return _dependents; }
    public final boolean hasCondition() { return _hasCondition; }
    public final boolean hasTarget() { return _hasTarget; }
-   public final boolean hasPredicate() { return (_predicates != null); }
+   public final boolean hasArguments() { return (_argNames != null); }
    public final boolean isContainer() { return _isContainer; }
    public final boolean isParser() { return _isParser; }
    public final boolean isMulti() { return (_dependents != null); }
    public final boolean isSubDirective() { return (_isSubDirective); }
    
-
-   public final String getMarker() throws BuildException
-   {
-      if (_marker == null) {
-         throw new BuildException("Directive does not implement getMarker()");
-      }
-      Object arg[] = new Object[2];
-
-      arg[0] = _target;
-      arg[1] = _predicate;
-      try {
-         return (String) _marker.invoke(null, arg);
-      } catch (IllegalAccessException ie) {
-         throw new BuildException("Your getMarker() method could not be " 
-               + "executed due to invalid permissions. Both the class and "  
-               + "the method must be public: " + ie);
-      } catch (InvocationTargetException it) {
-         Throwable te = it.getTargetException();
-         Engine.log.exception(te);
-         throw new BuildException("Your getMarker() method failed: " + te);
-      }
-   }
 
    // INSTANCE PROPERTIES
    
@@ -205,8 +176,21 @@ final class DirectiveBuilder implements Cloneable, Builder
    private Object _dependent = null;
    private Object  _target = null;
    private Object _condition = null;
-   private Object  _predicate = null;
-   static final private Class[] _markerArgs = { Object.class, Object.class };
+   private Vector _arguments = null;
+
+
+   private final Argument[] getArguments() {
+      if (!hasArguments()) {
+         return null;
+      }
+      if (_arguments == null) {
+         _arguments = new Vector();
+      }
+      Argument[] args = new Argument[_arguments.size()];
+      _arguments.copyInto(args);
+      return args;
+   }
+
 
    public final void setTarget(Object term) 
       throws IllegalStateException
@@ -235,21 +219,29 @@ final class DirectiveBuilder implements Cloneable, Builder
       _dependent = dep;
    }
 
-   public final void addPredicate(Predicate p) 
+   public final void addArgument(Argument p) 
       throws IllegalStateException
    {
+
+      if (! hasArguments()) {
+         throw new IllegalStateException("Does not take arguments");
+      }
+
       boolean match = false;
-      String verb = p.getVerb();
-      for (int i = 0; i < _verbs.length; i++) {
-         if (_verbs[i].equals(verb)) {
+      String argument = p.getName();
+      for (int i = 0; i < _argNames.length; i++) {
+         if (_argNames[i].equals(argument)) {
             match = true;
          }
       }
       if (!match) {
-         throw new IllegalStateException(verb 
-               + " is not recognized in " + toString());
+         throw new IllegalStateException(argument 
+               + " is not recognized as an argument for " + toString());
       }
-      _predicates.addElement(p);
+      if (_arguments == null) {
+         _arguments = new Vector();
+      }
+      _arguments.addElement(p);
    }
 
    public final void setContents(Builder contents)
@@ -276,7 +268,6 @@ final class DirectiveBuilder implements Cloneable, Builder
    {
       check("condition", hasCondition(), _condition != null);
       check("target", hasTarget(), _target != null);
-      check("predicate", hasPredicate(), _predicate != null);
       check("contents", isContainer(), _contents != null);
    }
 
@@ -315,10 +306,8 @@ final class DirectiveBuilder implements Cloneable, Builder
             args[i++] = _target;
          }
 
-         if ( hasPredicate() ) {
-            Predicate[] p = new Predicate[ _predicates.size() ];
-            _predicates.copyInto(p);
-            args[i++] = p;
+         if ( hasArguments() ) {
+            args[i++] = getArguments();
          }
 
          if ( isContainer() ) {
@@ -363,11 +352,11 @@ final class DirectiveBuilder implements Cloneable, Builder
 
      
       StringBuffer predicate = null;
-      if (hasPredicate()) {
+      if (hasArguments()) {
          predicate = new StringBuffer();
-         for (int i = 0; i < _predicates.size(); i++) {
+         for (int i = 0; i < _argNames.length; i++) {
             predicate.append(" ");
-            predicate.append( _predicates.elementAt(i) );
+            predicate.append( _argNames[i] );
             predicate.append(" TERM");
          }
       }
@@ -375,7 +364,7 @@ final class DirectiveBuilder implements Cloneable, Builder
       String base = "#" + _name + " "
          + (hasCondition() ? "(CONDITION) " : "")
          + (hasTarget() ? "TARGET " : "")
-         + (hasPredicate() ? predicate.toString() : "")
+         + (hasArguments() ? predicate.toString() : "")
          + (isContainer() ? "{ ... } " : "");
       if (isMulti()) {
          StringBuffer buf = new StringBuffer();

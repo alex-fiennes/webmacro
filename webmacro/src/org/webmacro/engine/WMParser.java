@@ -405,24 +405,30 @@ public class WMParser implements Parser
             Object term = parseTerm(in); 
             dirB.setTarget(term);
 
-            if (dirB.hasPredicate()) {
+            if (dirB.hasArguments()) {
 
                in.skipSpaces();
-               String verb;
+               String arg;
                Object obj;
 
-               String[] verbs = dirB.getVerbs();
-               while ((verb = in.parseStrings(verbs)) != null) 
+               String[] args = dirB.getArgumentNames();
+               while ((arg = in.parseStrings(args)) != null) 
                {
                   in.skipSpaces();
                   obj = parseTerm(in); 
-                  dirB.addPredicate(new Predicate(verb,obj));
+                  dirB.addArgument(new Argument(arg,obj));
                }
             }
          } 
 
          if (dirB.isParser()) {
-            String marker = dirB.getMarker();
+            in.skipWhitespace();
+            String marker = null;
+            if (in.parseString("#begin")) {
+               marker = "#end";
+            } else if (in.parseString("{")) {
+               marker = "}";
+            }
             StringBuffer buf = new StringBuffer();
             in.parseUntil(buf,marker);
             buf.setLength(buf.length() - marker.length());

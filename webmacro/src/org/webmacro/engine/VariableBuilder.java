@@ -22,7 +22,10 @@ public class VariableBuilder implements Builder
          c[i] = (names[i] instanceof Builder) ? 
             ((Builder) names[i]).build(bc) : names[i];
       }
-      return new Variable(c, (filtered ? bc.getFilter(names) : null));
+      return new Variable(c, 
+            (filtered ? bc.getFilter(Variable.makePropertyNames(names)) 
+             : 
+             null));
       
    }
 

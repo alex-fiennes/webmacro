@@ -44,7 +44,7 @@ abstract class UseDirective implements Directive
      * Builder method
      */
    public static final Object build(
-         BuildContext rc, Object parser, Object endMarker, String text) 
+         BuildContext rc, Object parser, Argument args[], String text) 
       throws BuildException
    {
       String pname = (parser != null) ? parser.toString() : null;
@@ -64,9 +64,14 @@ abstract class UseDirective implements Directive
       }
    }
 
-   public static final String getVerb() { return "until"; }
+   public static final String[] getArgumentNames() { return _verbs; }
+   private static final String[] _verbs = { "until" };
 
-   public static final String getMarker(Object target, Object source) {
+   public static final String getMarker(Object target, Argument args[]) {
+      Object source = null;
+      if ((args.length == 1) && (args[0].getName().equals("until"))) {
+         source = args[0].getValue();
+      }
       return (source != null) ? source.toString() : "__END__";
    }
 

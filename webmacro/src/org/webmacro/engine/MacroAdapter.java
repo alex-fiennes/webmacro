@@ -81,22 +81,27 @@ final public class MacroAdapter implements Macro
 final class StringMacroAdapter implements Macro
 {
 
-   final private String _self;
+   final private char[] _self;
+   private String _cache = null; // assume this will not be used most times
 
    public StringMacroAdapter(String wrapMe) 
    {
-      _self = wrapMe;
+      _self = new char[wrapMe.length()];
+      wrapMe.getChars(0, _self.length, _self, 0);
    }
 
    public final String toString() {
-      return _self; 
+      if (_cache == null) {
+         _cache = new String(_self);
+      }
+      return _cache;
    }
 
    /**
      * Returns the wrapped object, context is ignored.
      */
    public final Object evaluate(Object context) {
-      return _self;
+      return toString();
    }
 
    /**
@@ -107,6 +112,4 @@ final class StringMacroAdapter implements Macro
    {
       out.write(_self);
    }
-
-
 }

@@ -67,7 +67,7 @@ abstract public class WMTemplate implements Template
    /**
      * Template filters
      */
-   private FilterTable myFilters;
+   private Hashtable myFilters;
 
 
    /**
@@ -115,7 +115,7 @@ abstract public class WMTemplate implements Template
       Block newContent = null;
       Hashtable newParameters = null;
       Reader source = null;
-      FilterTable newFilters = null;
+      Hashtable newFilters = null;
       try {
          Parser parser;
          try {
@@ -272,8 +272,12 @@ abstract public class WMTemplate implements Template
       return new EnumIterator(params.keys());
    }
 
+   /**
+     * Return the subfilter associated with the supplied top level 
+     * property name
+     */
    public Filter getFilter(String name) {
-      return myFilters.getFilter(name);
+      return (Filter) myFilters.get(name);
    }
 
 }

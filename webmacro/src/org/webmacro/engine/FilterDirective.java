@@ -35,20 +35,31 @@ import org.webmacro.*;
 final class FilterDirective implements Directive
 {
 
+
+   private static final String[] _verbs = { "through" };
+   public static final String[] getArgumentNames() { return _verbs; }
+
    public static final Object build(BuildContext rc, 
-         Object lhs, Object rhs) throws BuildException
+         Object subject, Argument[] args) throws BuildException
    {
       Variable v = null;
       Filter f = null;
+      Object rhs;
 
       // get the variable we want to operate on
       try {
-         v = (Variable) lhs;
+         v = (Variable) subject;
       } catch (ClassCastException ce) {
          throw new BuildException("First argument to #filter must be a variable");
       }
 
       // get the filter target
+
+      if ((args.length != 1) || (! args[0].getName().equals("through"))) {
+         throw new BuildException(
+               "Filter directive takes a single argument: through");
+      }
+      rhs = args[0].getValue();
 
       try {
          if (rhs instanceof Macro) {
@@ -74,11 +85,16 @@ final class FilterDirective implements Directive
                   + rhs + ") could not be loaded: " + e);
          }
       }
-      rc.addFilter(v, f);
+
+      String[] names = v.getPropertyNames();
+      if (names.length != 1) {
+         throw new BuildException(
+               "Filters can only be set on top level property names."
+               + " You tried to set one on a complex variable: " + v);
+      }
+      rc.addFilter(names[0], f);
       return null;
    }
-
-   public static final String getVerb() { return "through"; }
 
    /**
      * Interpret the directive and write it out
@@ -100,7 +116,5 @@ final class FilterDirective implements Directive
       // do nothing
       return null;
    }  
-
 }
-
 

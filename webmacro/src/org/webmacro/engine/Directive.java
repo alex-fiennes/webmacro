@@ -18,9 +18,9 @@ import org.webmacro.*;
   * The signature must have the form: <pre>
   *    public static Object build(
   *         BuildContext rc,
-  *         ( Condition cond | (Subject (Predicate[])? )?,
+  *         ( Condition cond | (Subject (Argument[])? )?,
   *         ( Macro block | String text )?,
-  *         ( Object subordinate )?
+  *         ( Object subdirective )?
   *       );
   * </pre>
   * <p>
@@ -31,47 +31,39 @@ import org.webmacro.*;
   * The arguments to the build method are:
   * <ul>
   * <li>A condition, or a subject. If a subject is present then there 
-  * may optionally also be a Predicate array.
+  * may optionally also be a Argument array.
   * <li>An optional block of text. This is either a Macro (ie: a parsed
   * block of text), or a String (ie: an unparsed block of text). 
-  * <li>An optional  subordinate directive. It is of type Object, since 
+  * <li>An optional subdirective. It is of type Object, since 
   * when it resolves itself it may actually return a String or a null, 
   * however this value represents the result of building a subordinate
-  * directive.
+  * directive. An example would be an #else subdirectove of an #if.
   * </ul>
   * <p>
   * The other methods required for the Directive depend on the signature
   * of the build method as follows:
   * <ul>
-  * <li>If the build method has a String text argument, then there must 
-  * be a "public String getMarker(Object subject, Object object)" method
-  * which can be used to retrieve an end-of-block marker for parsing. 
-  * Both the subject and object passed to getMarker() may be null.
-  * <p>
-  * <b>NOTE: the subject and object that the getMarker() method sees are
-  * pre-build phase. Thus, if they contain any variable references or
-  * other complex strings, they may show up as objects of type Build. 
-  * You can only extract information out of these if the arguments to 
-  * your method are simple terms, or quoted strings with no internal 
-  * variables.</b>
+  * <li>If the build method has a String text argument, then it takes a
+  * block which is unparsed. The unparsed block will be passed in as the
+  * text argument, and the expectation is that the directive will parse
+  * it itself. 
   * <p>
   * <pre>public static Object 
   * build(BuildContext c, Condition cond, Macro ifBlock, Object else)</pre>
   * The subordinate, if present, may be passed as a null--indicating that it
   * did not exist in the input. 
   * <p>
-  * <li>If a directive has an Predicate array, it must have a 
-  * "String[] getVerb()" method which can be used to find the names of 
-  * the predicates that are possible. 
-  * <li>If a directive has a subordinate, it 
-  * must have a String[] getSubordinateNames() method which returns the 
+  * <li>If a directive has an Argument array, it must have a 
+  * "String[] getArgumentNames()" method which can be used to find the 
+  * names of the arguments that are possible. 
+  * <li>If a directive has a subordinate, it must have a 
+  * String[] getSubordinateNames() method which returns the 
   * names of the subordinate directives which may follow this one. These
   * will be loaded and introspected seperately by the DirectiveBuilder, and
   * may then appear as subordinate directives to this one.
   * </ul>
   * <p>
-  * The build method may throw a BuildException if something
-  * goes wrong.
+  * The build method may throw a BuildException if something goes wrong.
   */
 public interface Directive extends Macro
 {

@@ -19,7 +19,7 @@ public final class BuildContext extends Hashtable
 
    private final Hashtable _params = new Hashtable();
 
-   private final FilterTable _filters = new FilterTable();
+   private final Hashtable _filters = new Hashtable();
 
    private final Broker _broker;
 
@@ -47,46 +47,42 @@ public final class BuildContext extends Hashtable
       return _broker;
    }
 
-   public Filter getFilter(Object names[]) {
-      return _filters.getFilter(names);
+   /**
+     * Add a filter for this name
+     */
+   void addFilter(String name, Filter f) 
+   {
+      _filters.put(name,f);
    }
-
-   public Filter getFilter(String name) {
-      return _filters.getFilter(name);
-   }
-
 
    /**
-     * Add a filter for this variable. The variable must be a simple top 
-     * level variable (no sub-properties specified).
+     * Get a filter for this name array
      */
-   public void addFilter(Variable v, Filter f) 
-      throws BuildException
+   Filter getFilter(String[] name) 
    {
-      Object[] names = v.getNameArray();
-      if (names.length != 1) {
-         throw new BuildException("Only top level, single-property variable names can be specified as filter targets. Maybe in a later version you will be able to directly filter a sub-property of a variable, but not in this version.");
+      if (name.length == 0) {
+         return null;
       }
-      String name = (names[0] instanceof Named) ?
-         ((Named) names[0]).getName() : (String) names[0];
-      addFilter(name, f);
+
+      Filter f = (Filter) _filters.get(name[0]);
+
+      for (int i = 0; i < name.length; i++) {
+         f = f.getFilter(name[i]);
+         if (f == null) {
+            return null;
+         }
+      }
+      return f;
    }
 
-   /**
-     * Add a filter for the supplied property. NOTE: do not use the WM template
-     * notation for the variable. It must be a simple top-level variable name,
-     * and must not include the $ or $$ notation.
-     */
-   public void addFilter(String name, Filter f)
-      throws BuildException
-   {
-      _filters.addFilter(name,f);
-   }
 
-   public FilterTable getFilters() {
+   public Hashtable getFilters() {
       return _filters;
    }
 
 }
+
+
+
 
 

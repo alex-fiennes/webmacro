@@ -81,7 +81,7 @@ final class Variable implements Macro
    /**
      * The filter for this variable, if any
      */
-   final private Macro _filter;
+   final private Filter _filter;
 
    /**
      * The name as an array
@@ -92,7 +92,7 @@ final class Variable implements Macro
      * Create a variable with the supplied name. The elements of the name 
      * are either strings, or a method reference. 
      */
-   Variable(Object names[], Macro filter) {
+   Variable(Object names[], Filter filter) {
       _vname = makeName(names).intern();
       _names = names;
       _filter = filter;
@@ -108,10 +108,22 @@ final class Variable implements Macro
 
 
    /**
-     * Return the name array for this variable
+     * Return the property names for this variable. These are stringified
+     * names corresponding to the names of the variable; if one of the 
+     * elements of the variable name is a method call then the name of
+     * the method is inserted at that point as if it were a property name.
      */
-   public final Object[] getNameArray() {
-      return _names;
+   static final String[] makePropertyNames(Object names[]) {
+      String[] sn = new String[ names.length ];
+      for (int i = 0; i < sn.length; i++) {
+         sn[i] = (names[i] instanceof Named) ? 
+            ((Named) names[i]).getName() : (String) names[i];
+      }
+      return sn;
+   }
+
+   final String[] getPropertyNames() {
+      return makePropertyNames(_names);
    }
 
    /**

@@ -37,6 +37,9 @@ final class SetDirective implements Directive
 
    final private Variable myVariable;
    final private Object myValue;
+   final private static String[] _verbs = { "=" };
+
+   final public static String[] getArgumentNames() { return _verbs; }
 
    /**
      *  Constuctor for SetDirective.
@@ -48,8 +51,14 @@ final class SetDirective implements Directive
 
 
    public static final Object build(BuildContext rc, 
-         Object lhs, Object rhs) throws BuildException
+         Object lhs, Argument[] args) throws BuildException
    {
+
+      if ((args.length != 1) || (! args[0].getName().equals("="))) {
+         throw new BuildException("SetDirective requites an = argument");
+      }
+      Object rhs = args[0].getValue();
+
       Variable lhsVar;
       try {
          lhsVar = (Variable) lhs;

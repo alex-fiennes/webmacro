@@ -39,6 +39,7 @@ import org.webmacro.util.*;
 final class ForeachDirective implements Directive
 {
 
+   final static private String[] _verbs = { "in" };
 
    /**
      * This is a reference to the list we iterate through
@@ -74,10 +75,17 @@ final class ForeachDirective implements Directive
      * Builder method
      */
    public static final Object build(
-         BuildContext rc, Object listVar, Object list, Macro block) 
+         BuildContext rc, Object listVar, Argument[] args,  Macro block) 
       throws BuildException
    {
       Variable v;
+
+
+      if ((args.length != 1) || (! args[0].getName().equals("in"))) {
+         throw new BuildException("foreach expects a single argument: in");
+      }
+      Object list = args[0].getValue();   
+
       try {
          v = (Variable) listVar;
       } catch (ClassCastException e) {
@@ -86,7 +94,7 @@ final class ForeachDirective implements Directive
       return new ForeachDirective(list, v, block);
    }
 
-   public static final String getVerb() { return "in"; }
+   public static final String[] getArgumentNames() { return _verbs; }
 
    /**
      * Interpret the directive and write it out

@@ -9,28 +9,28 @@ import org.webmacro.*;
   * to perform the action. The target object can be any kind of WebMacro
   * term. 
   */
-final class Predicate
+final class Argument
 {
 
-   final private String _verb;
-   final private Object _object;
+   final private String _name;
+   final private Object _value;
 
    /**
      * Create a new predicate
      */
-   public Predicate(String verb, Object object) {
-      _verb = verb;
-      _object = object;
+   public Argument(String name, Object value) {
+      _name = name;
+      _value = value;
    }
 
    /**
      * Return the action code for this predicate
      */
-   public String getVerb() { return _verb; }
+   public String getName() { return _name; }
 
    /**
      * Return the object on which this predicate operates
      */
-   public Object getObject() { return _object; }
+   public Object getValue() { return _value; }
 
 }

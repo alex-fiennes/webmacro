@@ -35,11 +35,15 @@ abstract class ParamDirective implements Directive
 {
 
    public static final Object build(BuildContext rc,
-         Object lhs, Object rhs)
+         Object lhs, Argument[] args)
       throws BuildException
    {
       Hashtable paramContext = rc.getParameters();
 
+      if ((args.length != 1) || (! args[0].getName().equals("="))) {
+         throw new BuildException("ParamDirective expects \"=\" argument");
+      }
+      Object rhs = args[0].getValue();
       
       // perform static evaluation of parameters
       try {
@@ -57,7 +61,8 @@ abstract class ParamDirective implements Directive
       return null; // not to be included in output
    }
 
-   public static final String getVerb() { return "="; }
+   public static final String[] getArgumentNames() { return _verbs; }
+   private static final String[] _verbs = { "=" };
 
 }
 
