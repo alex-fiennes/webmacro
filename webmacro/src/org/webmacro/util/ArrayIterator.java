@@ -25,7 +25,7 @@ import org.webmacro.util.java2.*;
 /**
   * This provides an iterator interface to an array
   */
-final public class ArrayIterator implements Iterator
+final public class ArrayIterator implements com.sun.java.util.collections.Iterator
 {
    final Object[] a;
    int pos;
@@ -63,9 +63,9 @@ final public class ArrayIterator implements Iterator
    /**
      * Unsupported 
      */
-   final public void remove() throws UnsupportedOperationException
+   final public void remove() throws com.sun.java.util.collections.UnsupportedOperationException
    {
-      throw new UnsupportedOperationException();
+      throw new com.sun.java.util.collections.UnsupportedOperationException();
    }
 
    /**
@@ -74,7 +74,7 @@ final public class ArrayIterator implements Iterator
    static public void main(String arg[]) {
 
       try {
-         Iterator i = new ArrayIterator(arg);
+         com.sun.java.util.collections.Iterator i = new ArrayIterator(arg);
          while (i.hasNext()) {
             System.out.println("item: " + i.next());
          }

@@ -150,7 +150,7 @@ final public class PropertyOperator
      * @return an Iterator that iterates through that list
      * @exception PropertyException could not extract iterator from instance
      */
-   static final public Iterator getIterator(Object instance)
+   static final public com.sun.java.util.collections.Iterator getIterator(Object instance)
       throws PropertyException
    {
       return getOperator(instance.getClass()).findIterator(instance);
@@ -457,7 +457,7 @@ final public class PropertyOperator
                Class returnType = meth.getReturnType();
 
                // iterator supercedes enumeration supercedes Object[]
-               Class iterClass = Iterator.class;
+               Class iterClass = com.sun.java.util.collections.Iterator.class;
                boolean iterA = iterClass.isAssignableFrom(returnType);
                if (
                     iterA ||
@@ -736,20 +736,20 @@ final public class PropertyOperator
      * @exception PropertyException current object is not any sort of list
      * @return an iterator representing the current object's list
      */
-   private Iterator findIterator(Object instance)
+   private com.sun.java.util.collections.Iterator findIterator(Object instance)
       throws PropertyException
    {
       if (instance instanceof Object[]) {
          return new ArrayIterator((Object[])instance);
-      } else if (instance instanceof Iterator) {
-         return (Iterator) instance;
+      } else if (instance instanceof com.sun.java.util.collections.Iterator) {
+         return (com.sun.java.util.collections.Iterator) instance;
       } else if (instance instanceof Enumeration) {
          return new EnumIterator((Enumeration)instance);
       } else if (iteratorMethod != null) {
          try {
                Object ret = invoke(iteratorMethod,instance,null);
-            if (ret instanceof Iterator) {
-               return (Iterator) ret;
+            if (ret instanceof com.sun.java.util.collections.Iterator) {
+               return (com.sun.java.util.collections.Iterator) ret;
             } else if (ret instanceof Enumeration) {
                return new EnumIterator((Enumeration) ret);
             } else if (ret instanceof Object[]) {

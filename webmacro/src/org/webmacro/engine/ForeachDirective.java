@@ -116,7 +116,7 @@ final class ForeachDirective implements Directive
          }
       }
 
-      Iterator iter;
+      com.sun.java.util.collections.Iterator iter;
       try {
          iter = PropertyOperator.getIterator(list);
       } catch (Exception e) {

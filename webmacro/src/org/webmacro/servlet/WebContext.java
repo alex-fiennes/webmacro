@@ -145,7 +145,6 @@ final public class WebContext extends Context
      * @see org.webmacro.util.Property
      */
    public final HttpServletResponse getResponse() { 
-System.out.println("WebContext.getResponse() called!");
       return _response; 
    }
 

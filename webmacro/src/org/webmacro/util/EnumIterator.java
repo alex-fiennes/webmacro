@@ -26,7 +26,7 @@ import org.webmacro.util.java2.*;
 /**
   * Allow a Java 1.1 enumeration to be used as a JDK 1.2 style Iterator
   */
-final public class EnumIterator implements Iterator
+final public class EnumIterator implements com.sun.java.util.collections.Iterator
 {
    final Enumeration enum;
    private boolean hasNext;
@@ -65,9 +65,9 @@ final public class EnumIterator implements Iterator
    /**
      * Unsupported 
      */
-   final public void remove() throws UnsupportedOperationException
+   final public void remove() throws com.sun.java.util.collections.UnsupportedOperationException
    {
-      throw new UnsupportedOperationException();
+      throw new com.sun.java.util.collections.UnsupportedOperationException();
    }
 
    /**
@@ -80,7 +80,7 @@ final public class EnumIterator implements Iterator
       }
 
       try {
-         Iterator i = new EnumIterator(v.elements());
+         com.sun.java.util.collections.Iterator i = new EnumIterator(v.elements());
          while (i.hasNext()) {
             System.out.println("item: " + i.next());
          }
