@@ -109,6 +109,12 @@ public final class BackupCharStream implements CharStream
         tokenBeginPos = curBuf.curPos;
         tokenBeginBuf   = curBuf;
       }
+      if (e.getClass().getName().equals("sun.io.MalformedInputException")) {
+          // it's an ugly hack, but we want to pass this exception
+          // through the JavaCC parser, since it has a bad
+          // exception handling
+          throw new ParserRuntimeException("MalformedInput",e);
+      }
       throw e;
     }
   }

@@ -80,6 +80,9 @@ public class WMParser implements Parser
     catch (ParseException e) {
       throw new org.webmacro.engine.ParseException("Parser Exception", e);
     }
+    catch (ParserRuntimeException e) {
+        throw new org.webmacro.engine.ParseException("Parse Exception", e);
+    }
     finally {
       if (parser != null)
         _parserCache.put(parser);
