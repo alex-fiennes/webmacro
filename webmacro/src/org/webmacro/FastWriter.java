@@ -79,6 +79,10 @@ public class FastWriter extends Writer
    
    private OutputStream _out;
 
+   /** _open is true iff the FW has been dispensed to a user and not 
+     * returned to the pool.  */
+   private boolean _open = true;
+
    private byte[] _buf = new byte[512];
 
    private char[] _cbuf = new char[512];
@@ -397,6 +401,7 @@ public class FastWriter extends Writer
       if (_buffered) bflush();
       _bstream.reset();
       _out = out;
+      _open = true;
    }
 
    /**
@@ -453,12 +458,15 @@ public class FastWriter extends Writer
          _out.close();
          _out = null;
       }
-      Pool p = (Pool) _writerCache.get(_encoding);
-      if (p == null) {
-         p = new UPool(7);
-         _writerCache.put(_encoding,p);
+      if (_open) {
+        _open = false;
+        Pool p = (Pool) _writerCache.get(_encoding);
+        if (p == null) {
+          p = new UPool(7);
+          _writerCache.put(_encoding,p);
+        }
+        p.put(this);
       }
-      p.put(this);
    }
 
    public static void main(String arg[]) {
