@@ -43,8 +43,7 @@ public class BlockBuilder extends Vector implements Builder
       StringBuffer buf = new StringBuffer(512);
       flatten(bc, block, buf, elementData);
       if (buf.length() > 0) {
-         block.addElement(new StringMacroAdapter(buf.toString(),
-                                                 bc.getEncoding()));
+         block.addElement(new StringMacroAdapter(buf.toString()));
       }
       Macro[] result = new Macro[block.size()];
       block.copyInto(result);
@@ -77,8 +76,7 @@ public class BlockBuilder extends Vector implements Builder
             // I don't see a lot of point to unrolling the block at this time.
             if (o instanceof Macro) {
                if (buf.length() > 0) {
-                  block.addElement(new StringMacroAdapter(buf.toString(),
-                                                          bc.getEncoding()));
+                  block.addElement(new StringMacroAdapter(buf.toString()));
                   buf.setLength(0);
                }
                block.addElement((Macro) o);

@@ -10,23 +10,15 @@ import org.webmacro.util.*;
 public final class StringMacroAdapter implements Macro, Visitable
 {
 
-   private byte[] _self;
-   private String _cache = null; // assume this will not be used most times
+   final String _self;
 
-   public StringMacroAdapter(String wrapMe, String encoding) 
+   public StringMacroAdapter(String wrapMe) 
    {
-      try {
-         _self = wrapMe.getBytes(encoding);
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
+      _self = wrapMe;
    }
 
    public final String toString() {
-      if (_cache == null) {
-         _cache = new String(_self);
-      }
-      return _cache;
+      return _self;
    }
 
    public void accept(TemplateVisitor v) { v.visitString(toString()); } 
@@ -35,7 +27,7 @@ public final class StringMacroAdapter implements Macro, Visitable
      * Returns the wrapped object, context is ignored.
      */
    public final Object evaluate(Context context) {
-      return toString();
+      return _self;
    }
 
    /**
@@ -44,6 +36,6 @@ public final class StringMacroAdapter implements Macro, Visitable
    public final void write(FastWriter out, Context context) 
       throws IOException
    {
-      out.write(_self);
+      out.writeStatic(_self);
    }
 }

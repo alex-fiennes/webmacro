@@ -58,10 +58,9 @@ public abstract class Directive implements Macro, Visitable {
     throws ContextException {
       try {
         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-        FastWriter fw = new FastWriter(os, "UTF8");
+        FastWriter fw = FastWriter.getInstance();
         write(fw,context);
-        fw.flush();
-        return os.toString("UTF8");
+        return fw.toString();
       } catch (IOException e) {
          context.getBroker().getLog("engine").error(
            "Directive.evaluate: IO exception on write to StringWriter", e);

@@ -74,25 +74,19 @@ abstract public class WMTemplate implements Template
    private Map _parameters;
 
    /**
-     * My encoding
-     */
-   private String _encoding;
-
-   /**
      * Create a new Template. Constructors must supply a broker.
      */
-   protected WMTemplate(Broker broker, String encoding) {
-      this(broker,"wm",encoding);
+   protected WMTemplate(Broker broker) {
+      this(broker,"wm");
    }
 
    /**
      * Create a new Template specifying both the broker and the 
      * parsing language.
      */
-   protected WMTemplate(Broker broker, String parserName, String encoding) {
+   protected WMTemplate(Broker broker, String parserName) {
       _broker = broker;
       _parserName = parserName;
-      _encoding = encoding;
       _log = broker.getLog("template");
    }
 
@@ -138,7 +132,7 @@ abstract public class WMTemplate implements Template
          in = getReader();
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
-         BuildContext bc = new BuildContext(_broker, _encoding);
+         BuildContext bc = new BuildContext(_broker);
          newParameters = bc.getGlobalVariables();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
@@ -166,11 +160,11 @@ abstract public class WMTemplate implements Template
    public final Object evaluate(Context data)
    {
       try {
-         ByteArrayOutputStream os = new ByteArrayOutputStream(512); 
-         FastWriter fw = new FastWriter(os, _encoding);
+         FastWriter fw = FastWriter.getInstance();
          write(fw,data);
-	 fw.flush();
-   	 return os.toString(_encoding);
+         String ret = fw.toString();
+         fw.close();
+         return ret;
       } catch (IOException e) {
          _log.error("Template: Could not write to ByteArrayOutputStream!",e);
          return null;
@@ -191,20 +185,19 @@ abstract public class WMTemplate implements Template
    public final void write(FastWriter out, Context data) 
       throws IOException
    {
-         try {
-            if (_content == null) {
-               parse();   
-            }
-         } catch (Exception e) {
-            _log.error("Template: Unable to read template: " + this, e);
-            out.write("<!--\n Template failed to read. Reason: ");
-            out.write(e.toString());
-            out.write(" \n-->");
+      try {
+         if (_content == null) {
+            parse();   
          }
-      } 
+      } catch (Exception e) {
+         _log.error("Template: Unable to read template: " + this, e);
+         out.write("<!--\n Template failed to read. Reason: ");
+         out.write(e.toString());
+         out.write(" \n-->");
+      }
 
       try {
-         content.write(out,data);
+         _content.write(out,data);
       } catch (ContextException e) {
          String warning = 
             "Template: Missing data in Map passed to template " + this;

@@ -1,3 +1,17 @@
+-- Nov-2000 justin: StringMacro adapter and builder process modified so 
+   that they no longer know about output encoding
+
+-- Nov-2000 justin: FastWriter overhauled: it is now soley responsible
+   for the output encoding on a request. The mechanism by
+   which unicode conversion is cached has changed to depend on
+   FastWriter.writeStatic(). The FastWriter class also now writes
+   output only on an explicit flush(). It has also grown toString() and
+   toByteArray() methods which can be used to get at the content, as well
+   as a writeTo() to write to an explicit stream. You can actually have
+   a FastWriter which does not have an attached output stream (set it to
+   null) and just use those other methods. On top of that the FastWriter
+   class has a built in static cache of FastWriter objects.
+
 -- Nov-2000 keats: added code to Context that allows get() and put() to
    work when a _bean has been set.  If the _bean has an appropriate get()
    or put() method, get()/put() calls on the context will be delegated

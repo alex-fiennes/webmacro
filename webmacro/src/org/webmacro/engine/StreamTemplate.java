@@ -120,10 +120,11 @@ public class StreamTemplate extends WMTemplate
                new InputStreamReader(System.in), "UTF8");
          t1.parse();
 
-         FastWriter w = new FastWriter(System.out, "UTF8");
+         FastWriter w = FastWriter.getInstance("UTF8");
 
          System.out.println("*** RESULT ***");
          t1.write(w,context);
+         w.writeTo(System.out);
          w.close();
          System.out.println("*** DONE ***");
          //System.out.println(result);

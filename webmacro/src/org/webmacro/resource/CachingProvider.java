@@ -122,4 +122,3 @@ abstract public class CachingProvider implements Provider
       return "CachingProvider(type = " + getType() + ")";
    }
 }
-

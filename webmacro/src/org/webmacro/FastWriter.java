@@ -1,68 +1,92 @@
 
 package org.webmacro;
 import java.io.*;
+import java.util.Hashtable;
+import org.webmacro.util.*;
 
 
 /**
-  * This class allows you to write both char[] and byte[] data to an 
-  * eventual outputstream. You have to specify the encoding. It tries
-  * to be somewhat efficient. It is buffered. If you set the 
-  * setAsciiHack(true) then performance increases dramatically but
-  * the stream commits errors if it attempts to write non-ascii data.
-  * You can turn the ascii hack on around segments of output where you
-  * know no unicode data will be output.
+  * FastWriter attempts to optimize output speed in a WebMacro template
+  * through several specific optimizations: 
+  * <ul>
+  *   <li> FastWriter caches the output in a byte array until you 
+  *        call reset(). You can access the output by one of several
+  *        methods: toString(), toByteArray(), or writeTo(OutputStream)
+  *   <li> you can turn off unicode conversion by calling setAsciiHack()
+  *   <li> you can use a unicode conversion cache by calling writeStatic()
+  *   <li> you can get the contents written to the FastWriter back
+  *        as an array of bytes INSTEAD of writing to the output stream
+  * </ul>
+  * Note that if you turn on the asciiHack and then write non-ASCII 
+  * data the output will be mangled. 
+  * <p>
+  * <b>Note that the FastWriter requires an explicit flush</b>
+  * <p>
+  * If you re-use a FastWriter you must re-use it in a context which
+  * uses the SAME unicode conversion. The caches and internal data 
+  * structures which the FastWriter allocates are tied to the 
+  * encoding it was created with. 
   */
 
 final public class FastWriter extends Writer
 {
+   final private String _encoding;      // what encoding we use
+   final private BufferedWriter _bwriter;
+   final private ByteArrayOutputStream _bstream;
+   final private EncodingCache _cache;
+   
+   private OutputStream _out;
 
-   OutputStream _out;                    // where our output goes
-   String _encoding;                     // what encoding we use
+   private byte[] _buf = new byte[512];
+   private boolean _encodeProperly;  // are we in fast mode?
+   private boolean _buffered;
 
-   final sun.io.CharToByteConverter _c2b; // sun.io?! ugh. thank you sun.
-
-   static private final int CSIZE = 4096; // how much we buffer
-   final char[] _cbuf = new char[CSIZE]; // buffer chars prior to convert
-   int _cpos;                            // how much we used?
-
-
-   private final int _BSIZE;             // size of the byte buffer
-   final byte[] _bbuf;                   // reusable byte buffer
-
-   boolean _asciiHack;                   // are we in fast mode?
-
+   final private static Hashtable _writerCache = new Hashtable();
 
    /**
     * Create a FastWriter to the target outputstream. You must specify
-    * a character encoding. Try ut
+    * a character encoding. You can also call writeTo(), toString(), 
+    * and toByteArray() to access any un-flush()ed contents.
     */
-   public FastWriter(OutputStream target, String encoding) 
+   public FastWriter(OutputStream out, String encoding)
       throws java.io.UnsupportedEncodingException
    {
       _encoding = encoding;
-      _out = new BufferedOutputStream(target); // XXX: we should re-use this somehow
+      _bstream = new ByteArrayOutputStream(4096);
+      _bwriter = new BufferedWriter(new OutputStreamWriter(_bstream, encoding));
+      _cache = EncodingCache.getInstance(encoding);
 
-      _c2b = sun.io.CharToByteConverter.getConverter(encoding);
-      _BSIZE = CSIZE * _c2b.getMaxBytesPerChar();
-      _bbuf = new byte[_BSIZE];
+      _encodeProperly = true;
+      _buffered = false;
 
-      _cpos = 0;
-
-      _asciiHack = false;
+      _out = out;
    }
 
+   /**
+     * Create a new FastWriter with no output stream target. You can
+     * still call writeTo(), toString(), and toByteArray().
+     */
+   public FastWriter(String encoding) 
+      throws java.io.UnsupportedEncodingException
+   {
+      this(null,encoding);
+   }
+
+
+   /**
+     * Get the character encoding this FastWriter uses to convert
+     * characters to byte[]
+     */
    public String getEncoding() {
       return _encoding;
    }
 
    /**
-    * Reset the output stream to enable re-use of the FastWriter. If 
-    * there is anything buffered this wipes it out.
-    */
-   public void recycle(OutputStream newOut, String encoding) {
-      _out = new BufferedOutputStream(newOut); // XXX: we should re-use this somehow
-      _encoding = encoding;
-      _cpos = 0;
+     * Get the output stream this FastWriter sends output to. It 
+     * may be null, in which case output is not sent anywhere.
+     */
+   public OutputStream getOutputStream() {
+      return _out;
    }
 
    /**
@@ -73,197 +97,274 @@ final public class FastWriter extends Writer
     * Remember to turn the AsciiHack off before writing true Unicode
     * characters, otherwise they'll be mangled.
     */
-   public void setAsciiHack(boolean on) throws IOException
+   public void setAsciiHack(boolean on) 
    {
-      if (_cpos != 0) cflush();
-      _asciiHack = on;
+      bflush();
+      _encodeProperly = !on;
    }
 
    /**
-    * Write a character to the output stream
-    */
-   public void write(int b) throws IOException 
-   {
-      if ((_cpos + 1) > CSIZE) cflush();
-      _cbuf[_cpos] = (char) b;
-      _cpos++; 
-   }
-
-   /**
-    * Write a byte to the output stream.
-    */
-   public void write(byte b) throws IOException
-   {
-      if (_cpos != 0) cflush();
-      _out.write(b);
-   }
-
-   /**
-     * Write unicode characters. 
+     * Returns true if we are mangling the unicode conversion in an
+     * attempt to eek out a bit of extra efficiency.
      */
-   public void write(char[] c) throws IOException 
+   public boolean getAsciiHack() 
    {
-      this.write(c,0,c.length);
+      return !_encodeProperly;
    }
 
    /**
-     * Write unicode characters. 
+     * Write characters to the output stream performing slow unicode
+     * conversion unless AsciiHack is on.
      */
-   public void write(char[] c, int offset, int len) throws IOException 
+   public void write(char[] cbuf) 
    {
-      if ((_cpos + len) > CSIZE) {
-         cflush();
-         if (len > CSIZE) {
-            writeChars(c,offset,len); // won't fit in our buffer anyway
-            return;
-         }
-      }
-      System.arraycopy(c, offset, _cbuf, _cpos, len); 
-      _cpos += len;
+      write(cbuf, 0, cbuf.length);
    }
 
-   /**
-    * Write bytes directly to the output stream with no unicode
-    * conversion
-    */
-   public void write(byte[] b) throws IOException 
-   {
-      if (_cpos != 0) cflush();
-      _out.write(b);
-   }
-
-   /**
-    * Write bytes directly to the output stream with no unicode
-    * conversion
-    */
-   public void write(byte[] b, int offset, int len) throws IOException 
-   {
-      if (_cpos != 0) cflush();
-      _out.write(b,offset,len);
-   }
-
-   /**
-     * If ASCII hack is on, write this string out efficiently. Otherwise
-     * do full correct and slow unicode conversion before writing.
-     */
-   public void write(String s, int offset, int len) throws IOException 
-   {
-      if (_asciiHack) {
-         if (_cpos != 0) cflush();
-         writeAsciiBytes(s,offset,len);
-         return;
-      } 
-      if ((_cpos + len) > CSIZE) {
-         cflush();
-         if (len > CSIZE) {
-            _out.write(s.getBytes(_encoding));
-            return;
-         }
-      } 
-      s.getChars(offset,offset + len,_cbuf,_cpos);
-      _cpos += len;
-   }
-
-   /**
-     * Just another way to call write(String,int,int)
-     */
-   public void write(String s) throws IOException 
-   {
-      this.write(s,0,s.length());
-   }
-
-   /**
-     * Efficiently write this non-Unicode string to the output 
-     * stream. This will mangle the string if it is unicode.
-     */
-   private void writeAsciiBytes(String buf, int offset, int len) 
-   throws IOException 
-   {
-      while (len > 0) {
-         int max = (len < _BSIZE) ? len : _BSIZE;
-	 buf.getChars(offset, offset + max, _cbuf, 0); 
-         for (int i = 0; i < max; i++) {
-            _bbuf[i] = (byte) _cbuf[i];
-         }
-         len -= max;
-         offset += max;
-         _out.write(_bbuf,0,max);
-      }
-   }
 
    /**
      * Write characters to to the output stream performing slow unicode
      * conversion unless the AsciiHack is on. 
      */
-   private void writeChars(char[] cbuf, int offset, int len) 
-      throws IOException
+   public void write(char[] cbuf, int offset, int len) 
    {
       try {
-         if (_asciiHack) {
-            // cheat
-            while (len > 0) {
-               int max = (len < _BSIZE) ? len : _BSIZE;
-               for (int i = 0; i < max; i++) {
-                  _bbuf[i] = (byte) cbuf[i + offset];
-               }
-               _out.write(_bbuf,0,max);
-               len -= max;
-               offset += max;
-            }
+         if (_encodeProperly) {
+            _bwriter.write(cbuf,offset,len);
+            _buffered = true;
          } else {
-            // slow, but correct
-            int nextC = 0;
-            while (nextC < _cpos) {
-               nextC += _c2b.convert(cbuf,nextC,_cpos,_bbuf,0,_BSIZE); 
-               _out.write(_bbuf, 0, _c2b.nextByteIndex());
-            } 
+            if (_buf.length < len) _buf = new byte[len];
+            int end = offset + len;
+            for (int i = offset; i < end; i++) {
+               _buf[i] = (byte) cbuf[i];
+            }
+            _bstream.write(_buf,0,cbuf.length);
          }
-      } finally {
-        _c2b.reset();
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
       }
    }
 
    /**
-    * Catch up: flush out the local buffers but not the stream. Character
-    * data is buffered locally to avoid too many calls to the unicode 
-    * encoding mechanism. This method flushes just those buffers.
-    */
-   public void cflush() throws IOException
+     * Write a single character, performing slow unicode conversion
+     * unless AsciiHack is on.
+     */
+   public void write(int c) 
    {
-       writeChars(_cbuf,0,_cpos);
-       _cpos = 0;
+      try {
+         if (_encodeProperly ) {
+            _bwriter.write(c);
+            _buffered = true;
+         } else {
+            _bstream.write((byte) c);
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
+      }
+   }
+
+   /**
+     * Write a string to the underlying output stream, performing
+     * unicode conversion.
+     */
+   public void write(String s) 
+   {
+      write(s,0,s.length());
+   }
+
+   /*
+    * Write a string to the underlying output stream, performing
+    * unicode conversion.
+    */
+   public void write(String s, int off, int len) 
+   {
+      try {
+         if (_encodeProperly) {
+            _bwriter.write(s,off,len);
+            _buffered = true;
+         } else {
+            if (_buf.length < len) _buf = new byte[len];
+            s.getBytes(off,len,_buf,0);
+            _bstream.write(_buf,0,len);
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
+      }
+   }
+
+   /**
+     * Write a string tot he underlying output stream, performing
+     * unicode conversion if necessary--try and read the encoding
+     * from an encoding cache if possible.
+     */
+   public void writeStatic(String s) 
+   {
+      try {
+         if (_encodeProperly) {
+            bflush();
+            _bstream.write(_cache.getEncoding(s));
+         } else {
+            write(s,0,s.length());
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
+      }
    }
 
    /**
      * Flush out all the buffers
      */
+   private void bflush() 
+   {
+      try {
+         if (_buffered) { 
+            _bwriter.flush();
+            _buffered = false;
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
+      }
+   }
+
+   /**
+     * Flush all data out to the OutputStream, if any, clearing 
+     * the internal buffers. Note that data is ONLY written to 
+     * the output stream on a flush() operation, and never at 
+     * any other time. Consequently this is one of the few places
+     * that you may actually encounter an IOException when using
+     * the FastWriter class.
+     */
    public void flush() throws IOException
    {
-      cflush();
+      bflush();
+      if (_out != null) {
+         writeTo(_out);
+      }
+      _bstream.reset();
       _out.flush();
    }
 
    /**
-     * Close the stream. you can use recycle() to re-use this object.
+     * Copy the contents written so far into a byte array.
+     */
+   public byte[] toByteArray() 
+   {
+      bflush();
+      return _bstream.toByteArray();
+   }
+
+   /**
+     * Copy the contents written so far into a String. 
+     */
+    public String toString() 
+    {
+       try {
+          bflush();
+          return _bstream.toString(_encoding); 
+       } catch (UnsupportedEncodingException e) {
+          e.printStackTrace(); // never happen: we already used it
+          return null;
+       }
+    }
+
+   /**
+     * Copy the contents written so far to the suppiled output stream
+     */
+   public void writeTo(OutputStream out) throws IOException
+   {
+      bflush();
+      _bstream.writeTo(out);
+   }
+
+   /**
+     * Reset the fastwriter, clearing any contents that have 
+     * been generated so far.
+     */
+   public void reset(OutputStream out) {
+      bflush();
+      _bstream.reset();
+      _out = out;
+   }
+
+   /**
+     * Get a new FastWriter. You must then call writeTo(..) before
+     * attempting to write to the FastWriter.
+     */
+   public static FastWriter getInstance(OutputStream out, String encoding) 
+      throws UnsupportedEncodingException
+   {
+      FastWriter fw = null;
+      SimpleStack ss = (SimpleStack) _writerCache.get(encoding);
+      if (ss != null) {
+         fw = (FastWriter) ss.pop();
+         fw.reset(out);
+      }
+      if (fw == null) {
+         fw = new FastWriter(out,encoding);
+      } 
+      return fw;
+   }
+
+   /**
+     * Return a FastWriter with the specified encoding and no output stream.
+     */
+   public static FastWriter getInstance(String encoding) 
+      throws UnsupportedEncodingException
+   {
+      return getInstance(null,encoding);
+   }
+
+   /**
+     * Return a FastWriter with default encoding and no output stream.
+     */
+   public static FastWriter getInstance() 
+   {
+      try {
+         return getInstance(null,"UNICODE");
+      } catch (UnsupportedEncodingException e) {
+         e.printStackTrace(); // never gonna happen
+         return null;
+      }
+   }
+
+   /**
+     * Return the FastWriter to the queue for later re-use. You must
+     * not use the FastWriter after this call. Calling close() 
+     * returns the FastWriter to the pool. If you don't want to
+     * return it to the pool just discard it without a close().
      */
    public void close() throws IOException
    {
-      cflush();
-      _out.close();
-      _out = null;
+      flush();
+      if (_out != null) {
+         _out.close();
+         _out = null;
+      }
+      SimpleStack ss = (SimpleStack) _writerCache.get(_encoding);
+      if (ss == null) {
+         ss = new SimpleStack();
+         _writerCache.put(_encoding,ss);
+      }
+      ss.push(this);
    }
 
    public static void main(String arg[]) {
 
       System.out.println("----START----");
       try {
-         FastWriter fw = new FastWriter(System.out, "UTF8");
-         fw.setAsciiHack(true);
+         FastWriter fw = new FastWriter("UTF8");
+         fw.setAsciiHack(false);
          for (int i = 0; i < arg.length; i++) {
+            fw.writeStatic("write: ");
             fw.write(arg[i]);
-            fw.write(arg[i].getBytes());
+            fw.writeStatic("\n");
+
+            fw.writeStatic("cache: ");
+            fw.writeStatic(arg[i]);
+            fw.writeStatic("\n");
          }
          fw.flush();
+         fw.writeTo(System.out);
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -272,3 +373,4 @@ final public class FastWriter extends Writer
    }
 
 }
+

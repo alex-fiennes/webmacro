@@ -51,8 +51,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    private WebContext _wcPrototype;
    private boolean _started = false;
 
-   private final SimpleStack _writerCache = new SimpleStack();
-
    /**
      * The name of the config entry we look for to find out what to 
      * call the variable used in the ERROR_TEMPLATE
@@ -162,7 +160,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       _wm.destroy();
       _wm = null;
       _started = false;
-      _writerCache.clear();
       super.destroy();
    }
 
@@ -386,18 +383,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    {
       Writer out = null;
       try {
-         FastWriter fw = (FastWriter) _writerCache.pop();
          HttpServletResponse resp= c.getResponse();
-         if (fw == null) {
-             fw = new FastWriter(resp.getOutputStream(),
-                                 resp.getCharacterEncoding());
-         } else {
-             fw.recycle(resp.getOutputStream(),
-                        resp.getCharacterEncoding());
-         }
+         FastWriter fw = FastWriter.getInstance(
+               resp.getOutputStream(), resp.getCharacterEncoding());
          tmpl.write(fw, c);
          fw.close();
-         _writerCache.push(fw);
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {

@@ -22,18 +22,9 @@ public final class BuildContext extends Context
 
    private final FilterManager _filters = new FilterManager();
 
-   private String _encoding;
-
-
-   public BuildContext(Broker b, String encoding) {
+   public BuildContext(Broker b) {
       super(b);
-      _encoding = encoding;
    }
-
-   /**
-     * What encoding is used for the output of this template?
-     */
-   public String getEncoding() { return _encoding; }
 
    public final Parser getParser(String pname) 
       throws NotFoundException

@@ -150,16 +150,15 @@ final class ForeachDirective implements Directive, Visitable
    public Object evaluate(Context context)
       throws ContextException
    {
+      FastWriter fw = FastWriter.getInstance();
       try {
-         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-         FastWriter fw = new FastWriter(os, "UTF8");
          write(fw,context);
-         fw.flush();
-         return os.toString("UTF8");
+         String ret = fw.toString();
+         fw.close();
+         return ret;
       } catch (IOException e) {
-         context.getBroker().getLog("engine").error(
-            "evaluate got IO exception on write to StringWriter");
-         return "";
+         e.printStackTrace();
+         return null; // never gonna happen
       }
    }  
 
