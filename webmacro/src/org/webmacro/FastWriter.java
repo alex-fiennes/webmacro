@@ -149,7 +149,22 @@ final public class FastWriter extends Writer
      */
    public void write(char[] cbuf) 
    {
-      write(cbuf, 0, cbuf.length);
+     try {
+         if (_encodeProperly) {
+            _bwriter.write(cbuf,0,cbuf.length);
+            _buffered = true;
+         } else {
+            int len = cbuf.length;
+            if (_buf.length < len) _buf = new byte[len];
+            for (int i = 0; i < len; i++) {
+               _buf[i] = (byte) cbuf[i];
+            }
+            _bstream.write(_buf,0,len);
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
+      }
+
    }
 
    /**
@@ -168,7 +183,7 @@ final public class FastWriter extends Writer
             for (int i = offset; i < end; i++) {
                _buf[i] = (byte) cbuf[i];
             }
-            _bstream.write(_buf,0,cbuf.length);
+            _bstream.write(_buf,0,len);
          }
       } catch (IOException e) {
          e.printStackTrace(); // never happens
@@ -202,11 +217,24 @@ final public class FastWriter extends Writer
       final int len = s.length();
       try{
       	s.getChars(0,len,_cbuf,0);
-      	write(_cbuf,0,len);
       } catch (IndexOutOfBoundsException e) {
         _cbuf = new char[len + (len - _cbuf.length)]; 
       	s.getChars(0,len,_cbuf,0);
-      	write(_cbuf,0,len);
+      }
+
+      try {
+         if (_encodeProperly) {
+            _bwriter.write(_cbuf,0,len);
+            _buffered = true;
+         } else {
+            if (_buf.length < len) _buf = new byte[len];
+            for (int i = 0; i < len; i++) {
+               _buf[i] = (byte) _cbuf[i];
+            }
+            _bstream.write(_buf,0,len);
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
       }
    }
 
@@ -218,11 +246,24 @@ final public class FastWriter extends Writer
    {
       try{
       	s.getChars(off,off + len,_cbuf,0);
-      	write(_cbuf,0,len);
       } catch (IndexOutOfBoundsException e) {
         _cbuf = new char[len + (len - _cbuf.length)]; 
       	s.getChars(off,off + len,_cbuf,0);
-      	write(_cbuf,0,len);
+      }
+
+      try {
+         if (_encodeProperly) {
+            _bwriter.write(_cbuf,0,len);
+            _buffered = true;
+         } else {
+            if (_buf.length < len) _buf = new byte[len];
+            for (int i = 0; i < len; i++) {
+               _buf[i] = (byte) _cbuf[i];
+            }
+            _bstream.write(_buf,0,len);
+         }
+      } catch (IOException e) {
+         e.printStackTrace(); // never happens
       }
    }
 
@@ -233,13 +274,9 @@ final public class FastWriter extends Writer
      */
    public void writeStatic(final String s) 
    {
-      if (_encodeProperly) {
-         if (_buffered) bflush();
-	 byte[] b = _cache.encode(s);
-         _bstream.write(b,0,b.length);
-      } else {
-         write(s,0,s.length());
-      }
+      if (_buffered) bflush();
+      byte[] b = _cache.encode(s);
+      _bstream.write(b,0,b.length);
    }
 
    /**
