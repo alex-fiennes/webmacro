@@ -30,6 +30,8 @@ final public class Broker
    public static final String WEBMACRO_DEFAULTS = "WebMacro.defaults";
    public static final String WEBMACRO_PROPERTIES = "WebMacro.properties";
 
+
+   private ClassLoader _classloader = null;
    final private Hashtable _providers = new Hashtable();
    final private Settings _config;
    final private String _name;
@@ -37,32 +39,32 @@ final public class Broker
    final private Log _log;
    final private ProfileCategory _prof;
 
-   static private Settings initSettings() throws InitException
+   static private Settings initSettings(ClassLoader cl) throws InitException
    {
       Settings defaults = new Settings();
       try {
-         defaults.load(WEBMACRO_DEFAULTS);
+         defaults.load(WEBMACRO_DEFAULTS,cl);
       } catch (java.io.IOException e) {
          throw new InitException("IO Error reading " + WEBMACRO_DEFAULTS, e);
       }
       return new Settings(defaults);
    }
 
-   static private Settings fileSettings(String name) throws InitException
+   static private Settings fileSettings(String name, ClassLoader cl) throws InitException
    {
       try {
-         Settings s = initSettings();
-         s.load(name);
+         Settings s = initSettings(cl);
+         s.load(name,cl);
          return s;
       } catch (IOException e) {
          throw new InitException("Error reading from " + name, e);
       }
    }
 
-   static private Settings urlSettings(URL u) throws InitException
+   static private Settings urlSettings(URL u, ClassLoader cl) throws InitException
    {
       try {
-         Settings s = initSettings();
+         Settings s = initSettings(cl);
          s.load(u);
          return s;
       } catch (IOException e) {
@@ -99,7 +101,16 @@ final public class Broker
      */
    public Broker() throws InitException
    {
-      this(fileSettings(WEBMACRO_PROPERTIES), WEBMACRO_PROPERTIES);
+      this(fileSettings(WEBMACRO_PROPERTIES,null), WEBMACRO_PROPERTIES, null);
+   }
+   
+   /**
+     * Initialize with a classloader
+     */
+
+   public Broker(ClassLoader cl) throws InitException
+   {
+      this(fileSettings(WEBMACRO_PROPERTIES,cl), WEBMACRO_PROPERTIES, cl);
    }
 
    /**
@@ -109,7 +120,11 @@ final public class Broker
      */
    public Broker(String fileName) throws InitException
    {
-      this(fileSettings(fileName), fileName);
+      this(fileSettings(fileName,null), fileName, null);
+   }
+   public Broker(String fileName, ClassLoader cl) throws InitException
+   {
+      this(fileSettings(fileName,cl), fileName, cl);
    }
 
    /**
@@ -119,7 +134,11 @@ final public class Broker
      */
    public Broker(URL url) throws InitException
    {
-      this(urlSettings(url), url.toString());
+      this(urlSettings(url,null), url.toString(), null);
+   }
+   public Broker(URL url, ClassLoader cl) throws InitException
+   {
+      this(urlSettings(url,null), url.toString(), cl);
    }
 
 
@@ -131,9 +150,10 @@ final public class Broker
      * @param config WebMacro's configuration settings
      * @param name Two brokers are the "same" if they have the same name
      */
-   public Broker(Settings settings, String name)
+   public Broker(Settings settings, String name, ClassLoader cl)
       throws InitException
    {
+      _classloader = cl;
       _config = settings;
       _name = name;
       _ls = LogSystem.getInstance(name);
@@ -195,6 +215,20 @@ final public class Broker
             _log.error("Provider (" + className + ") failed to load", e);
          }
       }
+   }
+
+   /**
+     * Return the classloader used by the broker.  This is not 
+     * necessarily the classloader for the Broker class but that
+     * passed in the optional consructor.
+     * The driving classes (e.g., a servlet) may have a different
+     * classloader from the webmacro classes.
+     */
+
+   public ClassLoader getClassLoader() {
+      return (_classloader==null) 
+        ? this.getClass().getClassLoader() 
+        : _classloader;
    }
 
    /**

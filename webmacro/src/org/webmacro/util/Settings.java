@@ -9,6 +9,7 @@ public class Settings {
 
    Properties _props;
    String _prefix;
+   private final boolean debugClassLoaders = true;
 
    /**
      * Create an empty Settings object
@@ -103,7 +104,15 @@ public class Settings {
      */
    public void load(String fileName, ClassLoader cl) throws InitException, IOException 
    {  
-      URL u = cl.getResource(fileName);
+      if (debugClassLoaders) {     
+          System.out.println("Loading settings from "+fileName);
+          System.out.println("Settings class ClassLoader: "+Settings.class.getClassLoader());
+          System.out.println("Given ClassLoader: "+cl);
+      }
+      URL u = null;
+      if (cl != null) {
+         u = cl.getResource(fileName);
+      }
       if (u == null) {
          u = ClassLoader.getSystemResource(fileName);
       }

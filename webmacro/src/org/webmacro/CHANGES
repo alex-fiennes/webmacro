@@ -1,5 +1,11 @@
+-- Jan-2000 fergus: upgraded WM, WMServlet & Broker to use the earlier change
+   to Settings.  By default WMSerlvet will pass through the classloader of the
+   servlet, which may be different from the classloader that loads in WebMacro
+   core classes
+
 -- Dec-2000 fergus: added Jakarta ant build file (in contrib).  This seems to
-   work better than the current make file which seems to need frequent cleaning.
+   work better than the current make file which seems to need frequent
+   cleaning.
 
 -- Dec-2000 fergus: Settings can be supplied with an external classloader.
    This might be needed if WebMacro.jar is in the System classpath, but

@@ -64,10 +64,20 @@ public class WM implements WebMacro
 
    public WM() throws InitException
    {
-      this(null);
+      this(null, null);
+   }
+   
+   public WM(ClassLoader cl) throws InitException
+   {
+      this(null, cl);
    }
 
+
    public WM(String config) throws InitException
+   {
+      this(config,null);
+   }
+   public WM(String config, ClassLoader cl) throws InitException
    {
       BrokerOwner owner = null;
       Broker broker = null;
@@ -78,7 +88,7 @@ public class WM implements WebMacro
             synchronized(_brokers) {
                owner = (BrokerOwner) _brokers.get(config);
                if (owner == null) {
-                  owner = new BrokerOwner(config);
+                  owner = new BrokerOwner(config, cl);
                   _brokers.put(config,owner);
                }
             }
@@ -277,12 +287,17 @@ final class BrokerOwner {
    /*final*/ String _config;
    private Broker _broker;
    private static int _brokerUsers = 0;
+   final private ClassLoader _classloader;
 
    BrokerOwner() {
-      this(null);
+      this(null,null);
+   }
+   BrokerOwner(String config) {
+      this(config,null);
    }
 
-   BrokerOwner(String config) {
+   BrokerOwner(String config, ClassLoader cl) {
+      _classloader = cl;
       _config = config;
       _broker = null;
       _brokerUsers = 0;
@@ -293,7 +308,7 @@ final class BrokerOwner {
       _brokerUsers++;
       if (_broker == null) {
          try {
-            _broker = (_config == null) ?  new Broker() : new Broker(_config);
+            _broker = (_config == null) ?  new Broker(_classloader) : new Broker(_config,_classloader);
          } catch (InitException e) {
 e.printStackTrace();
             _broker = null;
