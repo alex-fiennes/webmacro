@@ -1,4 +1,4 @@
-options { STATIC = false; USER_CHAR_STREAM = true; } 
+options { STATIC = false; USER_CHAR_STREAM = true; UNICODE_INPUT = true; } 
 
 PARSER_BEGIN(WMParser_impl)
 
