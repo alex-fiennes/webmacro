@@ -31,7 +31,7 @@ public class TestDirectiveParser extends TemplateTestCase {
   
   public void registerDirective(String name, String clazz) throws Exception {
     DirectiveProvider dp = (DirectiveProvider) _wm.getBroker().getProvider(DirectiveProvider.DIRECTIVE_KEY);
-    dp.register(clazz, name);
+    dp.registerDirective(clazz, name);
   }
 
   private static class BaseDirective extends Directive {
