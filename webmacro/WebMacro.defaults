@@ -359,3 +359,20 @@ getName,isArray,isPrimitive,isAssignableFrom,isInstance
 # Where does the servlet broker look for templates?  Default is the servlet
 # root, but you could put WEB-INF/templates here.
 Servlet22Broker.TemplateLocation=
+
+
+# Default settings for DelegatingTemplateProvider
+# First some template loaders
+
+TemplateLoader.default=org.webmacro.resource.FileTemplateLoader
+TemplateLoader.file=org.webmacro.resource.FileTemplateLoader
+TemplateLoader.classpath=org.webmacro.resource.ClassPathTemplateLoader
+TemplateLoader.broker=org.webmacro.resource.BrokerTemplateLoader
+TemplateLoader.webapp=org.webmacro.resource.Servlet22TemplateLoader
+
+# and a template loader factory
+TemplateLoaderFactory=org.webmacro.resource.DefaultTemplateLoaderFactory
+
+# To use it, uncomment the following settings
+#Providers.template: org.webmacro.resource.DelegatingTemplateProvider
+#TemplateLoaderPath.1=broker:
