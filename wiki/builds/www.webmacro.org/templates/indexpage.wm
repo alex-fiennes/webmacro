@@ -1,0 +1,42 @@
+#include as template "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120">
+		#parse "leftmenu.wm"
+	</td>
+
+	<td width="8">&nbsp;</td>
+
+    <td valign=top>
+        
+        #set $prefix=$User.Attribute.LastIndexPageLetter
+        #if ($Form.LETTER) { #set $prefix="$Form.LETTER" }
+        #set $abc = "*ABCDEFGIJKLMNOPQRSTUVWXYZ"
+
+        #foreach $letter in $abc.toCharArray() indexing $i from 0 {
+            #if ($i>0) { | }
+            #if ($prefix &&  ("$prefix"=="$letter" || "$prefix"=="" && "$letter"=="*")) {
+                <b>$letter</b>
+            } #else {
+                <a href="$Request.RequestURI?LETTER=$letter">$letter</a>
+            }
+        }
+        
+        #set $pages = $Wiki.getPages($prefix)
+        #set $currentLetter = ""
+        #foreach $page in $pages {
+            #set $firstLetter = "$page.charAt(0)"
+            #if (!$firstLetter.equalsIgnoreCase($currentLetter)) {
+                #set $currentLetter = $firstLetter
+                <p>
+                <table border=0 width="100%" cellspacing=0>
+                <tr><th align=left>$currentLetter</th></tr>
+                </table>
+            }
+            <a href="$page">$page</a><br>
+        }
+    </td>
+</tr>
+</table>
+#include as template "footer.wm"

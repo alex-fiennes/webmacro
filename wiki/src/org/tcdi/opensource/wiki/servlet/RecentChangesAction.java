@@ -136,6 +136,6 @@ public class RecentChangesAction implements PageAction {
      * no page name for this action
      */
     public String getWikiPageName(WikiSystem wiki, WebContext wc) {
-        return null;
+        return "RecentChanges";
     }
  }

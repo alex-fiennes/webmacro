@@ -51,11 +51,41 @@ import org.tcdi.opensource.wiki.renderer.*;
  * @author Eric B. Ridge
  */
 public interface WikiSystem extends WikiTermMatcher {
+
+    /**
+     * Represents a single entry in our Page Tree
+     */ 
+    public static class PageTreeEntry {
+        private final WikiPage _page;
+        private final int _depth;
+        
+        public PageTreeEntry (WikiPage page, int depth) {
+            _page = page;
+            _depth = depth;
+        }        
+        
+        public WikiPage getPage() {
+            return _page;
+        }
+        
+        public int getDepth() {
+            return _depth;
+        }
+    }
+
     /**
      * @param title the title of the WikiPage to retrieve.  This should be a propertly formed WikiTerm
      * @return the WikiPage of the specified title
      */
     public WikiPage getPage(String title);
+    
+    /**
+     * Return a list of all page names that begin with the specified string.  
+     * The special string "*" is understood to mean <i>all pages</i>. 
+     * So is <code>null</code> and the empty string.
+     */ 
+    public String[] getPages(String prefix);
+    
     
     /**
      * return a list of all page names, including names of deleted pages
@@ -227,4 +257,9 @@ public interface WikiSystem extends WikiTermMatcher {
      * in this wiki
      */
     public void indexCurrentPages () throws Exception;
+    
+    /**
+     * Returns a tree-like structure ordered by page links.
+     */ 
+    public List getPageTree();
 }

@@ -91,7 +91,7 @@ public class WikiUtil {
     /**
      * takes provided phrase and turns it into a WikiTerm by
      * .toUpperCase() first letter, and first letter of each word.
-     * Strips all non-alpha characters
+     * Strips all non-alphanumeric characters
      *
      * @param phrase a phrase to convert to a WikiTerm
      * @return a wiki-fied version of phrase
@@ -107,7 +107,7 @@ public class WikiUtil {
             if (x == 0 || chars[x-1] == ' ')
                 chars[x] = Character.toUpperCase(chars[x]);
             
-            if (Character.isLetter(chars[x]))
+            if (Character.isLetterOrDigit (chars[x]))
                 sb.append(chars[x]);
         }
         

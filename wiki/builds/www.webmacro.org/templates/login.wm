@@ -1,5 +1,5 @@
 #set $PageName = "Log In"
-#parse "header.wm"
+#include as template "header.wm"
 
 <br>
 <table border=0 align=center>
@@ -34,4 +34,4 @@
 </table>
 </form>
 
-#parse "footer.wm"
+#include as template "footer.wm"

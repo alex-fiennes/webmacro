@@ -79,6 +79,7 @@ final public class Wiki implements WikiSystem, QueueListener {
     /** array of all valid page names */
     private volatile String[] _pageNames;
     private volatile Map _pageLookup;
+    private List _pageTree;
 
     /** the page renderer this Wiki is configured to use */
     private WikiPageRenderer _pageRenderer;
@@ -100,6 +101,22 @@ final public class Wiki implements WikiSystem, QueueListener {
 
     public WikiPage getPage(String title) {
         return (WikiPage) _pageStore.get(title);
+    }
+
+    public String[] getPages(String prefix) {
+        String[] names = getCurrentPageNames();
+        if (prefix == null || prefix.trim().length() == 0)
+            prefix = "*";
+        
+        prefix = prefix.toLowerCase();
+        List l = new ArrayList();
+        for (int x=0; x<names.length; x++) {
+            if (prefix.equals("*") || names[x].toLowerCase().startsWith(prefix)) {
+                l.add (names[x]);
+            }
+        }
+        
+        return (String[]) l.toArray(new String[l.size()]);
     }
 
     public Enumeration getPageNames() {
@@ -137,6 +154,10 @@ final public class Wiki implements WikiSystem, QueueListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        synchronized (this) {
+            _pageTree = null;
+        }
     }
 
     public void indexCurrentPages() throws Exception {
@@ -165,6 +186,10 @@ final public class Wiki implements WikiSystem, QueueListener {
         // remove the page
         _pageStore.remove(title);
         populatePageNames();
+
+        synchronized (this) {
+            _pageTree = null;
+        }
     }
 
     public void renamePage(String oldName, String newName) {
@@ -411,14 +436,16 @@ final public class Wiki implements WikiSystem, QueueListener {
         page.setWikiData(tmp.getData());
         this.savePage(page);
     }
-
+    
     /**
      * Is the specified String a Wiki page reference?
      */
     public boolean isWikiTermReference(String word) {
         char[] chars = word.toCharArray();
-        int ucase = 0, lcase = 0;
+        int ucase = 0, lcase = 0;  
 
+        
+        
         // does the word end in a backwards tick?
         if (chars[chars.length - 1] == '`')
             return true;
@@ -452,4 +479,52 @@ final public class Wiki implements WikiSystem, QueueListener {
     public String getStartPage() {
         return _properties.getProperty("StartPage").trim();
     }
+
+    public synchronized List getPageTree() {
+        if (_pageTree == null) {
+            _pageTree = new ArrayList();            
+            Map lookup = new HashMap();
+            String[] pageNames = getCurrentPageNames();
+            for (int x=0; x<pageNames.length; x++) {
+                String name = pageNames[x];
+                    WikiPage wiki_page = getPage(name);
+                    if (wiki_page == null)
+                        continue;
+    
+                    if (!lookup.containsKey(name)) {
+                        _pageTree.add (new WikiSystem.PageTreeEntry(wiki_page, 0));
+                        lookup.put(name, null);
+                        addChildren (_pageTree, lookup, wiki_page, 0);
+                    }
+            }
+            lookup.clear(); // no longer needed
+        }
+        
+        return _pageTree;
+    }
+    
+    private void addChildren(List pages, Map lookup, WikiPage root, int depth) {
+        WikiData[] data = root.getData();
+        for (int x=0; x<data.length; x++) {
+            switch (data[x].getType()) {
+                case WikiDataTypes.PAGE_REFERENCE:
+                    WikiPage wiki_page = getPage((String) data[x].getData());
+                    if (wiki_page == null)
+                        continue;
+                    
+                    String name = wiki_page.getTitle();
+                    if (!lookup.containsKey(name)) {
+                        pages.add (new PageTreeEntry(wiki_page, depth+1));
+                        lookup.put (name, null);
+                        addChildren (pages, lookup, wiki_page, depth+1);
+                    }
+                    
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+    }
+ 
 }

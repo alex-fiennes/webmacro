@@ -51,7 +51,6 @@ import org.webmacro.*;
 import org.webmacro.servlet.*;
 
 import org.tcdi.opensource.wiki.*;
-import org.tcdi.opensource.util.*;
 
 /**
  * The main servlet for Wiki
@@ -72,7 +71,6 @@ public class WikiServlet extends WMServlet {
     /** the PageActionManager we should use for each page request */
     private PageActionManager _actionManager;
     
-
     /**
      * do necessary statup work like creating a Log and configuring
      * the various options of WikiServet
@@ -132,6 +130,7 @@ public class WikiServlet extends WMServlet {
         } catch (Exception e) {
             // something bad happened while performing the action
             // TODO: Handle error and error template ourselves
+            e.printStackTrace();
             throw new HandlerException (e.toString());
         } finally {
             if (user != null)

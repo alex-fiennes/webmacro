@@ -28,11 +28,15 @@
                   || <a href="ControllerPage?delete=$Page.Title"><span class="Options">Delete page</span></a>
                }
                
-               || <a href="ControllerPage?logout=true"><span class="Options">Log Out</span></a>
+               || 
             }
          } #elseif (!$User) {
               <a href="?login=true"><span class="Options">Log in</span></a>
               || <a href="?register=true" class="Options">Register</a>
+         }
+         
+         #if ($User) {
+            <a href="ControllerPage?logout=true"><span class="Options">Log Out</span></a>
          }
    </td>
       

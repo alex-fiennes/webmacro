@@ -25,7 +25,6 @@ public class UserListAction extends AdminAction {
     }
 
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
-        // nothing to do here
         String prefix = wc.getForm("PREFIX");
         if (prefix != null)
             user.setAttribute("LastUserListLetter", prefix);

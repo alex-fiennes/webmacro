@@ -1,0 +1,32 @@
+#include as template "header.wm"
+
+$PageTree.size() pages
+<table border=0 cellpadding=3 cellspacing=1 width="100%">
+<tr>
+    <th>Page</th>
+    <th>Author</th>
+    <th>Last Modified</th>
+</tr>
+<tr>
+#alternate $bgcolor through ["#efefef", "#ffffff"]
+#foreach $entry in $PageTree {
+    <tr bgcolor="$bgcolor">
+        <td nowrap width="100%">
+            #count $i from 1 to $entry.Depth {
+                &nbsp;&nbsp;
+            }
+            <a href="$entry.Page.Title">$entry.Page.Title</a></td>
+        </td>
+    
+        <td>
+            #set $author = $Wiki.getUser($entry.Page.Author)
+            #if ($author) {
+                $author.Name
+            }
+        </td>
+        
+        <td nowrap>$entry.Page.DateLastModified</td>
+    </tr>
+}
+</table>
+#include as template "footer.wm"

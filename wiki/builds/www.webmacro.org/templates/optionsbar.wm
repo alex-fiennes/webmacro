@@ -13,6 +13,10 @@
                  <a href="?login=true"><span class="Options">Log in</span></a>
                  || <a href="?register=true" class="Options">Register</a>
             }
+            
+            #if ($User && $Wiki.isAdministrator($User)) {
+                #parse "adminoptionsbar.wm"
+            }
       </td>
 
    <td width=15>&nbsp;</td>
@@ -48,6 +52,3 @@
    <td bgcolor="#000000" height=1></td>
 </tr>
 </table>
-#if (($User) && ($Wiki.isAdministrator($User))) {
-   #parse "adminoptionsbar.wm"
-}

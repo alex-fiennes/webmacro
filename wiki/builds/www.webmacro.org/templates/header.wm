@@ -61,4 +61,4 @@ $WikiUtil.unformatWikiTitle($PageName)</title>
 </tr>   
 </table>
 
-#parse "optionsbar.wm"
+#include as template "optionsbar.wm"
