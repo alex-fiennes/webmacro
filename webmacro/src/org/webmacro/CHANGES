@@ -1,3 +1,9 @@
+-- Oct-2000 brian: Break out StringMacroAdapter from MacroAdapter; 
+   break out {Escape,Encode,Silence}Filter from their respective directives;
+   make BlockBuilder flatten embedded blocks (but still doesn't fully
+   combine all strings across block boundaries); new directives 
+   (silence, encode, escape, tool, global, property, attribute, param)
+
 -- Oct-2000 fergus: added URLTemplate+Provider (moved by Justin into 
    org.webmacro.resource, see below).  URLTemplateProvider is a
    replacement for TemplateProvider which allows templates to be
