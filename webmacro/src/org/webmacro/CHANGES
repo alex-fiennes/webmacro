@@ -1,4 +1,8 @@
 
+-- Nov-2000 justin: Fixed a character encoding bug and added in a 
+   new template directive. You can now set the encoding for an input
+   file with TemplateEncoding in your WebMacro.properties file. 
+
 -- Nov-2000 justin: Revised the profiling code, removed the interfaces
    and created final classes. Fixed a bug in FastWriter on some 
    platforms (which don't support UTF16-le). Sped up EncodingCache

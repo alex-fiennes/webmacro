@@ -256,7 +256,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
         if (timing) context.startTiming("WMServlet.destroyContext()");
         try { destroyContext(context); }
-        finally { if (timing) context.stopTiming(); }
+        finally { 
+           if (timing) context.stopTiming(); 
+        }
       } catch (HandlerException e) {
          if (context == null) {
             context = _wcPrototype.newInstance(req,resp);
