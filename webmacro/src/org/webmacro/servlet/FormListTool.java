@@ -38,7 +38,6 @@ public class FormListTool implements ContextTool
       try {
          WebContext wc = (WebContext) context;
          FormList fl = new FormList(wc.getRequest());
-         wc.put("FormList", fl);
          return fl;
       } catch (ClassCastException ce) {
          throw new InvalidContextException(

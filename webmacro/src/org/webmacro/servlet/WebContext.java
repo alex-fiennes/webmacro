@@ -65,19 +65,7 @@ final public class WebContext extends Context
    HttpServletResponse _response = null;
 
    // property interface fields that are lazily set, non-final, and private
-
-   /**
-     * Find the name of a tool given the name of a class
-     */
-   private String getToolName(String cname)
-   {
-      int start = cname.lastIndexOf('.') + 1;
-      int end = (cname.endsWith("Tool")) ? 
-         (cname.length() - 4) : cname.length();
-      String ret = cname.substring(start,end);
-      return ret;
-   }
-               
+              
    /**
      * Construct a new WebContext. This class will be loaded with a set
      * of tools and other things, which can be configured. Actual 
@@ -90,41 +78,13 @@ final public class WebContext extends Context
       super(broker);
       try {
          String tools = (String) broker.getValue("config","TemplateTools");
-         Enumeration tenum = new StringTokenizer(tools);
-         while (tenum.hasMoreElements()) {
-            String toolName = (String) tenum.nextElement();
-            try {
-               Class toolType = Class.forName(toolName);
-               String varName = getToolName(toolName);
-               Macro tool = (Macro) toolType.newInstance(); 
-               addTool(varName,tool);
-            } catch (ClassCastException cce) {
-               _log.exception(cce);
-               _log.error("Tool class " + toolName 
-                     + " newInstance returns invalid type.");
-            } catch (ClassNotFoundException ce) {
-               _log.exception(ce);
-               _log.error("Tool class " + toolName + " not found: " + ce);
-            } catch (IllegalAccessException ia) {
-               _log.exception(ia);
-               _log.error("Tool class and methods must be public for "
-                     + toolName + ": " + ia);
-            } catch (InvalidContextException e) {
-               _log.exception(e);
-               _log.error("InvalidContextException thrown while registering "
-                     + "Tool: " + toolName);
-            } catch (InstantiationException ie) {
-               _log.exception(ie);
-               _log.error("Tool class " + toolName + " must have a public zero "
-                     + "argument or default constructor: " + ie);
-            }
-         }
-      } catch (NotFoundException e) {
-         _log.exception(e);
-         _log.error("Could not locate TemplateTools in config: " + e);
-      } catch (InvalidTypeException e) {
-         _log.exception(e);
-         _log.error("Could not access config: " + e);
+         addTools(tools);
+      } catch (InvalidTypeException it) {
+         _log.exception(it);
+         _log.error("config type not registered with broker!");
+      } catch (NotFoundException ne) {
+         _log.exception(ne);
+         _log.warning("could not load tools from config: " + ne);
       }
    }
 

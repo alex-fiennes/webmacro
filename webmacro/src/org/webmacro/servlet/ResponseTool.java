@@ -1,4 +1,5 @@
 
+
 /*
  * Copyright (c) 1998, 1999 Semiotek Inc. All Rights Reserved.
  *
@@ -28,18 +29,17 @@ import javax.servlet.*;
 /**
   * Provide Template with access to form data.
   */
-public class SessionTool implements ContextTool
+public class ResponseTool implements ContextTool
 {
    public Object init(Context context) 
       throws InvalidContextException
    {
       try {
          WebContext wc = (WebContext) context;
-         HttpSession s = wc.getRequest().getSession(true);
-         return s;
+         return wc.getResponse();
       } catch (ClassCastException ce) {
          throw new InvalidContextException(
-               "SessionTool only works with WebContext: " + ce);
+               "This only works with WebContext: " + ce);
       }
    }
 }

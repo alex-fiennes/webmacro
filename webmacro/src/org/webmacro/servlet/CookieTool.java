@@ -38,7 +38,6 @@ public class CookieTool implements ContextTool
       try {
          WebContext wc = (WebContext) context;
          CookieJar fl = new CookieJar(wc.getRequest(), wc.getResponse());
-         wc.put("Cookie", fl);
          return fl;
       } catch (ClassCastException ce) {
          throw new InvalidContextException(
