@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application>
+   <templates>
+      <template name="Login.wm" is-new-session="true"/>
+   </templates>
+
+   <components>
+      <component class="Authenticator" persistence="application">
+         <action name="Login" method="login(String userName, String password)"/>
+      </component>
+   </components>
+</application>
