@@ -18,10 +18,10 @@ final class EqualConditionBuilder implements Builder {
       l = _l.build(pc);
       r = _r.build(pc);
 
-      boolean lcond = (l instanceof Condition);
-      boolean rcond = (r instanceof Condition);
+      boolean lmacro = (l instanceof Macro);
+      boolean rmacro = (r instanceof Macro);
 
-      if (!lcond && !rcond) {
+      if (!lmacro && !rmacro) {
          if ((l == null) || (r == null)) {
             return (l == r) ? Boolean.TRUE : Boolean.FALSE;
          } else {
@@ -29,14 +29,14 @@ final class EqualConditionBuilder implements Builder {
          }
       }
 
-      if (lcond && rcond) {
-         return new EqualCondition((Condition) l, (Condition) r);
+      if (lmacro && rmacro) {
+         return new EqualCondition((Macro) l, (Macro) r);
       }
 
-      if (lcond) {
-         return new EqualConstantCondition((Condition) l, r);
+      if (lmacro) {
+         return new EqualConstantCondition((Macro) l, r);
       } else {
-         return new EqualConstantCondition((Condition) r, l);
+         return new EqualConstantCondition((Macro) r, l);
       }
    }
 }
@@ -47,8 +47,8 @@ final class EqualConditionBuilder implements Builder {
   */
 final class EqualCondition extends Condition implements Macro {
 
-   private final Condition _l,_r;
-   EqualCondition(Condition l, Condition r) { _l = l; _r = r; }
+   private final Macro _l,_r;
+   EqualCondition(Macro l, Macro r) { _l = l; _r = r; }
 
    public final boolean test(Object context) {
       Object left, right;
@@ -68,16 +68,22 @@ final class EqualCondition extends Condition implements Macro {
 /**
   * Utility class
   */
-final class EqualConstantCondition extends Condition {
+final class EqualConstantCondition extends Condition implements Macro {
 
-   private final Condition _l;
+   private final Macro _l;
    private final Object _r;
-   EqualConstantCondition(Condition l, Object r) { _l = l; _r = r; }
+   EqualConstantCondition(Macro l, Object r) {
+      _l = l; _r = r; 
+   }
 
    public final boolean test(Object context) {
       Object left;
-      try { left = _l.evaluate(context); }
-      catch (Exception e) { left = null; }
+      try { 
+         left = _l.evaluate(context); 
+      }
+      catch (Exception e) { 
+         left = null; 
+      }
 
       if ((left == null) || (_r == null)) {
          return (left == _r);

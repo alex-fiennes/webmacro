@@ -46,5 +46,9 @@ final class TermCondition extends Condition implements Macro {
          return false;
       }
    }
+
+   final public String toString() {
+      return "TermCondition:" + _term;
+   }
 }
 

@@ -113,6 +113,9 @@ public class StreamTemplate extends WMTemplate
                        new TestObject("peach",false),
                        new TestObject("lime",true) };
 
+      SelectList sl = new SelectList(fruits, 3);
+      context.put("sl-fruits", sl);
+
       context.put("fruits", fruits);
       context.put("flipper", new TestObject("flip",false));
 
