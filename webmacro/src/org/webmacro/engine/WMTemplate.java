@@ -188,8 +188,8 @@ abstract public class WMTemplate implements Template
          ByteArrayOutputStream os = new ByteArrayOutputStream(512); 
          FastWriter fw = new FastWriter(os, "UTF8");
          write(fw,data);
-			fw.flush();
-   	   return os.toString("UTF8");
+	 fw.flush();
+   	 return os.toString("UTF8");
       } catch (IOException e) {
          _log.exception(e);
          _log.error("Template: Could not write to ByteArrayOutputStream!");
