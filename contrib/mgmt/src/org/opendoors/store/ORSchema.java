@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
+ * Copyright (C) 1998-2000 Open Doors Software.  All Rights Reserved.  
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
@@ -23,8 +23,10 @@
 package org.opendoors.store;
 import java.util.*;
 import java.sql.*;
+import java.io.Serializable;
 
-public class ORSchema {
+
+public class ORSchema  implements Serializable {
 
   public static final MapType BOOLEAN_MAP = 
       new MapType(Boolean.class, Types.BIT, "number(1)", "boolean");
@@ -34,6 +36,9 @@ public class ORSchema {
     
   public static final MapType LONG_MAP = 
       new MapType(Long.class, Types.BIGINT, "number", "long");
+
+  /** The serial UID. */
+	static final long serialVersionUID = 0L;
 
   /** Factory method for an ORSchema.Entry */
   public static ORSchema.Entry getEntry() { return new ORSchema.Entry(); }
@@ -46,7 +51,7 @@ public class ORSchema {
   * maps from jdbc to java and from java to jdbc supported
   * by the type mapping.
   */
-  public static class MapType {
+  public static class MapType implements Serializable {
     
     private Class implClass;
     private int jdbcType;
@@ -54,6 +59,9 @@ public class ORSchema {
     private String javaType;
     private String formalJavaName;
     
+  	/** The serial UID. */
+	  static final long serialVersionUID = 0L;
+
     public MapType(Class implClass, int jdbcType, String sqlType,
                     String javaType) {
       this.implClass = implClass;
@@ -94,18 +102,22 @@ public class ORSchema {
     
     protected String getSQLDataRead(Entry entry) {
       StringBuffer value = new StringBuffer(entry.name);
-      value.append(" = stream.read").append(formalJavaName).append("()");
+      value.append(" = stream.read").append(formalJavaName).append("();");
       return value.toString();
     }
    
   }
   
-  public static class Entry {
+  public static class Entry implements Serializable {
     public MapType type;
     public  String name;
     public int length;
     protected Record owner;
-    
+  
+	  /** The serial UID. */
+  	static final long serialVersionUID = 0L;
+
+
     public String getSQLDeclaration() {
       return type.getSQLDeclaration(this);
     }
@@ -120,8 +132,11 @@ public class ORSchema {
     }
   }
   
-  public static class Record extends ArrayList {
+  public static class Record extends ArrayList implements Serializable {
     
+	  /** The serial UID. */
+  	static final long serialVersionUID = 0L;
+
     private HashSet fieldSet = new HashSet(10);
     private String recordName;
     private String schemaName;
@@ -146,6 +161,8 @@ public class ORSchema {
         return super.add(element);
     }
     
+    // implement remove semantic properly here...
+    
     public void setName(String recordName) {
       this.recordName = recordName;
     }
@@ -161,6 +178,6 @@ public class ORSchema {
     public String getSchemaName() {
       return schemaName;
     }
-    
+   
   }                                          
 }

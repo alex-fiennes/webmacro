@@ -1,0 +1,70 @@
+## For $GenerationTarget, generate a java class implementing SQLData
+#bean $Now = "Date" page
+/*
+ * Class Generation Performed By The Open Doors Software Persistence Module with
+ * support from the WebMacro Community and WebMacro Software Project.
+ * Date and Time of Generation: $Now
+ * WebMacro Version: 1.0rc1.
+ */
+package $(PackageName);
+import java.sql.*;
+
+/**
+ * $GenerationTarget.Name is a class which
+ * implements sql persistence via the java.sql.SQLData interface.
+ * <p>
+ * It exposes the data instance members on a public
+ * basis for introspection and access purposes. There
+ * is no special behavior associated with this class.
+ * <p>
+ * It is expected that subclasses would wrap this class with specific
+ * behaviors on the data values as required.
+ * <p>
+ * This class is automatically generated. Changes made by hand are not
+ * preserved from one generation run to the next.
+ * @see org.opendoors.store.ORSchema
+ * @see org.opendoors.store.SQLDataDef.tml
+ */
+public class $GenerationTarget.Name implements SQLData {
+
+#foreach $element in $GenerationTarget {
+  public $element.JavaMemberDeclaration
+}
+  
+  /** The name of the sql type for the jdbc sql map. */
+  public static final String SQL_MAP_NAME = "$(GenerationTarget.SchemaName).$(GenerationTarget.Name)";
+
+  /** The public constructor. */
+  public $(GenerationTarget.Name)() {}
+  
+  // the SQL Data interface.
+  /**
+   * Gets the map name found used in the database.
+   * @see java.sql.SQLData
+   * @return The map name found in the sql schema which by convention
+   * is the name of the class. 
+   */
+  public String getSQLTypeName() throws SQLException {
+    return SQL_MAP_NAME;
+  }
+
+  /**
+   * Writes the members in proper order to the sql stream.
+   */
+  public void writeSQL(SQLOutput stream) throws SQLException {
+
+#foreach $element in $GenerationTarget {
+    $element.SQLDataWrite
+}
+  }
+  /**
+   * Reads the sql stream in proper order into the members.
+   */
+  public void readSQL(SQLInput stream, String sqlTypeName) throws SQLException {
+
+#foreach $element in $GenerationTarget {
+    $element.SQLDataRead
+}
+  }
+}
+

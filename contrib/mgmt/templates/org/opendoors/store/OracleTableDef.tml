@@ -1,0 +1,7 @@
+## For $GenerationTarget and $TableTarget, generate an oracle table
+create table $TableTarget (
+
+#foreach $element in $GenerationTarget {
+  $element.SQLDeclaration
+}
+);

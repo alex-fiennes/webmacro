@@ -11,6 +11,9 @@
   <property name="dist"           value="mgmt"/>
   <property name="javadoc"        value="javadoc"/>
   <property name="jar"            value="${app.name}.jar"/>
+  <property name="dir.templates" value="templates" />
+  <property name="file.resources" value="resources.jar" />
+  
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
@@ -60,9 +63,13 @@
       <classpath refid="class.path" />
     </javadoc>
   </target>
+  
+  <target name="resources" >
+      <jar jarfile="${file.resources}"
+             basedir="${dir.templates}" />
+  </target>
 
-
-  <target name="jar" depends="prepare,compile">
+  <target name="jar" depends="prepare,compile,resources">
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
          includes="src/**,build.xml"/>
