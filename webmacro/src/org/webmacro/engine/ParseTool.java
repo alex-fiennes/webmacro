@@ -112,7 +112,7 @@ final class ParseTool
    /**
      * Create a parseTool that reads from the supplied input stream
      */
-   ParseTool(String name, InputStream in) {
+   ParseTool(String name, InputStream in) throws IOException {
       this(name, new InputStreamReader(in));
    }
 
@@ -121,7 +121,7 @@ final class ParseTool
      * The supplied name is used in error messages, to identify
      * the source of the input.
      */
-   ParseTool(String name, Reader inputStream) 
+   ParseTool(String name, Reader inputStream) throws IOException
    {
       _escaped = false;
       _name = name;
@@ -132,7 +132,9 @@ final class ParseTool
       for (int i = 0; i < MAX_MARKS; i++) {
          _marks[i] = new Mark();
       }
-      read(); // get it started (read the extra newline)
+      read(); // initialize the parsetool
+      parseChar('\n'); // toss this away, it's bogus (ParseTool thinks this is 
+                       // the start of a newline since the buffer was empty
    }
 
 
