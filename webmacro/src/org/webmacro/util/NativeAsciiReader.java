@@ -7,9 +7,9 @@ import java.io.IOException;
  * Reads a file that has been encoded with Java's unicode escape syntax,
  * typically converted with native2ascii.
  *
- * All character sequences like \uxxxx will be converted to a single unicode
+ * All character sequences like \\uxxxx will be converted to a single unicode
  * character.  Other '\' escaped characters will be passed unchanged. An
- * error will be thrown if the \u is not followed by 4 hexadecimal characters
+ * error will be thrown if the \\u is not followed by 4 hexadecimal characters
  *
  *
  */
