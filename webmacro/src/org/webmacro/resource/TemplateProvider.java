@@ -144,6 +144,7 @@ final public class TemplateProvider extends CachingProvider
          t = new FileTemplate (_broker, tFile);
          t.parse ();
          _lastModifiedCache.put (fileName, new Long (tFile.lastModified()));
+         return t;
       }
       catch (NullPointerException npe) {
          _log.warning ("TemplateProvider: Template not found: " + fileName, npe);
@@ -154,7 +155,7 @@ final public class TemplateProvider extends CachingProvider
          _log.warning ("TemplateProvider: Error occured while getting " + fileName, e);
       }
 
-      return t;
+      return null;
    }
    
    /**
