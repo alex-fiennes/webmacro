@@ -246,66 +246,6 @@ final public class PropertyOperatorCache
             return getOperator(instance).findIterator(instance);
     }
 
-    public static class Wrapper
-    {
-
-        private Map params = new Hashtable();
-
-        public String getParameters( String key )
-        {
-            return (String) params.get( key );
-        }
-
-        public void setParameters( String key, Object value )
-        {
-            params.put( key, value );
-        }
-    }
-
-    public static class Wrapper2
-    {
-
-        private Map params = new Hashtable();
-
-        public Wrapper2()
-        {
-            this.params.put( "Parameters", new Hashtable() );
-        }
-
-        public Object get( Object key )
-        {
-            return params.get( key );
-        }
-
-        public void put( Object key, Object value )
-        {
-            params.put( key, value );
-        }
-    }
-
-    public static void main( String[] args )
-    {
-        final String templateText =
-                "#set $test.Parameters.Name = 'marc'\n" +
-                "#set $test2.Parameters.Name = 'eric'\n" +
-                "Current value is: $test.Parameters.Name\n"+
-                "Current value2 is: $test2.Parameters.Name\n";
-        try
-        {
-            WebMacro wm = new WM( "testconfig.properties" );
-            Template t = new StringTemplate( wm.getBroker(), templateText );
-            Context context = wm.getContext();
-            context.put( "test", new Wrapper() );
-            context.put( "test2", new Wrapper2() );
-            t.write( System.out, context );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
-
-    }
-
 }
 
 
