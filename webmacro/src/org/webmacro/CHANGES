@@ -1,3 +1,5 @@
+-- Jan-2000 eric: setup of new CVS server @ TCDI
+
 -- Jan-2000 fergus: added setParam() in org.webmacro.Template.  The particular 
    need is for templates (and/or providers) to be able to pass arbitrary
    parameters back to the playout routine (e.g., WMServlet), such as encoding
