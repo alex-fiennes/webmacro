@@ -18,76 +18,147 @@
  * assume all risks and liabilities associated with its use.
  *
  * See www.webmacro.org for more information on the WebMacro project.
+ *
+ * @author Marcel Huijkman
+ *
+ * @version	17-07-2002
+ *
  */
+
+/*
+	ChangeLog:
+
+	17-07-2002
+	setting for WebMacro.properties added
+	LogFilePerDay
+		usage:
+			LogFilePerDay=FALSE or TRUE
+
+	LogFileAutoFlush
+		usage:
+			LogFileAutoFlush=FALSE or TRUE
+	(Notice: Only handy when developing on a Operating system, that buffers file-writing,
+	not recommended for production, since it obviously slows down the machine.)
+
+*/
 
 
 package org.webmacro.util;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 
 public class LogFile extends AbstractLogFile {
 
-   private PrintStream _out;
+	private PrintStream _out;
+	private boolean _logFilePerDay = false;
+	private boolean _logFileAutoFlush = false;
+	private String _prevLogDate = "";
+	private String _actLogDate = "";
+	private SimpleDateFormat _logFileSuffix = new SimpleDateFormat( "_yyyyMMdd" );
+	private String _orgLogFile = "";
 
-   /**
-    * Create a new LogFile instance.
-    */
-   public LogFile(Settings s) throws FileNotFoundException {
-      super(s);
-      init(s.getSetting("LogFile"));
-   }
+	/**
+	 * Create a new LogFile instance.
+	 */
+	public LogFile( Settings s ) throws FileNotFoundException {
+		super( s );
+		init( s.getSetting( "LogFile" ) );
 
-   public LogFile(String fileName) throws FileNotFoundException {
-      init(fileName);
-   }
+		String strLogFilePerDay = s.getSetting( "LogFilePerDay" );
 
-   private void init(String fileName) throws FileNotFoundException {
-      if ((fileName == null)
-            || (fileName.equalsIgnoreCase("system.err")
-            || fileName.equalsIgnoreCase("none")
-            || fileName.equalsIgnoreCase("stderr"))) {
-         _out = System.err;
-         _name = "System.err";
-      }
-      else {
-         _out = new PrintStream(new BufferedOutputStream(
-               new FileOutputStream(fileName, true)));
-         _name = fileName;
-      }
-      if (_defaultLevel <= LogSystem.NOTICE) {
-         log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---",
-             null);
-      }
-   }
+		if ( strLogFilePerDay != null ) {
+			if ( strLogFilePerDay.equals( "TRUE" ) ) {
+				_logFilePerDay = true;
+			}
+		}
+		String strLogFileAutoFlush = s.getSetting( "LogFileAutoFlush" );
+		if ( strLogFileAutoFlush != null ) {
+			if ( strLogFileAutoFlush.equals( "TRUE" ) ) {
+				_logFileAutoFlush = true;
+			}
+		}
+	}
 
-   /**
-    * Create a new LogFile instance
-    */
-   public LogFile(PrintStream out) {
-      _out = out;
-      _name = out.toString();
-   }
+	public LogFile( String fileName ) throws FileNotFoundException {
+		init( fileName );
+	}
 
-   private Object[] _args = new Object[4];
+	private void init( String fileName ) throws FileNotFoundException {
+		if ( ( fileName == null )
+			|| ( fileName.equalsIgnoreCase( "system.err" )
+			|| fileName.equalsIgnoreCase( "none" )
+			|| fileName.equalsIgnoreCase( "stderr" ) ) ) {
+			_out = System.err;
+			_name = "System.err";
+		}
+		else {
+			if ( _logFilePerDay ) {
+				// change logfilename if a logfile per day is wanted
+				_orgLogFile = fileName;
+				_actLogDate = _logFileSuffix.format( Calendar.getInstance().getTime() );
+				_prevLogDate = _actLogDate;
+				fileName += _actLogDate;
+			}
 
-   public void log(Date date, String name, String level, String message, Exception e) {
-      synchronized (_args) {
-         _args[0] = date;
-         _args[1] = name;
-         _args[2] = level;
-         _args[3] = message;
-         _out.println(_mf.format(_args));
-         if (_trace && (e != null)) {
-            e.printStackTrace(_out);
-         }
-      }
-   }
+			_out = new PrintStream( new BufferedOutputStream(
+				new FileOutputStream( fileName, true ) ) );
+			_name = fileName;
+			if ( _orgLogFile.length() == 0 ) {
+				_orgLogFile = fileName;
+			}
+		}
+		if ( _defaultLevel <= LogSystem.NOTICE ) {
+			log( Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---",
+				  null );
+		}
+	}
 
-   public void flush() {
-      _out.flush();
-   }
+	/**
+	 * Create a new LogFile instance
+	 */
+	public LogFile( PrintStream out ) {
+		_out = out;
+		_name = out.toString();
+	}
+
+	public void log( Date date, String name, String level, String message, Exception e ) {
+		Object[] _args = new Object[ 4 ];
+
+		if ( _logFilePerDay ) {
+			_actLogDate = _logFileSuffix.format( Calendar.getInstance().getTime() );
+			if ( !_actLogDate.equals( _prevLogDate ) ) {
+				try {
+					init( _orgLogFile );
+				}
+				catch ( FileNotFoundException f_ex ) {
+					System.out.println("Logfile " + _name + " not found");
+				}
+			}
+		}
+
+		synchronized ( _args ) {
+			_args[ 0 ] = date;
+			_args[ 1 ] = name;
+			_args[ 2 ] = level;
+			_args[ 3 ] = message;
+			_out.println( _mf.format( _args ) );
+			if ( _trace && ( e != null ) ) {
+				e.printStackTrace( _out );
+			}
+
+			if ( _logFileAutoFlush ) {
+				flush();
+			}
+		}
+	}
+
+	public void flush() {
+		_out.flush();
+	}
 
 }
+
 
 
