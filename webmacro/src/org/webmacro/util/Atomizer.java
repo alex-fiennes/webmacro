@@ -32,6 +32,15 @@ final public class Atomizer {
    }
 
    /**
+     * Get the atomic number for o. If o does not have an atomic 
+     * number return -1.
+     */
+   public int lookup(Object o) {
+      Integer atom = (Integer) _atoms.get(o);
+      return (atom != null) ? atom.intValue() : -1;
+   }
+
+   /**
      * Put an object in the atomizer, return its atomic number.
      * You will need this atomic number later to access the object.
      * If the object is already in the atomizer you will get back
@@ -47,7 +56,6 @@ final public class Atomizer {
          }
          i = atom.intValue();
          if (_max == _values.length) {
-            System.out.println("expanding space");
             int newM = _max * 2 + 1;
             Object[] newV = new Object[newM];
             System.arraycopy(_values,0,newV,0,_max);
