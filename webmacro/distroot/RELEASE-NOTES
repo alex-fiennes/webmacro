@@ -24,6 +24,12 @@ Changes in this Release
 - WEB-INF/ searched for WebMacro.properties before any other resource
 location is searched for 2.2+ servlet containers.
 
+- Parser fixes related to line/column numbers and excessive #'s
+
+- More test cases
+
+- Workarounds for encoding issues with Resin
+
 
 Recent Changes in rc1 and rc2
 -----------------------------
