@@ -24,33 +24,31 @@ import org.webmacro.util.*;
 import org.webmacro.*;
 
 /**
-  * Exception raised on discovery of a parsing error. To facilitate error
-  * recovery, you can extract the parseTool from this error. 
+  * Exception raised on discovery of a parsing error. 
   */
-public final class ParseException extends TemplateException
+public class ParseException extends TemplateException
 {
 
-   /**
-     * We store the parseTool to assist with error recovery
-     */
-   private ParseTool in;
+  public ParseException() {
+    super();
+  }
 
    /**
      * Create a new exception
-     * <p>
-     * @param in the parseTool we were reading that contained unparasable data
-     * @param reason what exactly failed in our attempt to parse it
+     * @param reason what went wrong
      */
-   public ParseException(ParseTool in, String reason) 
-   {
-      super(((in != null) ? in.toString() : "input source unknown" ) + ":" + reason);
-      this.in = in;
-   }
+  public ParseException(String reason) {
+    super(reason);
+  }
 
    /**
-     * Return the parseTool that contained the unparsable data
+     * Create a new exception, wrapping another exception
+     * @param reason what went wrong
+     * @param e The exception that caused us to raise this exception
      */
-   final ParseTool getParseTool() {
-      return in;
-   }
+  public ParseException(String reason, Exception e) {
+    super(reason, e);
+  }
+
+
 }

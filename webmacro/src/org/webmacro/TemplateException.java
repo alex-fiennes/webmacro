@@ -27,13 +27,25 @@ package org.webmacro;
 public class TemplateException extends WebMacroException
 {
 
+  public TemplateException() {
+    super();
+  }
+
    /**
      * Create a new exception
      * @param reason what went wrong
      */
-   public TemplateException(String reason) 
-   {
-      super(reason);
-   }
+  public TemplateException(String reason) {
+    super(reason);
+  }
+
+   /**
+     * Create a new exception, wrapping another exception
+     * @param reason what went wrong
+     * @param e The exception that caused us to raise this exception
+     */
+  public TemplateException(String reason, Exception e) {
+    super(reason, e);
+  }
 
 }

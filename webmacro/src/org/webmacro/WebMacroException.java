@@ -24,8 +24,17 @@ package org.webmacro;
   * This is the base class of all WebMacro exceptions. You could use it
   * to catch any exception enerated by WebMacro code. 
   */
-public class WebMacroException extends Exception {
-   public WebMacroException(String reason) {
-      super(reason);
-   }
+public class WebMacroException extends RethrowableException {
+  public WebMacroException() {
+    super();
+  }
+
+  public WebMacroException(String reason) {
+    super(reason);
+  }
+
+  public WebMacroException(String reason, Exception e) {
+    super(reason, e);
+  }
 }
+

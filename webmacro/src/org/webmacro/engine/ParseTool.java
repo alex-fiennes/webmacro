@@ -370,10 +370,10 @@ final class ParseTool
      * data read will be built up in a buffer associated with the mark,
      * adding a slight cost to reads. You can only mark up to MAX_MARKS 
      * positions in the stream.
-     * @excpetion ParseException tried to mark more than MAX_MARKS positions
+     * @excpetion ParseToolException tried to mark more than MAX_MARKS positions
      */
    final public int mark() 
-      throws ParseException
+      throws ParseToolException
    {
       for (int i = 0; i < MAX_MARKS; i++) {
          if (_marks[i].isSet == false) {
@@ -382,7 +382,7 @@ final class ParseTool
             return i;
          }
       }
-      throw new ParseException(this,"Tried to mark more than MAX_MARKS positions");
+      throw new ParseToolException(this,"Tried to mark more than MAX_MARKS positions");
    }
 
    /**
@@ -538,7 +538,7 @@ final class ParseTool
      * the object on the stream is not a number, this method
      * will return a null.
      */
-   public final Object parseNumber() throws IOException, ParseException
+   public final Object parseNumber() throws IOException, ParseToolException
    {
 
       Object num = null;
@@ -581,7 +581,7 @@ final class ParseTool
      * @returns whether or not we found it
      */
    public final boolean parseString(String str) 
-      throws IOException, ParseException
+      throws IOException, ParseToolException
    {
       int spos = 0;
       int slen = str.length();
@@ -607,7 +607,7 @@ final class ParseTool
      * the strings match, return null.
      */
    public final String parseStrings(String[] str) 
-      throws ParseException
+      throws ParseToolException
    {
    
       String match = null;
@@ -682,7 +682,7 @@ final class ParseTool
      * string.
      */
    public final void parseUntil(StringBuffer buf, String marker) 
-      throws ParseException
+      throws ParseToolException
    {
       if (marker == null) {
          return;
@@ -717,7 +717,7 @@ final class ParseTool
          read();
       }
       clearMark(mark);
-      throw new ParseException(this,"Expected " + marker 
+      throw new ParseToolException(this,"Expected " + marker 
             + " but reached end of file");
    }
 

@@ -137,14 +137,14 @@ public class WMParser implements Parser
      * being parsed.
      */
    public BlockBuilder parseBlock(String name, Reader in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       ParseTool pin = new ParseTool(name, in);
       BlockBuilder bb = new BlockBuilder();
       do {
          try {
             bb.addElement(parseBlockImpl(pin)); 
-         } catch (ParseException e) {
+         } catch (ParseToolException e) {
             _log.exception(e);
             if (! pin.isAtEOF()) {
                int c = pin.nextChar(); // skip a char before continuing
@@ -160,18 +160,18 @@ public class WMParser implements Parser
      * Attempt to parse the block, or return null if what follows the 
      * current position is not actually a block. 
      * <p>
-     * @exception ParseException if the sytax was invalid and we could not recover
+     * @exception ParseToolException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */
    protected BlockBuilder parseBlockImpl(ParseTool in) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       return parseBlockImpl(in, false, false);
    }
 
    private BlockBuilder parseBlockImpl(ParseTool in, boolean expectEnd, 
                boolean delim)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       boolean parens;
 
@@ -210,7 +210,7 @@ public class WMParser implements Parser
                   inBlock = false;
                   child = null;
                   if (parens || !expectEnd) {
-                     throw new ParseException(in, END_BLOCK + " unexpected");
+                     throw new ParseToolException(in, END_BLOCK + " unexpected");
                   }
                }
 
@@ -226,7 +226,7 @@ public class WMParser implements Parser
                   if (parens) {
                      inBlock = false; // breaks the loop
                   } else {
-                     throw new ParseException(in, "} unexpected");
+                     throw new ParseToolException(in, "} unexpected");
                   }
                   // drop preceeding WS, '#' case already handles \n dropping
                   // (for \n dropping, assume blocks always follow directives)
@@ -246,7 +246,7 @@ public class WMParser implements Parser
                break; 
 
             default: // error, we should have handled everything
-               throw new ParseException(in,
+               throw new ParseToolException(in,
                      "Parser bug: expected macro char, got " + (char) cur);
 
          }
@@ -269,7 +269,7 @@ public class WMParser implements Parser
 
       // check for close parens
       if (parens && !in.parseChar('}')) {
-         throw new ParseException(in, "expected } at end of block");
+         throw new ParseToolException(in, "expected } at end of block");
       }
 
       return b;
@@ -302,19 +302,19 @@ public class WMParser implements Parser
      * be returned as a string.
      */
    private Builder parseDirective(ParseTool in) 
-      throws ParseException, IOException 
+      throws ParseToolException, IOException 
    {
       return parseDirective(in,false);
    }
 
    private Builder parseSubDirective(ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       return parseDirective(in,true);
    }
 
    private Builder parseDirective(ParseTool in, boolean subDir)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       Builder child = null;
       String dirName = "unknown";
@@ -354,7 +354,7 @@ public class WMParser implements Parser
             // identify and validate the name
             dirB = getDirectiveBuilder(dirName);
             if (dirB == null) {
-               throw new ParseException(in, "Unrecognized directive: " 
+               throw new ParseToolException(in, "Unrecognized directive: " 
                      + dirName);
             }
             if (subDir && !dirB.isSubDirective()) {
@@ -405,7 +405,7 @@ public class WMParser implements Parser
             } else if (in.parseString("{")) {
                marker = "}";
             } else {
-               throw new ParseException(in, "Expected block after directive: " 
+               throw new ParseToolException(in, "Expected block after directive: " 
                      + dirB);
             }
             StringBuffer buf = new StringBuffer();
@@ -423,7 +423,7 @@ public class WMParser implements Parser
                   BlockBuilder b = parseBlockImpl(in,true,true);
                   dirB.setContents(b);
                } else {
-                  throw new ParseException(in, "Expected block after " 
+                  throw new ParseToolException(in, "Expected block after " 
                         + dirName);
                }
             }
@@ -444,12 +444,12 @@ public class WMParser implements Parser
          child = dirB;
       } catch (BuildException be) {
          _log.exception(be);
-         throw new ParseException(in, "Error parsing directive: " 
+         throw new ParseToolException(in, "Error parsing directive: " 
                + be.getMessage());
       } catch (NotFoundException e) {
          _log.exception(e);
 e.printStackTrace();
-         throw new ParseException(in, "Unrecognized directive: " 
+         throw new ParseToolException(in, "Unrecognized directive: " 
                + dirName);
       }
 
@@ -463,12 +463,12 @@ e.printStackTrace();
      * followed by an optional ';'. If the name begins with $$ it will be
      * considered a static parameter and must only contain a single name;
      * the value of the parameter will be returned as a string.
-     * @exception ParseException on unrecoverable parse error
+     * @exception ParseToolException on unrecoverable parse error
      * @exception IOException on failure to read from parseTool
      * @return a Variable object 
      */
    static public Object parseVariable(ParseTool in, boolean filtered)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       // check that we were called correctly 
       if (!in.parseChar('$')) {
@@ -507,7 +507,7 @@ e.printStackTrace();
       names.copyInto(oname);
 
       if ((closeChar != 0) && !in.parseChar(closeChar)) {
-         throw new ParseException(in, "Expected closing bracket" + 
+         throw new ParseToolException(in, "Expected closing bracket" + 
                " after variable name " + Variable.makeName(oname));
       } else {
          in.parseChar(';'); // eat optional ;
@@ -529,11 +529,11 @@ e.printStackTrace();
      * a variable, or a number.  
      * <p>
      * @returns a String, Variable, or QuotedString 
-     * @exception ParseException if the sytax was invalid and we could not recover
+     * @exception ParseToolException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */
     static public Object parseTerm(ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       Object term = null;;
       int last;
@@ -542,7 +542,7 @@ e.printStackTrace();
          case '$': // variable
             term = parseVariable(in,false); 
             if (term instanceof String) {
-               throw new ParseException(in, 
+               throw new ParseToolException(in, 
                      "Unexpected character after " + term + ": " 
                      + "expected variable name start, instead got " 
                      + in.getChar());
@@ -581,11 +581,11 @@ e.printStackTrace();
      * begin with either a single or double quotation mark, and then it 
      * must end with the same mark. Inside a quoted string, variables 
      * and parameters are recognized and properly substituted.
-     * @exception ParseException on unrecoverable parse error
+     * @exception ParseToolException on unrecoverable parse error
      * @exception IOException on failure to read from parseTool
      */
    static public Object parseQuotedString(ParseTool in) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
 
       int quoteChar = in.getChar();
@@ -626,7 +626,7 @@ e.printStackTrace();
       if (c == quoteChar) {
          in.nextChar();
       } else {
-         throw new ParseException(in, "Expected closing quote: " 
+         throw new ParseToolException(in, "Expected closing quote: " 
                + (char) quoteChar);
       }
 
@@ -648,7 +648,7 @@ e.printStackTrace();
      * This list values may optionally be separated by commas.
      */
    static public ListBuilder parseList(ParseTool in) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
 
       // find the start char, identify end char
@@ -674,7 +674,7 @@ e.printStackTrace();
 
       // find the end character
       if (! in.parseChar((char) endChar) ) {
-         throw new ParseException(in, "Expected end of list, instead got " 
+         throw new ParseToolException(in, "Expected end of list, instead got " 
                + in.getChar());
       }
 
@@ -687,11 +687,11 @@ e.printStackTrace();
      * to Boolean.TRUE or Boolean.FALSE depending on the condition.
      * <p>
      * @return boolean
-     * @exception ParseException if the sytax was invalid and we could not recover
+     * @exception ParseToolException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */
    public Builder parseCondition(ParseTool in) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       Builder cond;
       boolean parens;
@@ -708,7 +708,7 @@ e.printStackTrace();
          default : cond = parseTermCondition(in); break;
       }
       if (null == cond) {
-         throw new ParseException(in,"Expected term/expression, got: " 
+         throw new ParseToolException(in,"Expected term/expression, got: " 
                + (char) in.getChar());
       }
 
@@ -734,7 +734,7 @@ e.printStackTrace();
       // check for close paren
       in.skipSpaces();
       if (parens && !in.parseChar(')')) {
-         throw new ParseException(in,"Mismatched braces around expression.");
+         throw new ParseToolException(in,"Mismatched braces around expression.");
       }
       
       return cond;
@@ -744,14 +744,14 @@ e.printStackTrace();
      * Utility function to parse the operator and right term of a binary cond
      */
    private Builder parseBinOp(char[] opChars, ParseTool in) 
-      throws IOException, ParseException
+      throws IOException, ParseToolException
    {
       for (int i = 0; i < opChars.length; i++){
          if (! in.parseChar(opChars[i])) {
             if (i == 0) {
                return null;
             } else {
-               throw new ParseException(in, "Expected character " + opChars[i] 
+               throw new ParseToolException(in, "Expected character " + opChars[i] 
                      + " after " + opChars[i - 1] + " but got " 
                      + (char) in.getChar());
             } 
@@ -761,7 +761,7 @@ e.printStackTrace();
 
       Builder right = parseCondition(in); 
       if (null == right) {
-         throw new ParseException(in,"Expected term/expression after operator "
+         throw new ParseToolException(in,"Expected term/expression after operator "
                 +" but got: " + (char) in.getChar());
       }
       return right;
@@ -769,7 +769,7 @@ e.printStackTrace();
    
    
    private Builder parseNotCondition( ParseTool in ) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       if (! in.parseChar('!')) {
          return null;
@@ -781,14 +781,14 @@ e.printStackTrace();
    
    
    private Builder parseTermCondition(ParseTool in) 
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       Object term = parseTerm(in);
       return new TermConditionBuilder(term);
    }
 
    private Builder parseEqualCondition(Builder left, ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       final char[] opchars = { '=','=' };
       Builder right = parseBinOp(opchars, in);
@@ -799,7 +799,7 @@ e.printStackTrace();
    }
    
    private Builder parseNotEqualCondition(Builder left, ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       final char[] opchars = { '!','=' };
       Builder right = parseBinOp(opchars, in);
@@ -811,7 +811,7 @@ e.printStackTrace();
    }
 
    private Builder parseAndCondition(Builder left, ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       final char[] opchars = { '&','&' };
       Builder right = parseBinOp(opchars, in);
@@ -822,7 +822,7 @@ e.printStackTrace();
    }
    
    private Builder parseOrCondition(Builder left, ParseTool in)
-      throws ParseException, IOException
+      throws ParseToolException, IOException
    {
       final char[] opchars = { '|','|' };
       Builder right = parseBinOp(opchars, in);
