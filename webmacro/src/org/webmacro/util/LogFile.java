@@ -34,11 +34,17 @@ public class LogFile extends AbstractLogFile {
    /**
      * Create a new LogFile instance. 
      */
-   public LogFile(Settings s) throws FileNotFoundException
-   {
-      super(s);
-      String fileName = s.getSetting("LogFile");
-      if ( (fileName == null) 
+    public LogFile(Settings s) throws FileNotFoundException {
+       super(s);
+       init(s.getSetting("LogFile"));
+    }
+
+    public LogFile(String fileName) throws FileNotFoundException {
+       init(fileName);
+    }
+
+   private void init(String fileName) throws FileNotFoundException {
+       if ( (fileName == null) 
             || (fileName.equalsIgnoreCase("system.err") 
             || fileName.equalsIgnoreCase("none")
             || fileName.equalsIgnoreCase("stderr")))
@@ -46,11 +52,13 @@ public class LogFile extends AbstractLogFile {
          _out = System.err;
          _name = "System.err";
       } else {
-         _out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fileName,true)));
+         _out = new PrintStream(new BufferedOutputStream(
+                      new FileOutputStream(fileName,true)));
          _name = fileName;
       }
       if (_defaultLevel <= LogSystem.NOTICE) {
-         log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---", null);
+         log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---", 
+             null);
       }
    }
 
