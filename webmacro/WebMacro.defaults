@@ -243,8 +243,8 @@ type.Enabled = true
 #                      that are assumed to be templates when
 #                      #include is used without qualifing the
 #                      file type. By convention wmm is for WM macro library files.
-include.TemplateExtensions: .wm, .wmt, .tml, .wmm
-parse.TemplateExtensions: .wm, .wmt, .tml, .wmm
+include.TemplateExtensions: .wm, .wmt, .tml, .tmpl, .wmm
+parse.TemplateExtensions: .wm, .wmt, .tml, .tmpl, .wmm
 
 
 # The following are tools which are added to your WebContext. You can
