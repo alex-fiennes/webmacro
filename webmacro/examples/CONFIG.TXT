@@ -1,0 +1,93 @@
+INSTALLING THE WEBMACRO EXAMPLES
+
+This document describes how to install and configure the examples packaged
+with WebMacro using Tomcat and Resin, two popular Java servlet containers.
+Other JSDK 2.2+ compliant servlet containers should work very similarly.  
+The sources were compiled using Sun's JDK1.3 and WebMacro .97a on a 
+Windows 2000 box.  Unix/Linux configuration should be virtually identical 
+(except for the slashes and drive letters in the paths). 
+
+TOMCAT CONFIGURATION (v3.2.1)
+
+Extract the files from examples.zip to the webapps directory.  For example,
+if your TOMCAT_HOME is E:\tomcat then extract the files to 
+E:\tomcat\webapps.  This will create a directory called wm with the 
+following files:
+
+HTML and text:
+	e:\tomcat\webapps\wm\index.html
+	e:\tomcat\webapps\wm\README
+
+WebMacro configuration file:
+	e:\tomcat\webapps\wm\WebMacro.properties
+
+Sample batch file for compiling sources:	
+	e:\tomcat\webapps\wm\build.bat
+
+Templates:
+	e:\tomcat\webapps\wm\allguest.wm
+	e:\tomcat\webapps\wm\callgraph.wm
+	e:\tomcat\webapps\wm\error.wm
+	e:\tomcat\webapps\wm\form.wm
+	e:\tomcat\webapps\wm\helloWorld.wm
+	e:\tomcat\webapps\wm\noservlet.wm
+	e:\tomcat\webapps\wm\profile.wm
+	e:\tomcat\webapps\wm\sandbox.wm
+	e:\tomcat\webapps\wm\verify.wm
+	e:\tomcat\webapps\wm\WEB-INF\classes\standalone.wm
+
+Java sources:	
+	e:\tomcat\webapps\wm\GuestBook.java
+	e:\tomcat\webapps\wm\HelloWorld.java
+	e:\tomcat\webapps\wm\NoServlet.java
+	e:\tomcat\webapps\wm\Profile.java
+	e:\tomcat\webapps\wm\SandBox.java
+	e:\tomcat\webapps\wm\Standalone.java
+	
+Class files:	
+	e:\tomcat\webapps\wm\WEB-INF\classes\GuestBook$GuestEntry.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\GuestBook.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\HelloWorld.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\NoServlet.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\Profile.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\SandBox.class
+	e:\tomcat\webapps\wm\WEB-INF\classes\Standalone.class
+	
+WebMacro jar:	
+	e:\tomcat\webapps\wm\WEB-INF\lib\webmacro.jar
+	
+
+RESIN CONFIGURATION (1.2.5)
+
+Extract the files as above to the <resin_home>/doc directory.  Add the 
+following lines to the resin.conf file (usually in <resin_home>/conf) 
+within the <host> tag (just above the </host> tag):
+
+    <web-app id='wm'>
+      <servlet-mapping url-pattern='/servlet/*' servlet-name='invoker'/>
+      <welcome-file-list>index.html</welcome-file-list>
+    </web-app>
+
+NOTE ON TEMPLATE PATHS
+	
+Notice that all the templates are located in the applications root directory 
+except for standalone.wm.  The "Standalone" example instantiates WM directly 
+and does not extend WMServlet.  Because of this its broker does not have
+access to the ServletContext.  The other examples all extend WMServlet and 
+thus are able to get their resources (templates) through the ServletContext.
+This feature is only available with JSDK2.2+ compatable servlet containers.
+By putting the template in the classes directory, the Standalone servlet is
+able to locate it through the classpath.  
+
+The alternative would have been to add a TemplatePath to the 
+webmacro.properties file.  For example, you could put all of the templates 
+in e:\tomcat\webapps\wm\WEB-INF\templates and add:
+
+   TemplatePath: e:\tomcat\webapps\wm\WEB-INF\templates
+
+to the WebMacro.properties file.  This technique should work with all 
+servlet containers.  The major drawback is that it requires a manual
+configuration step (since we can't know what directory you will use) which
+is a frequent cause of configuration problems.  The other methods will work
+out of the box, even without a WebMacro.properties file.
+
