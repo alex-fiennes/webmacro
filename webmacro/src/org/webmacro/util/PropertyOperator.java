@@ -701,10 +701,10 @@ final public class PropertyOperator
           Object obj = meth.invoke (instance, args);
           
           // if the method's return type is void
-          // return a VoidMacro instance, instead of the
-          // 'null' we used to get here
+          // return the VoidMacro instance, instead of the
+          // 'null' we used to return here
           if (meth.getReturnType().isAssignableFrom (java.lang.Void.TYPE))
-              return new org.webmacro.engine.VoidMacro ();
+              return org.webmacro.engine.VoidMacro.instance;
           
           // otherwise, just return whatever the method returned
           else
