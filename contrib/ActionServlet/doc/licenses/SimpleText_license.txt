@@ -1,0 +1,137 @@
+THOUGHT Inc. SimpleText SOURCE LICENSE AGREEMENT 
+
+
+GRANT. THOUGHT Inc.("THOUGHT") grants a limited, non-exclusive license to
+use one copy of the application development tool called THOUGHT Inc.'s
+SimpleText for the purpose of developing applications for the JAVA 
+environment. This copy of THOUGHT Inc. SimpleText must exist on a 
+single terminal connected to a single computer (i.e., with a single CPU). 
+You may only network THOUGHT Inc. SimpleText or otherwise use them for 
+shared development if this use does not violate this agreement.
+
+RESTRICTED USE. The Software is protected by the copyright laws of the United
+States and international copyright treaties. You may not copy the Software, 
+except for backup or archival purposes. Any such copy shall be subject to 
+this Agreement and shall contain all of THOUGHT notices regarding proprietary 
+rights as contained in the Software THOUGHT originally provided to you. This 
+license does not grant you any right to any enhancement or update to the 
+Software. Enhancements and updates, if available, may be obtained at 
+THOUGHT's then current standard pricing, terms, and conditions. You may not 
+lend, rent, lease or otherwise transfer the Software. 
+
+OTHER RESTRICTIONS. You may not rent or lease THOUGHT Inc. SimpleText 
+Software, but you may transfer the software and accompanying written materials 
+if present on a permanent basis provided you retain no copies and the 
+recipient agrees to the terms of this Agreement, and any transfer fees which 
+may be due are paid in full as well. You may not reverse engineer, decompile, 
+or disassemble this software. 
+
+TITLE. Title, ownership rights, and intellectual property rights in the 
+Software shall remain in THOUGHT and/or its suppliers. This Agreement does 
+not include the right to sublicense the Software and may not be assigned 
+(by operation of law or otherwise) without the prior written consent of 
+THOUGHT, and only upon the full payment of any related fees of transfer by
+the parties transferring the license. You agree not to attempt to decipher,
+decompile or disassemble the Software or develop derivative works of the 
+Software or knowingly allow others to do so, except to the extent applicable 
+laws specifically prohibit such restriction. You may not modify or create 
+derivative works of the Software. 
+
+CONTENT. Title, ownership rights, and intellectual property rights in and 
+to the content accessed through the Software is the property of the 
+applicable content owner and may be protected by applicable copyright or 
+other law. This License gives you no rights to such content. 
+
+COPYRIGHT. THOUGHT Inc. SimpleText is owned by THOUGHT Inc. and the Coriolis 
+Group is protected by United Sates copyright laws and international treaty 
+provisions. You may make one copy of the software for backup purposes. 
+You may not under any circumstances, copy the manual and other written 
+materials that accompany this software. 
+
+RUNTIME DISTRIBUTION LICENSE. THOUGHT Inc. grants you a royalty-free right 
+to distribute copies of the JAVA classes included with this product for
+use with applications you have developed using THOUGHT Inc. SimpleText
+provided that the complete distribution is made available to clients.
+These JAVA classes may not be distributed for any other purpose than to 
+accompany software that you have developed using THOUGHT Inc. 
+SimpleText. You may use THOUGHT Inc. SimpleText in your 
+specific purpose application programs, in which case THOUGHT Inc. grants 
+you permission under THOUGHT Inc.'s copyright to use, give away or sell 
+such programs without additional license fees, as long as all copies of 
+these programs bear a valid copyright notice and provided that your program
+is not merely a set or subset of THOUGHT Inc. SimpleText or a 
+compilation or development tool or library which includes all or a portion 
+of THOUGHT Inc. SimpleText, or is otherwise a product that is 
+generally competitive with or a substitute for THOUGHT Inc. SimpleText. 
+This permission is granted solely for the purpose set forth above, and you 
+are not authorized to use THOUGHT Inc. SimpleText in any other manor. 
+
+LIMITED WARRANTY. THOUGHT Inc. warrants that the software herein will
+perform substantially in accordance with the accompanying materials for a 
+period of thirty days from the date of receipt. Any implied warranties on 
+THOUGHT Inc. are limited to thirty days. Some states do not allow 
+limitations on duration of an implied warranty, so the above limitation 
+may not apply to you. 
+
+LIMITATION OF LIABILITY. UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, 
+TORT, CONTRACT, OR OTHERWISE, SHALL THOUGHT OR ITS SUPPLIERS OR RESELLERS 
+BE LIABLE TO YOU OR ANY OTHER PERSON FOR ANY INDIRECT, SPECIAL, INCIDENTAL, 
+OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, 
+DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, 
+OR ANY AND ALL OTHER COMMERCIAL DAMAGES OR LOSSES. IN NO EVENT WILL THOUGHT 
+BE LIABLE FOR ANY DAMAGES IN EXCESS OF THOUGHT'S LIST PRICE FOR A LICENSE 
+TO THE SOFTWARE, EVEN IF THOUGHT SHALL HAVE BEEN INFORMED OF THE POSSIBILITY 
+OF SUCH DAMAGES, OR FOR ANY CLAIM BY ANY OTHER PARTY. THIS LIMITATION OF 
+LIABILITY SHALL NOT APPLY TO LIABILITY FOR DEATH OR PERSONAL INJURY TO THE 
+EXTENT APPLICABLE LAW PROHIBITS SUCH LIMITATION. FURTHERMORE, SOME STATES 
+DO NOT ALLOW THE EXCLUSION OR LIMITATION OF INCIDENTAL OR CONSEQUENTIAL 
+DAMAGES, SO THIS LIMITATION AND EXCLUSION MAY NOT APPLY TO YOU. 
+
+TERMINATION. This is a legal agreement between you, the end user, and
+THOUGHT Inc. with head offices at 2222 Leavenworth St. Suite 304, 
+San Francisco, Ca 94133. If after reading this agreement, you do not 
+agree with its terms , or if after use you are dissatisfied with 
+THOUGHT Inc. SimpleText software, destroy the software, and 
+notify THOUGHT Inc. in writing at the head office (or notify seller of 
+the software if other than THOUGHT Inc.) within thirty days of purchase 
+for a refund. IF YOU PURCHASE THE SOURCE THE SALE IS FINAL. 
+
+MISCELLANEOUS. This Agreement represents the complete and exclusive
+statement of the agreements concerning this license between the parties 
+and supersedes all prior agreements and representations between them. 
+It may be amended only by a writing executed by both parties. If any 
+provision of this Agreement is held to be unenforceable for any reason, 
+such provision shall be reformed only to the extent necessary to make it 
+enforceable, and such decision shall not affect the enforceability (i)
+of such provision under other circumstances or (ii) of the remaining 
+provisions hereof under all circumstances. Headings shall not be 
+considered in interpreting this Agreement. This Agreement shall be 
+governed by and construed under California law as such law applies to 
+agreements between California residents entered into and to be performed 
+entirely within California, except as governed by Federal law. 
+
+U.S. GOVERNMENT RESTRICTED RIGHTS. Use, duplication or disclosure by
+the Government is subject to restrictions set forth in subparagraphs 
+(a) through (d) of the Commercial Computer-Restricted Rights clause at 
+FAR 52.227-19 when applicable, or in subparagraph (c)(1)(ii) of the 
+Rights in Technical Data and Computer Software clause at DFARS 252.227-7013, 
+and in similar clauses in the NASA FAR Supplement. Contractor/manufacturer 
+is THOUGHT Inc., 2222 Leavenworth Street Suite 304, San Francisco, Ca 94133. 
+
+
+Accepted by:_________________________________ Date:_________________________
+
+Title:______________________________________________________________________
+
+Number of Licenses:_________________________________________________________
+
+Company:____________________________________________________________________
+
+Address:____________________________________________________________________
+
+Contact Name:_______________________________________________________________
+
+Phone/Fax:__________________________________________________________________
+
+Email:______________________________________________________________________
+
