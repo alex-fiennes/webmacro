@@ -1,0 +1,26 @@
+#comment {
+  href.wm
+  A template to excercise href formatting.
+}
+#include as macro "allmacros.wmm"
+
+## set up some useful test data for the url properties and the javascript properties
+#bean $System = "java.lang.System" scope=static
+#bean $urlProps = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $urlProps.url = "winFrame.html"
+  #set $urlProps.visibleContent = "Click Me To See A Pop-Up Window"
+}
+## set all the javascript props
+#bean $scriptProps = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $scriptProps.resizeable = "yes"
+  #set $scriptProps.width = "500"
+  #set $scriptProps.height = "700"
+}
+## now create the content.
+<html>
+<center>
+Content generation:
+<p>
+#hrefInWindow($urlProps, $scriptProps)
+</p></center>
+</html>

@@ -3,3 +3,4 @@
   Includes all wm macros in all subdirectories where all.wmm is defined.
 }
 #include as macro "ecomm/all.wmm"
+#include as macro "html/all.wmm"

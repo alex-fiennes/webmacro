@@ -1,0 +1,51 @@
+#comment {
+  frames.wmm
+  Macros for formatting urls and windows using java script
+}
+
+## hrefInWindow(urlProps, scriptProps) where:
+## arg1 corresponds to properties of the url 
+## arg2 corresponds to formatting properties of the href request
+## depending on the values of the arguments, will output an href request
+## formatted for a pop-up window. Optionally, you will reference
+## a url that spits the window into 2 frames. (See below).
+#macro hrefInWindow($urlProps, $scriptProps) {
+<a href=
+"javascript:
+popup.open();
+popup.focus();"
+onClick=
+"window.open(
+'$urlProps.url',
+'popup',
+'resizable=$scriptProps.resizeable,toolbar=no,status=no,location=no,scrollbars=yes,width=$scriptProps.width,height=$scriptProps.height,screenX=0,screenY=0,alwaysRaised=yes')"> 
+$urlProps.visibleContent</a>
+}
+
+## splitWindow()(contentProps, frameProps) where:
+## arg1 corresponds to the content properties
+## arg2 corresponds to formmatting properties of the window and frame
+## depending on the arguments formats content for viewing
+## in a framed window which is closeable.
+#macro closeableWindow($contentProps, $frameProps) {
+
+<html>
+<head>
+<title>$contentProps.title</title>
+<meta http-equiv="Content-Type" content="text/html; ">
+</head>
+<frameset 
+  rows="*,$frameProps.bottomSize" 
+  frameborder="$frameProps.borderEnabled" 
+  border="$frameProps.borderSize"
+  framespacing="$frameProps.spacing"> 
+  <frame 
+    name="top" 
+    src="$contentProps.top">
+  <frame 
+    name="bottom" 
+    src="$contentProps.bottom">
+</frameset>
+</html>
+}
+

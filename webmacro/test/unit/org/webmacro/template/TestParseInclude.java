@@ -103,6 +103,21 @@ public class TestParseInclude extends TemplateTestCase {
       store(System.getProperty("user.dir") + "/" + "ecomm.html", value);
    }
         
+
+    /** executes out of the standard macro/ distribution: html. */
+    public void testHrefMacro() throws Exception {
+      // execute the pay pal eCommerce test case and store the output
+      String value = executeFileTemplate("org/webmacro/template/href.wm");
+      store(System.getProperty("user.dir") + "/" + "windows.html", value);
+   }
+        
+    /** executes out of the standard macro/ distribution: html. */
+    public void testFrameMacro() throws Exception {
+      // execute the pay pal eCommerce test case and store the output
+      String value = executeFileTemplate("org/webmacro/template/frame.wm");
+      store(System.getProperty("user.dir") + "/" + "winFrame.html", value);
+   }
+        
         
 
     public static void main (String[] args) throws Exception {

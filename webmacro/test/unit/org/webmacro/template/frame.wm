@@ -1,0 +1,24 @@
+#comment {
+  frame.wm
+  A template to excercise frame formatting.
+}
+#include as macro "allmacros.wmm"
+
+## set up some useful data for the transaction.
+## see the paypalSetup macro for the property name specs.
+#bean $System = "java.lang.System" scope=static
+#bean $contentProps = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $contentProps.title = "A Pop Up Window"
+  #set $contentProps.top = "http://www.webmacro.org/EricRidge"
+  #set $contentProps.bottom = "close.html"
+}
+## set all the tran properties
+#bean $frameProps = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $frameProps.bottomSize = "50"
+  #set $frameProps.borderEnabled = "yes"
+  #set $frameProps.borderSize = "1"
+  #set $frameProps.spacing = "1"
+}
+## now create the content.
+#closeableWindow($contentProps, $frameProps)
+

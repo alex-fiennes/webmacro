@@ -1,0 +1,5 @@
+#comment {
+  html/all.wmm 
+  Includes all wm macros in the html directory.
+}
+#include as macro "html/frames.wmm"
