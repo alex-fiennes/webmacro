@@ -4,6 +4,20 @@ import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
+/**
+ * Syntax: 
+ * #if (condition) { block }  
+ * [ #elseif (condition) { block } ] *
+ * [ #else { block } ]
+ *
+ * IfDirective implements a WebMacro directive for an if..elseif..else 
+ * control structure.  This directive is more complicated than most others
+ * because it has repeating optional subdirectives, and because it tries
+ * to do as much constant folding in the build() method as possible. 
+ * Therefore, the build() method is complicated, but the write() method
+ * is fairly simple.  
+ */
+
 class IfDirective extends Directive {
 
   private static final int IF_COND      = 1;
@@ -84,8 +98,7 @@ class IfDirective extends Directive {
     else {
       // This is the ugly case -- we have to guess at how many conditions
       // we'll have.  We start with 1 + count(#elseof), and if any can be
-      // folded out at compile time, we'll have to resize the condition
-      // array.  
+      // folded out at compile time, we just won't use the whole thing
       int i=0;
       nConditions=elseifCount;
       if (cMacro)
@@ -139,18 +152,17 @@ class IfDirective extends Directive {
 
   public void write(FastWriter out, Context context) 
     throws ContextException, IOException {
-    boolean done=false;
 
     for (int i=0; i<nConditions; i++) {
       if (Expression.isTrue(conditions[i].evaluate(context))) {
         blocks[i].write(out, context);
-        done = true;
-        break;
+        return;
       }
     }
-    // If we fell out because we ran out of conditions, try the else block
-    if (!done && elseBlock != null)
+
+    // If we fell out, we ran out of conditions, try the else block if any
+    if (elseBlock != null)
       elseBlock.write(out, context);
   } 
-
+  
 }
