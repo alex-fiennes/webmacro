@@ -1,3 +1,7 @@
+-- Jan-2000 fergus: added LocaleTool.  Gives access to Locales from within
+   templates.  This is especially useful for setting the correct response
+   encoding without resorting to setting ";charset=xxxx" in the content type.
+   
 -- Jan-2000 fergus: added getResource() & getResourceAsStream() methods to
    Broker to load resources (properties files, templates) using supplied
    classloader (see also 3 items below)
