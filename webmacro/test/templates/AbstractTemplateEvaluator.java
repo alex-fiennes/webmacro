@@ -98,7 +98,7 @@ public abstract class AbstractTemplateEvaluator
             // print a little banner at the end of the output
             seconds = ( ((double) stop - start) / 1000);
             banner = "------" + _templateFilenames[x] + " finished in " + seconds + " seconds --------";
-            System.err.println (seconds);
+            System.err.println (banner);
         }
     }    
     
