@@ -48,14 +48,18 @@ public class ParserBlockBuilder extends BlockBuilder {
     literalMark = size();
   } 
 
+  private final static boolean isSpaceChar(char c) {
+    return (c == ' ' || c == '\t');
+  }
+
   private final static int eatWs(String s, int pos) {
-    while (pos >= 0 && Character.isSpaceChar(s.charAt(pos)))
+    while (pos >= 0 && isSpaceChar(s.charAt(pos))) 
       pos--;
     return pos;
   }
 
   private final static int eatOneWs(String s, int pos) {
-    if (pos >= 0 && Character.isSpaceChar(s.charAt(pos)))
+    if (pos >= 0 && isSpaceChar(s.charAt(pos))) 
       pos--;
     return pos;
   }
@@ -169,7 +173,7 @@ public class ParserBlockBuilder extends BlockBuilder {
       return;
     String s = (String) o;
     j = 0; l = s.length();
-    while (j < l && Character.isSpaceChar(s.charAt(j)))
+    while (j < l && isSpaceChar(s.charAt(j)))
       j++;
     if (j < l) {
       if (s.charAt(j) == '\r')

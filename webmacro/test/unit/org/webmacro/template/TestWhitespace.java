@@ -27,6 +27,13 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
 
+   public void testTabs() throws Exception { 
+     assertStringTemplateEquals("\t#if (true) { pass }\n\t#else { fail }", 
+                                " pass ");
+     assertStringTemplateEquals("\t#if (true) \t#begin pass \t#end\t#else \t#begin fail \t#end", 
+                                "pass ");
+   }
+
    //
    // test whitespace before a directive
    //
@@ -40,6 +47,12 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals("Hello\n#if(true)\n{ Brian }\n", "Hello Brian ");
    }
  
+   public void testBeforeSubdirective () throws Exception {
+      assertStringTemplateEquals ("#if(true){pass} #else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass} \n#else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass} \n #else{fail}", "pass");
+   }
+
    //
    // test whitespace after a directive
    //
@@ -61,6 +74,7 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals ("#if(true)#begin pass#end", "pass");
       assertStringTemplateEquals ("#if(true) {pass}", "pass");
       assertStringTemplateEquals ("#if(true){ pass}", " pass");
+      assertStringTemplateEquals ("#if(true){ pass }", " pass ");
       assertStringTemplateEquals ("#if(true){\n pass}", " pass");
       assertStringTemplateEquals ("#if(true){ \n pass}", " pass");
       assertStringTemplateEquals ("#if(true){  \npass}", "pass");
