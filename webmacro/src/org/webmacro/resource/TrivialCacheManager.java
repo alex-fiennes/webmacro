@@ -47,7 +47,7 @@ public class TrivialCacheManager implements CacheManager {
    public void destroy() {
    }
 
-   public Object get(final String query, CachingProviderMethods helper) 
+   public Object get(final Object query, ResourceLoader helper) 
    throws ResourceException  {
       return helper.load(query, null);
    }

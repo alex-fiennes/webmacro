@@ -41,7 +41,7 @@ import  java.net.*;
   * @since 0.96 
   */
 final public class BrokerTemplateProviderHelper 
-  implements CachingProviderMethods
+  implements ResourceLoader
 {
 
    // INITIALIZATION
@@ -120,6 +120,12 @@ final public class BrokerTemplateProviderHelper
       return ret;
    }
 
+
+   /** We don't implement this one */
+   public Object load(Object query, CacheElement ce)
+     throws ResourceException {
+     throw new ResourceException("CachingProvider: load(Object) not supported, use load(String)");
+   }
 
    public void setReload(boolean reload) {
       _cacheSupportsReload = reload;

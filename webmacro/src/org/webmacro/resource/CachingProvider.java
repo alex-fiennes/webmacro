@@ -30,14 +30,14 @@ import java.lang.ref.Reference;
 /**
  * CacheManager is an abstract base class for providers which wish to 
  * implement caching functionality.  By extending CachingProvider and
- * implementing the methods in CachingProviderMethods, a provider can
+ * implementing the methods in ResourceLoader, a provider can
  * automatically support caching using any CacheManager.  CachingProvider
  * looks in the properties file to find the desired cache manager. 
  * @since 0.96
  */
 
 abstract public class CachingProvider implements Provider, 
-                                                 CachingProviderMethods
+                                                 ResourceLoader
 {
    private CacheManager _cache; 
    private Log _log;
@@ -95,8 +95,17 @@ abstract public class CachingProvider implements Provider,
      * Get the object associated with the specific query, using the
      * specified cache manager. 
      */
-   public Object get(final String query) throws ResourceException {
+   public Object get(String query) throws ResourceException {
       return _cache.get(query, this);
+   }
+
+   /* 
+    * The cache manager will call this version; the providers implement
+    * the other version; so dispatch 
+    */
+   public Object load(Object query, CacheElement ce)
+     throws ResourceException {
+     return load((String) query, ce);
    }
 
    public String toString() {

@@ -58,7 +58,7 @@ public interface CacheManager {
      * Called to get a resource from the cache.  The helper object is used
      * to load the resource if the resource was not in the cache.  
      */
-   public Object get(final String query, CachingProviderMethods helper) 
+   public Object get(final Object query, ResourceLoader helper) 
      throws ResourceException; 
 
    /**
