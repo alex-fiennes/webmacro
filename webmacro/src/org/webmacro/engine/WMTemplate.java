@@ -150,7 +150,7 @@ abstract public class WMTemplate implements Template
       Map newFilters = null;
       try {
          Parser parser = getParser();
-         Reader in = getReader();
+         source = getReader();
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
