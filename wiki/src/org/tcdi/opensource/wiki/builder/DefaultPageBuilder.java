@@ -64,7 +64,7 @@ public class DefaultPageBuilder implements WikiPageBuilder {
         _matcher = matcher;
     }
 
-    public void init(WikiTermMatcher matcher) {
+    public void setWikiTermMatcher (WikiTermMatcher matcher) {
         _matcher = matcher;
     }
     

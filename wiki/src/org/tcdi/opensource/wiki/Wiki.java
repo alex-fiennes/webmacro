@@ -362,7 +362,7 @@ final public class Wiki implements WikiSystem, QueueListener {
      */
     public WikiPage createPage(String title, String author, String data) throws Exception {
         WikiPageBuilder builder = (WikiPageBuilder) this._pageBuilderClass.newInstance();
-        builder.init(this);
+        builder.setWikiTermMatcher (this);
         WikiParser parser = new WikiParser(new ByteArrayInputStream(data.getBytes()));
         
         WikiPage page = parser.parse(builder);
@@ -385,7 +385,7 @@ final public class Wiki implements WikiSystem, QueueListener {
      */
     private void reparsePage (WikiPage page) throws Exception {
         WikiPageBuilder builder = (WikiPageBuilder) this._pageBuilderClass.newInstance();
-        builder.init(this);
+        builder.setWikiTermMatcher (this);
         WikiParser parser = new WikiParser (new ByteArrayInputStream (page.getUnparsedData().getBytes()));
         WikiPage tmp = parser.parse (builder);
         

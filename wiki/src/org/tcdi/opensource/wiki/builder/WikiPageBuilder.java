@@ -52,7 +52,11 @@ import org.tcdi.opensource.wiki.*;
  */
 public interface WikiPageBuilder extends WikiTermMatcher {
 
-    public void init (WikiTermMatcher matcher);
+    /**
+     * A WikiPageBuilder should use a <code>WikiTermMatcher</code>
+     * for making decisions about how to build a word.
+     */
+    public void setWikiTermMatcher (WikiTermMatcher matcher);
     
     /** return the completed WikiPage */
     public WikiPage getPage ();
