@@ -62,6 +62,6 @@ public final class UndefinedMacro implements Macro, Visitable
    public final void write(FastWriter out, Context context) 
       throws PropertyException
    {
-       throw new PropertyException("Attempted to write an undefined value");       
+       throw new PropertyException.UndefinedVariableException();
    }
 }
