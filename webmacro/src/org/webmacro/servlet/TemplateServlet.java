@@ -123,6 +123,10 @@ public class TemplateServlet extends HttpServlet {
     {
       return welcomeList[0];
     }
+    else if (value.endsWith("/"))
+    {
+      return (value + welcomeList[0]);
+    }
     else
     {
       return value;
