@@ -226,7 +226,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                out.write("</font></h1><pre>");
                out.write(_problem); 
                out.write("</pre>");
-               out.write("Please contat the server administrator");
+               out.write("Please contact the server administrator");
                out.flush();
                out.close();
             } catch (Exception e) {
