@@ -32,7 +32,7 @@ final public class FastWriter extends Writer
 {
    final private String _encoding;      // what encoding we use
    final private BufferedWriter _bwriter;
-   final private ByteArrayOutputStream _bstream;
+   final private ByteBufferOutputStream _bstream;
    final private EncodingCache _cache;
    
    private OutputStream _out;
@@ -52,7 +52,7 @@ final public class FastWriter extends Writer
       throws java.io.UnsupportedEncodingException
    {
       _encoding = encoding;
-      _bstream = new ByteArrayOutputStream(4096);
+      _bstream = new ByteBufferOutputStream(4096);
       _bwriter = new BufferedWriter(new OutputStreamWriter(_bstream, encoding));
       _cache = EncodingCache.getInstance(encoding);
 
