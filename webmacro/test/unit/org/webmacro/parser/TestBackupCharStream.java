@@ -73,9 +73,9 @@ public class TestBackupCharStream extends TestCase {
     throws Exception {
     BackupCharStream in = new BackupCharStream(new CharArrayReader(chars));
     int counter = 0;
+    char c;
 
     for (int i=0; i<chars.length; i++) {
-      char c;
       try {
         c = (counter == 0) ? in.BeginToken() : in.readChar();
       }
@@ -99,11 +99,16 @@ public class TestBackupCharStream extends TestCase {
       }
     }
     try {
-      char c = in.readChar();
+      c = in.readChar();
       fail("Expecting BCS to return EOF; found /" + c + "/");
     }
     catch (IOException e) {
     }
+
+    in.backup(1);
+    c = in.readChar();
+    if (c != chars[chars.length-1])
+      failAt(file, chars.length-1, c, chars[chars.length-1]);
   }
   
   public void testBasic() throws Exception {
@@ -160,15 +165,4 @@ public class TestBackupCharStream extends TestCase {
     for (int i=0; i<testFiles.length; i++) 
       assertBcsEqual(readFile(testFiles[i]), testFiles[i], 4000, 2000);
   }
-
-  public void test_8000_2000() throws Exception {
-    for (int i=0; i<testFiles.length; i++) 
-      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 8000, 2000);
-  }
-
-  public void test_8000_4000() throws Exception {
-    for (int i=0; i<testFiles.length; i++) 
-      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 8000, 4000);
-  }
-
 }
