@@ -32,9 +32,9 @@ public class TestTemplate extends AbstractTemplateEvaluator
     public void stuffContext (Context c) throws Exception
     {
         Object nullObject = null;
-        TestObject notNullObject = TestObject ("Eric", "Ridge");
         
         c.put ("NullObject", nullObject);
-        c.put ("NotNullObject", notNullObject);
+        c.put ("TestObject", new TestObject ("Eric", "Ridge"));
+        c.put ("FirstNameNull", new TestObject (null, "Ridge"));        
     }
 }

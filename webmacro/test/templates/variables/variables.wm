@@ -1,1 +1,13 @@
-// todo:  this template
+use an object that is null:
+$NullObject
+
+use an object that is not null:
+$TestObject
+
+use methods of TestObject:
+$TestObject.FirstName  == $TestObject.getFirstName()
+$TestObject.LastName   == $TestObject.getLastName()
+
+use methods of FirstNameNull object:
+$TestObject.FirstName  == $TestObject.getFirstName()
+$TestObject.LastName   == $TestObject.getLastName()
