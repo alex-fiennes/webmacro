@@ -148,6 +148,7 @@ public class WM implements WebMacro
      * of the cases where it matters. 
      */
    protected void finalize() {
+      super.finalize();
       destroy();
    }
 
