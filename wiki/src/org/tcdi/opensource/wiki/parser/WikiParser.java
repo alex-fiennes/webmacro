@@ -60,6 +60,7 @@ public class WikiParser implements WikiParserConstants {
       case ITALIC:
       case LT:
       case GT:
+      case LI:
       case COLOR:
       case HEADER:
       case COLOR_HEADER_TERMINATE:
@@ -92,6 +93,10 @@ public class WikiParser implements WikiParserConstants {
       case GT:
         t = jj_consume_token(GT);
                           builder.gt();
+        break;
+      case LI:
+        t = jj_consume_token(LI);
+                          builder.li();
         break;
       case BOLD:
         t = jj_consume_token(BOLD);
@@ -223,8 +228,8 @@ public class WikiParser implements WikiParserConstants {
   private int jj_ntk;
   private int jj_gen;
   final private int[] jj_la1 = new int[2];
-  final private int[] jj_la1_0 = {0xfffffe00,0xfffffe00,};
-  final private int[] jj_la1_1 = {0x1,0x1,};
+  final private int[] jj_la1_0 = {0xfffffc00,0xfffffc00,};
+  final private int[] jj_la1_1 = {0x7,0x7,};
 
   public WikiParser(java.io.InputStream stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
@@ -322,8 +327,8 @@ public class WikiParser implements WikiParserConstants {
 
   final public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[33];
-    for (int i = 0; i < 33; i++) {
+    boolean[] la1tokens = new boolean[35];
+    for (int i = 0; i < 35; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -342,7 +347,7 @@ public class WikiParser implements WikiParserConstants {
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 35; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

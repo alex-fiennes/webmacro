@@ -48,34 +48,36 @@ public interface WikiParserConstants {
   int SPACE = 2;
   int TAB = 3;
   int ALPHANUM = 4;
-  int URLCHARS = 5;
-  int UCASE_ALPHANUM = 6;
-  int LCASE_ALPHANUM = 7;
-  int NON_ALPHANUM = 8;
-  int QUOTED_BLOCK = 9;
-  int BOLD = 10;
-  int UNDERLINE = 11;
-  int ITALIC = 12;
-  int LT = 13;
-  int GT = 14;
-  int COLOR = 15;
-  int HEADER = 16;
-  int COLOR_HEADER_TERMINATE = 17;
-  int RULE = 18;
-  int EMAIL = 19;
-  int URL = 20;
-  int WIKI_TERM = 21;
-  int SHORT_WIKI_TERM = 22;
-  int WORD = 23;
-  int NEW_PARAGRAPH = 24;
-  int LINE_BREAK = 25;
-  int INDENT = 26;
-  int WHITESPACE = 27;
-  int ASTERISK = 28;
-  int UNDERSCORE = 29;
-  int CARET = 30;
-  int DOUBLE_LBRACKET = 31;
-  int DELIMITERS = 32;
+  int MAILCHARS = 5;
+  int URLCHARS = 6;
+  int UCASE_ALPHANUM = 7;
+  int LCASE_ALPHANUM = 8;
+  int NON_ALPHANUM = 9;
+  int QUOTED_BLOCK = 10;
+  int BOLD = 11;
+  int UNDERLINE = 12;
+  int ITALIC = 13;
+  int LT = 14;
+  int GT = 15;
+  int LI = 16;
+  int COLOR = 17;
+  int HEADER = 18;
+  int COLOR_HEADER_TERMINATE = 19;
+  int RULE = 20;
+  int EMAIL = 21;
+  int URL = 22;
+  int WIKI_TERM = 23;
+  int SHORT_WIKI_TERM = 24;
+  int WORD = 25;
+  int NEW_PARAGRAPH = 26;
+  int LINE_BREAK = 27;
+  int INDENT = 28;
+  int WHITESPACE = 29;
+  int ASTERISK = 30;
+  int UNDERSCORE = 31;
+  int CARET = 32;
+  int DOUBLE_LBRACKET = 33;
+  int DELIMITERS = 34;
 
   int DEFAULT = 0;
 
@@ -85,6 +87,7 @@ public interface WikiParserConstants {
     "\" \"",
     "\"\\t\"",
     "<ALPHANUM>",
+    "<MAILCHARS>",
     "<URLCHARS>",
     "<UCASE_ALPHANUM>",
     "<LCASE_ALPHANUM>",
@@ -95,6 +98,7 @@ public interface WikiParserConstants {
     "\"~\"",
     "\"<\"",
     "\">\"",
+    "<LI>",
     "<COLOR>",
     "<HEADER>",
     "\"^\"",

@@ -59,6 +59,7 @@ PARSER_END(WikiParser)
    | < #SPACE: " " >
    | < #TAB: "\t" >
    | < #ALPHANUM: ["a"-"z", "A"-"Z", "0"-"9"] >
+   | < #MAILCHARS: <ALPHANUM> | [".", "_", "-"] >
    | < #URLCHARS: <ALPHANUM> | ["/", ".", "?", "&", "%", "~", ":", "_", "-", "@", "=" ] >
    | < #UCASE_ALPHANUM: ["A"-"Z", "0"-"9"] >
    | < #LCASE_ALPHANUM: ["a"-"z", "0"-"9"] >
@@ -74,11 +75,12 @@ PARSER_END(WikiParser)
  | < ITALIC: "~" >
  | < LT: "<" >
  | < GT: ">" >
+ | < LI: (<NL>)+ "-" (<WHITESPACE>)+ >
  | < COLOR: "^" (<ALPHANUM>)+ >
  | < HEADER: "^@" (<ALPHANUM>)* >
  | < COLOR_HEADER_TERMINATE: "^" >
  | < RULE: "-----" >
- | < EMAIL: (<ALPHANUM>)+ "@" ((<ALPHANUM>)+ "." (<ALPHANUM>)+)+ >
+ | < EMAIL: (<MAILCHARS>)+ "@" ((<ALPHANUM>)+ "." (<ALPHANUM>)+)+ >
  | < URL: ((<ALPHANUM>)+ ":") ((<URLCHARS>)+ | ((<URLCHARS>)+  (   "("  (~[")", "\r", "\n"])+  ")"  ))) >
  | < WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ >
  | < SHORT_WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ "`" >
@@ -99,6 +101,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
  (
     t = <LT>            { builder.lt(); }
   | t = <GT>            { builder.gt(); }
+  | t = <LI>            { builder.li(); }
   | t = <BOLD>          { builder.bold(); }
   | t = <UNDERLINE>     { builder.underline(); }
   | t = <ITALIC>        { builder.italic(); }
