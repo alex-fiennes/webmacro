@@ -1,4 +1,4 @@
-WebMacro 1.1b2
+WebMacro 1.1b3
 ---------------
                     
 This is the second in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
@@ -20,6 +20,20 @@ Please visit http://www.webmacro.org/MailingList for details.
 Changes in this Release
 -----------------------
 
+- cleanup to various error messages (eric)
+
+- make line/column info available in more situations (eric)
+
+- fix stupid warnings in IncludeDirective (eric)
+
+- expanded test cases (eric)
+
+- avoid exception throwing in ContextTool creation (keats) 
+
+
+Changes Prior to this Release
+-----------------------------
+
 - more documentation concerning new features (brian, keats, lane)
 
 - fixed bugs 69, 66, and 59 (eric)
@@ -27,7 +41,7 @@ Changes in this Release
 - WMServlet.doGet() is no longer "final" (eric)
 
 - logging API now accepts Throwable instead of Exception. (eric)
-   This one might require you to recompile your classes. 
+   This one might require you to recompile your classes.
 
 - the syntax for #default has changed to:
      #default $x = 3
@@ -36,7 +50,7 @@ Changes in this Release
      For example, #if($foo.noSuchMethod()) now throws exceptions when using Default and CrankyEEH
     whereas previously it did not.
 
-- fixed parser bug where a missing #end or } would not throw an exception, but would instead 
+- fixed parser bug where a missing #end or } would not throw an exception, but would instead
 consider the end of the file as the end of the block. (eric)
 
 - releases can now be downloaded in binary and/or source form. (eric)
@@ -47,11 +61,6 @@ consider the end of the file as the end of the block. (eric)
 - started a macros/ area to keep useful #macro's (lane)
 
 - additional unit tests for #macros, parser bugs, and other things (lane, eric)
- 
-
-
-Changes Prior to this Release
------------------------------
 
 - added #macro directive (brian)
 
