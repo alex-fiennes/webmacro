@@ -1,4 +1,10 @@
 
+-- Experimenting with QueueWriter in attempt to reduce the amount of copying
+   that occurs when you write in a servlet... this may not actually buy me 
+   anything so I may drop it. I know in Jakarta anyway that it's not likely
+   to matter much since the output is copied several times anyway. But it
+   might speed things up in resin and other servlet runners that do less
+   copying of the output.
 -- UrlProvider fixed so that it automatically adds the "file" protocol if 
    no protocol is specified. This means that #include "/tmp/foo" will work
    again. 
