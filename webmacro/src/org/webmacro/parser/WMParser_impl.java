@@ -2198,7 +2198,7 @@ public class WMParser_impl implements WMParser_implConstants {
           break;
         case 0:
           jj_consume_token(0);
-                    {if (true) throw new ParseException("Encountered EOF, expecting #end at " + token.beginLine + "." + token.beginColumn);}
+                    {if (true) throw new ParseException("Unclosed block beginning at line " + token.beginLine + ".  Check for invalid directive options or missing a #end");}
           break;
         case RBRACE:
         case LBRACE:

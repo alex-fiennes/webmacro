@@ -102,10 +102,11 @@ Administrative targets:
         <ant antfile="test/build.xml" target="unit-clean" />
     </target>
 
+    <target name='javacc' depends='prepare' if='javacc.present'>
+        <javacc target="src/org/webmacro/parser/WMParser_impl.jj" javacchome="${javacc.home}" />
+    </target>
 
-    <target name="precompile" depends="prepare" if="javacc.present">
-        <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
-            javacchome="${javacc.home}" />
+    <target name="precompile" depends="javacc" if="javacc.present">
     </target>
 
     <target name="compile" depends="prepare, precompile">

@@ -1174,7 +1174,7 @@ BlockBuilder Block(Subdirective[] subdirectives) : {
     )
   | ( [ <BEGIN> EatWsNlOrSpace(block) ]
       ( WMContentNoDirective(block)
-        | (<EOF>) { throw new ParseException("Encountered EOF, expecting #end at " + token.beginLine + "." + token.beginColumn); }
+        | (<EOF>) { throw new ParseException("Unclosed block beginning at line " + token.beginLine + ".  Check for invalid directive options or missing a #end"); }
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
         | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() })
           Directive(block)
