@@ -188,7 +188,7 @@ Directives.param:      org.webmacro.directive.ParamDirective
 # rather than as a single entry (and is $FormList in the template).
 #
 # CookieTool creates a $Cookie variable which can be used to get and 
-# set cookies by name. For example, $Cookie.Passowrd
+# set cookies by name. For example, $Cookie.Password
 #
 # SessionTool creates a $Session variable that resovles to the 
 # HttpSession of the current request.
