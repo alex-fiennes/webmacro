@@ -765,6 +765,16 @@ Object Expression() : {
 
 /* All of the following operate in the DEFAULT state */
 
+void EatWsNl() : {
+  int entryState = token_source.curLexState;
+  Object o;
+}
+{
+  { SetState(WM); } 
+  OptionalWsNl()
+  { SetState(entryState); }
+}
+
 // Parses an entire directive.  Treats # as text if the previous character
 // is a letter, digit, or certain special characters (=, ', ")
 void Directive(ParserBlockBuilder b) : {
@@ -857,23 +867,23 @@ BlockBuilder LiteralBlock() : {
 
 BlockBuilder Block() : {
   ParserBlockBuilder block = new ParserBlockBuilder();
-  boolean first = true;
   Token t;
 }
 { 
   ( 
     LOOKAHEAD(<LBRACE>) 
-    ( <LBRACE> 
-      ( ( 
-          WMContent(block) { if (first) block.eatLeadingWsNl(); }
-          | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
-        ) { first = false; } 
-      ) * <RBRACE> )
+    ( <LBRACE> EatWsNl()
+      ( 
+        WMContent(block) 
+        | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
+      ) * 
+      <RBRACE> EatWsNl()
+    )
   | ( [ <BEGIN> ] 
-      ( ( WMContent(block) { if (first) block.eatLeadingWsNl(); }
-          | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
-        ) { first = false; }
-      ) * <END> )
+      ( WMContent(block) EatWsNl()
+        | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
+      ) * <END> EatWsNl() 
+    )
   )
   { return block; }
 }

@@ -74,7 +74,8 @@ class IfDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("if", null, ifArgs, ifSubdirectives);
+    myDescr = new DirectiveDescriptor("if", null, ifArgs, ifSubdirectives,
+                                      DirectiveDescriptor.FLAG__IMPLICIT_END);
   
 
   public static DirectiveDescriptor getDescriptor() {
