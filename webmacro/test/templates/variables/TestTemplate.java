@@ -13,9 +13,28 @@ import org.webmacro.Context;
  */
 public class TestTemplate extends AbstractTemplateEvaluator
 {
+    public static class TestObject
+    {
+        String firstName;
+        String lastName;
+        public TestObject (String firstName, String lastName);
+        {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+        
+        public String getFirstName () { return firstName; }
+        public String getLastName () { return lastName; }
+        public String toString () { return firstName + " " + lastName; }
+        
+    }
+    
     public void stuffContext (Context c) throws Exception
     {
+        Object nullObject = null;
+        TestObject notNullObject = TestObject ("Eric", "Ridge");
         
-        
+        c.put ("NullObject", nullObject);
+        c.put ("NotNullObject", notNullObject);
     }
 }
