@@ -94,11 +94,10 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
                 PropertyException propEx = null;
                 if (problem instanceof PropertyException)
                     propEx = (PropertyException)problem;
-                else {
+                else 
                     propEx = new PropertyException(
                         "Error expanding $" + variable.getVariableName());
-                    propEx.setContextLocation(context.getCurrentLocation());
-                }
+                propEx.setContextLocation(context.getCurrentLocation());
                 strError = propEx.getMessage();
 
 		if ( context.containsKey( "WMERROR" ) )
