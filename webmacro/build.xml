@@ -7,6 +7,7 @@
 
   <property name="version"        value="0.98p1"/>
   <property name="app.name"       value="webmacro"/>
+  <property name="tmpdir"         value="tmp" />
   <property name="classes"        value="classes"/>
   <property name="dist"           value="webmacro-${version}"/>
   <property name="javadoc"        value="javadoc"/>
@@ -40,6 +41,7 @@
     <delete dir="${classes}"/>
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
+    <delete dir="${tmpdir}"/>
     <delete file="${jar}"/>
     <delete file="${src.jar}"/>
   </target>
@@ -51,14 +53,23 @@
   </target>
 
   <target name="compile" depends="prepare, precompile">
-    <javac srcdir="src" destdir="${classes}"
+    <exec executable="date" outputproperty="date" />
+    <copy todir="${tmpdir}">
+       <fileset dir="src" />
+       <filterset>
+          <filter token="VERSION" value="${version}" />
+          <filter token="BUILD_DATE" value="${date}" />
+       </filterset>
+    </copy>
+    <javac srcdir="${tmpdir}" destdir="${classes}"
            debug="on" optimize="off" deprecation="off">
       <classpath refid="class.path" />
     </javac>
     <copy todir="${classes}">
-      <fileset dir="src" includes="**/*.properties" />
+      <fileset dir="${tmpdir}" includes="**/*.properties" />
       <fileset dir="." includes="WebMacro.defaults"/>
     </copy>
+    <delete dir="${tmpdir}" />
   </target>
 
 

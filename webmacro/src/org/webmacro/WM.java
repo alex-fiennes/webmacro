@@ -107,7 +107,8 @@ public class WM implements WebMacro
       _broker = broker;
       _alive = true;
       _log = _broker.getLog("wm", "WebMacro instance lifecycle");
-      _log.info("new " + this);
+      _log.info("new " + this
+              + "; versoin=" + WebMacro.VERSION + " " + WebMacro.BUILD_DATE);
       _context = new Context(_broker);
       _contextCache = new ThreadLocal() {
             public Object initialValue() { return new ScalablePool(); }

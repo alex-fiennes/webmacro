@@ -40,6 +40,18 @@ import java.io.UnsupportedEncodingException;
   */
 public interface WebMacro 
 {
+   /**
+    * The current version of WebMacro.  The actual value is
+    * inserted by ANT during the "compile" process
+    */
+   public static final String VERSION = "@VERSION@";
+
+   /**
+    * When was this version of WebMacro built?  The actual value is
+    * inserted by ANT durint the "compile" process
+    */
+   public static final String BUILD_DATE = "@BUILD_DATE@";
+  
 
    /**
      * Call this method when you are finished with WebMacro. If you don't
