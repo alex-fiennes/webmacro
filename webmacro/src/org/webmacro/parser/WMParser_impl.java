@@ -171,7 +171,7 @@ public class WMParser_impl implements WMParser_implConstants {
   default:
     throw new ParseException("ParseDirectiveArg: Unknown argument type "
                              + arg.type);
-  };
+  }
   }
 
   boolean parse_arg_group(ArgDescriptor[] args, int i,

@@ -39,7 +39,7 @@ public class ListUtil {
   /**
    * Private constructor for a singleton class
    */
-  private ListUtil(){};
+  private ListUtil(){}
   private static ListUtil _singleton = new ListUtil();
 
   /**

@@ -49,11 +49,11 @@ public class RethrowableException extends Exception {
 
   public RethrowableException() {
     super();
-  };
+  }
 
   public RethrowableException(String s) {
     super(s);
-  };
+  }
 
   public RethrowableException(String s, Throwable e) {
     super(s + System.getProperty("line.separator") + e);
@@ -61,30 +61,29 @@ public class RethrowableException extends Exception {
     while (caught instanceof RethrowableException) {
       caught = ((RethrowableException) caught).caught;
     }
-  };
+  }
 
   public void printStackTrace() {
     super.printStackTrace();
     if (caught != null) {
       System.err.println(RETHROW_MESSAGE);
       caught.printStackTrace();
-    };
-  };
+    }
+  }
 
   public void printStackTrace(java.io.PrintStream ps) {
     super.printStackTrace(ps);
     if (caught != null) {
       ps.println(RETHROW_MESSAGE);
       caught.printStackTrace(ps);
-    };
-  };
+    }
+  }
 
   public void printStackTrace(java.io.PrintWriter pw) {
     super.printStackTrace(pw);
     if (caught != null) {
       pw.println(RETHROW_MESSAGE);
       caught.printStackTrace(pw);
-    };
-  };
-
-};
+    }
+  }
+}

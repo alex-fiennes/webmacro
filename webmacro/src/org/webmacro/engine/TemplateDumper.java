@@ -51,22 +51,22 @@ public class TemplateDumper extends TemplateVisitor {
 
   public void visitString(String s) { 
     print(s); 
-  };
+  }
 
   public void beginBlock() { 
     newLine(); 
     println("#begin"); 
-  };
+  }
 
   public void endBlock() {
     newLine();
     println("#end"); 
-  };
+  }
 
   public void beginDirective(String directiveName) {
     newLine();
     print("#" + directiveName + " "); 
-  };
+  }
 
   public void visitDirectiveArg(String argName, Object o) {
     print(":" + argName + ":");
@@ -76,7 +76,7 @@ public class TemplateDumper extends TemplateVisitor {
       print("<NULL>");
     else
       print(o.toString());
-  };
+  }
 
   public void visitBinaryOperation(String opType, Object l, Object r) {
     print(opType + "(");
@@ -90,7 +90,7 @@ public class TemplateDumper extends TemplateVisitor {
     else 
       print((r != null)? r.toString() : "<NULL>");
     print(")");
-  };
+  }
 
   public void visitUnaryOperation(String opType, Object o) {
     print(opType + "(" + ((o != null)? o.toString() : "<NULL>")
@@ -103,5 +103,5 @@ public class TemplateDumper extends TemplateVisitor {
 
   public void visitUnknownMacro(String macroType, Macro m) {
     print("[Unknown macro type " + macroType + "]");
-  };
+  }
 }
