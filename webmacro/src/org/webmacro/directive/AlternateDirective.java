@@ -37,7 +37,6 @@ public class AlternateDirective extends Directive {
 
   public void write(FastWriter out, Context context) 
     throws ContextException, IOException {
-    boolean done=false;
     Object[] arr;
 
     try {

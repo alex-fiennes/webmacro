@@ -36,7 +36,6 @@ public class SetDirective extends Directive {
 
   public void write(FastWriter out, Context context) 
     throws ContextException, IOException {
-    boolean done=false;
 
     try {
       if (result instanceof Macro) 
