@@ -73,9 +73,9 @@ public abstract class Variable implements Macro, Visitable
 {
 
 
-   final static protected Object PROPERTY_TYPE = null;
-   final static protected Object LOCAL_TYPE = new Object();
-   final static protected Object TOOL_TYPE = new Object();
+   final static public Object PROPERTY_TYPE = null;
+   final static public Object LOCAL_TYPE = new Object();
+   final static public Object TOOL_TYPE = new Object();
 
    /**
      * The name of this variable.
@@ -112,8 +112,25 @@ public abstract class Variable implements Macro, Visitable
       return sn;
    }
 
-   final String[] getPropertyNames() {
+   public final String[] getPropertyNames() {
       return makePropertyNames(_names);
+   }
+
+   /**
+    * Like getPropertyNames, but only works if isSimpleName is true 
+    */
+   public final String getName() {
+     return (_names[0] instanceof Named) ? 
+       ((Named) _names[0]).getName() 
+       : (String) _names[0];
+   }
+  
+  /**
+   * Returns true if the Variable describes a simple name (one with only
+   * one element) 
+   */
+   public final boolean isSimpleName() {
+      return (_names.length == 1);
    }
 
    /**
