@@ -56,34 +56,79 @@ import java.util.Iterator;
 public class DiffPageAction implements PageAction {
     
     public static class DiffHelper {
-        private List _changes;
+        private List _changeList;
+        private String[] _currentLines;
+        private String[] _oldLines;
         
-        public DiffHelper (Diff.change changes) {
-            _changes = new ArrayList();
+        
+        public DiffHelper (WikiSystem wiki, WikiPage old, WikiPage current) throws Exception {
+            _currentLines = WikiUtil.delimitedToArray(wiki.getPageRenderer().render(current), "\n");
+            _oldLines = WikiUtil.delimitedToArray(wiki.getPageRenderer().render(old), "\n");
+        
+            Diff diff = new Diff (_oldLines, _currentLines);
+            Diff.change changes = diff.diff(Diff.forwardScript);
+            
+            _changeList = new ArrayList();
             while (changes != null) {
-                _changes.add (changes);
+                _changeList.add (changes);
                 changes = changes.link;
             }
         }
         
-        public List getChanges() {
-            return _changes;
+        public String[] getCurrentLines() {
+            return _currentLines;
         }
         
-        public boolean isModified (int line_no) {
-            for (Iterator itr = _changes.iterator(); itr.hasNext();) {
+        public String[] getOldLines() {
+            return _oldLines;
+        }
+        
+        public List getChangeList() {
+            return _changeList;
+        }
+        
+        public boolean isStartOfDiffLeft (int line_no) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
                 Diff.change ch = (Diff.change) itr.next();
-                if (line_no < ch.line0+ch.deleted && line_no <= ch.line1 + ch.inserted && line_no >= ch.line0 && line_no >=ch.line1 && ch.deleted > 0 && ch.inserted > 0)
+                if (line_no == ch.line0)
+                    return true;
+            }
+            return false;
+        }
+        
+        public boolean isStartOfDiffRight (int line_no) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
+                Diff.change ch = (Diff.change) itr.next();
+                if (line_no == ch.line1)
+                    return true;
+            }
+            return false;
+        }
+        
+        public boolean isModifiedLeft (int line_no) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
+                Diff.change ch = (Diff.change) itr.next();
+                if (line_no >= ch.line0 && line_no < ch.line0+Math.min(ch.inserted, ch.deleted)
+                   && ch.inserted > 0 && ch.deleted > 0)
+                    return true;
+            }
+            return false;
+        }
+        public boolean isModifiedRight (int line_no) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
+                Diff.change ch = (Diff.change) itr.next();
+                if (line_no >= ch.line1 && line_no < ch.line1+Math.min(ch.deleted, ch.inserted)
+                   && ch.inserted > 0 && ch.deleted > 0)
                     return true;
             }
             return false;
         }
         
         public boolean isDeleted(int line_no) {
-            if (isModified(line_no))
+            if (isModifiedLeft(line_no))
                 return false;
             
-            for (Iterator itr = _changes.iterator(); itr.hasNext();) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
                 Diff.change ch = (Diff.change) itr.next();
                 if (ch.line0 + ch.deleted > line_no && ch.line0 <= line_no)
                     return true;
@@ -92,10 +137,10 @@ public class DiffPageAction implements PageAction {
         }
         
         public boolean isInserted(int line_no) {
-            if (isModified(line_no))
+            if (isModifiedLeft(line_no))
                 return false;
             
-            for (Iterator itr = _changes.iterator(); itr.hasNext();) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
                 Diff.change ch = (Diff.change) itr.next();
                 if (line_no >= ch.line1 && line_no < ch.line1 + ch.inserted)
                     return true;
@@ -104,10 +149,10 @@ public class DiffPageAction implements PageAction {
         }
 
         public int getDeleteCount(int line_no) {
-            if (isModified(line_no))
+            if (isModifiedRight(line_no))
                 return 0;
             
-            for (Iterator itr = _changes.iterator(); itr.hasNext();) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
                 Diff.change ch = (Diff.change) itr.next();
                 if (line_no == ch.line1)
                     return ch.deleted;
@@ -115,10 +160,10 @@ public class DiffPageAction implements PageAction {
             return 0;
         }
         public int getInsertCount(int line_no) {
-            if (isModified(line_no))
+            if (isModifiedRight(line_no))
                 return 0;
             
-            for (Iterator itr = _changes.iterator(); itr.hasNext();) {
+            for (Iterator itr = _changeList.iterator(); itr.hasNext();) {
                 Diff.change ch = (Diff.change) itr.next();
                 if (line_no == ch.line0)
                     return ch.inserted;
@@ -155,18 +200,12 @@ public class DiffPageAction implements PageAction {
 
             boolean is_current = tmp.getVersion() == currentPage.getVersion();
             
-            String[] currentPageLines = WikiUtil.delimitedToArray(currentPage.getUnparsedData(), "\n");
-            String[] oldPageLines = WikiUtil.delimitedToArray(oldPage.getUnparsedData(), "\n");
-                
-            Diff diff = new Diff(oldPageLines, currentPageLines);
-            Diff.change changes = diff.diff(Diff.forwardScript);
+            DiffHelper helper = new DiffHelper (wiki, oldPage, currentPage);
             
             wc.put ("IsCurrent", is_current);
             wc.put ("CurrentPage", currentPage);
             wc.put ("OldPage", oldPage);
-            wc.put ("CurrentPageLines", currentPageLines);
-            wc.put ("OldPageLines", oldPageLines);
-            wc.put ("DiffHelper", new DiffHelper (changes));
+            wc.put ("DiffHelper", helper);
         } catch (Exception e) {
             e.printStackTrace();
             throw new PageAction.PageActionException(e.toString());

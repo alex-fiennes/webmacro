@@ -73,7 +73,9 @@ public class EditPageAction implements PageAction {
         if (page != null && page.getIsModerated() && !user.getIsModerator())
             throw new PageAction.PageActionException ("This page can only be edited by moderators");
         
-        wc.put ("PageName", wc.getForm ("edit"));
+        String pageName = wc.getForm("edit");
+        pageName = WikiUtil.formatAsWikiTitle(pageName);
+        wc.put ("PageName", pageName);
     }
     
     /**

@@ -93,7 +93,7 @@ public class SavePageAction implements PageAction {
         String text = wc.getForm ("TEXT");
         boolean moderated = wc.getForm ("MODERATED") != null && wc.getForm("MODERATED").equals ("true");
         String keywords = wc.getForm ("RELATED_TITLES");
-        String pageName = wc.getForm ("save");
+        String pageName = getWikiPageName(wiki, wc);
         
         // create the page
         WikiPage newPage = wiki.createPage (pageName, editor, text);
@@ -141,7 +141,9 @@ public class SavePageAction implements PageAction {
      * parameter.
      */
     public String getWikiPageName(WikiSystem wiki, WebContext wc) {
-        return wc.getForm ("save");
+        String pageName = wc.getForm ("save");
+        pageName = WikiUtil.formatAsWikiTitle(pageName);
+        return pageName;
     }
 
     private String[] keywordsToStringArray (String input) {

@@ -23,6 +23,8 @@
             }
         }
 
+        <p>
+##        $Wiki.getUserCount() total Users<br>
         <table border=0>
         <tr>
             <th>UID</th>

@@ -161,14 +161,22 @@ public abstract class WikiPageRenderer {
                     str = renderStartList();
                     break;
 
-                case WikiDataTypes.LI:
-                    str = renderListItem();
-                    break;
-
                 case WikiDataTypes.END_LIST:
                     str = renderEndList();
                     break;
+                    
+                case WikiDataTypes.START_NUMBERED_LIST:
+                    str = renderStartNumberedList();
+                    break;
 
+                case WikiDataTypes.END_NUMBERED_LIST:
+                    str = renderEndNumberedList();
+                    break;
+
+                case WikiDataTypes.LI:
+                    str = renderListItem();
+                    break;
+                    
                 // @deprecated "image" is now a URL type.
                 case WikiDataTypes.IMAGE:
                     str = renderImage (data);
@@ -240,9 +248,11 @@ public abstract class WikiPageRenderer {
     protected abstract String renderUnknown (WikiData data);
 
     protected abstract String renderStartList();
-    protected abstract String renderListItem();
     protected abstract String renderEndList();
-
+    protected abstract String renderStartNumberedList();
+    protected abstract String renderEndNumberedList();
+    protected abstract String renderListItem();
+    
     protected abstract String renderBoldStart ();
     protected abstract String renderBoldEnd ();
     protected abstract String renderUnderlineStart ();

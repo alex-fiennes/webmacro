@@ -49,8 +49,11 @@ import org.tcdi.opensource.wiki.*;
  * @author  e_ridge
  */
 public class DefaultPageBuilder implements WikiPageBuilder {
+    protected static final short LIST_TYPE_NORMAL = 0;
+    protected static final short LIST_TYPE_NUMBERED = 1;
     protected WikiTermMatcher _matcher;
     protected boolean _bold, _underline, _italic, _color, _header, _space, _list;
+    protected short _listType;
     protected String _currentHeader = null;
     protected StringBuffer _text = new StringBuffer ();
     protected List _data = new ArrayList ();
@@ -62,6 +65,14 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     
     public DefaultPageBuilder (WikiTermMatcher matcher) {
         _matcher = matcher;
+    }
+
+    public void begin() {
+        // nothing to do here
+    }
+
+    public void done() {
+        finishFormatting ();
     }
 
     public void setWikiTermMatcher (WikiTermMatcher matcher) {
@@ -92,15 +103,45 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     }
 
     public void li() {
-		if (!_list) {
+        if (_list && _listType != LIST_TYPE_NORMAL)
+            endList();
+        if (!_list) {
 			newData();
 			_currentData.setType(WikiDataTypes.START_LIST);
 			_list = true;
+            _listType = LIST_TYPE_NORMAL;
 		}
 		newData();
 		_currentData.setType(WikiDataTypes.LI);
     }
 
+    public void liNumbered() {
+        if (_list && _listType != LIST_TYPE_NUMBERED)
+            endList();
+		if (!_list) {
+			newData();
+			_currentData.setType(WikiDataTypes.START_NUMBERED_LIST);
+			_list = true;
+            _listType = LIST_TYPE_NUMBERED;
+		}
+		newData();
+		_currentData.setType(WikiDataTypes.LI);
+    }
+
+    private void endList() {
+            newData();
+        switch (_listType) {
+            case LIST_TYPE_NORMAL:
+                _currentData.setType(WikiDataTypes.END_LIST);
+                break;
+                    
+            case LIST_TYPE_NUMBERED:
+                _currentData.setType(WikiDataTypes.END_NUMBERED_LIST);
+                break;
+        }
+        _list = false;
+    }
+    
     public void underline() {
         newData ();
         if (!_underline)
@@ -168,12 +209,8 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     
     public void paragraph() {
         finishFormatting ();
-        if (_list) {
-            newData();
-            _currentData.setType(WikiDataTypes.END_LIST);
-            _list = false;
-
-        }
+        if (_list) 
+            endList();
         newData ();
         _currentData.setType (WikiDataTypes.PARAGRAPH_BREAK);
     }

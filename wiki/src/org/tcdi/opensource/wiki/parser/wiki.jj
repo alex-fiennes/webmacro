@@ -83,6 +83,7 @@ PARSER_END(WikiParser)
  | < LT: "<" >
  | < GT: ">" >
  | < LI: (<NL>)+ "-" (<WHITESPACE>)+ >
+ | < LI_NUMBERED: (<NL>)+ "#" (<WHITESPACE>)+ >
  | < COLOR: "^" (<ALPHANUM>)+ >
  | < HEADER: "^@" (<ALPHANUM>)* >
  | < COLOR_HEADER_TERMINATE: "^" >
@@ -96,6 +97,7 @@ PARSER_END(WikiParser)
  | < LINE_BREAK: <NL> >
  | < INDENT: <SPACE> <SPACE> >
  | < WHITESPACE:  <SPACE> | <TAB> >
+ | < TILDE: "~~" >
  | < ASTERISK: "**" >
  | < UNDERSCORE: "__" >
  | < CARET: "^^" >
@@ -103,12 +105,15 @@ PARSER_END(WikiParser)
  | < DELIMITERS: <NON_ALPHANUM> >
 }
 
-WikiPage parse (WikiPageBuilder builder) : { Token t;}
-{
+WikiPage parse (WikiPageBuilder builder) : { 
+    Token t;
+    builder.begin();
+} {
  (
     t = <LT>            { builder.lt(); }
   | t = <GT>            { builder.gt(); }
   | t = <LI>            { builder.li(); }
+  | t = <LI_NUMBERED>   { builder.liNumbered(); }
   | t = <BOLD>          { builder.bold(); }
   | t = <UNDERLINE>     { builder.underline(); }
   | t = <ITALIC>        { builder.italic(); }
@@ -161,6 +166,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
   | t = <LINE_BREAK>    { builder.newline(); }
   | t = <INDENT>        { builder.indent(2); }
   | t = <WHITESPACE>    { builder.space(); }
+  | t = <TILDE>         { builder.word ("~"); }
   | t = <ASTERISK>      { builder.word ("*"); }
   | t = <UNDERSCORE>    { builder.word ("_"); }
   | t = <CARET>         { builder.word ("^"); }
@@ -169,6 +175,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
   | t = <URL>           { builder.url (t.image); }
   | t = <QUOTED_BLOCK>  { builder.quotedBlock (t.image.substring(2, t.image.length()-2)); }
  )* {
+        builder.done();
         return builder.getPage ();
     }
 }

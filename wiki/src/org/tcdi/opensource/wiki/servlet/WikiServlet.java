@@ -134,7 +134,7 @@ public class WikiServlet extends WMServlet {
         } catch (Exception e) {
             // something bad happened while performing the action
             // TODO: Handle error and error template ourselves
-            e.printStackTrace();
+            log("Error handling request", e);
             throw new HandlerException (e.toString());
         } finally {
             if (user != null)

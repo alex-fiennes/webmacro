@@ -53,58 +53,60 @@ import java.io.Serializable;
  * 
  * @author Eric B. Ridge
  */
-public interface WikiDataTypes
-{
-   public static final int UNKNOWN = -1;
-   public static final int PLAIN_TEXT = 0;            
-   public static final int HORIZ_LINE = 1;
-   public static final int PAGE_REFERENCE = 2;
-   public static final int LINE_BREAK = 3;
-   public static final int PARAGRAPH_BREAK = 4;
-   public static final int URL = 5;
-   public static final int JAVADOC = 6;
-   public static final int IMAGE = 7;
-   public static final int INDENT = 8;
-   
-   public static final int START_INDENT = 10;
-   public static final int END_INDENT = 11;
-   public static final int START_INDENT_BLOCK = 12;
-   public static final int END_INDENT_BLOCK = 13;
-   
-   public static final int START_BOLD = 20;
-   public static final int END_BOLD = 21;
-   
-   public static final int START_UNDERLINE = 30;
-   public static final int END_UNDERLINE = 31;
-   
-   public static final int START_ITALIC = 40;
-   public static final int END_ITALIC = 41;
-   
-   public static final int START_URL = 50;
-   public static final int END_URL = 51;
-   
-   public static final int START_IMAGE = 60;
-   public static final int END_IMAGE = 61;
-   
-   public static final int START_JAVADOC = 70;
-   public static final int END_JAVADOC = 71;
-   
-   public static final int START_COLOR = 80;
-   public static final int END_COLOR = 81;
-   
-   public static final int START_NAMED_HEADER = 90;
-   public static final int END_NAMED_HEADER = 91;
-   
-   public static final int START_QUOTE = 100;
-   public static final int END_QUOTE = 101;
+public interface WikiDataTypes {
+    public static final int UNKNOWN = -1;
+    public static final int PLAIN_TEXT = 0;
+    public static final int HORIZ_LINE = 1;
+    public static final int PAGE_REFERENCE = 2;
+    public static final int LINE_BREAK = 3;
+    public static final int PARAGRAPH_BREAK = 4;
+    public static final int URL = 5;
+    public static final int JAVADOC = 6;
+    public static final int IMAGE = 7;
+    public static final int INDENT = 8;
 
-	public final static int START_LIST = 110;
-	public final static int LI = 111;
-	public final static int END_LIST = 112;
+    public static final int START_INDENT = 10;
+    public static final int END_INDENT = 11;
+    public static final int START_INDENT_BLOCK = 12;
+    public static final int END_INDENT_BLOCK = 13;
 
-   public static final int EMAIL = 200;
-   public static final int QUOTED_BLOCK = 201;
-   public static final int SPACE = 202;
-   public static final int LT = 203;
-   public static final int GT = 204;
+    public static final int START_BOLD = 20;
+    public static final int END_BOLD = 21;
+
+    public static final int START_UNDERLINE = 30;
+    public static final int END_UNDERLINE = 31;
+
+    public static final int START_ITALIC = 40;
+    public static final int END_ITALIC = 41;
+
+    public static final int START_URL = 50;
+    public static final int END_URL = 51;
+
+    public static final int START_IMAGE = 60;
+    public static final int END_IMAGE = 61;
+
+    public static final int START_JAVADOC = 70;
+    public static final int END_JAVADOC = 71;
+
+    public static final int START_COLOR = 80;
+    public static final int END_COLOR = 81;
+
+    public static final int START_NAMED_HEADER = 90;
+    public static final int END_NAMED_HEADER = 91;
+
+    public static final int START_QUOTE = 100;
+    public static final int END_QUOTE = 101;
+
+    public final static int START_LIST = 110;
+    public final static int LI = 111;
+    public final static int END_LIST = 112;
+
+    public final static int START_NUMBERED_LIST = 113;
+    public final static int END_NUMBERED_LIST = 114;
+
+    public static final int EMAIL = 200;
+    public static final int QUOTED_BLOCK = 201;
+    public static final int SPACE = 202;
+    public static final int LT = 203;
+    public static final int GT = 204;
 }

@@ -387,13 +387,13 @@ final public class Wiki implements WikiSystem, QueueListener {
      */
     private Hashtable createStore(String name) throws Exception {
         Properties props = new Properties();
-        props.put("ProxyImplementation", (String) _properties.get(name + ".ProxyImplementation"));
-        props.put("PartitionKey", (String) _properties.get(name + ".PartitionKey"));
-        props.put("ImmutableCertificate", (String) _properties.get(name + ".ImmutableCertificate"));
-        props.put("MutableCertificate", (String) _properties.get(name + ".MutableCertificate"));
-        props.put("Creator", (String) _properties.get(name + ".Creator"));
-        props.put("Server", (String) _properties.get(name + ".Server"));
-        props.put("Port", (String) _properties.get(name + ".Port"));
+        props.put("ProxyImplementation", _properties.get(name + ".ProxyImplementation"));
+        props.put("PartitionKey", _properties.get(name + ".PartitionKey"));
+        props.put("ImmutableCertificate", _properties.get(name + ".ImmutableCertificate"));
+        props.put("MutableCertificate", _properties.get(name + ".MutableCertificate"));
+        props.put("Creator", _properties.get(name + ".Creator"));
+        props.put("Server", _properties.get(name + ".Server"));
+        props.put("Port", _properties.get(name + ".Port"));
 
         VLHProvider provider = VLHProvider.getInstance();
         try {
@@ -430,19 +430,6 @@ final public class Wiki implements WikiSystem, QueueListener {
         page.setWikiData(tmp.getData());
     }
 
-    /**
-     * reparse a page
-     */
-    private void reparsePage(WikiPage page) throws Exception {
-        WikiPageBuilder builder = (WikiPageBuilder) this._pageBuilderClass.newInstance();
-        builder.setWikiTermMatcher(this);
-        WikiParser parser = new WikiParser(new ByteArrayInputStream(page.getUnparsedData().getBytes()));
-        WikiPage tmp = parser.parse(builder);
-
-        page.setWikiData(tmp.getData());
-        this.savePage(page);
-    }
-    
     /**
      * Is the specified String a Wiki page reference?
      */
@@ -508,7 +495,18 @@ final public class Wiki implements WikiSystem, QueueListener {
         
         return _pageTree;
     }
-    
+
+    public int getPageCount() {
+        return getCurrentPageNames().length;
+    }
+
+    /**
+     * TODO:  WHY DOES THIS ALWAYS RETURN 4?  I don't understand.
+     */ 
+    public int getUserCount() {
+        return _userStore.size();
+    }
+
     private void addChildren(List pages, Map lookup, WikiPage root, int depth) {
         WikiData[] data = root.getData();
         for (int x=0; x<data.length; x++) {

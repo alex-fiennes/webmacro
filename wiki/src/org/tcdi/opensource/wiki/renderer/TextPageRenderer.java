@@ -163,14 +163,25 @@ public class TextPageRenderer extends WikiPageRenderer {
         return "\n";
     }
 
-    protected String renderListItem() {
-        return "*   ";
-    }
-
     protected String renderEndList() {
         return "";
     }
 
+    private int _number = 0;
+    protected String renderStartNumberedList() {
+        _number = 1;
+        return "\n";
+    }
+
+    protected String renderEndNumberedList() {
+        _number = 0;
+        return "";
+    }
+
+    protected String renderListItem() {
+        return _number > 0 ? "" + (++_number) : "*   ";
+    }
+    
     protected String renderLineBreak() {
         return System.getProperty ("line.separator");        
     }

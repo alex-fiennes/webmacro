@@ -8,10 +8,10 @@
       <td>   
          Thank you for taking the time to register.  You are now able to edit any non-moderated page on this site
          (any page with an Edit link in the upper-left corner).<p>
-         
-         You can also create your own home page.  We suggest you use 
-         <a href="ControllerPage?edit=$User.FirstName$User.LastName">$User.FirstName$User.LastName</a> 
-         as the page name.
+
+         #set $userPageName = "$WikiUtil.formatAsWikiTitle($User.FirstName)$WikiUtil.formatAsWikiTitle($User.LastName)"
+         To learn how to use this Wiki, feel free to create your own homepage.         
+         We suggest you name it <b><a href="ControllerPage?edit=$userPageName">$userPageName</a></b>.
          
       </td>
    </tr>

@@ -57,7 +57,8 @@ public class WikiParser implements WikiParserConstants {
    private String _colorName = null;
 
   final public WikiPage parse(WikiPageBuilder builder) throws ParseException {
-                                             Token t;
+    Token t;
+    builder.begin();
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -68,6 +69,7 @@ public class WikiParser implements WikiParserConstants {
       case LT:
       case GT:
       case LI:
+      case LI_NUMBERED:
       case COLOR:
       case HEADER:
       case COLOR_HEADER_TERMINATE:
@@ -81,6 +83,7 @@ public class WikiParser implements WikiParserConstants {
       case LINE_BREAK:
       case INDENT:
       case WHITESPACE:
+      case TILDE:
       case ASTERISK:
       case UNDERSCORE:
       case CARET:
@@ -104,6 +107,10 @@ public class WikiParser implements WikiParserConstants {
       case LI:
         t = jj_consume_token(LI);
                           builder.li();
+        break;
+      case LI_NUMBERED:
+        t = jj_consume_token(LI_NUMBERED);
+                          builder.liNumbered();
         break;
       case BOLD:
         t = jj_consume_token(BOLD);
@@ -191,6 +198,10 @@ public class WikiParser implements WikiParserConstants {
         t = jj_consume_token(WHITESPACE);
                           builder.space();
         break;
+      case TILDE:
+        t = jj_consume_token(TILDE);
+                          builder.word ("~");
+        break;
       case ASTERISK:
         t = jj_consume_token(ASTERISK);
                           builder.word ("*");
@@ -225,6 +236,7 @@ public class WikiParser implements WikiParserConstants {
         throw new ParseException();
       }
     }
+        builder.done();
         {if (true) return builder.getPage ();}
     throw new Error("Missing return statement in function");
   }
@@ -236,7 +248,7 @@ public class WikiParser implements WikiParserConstants {
   private int jj_gen;
   final private int[] jj_la1 = new int[2];
   final private int[] jj_la1_0 = {0xfffffc00,0xfffffc00,};
-  final private int[] jj_la1_1 = {0x7,0x7,};
+  final private int[] jj_la1_1 = {0x1f,0x1f,};
 
   public WikiParser(java.io.InputStream stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
@@ -334,8 +346,8 @@ public class WikiParser implements WikiParserConstants {
 
   final public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[35];
-    for (int i = 0; i < 35; i++) {
+    boolean[] la1tokens = new boolean[37];
+    for (int i = 0; i < 37; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -354,7 +366,7 @@ public class WikiParser implements WikiParserConstants {
         }
       }
     }
-    for (int i = 0; i < 35; i++) {
+    for (int i = 0; i < 37; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

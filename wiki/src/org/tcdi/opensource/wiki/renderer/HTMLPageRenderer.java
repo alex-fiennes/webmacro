@@ -132,7 +132,7 @@ public class HTMLPageRenderer extends WikiPageRenderer {
         StringBuffer sb = new StringBuffer (text.length());
         sb.append ("<pre>")
           .append (replace (replace (text, "<", "&lt;"), ">", "&gt;"))
-          .append ("</pre>");
+          .append ("</pre>\n");
         
         return sb.toString ();
     }
@@ -225,7 +225,7 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderHorizLine() {
-        return "<hr>";
+        return "<hr>\n";
     }
     
     protected String renderItalicEnd() {
@@ -249,23 +249,31 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderLineBreak() {
-        return "<br>";
+        return "<br>\n";
     }
     
     protected String renderParagraphBreak() {
-        return "<br><br>";
+        return "<br><br>\n";
     }
 
+    protected String renderStartNumberedList() {
+        return "<ol>\n";
+    }
+    
+    protected String renderEndNumberedList() {
+        return "</ol>\n";
+    }
+    
     protected String renderStartList() {
-        return "<ul>";
-    }
-
-    protected String renderListItem() {
-        return "<li>";
+        return "<ul>\n";
     }
 
     protected String renderEndList() {
-        return "</ul>";
+        return "</ul>\n";
+    }
+    
+    protected String renderListItem() {
+        return "<li>";
     }
 
     /**

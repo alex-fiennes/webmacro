@@ -1,0 +1,48 @@
+#set $Response.ContentType = "text/html"
+#if ($Page)
+   #set $PageName = $Page.Title
+#end
+
+<html><head><title>WebMacro:   
+$WikiUtil.unformatWikiTitle($PageName)</title>
+
+#if ($Page) {
+   #set $space = ", "
+   #if ($Page.RelatedTitles) {
+      <META name="keywords" content="  #if ($Page) #begin#foreach $pageTitle in $Page.RelatedTitles #begin $pageTitle $space #end #end">
+   }
+   #if ($Page.Author) {
+      <META name="author" content="$Wiki.getUser($Page.Author).Name">
+   }
+   #if ($Page.UnparsedData) {
+      <META name="description" content="$Page.Title: $Page.UnparsedData.substring(0, $Math.min($Page.UnparsedData.length(), 100)) ...">
+   }
+}
+<link rel="stylesheet" type="text/css" href=site-style.css> 
+</head>
+<body topmargin=0 leftmargin=0 marginwidth=0 marginheight=0 id="body" onLoad='window.focus();'>      
+<table border=0 width="100%">
+<tr>
+    <td colspan=3 align=right><form><input type='button' value='Close Window' onClick='window.close();'></form></td>
+</tr>
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#include as template "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top>
+      #if ($Page) {
+         $Renderer.render($Page)
+      } #else {
+         You have requested a page that doesn't exist.
+         #if ($User) {
+            But that's okay!<p>
+            You can create the page $PageName by <a href="ControllerPage?edit=$WikiUtil.formatAsWikiTitle($PageName)">clicking here</a>.
+         }            
+      }
+</tr>
+</table>
+</body>
+</html>

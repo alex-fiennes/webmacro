@@ -60,24 +60,26 @@ public interface WikiParserConstants {
   int LT = 14;
   int GT = 15;
   int LI = 16;
-  int COLOR = 17;
-  int HEADER = 18;
-  int COLOR_HEADER_TERMINATE = 19;
-  int RULE = 20;
-  int EMAIL = 21;
-  int URL = 22;
-  int WIKI_TERM = 23;
-  int SHORT_WIKI_TERM = 24;
-  int WORD = 25;
-  int NEW_PARAGRAPH = 26;
-  int LINE_BREAK = 27;
-  int INDENT = 28;
-  int WHITESPACE = 29;
-  int ASTERISK = 30;
-  int UNDERSCORE = 31;
-  int CARET = 32;
-  int DOUBLE_LBRACKET = 33;
-  int DELIMITERS = 34;
+  int LI_NUMBERED = 17;
+  int COLOR = 18;
+  int HEADER = 19;
+  int COLOR_HEADER_TERMINATE = 20;
+  int RULE = 21;
+  int EMAIL = 22;
+  int URL = 23;
+  int WIKI_TERM = 24;
+  int SHORT_WIKI_TERM = 25;
+  int WORD = 26;
+  int NEW_PARAGRAPH = 27;
+  int LINE_BREAK = 28;
+  int INDENT = 29;
+  int WHITESPACE = 30;
+  int TILDE = 31;
+  int ASTERISK = 32;
+  int UNDERSCORE = 33;
+  int CARET = 34;
+  int DOUBLE_LBRACKET = 35;
+  int DELIMITERS = 36;
 
   int DEFAULT = 0;
 
@@ -99,6 +101,7 @@ public interface WikiParserConstants {
     "\"<\"",
     "\">\"",
     "<LI>",
+    "<LI_NUMBERED>",
     "<COLOR>",
     "<HEADER>",
     "\"^\"",
@@ -112,6 +115,7 @@ public interface WikiParserConstants {
     "<LINE_BREAK>",
     "<INDENT>",
     "<WHITESPACE>",
+    "\"~~\"",
     "\"**\"",
     "\"__\"",
     "\"^^\"",

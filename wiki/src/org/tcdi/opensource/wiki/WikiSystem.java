@@ -74,6 +74,11 @@ public interface WikiSystem extends WikiTermMatcher {
     }
 
     /**
+     * How many "current" pages do we have?
+     */ 
+    public int getPageCount();
+    
+    /**
      * @param title the title of the WikiPage to retrieve.  This should be a propertly formed WikiTerm
      * @return the WikiPage of the specified title
      */
@@ -150,6 +155,8 @@ public interface WikiSystem extends WikiTermMatcher {
      */
     public boolean containsPage(String title);
     
+    /** How many users do we have? */
+    public int getUserCount();
     
     /**
      * @param uid the user id of the requested user

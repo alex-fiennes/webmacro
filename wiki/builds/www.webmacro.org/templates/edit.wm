@@ -1,6 +1,6 @@
 #include as template "header.wm"
 
-<form action="$Request.RequestURI" method=POST>
+<form action="$Request.RequestURI" method=POST target='_top'>
 <input type=hidden name="save" value="$PageName">
 #if ($Page) {
    <input type=hidden name="VERSION" value="$Page.Version">
@@ -38,9 +38,18 @@ value="$keywords.trim()"
 
 <p>
 
-
+<input type='hidden' name='preview' value='false' >
 <input type=button value="Cancel" onClick="top.location.href='$PageName';"
-       >&nbsp;<input type=submit value="Save">
+       >&nbsp;<input type=button onClick="
+            window.open('', 'PREVIEW', 'scrollbars=yes,resizeable=yes,menubar=no,status=no,width=640,height=480');
+            this.form.target = 'PREVIEW';
+            this.form.preview.value = 'true';
+            this.form.submit();
+            " value="Preview"
+       >&nbsp;<input type=submit onClick="
+                    this.form.preview.value='false'; 
+                    this.form.target='_top'; 
+                    this.form.submit();" value="Save">
 </form>
 
 #include as template "footer.wm"

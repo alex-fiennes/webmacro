@@ -52,6 +52,12 @@ import org.tcdi.opensource.wiki.*;
  */
 public interface WikiPageBuilder extends WikiTermMatcher {
 
+    /** called when the page building process first begins */
+    public void begin();
+    
+    /** called when the page building process is complete */
+    public void done();
+    
     /**
      * A WikiPageBuilder should use a <code>WikiTermMatcher</code>
      * for making decisions about how to build a word.
@@ -108,6 +114,9 @@ public interface WikiPageBuilder extends WikiTermMatcher {
 
     /** a bulleted list item */
     public void li ();
+    
+    /** a numbered bulleted list item */
+    public void liNumbered ();
 
     /** add a URL */
     public void url (String url);
