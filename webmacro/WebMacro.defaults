@@ -165,7 +165,8 @@ Directives.alternate:  org.webmacro.directive.AlternateDirective
 Directives.encode:     org.webmacro.directive.EncodeDirective
 Directives.escape:     org.webmacro.directive.EscapeDirective
 Directives.silence:    org.webmacro.directive.SilenceDirective
-Directives.param:      org.webmacro.directive.ParamDirective
+Directives.const:      org.webmacro.directive.ConstDirective
+Directives.param:      org.webmacro.directive.ConstDirective
 
 # The following are tools which are added to your WebContext. You can 
 # customize your WebContext with special tools of your own by adding 

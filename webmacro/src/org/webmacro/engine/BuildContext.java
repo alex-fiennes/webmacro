@@ -28,19 +28,17 @@ import org.webmacro.util.*;
 
 
 /**
-  * Contains data structures which are manipulated during the 
-  * builder phase of parsing. It extends Map so that 
-  * user provided directives can store information in it during
-  * the builder phase. Although WebMacro's built in directives
-  * make no use of this hashtable (they use the other structures
-  * added in the derived class), other user provided directives 
-  * might. Therefore you should adopt a sensible naming scheme for 
-  * your keys, to avoid conflicting with keys inserted by someone else.
+  * Contains data structures which are manipulated during the builder
+  * phase of parsing. It extends Map so that user provided directives
+  * can store information in it during the builder phase.  These
+  * variables can be retrieved by the calling servlet, and can also be
+  * used in the template as compile-time variables.  
   */
 public final class BuildContext extends Context
 {
 
    private final Map _types = new HashMap();
+  private final Map _variables = new HashMap();
 
    private final FilterManager _filters = new FilterManager();
 
@@ -111,5 +109,25 @@ public final class BuildContext extends Context
    public Macro getFilterMacro(Variable v) {
       return _filters.getMacro(v);
    }
+
+   public Macro getVariable(Object names[], boolean filtered) 
+   throws BuildException {
+      if (names.length < 1) 
+         throw new BuildException("Variable with name of length zero!");
+
+      Variable v;
+      Object c[] = new Object[ names.length ];
+      for (int i = 0; i < c.length; i++) {
+         c[i] = (names[i] instanceof Builder) ? 
+            ((Builder) names[i]).build(this) : names[i];
+      }
+      if (names.length == 1) 
+         v = new SimplePropertyVariable(c);
+      else
+         v = new PropertyVariable(c); 
+
+      return filtered ? getFilterMacro(v) : v;
+   }
+
 }
 
