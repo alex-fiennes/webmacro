@@ -1,3 +1,10 @@
+-- Mar-2000 brian: Refactor cache manager (again) to move all the
+   SoftReference stuff out of the providers.  The cache manager is now 
+   completely decoupled from the caching providers.  All timeouts, soft
+   reference stuff, etc, is moved to SimpleCacheManager, which used to 
+   be CachingProvider.  Caching can be disabled by using
+   TrivialCacheManager.
+
 -- Mar-2000 brian: Integrated Tim Joyce's suggestion about evaluation 
    exception handlers -- created EvaluationExceptionHandlers and allow
    the user to set them on a per-context or per-Broker basis.  EEH is
