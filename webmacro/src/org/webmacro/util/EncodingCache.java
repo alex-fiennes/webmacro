@@ -67,7 +67,7 @@ final public class EncodingCache {
    public EncodingCache(String encoding) 
       throws UnsupportedEncodingException
    {
-      this(encoding,10001);
+      this(encoding,1001);
    }
 
    /**
@@ -106,7 +106,7 @@ final public class EncodingCache {
    }
 
    public byte[] encode(String s) {
-      int hash = System.identityHashCode(s) % _size;
+      int hash = s.hashCode() % _size;
       if (hash < 0) hash = -hash;
       Bucket b = _cache[hash];
       synchronized(b) { 
@@ -147,8 +147,12 @@ final public class EncodingCache {
    }
 
    public byte[][] encode(String s[]) {
-      int hash = System.identityHashCode(s) % _size;
+      return encode(s, System.identityHashCode(s));
+   }
+
+   public byte[][] encode(String s[], int hash) {
       if (hash < 0) hash = -hash;
+      hash %= _size;
       ArrayBucket b = _acache[hash];
       synchronized(b) { 
 	      if (b.string1 == s) 

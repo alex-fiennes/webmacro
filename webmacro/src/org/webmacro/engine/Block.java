@@ -35,6 +35,7 @@ final public class Block implements Macro, Visitable
 {
 
    private final String[] _strings;
+   private final int _strhash;
    private final Macro[] _macros;
    private final int _length;
    private final int _remainder;
@@ -54,6 +55,16 @@ final public class Block implements Macro, Visitable
 
       _length = _macros.length;
       _remainder = 10 - _length % 10;
+
+      // we compute the combined hash of our string array so that we can
+      // use this hash as the index to the encoding cache and so that we
+      // don't have to recompute it every time we do a hash lookup
+      long strhash = 0;
+      for (int i = 0; i < _strings.length; i++) {
+          strhash = (strhash + (long)_strings[i].hashCode()) %
+              Integer.MAX_VALUE;
+      }
+      _strhash = (int)strhash;
    }
 
    /**
@@ -67,7 +78,8 @@ final public class Block implements Macro, Visitable
       throws PropertyException, IOException
    {
       int i = 0;  
-      final byte[][] bcontent = out.getEncodingCache().encode(_strings);
+      final byte[][] bcontent =
+          out.getEncodingCache().encode(_strings, _strhash);
       byte[] b;
 
       switch(_remainder) {

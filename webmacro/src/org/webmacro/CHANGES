@@ -1,3 +1,5 @@
+-- Mar-2000 brian: Merge in Michael Bayne's EncodingCache patches.  
+
 -- Feb-2000 brian: Fixed context-recycling bug in WM; make FastWrite not final
 
 -- Feb-2000 brian: Integrated Keat's PropertyOperator changes so we can
