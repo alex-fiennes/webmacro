@@ -423,7 +423,6 @@ final public class URLTemplateProvider extends CachingProvider
         String pathSep = System.getProperty("path.separator");
         _log.debug("Searching classpath: "+classpath);
         StringTokenizer st = new StringTokenizer(classpath, pathSep);
-        boolean loaded = false;
         while (st.hasMoreTokens())
         {
             String entry = st.nextToken();
