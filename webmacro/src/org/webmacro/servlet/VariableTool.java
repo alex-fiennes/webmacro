@@ -63,6 +63,15 @@ public class VariableTool implements ContextTool
     }
 
     /**
+     * Get the specified object <code>name</code> defined from the active
+     * Context.
+     */
+    public Object get (Object name)
+    {
+        return context.get(name);
+    }
+
+    /**
      * Is the specified object, <code>obj</code>, an instance of the
      * specified <code>className</code>?<p>
      *
