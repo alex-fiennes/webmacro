@@ -187,7 +187,7 @@ public class HTMLEscaper
         {"\u00F4", "ocirc"},
         {"\u00F5", "otilde"},
         {"\u00F6", "ouml"},
-        {"\u00F7", "divid"},
+        {"\u00F7", "divide"},
         {"\u00F8", "oslash"},
         {"\u00F9", "ugrave"},
         {"\u00FA", "uacute"},
