@@ -1,4 +1,4 @@
-
+-- Keats fixed Context bug (for real this time) related to using setBean
 -- Sebastian added HTMLEscape directive
 -- Brian uploaded new parser
 -- Keats fixed a bug in Context that prevented proper lookup
