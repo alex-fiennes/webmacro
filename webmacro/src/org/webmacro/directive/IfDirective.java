@@ -191,7 +191,7 @@ class IfDirective extends Directive {
             b = Expression.isTrue(conditions[i].evaluate(context));
          }
          catch (Exception e) {
-            String warning = "#if: Error evaluating condition: " + e;
+            String warning = "#if: Error evaluating condition: " + e + " at " + context.getCurrentLocation();
             context.getLog("engine").warning(warning);
             writeWarning(warning, context, out);
          }
