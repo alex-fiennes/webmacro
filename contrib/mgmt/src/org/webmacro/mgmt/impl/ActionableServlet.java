@@ -118,6 +118,7 @@ public class ActionableServlet extends WMServlet {
    */
   public Template handle (WebContext context)
           throws HandlerException {
+    context.put("Servlet", this);
     String templateName = evaluateAction(context);
     if (templateName == null)
       templateName = evaluateActionProtocol(context);

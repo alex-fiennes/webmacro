@@ -162,16 +162,35 @@
   <target name="all" depends="clean,prepare,compile,javadoc,dist,test-unit"/>
 
   <!--
+  Note: there are two tasks: 
+  (1) Parsing a template which checks the grammar syntax
+  (2) Evaluating a template which evaluates a template using a context
+  provided by the template or some bean
+  
+  MOTE: the tasks are independent. (1) and/or (2) can be run completely
+  independent of the other!
+
   <taskdef name="wmtemplates" 
    classname="org.webmacro.tools.WMTemplateAntTask" >
     <classpath refid="class.path" />
   </taskdef>
 
+  <taskdef name="wmevaltemplates" 
+   classname="org.webmacro.tools.TemplateEvalAntTask" >
+   <classpath refid="class.path" />
+  </taskdef>
+
   <target name="templates">
     <wmtemplates>
-      <fileset dir="." includes="*.wm"/>
+      <fileset dir="." includes="**/*.wm"/>
       <classpath refid="class.path" />
     </wmtemplates>
+
+    <wmevaltemplates>
+      <fileset dir="templates" includes="**/*.wm"/>
+      <classpath refid="class.path" />
+    </wmevaltemplates>
+    
   </target>
   -->
 

@@ -47,10 +47,16 @@ public class WMTemplateAntTask extends Task {
     createClasspath().setRefid(r);
   }
 
+  /**
+   * Subclasses should override this
+   * to supply their own template execution
+   * vehicle.
+   */
+  protected String getMainClass() { return "org.webmacro.tools.CheckTemplates"; } 
 
   public WMTemplateAntTask() {
     cmdl.setVm("java");
-    cmdl.setClassname("org.webmacro.tools.CheckTemplates");
+    cmdl.setClassname(getMainClass());
   }
 
 

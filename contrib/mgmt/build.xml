@@ -23,9 +23,9 @@
 
   <path id="class.path">
     <!-- the following gets the standard jar files which mgmt depends on -->
-    <fileset dir="../lib">
-      <include name="webmacro-0.97a.jar" />
-      <include name="servlet-2.2.jar" />
+    <fileset dir="../../">
+      <include name="webmacro.jar" />
+      <include name="lib/servlet-2.2.jar" />
     </fileset>
     <pathelement location="${classes}" />
     <pathelement path="${java.class.path}" />
@@ -109,6 +109,30 @@
       </batchtest>
     </junit>
   </target>
+  
+ 
+  <taskdef name="wmtemplates" 
+   classname="org.webmacro.tools.WMTemplateAntTask" >
+   <classpath refid="class.path" />
+  </taskdef>
+
+  <taskdef name="wmevaltemplates" 
+   classname="org.webmacro.tools.TemplateEvalAntTask" >
+   <classpath refid="class.path" />
+  </taskdef>
+
+  <target name="templates">
+    <wmtemplates>
+      <fileset dir="templates" includes="**/*.jdl"/>
+      <classpath refid="class.path" />
+    </wmtemplates>
+    <wmevaltemplates>
+      <fileset dir="templates" includes="**/*.jdl"/>
+      <classpath refid="class.path" />
+    </wmevaltemplates>
+  </target>
+ 
+
 
 </project>
 

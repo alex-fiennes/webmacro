@@ -60,6 +60,7 @@ public class TemplateServlet extends WMServlet {
    */
   public Template handle (WebContext context)
           throws HandlerException {
+    context.put("Servlet", this);
     String templateName = locateTemplate(context.getRequest());
     try {
       return getTemplate(templateName);

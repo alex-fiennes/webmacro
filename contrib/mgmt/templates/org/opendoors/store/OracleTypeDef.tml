@@ -1,7 +1,11 @@
-## For $GenerationTarget, generate an oracle 8 object type
-create type $GenerationTarget.Name as object (
+## Oracle Type Template
+#bean $Now = "Date" page
+
+-- Generated on $Now
+create type $GenerationTarget.DistinctName as object (
 
 #foreach $element in $GenerationTarget {
   $element.SQLDeclaration
 }
 );
+

@@ -49,6 +49,9 @@ import org.webmacro.engine.StringTemplate;
  * <p>
  * This helper class is useful for evaluating WebMacro templates for which
  * flexibility in managing the evaluation options is key.
+ * <p>
+ * <b>Note</b>: All uses of the method assert(argList) should be converted
+ * to eval(argList) in anticipation of jdk 1.4.
  * @author Lane Sharman
  * @version 2.0
  */
@@ -61,6 +64,11 @@ public class WMEval {
 	private Template rule;
 	private OutputStream out = System.out;
 	private Context context;
+  /** 
+   * If an output file is not specified as an argument, it
+   * must be found in the context under this key.
+   */
+  public static final String outputContextKey = "OutputFileName";
 
 	//-------constructor(s)-----
 	/**
@@ -150,28 +158,53 @@ public class WMEval {
 	}
 
 	/**
-	 * Evaluates the context of this instance and the instance's 
-   * current template and current output stream using UTF8.
+   * @deprecated
 	 */
 	public void assert() throws Exception {
-		assert(context, rule, out, "UTF8");
+		eval(context, rule, out, "UTF8");
+	}
+	/**
+	 * Evaluates the context of this instance and the instance's 
+   * current template and current output stream using UTF8.
+   * @deprecated
+	 */
+	public void eval() throws Exception {
+		eval(context, rule, out, "UTF8");
+	}
+
+	/**
+  * @deprecated
+  */
+	public void assert(Context context) throws Exception {
+		eval(context, rule, out, "UTF8");
 	}
 
 	/**
 	 * Evaluate the context supplied against the current rule.
 	 * @param context The map containing the referents to assertable, rule-driven objects.
 	 */
-	public void assert(Context context) throws Exception {
-		assert(context, rule, out, "UTF8");
+	public void eval(Context context) throws Exception {
+		eval(context, rule, out, "UTF8");
 	}
 
+	/**
+   * @deprecated
+	 */
+	public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
+		FastWriter w;
+    w = context.getBroker().getFastWriter (out, encoding);
+		context.put("FastWriter", w); // allow template writers to access the output stream!
+		rule.write(w, context);
+		w.flush();
+	}
+	
 	/**
 	 * Evaluate the supplied context and template to the provided output.
    * @ rule the template provided.
    * @ out an output stream.
    * @ encoding the encoding for the output.
 	 */
-	public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
+	public void eval(Context context, Template rule, OutputStream out, String encoding) throws Exception {
 		FastWriter w;
     w = context.getBroker().getFastWriter (out, encoding);
 		context.put("FastWriter", w); // allow template writers to access the output stream!
@@ -183,24 +216,35 @@ public class WMEval {
 	 * Evaluate the supplied context and template and return the result as a
 	 * as a string.
 	 */
-	 public String assert(Context context, Template rule) throws Exception {
+	public String assert(Context context, Template rule) throws Exception {
 		return rule.evaluate(context).toString();		
 	}
+  
+	/**
+	 * Evaluate the supplied context and template and return the result as a
+	 * as a string.
+	 */
+	public String eval(Context context, Template rule) throws Exception {
+		return rule.evaluate(context).toString();		
+  }
   
   /**
    * Evaluates the context using a file template sending the output to a disk file.
    * @param context The context to use.
    * @param inputTemplateFileName The input template file in the resource path.
-   * @param outputFileName The absolute path to a file.
+   * @param outputFileName The absolute path to a file. If null, the context
+   * key OutputFileName must be present.
    * @param append If true, the file will be opened for appending the output.
    * @param encoding If null, the platform's encoding will be used.
    * @return The output is also returned as a convenience.
    */
-  public String assert(Context context, String templateResourceFile, 
+  public String eval(Context context, String templateResourceFile, 
     String outputFileName, boolean append, String encoding) throws Exception {
  	  Template rule = wm.getTemplate(templateResourceFile);
     String value = rule.evaluate(context).toString();
     // output the file
+    if (outputFileName == null) 
+      outputFileName = (String) context.get(outputContextKey);
     OutputStream out = new FileOutputStream(outputFileName, append);
     if (encoding == null) out.write(value.getBytes());
     else out.write(value.getBytes(encoding));
