@@ -41,20 +41,26 @@ import org.webmacro.util.Settings;
 
 public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHandler {
     private Log _log;
-    
+
     public DefaultEvaluationExceptionHandler() {
     }
-    
+
     public DefaultEvaluationExceptionHandler(Broker b) {
         init(b, b.getSettings());
     }
-    
+
     public void init(Broker b, Settings config) {
         _log = b.getLog("engine");
     }
-    
+
     public void evaluate(Variable variable, Context context, Exception problem) throws PropertyException {
-        
+
+        // if we were given a ProperyException, record the current
+        // context location.
+        if (problem instanceof PropertyException) {
+            ((PropertyException) problem).setContextLocation(context.getCurrentLocation());
+        }
+
         if (problem instanceof PropertyException.NoSuchVariableException) {
             if (_log != null)
                 _log.warning("Cannot evaluate $" + variable.getVariableName()
@@ -101,32 +107,38 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
                            + " at " + context.getCurrentLocation(), problem);
             // rethrow problem wrapped in a PropertyExcpetion
             throw new PropertyException("Error evaluating $"
-                                      + variable.getVariableName()
-                                      + " at " + context.getCurrentLocation(), 
-                                      problem);
+                                      + variable.getVariableName(),
+                                      problem, context.getCurrentLocation());
         }
     }
-    
+
     public String expand(Variable variable, Context context, Exception problem) throws PropertyException {
-        
+
+        // if we were given a ProperyException, record the current
+        // context location.
+        if (problem instanceof PropertyException) {
+            ((PropertyException) problem).setContextLocation(context.getCurrentLocation());
+        }
+
         if (problem instanceof PropertyException.NoSuchVariableException) {
             String msg = "Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": No such variable";
-            
+                       + variable.getVariableName()
+                       + " at " + context.getCurrentLocation()
+                       + ": No such variable";
+
             if (_log != null)
                 _log.warning(msg);
             return errorString(msg);
-            
+
         } else if (problem instanceof PropertyException.NoSuchMethodException) {
             PropertyException.NoSuchMethodException ex = (PropertyException.NoSuchMethodException) problem;
             if (_log != null)
                 _log.warning("Cannot expand $" + variable.getVariableName()
                            + " at " + context.getCurrentLocation()
                            + ": No such method " + ex.methodName);
+
             // rethrow this exception
-            throw ex;            
+            throw ex;
         } else if (problem instanceof PropertyException.NoSuchMethodWithArgumentsException) {
             PropertyException.NoSuchMethodWithArgumentsException ex = (PropertyException.NoSuchMethodWithArgumentsException) problem;
             if (_log != null) {
@@ -134,20 +146,22 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
                            + " at " + context.getCurrentLocation()
                            + ": No such method " + ex.methodName + "(" + ex.arguments + ")");
             }
-            // rethrow this exception            
+
+            // rethrow this exception
             throw ex;
         } else if (problem instanceof PropertyException.NullValueException) {
             String msg = "Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": Value is null";
+                       + variable.getVariableName()
+                       + " at " + context.getCurrentLocation()
+                       + ": Value is null";
+
             if (_log != null)
                 _log.warning(msg);
             return errorString(msg);
         } else if (problem instanceof PropertyException.NullToStringException) {
             String msg = "Cannot expand $" + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()           
-                           + ": .toString() returns null";
+                       + " at " + context.getCurrentLocation()
+                       + ": .toString() returns null";
             if (_log != null)
                 _log.warning(msg);
             return errorString(msg);
@@ -155,24 +169,26 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
             if (_log != null)
                 _log.error("Cannot expand $" + variable.getVariableName()
                          + " at " + context.getCurrentLocation(), problem);
-            // rethrow this exception            
+            // rethrow this exception
             throw (PropertyException) problem;
         } else {
-            String msg = "Error expanding $" + variable.getVariableName()
-                           + " at " + context.getCurrentLocation();
             if (_log != null)
-                _log.error(msg, problem);
-            // rethrow problem wrapped in a PropertyException            
-            throw new PropertyException(msg, problem);
+                _log.error("Error expanding $" + variable.getVariableName()
+                       + " at " + context.getCurrentLocation(), problem);
+
+            // rethrow problem wrapped in a PropertyException
+            throw new PropertyException("Error expanding $"
+                                      + variable.getVariableName(),
+                                      problem, context.getCurrentLocation());
         }
     }
-    
-    
+
+
     public String warningString(String warningText) {
         return "<!-- " + warningText + " -->";
     }
-    
-    
+
+
     public String errorString(String errorText) {
         return "<!-- " + errorText + " -->";
     }
