@@ -39,6 +39,7 @@ public final class DirectiveProvider implements Provider
 
    private final Hashtable _descriptors  = new Hashtable();
    private Log _log;
+   private Broker _broker;
 
    /**
      * Register a new directive class, so that a builder
@@ -52,7 +53,7 @@ public final class DirectiveProvider implements Provider
       Class directive = null;
       DirectiveDescriptor descriptor, oldDesc;
       try {
-        directive = Class.forName(dirClassName);
+        directive = _broker.classForName(dirClassName);
       } catch (Exception e) {
          throw new IntrospectionException("No class " + dirClassName, e);
       }
@@ -118,6 +119,7 @@ public final class DirectiveProvider implements Provider
 
    public void init(Broker broker, Settings config) throws InitException
    {
+      _broker = broker;
       _log = broker.getLog("directive");
       try {
          config.processListSetting("Directives", new SettingHandler());
