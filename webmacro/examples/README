@@ -27,14 +27,20 @@ Here is an overview:
    Also shows WebMacro using and introspecting some ordinary objects.
  
 
-   TestWM
-   ------
-
-   A handler. This is an alternate way of using WebMacro that may 
-   be convenient to people who would like to build controller servlets
-   from existing classes. A handler is an interface you can implement
-   rather than subclassing WMServlet. But then configuration becomes
-   slightly trickier.
- 
-
+   Standalone
+   ----------
    
+   An advanced HelloWorld servlet that does *not* subclass WMServlet.  This
+   example, although a servlet, manages it's own WebMacro instance internally.
+   It also demonstrates how to create FastWriters, Contexts, and how to write
+   Templates.  If you're trying to fit WebMacro into an existing servlet
+   application, this example will be of the most benefit for you.
+
+
+   NoServlet
+   ---------
+
+   A standalone command-line program which demonstrates how to create
+   a WebMacro instance and a Context along with getting and writing
+   a template.  If you plan on using WebMacro outside of a servlet
+   environment, look here first!
