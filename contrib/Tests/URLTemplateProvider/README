@@ -1,0 +1,25 @@
+URLProvider Test Scripts
+
+Require Mozilla Rhino Javascript engine.   No special reason, just that I use it a lot.
+
+Run from the root webmacro directory as
+
+    $ ./contrib/Tests/URLTemplateProvider/run.sh <scriptname.js>
+
+I haven't upgraded them all yet, but the following work:
+
+    1.  test.js - a basic test for TemplatePath=ignore:
+
+    2.  classpath.js - tests classpath loading(TemplatePath=classpath:). The
+        templates directory is added to the classpath. If you jar up the
+        template directory to templates.jar  and add that to the classpath (see
+        run.sh), that should test classpath loading from within Jars
+
+    3.  A simple cache tester.  Loads a file, wait 0.5 secs, loads it again,
+        waits 1.5 secs.  If TemplateExpireTime=1sec  then the template should
+        only be reloaded the second time. [ At the time of writing the logging
+        is broken so can't override the logging level to see the cache in
+        action without getting lots of wierd errors. ]
+
+Fergus
+$Id$
