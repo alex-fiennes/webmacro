@@ -1,6 +1,4 @@
 import org.webmacro.as.*;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
 
 /**
  * ActionServlet component that implements a simple calculator.
@@ -8,65 +6,80 @@ import org.webmacro.servlet.WebContext;
  * @author Petr Toman
  */
 public class Calculator {
-    private ActionServlet servlet;
+    /**
+     * Return code.
+     */
+    public static final int OK = 0;
 
     /**
-     * Mandatory public constructor of component.
+     * Return code.
      */
-    public Calculator(ActionServlet as) {
-        servlet = as;
-    }
+    public static final int ERROR = 1;
 
     ///////////////////////// Calculator variables  ////////////////////////
-    
+
     /**
-     * Typed number. 
+     * Displayed number;
      */
-    private String number = "0";
-    
+    protected String display;
+
     /**
-     * Was pressed the decimal point?
+     * Typed number.
      */
-    private boolean point = false;
-    
+    protected String number = "0";
+
     /**
      * Keeps the last result.
      */
-    private double result = 0;
-    
+    protected double result = 0;
+
     /**
      * Operation to be executed - values '=', '+', '-', '*', '/'.
      */
-    private char operation = '=';
-    
+    protected char operation = '=';
+
     /**
      * Indicates whether 'operation' has just been excecuted.
      * (false when user is typing digits or point)
      */
-    private boolean operationJustExecuted = false;
+    protected boolean operationJustExecuted = false;
+
+    /**
+     * Was pressed the decimal point?
+     */
+    protected boolean point = false;
+
+    ////////////////////////////// Constructor ////////////////////////////
+
+    public Calculator(ActionServlet as) {}
 
     ///////////////////////////// Action methods //////////////////////////
-    
+
     /**
      * Handles entering digits of number.
+     *
      * @param digit typed digit "0"..."9"
+     * @return OK
      */
-    public Template digit(WebContext context, String digit) {
+    public int digit(int digit) {
         if (operationJustExecuted) {
             operationJustExecuted = false;
             number = "0";
         }
-        
-        if ("0".equals(number)) number = digit.trim();
-            else number += digit.trim();
 
-        return getCalcTemplate(context, number);
+        if ("0".equals(number)) number = String.valueOf(digit);
+            else number += digit;
+
+        display = number;
+        return OK;
     }
-    
+
     /**
      * Handles pressing decimal point.
+     *
+     * @return OK
      */
-    public Template point(WebContext context) {
+    public int point() {
         if (operationJustExecuted) {
             operationJustExecuted = false;
             number = "0";
@@ -75,24 +88,31 @@ public class Calculator {
         if (!point) number += ".";
         point = true;
 
-        return getCalcTemplate(context, number);
+        display = number;
+        return OK;
     }
 
     /**
      * Handles '+/-' button.
+     *
+     * @return OK
      */
-    public Template plusminus(WebContext context) {
+    public int plusminus() {
         if (number.charAt(0) == '-') number = number.substring(1);
-            else if (number.charAt(0) != '0') number = "-"+number;
+            else if (Character.isDigit(number.charAt(0))) number = "-" + number;
 
-        return getCalcTemplate(context, number);
+        display = number;
+        return OK;
     }
-    
+
     /**
      * Handles addition, subtraction, multiplication and division.
+     *
      * @param nextOperation may have values ("+", "-", "*", "/")
+     * @exception ActionException on bad operation code
+     * @return OK or ERROR
      */
-    public Template operation(WebContext context, String nextOperation) 
+    public int operation(char nextOperation)
     throws ActionException {
         try {
             switch (operation) {
@@ -100,14 +120,15 @@ public class Calculator {
                 case '-': result -= new Double(number).doubleValue(); break;
                 case '*': result *= new Double(number).doubleValue(); break;
                 case '/': result /= new Double(number).doubleValue(); break;
-                case '=': result = new Double(number).doubleValue(); break;
-                default: throw new ActionException("Invalid numeric operation '" + 
+                case '=': result =  new Double(number).doubleValue(); break;
+                default: throw new ActionException("Invalid numeric operation '" +
                                                    operation + "'");
             }
 
-            operation = nextOperation.trim().charAt(0);
+            operation = nextOperation;
         } catch (NumberFormatException e) {
-            return getCalcTemplate(context, "ERROR!");
+            display = "ERR";
+            return ERROR;
         } catch (StringIndexOutOfBoundsException e) {
             throw new ActionException("Invalid numeric operation '" + nextOperation + "'");
         } finally {
@@ -115,34 +136,42 @@ public class Calculator {
             point = false;
         }
 
-        return getCalcTemplate(context, number = String.valueOf(result));
+        number = String.valueOf(result);
+        display = number;
+
+        return OK;
     }
 
     /**
      * Handles pressing 'CE'.
+     *
+     * @return OK
      */
-    public Template ce(WebContext context) {
+    public int ce() {
         number = "0";
         point = false;
+        display = number;
 
-        return getCalcTemplate(context, "0");
+        return OK;
     }
 
     /**
      * Handles pressing 'C'.
+     *
+     * @return OK
      */
-    public Template c(WebContext context) {
+    public int c() {
         operation = '=';
         result = 0;
         operationJustExecuted = true;
-        return ce(context);
+
+        return ce();
     }
 
     /**
-     * Sets the display value on the calculator template.
+     * Returns the value to display (number or "ERR").
      */
-    private Template getCalcTemplate(WebContext context, String display) {
-        context.put("display", display);
-        return servlet.getWMTemplate("Calculator.wm");
+    public String getDisplay() {
+        return display;
     }
 }

@@ -1,6 +1,4 @@
 import org.webmacro.as.ActionServlet;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
 
 /**
  * Component for &lt;output-variable&gt; demonstration.
@@ -8,20 +6,14 @@ import org.webmacro.servlet.WebContext;
  * @author Petr Toman
  */
 public class MyComponent {
-    private ActionServlet servlet;
-
-    /**
-     * Mandatory public constructor of component.
-     */
-    public MyComponent(ActionServlet as) {
-        servlet = as;
-    }
+    public MyComponent(ActionServlet as) {}
 
     /** 
      * Implements 'myAction' action.
      */
-    public Template myAction(WebContext context) {
-       return servlet.getWMTemplate("template2.wm");
+    public String myAction() {
+       // do something...
+       return "template2.wm";
     }
 
     /**

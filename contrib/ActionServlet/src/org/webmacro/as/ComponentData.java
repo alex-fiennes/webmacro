@@ -1,5 +1,5 @@
 /*
- *    Action Servlet is an extension of the WebMacro servlet framework, which 
+ *    Action Servlet is an extension of the WebMacro servlet framework, which
  *    provides an easy mapping of HTTP requests to methods of Java components.
  *
  *    Copyright (C) 1999-2001  Petr Toman
@@ -15,12 +15,13 @@
  *    Library General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with this library.  If not, write to the Free Software Foundation, 
+ *    along with this library.  If not, write to the Free Software Foundation,
  *    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package org.webmacro.as;
 
 import java.lang.reflect.Constructor;
+import java.util.Hashtable;
 
 /**
  * Holds data of a component.
@@ -29,29 +30,53 @@ class ComponentData {
     static final int PERSISTENCE_APPLICATION = 1;
     static final int PERSISTENCE_SESSION = 2;
     static final int PERSISTENCE_REQUEST = 3;
-    
-    /** 
-     * Corresponds to <TT>class</TT> of the component from the configuration file.
+
+    /**
+     * Attibute 'name' of &lt;component&gt; element.
+     */
+    final String componentName;
+
+    /**
+     * Corresponds to <TT>class</TT> of the component from ActionConfig.
      */
     final Class componentClass;
 
     /**
-     * Constructor that will be used to instantiate the component. 
+     * Constructor that will be used to instantiate the component.
      */
     final Constructor constructor;
-    
-    /** 
-     * Corresponds to <TT>persistence</TT> attribute of the component from the 
-     * configuration file. 
+
+    /**
+     * Indicates number of parameters if one.
+     */
+    final boolean consOne;
+
+    /**
+     * Corresponds to <TT>persistence</TT> attribute of the component from
+     * ActionConfig.
      */
     final int persistence;
-    
+
+    /**
+     * Table of &lt;on-return&gt; elements:
+     * key = field value, value = template name (of template to be displayed)
+     */
+    final Hashtable onReturns = new Hashtable();
+
+    /**
+     * Table &lt;properties&gt;: key = property name, value = property value.
+     */
+    final Hashtable properties = new Hashtable();
+
     /**
      * Creates an object holding component data.
      */
-    ComponentData(Class componentClass, Constructor constructor, int persistence) {
+    ComponentData(String componentName, Class componentClass,
+                  Constructor constructor, boolean consOne, int persistence) {
+        this.componentName = componentName;
         this.componentClass = componentClass;
         this.constructor = constructor;
+        this.consOne = consOne;
         this.persistence = persistence;
     }
 }

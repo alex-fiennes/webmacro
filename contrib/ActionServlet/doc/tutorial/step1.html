@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Action Servlet</title>
+	<title>ActionServlet: LoginServlet Tutorial</title>
 	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
 	<!--#include virtual="vars.inc" -->
 <style>
@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.54<P>
+version 0.61<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -53,7 +53,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </UL>
 
 <TABLE BORDER="1" CELLPADDING="20" CELLSPACING="1"><TR><TD>
-<B>Step 1/4:</B> The previously shown <B><FONT COLOR="blue"><TT>Login.wm</TT></FONT></B> HTML template looks like this:
+<B>Step 1/4:</B> Create the <B><FONT COLOR="blue"><TT>Login.wm</TT></FONT></B> HTML template:
 
 <P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
 <PRE>
@@ -72,13 +72,13 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </PRE>
 </TD></TR></TABLE><P>
 
-In the template, there are defined names of two parameters: <TT>userName</TT>, <TT>password</TT>, which
+In this template, there are defined names of two parameters: <TT>userName</TT> and <TT>password</TT>, which
 will take input user from user, and <TT><B>action</B></TT> specifying through it's <TT>VALUE</TT> action 
 to be invoked (<FONT COLOR="green"><TT><B>Login</B></TT></FONT>).
 
 <HR WIDTH="100%">
 
-Note: Defnition of <TT>action</TT> is mandatory for use with <EM>ActionServlet</EM>.
+Note: It is mandatory to define <TT>action</TT> when using <EM>ActionServlet</EM>.
 </TD></TR></TABLE>
 
 <P><CENTER>

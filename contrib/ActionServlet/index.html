@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Action Servlet</title>
+	<title>ActionServlet</title>
 	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
 	<!--#include virtual="vars.inc" -->
 <style>
@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.54<P>
+version 0.61.1<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -55,15 +55,18 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 methods of Java components together with automatic conversion of HTTP parameters to the 
 values of Java types.
 
+<P>Simplified schema of action invocation (see <A HREF="doc/specification.html#http">Specification</A> 
+for full details):
+
 <P><CENTER><IMG SRC="doc/images/auth.gif" WIDTH="564" HEIGHT="260" BORDER="0"></CENTER><P>
 
-To simplify the development with ActionServlet, you can use <EM>ASWizards for JBuilder</EM>:
+To ease the development with ActionServlet, you can use <EM>ASWizards for JBuilder</EM>:
 
 <TABLE ALIGN=CENTER BORDER=0 CELLPADDING=10><TR>
-<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/as_icon.gif" WIDTH=70 HEIGHT=47 BORDER=0></TD>
-<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/asc_icon.gif" WIDTH=70 HEIGHT=64 BORDER=0></TD>
-<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/th_icon.gif" WIDTH=94 HEIGHT=64 BORDER=0></TD>
-<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/ascfg_icon.gif" WIDTH=69 HEIGHT=50 BORDER=0></TD>
+<TD><IMG SRC="doc/images/as_icon.gif" WIDTH=70 HEIGHT=47 BORDER=0></TD>
+<TD><IMG SRC="doc/images/asc_icon.gif" WIDTH=70 HEIGHT=64 BORDER=0></TD>
+<TD><IMG SRC="doc/images/th_icon.gif" WIDTH=94 HEIGHT=64 BORDER=0></TD>
+<TD><IMG SRC="doc/images/ascfg_icon.gif" WIDTH=69 HEIGHT=50 BORDER=0></TD>
 </TR></TABLE>
 
 With these wizards you can easily create the basic structure of your web application.
@@ -72,13 +75,15 @@ With these wizards you can easily create the basic structure of your web applica
 <UL CLASS="sub">
 	<LI><EM>ActionServlet</EM>
 	<UL>
-	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A>
-	<LI>ActionServlet <A HREF="doc/api/org/webmacro/as/ActionServlet.html#start">specification</A>
+	<LI><A HREF="doc/advertisment.txt">Advertisment</A>
+	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet Tutorial</A>
+	<LI>ActionServlet <A HREF="doc/specification.html">Specification</A>
+	<LI>ActionServlet <A HREF="doc/guidelines.html">Design Guidelines</A>
 	<LI>Full <A HREF="doc/api/index.html">API documentation</A>
 	<LI><A HREF="examples/install.txt">Examples installation</A><P>
 	</UL>
 	
-	<LI><EM>ASWizards</EM>
+	<LI><EM>ASWizards for JBuilder</EM>
 	<UL>
 	<LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/install.html">Introduction and installation</A>
 	<LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/tutorial-1.html">Degrees2Radians WebApp Tutorial</A>
@@ -116,6 +121,17 @@ With these wizards you can easily create the basic structure of your web applica
 <A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2</A><SUP><FONT COLOR="red">*</FONT></SUP>
 </TD></TR><TR><TD>
 <A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+
+</TD></TR><TR><TD ROWSPAN=2>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_61_1.zip">ActionServlet_0_61_1.zip</A>
+</TD><TD>
+<A HREF="http://java.sun.com/j2se">JDK 1.2</A>+
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 1.0rc1</A>+
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>,<BR>
+<A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2/4.0</A><SUP><FONT COLOR="red">*</FONT></SUP>
+</TD></TR><TR><TD>
+<A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+
 </TD></TR></TABLE>
 
 <P>
@@ -128,12 +144,24 @@ With these wizards you can easily create the basic structure of your web applica
 <TD>...has example<BR>configured for</TD>
 </TR><TR>
 <TD><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB_1_0.zip">ASWizards_JB_1_0.zip</A></TD>
-<TD>ActionServlet 0.53+,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
+<TD>ActionServlet 0.53 or 0.54,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
 <TD><A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2</A><SUP><FONT COLOR="red">*</FONT></SUP></TD>
+</TR><TR>
+<TD COLSPAN=3 ALIGN=CENTER><EM>ASWizards for ActionServlet 0.6x will be comming soon!</EM></TD>
 </TR></TABLE>
 </TD></TR><TR><TD>
-<SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2</EM> and higher</SMALL>
+<SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2/2.3</EM></SMALL>
 </TD></TR></TABLE>
+
+<P>If you want to be notified when a new version of <EM>ActionServlet</EM> or <EM>ASWizards</EM> is available, please submit your e-mail address:
+<FORM ACTION="http://dione.zcu.cz/cgi-bin/FormMail.pl" METHOD="POST">
+<INPUT TYPE="HIDDEN" NAME="recipient" VALUE="Petr.Toman@pinknet.cz">
+<INPUT TYPE="HIDDEN" NAME="subject" VALUE="AS: Subscribe">
+<INPUT NAME="e-mail" VALUE="" size="50">
+<INPUT TYPE="HIDDEN" NAME="required" VALUE="e-mail">
+<INPUT TYPE=SUBMIT VALUE="Submit">
+</FORM>
+
 
 <P><LI><H3 CLASS="main">Latest news</H3>
 <UL CLASS="main">
@@ -146,12 +174,14 @@ With these wizards you can easily create the basic structure of your web applica
 	14.3. 2000: <B>version 0.43</B>: small doc fixes</TD></TR><TR><TD>
 	26.4. 2000: <B>version 0.44</B>: added <TT>newSession()</TT> method</TD></TR><TR><TD>
 	14.8. 2000: <B>version 0.45</B>: tiny changes</TD></TR><TR><TD>
-    31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
-                easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
-    14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
-    8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
-    24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
-	17.9. 2001: <EM>ASWizards 1.0 for JBuilder</EM> released</TD></TR>
+        31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
+                    easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
+        14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
+        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: made compatible with WebMacro 0.95+, examples improvements</TD></TR><TR><TD>
+        24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: Servlet 2.2+ containers support</TD></TR><TR><TD>
+	17.9. 2001: <EM>ASWizards 1.0 for JBuilder</EM> released</TD></TR></TD></TR><TR><TD>
+	14.10. 2001: <B>version 0.6</B>: ActionConfig improvements, new Guidelines document, ...</TD></TR></TD></TR><TR><TD>
+	30.10. 2001: <B>version 0.61.1</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR>
 	</TABLE>
 
 <P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>

@@ -4,42 +4,39 @@
 </head>
 #set $Response.ContentType = "text/html"
 
-<body bgcolor="white">
-<h1><font color="green">GuestBook Example</font></h1>
+<BODY BGCOLOR="white">
+<h1><FONT COLOR="green">GuestBook Example</FONT></h1>
 <p> This sample webmacro script will collect form data and then interpret 
 the form data and return the information in a table.
 
 
 #if ($badEmail) {
-	<P><CENTER>
-	<FONT color="red">E-mail must have the format like:</FONT>
-	<TT>somebody@somewhere.xyz</TT>. <FONT color="red">Try again!</FONT>
-	</CENTER><P>
+   <P><CENTER>
+   <FONT COLOR="red">E-mail must have the format like:</FONT>
+   <TT>somebody@somewhere.xyz</TT>. <FONT COLOR="red">Try again!</FONT>
+   </CENTER><P>
 }
 
-<FORM METHOD="POST">
+<FORM>
 <TABLE ALIGN="CENTER" width="600">
-<TR><TD font color="red">Your Name:</TD>
-<TD font color="green">
+<TR><TD>Your Name:</TD>
+<TD>
 
 #if ($name) {
-	<INPUT TYPE="TEXT" NAME="name" VALUE="$name">
+   <INPUT TYPE="TEXT" NAME="name" VALUE="$name">
 } #else {
-	<INPUT TYPE="TEXT" NAME="name">
+   <INPUT TYPE="TEXT" NAME="name">
 }
 
 </TD></TR>
-<TR><TD font color="red">e-Mail:</TD><TD font color="green">
+<TR><TD>e-Mail:</TD><TD>
 <INPUT TYPE="TEXT" NAME="email" VALUE=""></TD></TR>
-<TR><TD font color="red">Comment:</TD><TD font color="green">
+<TR><TD>Comment:</TD><TD>
 
 #if ($comment) {
-<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD">
-$comment
-</TEXTAREA>
+<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD">$comment</TEXTAREA>
 } #else {
-<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD">
-</TEXTAREA>
+<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD"></TEXTAREA>
 }
 
 </TD></TR> 
@@ -48,6 +45,6 @@ $comment
 </TD></TR></TABLE>
 </FORM>
 
-[ <a href="?action=allguest">See Guests</a> ]
+[ <a href="GuestBook?action=allguest">See Guests</a> ]
 
 </body></html>

@@ -1,5 +1,4 @@
 import org.webmacro.as.*;
-
 import org.webmacro.Template;
 import org.webmacro.servlet.WebContext;
 

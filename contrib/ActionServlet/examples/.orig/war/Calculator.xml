@@ -1,35 +1,40 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application>
    <templates>
-      <template name="Calculator.wm" is-new-session="true"/>
+      <template name="Calculator.wm" is-new-session="true">
+         <output-variable name="display" component="Calculator" value="getDisplay()"/>
+      </template>
    </templates>
 
    <components>
-      <component class="Calculator" persistence="session">
-         <action name="0" method="digit(String action)"/>
-         <action name="1" method="digit(String action)"/>
-         <action name="2" method="digit(String action)"/>
-         <action name="3" method="digit(String action)"/>
-         <action name="4" method="digit(String action)"/>
-         <action name="5" method="digit(String action)"/>
-         <action name="6" method="digit(String action)"/>
-         <action name="7" method="digit(String action)"/>
-         <action name="8" method="digit(String action)"/>
-         <action name="9" method="digit(String action)"/>
+      <component name="Calculator" class="Calculator" persistence="session">
+         <action name="0" method="digit(int action)"/>
+         <action name="1" method="digit(int action)"/>
+         <action name="2" method="digit(int action)"/>
+         <action name="3" method="digit(int action)"/>
+         <action name="4" method="digit(int action)"/>
+         <action name="5" method="digit(int action)"/>
+         <action name="6" method="digit(int action)"/>
+         <action name="7" method="digit(int action)"/>
+         <action name="8" method="digit(int action)"/>
+         <action name="9" method="digit(int action)"/>
 
          <action name="." method="point()"/>
          <action name="+/-" method="plusminus()"/>
 
-         <action name="+" method="operation(String action)"/>
-         <action name="-" method="operation(String action)"/>
-         <action name="*" method="operation(String action)"/>
-         <action name="/" method="operation(String action)"/>
-         <action name="=" method="operation(String action)"/>
+         <action name="+" method="operation(char action)"/>
+         <action name="-" method="operation(char action)"/>
+         <action name="*" method="operation(char action)"/>
+         <action name="/" method="operation(char action)"/>
+         <action name="=" method="operation(char action)"/>
 
          <action name="CE" method="ce()"/>
          <action name="C" method="c()"/>
+
+         <on-return value="OK" show-template="Calculator.wm"/>
+         <on-return value="ERROR" show-template="Calculator.wm"/>
       </component>
    </components>
 </application>

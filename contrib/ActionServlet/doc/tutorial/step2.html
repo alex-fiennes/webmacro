@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Action Servlet</title>
+	<title>ActionServlet: LoginServlet Tutorial</title>
 	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
 	<!--#include virtual="vars.inc" -->
 <style>
@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.54<P>
+version 0.61<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -53,40 +53,37 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </UL>
 
 <TABLE BORDER="1" CELLPADDING="20" CELLSPACING="1"><TR><TD>
-<B>Step 2/4:</B> Write the Java code of &nbsp;<TT><B>Authenticator</B></TT>:
+<B>Step 2/4:</B> Write the Java code of &nbsp;<TT><B>Authenticator</B></TT> component:
 
 <P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
 <PRE>
-import org.webmacro.as.ActionServlet;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
-
 <B>public class Authenticator</B> {
-   private ActionServlet servlet;
+   public Authenticator(org.webmacro.as.ActionServlet as) {}
 
-   public Authenticator(ActionServlet as) { servlet = as; }
-
-   <B>public Template <FONT COLOR="green">login</FONT>(WebContext context, String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)</B> {
-      // verify user name and password - here: only John may log in
+   <B>public String <FONT COLOR="green">login</FONT>(String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)</B> {
+      <I>// verify user name and password - here: only John may log in</I>
       if ("John".equals(userName) && "18x79Z".equals(password))
-         return servlet.getWMTemplate("SuccessfulLogin.html");
+         return "SuccessfulLogin.html";
       else 
-         return servlet.getWMTemplate("BadUserNameOrPassword.html");
+         return "BadUserNameOrPassword.html";
    <B>}</B>
 }
 </PRE>
 </TD></TR></TABLE><P>
 
-The <TT>login()</TT> is called <EM>action method</EM> - will handle action invoked on HTML page - and
-is nested inside <TT><B>Authenticator</B></TT> class, that defines the <EM>ActionServlet component</EM>.<P>
+In <EM>ActionServlet</EM> terminology, <TT>login()</TT> is called <EM>action method</EM> - it will handle action invoked on HTML page - and
+is nested inside <TT><B>Authenticator</B></TT> class, which defines the <EM>ActionServlet</EM> component</EM>.<P>
 
 <HR WIDTH="100%">
 
-Note 1: Components are objects instantiated by <EM>ActionServlet</EM> and their classes must have a public 
-        constructor with a single parameter of type <TT>org.webmacro.as.ActionServlet</TT>.<P>
-Note 2: Action methods must: a) be defined as public, b) return a template, c) have their first parameter
-        of type <TT>org.webmacro.servlet.WebContext</TT> and, optionally, d) may throw 
-        <TT>org.webmacro.as.ActionException</TT> (not used here).
+Note 1: Components are instantiated by <EM>ActionServlet</EM> and must have a public 
+        constructor with a single parameter of type <TT>org.webmacro.as.ActionServlet</TT>
+        (optionally it can have a second parameter of type <TT>java.lang.String</TT> 
+        which will be passed the component name).<P>
+
+Note2: Action method must be defined as public and usually returns a value - an error code or 
+       a template name (see <A HREF="../specification.html">Specification</A> 
+       for more info).<P>
 </TD></TR></TABLE>
 
 <P><CENTER>

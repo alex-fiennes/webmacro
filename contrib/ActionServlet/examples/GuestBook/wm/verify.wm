@@ -8,14 +8,21 @@
 <h1><font color="green">Verify recieved form input!</font></h1>
 <p>Submitted form contents were</p>
 
-<table align="center" width="400" border="1">
+<center>
+<table width="400" border="1">
    <tr><td>Name:</td><td>"$Form.name"</td></tr>
    <tr><td>Email:</td><td>"$Form.email"</td></tr>
    <tr><td>Comment:</td><td>"$Form.comment"</td></tr>
 </table><p>
 
-[ <a href="?action=form">Back to form</a> ]
+<FORM>
+<INPUT TYPE="Hidden" NAME="name" VALUE="$Form.name">
+<INPUT TYPE="Hidden" NAME="email" VALUE="$Form.email">
+<INPUT TYPE="Hidden" NAME="comment" VALUE="$Form.comment">
+<INPUT TYPE="Submit" NAME="action" VALUE="PROCEED">
+</FORM>
+</center>
 
-[ <a href="?action=allguest">See Guests</a> ]
+[ <a href="GuestBook?action=form">Back to form</a> ]
 
 </body></html>

@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application repository="C:/Progra~1/ActionServlet/examples/DateHandler/classes">
    <templates>
       <template name="DateForm.wm" is-new-session="true"/>
+
+      <template name="SubmittedDate.wm">
+         <output-variable name="date" component="DateComponent" value="getDateAsString()"/>
+      </template>
    </templates>
 
    <type-handlers>
@@ -11,7 +15,7 @@
    </type-handlers>
 
    <components>
-      <component class="DateComponent" persistence="application">
+      <component name="DateComponent" class="DateComponent" persistence="application">
          <action name="Submit" method="submit(java.util.Date date)"/>
       </component>
    </components>

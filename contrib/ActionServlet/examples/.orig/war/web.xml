@@ -34,6 +34,20 @@
    </servlet>
 
    <!-- ************************************************** -->
+   <!-- ******************* Calculators ****************** -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>Calculators</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>Calculators.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
    <!-- ******************* DateHandler ****************** -->
    <!-- ************************************************** -->
 
@@ -76,6 +90,20 @@
    </servlet>
 
    <!-- ************************************************** -->
+   <!-- ********************** DbDemo ******************** -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>DbDemo</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>DbDemo.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
    <!-- ********************* TwoForms ******************* -->
    <!-- ************************************************** -->
 
@@ -104,6 +132,11 @@
    </servlet-mapping>
 
    <servlet-mapping>
+      <servlet-name>Calculators</servlet-name>
+      <url-pattern>/Calculators</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
       <servlet-name>DateHandler</servlet-name>
       <url-pattern>/DateHandler</url-pattern>
    </servlet-mapping>
@@ -111,6 +144,11 @@
    <servlet-mapping>
       <servlet-name>GuestBook</servlet-name>
       <url-pattern>/GuestBook</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>DbDemo</servlet-name>
+      <url-pattern>/DbDemo</url-pattern>
    </servlet-mapping>
 
    <servlet-mapping>

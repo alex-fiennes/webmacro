@@ -31,6 +31,9 @@ final class LastActionData {
     /** Lastly invoked Action. */
     final Action action;
 
+    /** Component name. */
+    final String componentName;
+
     /** Component object implementing action. */
     final Object component;
 
@@ -45,8 +48,9 @@ final class LastActionData {
      * @param component object implementing action
      * @param convertedParams converted parameters from HTTP request
      */
-    LastActionData(Action action, Object component, Object[] convertedParams) {
+    LastActionData(Action action, String componentName, Object component, Object[] convertedParams) {
         this.action = action;
+        this.componentName = componentName;
         this.component = component;
         lastParams = convertedParams;
     }
@@ -59,8 +63,8 @@ final class LastActionData {
      * @exception ActionException propagated exception from action method
      */
     Template reinvokeLastAction(WebContext context) throws ActionException {
-        action.servlet.log.debug("Reinvoking method '" + component.getClass().getName() +
-                                 "." + action.method.getName() + "'");
-        return action.reinvoke(context, component, lastParams);
+        action.servlet.log.debug("Reinvoking method '" + action.method.getName() +
+                                 "' of '" + componentName + "'");
+        return action.reinvoke(context, componentName, component, lastParams);
     }
 }

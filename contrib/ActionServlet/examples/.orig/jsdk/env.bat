@@ -20,4 +20,6 @@ set AS_HOME=@as.home@
 @rem
 @rem -----------------------------
 @rem
+@set %BROWSER%="C:\Program Files\Plus!\Microsoft Internet\IEXPLORE.EXE"
+@rem
 @set CLASSPATH=%JSDK_HOME%\lib\jsdk.jar;%WM_HOME%\webmacro.jar;%AS_HOME%\lib\ActionServlet.jar;%AS_HOME%\lib\jaxp.jar;%AS_HOME%\lib\parser.jar

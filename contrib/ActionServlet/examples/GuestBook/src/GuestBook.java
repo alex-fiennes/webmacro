@@ -1,8 +1,5 @@
 import java.util.Vector;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
-import org.webmacro.as.*;
-import org.webmacro.Log;
+import org.webmacro.as.ActionServlet;
 
 /**
  * ActionServlet component that implements a guest book.
@@ -10,52 +7,50 @@ import org.webmacro.Log;
  * @author Petr Toman
  */
 public class GuestBook {
-    private Log log;
-
-    private ActionServlet servlet;
-
     /**
      * Keeps guest book entries.
      */
-    private Vector book = new Vector();
+    public Vector book = new Vector();
 
     /**
-     * Mandatory public constructor of component.
+     * Component constructor.
      */
-    public GuestBook(ActionServlet as) {
-        servlet = as;
-	log = servlet.getLog("guestbk", "GuestBook example");
-    }
-    
+    public GuestBook(ActionServlet as) {}
+   
     /**
      * Handles 'form' action.
      */
-    public Template showEmptyForm(WebContext context) {
-        return servlet.getWMTemplate("form.wm");
+    public String showEmptyForm() {
+        return "form.wm";
     }
-   
+
     /**
      * Handles 'SUBMIT' action.
      */
-    public Template verify(WebContext context, String name, Email email, String comment) {
+    public String verify(Email email) {
+        return "verify.wm";
+    }
+
+    /**
+     * Handles 'PROCEED' action.
+     */
+    public String proceed(String name, Email email, String comment) {
         book.addElement(new GuestEntry(name, email, comment));
       
-        return servlet.getWMTemplate("verify.wm");
+        return "allguest.wm";
     }
 
     /**
      * Handles 'allguest' action.
      */
-    public Template showAllGuests(WebContext context) {
-        context.put("registry", book);
-
-        return servlet.getWMTemplate("allguest.wm");
+    public String showAllGuests() {
+        return "allguest.wm";
     }
 
     /**
      * Represents a guest book entry.
      */
-    public final class GuestEntry {
+    public class GuestEntry {
         private String name;
         private Email email;
         private String comment;

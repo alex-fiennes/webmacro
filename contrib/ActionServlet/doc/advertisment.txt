@@ -2,7 +2,7 @@
 *    Easy mapping of HTTP requests to methods of    *
 *                  Java components                  *
 *                                                   *
-*                 ActionServlet 0.54                *
+*                ActionServlet 0.61                 *
 *        Copyright (c) 1999-2001 Petr Toman         *
 *                                                   *
 *     http://dione.zcu.cz/~toman40/ActionServlet    *
@@ -14,7 +14,7 @@
 *                                                   *
 * - Simple and highly configurable servlet setup    *
 *   enables mapping of HTTP requests (user actions) *
-*   to methods of Java components.                  *
+*   to methods of reusable Java components.         *
 *                                                   *
 * - Automatic conversion of HTTP parameters to      *
 *   values of Java types (including primitive       *

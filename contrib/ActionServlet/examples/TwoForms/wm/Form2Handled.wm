@@ -1,8 +1,8 @@
 <HTML>
 #set $Response.ContentType = "text/html"
 <BODY>
-	<P><CENTER><H2>
-	The submitted <EM>char</EM> value was '$char'.
-	</H2></CENTER><P>
+   <P><CENTER><H2>
+   The submitted <EM>char</EM> value was '$char'.
+   </H2></CENTER><P>
 </BODY>
 </HTML>

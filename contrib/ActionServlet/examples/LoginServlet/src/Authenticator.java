@@ -1,34 +1,43 @@
 import org.webmacro.as.ActionServlet;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
 
 /**
- * ActionServlet component that authenticates users.
+ * A simple component for authenticating users.
  *
  * @author Petr Toman
  */
 public class Authenticator {
-    private ActionServlet servlet;
+    /** Return code. */
+    public static final int OK = 1;
+
+    /** Return code. */
+    public static final int BAD_USERNAME_OR_PASSWORD = 2;
+
+    /** Indicates that bad user name or bassword was entered. */
+    private boolean isLoggedIn = false;
 
     /**
-     * Mandatory public constructor of component.
+     * Component constructor.
      */
-    public Authenticator(ActionServlet as) {
-        servlet = as;
-    }
+    public Authenticator(ActionServlet as) {}
 
     /** 
      * Implements 'Login' action.
      */
-    public Template login(WebContext context, String userName, String password) {
+    public int login(String userName, String password) {
         // only John may log in...
         if ("John".equals(userName) && "18x79Z".equals(password)) {
-            context.put("userName", userName);
-            return servlet.getWMTemplate("SuccessfulLogin.wm");
+            isLoggedIn = true;
+            return OK;
         } else {
-            // others will get 'Bad login' message back on the login page
-            context.put("badLogin", Boolean.TRUE);
-            return servlet.getWMTemplate("Login.wm");
+            isLoggedIn = false;
+            return BAD_USERNAME_OR_PASSWORD;
         }
+    }
+
+    /**
+     * Returns true if wrong user name or password was entered.
+     */
+    public boolean isLoggedIn() {
+        return isLoggedIn;
     }
 }

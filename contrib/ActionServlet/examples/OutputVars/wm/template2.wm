@@ -10,7 +10,7 @@
       &lt;output-variable name="third" value="\$second"/&gt;
    &lt;/template&gt;
 
-   &lt;component class="MyComponent" ...&gt;
+   &lt;component name="MyComponent" ...&gt;
       &lt;action ...&gt;
          &lt;output-variable name="second" component="MyComponent" value="getSecond()"/&gt;
          &lt;output-variable name="lengthOfSecond" value="\$second.length()"/&gt;

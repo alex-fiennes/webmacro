@@ -23,11 +23,13 @@ package org.webmacro.as;
 import org.webmacro.servlet.HandlerException;
 
 /**
- * The only exception that may be thrown by action methods.
+ * Exception thrown by {@link org.webmacro.as.ActionServlet ActionServlet} 
+ * and action methods.
  */
 public class ActionException extends HandlerException {
-    final Exception detail;
-    
+    /** Nested exception or null. */
+    public final Throwable detail;
+
     /** 
      * Creates an exception with the specified message. 
      */
@@ -39,7 +41,7 @@ public class ActionException extends HandlerException {
     /** 
      * Creates an exception with the specified message and nested exception. 
      */
-    public ActionException(String reason, Exception detail) {
+    public ActionException(String reason, Throwable detail) {
         super(reason);
         this.detail = detail;
     }
@@ -50,6 +52,7 @@ public class ActionException extends HandlerException {
     public String getMessage() {
         if (detail == null) return super.getMessage();
             return super.getMessage() + "; nested exception is: " + 
-                   detail.getClass().getName() + ": " + detail.getMessage();
+                   detail.getClass().getName() + ": " + 
+                   detail.getMessage();
     }
 }

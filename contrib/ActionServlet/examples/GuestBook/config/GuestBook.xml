@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application>
    <templates>
       <template name="form.wm" is-new-session="true"/>
+
+      <template name="allguest.wm">
+         <output-variable name="registry" component="GuestBook" value="book"/>
+      </template>
    </templates>
 
    <type-handlers>
@@ -11,12 +15,10 @@
    </type-handlers>
 
    <components>
-      <component class="GuestBook" persistence="application">
+      <component name="GuestBook" class="GuestBook" persistence="application">
          <action name="form" method="showEmptyForm()"/>
-
-         <action name="SUBMIT" 
-                 method="verify(String name, Email email, String comment)"/>
-
+         <action name="SUBMIT" method="verify(Email email)"/>
+         <action name="PROCEED" method="proceed(String name, Email email, String comment)"/>
          <action name="allguest" method="showAllGuests()"/>
       </component>
    </components>

@@ -1,8 +1,7 @@
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import org.webmacro.as.ActionServlet;
-import org.webmacro.Template;
-import org.webmacro.servlet.WebContext;
 
 /**
  * ActionServlet component that demonstrates <TT>CompositeTypeHandler</TT> usage.
@@ -11,21 +10,23 @@ import org.webmacro.servlet.WebContext;
  */
 public class DateComponent {
     private static SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy", Locale.US);
-    private ActionServlet servlet;
+    private Date date;
 
-    /**
-     * Mandatory public constructor of component.
-     */
-    public DateComponent(ActionServlet as) {
-        servlet = as;
-    }
+    public DateComponent(ActionServlet as) {}
 
     /** 
      * Implements 'OK' action.
      */
-    public Template submit(WebContext context, java.util.Date date) {
-        context.put("date", formatter.format(date));
+    public String submit(Date date) {
+        this.date = date;
 
-        return servlet.getWMTemplate("SubmittedDate.wm");
+        return "SubmittedDate.wm";
+    }
+
+    /**
+     * Returns formated date.
+     */
+    public String getDateAsString() {
+        return formatter.format(date);
     }
 }

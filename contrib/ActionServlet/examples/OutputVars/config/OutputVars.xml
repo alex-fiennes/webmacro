@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application repository="C:/Progra~1/ActionServlet/examples/OutputVars/classes">
    <templates>
@@ -14,7 +14,7 @@
    </templates>
 
    <components>
-      <component class="MyComponent" persistence="application">
+      <component name="MyComponent" class="MyComponent" persistence="application">
          <action name="Continue..." method="myAction()">
             <output-variable name="second" component="MyComponent" value="getSecond()"/>
             <output-variable name="lengthOfSecond" value="$second.length()"/>

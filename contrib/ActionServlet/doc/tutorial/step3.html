@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Action Servlet</title>
+	<title>ActionServlet: LoginServlet Tutorial</title>
 	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
 	<!--#include virtual="vars.inc" -->
 <style>
@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.54<P>
+version 0.61<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -53,7 +53,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </UL>
 
 <TABLE BORDER="1" CELLPADDING="20" CELLSPACING="1"><TR><TD>
-<B>Step 3/4:</B> Bind actions to action methods of components via <EM>configuration file</EM> (snippet follows):
+<B>Step 3/4:</B> Bind actions to action methods of components in the configuration file called <EM>ActionConfig</EM>:
 
 <P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
 <PRE>
@@ -63,7 +63,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
    &lt;/templates&gt;
 
    &lt;components&gt;
-      <B>&lt;component class="Authenticator" persistence="application"&gt;
+      <B>&lt;component name="Authenticator" class="Authenticator" persistence="session"&gt;
          &lt;action name="<FONT COLOR="green">Login</FONT>" method="<FONT COLOR="green">login</FONT>(String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)"/&gt;
       &lt;/component&gt;</B>
    &lt;/components&gt;
@@ -71,14 +71,14 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </PRE>
 </TD></TR></TABLE><P>
 
-The configuration file has a simple XML format. Each component has defined <TT>class</TT> and persistence
-(application/session/request) and one or more action subelements. Here is bound <FONT COLOR="green"><TT><B>Login</B></TT></FONT>
-action to <TT>Authenticator.login(WebContext context, String userName, String password)</TT> method.
-Template with <TT>is-new-session</TT> attribute set to true is shown upon a new session (when the user
-first visits the servlet page).
+ActionConfig has a simple XML format. Each component has defined <TT>name</TT>, <TT>class</TT> and persistence
+(one of: <TT>application</TT>/<TT>session</TT>/<TT>request</TT>) and zero or more <TT>&lt;action&gt;</TT> subelements. Here is bound <FONT COLOR="green"><TT><B>Login</B></TT></FONT>
+action to <TT>Authenticator.login(String userName, String password)</TT> method.<P>
+The template with an <TT>is-new-session</TT> attribute set to <TT>true</TT> is shown upon a new session (when the user
+first visits the servlet's page).
 
 <HR WIDTH="100%">
-Note: The <TT>context</TT> variable is always <B>omitted</B> in the action definition.
+Note: For full description of ActionConfig structure see <A HREF="../specification.html#config">Specification</A>.
 
 </TD></TR></TABLE>
 

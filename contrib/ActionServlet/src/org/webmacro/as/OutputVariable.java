@@ -35,7 +35,7 @@ import org.webmacro.servlet.WebContext;
 class OutputVariable {
     private static final String TMP_VAR_NAME = "ACTION_SERVLET_COMPONENT";
     private final ActionServlet servlet;
-    private final Macro variable;
+    private final Variable variable;
     private final ComponentData componentData;
     private final String name;
 
@@ -50,11 +50,11 @@ class OutputVariable {
 
         try {
             if (componentData != null)
-                variable = (Macro) new WMParser(servlet.getBroker()).parseBlock("string",
-                           new StringReader("$"+TMP_VAR_NAME+"." + definition)).build(new BuildContext(servlet.getBroker()));
+               variable = (Variable) ((VariableBuilder) new WMParser(servlet.getBroker()).parseBlock("string",
+               new StringReader("$"+TMP_VAR_NAME+"." + definition)).elementAt(0)).build(new BuildContext(servlet.getBroker()));
             else
-                variable = (Macro) new WMParser(servlet.getBroker()).parseBlock("string",
-                           new StringReader(definition)).build(new BuildContext(servlet.getBroker()));
+               variable = (Variable) ((VariableBuilder) new WMParser(servlet.getBroker()).parseBlock("string",
+               new StringReader(definition)).elementAt(0)).build(new BuildContext(servlet.getBroker()));
 
             if (variable == null)
                 throw new ParseException("Bad definition of 'value' attribute=\"" +
@@ -72,17 +72,19 @@ class OutputVariable {
      */
     void evaluate(WebContext context) {
         if (componentData != null)
-            context.put(TMP_VAR_NAME, servlet.getComponent(componentData.componentClass, true));
+            context.put(TMP_VAR_NAME, servlet.getComponent(componentData.componentName, true));
 
         Object val = null;
         try {
-            val = variable.evaluate(context);
+            val = variable.getValue(context);
         } catch(Exception e) {
-            servlet.log.error("Error while evaluating output variable '" + name + "'", e);
+            servlet.log.error("Error while evaluating <output-variable> $" + name, e);
         }
 
         if (componentData != null)
             context.remove(TMP_VAR_NAME);
+
+        servlet.log.debug("Evaluating <output-variable> $" + name + " = " + val);
         context.put(name, val);
     }
 }

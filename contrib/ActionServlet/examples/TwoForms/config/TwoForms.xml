@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application repository="C:/Progra~1/ActionServlet/examples/TwoForms/classes">
    <templates>
@@ -7,9 +7,9 @@
    </templates>
 
    <components>
-      <component class="TwoForms" persistence="application">
-         <action form="Form1" name="OK" method="submit(double number)"/>
-         <action form="Form2" name="OK" method="submit(char ch)"/>
+      <component name="TwoForms" class="TwoForms" persistence="application">
+         <action form="Form1" name="OK" method="submit(WebContext context, double number)"/>
+         <action form="Form2" name="OK" method="submit(WebContext context, char ch)"/>
       </component>
    </components>
 </application>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
 
 <application>
    <templates>
@@ -7,8 +7,13 @@
    </templates>
 
    <components>
-      <component class="Authenticator" persistence="application">
-         <action name="Login" method="login(String userName, String password)"/>
+      <component name="Authenticator" class="Authenticator" persistence="session">
+         <action name="Login" method="login(String userName, String password)">
+            <output-variable name="loginOK" component="Authenticator" value="isLoggedIn()"/>
+         </action>
+
+         <on-return value="OK" show-template="SuccessfulLogin.wm"/>
+         <on-return value="BAD_USERNAME_OR_PASSWORD" show-template="Login.wm"/>
       </component>
    </components>
 </application>

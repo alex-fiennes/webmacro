@@ -1,9 +1,9 @@
-<html><head><title>ERROR!</title></head>
+<HTML>
 #set $Response.ContentType = "text/html"
-
-<body bgcolor="white">
-<h1><font color="green">ERROR!</font></h1>
+<BODY>
+<H1><FONT COLOR="green">ERROR!</FONT></H1>
 
 <TT>$error</TT>
 
-</body></html>
+</BODY>
+</HTML>

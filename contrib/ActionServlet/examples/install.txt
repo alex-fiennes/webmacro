@@ -2,9 +2,11 @@ List of examples
 ----------------
 
 	- LoginServlet - authenticates user - START HERE!
-	- Calculator   - a simple calculator
+	- Calculator   - simple calculator
+	- Calculators  - demo using basic and enhanced calculator
 	- DateHandler  - demonstrates CompositeTypeHandler usage
-	- GuestBook    - modified example from original WebMacro 0.89.1 distribution
+	- GuestBook    - modified example from WebMacro 0.89.1 distribution
+	- DbDemo       - shows how to use simple JDBC component
 	- TwoForms     - demonstrates 'form' parameter usage
 	- OutputVars   - demonstrates <output-variable> element usage
 
@@ -13,7 +15,7 @@ Examples installation instructions
 for use with JSDK 2.0 servletrunner
 -----------------------------------
 
-	1) Change directory to ..\src
+	1) Change directory to ActionServlet root
 
 	2) Set correct values of properties in build.xml
 
@@ -23,17 +25,17 @@ for use with JSDK 2.0 servletrunner
 
 
 Examples installation instructions
-for use with Tomcat 3.2.1 servlet container
+for use with Tomcat 3.x/4.0 servlet container
 (see http://jakarta.apache.org/tomcat)
 -------------------------------------------
 
-	1) Change directory to ..\src
+	1) Change directory to ActionServlet root
 
 	2) Set correct values of properties in build.xml
 
 	3) Run "ant examples_war"
 
-	4) Move ..\examples\as_examples.war to Tomcat's webapps directory
+	4) Move examples\as_examples.war to Tomcat's webapps directory
 
 	5) Restart Tomcat
 
@@ -45,20 +47,11 @@ Examples installation instructions
 for use with other "Servlet 2.2+" containers
 --------------------------------------------
 
-	1) Change directory to ..\src
+	1) Change directory to ActionServlet root
 
 	2) Set correct values of properties in build.xml
 
 	3) Run "ant examples_war"
 
-	4) Deploy ..\examples\as_examples.war
+	4) Deploy examples\as_examples.war
 	   (consult your servlet container documentation how to do it)
-
-
-Notes
------
-	* Checkout http://dione.zcu.cz/~toman40/ActionServlet for news
-	  if you have problems with versions of WebMacro higher than 0.98
-
-	* ..\lib\jaxp.jar and ..\lib\parser.jar are not needed if 
-	  JDK 1.4 (alias Java 2 SDK v1.4) or higher is used
