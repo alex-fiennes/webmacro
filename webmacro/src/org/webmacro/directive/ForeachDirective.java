@@ -140,6 +140,12 @@ public class ForeachDirective extends Directive {
     v.beginDirective(myDescr.name);
     v.visitDirectiveArg("ForeachTarget", target);
     v.visitDirectiveArg("ForeachList", list);
+    if (index!=null)
+      v.visitDirectiveArg("ForeachIndex", index);
+    if (indexFromExpr!=null)  
+      v.visitDirectiveArg("ForeachFrom", indexFromExpr);
+    if (limitExpr!=null)
+      v.visitDirectiveArg("ForeachLimit", limitExpr);
     v.visitDirectiveArg("ForeachBlock", body);
     v.endDirective();
   }
