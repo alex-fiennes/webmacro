@@ -38,7 +38,7 @@ public class LogFile implements LogTarget {
       Settings levels = s.getSubSettings("LogLevel");
       String[] keys = levels.keys();
       for (int i = 0; i < keys.length; i++) {
-         _levels.put(keys[i], levels.getSetting(keys[i]));
+         _levels.put(keys[i], new Integer(LogSystem.getLevel(levels.getSetting(keys[i]))));
       }
    }
 
