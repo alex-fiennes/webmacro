@@ -276,7 +276,6 @@ TOKEN_MGR_DECLS : {
   <NULL:      "null">
 | <TRUE:      "true">
 | <FALSE:     "false">
-| <UNDEFINED: "undefined">
 | <WS:        (<_WHITESPACE>)+ >
 | <NEWLINE:   <_NEWLINE> >
 | <LPAREN:    "(">
@@ -325,9 +324,14 @@ TOKEN_MGR_DECLS : {
 JAVACODE
 Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
   int n=1;
-  if (getToken(n).kind == WS)            ++n;
-  if (getToken(n).kind == NEWLINE)       ++n;
-  if (getToken(n).kind == WS)            ++n;
+//  if (getToken(n).kind == WS)            ++n;
+//  if (getToken(n).kind == NEWLINE)       ++n;
+//  if (getToken(n).kind == WS)            ++n;
+  Token t = getToken(n);
+  while ( t.kind == WS || t.kind == NEWLINE ) {
+     t = getToken(++n);
+  }
+
   if (getToken(n).kind == POUND
       && getToken(n+1).kind == WORD) {
     String word = getToken(n+1).image;
@@ -347,21 +351,6 @@ boolean lookahead_keyword(String keyword) {
   if (getToken(n).kind == WORD
       && getToken(n).image.equals(keyword))
     return true;
-  else
-    return false;
-}
-
-// is the next thing the specified keyword?
-JAVACODE
-boolean lookahead_arg(ArgDescriptor arg) {
-  if (arg.type == Directive.ArgType_KEYWORD)
-    return lookahead_keyword(arg.keyword);
-  else if (arg.type == Directive.ArgType_ASSIGN) {
-    int n=1;
-    if (getToken(n).kind == WS)
-      ++n;
-    return (getToken(n).kind == OP_SET);
-  }
   else
     return false;
 }
@@ -411,18 +400,12 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   case Directive.ArgType_QUOTEDSTRING:
     return QuotedString();
 
-  case Directive.ArgType_NAME:
-    return Word();
-
   case Directive.ArgType_STRING:
     return StringArg();
 
   case Directive.ArgType_ASSIGN:
     Punct_EQ();
     return "=";
-
-  case Directive.ArgType_ARGLIST:
-    return FormalArgList();
 
   case Directive.ArgType_KEYWORD:
     if (arg.optional && !lookahead_keyword(arg.keyword))
@@ -448,15 +431,12 @@ boolean parse_arg_group(DirectiveDescriptor descriptor,
                         DirectiveArgs da)
   throws BuildException {
   if (args[i].optional)
-    if (!lookahead_arg(args[args[i].children[0]]))
+    if (!lookahead_keyword(args[args[i].children[0]].keyword))
       return false;
   for (int j=0; j<args[i].subordinateArgs; j++) {
     ArgDescriptor child = args[args[i].children[j]];
     if (child.type == Directive.ArgType_GROUP) {
       parse_arg_group(descriptor, args, args[i].children[j], da);
-    }
-    else if (child.type == Directive.ArgType_CHOICE) {
-      parse_arg_choice(descriptor, args, args[i].children[j], da);
     }
     else {
       Object o = parse_arg(descriptor, child);
@@ -464,42 +444,6 @@ boolean parse_arg_group(DirectiveDescriptor descriptor,
     }
   }
   return true;
-}
-
-// parse_arg_choice -- parse a choice-set (one-of a, b, c)
-
-JAVACODE
-void parse_arg_choice(DirectiveDescriptor descriptor,
-                      ArgDescriptor[] args,
-                      int i,
-                      DirectiveArgs da)
-throws BuildException {
-  boolean foundOne = false;
-
-  OptionChoice oc = (OptionChoice) args[i];
-  for (boolean more=true; more; ) {
-    for (int j=0; j<args[i].subordinateArgs; j++) {
-      more = false;
-      // Each child is a GROUP, so we want to look at child's first child
-      ArgDescriptor child = args[args[i].children[j]];
-      if (lookahead_keyword(args[child.children[0]].keyword)) {
-        foundOne = true;
-        parse_arg_group(descriptor, args, args[i].children[j], da);
-        if (oc.repeating)
-          more = true;
-        break;
-      }
-    }
-  }
-  if (!args[i].optional && !foundOne) {
-    StringBuffer sb = new StringBuffer();
-    for (int j=0; j<args[i].subordinateArgs; j++) {
-      if (j>0) sb.append(", ");
-      ArgDescriptor child = args[args[i].children[j]];
-      sb.append(args[child.children[0]].keyword);
-    }
-    throw new ParseException("Expecting one of " + sb.toString());
-  }
 }
 
 //parse_args -- parse a whole directive's worth of arguments
@@ -513,8 +457,22 @@ void parse_args(DirectiveDescriptor descriptor,
 
       if (arg.type == Directive.ArgType_GROUP)
         parse_arg_group(descriptor, args, i, da);
-      else if (arg.type == Directive.ArgType_CHOICE)
-        parse_arg_choice(descriptor, args, i, da);
+      else if (arg.type == Directive.ArgType_CHOICE) {
+        OptionChoice oc = (OptionChoice) arg;
+        for (boolean more=true; more; ) {
+          for (int j=0; j<arg.subordinateArgs; j++) {
+            more = false;
+            // Each child is a GROUP, so we want to look at child's first child
+            ArgDescriptor child = args[arg.children[j]];
+            if (lookahead_keyword(args[child.children[0]].keyword)) {
+              parse_arg_group(descriptor, args, arg.children[j], da);
+              if (oc.repeating)
+                more = true;
+              break;
+            }
+          }
+        }
+      }
       else {
         Object o = parse_arg(descriptor, arg);
         da.setArg(arg.id, o);
@@ -532,10 +490,10 @@ void parse_args(DirectiveDescriptor descriptor,
 /* Directive Parsing */
 /* ***************** */
 
-/* Parses an entire directive (or macro).  Assumes state WM.  */
+/* Parses all of a directive's arguments.  Assumes state WM.  */
 
 JAVACODE
-Builder parse_directive(String directive) throws ParseException {
+DirectiveBuilder parse_directive(String directive) throws ParseException {
   DirectiveBuilder db=null;
   DirectiveDescriptor descriptor=null;
   Subdirective subd;
@@ -544,9 +502,7 @@ Builder parse_directive(String directive) throws ParseException {
     descriptor =
       (DirectiveDescriptor) broker.get(DirectiveProvider.DIRECTIVE_KEY,
                                        directive);
-    if (descriptor == null)
-      return parse_macro(directive);
-    else if (!descriptor.valid)
+    if (!descriptor.valid)
       throw new ParseException("Descriptor for directive " + directive
                                + " is not valid");
   }
@@ -575,16 +531,6 @@ Builder parse_directive(String directive) throws ParseException {
   OptionalWsNl();
 
   return db;
-}
-
-
-/* Parses a macro invocation.  Assumes state WM */
-
-JAVACODE
-Builder parse_macro(String name) throws ParseException {
-  Token token = getToken(1);
-  ListBuilder lb = MacroArgList();
-  return new MacroBuilder(name, lb, token.beginLine, token.beginColumn);
 }
 
 
@@ -636,7 +582,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 {
-  [ LOOKAHEAD( [<WS>]<NEWLINE>[<WS>] ) [<WS>]<NEWLINE>[<WS>] ] <POUND> <WORD> [ <WS> ]
+  [ LOOKAHEAD( ([<WS>]<NEWLINE>[<WS>])+ ) ([<WS>](<NEWLINE>)[<WS>])+ ] <POUND> <WORD> [ <WS> ]
 }
 
 
@@ -695,14 +641,6 @@ void Keyword(String s) : {
       throw new ParseException("Encountered " + t.image + " at line "
                                + t.beginLine + "; expecting " + s);
   }
-}
-
-String Word() : {
-  Token t;
-}
-{
-  [ <WS> ] t=<WORD> [ <WS> ]
-  { return t.image; }
 }
 
 Object Conditional() : {
@@ -824,30 +762,6 @@ ListBuilder BracketList() : {
   { return list; }
 }
 
-Object[] FormalArgList() : {
-  ArrayList list=new ArrayList();
-  Token name;
-}
-{
-  [ <LPAREN>
-    [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
-    (
-      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
-    ) *
-  ]
-    <RPAREN>
-  ]
-  { return list.toArray(); }
-}
-
-ListBuilder MacroArgList() : {
-  ListBuilder list=new ListBuilder();
-}
-{
-  [ <LPAREN> list=ArgList() <RPAREN> ]
-  { return list; }
-}
-
 
 Object Term() : {
   Object e;
@@ -862,7 +776,6 @@ Object Term() : {
     | <NULL>           { e = null; }
     | <TRUE>           { e = Boolean.TRUE; }
     | <FALSE>          { e = Boolean.FALSE; }
-    | <UNDEFINED>      { e = org.webmacro.engine.UndefinedMacro.getInstance(); }
     | <OP_NOT> [<WS>] e=Term() { e = new Expression.NotBuilder(e); }
     | t=<NUMBER>
       { try { e = new Integer(t.image); }

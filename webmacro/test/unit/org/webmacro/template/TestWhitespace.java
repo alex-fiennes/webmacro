@@ -87,6 +87,11 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals ("#if(true){pass} #else{fail}", "pass");
       assertStringTemplateEquals ("#if(true){pass} \n#else{fail}", "pass");
       assertStringTemplateEquals ("#if(true){pass} \n #else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass}\n\n#else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass} \n \n #else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass}\n\n\n\n\n\n\n\n\n\n#else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass}             \n\n \n \n\n           \n \n\n \n\n               #else{fail}", "pass");
+      assertStringTemplateEquals ("#if(true){pass}\n     \n \n \n             \n           \n \n\n \n\n#else{fail}", "pass");
    }
 
    //
