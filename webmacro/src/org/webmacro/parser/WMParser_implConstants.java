@@ -53,9 +53,10 @@ public interface WMParser_implConstants {
   int OP_OR = 48;
   int OP_NOT = 49;
   int COMMA = 50;
-  int NUMBER = 51;
-  int OTHER = 52;
-  int QS_TEXT = 53;
+  int SEMI = 51;
+  int NUMBER = 52;
+  int OTHER = 53;
+  int QS_TEXT = 54;
 
   int QS = 0;
   int COMMENT = 1;
@@ -114,6 +115,7 @@ public interface WMParser_implConstants {
     "\"||\"",
     "\"!\"",
     "\",\"",
+    "\";\"",
     "<NUMBER>",
     "<OTHER>",
     "<QS_TEXT>",

@@ -10,7 +10,7 @@ package org.webmacro.parser;
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
  */
-public class ParseException extends Exception {
+public class ParseException extends org.webmacro.RethrowableException {
 
   /**
    * This constructor is used by the method "generateParseException"
@@ -53,6 +53,11 @@ public class ParseException extends Exception {
 
   public ParseException(String message) {
     super(message);
+    specialConstructor = false;
+  }
+
+  public ParseException(String message, Exception e) {
+    super(message, e);
     specialConstructor = false;
   }
 

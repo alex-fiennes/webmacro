@@ -110,8 +110,8 @@ private final int jjMoveNfa_0(int startState, int curPos)
                case 4:
                   if ((0xffffffebffffdbffL & l) == 0L)
                      break;
-                  if (kind > 53)
-                     kind = 53;
+                  if (kind > 54)
+                     kind = 54;
                   jjCheckNAdd(4);
                   break;
                case 1:
@@ -145,8 +145,8 @@ private final int jjMoveNfa_0(int startState, int curPos)
                case 0:
                   if ((0xffffffffefffffffL & l) != 0L)
                   {
-                     if (kind > 53)
-                        kind = 53;
+                     if (kind > 54)
+                        kind = 54;
                      jjCheckNAdd(4);
                   }
                   else if (curChar == 92)
@@ -159,8 +159,8 @@ private final int jjMoveNfa_0(int startState, int curPos)
                case 4:
                   if ((0xffffffffefffffffL & l) == 0L)
                      break;
-                  if (kind > 53)
-                     kind = 53;
+                  if (kind > 54)
+                     kind = 54;
                   jjCheckNAdd(4);
                   break;
                default : break;
@@ -179,8 +179,8 @@ private final int jjMoveNfa_0(int startState, int curPos)
                case 4:
                   if ((jjbitVec0[i2] & l2) == 0L)
                      break;
-                  if (kind > 53)
-                     kind = 53;
+                  if (kind > 54)
+                     kind = 54;
                   jjCheckNAdd(4);
                   break;
                case 1:
@@ -292,6 +292,8 @@ private final int jjMoveStringLiteralDfa0_2()
          return jjStopAtPos(0, 35);
       case 47:
          return jjStopAtPos(0, 46);
+      case 59:
+         return jjStopAtPos(0, 51);
       case 60:
          jjmatchedKind = 36;
          return jjMoveStringLiteralDfa1_2(0x2000000000L);
@@ -454,8 +456,8 @@ private final int jjMoveNfa_2(int startState, int curPos)
                case 2:
                   if ((0x3ff000000000000L & l) != 0L)
                   {
-                     if (kind > 51)
-                        kind = 51;
+                     if (kind > 52)
+                        kind = 52;
                      jjCheckNAdd(13);
                   }
                   else if ((0x2400L & l) != 0L)
@@ -525,8 +527,8 @@ private final int jjMoveNfa_2(int startState, int curPos)
                case 13:
                   if ((0x3ff000000000000L & l) == 0L)
                      break;
-                  if (kind > 51)
-                     kind = 51;
+                  if (kind > 52)
+                     kind = 52;
                   jjCheckNAdd(13);
                   break;
                default : break;
@@ -968,7 +970,7 @@ public static final String[] jjstrLiteralImages = {
 "\134", "\43", "\42", "\156\165\154\154", "\164\162\165\145", "\146\141\154\163\145", 
 null, null, null, "\50", "\51", "\133", "\135", "\56", "\74", "\74\75", "\76", 
 "\76\75", "\75\75", "\75", "\41\75", "\53", "\55", "\52", "\57", "\46\46", "\174\174", 
-"\41", "\54", null, null, null, };
+"\41", "\54", "\73", null, null, null, };
 public static final String[] lexStateNames = {
    "QS", 
    "COMMENT", 
@@ -978,10 +980,10 @@ public static final String[] lexStateNames = {
 public static final int[] jjnewLexState = {
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-   -1, -1, -1, -1, 
+   -1, -1, -1, -1, -1, 
 };
 static final long[] jjtoToken = {
-   0x3ffffffffef801L, 
+   0x7ffffffffef801L, 
 };
 static final long[] jjtoSkip = {
    0x10000L, 
@@ -1105,9 +1107,9 @@ public final Token getNextToken()
        jjmatchedKind = 0x7fffffff;
        jjmatchedPos = 0;
        curPos = jjMoveStringLiteralDfa0_2();
-       if (jjmatchedPos == 0 && jjmatchedKind > 52)
+       if (jjmatchedPos == 0 && jjmatchedKind > 53)
        {
-          jjmatchedKind = 52;
+          jjmatchedKind = 53;
        }
        break;
      case 3:
