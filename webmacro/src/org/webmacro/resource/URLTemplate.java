@@ -19,6 +19,7 @@ public class URLTemplate extends WMTemplate
      */
     private  URL _url;
     private  String _encoding;
+    private  File underLyingFile = null;
     
     /**
      * Instantiate a template based on the specified file
@@ -31,6 +32,14 @@ public class URLTemplate extends WMTemplate
         super(broker);
         _url = templateURL;
         _encoding = encoding;
+        String _u = _url.toExternalForm();
+        if (_u.startsWith("file:")) {
+            underLyingFile = new File(_u.substring(5));
+        }
+        else if (_u.startsWith("jar:")) {
+            int p = _u.indexOf("!");
+            underLyingFile = new File(_u.substring(4,p));
+        }
     }
 
 
@@ -64,5 +73,9 @@ public class URLTemplate extends WMTemplate
     public String toString()
     {
         return "URLTemplate:" + _url;
+    }
+    
+    public File getUnderlyingFile() {
+        return underLyingFile;
     }
 }
