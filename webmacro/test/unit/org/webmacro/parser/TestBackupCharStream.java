@@ -89,11 +89,12 @@ public class TestBackupCharStream extends TestCase {
       ++counter;
       if (counter == readChars) {
         counter = 0;
-        in.backup(backupChars);
-        for (int j=0; j<backupChars; j++) {
+        int jMax = Math.min(backupChars, i);
+        in.backup(jMax);
+        for (int j=0; j<jMax; j++) {
           c = in.readChar();
-          if (c != chars[i+1-backupChars+j])
-            failAt(file, i+1-backupChars+j, c, chars[i+1-backupChars+j]);
+          if (c != chars[i+1-jMax+j])
+            failAt(file, i+1-jMax+j, c, chars[i+1-jMax+j]);
         }
       }
     }
@@ -110,6 +111,21 @@ public class TestBackupCharStream extends TestCase {
       assertBcsEqual(readFile(testFiles[i]), testFiles[i]);
   }
 
+  public void test_1_1() throws Exception {
+    for (int i=0; i<testFiles.length; i++) 
+      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 1, 1);
+  }
+
+  public void test_1_2() throws Exception {
+    for (int i=0; i<testFiles.length; i++) 
+      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 1, 2);
+  }
+
+  public void test_1_4() throws Exception {
+    for (int i=0; i<testFiles.length; i++) 
+      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 1, 4);
+  }
+
   public void test_2_1() throws Exception {
     for (int i=0; i<testFiles.length; i++) 
       assertBcsEqual(readFile(testFiles[i]), testFiles[i], 2, 1);
@@ -118,6 +134,11 @@ public class TestBackupCharStream extends TestCase {
   public void test_3_2() throws Exception {
     for (int i=0; i<testFiles.length; i++) 
       assertBcsEqual(readFile(testFiles[i]), testFiles[i], 3, 2);
+  }
+
+  public void test_5_4() throws Exception {
+    for (int i=0; i<testFiles.length; i++) 
+      assertBcsEqual(readFile(testFiles[i]), testFiles[i], 5, 4);
   }
 
   public void test_10_9() throws Exception {
