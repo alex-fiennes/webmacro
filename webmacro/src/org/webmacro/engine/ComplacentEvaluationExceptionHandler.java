@@ -47,7 +47,7 @@ public class ComplacentEvaluationExceptionHandler
                         Exception problem) 
    throws PropertyException {
       if (problem instanceof PropertyException.NoSuchVariableException
-          || problem instanceof PropertyException.NullVariableException
+          || problem instanceof PropertyException.NullValueException
           || problem instanceof PropertyException.NoSuchMethodException
           || problem instanceof PropertyException.NoSuchPropertyException)
          return;
