@@ -19,9 +19,9 @@ public class TestSettings extends TestCase {
     Settings s = new Settings();
 
     s.load("org/webmacro/util/settings1.properties");
-    String k[] = s.getKeys();
-    for (int i=0; i<k.length; i++) 
-      System.out.println("/" + k[i] + "/" + s.getSetting(k[i]) + "/");
+//      String k[] = s.getKeys();
+//      for (int i=0; i<k.length; i++) 
+//        System.out.println("/" + k[i] + "/" + s.getSetting(k[i]) + "/");
     assert(s.getIntegerSetting("one") == 1);
     assert(s.getIntegerSetting("two") == 2);
     assert(s.getIntegerSetting("three") == 3);
