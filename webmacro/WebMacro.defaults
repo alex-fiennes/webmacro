@@ -28,8 +28,7 @@
 # this encoding to whatever encoding the browser requests. See 
 # the FastWriter class to learn how to control output encoding.
 TemplateEncoding: UTF-8
-
-
+TemplateOutputEncoding: UTF-8
 
 #
 # Logging
