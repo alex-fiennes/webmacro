@@ -1,4 +1,5 @@
 
+-- added a webcontext.clear() to WMServlet to help out the GC
 -- added FilterDirective, and $() and ${} notation to variable
 -- WMServlet calls stop() from destroy() now (was always supposed to!)
 -- fixed bug in or condition
