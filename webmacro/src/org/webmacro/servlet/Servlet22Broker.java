@@ -164,7 +164,7 @@ public class Servlet22Broker extends ServletBroker {
     */
    public URL getTemplate(String name) {
      if (_templatePrefix == null)
-       return getTemplate(name);
+         return getResource(name);
      else {
        URL u = getResource(_templatePrefix + name);
        return (u != null) ? u : getResource(name);
