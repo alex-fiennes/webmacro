@@ -1,71 +1,59 @@
-<project name="wiki" default="install" basedir=".">
-   <property name="site.name" value="reference.arinso.de" />
-	<property name="dir.install" value="/C:/" />
-	<property name="app.name" value="wiki" />
-	<property name="dir.class" value="./class" />
-	<property name="dir.src"   value="./src" />
-	<property name="dir.lib"   value="./lib" />
-	<property name="dir.lib.build"   value="./lib.build" />
+<project name="wiki" default="jar" basedir=".">
+   <property name="site.name.default" value="default" />
+   <property name="site.name" value="${site.name.default}" />
+   <property name="build" value="builds" />
+	<property name="dir.src" value="src" />
+	<property name="dir.resource" value="resources" />
+   
+	<property name="dir.lib"   value="lib" />
 
-	<property name="file.jar"  value="./wiki.jar" />
-
-	<path id="path.class">
-		<fileset dir="${dir.lib}">
-			<include name="*.jar" />
-			<include name="*.zip" />
-		</fileset>
-		<fileset dir="${dir.lib.build}">
-			<include name="*.jar" />
-			<include name="*.zip" />
-		</fileset>
-	</path>
-
-
-	<target name="prepare">
-		<mkdir dir="${dir.class}" />
+	<target name="init">
+      <tstamp />
+		<mkdir dir="${build}/${site.name}/WEB-INF/classes" />
 	</target>
 
 	<target name="clean">
-		<delete dir="${dir.class}" />
-		<delete file="${file.jar}" />
+		<delete dir="${build}" />
 	</target>
+   
+   <target name="copy" depends="init">
+      <copy todir="${build}/${site.name}">
+         <fileset dir="${dir.resource}/${site.name.default}"/>
+      </copy>
+      <copy todir="${build}/${site.name}" overwrite="true">
+         <fileset dir="${dir.resource}/${site.name}"/>
+      </copy>
+   </target>
 
-	<target name="compile" depends="prepare">
-		<!--
+   <target name="javacc" depends="copy" if="compile_cc">
 		<javacc 
 			 target="${dir.src}/org/tcdi/opensource/wiki/parser/wiki.jj" 
 			 javacchome="." 
 		/>
-		-->
-		<javac  destdir="${dir.class}"
+   </target>
+	
+   <target name="compile" depends="copy">
+      <property name="build.classes" value="${build}${file.separator}${site.name}${file.separator}WEB-INF${file.separator}classes" />
+		<delete file="${build}/${site.name}/WEB-INF/lib/wiki.jar"/>
+      <javac destdir="${build.classes}"
 			debug="on"
 			optimize="on"
-			deprecation="on"
-		>
+			deprecation="on" >
 			<src path="${dir.src}" />
-			<classpath refid="path.class" />
+			<classpath>
+            <fileset dir="${dir.lib}">
+               <include name="*.jar" />
+            </fileset>
+            <fileset dir="${build}/${site.name}/WEB-INF/lib">
+               <include name="*.jar" />
+            </fileset>
+         </classpath>
 		</javac>
 	</target>
 
-	<target name="jar" depends="prepare,compile">
-		<jar 	jarfile="${file.jar}"
-			basedir="${dir.class}"
-		/>
+	<target name="jar" depends="compile">
+		<jar jarfile="${build}${file.separator}${site.name}${file.separator}WEB-INF${file.separator}lib${file.separator}wiki.jar" basedir="${build.classes}" />
+      <delete dir="${build.classes}"/>
+      <jar jarfile="${build}${file.separator}${site.name}.war" basedir="${build}${file.separator}${site.name}"/>
 	</target>
-
-        <target name="verify.dir.install" unless="dir.install">
-        	<fail message="Please define dir.install" />
-        </target>
-        <target name="verify.site.name" unless="site.name">
-		<fail message="Please specify the site.name to install" />
-	</target>
-
-	<target name="install" depends="verify.dir.install,verify.site.name,prepare,compile,jar">
-		<ant antfile="build.xml" 
-                     inheritAll="false"
-                     dir="builds/${site.name}/">
-			<property name="dir.install" value="${dir.install}" />
-		</ant>
-	</target>
-
 </project>
