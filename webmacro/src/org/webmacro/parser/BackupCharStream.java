@@ -61,6 +61,7 @@ public final class BackupCharStream implements CharStream
   private boolean prevCharIsLF = false;
 
   private java.io.Reader inputStream;
+  private boolean inputStreamClosed = false;
 
   private final void swapBuf() {
     Buffer tmp = curBuf;
@@ -96,6 +97,7 @@ public final class BackupCharStream implements CharStream
                                curBuf.size - curBuf.dataLen);
       if (i == -1) {
         inputStream.close();
+        inputStreamClosed = true;
         throw new java.io.IOException();
       }
       else
@@ -231,7 +233,7 @@ public final class BackupCharStream implements CharStream
   public final void backup(int amount)  {
     backupChars += amount;
     if (curBuf.curPos - amount < 0) {
-      int addlChars = amount - 1 - curBuf.curPos;
+      int addlChars = amount - (inputStreamClosed? 0 : 1) - curBuf.curPos;
       curBuf.curPos = 0;
       swapBuf();
       curBuf.curPos = curBuf.dataLen - addlChars - 1;
@@ -261,6 +263,7 @@ public final class BackupCharStream implements CharStream
                      int startcolumn, int buffersize)
   {
     inputStream = dstream;
+    inputStreamClosed = false;
     line = startline;
     column = startcolumn - 1;
 
