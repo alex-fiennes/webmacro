@@ -152,7 +152,7 @@ final class Variable implements Macro
       } catch (Exception e) {
          Engine.log.exception(e);
          Engine.log.warning("Variable: " + vname + " is undefined");
-         out.write("<!--\n warning: attempt to write undefined variable " 
+         out.write("<!--\n warning: attempt to write out undefined variable " 
             + vname + ": " + e + " \n-->");
       } 
    }
