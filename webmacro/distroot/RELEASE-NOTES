@@ -1,7 +1,7 @@
 WebMacro 1.1b3
 ---------------
                     
-This is the second in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
+This is the third in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
 new features such as #macro, #count, $functions(), and various bugfixes.
 
 WebMacro is alive, and this release is proof!
@@ -29,6 +29,12 @@ Changes in this Release
 - expanded test cases (eric)
 
 - avoid exception throwing in ContextTool creation (keats) 
+
+- more #macro's (lane)
+
+- WebMacro.properties settings for default FastWriter buffer size and 
+max pool size (eric) 
+ 
 
 
 Changes Prior to this Release
