@@ -1,0 +1,16 @@
+Ant build
+
+Suggest copying or symlinking build.sh & build.xml to webmacro root directory.  
+Originally this worked from the current directory by setting basdir-"../.." but that 
+doesn't work in IDE's supporting ant (like NetBeans).
+
+If you want to change the build directory, either edit the "dest" property or run as, for example,
+
+    $ build.sh -Ddest=/tmp/path
+
+The same goes for any other properties.
+
+See http://jakarta.apache.org for more information on ant.
+
+Fergus
+$Id$
