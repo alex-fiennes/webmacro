@@ -96,12 +96,14 @@ public class StreamTemplate extends WMTemplate
       // Build a context
       WebMacro wm = null;
       Context context = null;
+      String encoding = null;
 
       try {
          wm = new WM();
          context = wm.getContext();
          Object names[] = { "prop" };
          context.setProperty(names, "Example property");
+         encoding = wm.getConfig("TemplateEncoding");
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -140,7 +142,7 @@ public class StreamTemplate extends WMTemplate
                new InputStreamReader(System.in));
          t1.parse();
 
-         FastWriter w = FastWriter.getInstance(wm.getBroker(), "UTF8");
+         FastWriter w = FastWriter.getInstance(wm.getBroker(), encoding);
 
          t1.write(w,context);
          System.out.println("*** RESULT ***");
