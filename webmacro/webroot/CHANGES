@@ -1,0 +1,216 @@
+-- fixed bug relating to $ at end of line in quoted string
+-- added apache style license in LICENSE
+-- fixed bug relating to extra newline at top of file
+-- replaced QueueWriter/Writer with FastWriter and corresponding changes to WMServlet
+-- updated Macro interface to take a FastWriter
+-- lots of optimizing
+-- fixed spelling mistake in doRequest()
+-- WMTemplate has an overridable getParser() method to support alternates
+-- switched to com.sun.java.util.collections in JDK1.1
+-- InvalidContextException is deprecated, now ContextException
+-- script language now has #local, #tool, and #property declarations for
+   variables, so that you can exactly specify which you mean in 
+   sub-templates
+-- Context is now an intelligent object containing a variety of kinds of 
+   things: local variables, a bean, methods to access properties of the 
+   bean, tools, methods to access tools and register them 
+-- use directive no longer uses the getMarker() mechanism; the expectation
+   now is that it takes a complete block delimited by either { .. } or 
+   by #begin .. #end. 
+-- getVerb() mechanism replaced by getArgumentNames(), and directives 
+   now build with an Argument[] array rather than a single predicate.
+-- block stores char[] rather than String for body text
+-- added a webcontext.clear() to WMServlet to help out the GC
+-- added FilterDirective, and $() and ${} notation to variable
+-- WMServlet calls stop() from destroy() now (was always supposed to!)
+-- fixed bug in or condition
+-- added SelectList example class in util
+-- fixed problem with abstract subclass
+-- added super.destroy() to WMServlet.destroy()
+-- constructor for WC class is no longer private
+-- fixed typo in example WebMacro.properties file
+-- fixed '==' bug
+-- fixed extra printing of exception in WMServlet
+
+-- added back support for old legacy methods in WebContext, and then 
+   fixed up the example applications so they compile.
+-- WebContext is now an interfaced implemented by servlet.WC
+-- WM can now be constructed with a string naming a particular 
+   configuration file. Thus you can have multiple different brokers,
+   each uniquely identified by a different configuration file.
+-- created CookieTool, FormTool, FormListTool, and CGITool, and removed
+   the corresponding functionality from WebContext itself
+-- you can register tools for the WebContext under the name TemplateTools
+   in the config file. These must be public classes with public default
+   constructors. The last component of the class name will be used as 
+   the variable name in the context, except that the word "Tool" will 
+   be dropped from the end if it's there. If the class needs access to
+   the context, make it a Macro and implement the evaluate() and write()
+   methods.
+-- you can enable or disable C-Style block processing with an option in 
+   the configuration file.
+-- org.webmacro.WebMacro interface created as the top level interface  
+   to WebMacro, org.webmacro.WM is an implementation of it--this makes
+   it easier to use WebMacro standalone
+-- WMServlet now accepts null return from the handle method, allowing 
+   you to execute the template yourself, or not use a template at all. 
+   It will do nothing on a null return.
+-- #use directive uses the Broker to look for parsers using the 
+   "parse" type. 
+-- org.webmacro.engine.Template changed to org.webmacro.engine.WMTemplate,
+   Template is now an interface in the top level org.webmacro package.
+-- broker is now represented by a top level interface; had to rename some exceptions
+   to make this properly generalizable. Also, exceptions all now subclass from 
+   WebMacroException, or at least they should all.
+-- removed the broken UserProvider class
+-- broker now passed to templates on construction
+-- whitespace rules:
+      1. spaces before and after a { or } or directive are dropped
+      2. a newline preceeding a { or } or directive is dropped if the { or } is on 
+         its own line, or in the case of a directive, there is nothing on the line
+         that the entire directive ends on
+      3. an escaped space or newline counts as a separator but is not dropped
+-- changed rules for recognizing webmacro characters
+-- directives are now parsed based on their method signatures 
+-- ParseTool rewritten to use mark/rewind mechanism rather than pushback
+-- conditions are now false if they are equal to the constants 0L, 0, null, or Boolean.FALSE
+-- conditions now short-circuit at build time if they can be statically analyzed
+-- log class now supports enabling and disabling messages by type
+-- created StreamTemplate for testing purposes
+-- added getParameterNames() to template
+-- parse and include cache their data
+-- parser now has two passes: parse and build
+-- fixed bug in handling of \ character
+-- fixed bug in integer support-- negatives
+
+WebMacro 0.89.1:
+
+-- fixed bug in conditional code 
+
+WebMacro 0.89:
+
+-- added HelloWorld servlet
+-- cleaned up some more error messages
+-- integer and long support added to term
+-- bug fixed: PropertyOperator was putting superclasses ahead of subs
+-- null is now a legal value in more places, but cannot be used as arg
+-- Conditions exist and support ! == != && and || operators
+-- directives are loaded using Class.forName()
+-- parse errors now report correct line number, and source file
+
+WebMacro 0.85.2:
+
+-- eliminated SException class, served no purpose here
+-- config is more aggressive about where it loads the config 
+   file from now: Config class loader, java.lang class loader,
+   then finally local file
+-- renamed tokenizer to parsetool to reflect its sophistication
+-- reduced visibility of package-specific classes, eliminated 
+   unnecessary isDefined() method from Macro interface
+-- foreach now accepts a list directly as its argument as well
+   as a variable
+-- improved docs for WebContext
+-- list now evaluates macros recursively, hopefully solving
+   bug reported with param and ParsedString vs. Lists
+-- fixed resource manager visibility
+-- License is now directly GPL. WebMacro used to have an intermediate 
+   license which added a clause granting copyright on contributed code,
+   to allow sharing. That clause is now a condition of the mailing 
+   list instead; the old way was incompatible with th GPL. In practice,
+   things are exactly as they were; and this is simpler, too.
+-- The #if directiuve evaluated its condition twice, which causes a
+   problem if the condition has  side-effect. Fixed.
+-- Fixed docs to note that lists are of type Object[]
+
+
+
+WebMacro 0.85.1:
+
+-- Added documentation to Script.html noting that all free standing
+   Terms in WebMacro are Strings by default.
+-- Moved semiotek sources into the webmacro package; created a package 
+   for the broker, and moved Config from servlet to broker.
+-- Fixed bug that caused iterator() methods to be ignored in
+   property introspection
+-- Made com.semiotek.util.java2 the first import statement, so that 
+   people compiling with java2 can choose to use the JDK1.1 
+   compatible classes by leaving the directory along, or use the JDK1.2
+   versions by deleting it.
+-- Fixed bug that caused an exception to be logged if there were multiple
+   directories in TemplatePath 
+
+WebMacro 0.85:
+
+-- Changed TemplateDirectory to TemplatePath, which is a list of directories
+   to search. The template name can be a path relative to any directory
+   in the TemplatePath.
+-- Made it easier to compile webmacro under jdk1.2 -- just erase the files
+   in com/semiotek/util/java2 to eliminate conflicts between my pseudo
+   java2 collections classes and the real ones. 
+-- Made WMServlet.handle() equivalent to Reactor/Handler API by changing
+   the return type to Template and allowing HandlerException to be thrown
+-- Added constants true and false which can be used anywhere a Term is 
+   expected; for example, in a #set directive, a list, method arguement, etc.
+-- Fixed a bug that prevented property introspection from working when 
+   the arguments to a method included a primative such as int, long, ...
+-- Split getForm into String getForm() and String[] getFormList()
+-- Fixed a bug in ResourceManager cache
+-- Added License.html and LICENSE.dev (developer license) 
+-- Wrote Servlet.html, etc., documents on design of servlets
+-- TemplateProvider has config variable: TemplateExpireTime, which
+   allows you to specify duration to cache templates. In particular,
+   you can set it to 0, to allow immediate update of templates (at 
+   the cost of reparsing them every time). This is useful for 
+   development; set a non-zero time for production.
+
+WebMacro 0.80.1:
+
+  -- Fixed bug in config WRT error templates
+
+WebMacro 0.80:
+
+  -- Added Script.html and FAQ.html to the documentation
+  -- Added comments, two ##'s at the start of a line make a comment
+  -- IfDirective checks for null and Boolean.FALSE, or a macro leading 
+     to one of those two (where undefined is considered null)
+  -- #param directive added, parameters can be referenced as $$name, 
+     they can also be accessed as Template.getParam(String)
+  -- You can throw an exception out of Handler init if you need to
+  -- WebContext is a subclass of Map rather than PropertyMap
+  -- Context is no longer required to be a map in the engine, any 
+     object can be used--it will be introspected directly.
+  -- Method invocation added to PropertyOperator and therefore Variable
+     resolution. Method can be used in place of standard properties 
+     as in Foo.Bar.doSomething(Foo.getName(), Foo.Name) -- though it 
+     will probably be slightly slower than regular property introspection.
+  -- Macro.evaluate() now returns an Object rather than a string. This is
+     so that in theory #set can set something to the underlying object 
+     rather than the derived string.
+  -- Created WMServlet as the generic superclass of Reactor, allowing 
+     creation of different kinds of servlets and easier registration. 
+  -- Added list initializer syntax
+
+WebMacro 0.75:
+
+  -- Examples now ship with CRLF line endings as a convenience for NT users
+  -- Fixed bug with #script/#use directive not working
+  -- Fixed bug with tabs not being treated as whitespaces
+  -- Template class is now abstract, allowing you greater flexibility 
+     in writing your own TemplateProvider--for example, you could generate
+     templates on the fly, or read them from somewhere other than a File.
+     The original File based behavior is now encoded in the default 
+     FileTemplate class.
+  -- com.sun.java.util package no longer needlessly imported
+  -- fixed a variety of bugs reported by Tom May: patches posted to 
+     the list--ResourceBroker and Template
+  -- fixed a bug that caused PropertyOperator to throw a NullPtr exception
+     under some circumstances if a variable was not found. Now it throws
+     a PropertyException explaining why not.
+  -- fixed a bug that caused #if followed by a directive to fail
+     unless there was an #else present
+  -- ':' character is no longer acceptable in a variable name, in fact
+     no ASCII punctuation is
+  -- FileTemplate reads are now buffered
+  -- If Variable evaluates to a Macro, Variable.evaluate() will recursively
+     call evaluate(), and Variable.write() will recursively call write(), 
+     otherwise toString() is called.
