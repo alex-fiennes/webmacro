@@ -1,63 +1,42 @@
-<!--
-    In order to build DataTable, set
-    JAVACC_HOME as an environment variable
-    to your jdk home.
-    [NOT NEEDED UNTIL TESTS ARE SET UP]
- -->
-
-<project name="DataTable" default="compile" basedir=".">
-
-  <property name="app.name"       value="datatable"/>
-  <property name="jars"           value="jars"/>
-  <property name="classes"        value="${app.name}/WEB-INF/classes"/>
-  <property name="lib"            value="${app.name}/WEB-INF/lib"/>
-  <property name="javadoc"        value="${app.name}/api"/>
-  <property name="jar"            value="${app.name}.jar"/>
-  <property name="src.jar"        value="${app.name}-src.jar"/>
-  <property name="doc.jar"        value="${app.name}-doc.jar"/>
-<!--
-  <property environment="ENV" />
-  <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-  <property name="test.root" value="test"/>
-  <property name="unit.reports" value="${test.root}/unit-reports"/>
-  <property name="unit.src" value="${test.root}/unit"/>
--->
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="compile" name="DataTable">
+  <!-- NOTE: change this to the webmacrojar that you are using -->
+  <property name="webmacrojar" value="webmacro-0.97a.jar" />
+  <property name="webmacrojardir" value="../lib" />
+  <property name="app.name" value="datatable"/>
+  <property name="jars" value="jars"/>
+  <property name="classes" value="${app.name}/WEB-INF/classes"/>
+  <property name="lib" value="${app.name}/WEB-INF/lib"/>
+  <property name="javadoc" value="${app.name}/api"/>
+  <property name="jar" value="${app.name}.jar"/>
+  <property name="src.jar" value="${app.name}-src.jar"/>
+  <property name="doc.jar" value="${app.name}-doc.jar"/>
 
   <path id="class.path">
     <!-- the following gets the standard jar files which datatable depends on -->
+    <fileset dir="${webmacrojardir}">
+      <include name="${webmacrojar}" />
+    </fileset>
     <fileset dir="../lib">
-      <!--
-         <include name="webmacro-0.97a.jar" /> 
-      -->
-      <include name="servlet-2.2.jar" />
+      <include name="servlet-2.2.jar"/>
     </fileset>
     <fileset dir="${lib}">
-      <include name="hsqldb.jar" />
-      <include name="protomatter-1.1.5.jar" />
-      <include name="webmacro-0.97a.jar" /> 
+      <include name="hsqldb.jar"/>
     </fileset>
-    <pathelement location="${classes}" />
-<!--
-    <pathelement path="${java.class.path}" />
--->
+    <pathelement location="${classes}"/>
   </path>
   <property name="classpath.resolved" refid="class.path"/>
 
   <target name="prepare">
-    <mkdir  dir="${classes}"/>
-    <!-- this should already exist now
-       <mkdir  dir="${lib}"/>
-    -->
-    <mkdir  dir="${javadoc}"/>
-    <mkdir  dir="${jars}"/>
+    <mkdir dir="${classes}"/>
+    <!-- this should already exist now        <mkdir  dir="${lib}"/>     -->
+    <mkdir dir="${javadoc}"/>
+    <mkdir dir="${jars}"/>
   </target>
 
-
-  <target name="clean" >
+  <target name="clean">
     <delete dir="${classes}"/>
-    <!-- 
-       <delete dir="${lib}"/>
-    -->
+    <!--         <delete dir="${lib}"/>     -->
     <delete dir="${javadoc}"/>
     <delete dir="${jars}"/>
     <delete>
@@ -65,76 +44,66 @@
     </delete>
   </target>
 
-
-  <target name="compile" depends="prepare">
-    <javac srcdir="src" destdir="${classes}"
-           debug="on" optimize="off" deprecation="off" verbose="off">
-      <classpath refid="class.path" />
+  <target depends="prepare" name="compile">
+    <javac debug="on" deprecation="off" destdir="${classes}" optimize="off" srcdir="src" verbose="off">
+      <classpath refid="class.path"/>
     </javac>
   </target>
 
-
-  <target name="javadoc" depends="prepare">
-    <javadoc sourcepath="src" destdir="${javadoc}"  
-             packagenames="org.webmacro.*" author="true" version="true" 
-             use="true" overview="overview.html">
-      <classpath refid="class.path" />
+  <target depends="prepare" name="javadoc">
+    <javadoc author="true" destdir="${javadoc}" overview="overview.html" packagenames="org.webmacro.*" sourcepath="src" use="true" version="true">
+      <classpath refid="class.path"/>
     </javadoc>
   </target>
 
-
-  <target name="jar" depends="prepare,compile">
-    <jar jarfile="${jars}/${jar}" basedir="${classes}"/>
-    <jar jarfile="${jars}/${src.jar}" basedir="." 
-         includes="src/**,build.xml,**.wm,**.html,**.txt"/>
+  <target depends="prepare,compile" name="jar">
+    <jar basedir="${classes}" jarfile="${jars}/${jar}"/>
+    <jar basedir="." includes="src/**,build.xml,**.wm,**.html,**.txt,**.data" jarfile="${jars}/${src.jar}"/>
   </target>
 
 
-  <target name="docjar" depends="prepare,compile,javadoc">
-    <jar jarfile="${jars}/${doc.jar}" basedir="."
-        includes="${javadoc}/**,**.html,**.txt"/>
+  <target depends="prepare,compile,javadoc" name="docjar">
+    <jar basedir="." includes="${javadoc}/**,**.html,**.txt" jarfile="${jars}/${doc.jar}"/>
   </target>
 
-  <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
-    <mkdir dir="${app.name}/api" />
+  <target depends="prepare,compile,jar,javadoc,docjar" name="dist">
+    <mkdir dir="${app.name}/api"/>
     <copy todir="${app.name}">
-      <fileset dir="." includes="**.txt,**.html,**.wm"/>
+      <fileset dir="." includes="**.txt,**.html,**.wm,**.data"/>
     </copy>
   </target>
 
-  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+  <target depends="clean,prepare,compile,javadoc,dist" name="all"/>
 
-  <target name="war" depends="dist">
+  <target depends="dist" name="war">
     <war warfile="datatable.war" webxml="${app.name}/WEB-INF/web.xml">
       <classes dir="${classes}"/>
       <lib dir="${lib}"/>
-      <zipfileset dir="." includes="**.txt,**.html,**.wm"/>
+      <zipfileset dir="." includes="**.txt,**.html,**.wm,**.data"/>
       <zipfileset dir="${app.name}/api" prefix="api"/>
     </war>
   </target>
 
-<!--  NOTE: Unit tests not implemented 
-
-  <target name="unit-prepare" depends="compile">
-    <mkdir  dir="${unit.reports}"/>
-  </target>
-
-  <target name="unit-compile" depends="unit-prepare">
-    <javac srcdir="${unit.src}" destdir="${classes}"
-           debug="on" optimize="off" deprecation="off">
-      <classpath refid="class.path"/>
-    </javac>
-  </target>
-
-  <target name="test" depends="unit-compile">
-    <junit printsummary="yes" haltonfailure="no" >
-      <classpath refid="class.path"/>
-      <formatter type="plain" />
-      <batchtest fork="yes" todir="${unit.reports}">
-        <fileset dir="${unit.src}" includes="**/Test*.java" />
-      </batchtest>
-    </junit>
-  </target>
+<!--  
+     NOTE: Unit tests not implemented     
+  <target name="unit-prepare" depends="compile">     
+    <mkdir  dir="${unit.reports}"/>   
+  </target>    
+  <target name="unit-compile" depends="unit-prepare">     
+    <javac srcdir="${unit.src}" destdir="${classes}"            
+      debug="on" optimize="off" deprecation="off">       
+      <classpath refid="class.path"/>     
+    </javac>   
+  </target>    
+  <target name="test" depends="unit-compile">     
+    <junit printsummary="yes" haltonfailure="no" >       
+      <classpath refid="class.path"/>       
+      <formatter type="plain" />       
+      <batchtest fork="yes" todir="${unit.reports}">         
+         <fileset dir="${unit.src}" includes="**/Test*.java" />       
+      </batchtest>     
+    </junit>   
+  </target> 
 -->
 
 </project>
