@@ -1,8 +1,6 @@
 
 package org.webmacro.util;
 
-import org.webmacro.Log;
-
 /**
   * TimeLoop is a scheduler which can schedule Runnable objects 
   * for execution or repeate execution. A TimeLoop is configured
@@ -26,7 +24,7 @@ public class TimeLoop extends Thread
    final Runnable[][] _tasks;
    final boolean[][] _repeats;
    final Object[] _locks;
-   static final Log _syslog = LogManager.getSystemLog();
+   static final org.webmacro.Log _syslog = LogSystem.getSystemLog("timeloop");
 
    /**
      * Create a new TimeLoop. 

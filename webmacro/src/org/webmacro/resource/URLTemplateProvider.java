@@ -137,23 +137,23 @@ final public class URLTemplateProvider extends CachingProvider
     * as the source for Template objects that it will return
     * 
     * @param b A broker
-    * @param config Properties from the webmacro initialization file
+    * @param config Settings from the webmacro initialization file
     * @exception InitException thrown when the provider fails to initialize
     */
-   public void init(Broker b, Properties config) throws InitException
+   public void init(Broker b, Settings config) throws InitException
    {
       super.init(b,config);
       _broker = b;
-      _log = b.getLog("resource");
+      _log = b.getLog("resource", "general object loading");
 
       try {
          try {
-            String cacheStr = config.getProperty("TemplateExpireTime");
+            String cacheStr = config.getSetting("TemplateExpireTime");
             _cacheDuration = Integer.valueOf(cacheStr).intValue();
          } catch (Exception ee) {
             // use default
          }
-         _templatePath = config.getProperty("TemplatePath");
+         _templatePath = config.getSetting("TemplatePath");
          StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
          _templateDirectory = new String[ st.countTokens() ];

@@ -73,9 +73,12 @@ public abstract class Variable implements Macro, Visitable
 {
 
 
-   final static public Object PROPERTY_TYPE = null;
+   // null: because in BuildContext.getVariableType() we can just
+   // return null from a HashMap for a never before heard of variable
+   // to mean that it is a PROPERTY_TYPE. Only this code right here
+   // and BuildContext.getVariableType() needs to know that.
+   final static public Object PROPERTY_TYPE = new Object();
    final static public Object LOCAL_TYPE = new Object();
-   final static public Object TOOL_TYPE = new Object();
 
    /**
      * The name of this variable.
@@ -148,7 +151,7 @@ public abstract class Variable implements Macro, Visitable
          } 
          return val;
       } catch (NullPointerException e) {
-         context.getLog("engine").warning("Variable: " + _vname + " does not exist",e);
+         context.getLog("engine", "parsing and template execution").warning("Variable: " + _vname + " does not exist",e);
          return "<!--\n unable to access variable " 
             + _vname + ": not found in " + context + "\n -->";
       } catch (Exception e) {

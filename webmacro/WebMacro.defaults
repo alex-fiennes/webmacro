@@ -147,7 +147,6 @@ Directives:  org.webmacro.engine.ElseDirective \
              org.webmacro.engine.PropertyDirective \
              org.webmacro.engine.SetDirective \
              org.webmacro.engine.SilenceDirective \
-             org.webmacro.engine.ToolDirective \
              org.webmacro.engine.UseDirective \
              org.webmacro.directive.IncludeDirective \
              org.webmacro.directive.ParseDirective \
@@ -161,7 +160,6 @@ Directives:  org.webmacro.engine.ElseDirective \
              org.webmacro.directive.EscapeDirective \
              org.webmacro.directive.SilenceDirective \
              org.webmacro.directive.PropertyDirective \
-             org.webmacro.directive.ToolDirective \
              org.webmacro.directive.GlobalDirective \
              org.webmacro.directive.ParamDirective \
              org.webmacro.directive.AttributeDirective 

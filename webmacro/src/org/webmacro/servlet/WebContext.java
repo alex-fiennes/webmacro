@@ -55,8 +55,6 @@ import org.webmacro.util.*;
 public class WebContext extends Context 
 {
 
-   // raw data fields that are always set, final, and available to the package
-
    /**
      * Log configuration errors, context errors, etc.
      */
@@ -81,10 +79,10 @@ public class WebContext extends Context
    public WebContext(final Broker broker) 
    {
       super(broker);
-      _log = broker.getLog("webcon");
+      _log = broker.getLog("webcon", "WebContext lifecycle information");
       try {
          String tools = (String) broker.get("config","WebContextTools");
-         registerTools(tools);
+         loadTools(tools);
       } catch (NotFoundException ne) {
          _log.warning("could not load WebContextTools from config", ne);
       }
@@ -118,9 +116,9 @@ public class WebContext extends Context
      * Clear a WebContext of it's non-shared data
      */
    public void clear() {
-      super.clear();
       _request = null;
       _response = null;
+      super.clear();
    }
 
    /**
@@ -152,9 +150,13 @@ public class WebContext extends Context
 
    // LEGACY METHODS
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public String getForm(String field) {
       try {
-         Bag ct = (Bag) getTool("Form");
+         Bag ct = (Bag) getProperty("Form");
          return (String) ct.get(field);
       } catch (Exception e) {
          _log.error("Could not load Form tool",e);
@@ -162,9 +164,13 @@ public class WebContext extends Context
       }
    }
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public String[] getFormList(String field) {
       try {
-          Bag ct = (Bag) getTool("FormList");
+          Bag ct = (Bag) getProperty("FormList");
          return (String[]) ct.get(field);
       } catch (Exception e) {
          _log.error("Could not load FormList tool",e);
@@ -172,18 +178,26 @@ public class WebContext extends Context
       }
    }
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public CGI_Impersonator getCGI() {
       try {
-         return (CGI_Impersonator) getTool("CGI");
+         return (CGI_Impersonator) getProperty("CGI");
       } catch (Exception e) {
          _log.error("Could not load CGI tool",e);
          return null;
       }
    }
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public Cookie getCookie(String name) {
       try {
-         CookieJar cj = (CookieJar) getTool("Cookie");
+         CookieJar cj = (CookieJar) getProperty("Cookie");
          return (Cookie) cj.get(name);
       } catch (Exception e) {
          _log.error("Could not load Cookie tool",e);
@@ -191,18 +205,26 @@ public class WebContext extends Context
       }
    }
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public void setCookie(String name, String value) {
       try {
-         CookieJar cj = (CookieJar) getTool("Cookie");
+         CookieJar cj = (CookieJar) getProperty("Cookie");
          cj.set(name, value);
       } catch (Exception e) {
          _log.error("Could not load Cookie tool",e);
       }
    }
 
+   /**
+     * @deprecated: use getProperty() and access the tool in a 
+     * the conventional way, as a property of the context.
+     */
    final public HttpSession getSession() {
       try {
-         return (HttpSession) getTool("Session");
+         return (HttpSession) getProperty("Session");
       } catch (Exception e) {
          _log.error("Could not load Session tool",e);
          return null;

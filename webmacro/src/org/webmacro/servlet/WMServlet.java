@@ -117,12 +117,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                   + "*** classpath, in a similar place to webmacro.jar \n"
                   + "*** and that all values were set correctly.\n\n"
                   + e.getMessage();
-            Log sysLog = LogManager.getSystemLog();
+            Log sysLog = LogSystem.getSystemLog("servlet");
             sysLog.error(_problem, e);
             return;
          }
       }
-      _log = _broker.getLog("servlet");
+      _log = _broker.getLog("servlet", "WMServlet lifecycle information");
 
       // set up WebContext
       try {
@@ -331,12 +331,22 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    /**
      * Get a Log object which can be used to write to the log file. 
      * Messages to the logfile will be associated with the supplied
-     * name. 
+     * type. The type name should be short as it may be printed on 
+     * every log line. The description is a longer explanation of 
+     * the type of messages you intend to write to this Log.
      */
-   final public Log getLog(String name) {
-      return _broker.getLog(name);
+   final public Log getLog(String type, String description) {
+      return _broker.getLog(type, description);
    }
 
+   /**
+     * Get a Log object which can be used to write to the log file. 
+     * Messages to the logfile will be associated with the supplied
+     * type. The type will be used as the description.
+     */
+   final public Log getLog(String type) {
+      return _broker.getLog(type, type);
+   }
 
    /**
      * Retrieve a template from the "template" provider. Equivalent to 

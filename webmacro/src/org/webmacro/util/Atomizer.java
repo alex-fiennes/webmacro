@@ -8,12 +8,12 @@ import java.util.Iterator;
   * Atomize an object into an atomic number, and provide a means to turn 
   * that atomic number back into the original object.
   */
-final public class Atomizer {
+final public class Atomizer implements Cloneable {
 
-   final HashMap _atoms;
-   Object[] _values;
-   final Pool _freeAtoms = new ScalablePool();
-   int _max = 0;
+   private HashMap _atoms;
+   private Object[] _values;
+   private Pool _freeAtoms = new ScalablePool();
+   private int _max = 0;
 
    /**
      * Create an atomizer with space for 100 atoms
@@ -29,6 +29,22 @@ final public class Atomizer {
    public Atomizer(int size) {
       _atoms = new HashMap( (int) (size/.75 + 1));
       _values = new Object[size];
+   }
+
+   /**
+     * Clone this Atomizer
+     */
+   public Object clone() {
+      try {
+         Atomizer c = (Atomizer) super.clone();
+         c._atoms = (HashMap) _atoms.clone();
+         c._values = (Object[]) _values.clone();
+         c._freeAtoms = new ScalablePool();
+         return c;
+      } catch (CloneNotSupportedException e) {
+         // never gonna happen
+         return null;
+      }
    }
 
    /**

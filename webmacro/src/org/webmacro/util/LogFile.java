@@ -1,83 +1,118 @@
 
 package org.webmacro.util;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.Date;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 import java.text.MessageFormat;
 
 public class LogFile implements LogTarget {
 
-   Properties _levels;
-   boolean _trace;
-   PrintStream _out;
-   MessageFormat _mf; 
-   String _defaultLevel;
-   String _name;
+   private Map _levels = new HashMap();
+   private boolean _trace = false;
+   private MessageFormat _mf = new MessageFormat("{0,time}\t{1}\t{2}\t{3}");
+   private int _defaultLevel = LogSystem.NOTICE;
+   private PrintStream _out;
+
+   private List _observers = new LinkedList();
+
+   private String _name;
+
 
    /**
-     * Create a new LogFile instance. The LogFile can be configured 
-     * to accept different kinds of log messages, and to print them
-     * out in different ways. 
-     * <p>
-     * The levels Properties maps a log name to a log level string
-     * describing what level of logging is desired for that target. 
-     * The levels correspond to severity levels: ALL, DEBUG, INFO, 
-     * NOTICE, WARNING, ERROR, and NONE.
-     * <p>
-     * @param fileName where the log should write
-     * @param levels a hashtable mapping log names to levels (may be null)
-     * @param trace true if this log should trace out exceptions
-     * @param flush true if this log should flush after every message
+     * Create a new LogFile instance reading properties from the 
+     * supplied Settings object: <pre>
+     *     LogFile: filename|stderr
+     *     LogTraceExceptions: true|false|yes|no|on|off
+     *     Log
      */
-   public LogFile(String file, String format, String defaultLevel, Properties levels, boolean trace) 
-      throws IOException
-   {
-      this(file, new PrintStream(
-            new BufferedOutputStream(new FileOutputStream(file,true))), 
-            format, defaultLevel, levels, trace);
+   public LogFile(Settings s) throws FileNotFoundException {
+      this(s.getSetting("LogFile"));
+
+      _trace = s.getBooleanSetting("LogTraceExceptions");
+      String slevel = s.getSetting("LogLevel", "NOTICE");
+      _defaultLevel = LogSystem.getLevel(slevel);
+      String format = s.getSetting("LogFormat");
+      if (format != null) {
+         _mf = new MessageFormat(format);
+      }
+      Settings levels = s.getSubSettings("LogLevel");
+      String[] keys = levels.keys();
+      for (int i = 0; i < keys.length; i++) {
+         _levels.put(keys[i], levels.getSetting(keys[i]));
+      }
    }
 
    /**
-     * Create a new logfile
-     * @param name what we want to call it (debugging purposes)
-     * @param out where we write our output
-     * @param format MessageFormat for our output
-     * @param defaultLevel What level do we use for unknown sources?
-     * @param levels What levels do we use for specific sources (may be null)
-     * @param trace Do we write out exceptions (true) or not (false)?
+     * Create a new LogFile instance. 
      */
-   public LogFile(String name, PrintStream out, String format, 
-               String defaultLevel, Properties levels, boolean trace)
+   public LogFile(String fileName) throws FileNotFoundException
    {
-      _mf = new MessageFormat(format);
-      _levels = levels;
-      _trace = trace;
+      if ( (fileName == null) 
+            || (fileName.equalsIgnoreCase("system.err") 
+            || fileName.equalsIgnoreCase("none")
+            || fileName.equalsIgnoreCase("stderr")))
+      {
+         _out = System.err;
+         _name = "System.err";
+      } else {
+         _out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fileName,true)));
+         _name = fileName;
+      }
+      if (_defaultLevel <= LogSystem.NOTICE) {
+         log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---", null);
+      }
+   }
+
+   /**
+     * Create a new LogFile instance
+     */
+   public LogFile(PrintStream out) {
       _out = out;
-      _defaultLevel = defaultLevel;
-      _name = name;
+      _name = out.toString();
    }
+
 
    public String toString() {
-      return getName();
+      return "LogFile(name=" + _name + ", level=" + _defaultLevel + ", trace=" + _trace + ")"; 
    }
 
-   public String getName() {
-      return "LogFile(" + _name + ", " + _defaultLevel + ", " + _levels + ")";
+   /**
+     * Set the log level for this Logfile. The default is LogSystem.NOTICE
+     */
+   public void setLogLevel(int level) {
+      _defaultLevel = level;
+      Iterator i = _observers.iterator();
+      while (i.hasNext()) {
+         LogSystem ls = (LogSystem) i.next();
+         ls.update(this,null);
+      }
+   }
+
+   /**
+     * Set the log level for a specific category name. 
+     */
+   public void setLogLevel(String name, int level) {
+      _levels.put(name, new Integer(level));   
+      Iterator i = _observers.iterator();
+      while (i.hasNext()) {
+         LogSystem ls = (LogSystem) i.next();
+         ls.update(this,name);
+      }
+   }
+
+   /**
+     * Set whether this LogFile traces exceptions. The 
+     * default is false.
+     */
+   public void setTraceExceptions(boolean trace) {
+      _trace = trace;
    }
 
    private Object[] _args = new Object[4];
-   private long _timestamp = 0;
-   public void log(String name, String level, String message, Exception e)
+   public void log(Date date, String name, String level, String message, Exception e)
    {
-      long time = System.currentTimeMillis();
       synchronized(_args) {
-         if ((time - _timestamp) > 1000) {
-            _args[0] = new Date();
-         }
+         _args[0] = date;
          _args[1] = name;
          _args[2] = level;
          _args[3] = message;
@@ -88,13 +123,24 @@ public class LogFile implements LogTarget {
       }
    }
 
-   public void attach(LogSource l) {
-      String name = l.getName();
-      String level = (_levels != null) ? _levels.getProperty(name) : null;
-      if (level == null) {
-         level = _defaultLevel;
+   public boolean subscribe(String category, String name, int level) {
+      Integer ilevel = (Integer) _levels.get(name);
+      boolean sub;
+      if (ilevel != null) {
+         sub = (ilevel.intValue() <= level);
+      } else {
+         sub =(_defaultLevel <= level);
       }
-      l.addTarget(this, level);   
+      return sub;
+   }
+
+
+   public void addObserver(LogSystem ls) {
+      _observers.add(ls);
+   }
+
+   public void removeObserver(LogSystem ls) {
+      _observers.remove(ls);
    }
 
    public void flush() {

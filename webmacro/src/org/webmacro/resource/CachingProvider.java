@@ -3,12 +3,7 @@ package org.webmacro.resource;
 
 import org.webmacro.*;
 import org.webmacro.util.*;
-import java.util.Properties;
-import org.webmacro.util.ScalableMap;
 import java.lang.ref.Reference;
-import org.webmacro.util.TimeLoop;
-import org.webmacro.Log;
-import org.webmacro.Flags;
 
 abstract public class CachingProvider implements Provider
 {
@@ -52,9 +47,9 @@ abstract public class CachingProvider implements Provider
    /**
      * If you over-ride this method be sure and call super.init(...)
      */
-   public void init(Broker b, Properties config) throws InitException
+   public void init(Broker b, Settings config) throws InitException
    {
-      _log = b.getLog("resource");
+      _log = b.getLog("resource", "Object loading and caching");
       _cache = new ScalableMap(1001);
    }
 

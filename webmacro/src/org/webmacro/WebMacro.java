@@ -95,13 +95,17 @@ public interface WebMacro
    /**
      * Get a log to write information to. The log messages will 
      * be output to one or more pre-configured log files. The 
-     * name you specify will be printed in the log next to 
+     * type you specify will be printed in the log next to 
      * any message you log. See the WebMacro.properties (or other
      * configuration) for information on how to set up and 
      * control logging.
      */
-   public Log getLog(String name);
+   public Log getLog(String type, String description);
 
+   /**
+     * Get a log using the type as the description
+     */
+   public Log getLog(String type);
 
    /**
      * Create a new WebContext object. This returns a Context object 

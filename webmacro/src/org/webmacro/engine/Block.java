@@ -130,7 +130,7 @@ final public class Block implements Macro, Visitable
          fw.close();
          return ret;
       } catch (IOException e) {
-         context.getBroker().getLog("engine").error("StringWriter threw an IOException!",e);
+         context.getBroker().getLog("engine","parsing and template execution").error("StringWriter threw an IOException!",e);
          return null;
       }
    }

@@ -37,7 +37,8 @@ public final class BuildContext extends Context
      * or property variable.
      */
    public Object getVariableType(String name) {
-      return _types.get(name);
+      Object ret =  _types.get(name);
+      return (ret == null) ? Variable.PROPERTY_TYPE : ret;
    }
 
    /**

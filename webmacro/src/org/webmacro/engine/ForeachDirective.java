@@ -135,7 +135,7 @@ final class ForeachDirective implements Directive, Visitable
             }
          }
       } catch (PropertyException e) {
-         context.getBroker().getLog("engine").error(
+         context.getBroker().getLog("engine", "parsing and template execution").error(
             "unable to set a list item of list: " + _list); 
          out.write("<!--\n Unable to resolve list " + _list + " \n-->");
       }

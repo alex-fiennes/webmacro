@@ -1,3 +1,14 @@
+
+-- Dec-2000 justin: Cleaned up Context, removing some methods, awaiting
+   vote on list for resolution to removed methods. Changed logging API
+   to support global logging. Changed broker to support Settings class
+   rather than Properties. Changed the Provider interface to use the
+   new Settigns code instead of the old Properties code. Changes
+   to context, broker, and log result in large number of changes to
+   large number of files. Changed the way tools are loaded (now uses
+   ComponentMap) which adds some power to the tool API (can take
+   configuration arguments).
+
 -- Dec-2000 fergus: Added a BeanTool in contrib, to mimic some of the 
    functionality of JSP page beans.
 

@@ -36,8 +36,6 @@ public class VariableBuilder implements Builder
          v = new PropertyVariable(c); 
       } else if (type == Variable.LOCAL_TYPE) {
          v = new GlobalVariable(c);
-      } else if (type == Variable.TOOL_TYPE) {
-         v = new ToolVariable(c);
       } else {
          throw new BuildException("Unrecognized Variable Type: " + type);
       }

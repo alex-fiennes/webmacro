@@ -165,7 +165,7 @@ public class Settings {
    /**
      * Get a setting and convert it to an int 
      */
-   public int getIntSetting(String key) {
+   public int getIntegerSetting(String key) {
       String snum = getSetting(key);
       try {
          return Integer.parseInt(key);
@@ -177,9 +177,9 @@ public class Settings {
    /**
      * Get a setting with a default value in case it is not set
      */
-   public int getIntSetting(String key, int defaultValue) {
+   public int getIntegerSetting(String key, int defaultValue) {
       if (containsKey(key)) {
-         return getIntSetting(key);
+         return getIntegerSetting(key);
       } else {
          return defaultValue;
       }
@@ -216,10 +216,10 @@ public class Settings {
      * beginning with the supplied prefix, with the 
      * prefix chopped off. So if this settings file had 
      * a setting "LogLevel.foo" then the settings file
-     * returned by getSettings("LogLevel") would contain
+     * returned by getSubSettings("LogLevel") would contain
      * the key "foo".
      */
-   public Settings getSettings(String prefix) {
+   public Settings getSubSettings(String prefix) {
       if (_prefix == null) {
          return new Settings(_props, prefix);
       } else {
@@ -258,7 +258,7 @@ public class Settings {
       Settings s = new Settings();
       s.load("Test.properties");
 
-      Settings sb = s.getSettings("b");
+      Settings sb = s.getSubSettings("b");
       String[] keys = sb.keys();
       for (int i = 0; i < keys.length; i++) {
          System.out.println("prop " + keys[i] + " = " + sb.getSetting(keys[i]));

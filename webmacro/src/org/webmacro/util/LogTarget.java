@@ -13,7 +13,7 @@ public interface LogTarget {
      * Log out an event that just happened and which you have previously
      * accepted. 
      */
-   public void log(String name, String level, String message, Exception e);
+   public void log(java.util.Date date, String type, String level, String message, Exception e);
 
    /**
      * Flush the log. This will be called after writing methods that
@@ -22,17 +22,34 @@ public interface LogTarget {
    public void flush();
 
    /**
-     * Register a new Log object. Typically a LogTarget will look at 
-     * l.getType() and then decide to call l.addTarget(this,N) several
-     * times for suitable values of N--in order to set itself up to
-     * receive messages.
+     * Return true or false if this log target would like to receive 
+     * log messages for the named category, type, and logLevel. This 
+     * method must return the same value every time it is called with
+     * the same arguments. 
+     * <p>
+     * The logLevel you will be called with is one of the integers 
+     * Log.ALL, Log.DEBUG, Log.INFO, Log.NOTICE, Log.WARNING, 
+     * Log.ERROR, and Log.NONE in ascending order (Log.ERROR is a higher
+     * number than Log.WARNING which is a higher number than Log.DEBUG).
+     * In other words, the higher the logLevel the more important the 
+     * log message is.
      */
-   public void attach(LogSource l);
+   public boolean subscribe(String category, String type, int logLevel);
 
    /**
-     * Get the name of this log, eg: what file it writes to
+     * A LogSystem will register itself though this method in order to 
+     * detect changes to the LogTarget. LogTargets should notify all 
+     * observers when any setting changes that might affect the 
+     * return value of the subscribe(...) method.
      */
-   public String getName();
+   public void addObserver(LogSystem ls);
+
+   /**
+     * A LogSystem may remove itself through this method if it 
+     * de-registeres the LogTarget. After this method the supplied
+     * observer should no longer receive notification of updates.
+     */
+   public void removeObserver(LogSystem ls);
 
 }
 

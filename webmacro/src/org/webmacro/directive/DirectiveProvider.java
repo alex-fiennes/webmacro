@@ -82,11 +82,11 @@ public final class DirectiveProvider implements Provider
       return "org.webmacro.directive.Directive";
    }
 
-   public void init(Broker broker, Properties config) throws InitException
+   public void init(Broker broker, Settings config) throws InitException
    {
       _log = broker.getLog("directive");
       try {
-         String directives = config.getProperty("Directives");
+         String directives = config.getSetting("Directives");
          Enumeration denum = new StringTokenizer(directives);
          while (denum.hasMoreElements()) {
             String dir = (String) denum.nextElement();

@@ -63,20 +63,20 @@ final public class TemplateProvider extends CachingProvider
      * as the source for Template objects that it will return
      * @exception ResourceInitException provider failed to initialize
      */
-   public void init(Broker b, Properties config) throws InitException
+   public void init(Broker b, Settings config) throws InitException
    {
       super.init(b,config);
       _broker = b;
-      _log = b.getLog("resource");
+      _log = b.getLog("resource", "Object loading and caching");
 
       try {
          try {
-            String cacheStr = config.getProperty("TemplateExpireTime");
+            String cacheStr = config.getSetting("TemplateExpireTime", "0");
             _cacheDuration = Integer.valueOf(cacheStr).intValue();
          } catch (Exception ee) {
             // use default
          }
-         _templatePath = config.getProperty("TemplatePath");
+         _templatePath = config.getSetting("TemplatePath");
          StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
          _templateDirectory = new String[ st.countTokens() ];

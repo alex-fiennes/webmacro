@@ -1,7 +1,7 @@
 
 package org.webmacro.resource;
 import org.webmacro.*;
-import java.util.Properties;
+import org.webmacro.util.*;
 
 /**
   * A very simple provider which simply takes the config information
@@ -10,11 +10,11 @@ import java.util.Properties;
 public class ConfigProvider implements Provider
 {
 
-   private Properties _config;
+   private Settings _config;
 
    public String getType() { return "config"; }
 
-   public void init(Broker b, Properties config) throws InitException
+   public void init(Broker b, Settings config) throws InitException
    {  
       _config = config;
       if (_config == null) {
@@ -28,7 +28,7 @@ public class ConfigProvider implements Provider
 
    public Object get(String key) throws NotFoundException 
    {
-      Object o = _config.getProperty(key);
+      Object o = _config.getSetting(key);
       if (o == null) {
          throw new NotFoundException("No config information for: " + key);
       }

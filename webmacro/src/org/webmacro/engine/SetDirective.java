@@ -100,7 +100,7 @@ final class SetDirective implements Directive, Visitable
             myVariable.setValue(context, myValue);
          }
       } catch (PropertyException e) {
-         context.getLog("engine").warning("Set: Unable to set value: " + myVariable);
+         context.getLog("engine", "parsing and template execution").warning("Set: Unable to set value: " + myVariable);
          return ("<!--\n Unable to set value: " + myVariable + " \n-->");
       } 
       return null;

@@ -5,6 +5,7 @@ import java.util.*;
 import java.lang.reflect.*;
 import org.webmacro.*;
 import org.webmacro.resource.*;
+import org.webmacro.util.*;
 
 /**
   * Utility class to assist in the creation of directives.
@@ -95,19 +96,19 @@ public final class ParserProvider implements Provider
       return "parser";
    }
 
-   public void init(Broker broker, Properties p) throws InitException
+   public void init(Broker broker, Settings p) throws InitException
    {
       _brokerArg[0] = broker;
       try {
-         String parsers = p.getProperty("Parsers");
+         String parsers = p.getSetting("Parsers");
          Enumeration penum = new StringTokenizer(parsers);
          while (penum.hasMoreElements()) {
             String par = (String) penum.nextElement();
             try {
-               broker.getLog("engine").info("Registering parser: " + par); 
+               broker.getLog("engine", "parsing and template execution").info("Registering parser: " + par); 
                register(par);
             } catch (Exception ce) {
-               broker.getLog("engine").error("Could not load parser: " + par);    
+               broker.getLog("engine", "parsing and template execution").error("Could not load parser: " + par);    
             }
          }
       } catch (Exception e) {

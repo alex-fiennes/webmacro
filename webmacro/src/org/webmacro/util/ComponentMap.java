@@ -43,22 +43,20 @@ import org.webmacro.*;
   * then your component will have some extra information available with
   * which to configure itself when it is instantiated by the ComponentMap.
   */
-public class ComponentMap extends HashMap
+public class ComponentMap 
 {
 
-   private Settings _config;
-   private Map _values;
-   private Log _log = LogSystem.getSystemLog("system");
+   final private Settings _config;
+   final private Map _values = new HashMap();
+   final private Log _log = LogSystem.getSystemLog("system");
 
    /**
      * Create a new ComponentMap for the supplied list of names separated
      * on whitespace, commas, newlines, colons, and semicolons.
      */
-   public ComponentMap(String namelist) {
+   public ComponentMap() {
       _config = new Settings();
-      init(tokenize(namelist));
    }
-
 
    /**
      * Create a new ComponentMap for the supplied list of names using
@@ -66,33 +64,43 @@ public class ComponentMap extends HashMap
      * can be done. The name list will be separated on whitespace, commas,
      * newlines, colons, and semicolons.
      */
-   public ComponentMap(String namelist, Settings initProps) {
+   public ComponentMap(Settings initProps) {
       _config = initProps;
-      init(tokenize(namelist));
+   }
+
+   public Object get(Object name) {
+      return _values.get(name);
    }
 
    /**
-     * Create a component map from the supplied list of names
+     * Get an iterator that walks throught he keys installed into
+     * this ComponentMap
      */
-   public ComponentMap(String[] namelist) {
-      _config = new Settings();
-      init(namelist);
+   public Iterator keys() {
+      return _values.keySet().iterator();
    }
 
    /**
-     * Create a new ComponentMap for the supplied list of names using
-     * the supplied Settings for initialization, if any initialization
-     * can be done.
+     * Get an iterator that walkst hrough the values installed 
+     * into this ComponentMap
      */
-   public ComponentMap(String[] namelist, Settings initProps) {
-      _config = initProps;
-      init(namelist);
+   public Iterator values() {
+      return _values.values().iterator();
+   }
+
+   /**
+     * Load the component map from the supplied namelist. The string
+     * will be separated by spaces, tabs, newlines, commas, and 
+     * semicolons, the load(String[]) will be called. 
+     */
+   public void load(String namelist) {
+      load(tokenize(namelist));
    }
 
    /**
      * Process the list of component names
      */
-   private void init(String[] namelist) 
+   public void load(String[] namelist) 
    {
       ClassLoader c = ComponentMap.class.getClassLoader();
       char[] buf = new char[8192];
@@ -111,12 +119,12 @@ public class ComponentMap extends HashMap
                   b.append(buf,0,num);
                }
                in.close();
-               init(tokenize(b.toString()));          
+               load(tokenize(b.toString()));          
             } catch (IOException e) {
                _log.warning("ComponentMap: Error reading data from " + u, e);
             }
          } else {
-            registerComponent(name);
+            add(name);
          }
       }
    }
@@ -124,7 +132,7 @@ public class ComponentMap extends HashMap
    private static final Class[] _ctorArgs1 = { java.lang.String.class, org.webmacro.util.Settings.class };
    private static final Class[] _ctorArgs2 = { java.lang.String.class };
 
-   public void registerComponent(String component) {
+   protected void add(String component) {
 
       String key = null;
       String name = component;
@@ -156,7 +164,7 @@ public class ComponentMap extends HashMap
          Constructor ctor = c.getConstructor(_ctorArgs1);
          Object[] args = new Object[2];
          args[0] = key;
-         args[1] = _config;
+         args[1] = _config.getSubSettings(key);
          instance = ctor.newInstance(args);
       } catch (Exception e) { 
          log = new StringBuffer();
@@ -194,7 +202,7 @@ public class ComponentMap extends HashMap
             return;
          }
       }
-      put(key,instance);
+      _values.put(key,instance);
    }
 
    static private String[] tokenize(String list) {
@@ -208,8 +216,9 @@ public class ComponentMap extends HashMap
    }
 
    public static void main(String arg[]) {
-      ComponentMap cm = new ComponentMap(arg);
-      Iterator i = cm.keySet().iterator();
+      ComponentMap cm = new ComponentMap();
+      cm.load(arg);
+      Iterator i = cm.keys();
       while (i.hasNext()) {
          String key = (String) i.next();
          System.out.println(key + ": " + cm.get(key));

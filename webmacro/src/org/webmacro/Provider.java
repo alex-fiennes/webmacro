@@ -1,6 +1,6 @@
 
 package org.webmacro;
-import java.util.Properties;
+import org.webmacro.util.Settings;
 
 /**
   * A Provider is an object responsible or loading and managing 
@@ -21,7 +21,7 @@ public interface Provider {
   /**
     * Initialize this provider based on the specified config.
     */
-  public void init(Broker b, Properties config) throws InitException;
+  public void init(Broker b, Settings config) throws InitException;
 
   /**
     * Clear any cache this provider may be maintaining

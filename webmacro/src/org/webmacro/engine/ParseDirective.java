@@ -95,7 +95,7 @@ class ParseDirective implements Directive
          fw.close();
          return ret;
       } catch(IOException e) {
-         context.getLog("engine").error(
+         context.getLog("engine", "parsing and template execution").error(
             "Include: evaluate got IO exception on write to StringWriter",e);
          return "";
       }

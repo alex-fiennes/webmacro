@@ -88,7 +88,7 @@ abstract public class WMTemplate implements Template
    protected WMTemplate(String parserName, Broker broker) {
       _broker = broker;
       _parserName = parserName;
-      _log = broker.getLog("template");
+      _log = broker.getLog("template", "template lifecycle");
    }
 
    /**
@@ -134,7 +134,7 @@ abstract public class WMTemplate implements Template
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
-         newParameters = bc.getGlobalVariables();
+         newParameters = bc.getMap();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;
