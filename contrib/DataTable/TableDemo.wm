@@ -8,10 +8,10 @@
 	<script>
 	  var curr = $tbl.SkipRows;
 	</script>
-	#use 'text' #begin
+	#text #begin
 	<script>
 	  function page(prevnext){
-	    document.location = "/servlet/TableDemo?cmd=" + prevnext
+	    document.location = "TableDemo?cmd=" + prevnext
 	      + "&curr=" + curr + "&pageSize=" + document.forms[0].pageSize.value;
 	  }
 	  function next(){ page("next"); }
