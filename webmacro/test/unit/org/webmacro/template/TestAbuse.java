@@ -59,6 +59,15 @@ public class TestAbuse extends TemplateTestCase {
       String tmpl = "#comment { #if ($true) }";
       assertStringTemplateMatches (tmpl, "");
    }
+  
+   /** split an #if across multiple lines.
+       currently produces a big parse error
+    */
+   public void testMultiLineId () throws Exception {
+      String tmpl = "#if (true\n&& true && true\n) {pass} #else {fail}";
+      assertStringTemplateEquals (tmpl, "pass");
+
+   }
 
    /**
     * The error message this produces is: 
