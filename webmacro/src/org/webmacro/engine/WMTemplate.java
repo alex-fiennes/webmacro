@@ -255,6 +255,7 @@ abstract public class WMTemplate implements Template {
          _content.write(out, data);
       }
       catch (PropertyException e) {
+         e.setContextLocation(data.getCurrentLocation());
          throw e;
       }
       catch (IOException ioe) {
