@@ -56,11 +56,11 @@
       <tr bgcolor="$row.Attributes.bgcolor">
         <td>
           <font color="$row.Attributes.fgcolor">
-            $row.Attributes.styleBegin;$row.get(3)$row.Attributes.styleEnd
+            $row.Attributes.styleBegin;$row.itemAt(3)$row.Attributes.styleEnd
           </font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.get(1)</font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.get(2)</font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.get(99)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(1)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(2)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(99)</font></td>
       </tr>
     #end
   </table>
