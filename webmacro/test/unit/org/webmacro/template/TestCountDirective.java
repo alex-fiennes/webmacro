@@ -58,6 +58,16 @@ public class TestCountDirective extends TemplateTestCase
     }
 
 
+    public void testCountBackwardsImplicitStep () throws Exception
+    {
+        executeStringTemplate("#count $i from 10 to 1 { $Counter.next() }");
+        Integer i = (Integer) _context.get("i");
+        Counter c = (Counter) _context.get("Counter");
+        assertTrue(c.toString(), c.getCount() == 10);
+        assertTrue(i.toString(), i.intValue() == 1);
+    }
+
+
     public void testCountBackwards () throws Exception
     {
         executeStringTemplate("#count $i from 10 to 1 step -1 { $Counter.next() }");

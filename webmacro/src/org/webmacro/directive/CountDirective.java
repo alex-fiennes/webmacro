@@ -75,7 +75,7 @@ public class CountDirective extends org.webmacro.directive.Directive
     private Object _objEnd;
     private Object _objStep;
 
-    private int _start, _end, _step = 1;
+    private int _start, _end, _step = Integer.MAX_VALUE;
 
     public Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
     {
@@ -180,6 +180,12 @@ public class CountDirective extends org.webmacro.directive.Directive
                 writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
                 return;
             }
+        }
+
+        // Check if no step explicitly assigned, if so auto-detect it
+        if (step == Integer.MAX_VALUE )
+        {
+            step = (start > end) ? -1 : +1;
         }
 
         if (step > 0)
