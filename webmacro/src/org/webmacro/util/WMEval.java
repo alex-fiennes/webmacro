@@ -23,9 +23,11 @@
 package org.webmacro.util;
 
 import java.io.*;
-
+import javax.servlet.http.*;
+import javax.servlet.ServletException;
 import org.webmacro.*;
 import org.webmacro.engine.StreamTemplate;
+
 
 
 /**
@@ -64,6 +66,7 @@ public class WMEval {
    private Template rule;
    private OutputStream out = System.out;
    private Context context;
+   private boolean useWebContext = false;
    /**
     * If an output file is not specified as an argument, it
     * must be found in the context under this key.
@@ -74,15 +77,20 @@ public class WMEval {
    /**
     * The constructor which creates the environment for evaluating a rule.
     */
-   public WMEval() {
+   public WMEval(HttpServlet servlet) {
       // Build a web macro environment for rule execution.
       try {
-         wm = new WM();
+         wm = new WM(servlet);
          context = wm.getContext();
       }
       catch (Exception e) {
-         e.printStackTrace();
+         e.printStackTrace(System.err);
+         throw new IllegalStateException(e.toString());
       }
+   }
+   
+   public WMEval() {
+     this(null);
    }
 
 
@@ -108,6 +116,10 @@ public class WMEval {
       rule = new StreamTemplate(wm.getBroker(), new InputStreamReader(unparsedRule));
       rule.parse();
       return rule;
+   }
+   
+   public void error(String msg, Exception e) {
+     wm.getLog("ERROR").error(msg, e);
    }
 
    /**
@@ -211,6 +223,58 @@ public class WMEval {
       context.put("FastWriter", w); // allow template writers to access the output stream!
       rule.write(w, context);
       w.flush();
+   }
+   
+   /**
+    * Evaluates the string template against the current context
+    * and returns the value. If an output file is specified, the value
+    * is written out as well.
+    * @param templateName The name of the template.
+    * @param output An optional output.
+    * @return The output from the evaluated template
+    */
+   public String eval(String templateName, OutputStream out) throws Exception {
+      Template t = wm.getTemplate(templateName);
+      String val =  t.evaluate(context).toString();
+      if (out != null) {
+        out.write(val.getBytes());
+      }
+      return val;
+   }
+
+   /**
+    * Evaluates the string template against a new context and writes
+    * it to the http Response output stream using the proper encoding.
+    * <p>
+    * This is an exceptionally useful method for a servlet to use to
+    * write out a template.
+    * <p>
+    * <b>Note:</b> This method places "FastWriter" in the context
+    * so you can write out to the stream.
+    * @param templateName The name of the template.
+    * @param response The servlet response object and its output stream
+    * @return The output from the evaluated template
+    */
+   public void eval(String templateName, HttpServletRequest req, 
+   			HttpServletResponse resp) throws ServletException {
+     try {
+        context = wm.getWebContext(req, resp);
+        String encoding = (String) wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+        if (encoding == null) {
+          encoding = resp.getCharacterEncoding();
+        }
+        FastWriter w = context.getBroker().getFastWriter(out, encoding);
+        Template t = wm.getTemplate(templateName);
+        context.put("FastWriter", w); // allow template writers to access the output stream!
+        t.write(w, context);
+        resp.setContentLength(w.size());
+        w.writeTo(resp.getOutputStream());
+        w.flush();
+     }
+     catch (Exception e) {
+       e.printStackTrace(System.err);
+       throw new ServletException(e.toString());
+     }
    }
 
    /**
