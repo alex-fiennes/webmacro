@@ -91,6 +91,8 @@ public class Broker
     /** a local map for context tools and other automatic context goodies */
     private Map _toolLoader = new ConcurrentHashMap();
 
+    /** map of global macros */
+    private Map _macros = new ConcurrentHashMap();
 
     /*
 * Constructors.  Callers shouldn't use them; they should use the
@@ -408,6 +410,19 @@ public class Broker
                         + " using the supplied configuration.", e);
             }
         }
+
+        // initialize global macros
+        _config.processListSetting("Macros.Include",new Settings.ListSettingHandler() {
+            public void processSetting(String settingKey, String settingValue) {
+                try {
+                    Template t = (Template) getProvider("template").get(settingValue);
+                    _macros.putAll(t.getMacros());
+                } catch (ResourceException e) {
+                    _log.warning("Error loading macro library '"+settingValue+"', ignoring it",e);
+                }
+            }
+        });
+
     }
 
     /* Factory methods -- the supported way of getting a Broker */
@@ -704,6 +719,15 @@ public class Broker
     }
 
 
+    /**
+     * Return a map of all global macros. These macros will be included into
+     * all templates. As the Map implementation is thread-safe, you can even
+     * add macros to the map, if you want to.
+     * @return map of global macros.
+     */
+    public Map getMacros() {
+        return _macros;
+    }
     /**
      * Get a resource (file) from the the Broker's class loader.
      * We look first with the Broker's class loader, then with the system

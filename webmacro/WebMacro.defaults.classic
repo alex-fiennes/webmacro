@@ -393,3 +393,9 @@ Functions.replace=org.webmacro.servlet.TextTool.replace
 Functions.split=org.webmacro.servlet.TextTool.split
 Functions.join=org.webmacro.servlet.TextTool.join
 Functions.eval=org.webmacro.util.Eval.eval
+
+# To include global macro libraries, just put them into
+# a file at the location you usually load templates from
+# and put a space separated list after Macros.Include
+# Example: 
+# Macros.Include: myGlobalMacros.wmm macros2.wmm

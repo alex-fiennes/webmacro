@@ -27,6 +27,7 @@ import org.webmacro.*;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Template objects represent the user defined layout into which the
@@ -172,8 +173,13 @@ abstract public class WMTemplate implements Template
                 in = getReader();
                 BlockBuilder bb = parser.parseBlock(getName(), in);
                 in.close();
-
                 bc = new BuildContext(_broker);
+                // put global macros from Broker into the BuildContext
+                Map globalMacros = _broker.getMacros();
+                for (Iterator i=globalMacros.entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry)i.next();
+                    bc.putMacro((String)entry.getKey(),(MacroDefinition) entry.getValue());
+                }
                 newParameters = bc.getMap();
                 newMacros = bc.getMacros();
                 newContent = (Block) bb.build(bc);
