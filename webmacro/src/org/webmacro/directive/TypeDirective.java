@@ -7,7 +7,6 @@
 package org.webmacro.directive;
 
 import java.io.*;
-import java.util.*;
 
 import org.webmacro.*;
 import org.webmacro.engine.*;
@@ -80,13 +79,6 @@ public class TypeDirective extends Directive {
         return _dd;
     }
 
-    /** has this directive been configured via the .properties file? */
-    private static volatile boolean _configured = false;
-    
-    /** is this directive enabled?  In other words, should it actually perform
-     * the type checking? */
-    private static volatile boolean _enabled = true;
-
     
     /** the Context object we need to check the type of */
     private Variable _object;
@@ -101,12 +93,10 @@ public class TypeDirective extends Directive {
      * configure directive for this run and return 'this'
      */
     public Object build (DirectiveBuilder builder,  BuildContext bc) throws BuildException {
-        if (!TypeDirective._enabled)
-            return null; 
-
-        String classname;
-
-        classname = (String) builder.getArg (TYPE_CLASSNAME, bc);
+        if (!isEnabled (bc.getBroker()))
+            return null;
+        
+        String classname = (String) builder.getArg (TYPE_CLASSNAME, bc);
         _object = (Variable) builder.getArg (TYPE_OBJECT, bc);
         _required = builder.getArg (TYPE_REQUIRED, bc) != null;
         
@@ -132,13 +122,6 @@ public class TypeDirective extends Directive {
      *         specified classname arg
      */
     public Object evaluate (Context context) throws PropertyException {
-        if (!TypeDirective._configured) {
-            TypeDirective.configure (context.getBroker ());
-            
-            if (!TypeDirective._enabled) // configure says we're not enabled
-                return null;
-        }
-        
         Object o = _object;
         
         // evaluate the _object reference down to its base object
@@ -181,23 +164,21 @@ public class TypeDirective extends Directive {
         v.endDirective();
     }    
     
+    /**
+     * Check the configuration and see if we're enabled or not.  By default, we 
+     * are <b>enabled</b>, even if the configuration key doesn't exist.
+     */
+    private final boolean isEnabled (Broker broker) {
+        Settings s = broker.getSettings ();
+        return s.getBooleanSetting ("TypeDirective.Enabled", true);
+    }
+    
     //
     // private, static methods
     //
-    
-    /**
-     * configure this directive using the properties available from the
-     * specified Broker.  By default, we are <b>enabled</b>, even if
-     * the configuration key doesn't exist.
-     */
-    private static final void configure (Broker broker) {
-        Settings s = broker.getSettings ();
-        _enabled = s.getBooleanSetting ("TypeDirective.Enabled", true);
-        _configured = true;
-    }
-    
+
     /** 
-     * Use specified class name to return it's Class instance.  special support
+     * Use specified class name to return its Class instance.  special support
      * for an alternate syntax for object arrays:<pre>
      *    java.util.Date[]   -- a 1d array of Date objects
      *    java.util.Data[][] -- a 2d array of Date objects
