@@ -1,0 +1,37 @@
+#set $PageName = "User Admin"
+#parse "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120">
+		#parse "leftmenu.wm"
+	</td>
+
+	<td width="8">&nbsp;</td>
+
+    <td valign=top>
+        <form method='post' action='AdminUpdateUser'>
+        <input type='hidden' name='user' value='$UserToUpdate.Identifier'>
+        Username: <b>$UserToUpdate.Identifier</b><br>
+        Name: <input type='text' name='name' value='$Text.HTMLEncode($UserToUpdate.Name)' size=45><br>
+        Password: <input type='password' name='password' value=''><br>
+        email: <input type='text' name='email' value='$Text.HTMLEncode($UserToUpdate.Attributes.email)' size=45><br>
+        is moderator? <input type='checkbox' name='moderator' value='true'  #if($UserToUpdate.IsModerator){ checked}><p>
+
+        All Attributes:<br>
+        #foreach $attribute in $UserToUpdate.Attributes.entrySet() {
+            $attribute.Key = $attribute.Value<br>
+        }
+
+        <input type=button value='Back to User List' onClick='top.location.href="AdminUserList";'>&nbsp;
+        <input type=submit name="ACTION" value='Delete' onClick='return confirm("Are you sure you want to delete this user?");'>
+        <input type=submit name="ACTION" value='Update'>
+
+        #if ($Saved) {
+            <p align='center'><font color='red'><b>Saved</b></p>
+        }
+        </form>
+    </td>
+</tr>
+</table>
+#parse "footer.wm"

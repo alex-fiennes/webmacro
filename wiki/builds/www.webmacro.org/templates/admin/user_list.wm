@@ -1,0 +1,50 @@
+#set $PageName = "User Admin"
+#parse "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120">
+		#parse "leftmenu.wm"
+	</td>
+
+	<td width="8">&nbsp;</td>
+
+    <td valign=top>
+        #set $prefix=$User.Attribute.LastUserListLetter
+        #if ($Form.PREFIX) { #set $prefix="$Form.PREFIX" }
+        #const $abc = "*ABCDEFGIJKLMNOPQRSTUVWXYZ"
+
+        #foreach $letter in $abc.toCharArray() indexing $i from 0 {
+            #if ($i>0) { | }
+            #if ($prefix &&  ("$prefix"=="$letter" || "$prefix"=="" && "$letter"=="*")) {
+                <b>$letter</b>
+            } #else {
+                <a href="$Request.RequestURI?PREFIX=$letter">$letter</a>
+            }
+        }
+
+        <table border=0>
+        <tr>
+            <th>UID</th>
+            <th>Name</th>
+            <th>email</th>
+            <th nowrap>Last Access</th>
+            <th>Last IP</th>
+        </tr>
+
+        #alternate $bgcolor through ["#efefef", "#ffffff"]
+        #foreach $user in $Wiki.getUsers($prefix) {
+            <tr bgcolor="$bgcolor">
+                <td><a href='AdminUpdateUser?user=$Text.URLEncode($user.Identifier)'>#if($user.IsModerator){<font color='red'>}$user.Identifier</a></td>
+                <td>#if($user.Name){$user.Name}</td>
+                <td>#if($user.Attributes.email){$user.Attributes.email}</td>
+                <td nowrap>#if($user.Attributes.lastaccessed){$user.Attributes.lastaccessed}</td>
+                <td>#if($user.Attributes.ipaddress){$user.Attributes.ipaddress}</td>
+            </tr>
+        }
+
+        </table>
+   </td>
+</tr>
+</table>
+#parse "footer.wm"

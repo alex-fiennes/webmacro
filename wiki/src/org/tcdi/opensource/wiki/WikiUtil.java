@@ -197,4 +197,14 @@ public class WikiUtil {
         }
         return chars;
     }
+
+    /**
+     * Convernt an <code>Enumeration</code> into a List.
+     */
+    public static final List enumToList (Enumeration enum) {
+        List l = new ArrayList();
+        while (enum.hasMoreElements())
+            l.add (enum.nextElement());
+        return l;
+    }
 }

@@ -28,7 +28,7 @@ BODY
 }
 TD
 {
-    FONT-SIZE: 10.5pt;
+    FONT-SIZE: 9.5pt;
     FONT-FAMILY: Arial
 }
 .PageAuthor
@@ -75,7 +75,7 @@ A:active
 }
 .AdminOptions
 {
-    FONT-SIZE: 7.5pt;
+    FONT-SIZE: 8pt;
     COLOR: red
 }
 .NavigationLinks
@@ -86,6 +86,7 @@ A:active
 }
 TH
 {
+    FONT-SIZE:10.2pt;
     COLOR: white;
     BACKGROUND-COLOR: #b596cc
 }

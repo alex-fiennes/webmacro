@@ -104,7 +104,7 @@ public class LoginAction implements PageAction {
     static boolean loginUser(WikiSystem wiki, WebContext wc) {
         String userid   = wc.getForm("username");
         String password = wc.getForm("password");
-        
+
         if (userid == null || password == null) {
             createCookie(wiki, wc, null);
             return false;
@@ -113,7 +113,7 @@ public class LoginAction implements PageAction {
         WikiUser user = (WikiUser) wiki.getUser(userid);
         if (user == null)
             return false;   // user not found
-        
+
         String userupw = user.getPassword().substring(0, 10);
         String authupw = WikiUtil.getMD5 (password).substring(0, 10);
         if (userupw.equals (authupw)) {
@@ -121,7 +121,7 @@ public class LoginAction implements PageAction {
             if (user.getPassword().equals(password)) {  // support for old clear-text passwords
                 // convert to new md5 form
                 user.setPassword(WikiUtil.getMD5(password));
-                // user.setPassword (password);
+                // and save back into the user store
                 wiki.updateUser(user);
             }
             

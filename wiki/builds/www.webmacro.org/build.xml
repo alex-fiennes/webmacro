@@ -29,27 +29,26 @@
                 <mkdir dir="${dir.install}/deploy/WEB-INF/lib" />
 
                 <!-- copy our "htdocs" directory to ${dir.install}/deploy -->
-                <copy todir="${dir.install}/deploy">
+                <copy todir="${dir.install}/deploy" overwrite='true'>
                         <fileset dir="${dir.htdocs}" />
                 </copy>
 
                 <!-- copy library files (.jars and .zips) from parent
                      directory into the WEB-INF/lib directory
                 -->
-                <copy todir="${dir.install}/deploy/WEB-INF/lib">
+                <copy todir="${dir.install}/deploy/WEB-INF/lib" overwrite='true'>
                         <fileset dir="${dir.wikiroot}/lib/" />
                         <fileset dir="${dir.wikiroot}" includes="*.jar" />
                 </copy>
 
                 <!-- copy resources.jar into the WEB-INF/lib directory -->
-                <copy todir="${dir.install}/deploy/WEB-INF/lib"
-     		      file="${file.resources}" />
+                <copy todir="${dir.install}/deploy/WEB-INF/lib" file="${file.resources}" overwrite='true' />
 
                 <!-- copy files from ${dir.etc} to ${dir.install}/deploy/WEB-INF,
                      replacing instances of @INSTALL_DIR@ with the ${dir.install} 
                      property
                 -->
-                <copy todir="${dir.install}/deploy/WEB-INF">
+                <copy todir="${dir.install}/deploy/WEB-INF" overwrite='true'>
                         <fileset dir="${dir.etc}" />
                         <filterset>
                                 <filter token="INSTALL_DIR" value="${dir.install}" />

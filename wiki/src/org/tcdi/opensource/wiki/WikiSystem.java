@@ -133,14 +133,25 @@ public interface WikiSystem extends WikiTermMatcher {
      * @return an Enumeration of all user names
      */
     public Enumeration getUserNames();
-    
+
+    /**
+     * get an enumeration of all users in the system, sorted by their usernames
+     */
+    public Enumeration getUsers ();
+
+    /**
+     * get an enumeration of all users in the system who's username begins with the
+     * specified prefix.  Use <code>null</code> or <code>*</code> to get all users.
+     */
+    public Enumeration getUsers (String prefix);
+
     /**
      * Delete a user from this wiki system
      *
      * @param uid the user id to delete
      */
     public void deleteUser(String uid);
-    
+
     /**
      * Register a new user in this wiki system
      *

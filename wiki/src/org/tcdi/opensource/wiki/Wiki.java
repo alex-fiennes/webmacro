@@ -183,6 +183,38 @@ final public class Wiki implements WikiSystem, QueueListener {
         return _userStore.keys();
     }
 
+    public Enumeration getUsers () {
+        return Collections.enumeration(getUserList(null));
+    }
+
+    public Enumeration getUsers(String prefix) {
+        return Collections.enumeration(getUserList(prefix));
+    }
+
+    private List getUserList(String match) {
+        List l = new ArrayList();
+        Enumeration enum = getUserNames();
+        while (enum.hasMoreElements()) {
+            String userName = (String) enum.nextElement();
+            if (userName == null)
+                continue;
+
+            WikiUser user = getUser(userName);
+            if (user == null)
+                continue;
+            if(match == null || match.trim().length()== 0 || match.trim().equals("*") || user.getIdentifier().toLowerCase().startsWith(match.toLowerCase()))
+                l.add (user);
+        }
+        Collections.sort(l, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                WikiUser a = (WikiUser) o1;
+                WikiUser b = (WikiUser) o2;
+                return a.getIdentifier().toLowerCase().compareTo(b.getIdentifier().toLowerCase());
+            }
+        });
+        return l;
+    }
+
     public void deleteUser(String uid) {
         _userStore.remove(uid);
     }
@@ -215,7 +247,13 @@ final public class Wiki implements WikiSystem, QueueListener {
         if (user == null)
             return false;
 
-        return _properties.getProperty("Administrators").indexOf(user.getIdentifier() + ";") > -1;
+        String[] admins = org.webmacro.servlet.TextTool.split(_properties.getProperty("Administrators"), ";");
+        for (int x=0; x<admins.length; x++) {
+            if (admins[x].equals(user.getIdentifier()))
+                return true;
+        }
+
+        return false;
     }
 
     public Properties getProperties() {

@@ -31,8 +31,9 @@
          </th>
       </tr>
 
+      #alternate $bgcolor through ["#efefef", "#ffffff"]
       #foreach $page in $RecentChanges {
-         <tr bgcolor="#ffffff">
+         <tr bgcolor="$bgcolor">
             <td align=left valign=top>
                <a href="$page.Title">$page.Title</a>
             </td>

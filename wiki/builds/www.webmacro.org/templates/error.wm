@@ -1,9 +1,6 @@
 #set $PageName = "Error "
 #parse "header.wm"
 
-#if ($error.Message){
-   $error.Message
-} #else {
-   $error
-}
+$error
+
 #parse "footer.wm"

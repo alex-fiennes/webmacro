@@ -132,9 +132,11 @@ public class WikiServlet extends WMServlet {
         } catch (Exception e) {
             // something bad happened while performing the action
             // TODO: Handle error and error template ourselves
-            _log.error ("Could not perform action", e);
             throw new HandlerException (e.toString());
-        }           
+        } finally {
+            if (user != null)
+                _wiki.updateUser(user);
+        }
 
 
         // the action performed successfully, so now return 
@@ -171,7 +173,6 @@ public class WikiServlet extends WMServlet {
                 // udate the last accessed attribute for this user
                 user.setAttribute("LastAccessed", new Date().toString());
                 user.setAttribute("IPAddress", wc.getRequest().getRemoteAddr());
-                _wiki.updateUser(user);
             }
             
             return user;
