@@ -9,7 +9,7 @@ import org.webmacro.Context;
 */
 public class TestSyntheticTemplate extends TemplateTestCase {
 
-  private static final int iterationCount = 3;
+  private static final int iterationCount = 12;
 
   private static final String fileName = "org/webmacro/template/synthetictest.wm";
   private static final String reportName = "org/webmacro/template/syntheticreport.wm";
