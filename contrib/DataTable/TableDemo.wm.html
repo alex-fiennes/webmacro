@@ -1,0 +1,92 @@
+<html>
+<head><title>TableDemo.wm template source</title></head>
+<body>
+<pre>
+#set $Response.ContentType = &quot;text/html&quot;
+#if ($Response.setHeader(&quot;Pragma&quot;,&quot;no-cache&quot;)) #begin #end
+#if ($Response.setHeader(&quot;Cache-Control&quot;,&quot;no-cache;no-store&quot;)) #begin #end
+#set $tableWidth=600
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;ResultSetDataTable Demo&lt;/title&gt;
+	&lt;script&gt;
+	  var curr = $tbl.SkipRows;
+	&lt;/script&gt;
+	#use 'text' #begin
+	&lt;script&gt;
+	  function page(prevnext){
+	    document.location = &quot;/servlet/TableDemo?cmd=&quot; + prevnext
+	      + &quot;&amp;curr=&quot; + curr + &quot;&amp;pageSize=&quot; + document.forms[0].pageSize.value;
+	  }
+	  function next(){ page(&quot;next&quot;); }
+	  function prev(){ page(&quot;prev&quot;); }
+	  function top(){ page(&quot;top&quot;); }
+	&lt;/script&gt;
+	#end
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h3&gt;ResultSetDataTable Demo&lt;/h3&gt;
+  &lt;b&gt;Table 1, fields by name&lt;/b&gt;
+  #set $tbl.RowColors = [&quot;\#999999&quot;, &quot;\#FFFFFF&quot;]
+  &lt;table border=&quot;1&quot; width=&quot;$tableWidth&quot;&gt;
+    &lt;tr&gt;
+      &lt;th&gt;First Name&lt;/th&gt;&lt;th&gt;Last Name&lt;/th&gt;&lt;th&gt;ID&lt;/th&gt;
+      &lt;th&gt;BadCol&lt;/th&gt;
+    &lt;/tr&gt;
+    #foreach $row in $tbl #begin
+      &lt;tr bgcolor=&quot;$row.Color&quot;&gt;
+        &lt;td&gt;$row.FIRSTNAME&lt;/td&gt;&lt;td&gt;$row.LASTNAME&lt;/td&gt;&lt;td&gt;$row.ID&lt;/td&gt;
+        &lt;td&gt;$row.BADCOL&lt;/td&gt;
+      &lt;/tr&gt;
+    #end
+  &lt;/table&gt;
+  #parse &quot;TableNav.wm&quot;
+
+&lt;b&gt;Table 2, fields by number, with row attributes&lt;/b&gt;
+
+#set $tbl.ErrorString = &quot;ERR: &quot;
+#set $tbl.HideErrors = &quot;false&quot;
+##set $tbl.RowColors = [&quot;\#FF00CC&quot;, &quot;\#CC4400&quot;, &quot;\#00CCCC&quot;]
+#set $oldvals = $tbl.putRowAttribute(&quot;bgcolor&quot;, [&quot;\#CC00CC&quot;, &quot;\#4444CC&quot;, &quot;\#FFAAAA&quot;])
+#set $oldvals = $tbl.putRowAttribute(&quot;fgcolor&quot;, [&quot;\#33FF33&quot;, &quot;\#AAAA33&quot;, &quot;\#005555&quot;])
+#set $oldvals = $tbl.putRowAttribute(&quot;styleBegin&quot;, [&quot;&lt;i&gt;&quot;, &quot;&lt;u&gt;&quot;])
+#set $oldvals = $tbl.putRowAttribute(&quot;styleEnd&quot;, [&quot;&lt;/i&gt;&quot;, &quot;&lt;/u&gt;&quot;])
+  &lt;table border=&quot;1&quot; width=&quot;$tableWidth&quot;&gt;
+    &lt;tr bgcolor=&quot;\#888888&quot;&gt;
+      &lt;th&gt;Field 3&lt;/th&gt;&lt;th&gt;Field 1&lt;/th&gt;&lt;th&gt;Field 2&lt;/th&gt;
+      &lt;th&gt;Field 99&lt;/th&gt;
+    &lt;/tr&gt;
+    #foreach $row in $tbl #begin
+      &lt;tr bgcolor=&quot;$row.Attributes.bgcolor&quot;&gt;
+        &lt;td&gt;
+          &lt;font color=&quot;$row.Attributes.fgcolor&quot;&gt;
+            $row.Attributes.styleBegin;$row.itemAt(3)$row.Attributes.styleEnd
+          &lt;/font&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;font color=&quot;$row.Attributes.fgcolor&quot;&gt;$row.itemAt(1)&lt;/font&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;font color=&quot;$row.Attributes.fgcolor&quot;&gt;$row.itemAt(2)&lt;/font&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;font color=&quot;$row.Attributes.fgcolor&quot;&gt;$row.itemAt(99)&lt;/font&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+    #end
+  &lt;/table&gt;
+
+  #parse &quot;TableNav.wm&quot;
+
+&lt;b&gt;Table 3, iterate over fields dynamically&lt;/b&gt;
+  &lt;table border=&quot;1&quot; width=&quot;$tableWidth&quot;&gt;
+    &lt;tr&gt;&lt;th&gt;Row \#&lt;/th&gt;
+      #foreach $col in $tbl.ColumnNames
+        #begin &lt;th&gt;$col&lt;/th&gt; #end
+    &lt;/tr&gt;
+    #foreach $row in $tbl #begin
+      &lt;tr&gt;
+        &lt;td&gt;$row.RowNumber&lt;/td&gt;
+        #foreach $col in $row
+          #begin &lt;td&gt;$col&lt;/td&gt; #end
+      &lt;/tr&gt;
+    #end
+  &lt;/table&gt;
+  #parse &quot;TableNav.wm&quot;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</body></html>

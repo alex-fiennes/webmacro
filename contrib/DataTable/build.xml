@@ -7,29 +7,33 @@
 <project name="DataTable" default="compile" basedir=".">
 
   <property name="app.name"       value="datatable"/>
-  <property name="classes"        value="WEB-INF/classes"/>
-  <property name="dist"           value="datatable"/>
+  <property name="dist"           value="dist"/>
+  <property name="classes"        value="${app.name}/WEB-INF/classes"/>
+  <property name="lib"            value="${app.name}/WEB-INF/lib"/>
   <property name="javadoc"        value="javadoc"/>
   <property name="jar"            value="${app.name}.jar"/>
   <property name="src.jar"        value="${app.name}-src.jar"/>
+  <property name="doc.jar"        value="${app.name}-doc.jar"/>
+<!--
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-
-<!--
   <property name="test.root" value="test"/>
   <property name="unit.reports" value="${test.root}/unit-reports"/>
   <property name="unit.src" value="${test.root}/unit"/>
 -->
 
   <path id="class.path">
-    <!-- the following gets the standard jar files which mgmt depends on -->
+    <!-- the following gets the standard jar files which datatable depends on -->
     <fileset dir="../lib">
-      <include name="webmacro-0.97a.jar" />
+      <!--
+         <include name="webmacro-0.97a.jar" /> 
+      -->
       <include name="servlet-2.2.jar" />
     </fileset>
-    <fileset dir="WEB-INF/lib">
+    <fileset dir="${lib}">
       <include name="hsqldb.jar" />
       <include name="protomatter-1.1.5.jar" />
+      <include name="webmacro-0.97a.jar" /> 
     </fileset>
     <pathelement location="${classes}" />
 <!--
@@ -40,6 +44,9 @@
 
   <target name="prepare">
     <mkdir  dir="${classes}"/>
+    <!-- this should already exist now
+       <mkdir  dir="${lib}"/>
+    -->
     <mkdir  dir="${javadoc}"/>
     <mkdir  dir="${dist}"/>
   </target>
@@ -47,16 +54,20 @@
 
   <target name="clean" >
     <delete dir="${classes}"/>
+    <!-- 
+       <delete dir="${lib}"/>
+    -->
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
     <delete file="${jar}"/>
     <delete file="${src.jar}"/>
+    <delete file="${doc.jar}"/>
   </target>
 
 
   <target name="compile" depends="prepare">
     <javac srcdir="src" destdir="${classes}"
-           debug="on" optimize="off" deprecation="off">
+           debug="on" optimize="off" deprecation="off" verbose="off">
       <classpath refid="class.path" />
     </javac>
   </target>
@@ -65,7 +76,7 @@
   <target name="javadoc" depends="prepare">
     <javadoc sourcepath="src" destdir="${javadoc}"  
              packagenames="org.webmacro.*" author="true" version="true" 
-             use="true" overview="API_users_guide.html">
+             use="true" overview="readme.html">
       <classpath refid="class.path" />
     </javadoc>
   </target>
@@ -77,15 +88,22 @@
          includes="src/**,build.xml"/>
   </target>
 
-  <target name="dist" depends="prepare,compile,jar,javadoc">
-    <mkdir dir="${dist}/api" />
-    <copy todir="${dist}/api">
+
+  <target name="docjar" depends="prepare,compile,javadoc">
+    <jar jarfile="${doc.jar}" basedir="."
+        includes="${javadoc}/**,**.html,**.txt"/>
+  </target>
+
+  <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
+    <mkdir dir="${app.name}/api" />
+    <copy todir="${app.name}/api">
       <fileset dir="${javadoc}"/>
     </copy>
     <copy todir="${dist}" file="${src.jar}"/>
     <copy todir="${dist}" file="${jar}"/>
-    <copy todir="${dist}">
-      <fileset dir="." includes="**.txt,**.html"/>
+    <copy todir="${dist}" file="${doc.jar}"/>
+    <copy todir="${app.name}">
+      <fileset dir="." includes="**.txt,**.html,**.wm"/>
     </copy>
   </target>
 
