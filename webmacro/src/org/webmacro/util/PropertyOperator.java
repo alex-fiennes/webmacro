@@ -115,7 +115,7 @@ final public class PropertyOperator
          }
          return getOperator(instance.getClass()).setProperty(context,instance,names,value,start);
       } catch (NoSuchMethodException e) {
-         throw new PropertyException("No method to access property: " + e,e);
+         throw new PropertyException("No method to access property: " + e, e);
       }
    }
 
@@ -736,7 +736,7 @@ abstract class Accessor {
    Object get(Object instance) 
       throws PropertyException, NoSuchMethodException
    {
-      throw new PropertyException("BUG in PropertyOperator.java!",null);
+      throw new PropertyException("BUG in PropertyOperator.java!");
    }
 
    /**
@@ -745,7 +745,7 @@ abstract class Accessor {
    boolean set(Object instance, Object value) 
       throws PropertyException, NoSuchMethodException
    {
-      throw new PropertyException("BUG in PropertyOperator.java!",null);
+      throw new PropertyException("BUG in PropertyOperator.java!");
    }
 
    /**
@@ -754,7 +754,7 @@ abstract class Accessor {
    Object get(Object instance, String subName) 
       throws PropertyException, NoSuchMethodException
    {
-      throw new PropertyException("BUG in PropertyOperator.java!",null);
+      throw new PropertyException("BUG in PropertyOperator.java!");
    }
 
    /**
@@ -763,7 +763,7 @@ abstract class Accessor {
    boolean set(Object instance, String subName, Object value)
       throws PropertyException, NoSuchMethodException
    {
-      throw new PropertyException("BUG in PropertyOperator.java!",null);
+      throw new PropertyException("BUG in PropertyOperator.java!");
    }
 
 
@@ -773,7 +773,7 @@ abstract class Accessor {
    Object get(Object instance, Object[] args)
       throws PropertyException, NoSuchMethodException
    {
-      throw new PropertyException("BUG in PropertyOperator.java!",null);
+      throw new PropertyException("BUG in PropertyOperator.java!");
    }
 
 }
@@ -911,7 +911,7 @@ final class DirectAccessor extends Accessor
       msg.append(") on object ");
       msg.append(instance);
 
-      throw new PropertyException(msg.toString(),null);
+      throw new PropertyException(msg.toString());
    }
    
 }
@@ -963,7 +963,7 @@ abstract class MethodAccessor extends Accessor
 
       } else {
          throw new PropertyException("PropertyOperator FAILED for method " 
-               + m + "--please report this bug!",null);
+               + m + "--please report this bug!");
       }
    }
 

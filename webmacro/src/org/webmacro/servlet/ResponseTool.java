@@ -39,7 +39,7 @@ public class ResponseTool implements ContextTool
          return wc.getResponse();
       } catch (ClassCastException ce) {
          throw new PropertyException(
-               "This only works with WebContext: " + ce);
+               "This only works with WebContext", ce);
       }
    }
 

@@ -31,7 +31,7 @@ public final class DirectiveProvider implements Provider
       try {
         directive = Class.forName(dirClassName);
       } catch (Exception e) {
-         throw new IntrospectionException("No class " + dirClassName);
+         throw new IntrospectionException("No class " + dirClassName, e);
       }
 
       // Make sure this class is an instance of o.w.directive.Directive
@@ -44,7 +44,7 @@ public final class DirectiveProvider implements Provider
         } 
         catch (Exception e) {
           throw new IntrospectionException("Class " + dirClassName 
-            + " does not have a getDescriptor() method");
+            + " does not have a getDescriptor() method", e);
         }
         oldDesc = (DirectiveDescriptor) 
           _descriptors.get(descriptor.name);
@@ -100,8 +100,7 @@ public final class DirectiveProvider implements Provider
          }
       } catch (Exception e) {
          //@@@Engine.log.exception(e);
-         throw new InitException("Could not init DirectiveProvider: "
-               + e);
+        throw new InitException("Could not init DirectiveProvider", e);
       }
    }
 
@@ -115,8 +114,7 @@ public final class DirectiveProvider implements Provider
       try {
          return getDescriptor(name);
       } catch (Exception e) {
-         throw new NotFoundException("No such directive: " + name 
-               + ":" + e.getMessage());
+        throw new NotFoundException("No such directive " + name, e);
       }
    }
 

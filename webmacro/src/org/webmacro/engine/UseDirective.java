@@ -55,11 +55,12 @@ abstract class UseDirective implements Directive
          in.close();
          return bb.build(rc); 
       } catch (ParseException pe) {
-         throw new BuildException("Parse error in use directive: " + pe);
+         throw new BuildException("Parse error in use directive", pe);
       } catch (NotFoundException ne) {
-         throw new BuildException("Unable to load requested parser: " + pname);
+         throw new BuildException("Unable to load requested parser " + pname, 
+                                  ne);
       } catch (IOException io) {
-         throw new BuildException("StringReader threw an IO exception: " + io);
+         throw new BuildException("StringReader threw an IO exception", io);
       }
    }
 

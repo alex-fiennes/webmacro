@@ -191,7 +191,7 @@ final public class URLTemplateProvider extends CachingProvider
             }
 
         } catch(Exception e) {
-            throw new InitException("Could not initialize: " + e);
+            throw new InitException("Could not initialize", e);
         }
     }
 

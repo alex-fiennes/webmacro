@@ -125,7 +125,7 @@ final class DirectiveBuilder implements Cloneable, Builder
          } catch (Exception e) {
             throw new IntrospectionException("Directive " + directive +
                   " build() requires a source object, but getArgumentNames " +
-                  " failed: " + e);
+                  " failed", e);
          }
          if (_argNames == null) {
             throw new IntrospectionException("getArgumentNames returned null.");
@@ -140,7 +140,7 @@ final class DirectiveBuilder implements Cloneable, Builder
          } catch (Exception e) {
             throw new IntrospectionException("Directive " + directive +
                   " build() accepts a dependent directive, but the " +
-                  " getSubDirectives method failed: " + e);
+                  " getSubDirectives method failed", e);
          }
          if (_dependents == null) {
             throw new IntrospectionException(
@@ -345,10 +345,10 @@ final class DirectiveBuilder implements Cloneable, Builder
          if (t instanceof BuildException) {
             throw (BuildException) t;
          } else {
-            throw new BuildException("failure during build: " + t);
+            throw new BuildException("failure during build", t);
          }
       } catch (Exception e) {
-         throw new BuildException("failed to build: " + e);
+         throw new BuildException("failed to build", e);
       }
       return self;
    }

@@ -53,7 +53,7 @@ abstract class ParamDirective implements Directive
       } catch (ClassCastException e) {
          throw new BuildException("lhs of param set must be a variable");  
       } catch (Exception e) {
-         throw new BuildException("Static evaluation of parameter " + lhs + " failed: " + e + " -- parameters must be statically resolvable based on a context containing other parameters only.");
+         throw new BuildException("Static evaluation of parameter " + lhs + " failed -- parameters must be statically resolvable based on a context containing other parameters only.", e);
       }
 
       return null; // not to be included in output

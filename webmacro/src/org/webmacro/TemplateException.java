@@ -44,7 +44,7 @@ public class TemplateException extends WebMacroException
      * @param reason what went wrong
      * @param e The exception that caused us to raise this exception
      */
-  public TemplateException(String reason, Exception e) {
+  public TemplateException(String reason, Throwable e) {
     super(reason, e);
   }
 

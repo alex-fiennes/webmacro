@@ -41,7 +41,7 @@ public class FormTool implements ContextTool
          return fr;
       } catch (ClassCastException ce) {
          throw new PropertyException(
-               "FormTool only works with WebContext: " + ce);
+               "FormTool only works with WebContext", ce);
       }
    }
 

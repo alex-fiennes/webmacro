@@ -83,7 +83,7 @@ final public class TemplateProvider extends CachingProvider
          }
 
       } catch(Exception e) {
-         throw new InitException("Could not initialize: " + e);
+         throw new InitException("Could not initialize",e);
       }
    }
 

@@ -39,7 +39,7 @@ public class CGITool implements ContextTool
          return cgi;
       } catch (ClassCastException ce) {
          throw new PropertyException(
-               "CGITool only works with WebContext: " + ce);
+               "CGITool only works with WebContext", ce);
       }
    }
 

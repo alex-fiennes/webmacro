@@ -130,8 +130,7 @@ public final class DirectiveProvider implements Provider
       try {
          return getBuilder(name);
       } catch (Exception e) {
-         throw new NotFoundException("No such directive: " + name
-               + ":" + e.getMessage());
+        throw new NotFoundException("No such directive: " + name, e);
       }
    }
 

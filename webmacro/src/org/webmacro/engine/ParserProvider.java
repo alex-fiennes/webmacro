@@ -50,17 +50,15 @@ public final class ParserProvider implements Provider
                   + " is already registered for type " + pname);
          }
       } catch (InstantiationException ne) {
-         throw new IntrospectionException("Parsers could not be instantiated: "
-               + ne);
+        throw new IntrospectionException("Parsers could not be instantiated", 
+                                         ne);
       } catch (IllegalAccessException ia) {
-         throw new IntrospectionException("Parser class must be public: " 
-               + ia);
+        throw new IntrospectionException("Parser class must be public", ia);
       } catch (InvocationTargetException it) {
-         throw new InitException("Parser threw an exception: " 
-               + it);
+        throw new InitException("Parser threw an exception", it);
       } catch (NoSuchMethodException nm) {
          throw new IntrospectionException(
-               "Parser missing the required constructor: " + nm);
+               "Parser missing the required constructor", nm);
       }
    }
 
@@ -112,7 +110,7 @@ public final class ParserProvider implements Provider
             }
          }
       } catch (Exception e) {
-         throw new InitException("Could not init ParserProvider: " + e);
+         throw new InitException("Could not init ParserProvider",e);
       }
    }
 
@@ -126,8 +124,7 @@ public final class ParserProvider implements Provider
       try {
          return getParser(name);
       } catch (Exception e) {
-         throw new NotFoundException("No such directive: " + name
-               + ":" + e.getMessage());
+        throw new NotFoundException("No such directive: " + name, e);
       }
    }
 

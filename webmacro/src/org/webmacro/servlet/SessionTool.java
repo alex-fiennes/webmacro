@@ -39,7 +39,7 @@ public class SessionTool implements ContextTool
          return s;
       } catch (ClassCastException ce) {
          throw new PropertyException(
-               "SessionTool only works with WebContext: " + ce);
+               "SessionTool only works with WebContext", ce);
       }
    }
 

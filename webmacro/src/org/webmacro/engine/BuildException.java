@@ -9,7 +9,7 @@ public class BuildException extends TemplateException
       super(message);
    }
 
-   public BuildException(String reason, Exception e) 
+   public BuildException(String reason, Throwable e) 
    {
       super(reason, e);
    }

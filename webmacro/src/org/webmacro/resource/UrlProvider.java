@@ -100,7 +100,7 @@ final public class UrlProvider extends CachingProvider
          in.close();
          return new TimedReference(sw.toString(), timeout);
       } catch (Exception e) {
-         throw new NotFoundException(this + " unable to load " + name + ": " + e.getMessage());
+         throw new NotFoundException(this + " unable to load " + name, e);
       }
    }
 	

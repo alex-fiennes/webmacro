@@ -29,7 +29,7 @@ public class InitException extends WebMacroException {
     super(reason);
   }
   
-  public InitException(String reason, Exception e) {
+  public InitException(String reason, Throwable e) {
     super(reason, e);
   }
 }

@@ -114,12 +114,12 @@ public class WM implements WebMacro
          _urlProvider = _broker.getProvider("url");
       } catch (NotFoundException nfe) {
          _log.error("Could not load configuration", nfe);
-         throw new InitException("Could not locate provider:\n  " + nfe 
-            + "\nThis implies that WebMacro is badly misconfigured, you\n"
+         throw new InitException("Could not locate provider; "
+            + "This implies that WebMacro is badly misconfigured, you\n"
             + "should double check that all configuration files and\n"
             + "options are set up correctly. In a default install of\n"
             + "WebMacro this likely means your WebMacro.properties file\n"
-            + "was not found on your CLASSPATH.");
+            + "was not found on your CLASSPATH.", nfe);
       }
    }
 
@@ -304,8 +304,7 @@ e.printStackTrace();
             _brokerUsers = 0;
             throw new InitException(
 "An unexpected exception was raised during initialization. This is bad,\n" +
-"there is either a bug in WebMacro, or your configuration is messed up:\n" +
-    t +
+"there is either a bug in WebMacro, or your configuration is messed up.\n" +
 "\nHere are some clues: if you got a ClassNotFound exception, either\n" +
 "something is missing from your classpath (odd since this code ran)\n" +
 "or your JVM is failing some important classfile due to bytecode problems\n" +
@@ -317,7 +316,7 @@ e.printStackTrace();
 "older than Java 1.1.7 you might be out of luck. If none of this helps,\n" +
 "please join the WebMacro mailing list and let us know about the problem,\n" +
 "because yet another possibility is WebMacro has a bug--and anyway, we \n" +
-"might know a workaround, or at least like to hear about the bug.\n");
+"might know a workaround, or at least like to hear about the bug.\n", t);
 
          }
       }

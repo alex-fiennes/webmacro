@@ -22,7 +22,7 @@ public class ParamBuilder implements Builder
          return ret;
       } catch (Exception e) {
          throw new BuildException("Property error occured during parameter "
-               + "build pocess: " + e);
+               + "build pocess: ", e);
       }
    }
 

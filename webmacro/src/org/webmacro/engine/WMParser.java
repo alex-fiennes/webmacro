@@ -276,8 +276,7 @@ public class WMParser implements Parser
       } catch (NotFoundException e) {
          throw e;
       } catch (Exception e) {
-         throw new NotFoundException("Could not load directive " 
-               + name + ": " + e);
+        throw new NotFoundException("Could not load directive " + name, e);
       }
    }
 
