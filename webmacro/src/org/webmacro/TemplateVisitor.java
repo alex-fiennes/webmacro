@@ -24,6 +24,12 @@ package org.webmacro;
 
 import org.webmacro.engine.Variable;
 
+/**
+ *
+ * @author Marcel Huijkman
+ *
+ * @version	27-07-2002
+ */
 public abstract class TemplateVisitor {
 
    public void beginBlock() {
@@ -57,9 +63,11 @@ public abstract class TemplateVisitor {
    }
 
    public final void visitMacro(Macro m) {
-      if (m instanceof Visitable)
+      if (m instanceof Visitable) {
          ((Visitable) m).accept(this);
-      else
+		}
+      else {
          visitUnknownMacro(m.getClass().getName(), m);
+		}
    }
 }
