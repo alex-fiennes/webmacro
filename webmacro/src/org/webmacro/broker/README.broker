@@ -1,0 +1,13 @@
+
+ResourceBroker has been eliminated. Instead use org/webmacro/Broker 
+and the new org/webmacro/Provider interface. It performs the same 
+important functions, except much less. No more notion of saving 
+events, etc., since nothing was using that. 
+
+If you were using the broker in your code for something important 
+let me know and I can give you a copy of the old ResourceBroker. 
+You would then use that independently. 
+
+The overhead imposed by the event system was too much for WM's 
+core, so I had to eliminate it. 
+
