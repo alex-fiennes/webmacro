@@ -26,6 +26,12 @@ abstract public class CachingProvider implements Provider
       _tl.start();
    }
 
+   public CachingProvider() { 
+      for (int i=0; i<_writeLocks.length; i++) {
+        _writeLocks[i] = new Object();
+      }
+   }
+   
    /**
      * You must implement this, loading an object from permanent
      * storage (or constructing it) on demand. 
@@ -81,9 +87,13 @@ abstract public class CachingProvider implements Provider
          // synchrnoized on a less expensive lock inside r.get().
          // the following ilne lets us simultaneously load up to 
          // writeLocks.length resources.
-         synchronized(_writeLocks[ query.hashCode() % _writeLocks.length])
+         
+         int lockIndex = Math.abs(query.hashCode()) % _writeLocks.length;
+         synchronized(_writeLocks[lockIndex])
          {
-            o = r.get();
+            if (r != null){ 
+              o = r.get();
+            }
             if (o == null) {
                r = load(query);
                if (r != null) {
