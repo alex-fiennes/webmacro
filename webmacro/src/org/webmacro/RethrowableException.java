@@ -43,7 +43,9 @@ package org.webmacro;
  * @since 0.96
  */
 public class RethrowableException extends Exception {
-  private Throwable caught;
+  
+  // make the underlying exception public so thatwe can find out what is was
+  public Throwable caught;
 
   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
