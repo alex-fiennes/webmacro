@@ -6,6 +6,7 @@ TARGETS = 	webmacro/webmacro.jar \
 		webmacro/examples \
 		webmacro/docs \
 		webmacro/IMPORTANT \
+		webmacro/CREDITS \
 		webmacro/RELEASE-NOTES.html \
 		webmacro/collections.jar \
 		webmacro/contrib \
@@ -29,7 +30,6 @@ DOCS =		org/webmacro/webroot/*.html \
 		org/webmacro/webroot/api \
 		org/webmacro/webroot/mkdoc \
 		org/webmacro/CHANGES \
-		org/webmacro/CREDITS \
 		org/webmacro/webroot/LICENSE \
 		org/webmacro/webroot/COPYING
 
@@ -105,6 +105,9 @@ webmacro/docs: 	webmacro
 
 webmacro/IMPORTANT: webmacro
 	cp org/webmacro/webroot/IMPORTANT webmacro
+
+webmacro/CREDITS: webmacro
+	cp org/webmacro/CREDITS webmacro
 
 webmacro/collections.jar:
 	cp org/webmacro/lib/collections.jar webmacro
