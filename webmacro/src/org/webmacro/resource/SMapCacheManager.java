@@ -51,10 +51,7 @@ public class SMapCacheManager implements CacheManager {
    private static final long DURATION = 1000;
    private static final int PERIODS = 600; 
 
-    private final TimeLoop _tl = getTimeloop();
-    private static TimeLoop _tlInstance;
-
-    private static int _tlCount;
+    private TimeLoop _tl;
 
    private Log _log;
 
@@ -82,24 +79,6 @@ public class SMapCacheManager implements CacheManager {
       }
    }
 
-    private static synchronized TimeLoop getTimeloop() {
-        if (_tlCount == 0) {
-            _tlInstance = new TimeLoop(DURATION,PERIODS);
-            _tlInstance.setDaemon(true);
-            _tlInstance.start();
-        }
-        _tlCount++;
-        return _tlInstance;
-    }
-
-    private static synchronized void stopTimeloop() {
-        if (--_tlCount == 0) {
-            _tlInstance.interrupt();
-            _tlInstance = null;
-        }
-    }
-
-
    private final class SoftScmCacheElement extends MyCacheElement {
       private SoftReference reference; 
 
@@ -124,7 +103,9 @@ public class SMapCacheManager implements CacheManager {
    throws InitException {
       int cacheSize, cacheFactor; 
       Settings ourSettings, defaultSettings;
-
+      
+      _tl = new TimeLoop(DURATION,PERIODS);
+      
       _log = b.getLog("resource", "Object loading and caching");
       _resourceType = resourceType;
 
@@ -185,9 +166,9 @@ public class SMapCacheManager implements CacheManager {
      * Close down the provider. 
      */
    public void destroy() {
-      // @@@ We should shut down TimeLoop too somehow
       _cache = null;
-      _tl.interrupt();
+      _tl.destroy();
+      _tl = null;
    }
 
    public boolean supportsReload() {
