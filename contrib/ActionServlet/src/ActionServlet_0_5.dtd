@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- Action Servlet 0.5 Beta DTD -->
+<!-- Action Servlet 0.5 DTD -->
 
 <!ELEMENT application (templates?, type-handlers?, components)>
 
