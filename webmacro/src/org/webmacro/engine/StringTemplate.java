@@ -80,7 +80,7 @@ public class StringTemplate extends WMTemplate
      * produce error messages describing which template had a problem.
      */
    public String toString() {
-      return "StringTemplate: " + templateText;
+      return "StringTemplate(" + templateText + ")";
    }
 
 }

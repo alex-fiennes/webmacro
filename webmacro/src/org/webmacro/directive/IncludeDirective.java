@@ -199,7 +199,7 @@ public class IncludeDirective extends Directive
    };
    
    private static final DirectiveDescriptor _desc = 
-                           new DirectiveDescriptor ("parse", null, _args, null);
+                           new DirectiveDescriptor ("include", null, _args, null);
    
    public static DirectiveDescriptor getDescriptor () {
       return _desc;

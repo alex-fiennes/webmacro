@@ -78,6 +78,8 @@ public interface Template extends Macro, Visitable
 
    public Map getParameters();
    
+   public String getName();
 
+   public void setName(String name);
 }
 

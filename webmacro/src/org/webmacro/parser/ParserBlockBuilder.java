@@ -41,6 +41,14 @@ import org.webmacro.engine.*;
 public class ParserBlockBuilder extends BlockBuilder {
   private int literalMark = 0;
 
+   public ParserBlockBuilder() {
+      super();
+   }
+
+   public ParserBlockBuilder(String name) {
+      super(name);
+   }
+
   /** Mark the last character in the block as being a literal (quoted
    * with backslash) so we don't eat trailing quoted whitespace.
    */

@@ -108,6 +108,17 @@ abstract public class WMTemplate implements Template
      */
    public abstract String toString(); 
 
+   /**
+     * Return a name for this template. If not overridden, uses toString()
+     */
+   public String getName() {
+     return toString();
+   }
+
+   /**
+     * Set the name for this template.  Default implementation does nothing.
+     */
+   public void setName(String name) { }
 
    /**
      * Subclasses can override this if they wish to invoke a parser
@@ -134,7 +145,7 @@ abstract public class WMTemplate implements Template
       try {
          Parser parser = getParser();
          in = getReader();
-         BlockBuilder bb = parser.parseBlock(toString(),in);
+         BlockBuilder bb = parser.parseBlock(getName(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
          newParameters = bc.getMap();

@@ -27,7 +27,7 @@ import java.util.*;
 import java.lang.reflect.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
-import org.webmacro.engine.EvaluationExceptionHandler;
+import org.webmacro.engine.*;
 
 /**
   * A Context contains state. The idea is to put all of the data you 
@@ -60,6 +60,9 @@ public class Context implements Map, Cloneable
    private Map _variables = new HashMap();
    private Pool _contextPool = null;
 
+   private TemplateEvaluationContext _teContext 
+     = new TemplateEvaluationContext();
+
    /**
      * Create a new Context relative to the supplied broker
      */
@@ -71,6 +74,11 @@ public class Context implements Map, Cloneable
       _log = broker.getLog("context", "property and evaluation errors");
       loadTools("ContextTools");
       if (_prof != null) { stopTiming(); }
+   }
+
+   public static final class TemplateEvaluationContext { 
+      public Block _curBlock;
+      public int _curIndex;
    }
 
    private class SettingHandler extends Settings.ListSettingHandler {
@@ -116,6 +124,7 @@ public class Context implements Map, Cloneable
          c._prof = _broker.newProfile();
          c.startTiming("Context life"); // stops in clear()
          c._initializedTools = (HashMap) _initializedTools.clone();
+         c._teContext = new TemplateEvaluationContext();
          if (_variables instanceof HashMap) {
             c._variables = (Map) ((HashMap) _variables).clone();
          } else {
@@ -157,6 +166,20 @@ public class Context implements Map, Cloneable
      */
    final public Broker getBroker() {
       return _broker;
+   }
+
+   final public TemplateEvaluationContext getTemplateEvaluationContext() { 
+      return _teContext;
+   }
+
+   final public String getCurrentLocation() {
+      Block b = _teContext._curBlock;
+      if (b == null) 
+         return "(unknown)";
+      else 
+         return b.getTemplateName() + ":" 
+            + Integer.toString(b.getLineNo(_teContext._curIndex))
+            + "." + Integer.toString(b.getColNo(_teContext._curIndex));
    }
 
    /**

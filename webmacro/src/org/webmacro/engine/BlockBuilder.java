@@ -36,60 +36,123 @@ import java.lang.reflect.*;
   */
 public class BlockBuilder implements Builder
 {
+   private static final int INITIAL_SIZE = 64;
+
    private static Macro[] mArray = new Macro[0];
    private static String[] sArray = new String[0];
 
    private ArrayList elements = new ArrayList();
+   private int[] lineNos = new int[INITIAL_SIZE];
+   private int[] colNos = new int[INITIAL_SIZE];
+
+   private String name = "unknown";
+
+   public BlockBuilder() {
+   }
+
+   public BlockBuilder(String name) {
+      this.name = name;
+   }
+
+   public interface BlockIterator extends Iterator {
+      public int getLineNo();
+      public int getColNo();
+   }
+
+   public class BBIterator implements BlockIterator {
+      private int size, i;
+
+      public BBIterator() {
+         size = elements.size();
+         i = 0;
+      }
+
+      public boolean hasNext() { return (i < size);  }
+      public Object next()     { return elements.get(i++); }
+      public int getLineNo()   { return lineNos[i-1]; }
+      public int getColNo()    { return colNos[i-1];  }
+      public void remove()     { throw new UnsupportedOperationException(); }
+   }
 
    final public Object build(BuildContext bc) throws BuildException
    {
-      ArrayList content = new ArrayList(elements.size());
-      {
-         Iterator i = elements.iterator();
-         while (i.hasNext()) {
-            Object o = i.next();
-            if (o instanceof Builder) {
-               o = ((Builder) o).build(bc);
-            }
-            if (o instanceof Block) {
-               ((Block) o).appendTo(content); 
-            } else {
-               content.add(o);
-            }
-         }
-     } 
-   
-     // flatten everything and view the content as being: 
-     //        string (macro string)* string
-     // store that as an array of strings and an array of 
-     // Macro objects and create a block.
+      ArrayList strings = new ArrayList((elements.size()));
+      ArrayList macros = new ArrayList((elements.size()));
+      int[] ln = new int[elements.size()];
+      int[] cn = new int[elements.size()];
+      Stack iterStack = new Stack();
+      StringBuffer s = new StringBuffer();
 
-     ArrayList strings = new ArrayList((elements.size() + 1) / 2);
-     ArrayList macros = new ArrayList((elements.size() + 1) / 2);  
-     {
-        Iterator i = content.iterator();        
-        StringBuffer s = new StringBuffer();
-        while (i.hasNext()) {
-           Object o = i.next();
+      // flatten everything and view the content as being: 
+      //        string (macro string)* string
+      // store that as an array of strings and an array of 
+      // Macro objects and create a block.
 
+      BlockIterator iter = new BBIterator();
+      while (iter.hasNext()) {
+         Object o = iter.next();
+         if (o instanceof Builder) 
+            o = ((Builder) o).build(bc);
+
+         if (o instanceof Block) {
+            iterStack.push(iter);
+            iter = ((Block) o).getBlockIterator();
+         } 
+         else {
            if (o instanceof Macro) {
               strings.add(s.toString());
-              s = new StringBuffer(); // do not reuse: othewise all strings will contain char[] of max length!!
+              s = new StringBuffer(); 
+              // do not reuse StringBuffer, 
+              // otherwise all strings will contain char[] of max length!!
               macros.add(o);
-           } else if (o != null) {
+
+              // Now deal with the line numbers
+              int size = macros.size();
+              if (ln.length < size) {
+                 ln = resizeIntArray(ln, ln.length*2);
+                 cn = resizeIntArray(cn, cn.length*2);
+              }
+              ln[size-1] = iter.getLineNo();
+              cn[size-1] = iter.getColNo();
+           } 
+           else if (o != null) {
               s.append(o.toString()); 
            }
-        }
-        strings.add(s.toString());
-     }
+         }
+         while (!iter.hasNext() && !iterStack.empty())
+            iter = (BlockIterator) iterStack.pop();
+      }
+      strings.add(s.toString());
    
-     Macro m[] = (Macro[]) macros.toArray(mArray);
-     String s[] = (String[]) strings.toArray(sArray);
-     return new Block(s,m);
+      Macro finalMacros[] = (Macro[]) macros.toArray(mArray);
+      String finalStrings[] = (String[]) strings.toArray(sArray);
+      int finalLines[] = resizeIntArray(ln, macros.size());
+      int finalCols[] = resizeIntArray(cn, macros.size());
+      return new Block(name, finalStrings, finalMacros, ln, cn);
    }
+
+   private static int[] resizeIntArray(int[] ia, int size) {
+     int[] temp = new int[size];
+     System.arraycopy(ia, 0, temp, 0, Math.min(ia.length, size));
+     return temp;
+   }
+
+   // Methods that look like Vector methods
 
    public void addElement(Object o) {
       elements.add(o);
+   }
+
+   public void addElement(Object o, int lineNo, int colNo) {
+      elements.add(o);
+
+      int size = elements.size();
+      if (lineNos.length < size) {
+        lineNos = resizeIntArray(lineNos, lineNos.length*2);
+        colNos  = resizeIntArray(colNos, colNos.length*2);
+      }
+      lineNos[size-1] = lineNo;
+      colNos[size-1] = colNo;
    }
 
    public int size() {

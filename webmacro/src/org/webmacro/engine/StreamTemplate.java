@@ -43,6 +43,7 @@ public class StreamTemplate extends WMTemplate
      * Our stream
      */
    private Reader _in;
+   private String _name = null;
 
    /**
      * Instantiate a template based on the specified stream
@@ -74,8 +75,17 @@ public class StreamTemplate extends WMTemplate
      * produce error messages describing which template had a problem.
      */
    public String toString() {
-      return "StreamTemplate: (stream " + _in + ")";
+      String s = null;
+      if (_in != null) 
+        s = _in.toString();
+      return (s != null) ? "StreamTemplate(" + _in + ")" : "(stream)";
    }
+
+   public String getName() {
+     return (_name == null) ? toString() : _name;
+   }
+
+   public void setName(String name) { _name = name; }
 
    /**
      * Simple test 

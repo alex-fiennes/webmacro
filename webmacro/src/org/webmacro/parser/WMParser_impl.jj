@@ -30,18 +30,25 @@ public class WMParser_impl {
   private Broker broker;
   private BackupCharStream stream;
   private Stack blockStack = new Stack();
+  private String templateName;
 
-  public WMParser_impl(Broker broker, BackupCharStream stream) {
+  public WMParser_impl(Broker broker, 
+                       String templateName, 
+                       BackupCharStream stream) {
     this(stream);
     this.stream = stream;
     this.broker = broker;
+    this.templateName = templateName;
   }
 
-  public WMParser_impl(Broker broker, java.io.Reader reader) {
-    this(broker, new BackupCharStream(reader));
+  public WMParser_impl(Broker broker, 
+                       String templateName, 
+                       java.io.Reader reader) {
+    this(broker, templateName, new BackupCharStream(reader));
   }
 
-  public void ReInit(java.io.Reader reader) {
+  public void ReInit(String templateName, java.io.Reader reader) {
+    this.templateName = templateName;
     stream.ReInit(reader);
     ReInit(stream);
   }
@@ -53,9 +60,10 @@ public class WMParser_impl {
     WMParser_impl parser;
 
     if (args.length >= 1) 
-      parser = new WMParser_impl(broker, new FileReader(args[0]));
+      parser = new WMParser_impl(broker, args[0], new FileReader(args[0]));
     else 
-      parser = new WMParser_impl(broker, new InputStreamReader(System.in));
+      parser = new WMParser_impl(broker, "stdin", 
+                                 new InputStreamReader(System.in));
 
     Builder bb = parser.WMDocument();
     Context context = null;
@@ -700,7 +708,8 @@ Builder QuotedString() : {
     ( t=<QS_TEXT> { qs.addElement(t.image); }
       | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { qs.addElement(dr); }
+      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference() 
+        { qs.addElement(dr); }
     ) * 
     <QUOTE> 
   |
@@ -708,7 +717,8 @@ Builder QuotedString() : {
     ( t=<SQS_TEXT> { qs.addElement(t.image); }
       | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { qs.addElement(dr); }
+      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference() 
+        { qs.addElement(dr); }
     ) * 
     <SQUOTE> 
   )
@@ -912,7 +922,7 @@ void Directive(ParserBlockBuilder b) : {
   { SetState(WM); } 
   ( LOOKAHEAD(<WORD>, { b.directiveOk() } ) 
        t=<WORD> [ <WS> ] o=parse_directive(t.image) 
-       { b.eatTrailingWsNl(); b.addElement(o); }
+       { b.eatTrailingWsNl(); b.addElement(o, t.beginLine, t.beginColumn); }
     | { b.addElement("#"); }
   ) 
   { SetState(DEFAULT); }
@@ -958,7 +968,8 @@ void WMContent(ParserBlockBuilder b) : {
     | t=<SLASH>     { b.addElement(t.image); }
     | Directive(b) 
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { b.addElement(dr); }
+    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference() 
+      { b.addElement(dr, t.beginLine, t.beginColumn); }
   ) 
 }
 
@@ -971,7 +982,8 @@ void WMContentNoDirective(ParserBlockBuilder b) : {
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { b.addElement(dr); }
+    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference() 
+      { b.addElement(dr, t.beginLine, t.beginColumn); }
   ) 
 }
 
@@ -987,7 +999,7 @@ void LiteralWMContent(ParserBlockBuilder b) : {
 }
 
 BlockBuilder LiteralBlock() : {
-  ParserBlockBuilder block = new ParserBlockBuilder();
+  ParserBlockBuilder block = new ParserBlockBuilder(templateName);
   Token t;
 }
 {
@@ -1008,7 +1020,7 @@ BlockBuilder LiteralBlock() : {
 }
 
 BlockBuilder Block(Subdirective[] subdirectives) : {
-  ParserBlockBuilder block = new ParserBlockBuilder();
+  ParserBlockBuilder block = new ParserBlockBuilder(templateName);
   Token t;
 }
 { 
@@ -1035,7 +1047,7 @@ BlockBuilder Block(Subdirective[] subdirectives) : {
 }
 
 BlockBuilder WMDocument() : {
-  ParserBlockBuilder block = new ParserBlockBuilder();
+  ParserBlockBuilder block = new ParserBlockBuilder(templateName);
   Token t;
 }
 {

@@ -95,6 +95,7 @@ final public class BrokerTemplateProviderHelper
          t = new StreamTemplate(_broker, 
                                 new InputStreamReader(
                                   UrlProvider.getUrlInputStream(tUrl)));
+         t.setName(name);
          t.parse ();
          ret = t;
          if (_cacheSupportsReload) 

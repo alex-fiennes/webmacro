@@ -91,7 +91,7 @@ public class DefaultEvaluationExceptionHandler
           _log.warning("Error expanding variable " + variable.getVariableName()
                        + ": " + problem);
          return errorString("Attempt to access nonexistent variable $" 
-                            + variable.getVariableName());
+                            + variable.getVariableName() + " at " + context.getCurrentLocation());
       }
       else if (problem instanceof PropertyException.NullValueException) {
         if (_log != null)

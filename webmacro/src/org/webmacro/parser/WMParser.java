@@ -66,9 +66,9 @@ public class WMParser implements Parser
     try {
       parser = (WMParser_impl) _parserCache.get();
       if (parser != null) 
-        parser.ReInit(in);
+        parser.ReInit(name, in);
       else
-        parser = new WMParser_impl(_broker, in);
+        parser = new WMParser_impl(_broker, name, in);
 
       try {
         bb = parser.WMDocument();
@@ -79,10 +79,6 @@ public class WMParser implements Parser
     } 
     catch (ParseException e) {
       throw new org.webmacro.engine.ParseException("Parser Exception", e);
-      // _log.exception(e);
-      // if (! pin.isAtEOF()) {
-      //  int c = pin.nextChar(); // skip a char before continuing
-      //  bb.addElement(new Character((char) c).toString());
     }
     finally {
       if (parser != null)

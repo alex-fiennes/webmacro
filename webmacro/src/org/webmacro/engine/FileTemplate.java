@@ -95,4 +95,9 @@ public class FileTemplate extends WMTemplate
       return "FileTemplate:" + myFile;
    }
 
+   public String getName() {
+     return myFile.getPath();
+   }
+
+
 }
