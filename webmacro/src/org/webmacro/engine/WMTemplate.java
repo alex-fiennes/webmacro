@@ -60,6 +60,11 @@ abstract public class WMTemplate implements Template
      */
    final protected Log _log;
 
+    /**
+     * Whether template has already been parsed.
+     */
+    private boolean _parsed;
+
    /**
      * What this template contains is a top level block
      */
@@ -144,36 +149,41 @@ abstract public class WMTemplate implements Template
      */
    public void parse() throws IOException, TemplateException
    {
-      Block newContent = null;
-      Map newParameters = null;
-      Map newMacros = null;
-      Reader in = null;
-      try {
-         Parser parser = getParser();
-         in = getReader();
-         BlockBuilder bb = parser.parseBlock(getName(),in);
-         in.close();
-         BuildContext bc = new BuildContext(_broker);
-         newParameters = bc.getMap();
-         newMacros = bc.getMacros();
-         newContent = (Block) bb.build(bc);
-      } catch (BuildException be) {
-         newContent = null;
-         _log.error("Template contained invalid data", be);
-         throw be;
-      } catch (IOException e) {
-         newContent = null; // don't let the old one survive
-         _log.error("Template: Could not read template: " + this);
-         throw e;
-      } catch (Exception e){
-          _log.error("Error parsing template: " + this, e);
-          throw new BuildException("Error parsing template: " + this, e);
-      } finally {
-         try { in.close(); } catch (Exception e) { }
-         _parameters = newParameters;
-         _content = newContent;
-         _macros = newMacros;
-      }
+       if (!_parsed) {
+           Block newContent = null;
+           Map newParameters = null;
+           Map newMacros = null;
+           Reader in = null;
+           try {
+               Parser parser = getParser();
+               in = getReader();
+               BlockBuilder bb = parser.parseBlock(getName(),in);
+               in.close();
+               BuildContext bc = new BuildContext(_broker);
+               newParameters = bc.getMap();
+               newMacros = bc.getMacros();
+               newContent = (Block) bb.build(bc);
+           } catch (BuildException be) {
+               newContent = null;
+               _log.error("Template contained invalid data", be);
+               throw be;
+           } catch (IOException e) {
+               newContent = null; // don't let the old one survive
+               _log.error("Template: Could not read template: " + this);
+               throw e;
+           } catch (Exception e){
+               _log.error("Error parsing template: " + this, e);
+               throw new BuildException("Error parsing template: " + this, e);
+           } finally {
+               try { in.close(); } catch (Exception e) { }
+               _parameters = newParameters;
+               _content = newContent;
+               _macros = newMacros;
+               _parsed = true;
+           }
+       } else {
+           _log.debug("Ignoring parse request on already parsed template "+this);
+       }
    }
 
     /**
@@ -220,7 +230,7 @@ abstract public class WMTemplate implements Template
      throws IOException, PropertyException
    {
       try {
-         if (_content == null) {
+         if (!_parsed) {
             parse();   
          }
       } catch (TemplateException e) {

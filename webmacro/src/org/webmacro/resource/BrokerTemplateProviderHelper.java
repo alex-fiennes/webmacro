@@ -98,6 +98,7 @@ final public class BrokerTemplateProviderHelper
           long lastMod = f.lastModified();
 
           t = new FileTemplate(_broker, f);
+          t.parse();
           ret = t;
           if (_cacheSupportsReload) {
             CacheReloadContext reloadContext 

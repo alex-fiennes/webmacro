@@ -34,9 +34,10 @@ public interface Template extends Macro, Visitable
      * the supplied file until the data is actually needed. However if you 
      * want to parse all of your templates at the start of the application 
      * to avoid incurring this call during an interactive session, you can 
-     * call the parse() function at an appropriate time. Alternately, you
-     * could call this function to reparse a template if you know that it
-     * has changed.
+     * call the parse() function at an appropriate time. Once a template has
+     * been parsed, subsequent calls to this method do not have an effect. If
+     * you want to reparse the template, because you know, it has been changed, you
+     * have to create a new Template object and leave this one to the garbage collector.
      * <p>
      * @exception TemplateException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool

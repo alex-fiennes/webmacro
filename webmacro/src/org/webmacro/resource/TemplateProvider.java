@@ -143,6 +143,7 @@ final public class TemplateProvider extends CachingProvider
       if (tFile != null) {
          try {
             Template t = new FileTemplate(_broker, tFile);
+            t.parse();
             ret = t;
             if (_cacheSupportsReload) {
                 CacheReloadContext reloadContext = 
@@ -154,13 +155,19 @@ final public class TemplateProvider extends CachingProvider
          catch (NullPointerException npe) {
             _log.warning("TemplateProvider: Template not found: " + name, 
                          npe);
+            throw new ResourceException("Error fetching template " + name, npe);
          }
-         catch (Exception e) {  
+         catch (TemplateException e) {  
             // Parse error
             _log.warning ("TemplateProvider: Error occured while parsing " 
                           + name, e);
             throw new InvalidResourceException("Error parsing template " 
                                                + name, e);
+         }
+         catch (Exception e) {  
+             _log.warning ("TemplateProvider: Error occured while fetching " 
+                           + name, e);
+             throw new ResourceException("Error fetching template " + name, e);
          }
       }
       else {
