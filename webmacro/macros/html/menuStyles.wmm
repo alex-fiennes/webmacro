@@ -1,0 +1,82 @@
+#comment {
+  menuStyles.wmm
+  Macros for formatting html menus.
+  
+  The general approach is to support multiple levels, a selection on or off,
+  and formatting on both edges. See http://apple.com and http://paypal.com
+  for style examples used as templates for these menus.
+}
+
+## tabbedMenu(menuData, formatProps) where:
+## arg1 corresponds to the data elements of the menu 
+## arg2 provides style values for the menu
+#macro tabbedMenu($menuData, $formatProps) {
+$formatProps.tableSpec
+	<tr>
+		<td $formatProps.leftCellSpec>
+      $formatProps.leftCellValue
+    </td>
+		<td $formatProps.leftCellSpec>
+    
+		<table $formatProps.contentTableSpec>
+
+			<tr>
+				<td $formatProps.contentCellSpec>
+          #foreach $menuItem in $menuData.menuList {
+            $menuItem
+          }
+        </td>
+			</tr>
+			<tr>
+				<td $formatProps.contextCellSpec>
+          #foreach $contextItem in $menuData.contextList {
+            $contextItem
+          }
+        </td>
+			</tr>
+		</table>
+
+		</td>
+
+		<td $formatProps.rightCellSpec>
+      $formatProps.rightCellValue
+    </td>
+
+	</tr>
+</table>
+
+
+}
+
+#macro singleTabbedMenu($menuData, $formatProps) {
+$formatProps.tableSpec
+	<tr>
+		<td $formatProps.leftCellSpec>
+      $formatProps.leftCellValue
+    </td>
+		<td $formatProps.leftCellSpec>
+    
+		<table $formatProps.contentTableSpec>
+
+			<tr>
+				<td $formatProps.contentCellSpec>
+          #foreach $menuItem in $menuData.menuList {
+            $menuItem
+          }
+        </td>
+			</tr>
+		</table>
+
+		</td>
+
+		<td $formatProps.rightCellSpec>
+      $formatProps.rightCellValue
+    </td>
+
+	</tr>
+</table>
+
+
+}
+
+

@@ -1,0 +1,33 @@
+#comment {
+  ecomm.wm
+  A template to excercise the standard eCommerce macros supplied with WM.
+}
+#include as macro "allmacros.wmm"
+
+## set up some useful data for the transaction.
+## see the paypalSetup macro for the property name specs.
+#bean $System = "java.lang.System" scope=static
+
+## verisign data...
+#bean $App = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $App.LoginName = "opendoors"
+  #set $App.PartnerName = "VeriSign"
+  #set $App.InputType = "image"
+  #set $App.SubmitLabel = "Complete Order"
+  #set $App.imageURL = "http://lyon.opendoors.com/img/completeOrder.gif"
+}
+#bean $Tran = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $Tran.Amount = "100.00"
+  #set $Tran.TranType = "S"
+}
+
+## now invoke the paypal macro with some supporting html so it can be viewed
+<html>
+<center>
+<p>
+Please go to the account of $App.LoginName. Amount Due=$Tran.Amount USD
+</p>
+<p>
+calling: #ccBasicTransaction( $Tran, $App )
+</center>
+</html>

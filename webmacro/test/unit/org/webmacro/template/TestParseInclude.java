@@ -97,6 +97,9 @@ public class TestParseInclude extends TemplateTestCase
         assertStringTemplateMatches("#include as macro \"org/webmacro/template/macros.wm\"\n"
                 + "$a", "\\$a was found");
 
+        assertStringTemplateMatches("#include as macro \"root.wmm\"\n"
+                + "$a", "\\$a was found");
+
     }
 
 
@@ -146,7 +149,6 @@ public class TestParseInclude extends TemplateTestCase
         String value = executeFileTemplate("org/webmacro/template/ecomm.wm");
         store(System.getProperty("user.dir") + "/" + "ecomm.html", value);
     }
-
 
     /** executes out of the standard macro/ distribution. */
     public void testVerisignMacros () throws Exception

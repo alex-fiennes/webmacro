@@ -1,0 +1,23 @@
+#comment {
+  verisign.wmm
+  Macros to support common web actions for a verisign cc transaction.
+}
+
+## basicCreditCard(arg2, arg3) where:
+## arg1 corresponds to transaction properties with names mapped below 
+## arg2 corresponds to application/format properties with names mapped below 
+## to the field elements required by verisign, Minimum Integration.
+#macro ccBasicTransaction($TranProps, $AppProps) {
+<FORM ACTION="https://payflowlink.verisign.com/payflowlink.cfm" METHOD="GET">
+<INPUT TYPE="hidden" NAME="LOGIN" VALUE="$AppProps.LoginName">
+<INPUT TYPE="hidden" NAME="PARTNER" VALUE="$AppProps.PartnerName">
+<INPUT TYPE="hidden" NAME="AMOUNT" VALUE="$TranProps.Amount">
+<INPUT TYPE="hidden" NAME="TYPE" VALUE="$TranProps.TranType">
+#if ($AppProps.InputType == "submit") {
+  <INPUT TYPE="submit" value="$AppProps.SubmitLabel">
+}
+#else {
+  <INPUT TYPE="image" SRC="$AppProps.imageURL" BORDER="0" NAME="submit" alt="$AppProps.SubmitLabel">
+}
+</FORM>
+}
