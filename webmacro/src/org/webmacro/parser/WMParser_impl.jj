@@ -278,6 +278,9 @@ Object parse_arg(ArgDescriptor arg) {
   case Directive.ArgType_RVALUE:
     return RValue();
 
+  case Directive.ArgType_QUOTEDSTRING:
+    return QuotedString();
+
   case Directive.ArgType_PUNCT:
     switch (arg.punctId) {
     case Directive.Punct_COMMA:  Punct_COMMA();  return ",";

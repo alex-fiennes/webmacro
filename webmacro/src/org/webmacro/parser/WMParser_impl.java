@@ -114,6 +114,9 @@ public class WMParser_impl implements WMParser_implConstants {
   case Directive.ArgType_RVALUE:
     return RValue();
 
+  case Directive.ArgType_QUOTEDSTRING:
+    return QuotedString();
+
   case Directive.ArgType_PUNCT:
     switch (arg.punctId) {
     case Directive.Punct_COMMA:  Punct_COMMA();  return ",";
@@ -1455,18 +1458,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
-  final private boolean jj_3R_47() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_scan_token(DOLLAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3R_16() {
     if (jj_scan_token(OP_MINUS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1833,6 +1824,18 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_31() {
     if (jj_scan_token(OP_GT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_47() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
