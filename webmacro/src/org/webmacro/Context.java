@@ -364,7 +364,7 @@ public class Context implements Map, Cloneable {
     * the name of an object in the context. The subsequent names
     * are properties of that object which will be searched using
     * introspection.
-    * @returns whether or not the set was successful
+    * @return whether or not the set was successful
     */
    final public boolean set(Object names[], Object value)
    throws PropertyException {
@@ -412,7 +412,7 @@ public class Context implements Map, Cloneable {
    /**
     * Same as set(Object names[], Object value) but can be overridden
     * by subclasses to behave differently
-    * @returns whether or not the set was successful
+    * @return whether or not the set was successful
     */
    public boolean setProperty(Object names[],Object value)
    throws PropertyException {
