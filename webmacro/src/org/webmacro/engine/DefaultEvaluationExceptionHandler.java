@@ -54,11 +54,11 @@ public class DefaultEvaluationExceptionHandler
    }
 
    public String warning(String warningText) {
-      return "<!--\n " + warningText + "\n -->";
+      return "<!-- " + warningText + " -->";
    }
 
    public String error(String errorText) {
-      return "<!--\n " + errorText + "\n -->";
+      return "<!-- " + errorText + " -->";
    }
 }
 
