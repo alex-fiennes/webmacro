@@ -6,6 +6,10 @@ These trivial examples are intended to help you get started with
 WebMacro. We suggest you try the HelloWorld example first, as it
 is the easiest to get going.
 
+[NOTE: For information on getting the examples configured on your system see
+the document CONFIGURING-EXAMPLES in the webroot directory of this
+distribution or the Wiki page at http://www.webmacro.org/ConfiguringExamples] 
+
 In each case you will find comments inside the .java file explaining
 what the example is, and how to get it working.
 
@@ -52,7 +56,12 @@ Below is an overview of the examples included with this release:
    different templates, so you can experiment with customizing it.
    Also shows WebMacro using and introspecting some ordinary objects.
  
-
+   Profile
+   -------
+   
+   A servlet that illustrates how to use the #profile directive to time
+   various operations in a WebMacro application.
+   
    Standalone
    ----------
    
@@ -62,6 +71,13 @@ Below is an overview of the examples included with this release:
    Templates.  If you're trying to fit WebMacro into an existing servlet
    application, this example will be of the most benefit for you.
 
+   Sandbox
+   -------
+   
+   A servlet.  This is basically another version of the HelloWorld servlet.
+   It is provided as a place where you can start playing with WebMacro by
+   just editing the template -- sandbox.wm -- and the servlet Sandbox.java.
+   Have fun exploring.
 
    NoServlet
    ---------
