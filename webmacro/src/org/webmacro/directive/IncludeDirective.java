@@ -72,7 +72,7 @@ public class IncludeDirective extends Directive {
     Object fname = file.evaluate(context);
     if (fname == null) {
       writeWarning("#include: cannot retrieve file " 
-                   + fname.toString(), out);
+                   + fname.toString(), context, out);
       throw new PropertyException("#include: file name is null");
     }
     else {
@@ -81,7 +81,7 @@ public class IncludeDirective extends Directive {
       } 
       catch (Exception e) {
         writeWarning("#include: cannot retrieve file " 
-                     + fname.toString(), out);
+                     + fname.toString(), context, out);
         throw new PropertyException("#include: cannot retrieve file "
                                    + fname.toString(), e);
       }

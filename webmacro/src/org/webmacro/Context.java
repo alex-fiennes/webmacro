@@ -26,6 +26,7 @@ package org.webmacro;
 import java.util.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
+import org.webmacro.engine.EvaluationExceptionHandler;
 
 /**
   * A Context contains state. The idea is to put all of the data you 
@@ -54,6 +55,7 @@ public class Context implements Map, Cloneable
 
 
    private HashMap _initializedTools = new HashMap();
+   private EvaluationExceptionHandler _eeHandler;
 
    private Map _variables = new HashMap();
    private Pool _contextPool = null;
@@ -167,6 +169,25 @@ public class Context implements Map, Cloneable
    final public Log getLog(String type) {
       return _broker.getLog(type, type);
    }
+
+   /**
+    * Get the EvaluationExceptionHandler 
+    */
+   public EvaluationExceptionHandler getEvaluationExceptionHandler() {
+     if (_eeHandler != null)
+        return _eeHandler;
+     else 
+        return _broker.getEvaluationExceptionHandler();
+   }
+
+
+   /**
+    * Set a new EvaluationExceptionHandler 
+    */
+   public void setEvaluationExceptionHandler(EvaluationExceptionHandler eeh) {
+      _eeHandler = eeh;
+   }
+
 
    /** 
      * Get the named object/property from the Context. If the Object

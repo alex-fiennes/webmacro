@@ -59,7 +59,7 @@ public class ServletLog extends AbstractLogFile {
        if (e == null)
          _servletContext.log(_mf.format(_args));
        else
-         _servletContext.log(_mf.format(_args), e);
+         _servletContext.log(e, _mf.format(_args));
      }
    }
 

@@ -21,6 +21,7 @@ package org.webmacro;
 
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
+import org.webmacro.engine.*;
 
 import java.util.*;
 import java.io.*;
@@ -61,7 +62,7 @@ public class Broker
    final protected LogSystem _ls;
    final protected Log _log;
    protected ProfileCategory _prof;
-
+   private EvaluationExceptionHandler _eeHandler;
 
    /*
     * Constructors.  Callers shouldn't use them; they should use the
@@ -194,6 +195,8 @@ public class Broker
          _log.error("No Providers specified");
          throw new InitException("No Providers specified in configuration");
       }
+
+      _eeHandler = new DefaultEvaluationExceptionHandler();
    }
 
    /* Factory methods -- the supported way of getting a Broker */
@@ -379,6 +382,22 @@ public class Broker
    public Log getLog(String type) {
       return _ls.getLog(type,type);
    }
+
+   /**
+    * Get the EvaluationExceptionHandler 
+    */
+   public EvaluationExceptionHandler getEvaluationExceptionHandler() {
+      return _eeHandler;
+   }
+
+
+   /**
+    * Set a new EvaluationExceptionHandler 
+    */
+   public void setEvaluationExceptionHandler(EvaluationExceptionHandler eeh) {
+      _eeHandler = eeh;
+   }
+
 
    /** 
     * Get a resource (file) from the the Broker's class loader

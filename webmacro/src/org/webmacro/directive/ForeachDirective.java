@@ -141,7 +141,7 @@ public class ForeachDirective extends Directive {
     } catch (PropertyException e) {
       String errorText = "#foreach: Unable to set list index";
       context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, out);
+      writeWarning(errorText, context, out);
     }
   } 
 

@@ -74,11 +74,11 @@ public class ParseDirective extends Directive {
     } catch (IOException e) {
       String warning = "#parse: Error reading template: " + fname;
       context.getLog("engine").warning(warning, e);
-      writeWarning(warning, out);
+      writeWarning(warning, context, out);
     } catch (Exception e) {
       String warning = "#parse: Template not found: " + fname;
       context.getLog("engine").warning(warning,e);
-      writeWarning(warning, out);
+      writeWarning(warning, context, out);
     }
   }
   

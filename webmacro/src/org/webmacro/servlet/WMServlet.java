@@ -303,7 +303,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final protected Template error(WebContext context, String error)
    {
       Template tmpl = null;
-      _log.warning(error);
       Handler hand = new ErrorHandler();
       try {
         context.put(getConfig(ERROR_VARIABLE, ERROR_VARIABLE_DEFAULT), 
@@ -463,12 +462,22 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          // ignore disconnect
       } catch (Exception e) {
          String error =
-            "WebMacro encountered an error while executing a  template:\n"
+            "WebMacro encountered an error while executing a template:\n"
             + ((tmpl != null) ?  (tmpl  + ": " + e + "\n") :
                 ("The template failed to load; double check the "
                  + "TemplatePath in your webmacro.properties file."));
          _log.warning(error,e);
-         try { fw.write(error); } catch (Exception ignore) { }
+         try {
+           Template errorTemplate = error(c, 
+              "WebMacro encountered an error while executing a template:\n"
+               + ((tmpl != null) ?  (tmpl  + ": ") 
+                  : ("The template failed to load; double check the "
+                     + "TemplatePath in your webmacro.properties file."))
+                                          + "\n<pre>" + e + "</pre>\n");
+           fw.reset(fw.getOutputStream());
+           errorTemplate.write(fw, c);
+         } 
+         catch (Exception ignore) { }
       } finally {
          try {
             if (fw != null) {

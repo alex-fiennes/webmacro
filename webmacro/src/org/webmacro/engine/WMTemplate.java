@@ -161,7 +161,7 @@ abstract public class WMTemplate implements Template
      * such as unable to read template or unable to introspect the context
      * then this method will return a null string.
      */
-   public final Object evaluate(Context data)
+   public final Object evaluate(Context data) throws PropertyException
    {
       try {
          FastWriter fw = FastWriter.getInstance();
@@ -187,7 +187,7 @@ abstract public class WMTemplate implements Template
      * @return whether the operation was a success
      */
    public final void write(FastWriter out, Context data) 
-      throws IOException
+     throws IOException, PropertyException
    {
       try {
          if (_content == null) {
@@ -195,9 +195,9 @@ abstract public class WMTemplate implements Template
          }
       } catch (TemplateException e) {
          _log.error("Template: Unable to parse template: " + this, e);
-         out.write("<!--\n Template failed to parse. Reason: ");
-         out.write(e.toString());
-         out.write(" \n-->");
+         out.write(data.getEvaluationExceptionHandler()
+                   .error("Template failed to parse. Reason: \n" 
+                          + e.toString()));
       }
 
       try {
@@ -205,12 +205,11 @@ abstract public class WMTemplate implements Template
       } catch (PropertyException e) {
          String warning = 
             "Template: Missing data in Context passed to template " + this;
-         _log.warning(warning,e);
+         _log.warning(warning, e);
          
-         out.write("<!--\n Could not interpret template. Reason: ");
-         out.write(warning);
-         out.write(e.toString());
-         out.write(" \n-->");
+         out.write(data.getEvaluationExceptionHandler()
+                   .warning("Could not interpret template. Reason: \n"
+                            + warning + "\n" + e.toString()));
       } 
    }
 

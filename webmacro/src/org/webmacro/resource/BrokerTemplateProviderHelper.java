@@ -24,7 +24,7 @@
 package org.webmacro.resource;
 
 import  org.webmacro.*;
-import  org.webmacro.engine.StreamTemplate;
+import  org.webmacro.engine.*;
 import  org.webmacro.util.*;
 import  java.util.*;
 import  java.io.*;
@@ -86,15 +86,18 @@ final public class BrokerTemplateProviderHelper
          ret = new UrlTemplateTimedReference(t, _cacheDuration, tUrl, lastMod);
       }
       catch (NullPointerException npe) {
-         _log.warning ("BrokerTemplateProvider: Template not found: " + name, 
-                       npe);
+         _log.warning ("BrokerTemplateProvider: Template not found: " + name);
       }
-      catch (Exception e) {  
-         // Parse error
+      catch (ParseException e) {  
          _log.warning ("BrokerTemplateProvider: Error occured while parsing " 
                        + name, e);
          throw new InvalidResourceException("Error parsing template " + name, 
                                             e);
+      }
+      catch (Exception e) {  
+         _log.warning ("BrokerTemplateProvider: Error occured while fetching " 
+                       + name, e);
+         throw new ResourceException("Error parsing template " + name, e);
       }
       if (ret == null) 
          throw new NotFoundException(this + " could not locate " + name);

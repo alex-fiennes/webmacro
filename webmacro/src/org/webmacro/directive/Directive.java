@@ -96,9 +96,10 @@ public abstract class Directive implements Macro, Visitable {
    * assumed to be the only underlying language. 
    */
 
-  protected static String getWarningText(String warning) 
-  throws IOException {
-    return "<!-- WARNING: " + warning + " -->";
+  protected static String getWarningText(String warning, Context context) 
+  throws IOException, PropertyException {
+    return context.getEvaluationExceptionHandler()
+      .warning("WARNING: " + warning);
   }
 
   /**
@@ -107,9 +108,11 @@ public abstract class Directive implements Macro, Visitable {
    * assumed to be the only underlying language. 
    */
 
-  protected static void writeWarning(String warning, FastWriter writer) 
-  throws IOException {
-    writer.write(getWarningText(warning));
+  protected static void writeWarning(String warning, 
+                                     Context context, 
+                                     FastWriter writer) 
+  throws IOException, PropertyException {
+    writer.write(getWarningText(warning, context));
   }
 
   public void accept(TemplateVisitor v) {
