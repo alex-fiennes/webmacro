@@ -37,7 +37,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       </tr>
     #end
   </table>
-  #parse "TableNav.wm"
+  #include "TableNav.wm"
 
 <b>Table 2, fields by number, with row attributes</b><br>
 <i>Note: the error in the last column is there intentionally for illustration</i><br>
@@ -58,7 +58,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       <tr bgcolor="$row.Attributes.bgcolor">
         <td>
           <font color="$row.Attributes.fgcolor">
-            $row.Attributes.styleBegin;$row.itemAt(3)$row.Attributes.styleEnd
+            $row.Attributes.styleBegin$row.itemAt(3)$row.Attributes.styleEnd
           </font></td>
         <td><font color="$row.Attributes.fgcolor">$row.itemAt(1)</font></td>
         <td><font color="$row.Attributes.fgcolor">$row.itemAt(2)</font></td>
@@ -67,7 +67,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
     #end
   </table>
 
-  #parse "TableNav.wm"
+  #include "TableNav.wm"
 
   <b>Table 3, fields by name</b> <i>(NOTE: the errors in BADCOL are intentional.)</i>
   #set $tbl.RowColors = ["\#999999", "\#FFFFFF"]
@@ -83,7 +83,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       </tr>
     #end
   </table>
-  #parse "TableNav.wm"
+  #include "TableNav.wm"
 
 </body>
 </html>
