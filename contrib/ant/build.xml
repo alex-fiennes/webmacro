@@ -69,6 +69,20 @@
         />
     </target>
 
+    <!--
+        ContextDebugger tool
+    -->
+
+    <target name="contextdebugger" depends="main">
+        <javac 
+            srcdir="contrib/ContextDebugger/src"
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+            deprecation="on"
+        />
+    </target>
+
 
     <!-- 
         BeanTool

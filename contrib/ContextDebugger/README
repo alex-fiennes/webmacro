@@ -1,0 +1,11 @@
+From: alexj@go-nst.com
+Subject: Re: [Webmacro] Self-documenting WMServlets, getting meta info from context, etc.
+Date: Tue, 9 Jan 101 15:34:12 +0000
+
+I have written a tool called ContextDebugger that once registered as a tool can 
+be called via $ContextDebugger. This will dump out The countents of the 
+context. This will list all the keys, objects and object types. Also it will 
+dump out the contexts of the HTTPSession, Any Cookies, Parameters RequestInfo 
+etc. I hope it is useful to anyone. You are welcome to use it. 
+
+Alex Jeannopoulos
