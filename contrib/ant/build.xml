@@ -30,11 +30,18 @@
         <copy file="./WebMacro.defaults" todir="${dest.classes}"/>
 	</target>
 
-	<target name="jar" depends="clean,main">
+
+	<target name="_jar" depends="main">
+        <delete file="${dest}/webmacro.jar"/>
 		<jar jarfile="${dest}/webmacro.jar"
        		basedir="${dest.classes}"
   		/>
   	</target>
+
+	<target name="jar" depends="clean,_jar">
+
+  	</target>
+
 
     <!--
         ActionServlet broken - skip
