@@ -91,20 +91,36 @@ final public class BrokerTemplateProviderHelper
 
       tUrl = findTemplate(name);
       try {
-         long lastMod = UrlProvider.getUrlLastModified(tUrl);
-         String encoding = tUrl.openConnection().getContentEncoding();
-         // encoding may be null. Will be handled by StreamTemplate
-         t = new StreamTemplate(_broker, 
-                                UrlProvider.getUrlInputStream(tUrl),
-                                encoding);
-         t.setName(name);
-         t.parse ();
-         ret = t;
-         if (_cacheSupportsReload) {
-             CacheReloadContext reloadContext = new UrlReloadContext(tUrl, lastMod);
-             ce.setReloadContext(reloadDelay.decorate(tUrl.getProtocol(),
-                                                      reloadContext));
-         }
+        String protocol = tUrl.getProtocol();
+        // Treat files as a special case
+        if (protocol.equals("file")) {
+          File f = new File(tUrl.getFile());
+          long lastMod = f.lastModified();
+
+          t = new FileTemplate(_broker, f);
+          ret = t;
+          if (_cacheSupportsReload) {
+            CacheReloadContext reloadContext 
+              = new TemplateProvider.FTReloadContext(f, lastMod);
+            ce.setReloadContext(reloadDelay.decorate("file", reloadContext));
+          }
+        }
+        else {
+          long lastMod = UrlProvider.getUrlLastModified(tUrl);
+          String encoding = tUrl.openConnection().getContentEncoding();
+          // encoding may be null. Will be handled by StreamTemplate
+          t = new StreamTemplate(_broker, 
+                                 UrlProvider.getUrlInputStream(tUrl),
+                                 encoding);
+          t.setName(name);
+          t.parse ();
+          ret = t;
+          if (_cacheSupportsReload) {
+            CacheReloadContext reloadContext = new UrlReloadContext(tUrl, lastMod);
+            ce.setReloadContext(reloadDelay.decorate(tUrl.getProtocol(),
+                                                     reloadContext));
+          }
+        }
       }
       catch (NullPointerException npe) {
          _log.warning ("BrokerTemplateProvider: Template not found: " + name);
