@@ -725,13 +725,29 @@ Object Conditional() : {
 /* Productions used in WM variable references.  State: WM.  */
 
 // Used by VariableReference; shouldn't be used outside it
+Object ObjectRoot() : {
+  Token t; 
+  ListBuilder argList;
+  Object element;
+}
+{
+  ( 
+    LOOKAHEAD(<WORD><LPAREN>) 
+      t=<WORD> <LPAREN> argList=ArgList() <RPAREN>
+      { element = new FunctionCallBuilder((String) t.image, argList); }
+    | t=<WORD> { element=t.image; }
+  )
+  { return element; }
+}
+
+// Used by VariableReference; shouldn't be used outside it
 void VariableReferenceGuts(ArrayList v) : {
   Token t;
   Object element;
   ListBuilder argList;
 }
 {
-  t=<WORD> { v.add(t.image); }
+  element=ObjectRoot() { v.add(element); }
   ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; }
     [ <LPAREN> argList=ArgList() <RPAREN>
       { element = new PropertyMethodBuilder((String) element, argList); }
