@@ -47,6 +47,7 @@ import org.webmacro.NotFoundException;
   * This is the servlet which accepts incoming requests and farms them off
   * <p>
   * @see org.webmacro.Handler
+  * @deprecated you probably ought to use the standalone org.webmacro.WM instead
   */
 final public class Reactor extends WMServlet
 {

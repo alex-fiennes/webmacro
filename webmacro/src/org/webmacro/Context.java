@@ -9,20 +9,30 @@ import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.Map;
 
 /**
-  * A Context is the execution context of a WebMacro request. It represents
-  * the data associated with a specific user of a Macro. The Context class 
-  * is not threaded--the expectation is that each use of a Macro will occur
-  * in its own thread. You can have multiple threads, each with its own 
-  * Context, accessing the same Macro. A Context contains a reference to 
-  * the broker in use for this request, a collection of Context tools, 
-  * local variables, and a bean object representing the Context's data.
+  * A Context contains all of the data you wish to display in a WebMacro 
+  * template. Ordinarily you just use the get() and set() methods to load
+  * the Context with all of your data, as if it were a hashtable, and then
+  * pass it to a Template for execution.
   * <p>
-  * Historical Note: In previous versions of WebMacro a Context was an 
-  * object of arbitrary type. That corresponds to Context.getBean()
-  * in the current implementation. 
+  * You should create a new Context for every request, usually by cloning
+  * a prototype object. The Context is not thread-safe and expects to
+  * operate in a thread-per-request environment. Because all of the 
+  * request-specific state is contained within the Context, Templates 
+  * and other objects can be safely shared between multiple threads. 
+  * <p>
+  * A Context also contains other things that may be useful to the template
+  * processing system: a copy of the Broker that is currently in effect, 
+  * which can be used to load other objects; a set of ContextTools which 
+  * add additional functionality to templates; and potentially an instance
+  * of a Java Bean which should be used as the root of introspection. If 
+  * the bean is null then the Context itself is the root of introspection.
+  * <p>
+  * You may wish to make use of the ContextTool objects directly within 
+  * your application. 
   * <p>
   * A Context is cloneable so that you can efficiently create a new 
-  * context from an existing one. The cloned context will not share 
+  * context from an existing one. Instantiating a brand new context object
+  * using the constructor is expensive. The cloned context will not share 
   * local variables with its sibling, but will share the same tools 
   * (including tool instances), and the same broker.
   */
@@ -51,13 +61,29 @@ public class Context implements Cloneable {
    // CONSTRUCTION, INITIALIZATION, AND LIFECYCLE
 
    /**
-     * Create an empty context--no bean, no tools, just local variables
-     * and a broker.
+     * Create an empty context--no bean, just local variables
+     * and a broker. Tools loaded from config "ContextTools".
+     * <p>
+     * Ordinarily you don't call this method: you create a prototype
+     * Context and then use newInstance. Creating the initial Context
+     * object is fairly expensive. Use the WebMacro.getContext() 
+     * method instead.
      */
-   public Context(final Broker broker) {
+   protected Context(final Broker broker) {
       _broker = broker; 
       _bean = null;
       _toolbox = null;
+      try {
+         String tools = (String) broker.getValue("config","ContextTools");
+         registerTools(tools);
+      } catch (InvalidTypeException it) {
+         _log.exception(it);
+         _log.error("config type not registered with broker!");
+      } catch (NotFoundException ne) {
+         _log.exception(ne);
+         _log.warning("could not load ContextTools from config: " + ne);
+      }
+ 
    }
 
    /**
@@ -67,8 +93,7 @@ public class Context implements Cloneable {
      * introspection, otherwise property introspection will work with 
      * the local variables stored in this context.
      */
-   public Context(final Broker broker, final Map toolbox, 
-         final Object bean)
+   protected Context(final Broker broker, final Map toolbox, final Object bean)
    {
       _broker = broker;
       _bean = bean;
@@ -102,6 +127,8 @@ public class Context implements Cloneable {
    }
 
    /**
+     * This method is ordinarily called by the template processing system.
+     * <p>
      * Push the supplied bean onto the context, creating a sub-context 
      * which is equivalent to the current one, only with fresh local vars
      * and using this bean for property evaluation. A subsequent pop will
@@ -144,6 +171,8 @@ public class Context implements Cloneable {
    }
 
    /**
+     * This method is ordinarily called by the template processing system.
+     * <p>
      * Restore the context to the state prior to the last push(bean), 
      * recovering the old local variables and the old bean. If you pop
      * more times than you push, this has no effect.
@@ -166,6 +195,8 @@ public class Context implements Cloneable {
 
 
    /**
+     * This method is ordinarily called by the template processing system.
+     * <p>
      * Clear the context of its non-shared data, preserving only the toolbox.
      */
    public void clear() {
@@ -190,10 +221,13 @@ public class Context implements Cloneable {
    // INITIALIZATION: TOOL CONFIGURATION
 
    /**
+     * This method is called when initializing a new context. You would
+     * ordinarily then clone the configured context.
+     * <p>
      * Subclasses can use this method to register new ContextTools
      * during construction or initialization of the Context. 
      */
-   final public void registerTool(String name, ContextTool tool) 
+   final protected void registerTool(String name, ContextTool tool) 
       throws ContextException
    {
       if (_toolbox == null) {
@@ -220,7 +254,7 @@ public class Context implements Cloneable {
      * of class names which can be loaded and introspected. It is expected
      * this method will be used during construction or initialization.
      */
-   final public void registerTools(String tools) {
+   final protected void registerTools(String tools) {
       Enumeration tenum = new StringTokenizer(tools);
       while (tenum.hasMoreElements()) {
          String toolName = (String) tenum.nextElement();
@@ -335,7 +369,7 @@ public class Context implements Cloneable {
    // LOCAL VARIABLE API
 
    /**
-     * Retrieve a local value from this Context
+     * Retrieve a local value from this Context. 
      */
    final public Object get(Object name) {
       return (_locals != null) ? _locals.get(name) : null;
@@ -352,7 +386,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Get the named local variable via introspection 
+     * Get the named local variable via introspection. This is 
+     * an advanced-use method.
      */
    public final Object getLocal(final Object[] names) 
       throws PropertyException, ContextException
@@ -372,7 +407,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Set the named local variable via introspection 
+     * Set the named local variable via introspection. This is 
+     * an advanced-use method.
      */
    final public boolean setLocal(final Object[] names, final Object value) 
       throws PropertyException, ContextException
@@ -401,7 +437,7 @@ public class Context implements Cloneable {
 
    /**
      * Return the tool corresponding to the specified tool name, or 
-     * null if there isn't one
+     * null if there isn't one. This is an advanced-use method.
      */
    final public Object getTool(Object name) 
       throws ContextException
@@ -428,7 +464,8 @@ public class Context implements Cloneable {
       }
    }
    /**
-     * Get the named tool variable via introspection 
+     * Get the named tool variable via introspection. This is an 
+     * advanced-use method.
      */
    public final Object getTool(final Object[] names) 
       throws PropertyException, ContextException
@@ -445,7 +482,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Set the named tool variable via introspection 
+     * Set the named tool variable via introspection. This is an 
+     * advanced-use method.
      */
    final public boolean setTool(final Object[] names, final Object value) 
       throws PropertyException, ContextException

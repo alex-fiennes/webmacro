@@ -84,5 +84,23 @@ public interface WebMacro
      */
    public String getConfig(String key) throws NotFoundException;
 
+   /**
+     * Create a new Context. You will likely call this method on every 
+     * request to create the Context you require for template execution. 
+     * Fill the Context up with the data you wish to display on the 
+     * template. 
+     */
+   public Context getContext();
+
+   /**
+     * Create a new WebContext object. This returns a Context object 
+     * with special knowledge of servlets (request and response) 
+     * thereby enabling some extra functionality. If you are using 
+     * WebMacro under a servlet this is the preferred method, 
+     * otherwise you ought to use getContext().
+     */
+   public org.webmacro.servlet.WebContext getWebContext(javax.servlet.http.HttpServletRequest req, javax.servlet.http.HttpServletResponse resp);
+
+
 }
 

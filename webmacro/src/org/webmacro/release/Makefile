@@ -1,7 +1,5 @@
 
-JAVAHOME=/local/java
-JSDKHOME=/local/www/jsdk
-CLASSPATH=$(JAVAHOME)/lib/classes.zip:/local/java-lib/collections.jar:$(JSDKHOME)/src:.
+CLASSPATH=$(JAVAHOME)/lib/classes.zip:/local/java-lib/collections.jar:/local/java-lib/jsdk.jar:.
 
 TARGETS = 	webmacro/webmacro.jar \
             	webmacro/src.zip \

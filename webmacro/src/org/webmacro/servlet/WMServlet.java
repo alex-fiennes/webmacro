@@ -345,6 +345,22 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       return _wm.getConfig(key);
    }
 
+   /**
+     * Create a new Context object
+     */
+   final public Context getContext()
+   {
+      return _wm.getContext();
+   }
+
+   /**
+     * Create a new WebContext object
+     */
+   final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse res)
+   {
+      return _wm.getWebContext(req,res);
+   }
+
 
    // DELEGATE-TO METHODS -- COMMON THINGS MADE EASIER
 

@@ -77,24 +77,21 @@ public class WebContext extends Context
    // property interface fields that are lazily set, non-final, and private
               
    /**
-     * Construct a new WebContext. This class will be loaded with a set
-     * of tools and other things, which can be configured. Actual 
-     * runtime instances which are used on a per-request basis 
-     * will be obtained from this prototype using the newInstance 
-     * factory method.
+     * Construct a new WebContext. The WebContext will have WebContextTools
+     * in addition to the ordinary ContextTools loaded from config.
      */
    public WebContext(final Broker broker) 
    {
       super(broker);
       try {
-         String tools = (String) broker.getValue("config","ContextTools");
+         String tools = (String) broker.getValue("config","WebContextTools");
          registerTools(tools);
       } catch (InvalidTypeException it) {
          _log.exception(it);
          _log.error("config type not registered with broker!");
       } catch (NotFoundException ne) {
          _log.exception(ne);
-         _log.warning("could not load tools from config: " + ne);
+         _log.warning("could not load WebContextTools from config: " + ne);
       }
    }
 

@@ -25,6 +25,10 @@ import org.webmacro.resource.*;
 import org.webmacro.util.*;
 import java.util.*;
 
+import org.webmacro.servlet.WebContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.HashMap;
 
@@ -42,6 +46,8 @@ public class WM implements WebMacro
 
    final private static Map _brokers = new HashMap();
    final private static BrokerOwner _default = new BrokerOwner();
+   private Context _context = null;
+   private WebContext _webContext = null;
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
@@ -139,6 +145,21 @@ public class WM implements WebMacro
       // complaining that it has been shut down, or they'll get a null here.
       return _broker;
    }
+
+   final public Context getContext() {
+      if (_context == null) {
+         _context = new Context(getBroker());
+      }
+      return (Context) _context.clone();
+   }
+
+   final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse resp) {
+      if (_webContext == null) {
+         _webContext = new WebContext(getBroker());
+      }
+      return _webContext.newInstance(req,resp);
+   }
+
 
    /**
      * Retrieve a template from the "template" provider. Equivalent to 
