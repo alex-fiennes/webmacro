@@ -1,27 +1,44 @@
-WebMacro 1.0rc3
+WebMacro 1.1b1
 ---------------
                     
-This is the third 1.0 release candidate.  We've worked hard to get here, and
-we hope WebMacro will (continue to) work hard for you.
+This is the fist in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
+new features such as #macro, #count, and $functions().
 
-Should you encounter problems with this release, please submit a bug report
-to http://www.webmacro.org/bugzilla/.
+WebMacro is alive, and this release is proof!
 
-As always, see http://www.webmacro.org for complete documentation.
+The best place for information about WebMacro is our website:
+    http://www.webmacro.org/
 
-Unless there are some serious problems found, this will be the last release
-candidate prior to release 1. 
+In addition, WebMacro has relocated the management aspects of the project to
+SourceForge (http://www.sourceforge.net/projects/webmacro/).  We hope this
+will prove to give the WebMacro community continued support.  We also hope
+it will make our lives a bit easier too!
+
+Please note that our mailing list address has changed.  
+Visit http://www.webmacro.org/MailingList for details.
+
 
 Changes in this Release
 -----------------------
 
-- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
+- added #macro directive (brian)
 
-- Fixed "characters get dropped" when parsing templates (brian)
+- added #count directive (eric)
+
+- added $functions() (keats)
+
+- cleanup some error messages (eric)
+
+- moved to SourceForge (eric)
+
 
 
 Changes Prior to this Release
 -----------------------------
+
+- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
+
+- Fixed "characters get dropped" when parsing templates (brian)
 
 - More encoding tests.  TestWindows1251Encoding and TestISO88591Encoding
 
