@@ -24,7 +24,6 @@
 package org.webmacro.engine;
 import java.util.*;
 import org.webmacro.*;
-import org.webmacro.util.*;
 
 
 /**
@@ -87,7 +86,7 @@ public class BuildContext extends Context
    /**
      * Register a new filter, adding it to the chain for the supplied name.
      * The name is either a top level property name or * to mean "all".
-     * @param name the top level property name that is being filtered
+     * @param var the top level property name that is being filtered
      * @param ft the Filter which will handle this property
      */
    public void addFilter(Variable var, Filter ft) {
@@ -125,6 +124,26 @@ public class BuildContext extends Context
    public MacroDefinition getMacro(String name) {
       return (MacroDefinition) _macros.get(name);
    }
+
+  /**
+   * Add #macros and #params from the specified Template to
+   * this bulid context
+   */
+  public void mergeConstants(Template t) {
+      Map macros = t.getMacros();
+      Map params = t.getParameters();
+      if (macros != null)
+          _macros.putAll(macros);
+      if (params != null)
+        super.putAll(params);
+  }
+
+  /**
+   * Return the map of MacroDefinitions
+   */
+  public Map getMacros() {
+      return _macros;
+  }
 
   /**
    * Create a variable (or resolve a constant at build time) 
