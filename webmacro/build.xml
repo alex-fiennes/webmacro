@@ -90,7 +90,7 @@
     <copy todir="${dist}" file="${jar}"/>
     <copy todir="${dist}">
       <fileset dir="webroot" 
-               includes="LICENSE,CREDITS,README.html,RELEASE-NOTES.html"/>
+               includes="LICENSE,CREDITS,README.html"/>
     </copy>
     <mkdir dir="${dist}/examples" />
     <copy todir="${dist}/examples">
