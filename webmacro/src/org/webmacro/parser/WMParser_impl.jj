@@ -36,6 +36,8 @@ public class WMParser_impl {
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
        Block b = (Block) bb.build(new BuildContext(broker,encoding));
+       // Dumper d = new Dumper();
+       // b.accept(d);
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();
@@ -97,10 +99,10 @@ TOKEN_MGR_DECLS : {
 | <#_ALPHANUM_CHAR: [ "a"-"z", "A"-"Z", "0"-"9" ] >
 | <#_IDENTIFIER_CHAR: [ "a"-"z", "A"-"Z", "0"-"9", "_" ] >
 | <#_IDENTIFIER: <_ALPHA_CHAR> (<_IDENTIFIER_CHAR>)* >
-| <#_WHITESPACE: ( " " | "\t" ) >
 | <#_NEWLINE:    ( "\r\n" | "\r" | "\n" ) >
-| <#_QCHAR:      ( "\\" ~["a"-"z", "A"-"Z", "0"-"9"] ) >
-| <#_COMMENT:    "##" (~["\r", "\n"])* <_NEWLINE> >
+| <#_WHITESPACE: ( " " | "\t" ) >
+| <#_QCHAR:      ( "\\" (<_NEWLINE> | ~["a"-"z", "A"-"Z", "0"-"9"] ) ) >
+| <#_COMMENT:    "##" (~["\r", "\n"])* >
 }
 
 <DEFAULT> TOKEN : {
@@ -177,6 +179,8 @@ TOKEN_MGR_DECLS : {
  */
 
 
+// Lookahead productions
+
 // is the next thing a subdirective? 
 JAVACODE
 Subdirective 
@@ -221,18 +225,20 @@ Object parse_arg(ArgDescriptor arg) {
     return Conditional();
       
   case Directive.ArgType_BLOCK: {
-    PostDirectiveWs();
+    OptionalWsNl();
     SetState(DEFAULT);
     BlockBuilder b = Block();
     SetState(WM);
+    OptionalWs();
     return b;
   }
 
   case Directive.ArgType_LITBLOCK: {
-    PostDirectiveWs();
+    OptionalWsNl();
     SetState(DEFAULT);
     BlockBuilder b = LiteralBlock();
     SetState(WM);
+    OptionalWs();
     return b;
   }
 
@@ -338,7 +344,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
     DirectiveArgs da;
 
     while ((subd = lookahead_subdirective(descriptor.subdirectives)) != null) {
-      Subdirective();
+      SubdirectiveStart();
       try {
         da = db.newSubdirective(subd.id);
       } catch (BuildException e) {
@@ -347,6 +353,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
       parse_args(subd.args, da);
     }
   }
+  OptionalWs();
     
   SetState(DEFAULT);
   return db;
@@ -360,17 +367,23 @@ Token RelOp() : {
   { return t; }
 }
 
-void PostDirectiveWs() : {
+void OptionalWsNl() : {
 }
 {
   [ <WS> ] [ <NEWLINE> [ <WS> ] ]
+}
+
+void OptionalWs() : {
+}
+{
+  [ <WS> ] 
 }
 
 Builder LValue() : {
   Builder lv;
 }
 {
-  [ <WS> ] lv=SimpleTerm() [ <WS> ] { return lv; }
+  [ <WS> ] lv=VariableReference() [ <WS> ] { return lv; }
 }
 
 Object RValue() : {
@@ -427,53 +440,30 @@ Object Conditional() : {
   <LPAREN> [ <WS> ] e=Expression() [ <WS> ] <RPAREN> { return e; }
 }
 
-Builder SimpleTerm() : {
-  Token t;
-  Vector v = new Vector();
-}
-{
-  <DOLLAR> (
-      t=<WORD> { v.addElement(t.image); }
-      ( 
-        <DOT> t=<WORD> { v.addElement(t.image); } 
-      ) * 
-    | <LPAREN> 
-      t=<WORD> { v.addElement(t.image); } 
-      ( 
-        <DOT> t=<WORD> { v.addElement(t.image); } 
-      ) * 
-      <RPAREN> 
-  )
-  {  
-    Object[] names = new Object[v.size()];
-    v.copyInto(names);
-    return new VariableBuilder(names, false);
-  }
-}
 
-Builder FullTerm() : {
+void VariableReferenceGuts(Vector v) : {
   Token t;
-  Vector v = new Vector();
   Object element;
   ListBuilder argList;
 }
 {
+  t=<WORD> { v.addElement(t.image); }
+  ( <DOT> t=<WORD> { element = t.image; } 
+    [ <LPAREN> argList=ArgList() <RPAREN> 
+      { element = new PropertyMethodBuilder((String) element, argList); }
+    ]  
+    { v.addElement(element); }
+  )*  
+}
+
+// State information: Expects WM
+Builder VariableReference() : {
+  Vector v = new Vector();
+}
+{
   <DOLLAR> (
-      t=<WORD> { v.addElement(t.image); }
-      ( <DOT> t=<WORD> { element = t.image; } 
-        [ <LPAREN> argList=ArgList() <RPAREN> 
-          { element = new PropertyMethodBuilder((String) element, argList); }
-        ]  
-        { v.addElement(element); }
-      )*  
-    | 
-      <LPAREN> t=<WORD> { v.addElement(t.image); }
-      ( <DOT> t=<WORD> { element = t.image; }
-        [ <LPAREN> argList=ArgList() <RPAREN> 
-          { element = new PropertyMethodBuilder((String) element, argList); }
-        ]  
-        { v.addElement(element); }
-      )* <RPAREN>
+    VariableReferenceGuts(v) 
+    | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )
   { 
     Object[] names = new Object[v.size()];
@@ -495,7 +485,7 @@ Builder QuotedString() : {
     | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
     | t=<SLASH> { qs.addElement(t.image); }
     | LOOKAHEAD(<DOLLAR>) { SetState(WM); } 
-      term=SimpleTerm() { qs.addElement(term); } 
+      term=VariableReference() { qs.addElement(term); } 
       { SetState(QS); } ) * 
   <QUOTE> 
   { SetState(entryState); }
@@ -621,7 +611,7 @@ Object Term() : {
 }
 {
   ( 
-    e=FullTerm() 
+    e=VariableReference() 
     | <LPAREN> e=Expression() <RPAREN>
     | e=QuotedString()
     | e=BracketList() 
@@ -641,65 +631,57 @@ Object Term() : {
 
   
 // State information: assumes DEFAULT; returns in DEFAULT
-Object WMContent() : {
+void WMContent(ParserBlockBuilder b) : {
   Token t;
   Object o;
 }
 {
-  ( t=<STUFF>       { o = t.image; }
-    | t=<QCHAR>     { o = t.image.substring(1); }
-    | t=<SLASH>     { o = t.image; }
+  ( t=<STUFF>       { b.addElement(t.image); }
+    | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
+    | t=<SLASH>     { b.addElement(t.image); }
     | <POUND> { SetState(WM); } 
           t=<WORD> [ <WS> ] o=parse_directive(t.image) 
-          { SetState(DEFAULT); }
+          { b.eatTrailingWsNl(); b.addElement(o); }
     | LOOKAHEAD(<DOLLAR>) 
           { SetState(WM); } 
-          o=FullTerm() 
-          { SetState(DEFAULT); }
-  ) [ <COMMENT> ]
-  { return o; }
+          o=VariableReference() 
+          { b.addElement(o); SetState(DEFAULT); }
+  ) [ <COMMENT> { b.eatTrailingWsNl(); } ]
 }
 
-Object LiteralWMContent() : {
+void LiteralWMContent(ParserBlockBuilder b) : {
   Token t;
-  Object o;
 }
 {
-  ( t=<STUFF>     { o = t.image; }
-    | t=<QCHAR>   { o = t.image.substring(1); }
-    | t=<SLASH>   { o = t.image; }
-    | t=<POUND>   { o = t.image; }
-    | t=<DOLLAR>  { o = t.image; }
-    | t=<COMMENT> { o = t.image; }
+  ( 
+    t=<QCHAR> { b.addElement(t.image.substring(1)); }
+    | ( t=<STUFF> | t=<SLASH> | t=<POUND> | t=<DOLLAR> | t=<COMMENT> )
+      { b.addElement(t.image); }
   )
-  { return o; }
 }
 
 // State: Assumes WM
-void Subdirective() : {
+void SubdirectiveStart() : {
 }
 { 
-  [ <WS> ] [ <NEWLINE> [ <WS> ] ] 
-  <POUND> <WORD> [ <WS> ] 
+  OptionalWsNl() <POUND> <WORD> [ <WS> ] 
 }
 
 BlockBuilder LiteralBlock() : {
-  BlockBuilder block = new BlockBuilder();
-  Object o;
+  ParserBlockBuilder block = new ParserBlockBuilder();
+  Token t;
 }
 {
   ( 
     LOOKAHEAD(<LBRACE>) 
     ( <LBRACE>    
-      ( o=LiteralWMContent() { block.addElement(o); } 
-        | <BEGIN>            { block.addElement("#begin"); }
-        | <END>              { block.addElement("#end"); }
+      ( LiteralWMContent(block) 
+        | ( t=<BEGIN> | t=<END> )     { block.addElement(t.image); }
       ) * 
       <RBRACE> )
   | ( [ <BEGIN> ] 
-      ( o=LiteralWMContent() { block.addElement(o); } 
-        | <LBRACE>           { block.addElement("{"); } 
-        | <RBRACE>           { block.addElement("}"); } 
+      ( LiteralWMContent(block)
+        | ( t=<LBRACE> | t=<RBRACE> ) { block.addElement(t.image); } 
       ) * 
       <END> )
   )
@@ -708,37 +690,33 @@ BlockBuilder LiteralBlock() : {
 
 
 BlockBuilder Block() : {
-  BlockBuilder block = new BlockBuilder();
-  Object o;
+  ParserBlockBuilder block = new ParserBlockBuilder();
+  Token t;
 }
 { 
   ( 
     LOOKAHEAD(<LBRACE>) 
-    ( <LBRACE>    
-      ( o=WMContent() { block.addElement(o); } 
-        | <BEGIN>     { block.addElement("#begin"); }
-        | <END>       { block.addElement("#end"); } 
-      ) * <RBRACE> )
+    ( <LBRACE> 
+      ( WMContent(block) 
+        | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
+      ) * <RBRACE> { block.eatTrailingWs(); } )
   | ( [ <BEGIN> ] 
-      ( o=WMContent() { block.addElement(o); }
-        | <LBRACE>    { block.addElement("{"); }
-        | <RBRACE>    { block.addElement("}"); }
-      ) * <END> )
+      ( WMContent(block) 
+        | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
+      ) * <END> { block.eatTrailingWs(); } )
   )
   { return block; }
 }
 
 BlockBuilder WMDocument() : {
-  BlockBuilder block = new BlockBuilder();
-  Object o;
+  ParserBlockBuilder block = new ParserBlockBuilder();
+  Token t;
 }
 {
   ( 
-    ( o=WMContent()  { block.addElement(o); }
-      | <BEGIN>      { block.addElement("#begin"); }
-      | <END>        { block.addElement("#end"); }
-      | <LBRACE>     { block.addElement("{"); }
-      | <RBRACE>     { block.addElement("}"); }
+    ( WMContent(block)
+      | (t=<BEGIN> | t=<END> | t=<LBRACE> | t=<RBRACE>)
+        { block.addElement(t.image); }
     )
   ) * <EOF> 
   { return block; }

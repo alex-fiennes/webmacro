@@ -9,8 +9,8 @@ public interface WMParser_implConstants {
   int _ALPHANUM_CHAR = 3;
   int _IDENTIFIER_CHAR = 4;
   int _IDENTIFIER = 5;
-  int _WHITESPACE = 6;
-  int _NEWLINE = 7;
+  int _NEWLINE = 6;
+  int _WHITESPACE = 7;
   int _QCHAR = 8;
   int _COMMENT = 9;
   int STUFF = 10;
@@ -65,8 +65,8 @@ public interface WMParser_implConstants {
     "<_ALPHANUM_CHAR>",
     "<_IDENTIFIER_CHAR>",
     "<_IDENTIFIER>",
-    "<_WHITESPACE>",
     "<_NEWLINE>",
+    "<_WHITESPACE>",
     "<_QCHAR>",
     "<_COMMENT>",
     "<STUFF>",
