@@ -1,10 +1,11 @@
-WebMacro 1.1b3
+WebMacro 1.1final
 ---------------
                     
-This is the third in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
-new features such as #macro, #count, $functions(), and various bugfixes.
+This is WebMacro 1.1.
 
-WebMacro is alive, and this release is proof!
+WM 1.1 includes new features such as #macro, #count, $functions(), and numerous bugfixes.
+
+WebMacro is alive, and this production quality release is proof!
 
 The best place for information about WebMacro is our website:
     http://www.webmacro.org/
@@ -20,6 +21,15 @@ Please visit http://www.webmacro.org/MailingList for details.
 Changes in this Release
 -----------------------
 
+- Fix for Tomcat and template loading from .jar files (Sebastian)
+
+- Fix NPE's when calling methods using the 'null' keyword
+
+- Add .tmpl as a recognized template file extension for #parse and #include
+
+Changes prior to this Release
+-----------------------------
+
 - cleanup to various error messages (eric)
 
 - make line/column info available in more situations (eric)
@@ -34,11 +44,6 @@ Changes in this Release
 
 - WebMacro.properties settings for default FastWriter buffer size and 
 max pool size (eric) 
- 
-
-
-Changes Prior to this Release
------------------------------
 
 - more documentation concerning new features (brian, keats, lane)
 
