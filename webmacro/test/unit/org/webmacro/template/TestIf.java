@@ -16,6 +16,8 @@ public class TestIf extends TemplateTestCase {
    }
 
    public void stuffContext (Context context) throws Exception {
+     context.put("a",this);
+     context.put("b",this);
    }
 
    public void test1() throws Exception {
@@ -25,6 +27,12 @@ public class TestIf extends TemplateTestCase {
       assertStringTemplateEquals("#set $v=3\n" + t, "Two-Four");
       assertStringTemplateEquals("#set $v=4\n" + t, "OverThree");
       assertStringTemplateEquals("#set $v=5\n" + t, "OverThree");
+   }
+
+   public void test2() throws Exception {
+      assertStringTemplateEquals("#if ($a==$b) #begin pass #end #else #begin fail #end", "pass");
+      assertStringTemplateEquals("#if (!($a==$b)) #begin fail #end #else #begin pass #end", "pass");
+      assertStringTemplateEquals("#if ($a!=$b) #begin fail #end #else #begin pass #end", "pass");
    }
 
 }
