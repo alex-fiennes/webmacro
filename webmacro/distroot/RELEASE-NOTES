@@ -26,11 +26,15 @@ Changes in this Release
 
 - WMServlet.doGet() is no longer "final" (eric)
 
-- logging API now accepts "Throwable"s instead of "Exception"s. (eric)
+- logging API now accepts Throwable instead of Exception. (eric)
    This one might require you to recompile your classes. 
 
 - the syntax for #default has changed to:
      #default $x = 3
+
+- #if now honors the exception handling rules of the active EvaluationExceptionHandler. (eric)
+     For example, #if($foo.noSuchMethod()) now throws exceptions when using Default and CrankyEEH
+    whereas previously it did not.
 
 Changes Prior to this Release
 -----------------------------
