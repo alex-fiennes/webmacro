@@ -441,3 +441,4 @@ Functions.abs=org.webmacro.servlet.MathTool.abs
 Functions.replace=org.webmacro.servlet.TextTool.replace
 Functions.split=org.webmacro.servlet.TextTool.split
 Functions.join=org.webmacro.servlet.TextTool.join
+Functions.eval=org.webmacro.util.Eval.eval
