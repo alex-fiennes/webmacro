@@ -97,5 +97,33 @@ public class CallGraph {
 
    public int getCalls() { return calls; }
 
+   public String format() {
+      StringBuffer buf = new StringBuffer();
+      format(buf,0);
+      return buf.toString();
+   }
+
+   private static char[] _indentation = new char[0];
+   public void format(StringBuffer buf, int depth) {
+      int indent = depth * 2;
+      if (indent > _indentation.length) {
+         _indentation = new char[indent * 2];
+         Arrays.fill(_indentation, ' ');
+      }
+      buf.append(_indentation,0,indent);
+      buf.append(name);
+      buf.append(": ");
+      buf.append(duration);
+      buf.append(" (");
+      buf.append(calls);
+      buf.append(", ");
+      buf.append((double) duration/calls);
+      buf.append(")\n");
+      CallGraph kids[] = getChildren();
+      for (int i = 0; i < kids.length; i++) {
+         kids[i].format(buf, depth + 1);
+      }
+   }
+
 }
 

@@ -30,20 +30,19 @@ final public class Profile
      */
    public Iterator getEvents() throws IllegalStateException
    {
+      final int last = _qPtr; 
+      int next = -1;
+      int lastOpen = -1;
+      int depth = 0;
+      final int numEvents = _qPtr / 2;
+      ProfileEvent[] buf = _eventBuffer; 
+      if (buf.length < numEvents) {
+         buf = new ProfileEvent[numEvents];
+         System.arraycopy(_eventBuffer,0,buf,0,_eventBuffer.length);
+         _eventBuffer = buf;
+      }
 
       try {
-         ProfileEvent[] buf = _eventBuffer; 
-         final int numEvents = _qPtr / 2;
-         if (buf.length < numEvents) {
-            buf = new ProfileEvent[numEvents];
-            System.arraycopy(_eventBuffer,0,buf,0,buf.length);
-            _eventBuffer = buf;
-         }
-      
-         final int last = _qPtr; 
-         int next = -1;
-         int lastOpen = -1;
-         int depth = 0;
          for (int i = 0; i < last; i++) {
             String name = _qName[i];
             long time = _qTime[i];
@@ -69,7 +68,7 @@ final public class Profile
          }
         
          if ((depth != 0) || (next+1 != numEvents)) {
-            throw new Exception(); // not as many starts as stops
+            throw new Exception("Invalid stack state");
          }
 
          return new Iterator() {
@@ -98,25 +97,30 @@ final public class Profile
 
          char[] indent = new char[_qPtr * 4];
          Arrays.fill(indent, ' ');
-         int depth = 0;
+         int mdepth = 0;
          for (int i = 0; i < _qPtr; i++) {
             if (_qName[i] != null) {
-               sb.append(indent,0,depth);
+               sb.append(indent,0,mdepth);
                sb.append(_qName[i]);
                sb.append("\n");
-               depth += 2;
+               mdepth += 2;
             } else {
-               depth -= 2;
+               mdepth -= 2;
             }
-            if (depth > _qPtr/2) {
+            if (mdepth > _qPtr/2) {
                sb.append("AT THIS POINT MORE START TIMINGS THAN STOPS\n");
             }
-            if (depth < 0) {
+            if (mdepth < 0) {
                sb.append("AT THIS POINT MORE STOP TIMINGS THAN STARTS\n");
-               depth = 0;
+               mdepth = 0;
             }
          }
-         sb.append("NUMBER OF START TIMINGS NOT EQUAL NUMBER OF STOPS\n");
+         sb.append("NUMBER OF START TIMINGS NOT EQUAL NUMBER OF STOPS:" 
+               + "depth=" + depth + " " + "lastOpen=" + lastOpen + " " 
+               + "next=" + next + " " + "last=" + last + " " 
+               + "buf.length=" + buf.length);
+         e.printStackTrace();
+
          throw new IllegalStateException(sb.toString());
       }
    }
