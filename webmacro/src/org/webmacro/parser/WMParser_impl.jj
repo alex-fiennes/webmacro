@@ -524,7 +524,7 @@ void EatWsNlOrSpace(BlockBuilder b) : {
 void BeforeBlock() : {
 }
 {
-  [ <WS> ] [ <NEWLINE> [ LOOKAHEAD(<WS> ( <BEGIN> | <LBRACE> ) ) <WS> ] ]
+  [ <WS> ] [ <NEWLINE> [ LOOKAHEAD(<WS> <POUND>) <WS> ] ]
 }
 
 void OptionalWsNl() : {

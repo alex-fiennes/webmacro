@@ -36,7 +36,7 @@ public class TestBlocks extends TemplateTestCase {
       assertStringTemplateEquals (tmpl, "pass");
 
       tmpl = "#if (true)\n #begin pass\n #end\n #else\n #begin fail\n #end";
-      assertStringTemplateEquals (tmpl, "pass");
+      assertStringTemplateEquals (tmpl, "pass\n");
    }
 
    public void testOnlyEnd () throws Exception {
