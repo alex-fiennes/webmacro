@@ -1,0 +1,15 @@
+## This template contains #macro's used by the TestParseInclude test
+
+#macro foo1() {
+   foo1
+}
+
+#macro foo2($a) {
+   foo2:$a
+}
+
+#macro foo3($a, $b) {
+   foo3:$a $b
+}
+
+#param $a = "\$a was found"
