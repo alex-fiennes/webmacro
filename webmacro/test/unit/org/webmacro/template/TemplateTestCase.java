@@ -106,6 +106,29 @@ public abstract class TemplateTestCase extends TestCase {
     return output;
   }
 
+
+  /**
+   * asserts that the specified template file (loaded via classpath) evaluates
+   * to the given result text when evaluated against the current context
+   */
+  public void assertTemplateEquals (String templateName, String resultText) throws Exception {
+     String result = null;
+     
+     try {
+       result = executeStringTemplate (templateFileToString(templateName));
+     } catch (Exception e) {
+        System.err.println ("Execution of /" + templateName + "/ threw " + e.getClass()
+                          + ", expecting /" + resultText + "/");
+     }
+     
+     if (result == null || !result.equals(resultText)) {
+        System.err.println ("/" + templateName + "/ does not "
+                          + "evaluate to /" + resultText + "/ "
+                          + "result=/" + result + "/");
+        assert (false);
+     }
+  }
+
   /** Asserts that the given template text evalutes to the given result text
    * when evaluated against the current context */
 
