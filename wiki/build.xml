@@ -1,4 +1,6 @@
 <project name="wiki" default="compile" basedir=".">
+	<property name="dir.install"   value="/usr/local/wiki" />
+
 	<property name="app.name" value="wiki" />
 	<property name="dir.class" value="./class" />
 	<property name="dir.src"   value="./src" />
@@ -6,7 +8,6 @@
         <property name="dir.templates" value="./templates" />
         <property name="dir.etc"       value="./etc" />
 	<property name="dir.htdocs"    value="./htdocs" />
-	<property name="dir.dist"      value="./wiki" />
 
 	<property name="file.jar"  value="./wiki.jar" />
 	<property name="file.resources" value="./wiki-resources.jar" />
@@ -25,7 +26,7 @@
 
 	<target name="clean">
 		<delete dir="${dir.class}" />
-		<delete dir="${dir.dist}" />
+		<delete dir="${dir.install}" />
 		<delete file="${file.jar}" />
 		<delete file="${file.resources}" />
 	</target>
@@ -53,22 +54,26 @@
 		/>
 	</target>
 
-        <target name="dist" depends="prepare,compile,jar,resources">
-		<mkdir dir="${dir.dist}" />
-		<mkdir dir="${dir.dist}/WEB-INF/lib" />
-		<copy todir="${dir.dist}">
+        <target name="install" depends="prepare,compile,jar,resources">
+		<mkdir dir="${dir.install}" />
+		<mkdir dir="${dir.install}/deploy" />
+		<mkdir dir="${dir.install}/deploy/WEB-INF/lib" />
+		<copy todir="${dir.install}/deploy">
 			<fileset dir="${dir.htdocs}" />
 		</copy>
-		<copy todir="${dir.dist}/WEB-INF/lib">
+		<copy todir="${dir.install}/deploy/WEB-INF/lib">
 			<fileset dir="${dir.lib}" />
 			<fileset dir="./" includes="*.jar" />
 		</copy>
-		<copy todir="${dir.dist}/WEB-INF">
+		<copy todir="${dir.install}/deploy/WEB-INF">
 			<fileset dir="${dir.etc}" />
+			<filterset>
+				<filter token="INSTALL_DIR" value="${dir.install}" />
+			</filterset>
 		</copy>
 	</target>
 
-	<target name="all" depends="clean,prepare,compile,jar,resources,dist">
+	<target name="all" depends="clean,prepare,compile,jar,resources,install">
 
 	</target>
 

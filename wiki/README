@@ -1,0 +1,45 @@
+
+                       WebMacro's Wiki
+                         Version 2.0
+
+What is is?
+-----------
+
+WebMacro's Wiki is a Java-based website that allows it's users to create
+and link the content.  It is loosely based off of the original Wiki:
+   http://www.c2.com/cgi/wiki
+
+
+Why does it exist? 
+------------------
+
+It exists because the developers of WebMacro are very lazy!  We refuse
+to maintain megabytes of static .html documentation for WebMacro.  Wiki
+allows us, and our users, to update WebMacro's documentation "on the fly."
+
+
+Who's responsible for this?
+---------------------------
+
+WebMacro's Wiki is mostly developed and maintained by Eric Ridge.  Lane
+Sharman and Justin Wells have had major input into the code.  Wiki uses
+Lane's VeryLargeHashtable as a storage medium for the pages and users.
+
+Eric can be reached at ebr@tcdi.com.
+Lane can be reached at lane@san.rr.com.
+Justin can't ever seem to be reached.  If you find him, please let me
+know.
+
+
+How do I make this thing run?
+-----------------------------
+
+Getting Wiki up and running is fairly strightforward.  Just read the
+INSTALL file.
+
+
+What license does WebMacro's Wiki use?
+--------------------------------------
+
+Wiki is covered under a dual GPL/MPL license.  Hopefully this will work
+just fine for you.  If not, please let me know.

@@ -1,0 +1,90 @@
+                      Installing WebMacro's Wiki
+
+
+System Requirements
+-------------------
+
+- Java 1.2 or better.  1.3.1 preferred
+- a JSDK 2.x compatible servlet container
+- WebMacro 0.98p1 or better
+- ANT 1.3 or better (for building) (http://jakarta.apache.org/ant/)
+
+
+Building Wiki
+-------------
+
+Building has been made as simple as possible thanks to ANT.  But
+before you can build Wiki, you need to set a few configuration
+options.
+
+
+Configuration
+-------------
+
+First, you need to decide where you are going to install Wiki.
+This is important because it is this directory where Wiki will
+store it's full-text index, pages, and users.
+
+Once you've decided, open ./build.xml and change the value of
+the first defined property to the install directory:
+
+   <property name="dir.install"   value="/usr/local/wiki" />
+
+
+Compiling
+---------
+
+Now that you've configured Wiki, you need to compile it.
+
+> ant compile
+
+This will compile all the source files and build 2 jar files
+in the current directory:  wiki.jar and wiki-resources.jar.
+You don't actually need to do anything with these, but they are
+there incase you like to snoop.
+
+
+Installing
+----------
+
+Okay, since Wiki is compiled, just do this:
+
+> ant install
+
+Wiki is now installed into the directory you set in build.xml.
+The directory structure will look something like this:
+
+/usr/local/wiki/
+               /deploy/
+                      /site-style.css
+                      /images/
+                             /*.gif
+                      /WEB-INF/
+                              /web.xml
+                              /Wiki.properties
+                              /lib/
+                                  /*.jar
+
+Next you need to tell your servlet container about
+the web-app.
+
+
+Configuring Resin 
+-----------------
+
+Edit your resin.conf file and set the "app-dir" for your <http-server>
+to "/usr/local/wiki/deploy":
+
+   <http-server app-dir='/usr/local/wiki/deploy'>
+        ... other resin options here ...
+   </http-server>
+
+Restart Resin, and point your browser to:
+
+http://localhost/WebMacro
+                     
+
+Configuring Tomcat
+------------------
+
+I have no idea.  Would somebody like to contribute? 
