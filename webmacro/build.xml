@@ -95,6 +95,12 @@
     </ant>
   </target>
 
+  <target name="test-validate" depends="compile" >
+    <ant antfile="test/build.xml" target="validate" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
   <target name="test-templates" depends="compile" >
     <ant antfile="test/build.xml" target="templates" >
       <property name="java.class.path" value="${classpath.resolved}"/>
@@ -107,7 +113,7 @@
     </ant>
   </target>
 
-  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+  <target name="all" depends="clean,prepare,compile,javadoc,dist,test-validate"/>
 
   <!--
   <taskdef name="wmtemplates" 

@@ -38,7 +38,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void testNoSuchVariable () throws Exception {
       assertStringTemplateMatches ("$NotInContext", 
-                                   "^<!--.*-->$");
+        "^<!--.* nonexistent .*\\$NotInContext.*-->$");
    }
 
    public void testNoSuchMethod () throws Exception {
@@ -59,7 +59,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void testNullMethod () throws Exception {
       assertStringTemplateMatches ("$TestObject.nullMethod()", 
-                                   "^<!--.*-->$");
+        "^<!--.*null .*\\$TestObject.nullMethod.*-->$");
    }
 
    public void testThrowsMethod() throws Exception {
@@ -72,7 +72,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
        behavior.
     */
    public void testNullVariable () throws Exception {
-      assertStringTemplateThrows ("$NullObject", 
-                                  PropertyException.NullVariableException.class);
+     assertStringTemplateMatches ("$NullObject", 
+          "^<!--.*null .*\\$NullObject.*-->$");
    }
 }
