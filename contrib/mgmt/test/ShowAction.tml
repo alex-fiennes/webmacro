@@ -1,0 +1,18 @@
+<html>
+
+  <!-- invoke the semantic mapped to the action servlet, here /action -->
+  <form action="/action" method="post">
+  <input type=submit name="ActionCancel" value="Cancel">
+  <input type=submit name="ActionClose" value="Close">
+
+  <!-- according to protocol, specify the action list for the request page -->
+  <input type=hidden name="al" value="ActionCancel,ActionClose">
+  <!-- for onActionCancel, this template will be loaded. -->
+  <input type=hidden name="onActionCancel" value="test/ShowAction.tml">
+  <!-- ditto for onActionClose -->
+  <input type=hidden name="onActionClose" value="test/ShowAction.tml">
+  
+  </form>
+</html>
+  
+  
