@@ -64,7 +64,7 @@ public class TestAbuse extends TemplateTestCase {
        currently produces a big parse error
     */
    public void testMultiLineIf () throws Exception {
-      System.err.println ("NEED TO REVISIT: TestAbsuse.testMultiLineIf()");
+      System.err.println ("NEED TO REVISIT: TestAbuse.testMultiLineIf()");
       assert (true);
 //      String tmpl = "#if (true\n&& true && true\n) {pass} #else {fail}";
 //      assertStringTemplateEquals (tmpl, "pass");
