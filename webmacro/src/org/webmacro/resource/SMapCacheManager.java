@@ -230,11 +230,13 @@ public class SMapCacheManager implements CacheManager {
                   if (_cacheDuration >= 0) {   
                      _tl.scheduleTime( 
                         new Runnable() { 
-                           public void run() { 
-                              _cache.remove(query); 
-                              if (_log.loggingDebug())
-                                 _log.debug("cache expired: " + query);
-                           } 
+                           public void run() {
+                               if (_cache != null) {
+                                  _cache.remove(query);
+                                  if (_log.loggingDebug())
+                                     _log.debug("cache expired: " + query);
+                               }
+                           }
                         }, _cacheDuration);
                   }
                } catch (Exception e) {
