@@ -76,7 +76,7 @@ public class TemplateTool implements org.webmacro.ContextTool {
          * @param s the template string
          * @return the new MacroTemplate
          */        
-        public MacroTemplate create(String s){
+        public MacroTemplate fromString(String s){
             MacroTemplate mt = new MacroTemplate(_context, s);
             _macros.add(mt);
             return mt;
@@ -152,6 +152,27 @@ public class TemplateTool implements org.webmacro.ContextTool {
             synchronized(_context){
                 return _template.evaluate(_context);
             }
+        }
+        
+        public Object eval(Object[] args) throws PropertyException {
+            if (args != null){
+                for (int i=0; i<args.length; i++){
+                    _context.put("arg" + (i+1), args[i]);
+                }
+                _context.put("args", args);
+            }
+            return eval();
+        }
+        
+        public Object eval(Object[] args, Object[] names) throws PropertyException {
+            if (args == null || names == null || args.length != names.length)
+                throw new PropertyException(
+                    "Usage error: both args must be arrays of equal length!");
+            for (int i=0; i<args.length; i++){
+                _context.put(names[i], args[i]);
+            }
+            _context.put("args", args);
+            return eval();
         }
         
         /** Copies all variables from the current request context into the context
