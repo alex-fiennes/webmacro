@@ -92,7 +92,7 @@ class ListMacro implements Macro {
          if (i != 0) {
             sb.append(", ");
          }
-         sb.append(_content[i].toString());
+         sb.append(_content[i] == null ? "null" : _content[i].toString());
       }
       sb.append(")");
       return sb.toString();
