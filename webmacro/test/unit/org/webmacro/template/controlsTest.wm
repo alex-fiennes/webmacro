@@ -1,0 +1,137 @@
+#comment {
+  formtest.wm
+  A template to test form control formatting.
+}
+#include as macro "allmacros.wmm"
+
+## set up some useful test data for the url properties and the javascript properties
+#bean $System = "java.lang.System" scope=static
+
+## choice sample data
+#bean $option1 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $option1.value = "100"
+  #set $option1.label = "Eric Ridge"
+}
+#bean $option2 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $option2.value = "101"
+  #set $option2.label = "Brian Goetz"
+}
+#bean $option3 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $option3.value = "102"
+  #set $option3.label = "Lane Sharman"
+}
+#bean $optionData = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $optionData.options = [$option1, $option2, $option3]
+  #set $optionData.selectedOption = "101"
+  #set $optionData.name = "WebMacroVeterans"
+}
+
+## date data:
+#bean $day1 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $day1.label=1
+}
+#bean $day2 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $day2.label=2
+}
+#bean $month1 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $month1.value=1
+  #set $month1.label="Jan"
+}
+#bean $month2 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $month2.value=2
+  #set $month2.label="Feb"
+}
+#bean $year1 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $year1.label=2002
+}
+#bean $year2 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $year2.label=2003
+}
+#bean $date = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $date.dayName= "jobStartDay"
+  #set $date.days=[$day1,$day2]
+  #set $date.monthName = "jobStartMonth"
+  #set $date.months = [$month1,$month2]
+  #set $date.yearName = "jobStartYear"
+  #set $date.years = [$year1,$year2]
+}
+
+## some button elements
+#bean $action1 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $action1.name = "com.job.Start"
+  #set $action1.value = "Start Job"
+}
+#bean $action2 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $action2.name = "com.job.Finish"
+  #set $action2.value = "Finish Job"
+}
+
+#bean $actionData = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $actionData.actions = [$action1, $action2]
+}
+
+## some image button elements
+#bean $action21 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $action21.name = "com.job.Start"
+  #set $action21.url = "http://webmacro.org/images/fish-normal.gif"
+}
+#bean $action22 = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $action22.name = "com.job.Finish"
+  #set $action22.url = "http://sourceforge.net/sflogo.php?group_id=64597&type=1"
+}
+
+#bean $actionImgData = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $actionImgData.actions = [$action21, $action22]
+}
+
+
+## format property hash
+#bean $formatProps = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $formatProps.type="multiple"
+  #set $formatProps.size=2
+  #set $formatProps.euro=true
+  #set $formatProps.closeWindow=false
+  #set $formatProps.imageAlign="bottom"
+}
+
+
+## now create the content.
+<html>
+<form>
+<center>
+
+Form Control, Select List, Single or Multiple:
+<p>
+
+#choiceList($optionData, $formatProps)
+</p>
+
+Form Control, Radio Choice:
+<p>
+
+#choiceRadio($optionData, $formatProps)
+</p>
+
+Date Control:
+<p>
+
+#dateControl($date, $formatProps)
+</p>
+
+Form Action Buttons:
+<p>
+
+#buttonAction($actionData, $formatProps)
+</p>
+
+Form Image Action Buttons:
+<p>
+
+#buttonImageAction($actionImgData, $formatProps)
+</p>
+
+
+
+</center>
+</form>
+</html>

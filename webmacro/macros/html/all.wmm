@@ -3,3 +3,4 @@
   Includes all wm macros in the html directory.
 }
 #include as macro "html/frames.wmm"
+#include as macro "html/formControls.wmm"

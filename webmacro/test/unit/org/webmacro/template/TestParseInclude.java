@@ -118,6 +118,13 @@ public class TestParseInclude extends TemplateTestCase {
       store(System.getProperty("user.dir") + "/" + "winFrame.html", value);
    }
         
+    /** executes out of the standard macro/ distribution: html. */
+    public void testControlsMacro() throws Exception {
+      // execute the pay pal eCommerce test case and store the output
+      String value = executeFileTemplate("org/webmacro/template/controlsTest.wm");
+      store(System.getProperty("user.dir") + "/" + "controls.html", value);
+   }
+        
         
 
     public static void main (String[] args) throws Exception {
