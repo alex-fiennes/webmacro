@@ -95,7 +95,7 @@ public class Settings {
     */
    public void load(String fileName) throws InitException, IOException {
       ClassLoader cl = this.getClass().getClassLoader();
-      URL u = cl.getResource(fileName);
+      URL u = (cl == null) ? null : cl.getResource(fileName);
       if (u == null)
          u = ClassLoader.getSystemResource(fileName);
       if (u == null)
