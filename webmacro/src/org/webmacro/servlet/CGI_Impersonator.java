@@ -111,6 +111,9 @@ final public class CGI_Impersonator
 
    /**
      * What is the root of documents served by this servlet
+     * 
+     * WARNING: the method called (getRealPath) is deprecated in Servlet 2.2
+     *
      */
    final public String getDOCUMENT_ROOT()
       { return requst_.getRealPath("/"); }
