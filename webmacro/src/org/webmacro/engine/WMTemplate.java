@@ -202,7 +202,11 @@ abstract public class WMTemplate implements Template
 
       try {
          _content.write(out,data);
-      } catch (PropertyException e) {
+      } 
+      catch (PropertyException e) {
+         throw e;
+      } 
+      catch (Exception e) {
          String warning = 
             "Template: Exception evaluating template " + this;
          _log.warning(warning, e);

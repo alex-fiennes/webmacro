@@ -7,6 +7,8 @@ import org.webmacro.engine.StringTemplate;
 
 import junit.framework.*;
 
+import org.apache.regexp.RE;
+
 
 public abstract class TemplateTestCase extends TestCase {
 
@@ -40,7 +42,7 @@ public abstract class TemplateTestCase extends TestCase {
     */
    public void init () throws Exception
    {
-      System.getProperties().setProperty("org.webmacro.LogLevel", "WARNING");
+      System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
       _wm = createWebMacro ();
       _context = _wm.getContext ();
 
@@ -63,4 +65,83 @@ public abstract class TemplateTestCase extends TestCase {
     fw.close();
     return output;
   }
+
+  public void assertStringTemplateEquals(String templateText, 
+                                         String resultText) {
+    String result = null;
+
+    try { 
+      result = executeStringTemplate(templateText);
+    }
+    catch (Exception e) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " threw " + e.getClass() + "/, expecting /" 
+                         + resultText + "/");
+      assert(false);
+    }
+    if (result == null)
+      return;
+
+    if (!result.equals(resultText)) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " yielded /" + result + "/, expecting /" 
+                         + resultText + "/");
+      assert(false);
+    }
+  }
+
+  public void assertStringTemplateThrows(String templateText, 
+                                         Class exceptionClass) {
+    String result = null;
+    Exception caught = null;
+
+    try {
+      result = executeStringTemplate(templateText);
+    }
+    catch (Exception e) {
+      caught = e;
+    }
+    if (caught == null) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " yielded /" + result + "/, expecting throw "
+                         + exceptionClass);
+      assert(false);
+    }
+    else if (!exceptionClass.isAssignableFrom(caught.getClass())) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " threw " + caught.getClass() + ", expecting "
+                         + exceptionClass);
+      assert(false);
+    }
+  }
+
+  public void assertStringTemplateMatches(String templateText, 
+                                          String resultPattern) 
+  throws Exception {
+    String result = null;
+
+    try { 
+      result = executeStringTemplate(templateText);
+    }
+    catch (Exception e) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " threw " + e.getClass() + "/, expecting match /" 
+                         + resultPattern + "/");
+      assert(false);
+    }
+    if (result == null)
+      return;
+
+    RE re = new RE(resultPattern);
+    if (!re.match(result)) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " yielded /" + result + "/, expecting match /" 
+                         + resultPattern + "/");
+      assert(false);
+    }
+  }
 }
+
+
+
+
