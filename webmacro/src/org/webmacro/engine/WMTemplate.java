@@ -189,9 +189,9 @@ abstract public class WMTemplate implements Template
          if (_content == null) {
             parse();   
          }
-      } catch (Exception e) {
-         _log.error("Template: Unable to read template: " + this, e);
-         out.write("<!--\n Template failed to read. Reason: ");
+      } catch (TemplateException e) {
+         _log.error("Template: Unable to parse template: " + this, e);
+         out.write("<!--\n Template failed to parse. Reason: ");
          out.write(e.toString());
          out.write(" \n-->");
       }
@@ -200,7 +200,7 @@ abstract public class WMTemplate implements Template
          _content.write(out,data);
       } catch (PropertyException e) {
          String warning = 
-            "Template: Missing data in Map passed to template " + this;
+            "Template: Missing data in Context passed to template " + this;
          _log.warning(warning,e);
          
          out.write("<!--\n Could not interpret template. Reason: ");

@@ -65,7 +65,7 @@ final class ProfileDirective implements Directive, Visitable
       if (Flags.PROFILE) {
          return new ProfileDirective(name.toString(), block);
       } else {
-         return null;
+         return block;
       }
    }
 
