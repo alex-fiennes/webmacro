@@ -55,27 +55,42 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 methods of Java components together with automatic conversion of HTTP parameters to the 
 values of Java types.
 
-<P><CENTER>
-<IMG SRC="doc/images/auth.gif" WIDTH="564" HEIGHT="260" BORDER="0">
-</CENTER><P>
+<P><CENTER><IMG SRC="doc/images/auth.gif" WIDTH="564" HEIGHT="260" BORDER="0"></CENTER><P>
+
+To simplify the development with ActionServlet, you can use <EM>ASWizards for JBuilder</EM>:
+
+<TABLE ALIGN=CENTER BORDER=0 CELLPADDING=10><TR>
+<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/as_icon.gif" WIDTH=70 HEIGHT=47 BORDER=0></TD>
+<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/asc_icon.gif" WIDTH=70 HEIGHT=64 BORDER=0></TD>
+<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/th_icon.gif" WIDTH=94 HEIGHT=64 BORDER=0></TD>
+<TD><IMG SRC="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/images/ascfg_icon.gif" WIDTH=69 HEIGHT=50 BORDER=0></TD>
+</TR></TABLE>
+
+With these wizards you can easily create the basic structure of your web application.
 
 <P><LI><H3 CLASS="main">Documentation</H3>
 <UL CLASS="sub">
-<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A>
-<LI>ActionServlet <A HREF="doc/api/org/webmacro/as/ActionServlet.html#start">specification</A>
-<LI>Full <A HREF="doc/api/index.html">API documentation</A>
-<LI><A HREF="examples/install.txt">Examples installation</A>
-<LI>GNU LGPL <A HREF="doc/licenses/ActionServlet_license.txt">license</A>
+	<LI><EM>ActionServlet</EM>
+	<UL>
+	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A>
+	<LI>ActionServlet <A HREF="doc/api/org/webmacro/as/ActionServlet.html#start">specification</A>
+	<LI>Full <A HREF="doc/api/index.html">API documentation</A>
+	<LI><A HREF="examples/install.txt">Examples installation</A><P>
+	</UL>
+	
+	<LI><EM>ASWizards</EM>
+	<UL>
+	<LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/install.html">Introduction and installation</A>
+	<LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB/doc/tutorial-1.html">Degrees2Radians WebApp Tutorial</A>
+	</UL>
 </UL>
 
 <P><LI><H3 CLASS="main">Download</H3>
 
 <P>
-<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING=0 CELLSPACING=0>
-<TR><TD>
-<TABLE ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="1" CELLPADDING=3 CELLSPACING=1>
+<TABLE WIDTH="490" ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="1" CELLPADDING=3 CELLSPACING=1>
 <TR ALIGN="center" BGCOLOR="#D0D0D0">
-<TD>ActionServlet...</TD>
+<TD>ActionServlet...<BR><SMALL>(sources &amp; docs included)</SMALL></TD>
 <TD COLSPAN=2>...requires also</TD>
 <TD>...has examples<BR>configured for</TD>
 </TR><TR><TD>
@@ -98,10 +113,24 @@ values of Java types.
 <A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.97</A>+
 </TD><TD ROWSPAN=2>
 <A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>,<BR>
-<A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2.1</A><SUP><FONT COLOR="red">*</FONT></SUP>
+<A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2</A><SUP><FONT COLOR="red">*</FONT></SUP>
 </TD></TR><TR><TD>
 <A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+
 </TD></TR></TABLE>
+
+<P>
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING=0 CELLSPACING=0>
+<TR><TD>
+<TABLE WIDTH="490" ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="1" CELLPADDING=3 CELLSPACING=1>
+<TR ALIGN="center" BGCOLOR="#D0D0D0">
+<TD>ASWizards...<BR><SMALL>(sources &amp; docs included)</SMALL></TD>
+<TD>...requires also</TD>
+<TD>...has example<BR>configured for</TD>
+</TR><TR>
+<TD><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB_1_0.zip">ASWizards_JB_1_0.zip</A></TD>
+<TD>ActionServlet 0.53+,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
+<TD><A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2</A><SUP><FONT COLOR="red">*</FONT></SUP></TD>
+</TR></TABLE>
 </TD></TR><TR><TD>
 <SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2</EM> and higher</SMALL>
 </TD></TR></TABLE>
@@ -117,12 +146,13 @@ values of Java types.
 	14.3. 2000: <B>version 0.43</B>: small doc fixes</TD></TR><TR><TD>
 	26.4. 2000: <B>version 0.44</B>: added <TT>newSession()</TT> method</TD></TR><TR><TD>
 	14.8. 2000: <B>version 0.45</B>: tiny changes</TD></TR><TR><TD>
-        31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
-                    easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
-        14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
-        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
-        24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A>
-	</TD></TR></TABLE>
+    31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
+                easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
+    14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
+    8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
+    24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
+	17.9. 2001: <EM>ASWizards 1.0 for JBuilder</EM> released</TD></TR>
+	</TABLE>
 
 <P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>
 <B>ActionServlet 0.44</B>
