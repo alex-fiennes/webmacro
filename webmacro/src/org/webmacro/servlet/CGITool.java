@@ -58,4 +58,5 @@ public class CGITool implements Macro
    {
       out.write(evaluate(context).toString());
    }
+
 }

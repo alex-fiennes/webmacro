@@ -56,11 +56,6 @@ final public class WC extends HashMap implements WebContext
    private final static Log _log = new Log("webcon","WebContext Messages");
 
    /**
-     * Used to return dictionaries that reference nothing
-     */
-   final private static Dictionary _nullDictionary = new NullDictionary();
-
-   /**
      * Broker from our reactor
      */
    final Broker _broker;              
@@ -77,6 +72,9 @@ final public class WC extends HashMap implements WebContext
 
    // property interface fields that are lazily set, non-final, and private
 
+   /**
+     * Find the name of a tool given the name of a class
+     */
    private String getToolName(String cname)
    {
       int start = cname.lastIndexOf('.') + 1;
@@ -204,17 +202,91 @@ final public class WC extends HashMap implements WebContext
       return _broker; 
    } 
 
-   static public void main(String arg[]) 
+   // WebContext API
+   public final Object getMacro(String key) 
+      throws InvalidContextException
+   {
+      Object t = get(key);
+      return (t instanceof Macro) ? ((Macro) t).evaluate(this) : t;
+   }
+
+   // WebContext API
+   final public ContextTool getTool(String name) 
+      throws InvalidContextException
    {
       try {
-         WebMacro wm = new WM();
-         WebContext proto = new WC(wm.getBroker());
-         proto.put("hello","hello, world");
-         WebContext clone1 = proto.clone(null,null);
-         clone1.put("hello","OUCH!");
-         System.out.println(proto.get("hello"));
-      } catch (Exception e) { 
-         e.printStackTrace();
+         return (ContextTool) getMacro(name);
+      } catch (ClassCastException ce) {
+         throw new InvalidContextException("Not a tool, " + name +
+               " is a " + name.getClass());
+      } 
+   }
+
+
+   // LEGACY METHODS
+
+
+   public String getForm(String field) {
+      try {
+         ContextTool ct = getTool("Form");
+         return (String) ct.get(field);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Form tool");
+         return null;
       }
    }
+
+   public String[] getFormList(String field) {
+      try {
+         ContextTool ct = getTool("FormList");
+         return (String[]) ct.get(field);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load FormList tool");
+         return null;
+      }
+   }
+
+   public CGI_Impersonator getCGI() {
+      try {
+         return (CGI_Impersonator) getMacro("CGI");
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load CGI tool");
+         return null;
+      }
+   }
+
+   public Cookie getCookie(String name) {
+      try {
+         ContextTool ct = getTool("Cookie");
+         return (Cookie) ct.get(name);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Cookie tool");
+         return null;
+      }
+   }
+
+   public void setCookie(String name, String value) {
+      try {
+         ContextTool ct = getTool("Cookie");
+         ct.set(name, value);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Cookie tool");
+      }
+   }
+
+   public HttpSession getSession() {
+      try {
+         return (HttpSession) getMacro("Session");
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Session tool");
+         return null;
+      }
+   }
+
 }

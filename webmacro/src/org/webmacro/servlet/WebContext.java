@@ -108,10 +108,104 @@ public interface WebContext extends Cloneable, Map
 
 
    /**
-     * This object provides access to extended services and other 
+     * The broker provides access to extended services and other 
      * resources, which live in the org.webmacro.resource package,
      * or that you define, or obtain from a third party.
      */
    public Broker getBroker();
+
+   /**
+     * A ContextTool is a simple object with get/set methods that provides
+     * some sort of extended functionality. Tools can generally be used 
+     * inside the context under their own names. This method helps the 
+     * back end programmer access them as well, by returning the tool 
+     * as an object with the ContextTool interface. If the named object
+     * is a Macro, it will be evaluated. If the result is a ContextTool, 
+     * it will be returned--otherwise an exception is raised.
+     * @exception InvalidContextException named object is not a ContextTool
+     */
+   public ContextTool getTool(String key) throws InvalidContextException;
+
+   /**
+     * This is a get() method. If the result is a Macro, it is evaluated
+     * first before returning it, so that the return of this method is 
+     * never a Macro. This is useful for accessing objects that change
+     * their behavior based on other objects in the context.
+     * @return a dereferenced object, or null if the key does not exist
+     * @exception InvalidContextException attempt to evaluate macro failed
+     */
+   public Object getMacro(String key) throws InvalidContextException;
+
+   // LEGACY METHODS
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public String getForm(String field);
+
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public String[] getFormList(String field);
+
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public CGI_Impersonator getCGI();
+
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public Cookie getCookie(String cookieName);
+   
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public void setCookie(String name, String value);
+
+   /**
+     * This method is provided for backwards compatibility with older 
+     * versions of WebMacro. Instead of this method you should either 
+     * use getMacro or getTool, using the property name of this method.
+     * The request will be evaluated using a tool or object plugged in
+     * to the context, probably via the configuration file. Using the
+     * underlying Tool or Macro directily will be more efficient.
+     * @deprecated use getTool or getMacro instead
+     */
+   public HttpSession getSession();
 
 }

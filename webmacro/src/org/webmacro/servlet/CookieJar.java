@@ -34,7 +34,7 @@ import org.webmacro.*;
 /**
   * Provide access to form variables
   */
-final public class CookieJar
+final public class CookieJar implements ContextTool
 {
 
    final private Cookie[] jar;
@@ -71,6 +71,19 @@ final public class CookieJar
    public final void put(final String name, final String value) {
       Cookie c = new Cookie(name,value);
       res.addCookie(c);
+   }
+
+   /**
+     * Calls put 
+     */
+   public final void set(final String name, final Object value) 
+      throws UnsettableException
+   {
+      try {
+         put(name, (String) value);
+      } catch (ClassCastException ce) {
+         throw new UnsettableException("Value must be a String");
+      }
    }
 
 }

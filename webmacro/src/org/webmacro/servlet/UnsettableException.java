@@ -21,53 +21,26 @@
 
 package org.webmacro.servlet;
 
-import java.util.*;
-import java.io.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.webmacro.util.*;
 import org.webmacro.*;
 
 
 /**
-  * Provide access to form variables
+  * This exception is thrown on attempt to set something that is
+  * not settable. 
+  * @see ContextTool
   */
-final public class FormList implements ContextTool
+public class UnsettableException extends InvalidContextException 
 {
 
    /**
-     * This is the request object from the WebContext
+     * Constructor only requires a reason 
+     * <p>
+     * @param reason explains what went wrong
      */
-   final HttpServletRequest _request;
-
-   /**
-     * Read the form data from the supplied Request object
-     */
-   FormList(final HttpServletRequest r) {
-      _request = r;
+   public UnsettableException(String reason) {
+      super(reason);
    }
-
-   /**
-     * Get a form value
-     */
-   final public Object get(String field) {
-      try {
-         return _request.getParameterValues(field);
-      } catch (NullPointerException ne) {
-         return null;
-      }
-   }
-
-
-   /**
-     * Unsupported
-     */
-   final public void set(String key, Object value) 
-      throws UnsettableException
-   {
-      throw new UnsettableException("Cannot set a form property");
-   }
+ 
 }
+
 

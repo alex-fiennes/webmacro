@@ -34,7 +34,7 @@ import org.webmacro.*;
 /**
   * Provide access to form variables
   */
-final public class Form
+final public class Form implements ContextTool
 {
 
    /**
@@ -58,6 +58,15 @@ final public class Form
       } catch (NullPointerException ne) {
          return null;
       }
+   }
+
+   /**
+     * Unsupported
+     */
+   final public void set(String key, Object value) 
+      throws UnsettableException
+   {
+      throw new UnsettableException("Cannot set a form property");
    }
 
 }
