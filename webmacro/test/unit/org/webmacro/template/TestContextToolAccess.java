@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
+ * Note: Tests in this class must allow for the tool not to be loaded.
  * @author Marc Palmer (<a href="mailto:wj5@wangjammers.org">wj5@wangjammers.org</a>)
  */
 public class TestContextToolAccess extends TemplateTestCase
@@ -19,7 +20,7 @@ public class TestContextToolAccess extends TemplateTestCase
 
     public void testContextToolMethodCall()
     {
-        assertStringTemplateEquals("$Text.HTMLEncode('&')", "&amp;");
+      assertStringTemplateEquals("#if ($Text) {$Text.HTMLEncode('&')} #else {&amp;}", "&amp;");
     }
 
     protected void stuffContext( Context context ) throws Exception

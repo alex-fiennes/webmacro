@@ -43,7 +43,7 @@ Administrative targets:
     </target>
 
     <property name="version"        value="2.0b1" />
-    <property name="wm-style"       value="classic" /> <!-- can be .minimal to get webmacro.defaults.minimal -->
+    <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
     <property name="classes"        value="classes"/>
@@ -125,8 +125,9 @@ Administrative targets:
 
         <copy todir="${classes}">
             <fileset dir="${tmpdir}" includes="**/*.properties" />
-            <fileset dir="." includes="WebMacro.defaults.${wm-type}"/>
         </copy>
+        <copy file="webmacro.defaults.${wm-style}" tofile="${classes}/WebMacro.defaults"/>
+
         <touch file="${classes}/WM-VERSION-${version}" />
     </target>
 
@@ -203,7 +204,7 @@ Administrative targets:
         <copy todir="${dist.source}">
             <fileset dir="distroot" />
         </copy>
-        <copy file='WebMacro.defaults' todir='${dist.source}' />
+        <copy file='WebMacro.defaults.${wm-style}' todir='${dist.source}' />
         <copy file='build.xml' todir='${dist.source}' />
 
         <mkdir dir="${dist.source}/src" />
