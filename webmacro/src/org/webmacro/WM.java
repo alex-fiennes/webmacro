@@ -27,10 +27,10 @@ import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
-import java.util.*;
-
 import org.webmacro.servlet.*;
 
+import java.util.*;
+import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 

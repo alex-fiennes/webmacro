@@ -195,11 +195,7 @@ public class Settings {
      * Get a setting and convert it to an int 
      */
    public int getIntegerSetting(String key) {
-      try {
-         return Integer.parseInt(getSetting(key));
-      } catch (Exception e) {
-         return 0;
-      }
+      return getIntegerSetting(key, 0);
    }
 
    /**

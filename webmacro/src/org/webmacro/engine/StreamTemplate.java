@@ -130,7 +130,7 @@ public class StreamTemplate extends WMTemplate
                new InputStreamReader(System.in));
          t1.parse();
 
-         FastWriter w = FastWriter.getInstance("UTF8");
+         FastWriter w = FastWriter.getInstance(wm.getBroker(), "UTF8");
 
          System.out.println("*** RESULT ***");
          t1.write(w,context);

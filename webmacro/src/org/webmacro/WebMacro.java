@@ -119,8 +119,8 @@ public interface WebMacro
      * WebMacro under a servlet this is the preferred method, 
      * otherwise you ought to use getContext().
      */
-   public org.webmacro.servlet.WebContext getWebContext(javax.servlet.http.HttpServletRequest req, javax.servlet.http.HttpServletResponse resp);
-
-
+   public org.webmacro.servlet.WebContext 
+     getWebContext(javax.servlet.http.HttpServletRequest req, 
+                   javax.servlet.http.HttpServletResponse resp);
 }
 
