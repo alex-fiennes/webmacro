@@ -148,8 +148,10 @@ public class BlockBuilder implements Builder
 
       int size = elements.size();
       if (lineNos.length < size) {
-        lineNos = resizeIntArray(lineNos, lineNos.length*2);
-        colNos  = resizeIntArray(colNos, colNos.length*2);
+        lineNos = resizeIntArray(lineNos, Math.max(lineNos.length*2, 
+                                                   size+INITIAL_SIZE));
+        colNos  = resizeIntArray(colNos, Math.max(colNos.length*2, 
+                                                  size+INITIAL_SIZE));
       }
       lineNos[size-1] = lineNo;
       colNos[size-1] = colNo;
