@@ -469,8 +469,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
                                + " is not valid");
   }
   catch (Exception e) {
-    throw new ParseException("Exception fetching directive "+directive
-                             + System.getProperty("line.separator"), e); 
+    throw new ParseException("No such directive #" + directive); 
   }
   db = new DirectiveBuilder(descriptor);
   parse_args(descriptor, descriptor.args, db);
