@@ -213,7 +213,6 @@ final public class Block implements Macro, Visitable
    final public Object evaluate(Context context) throws PropertyException
    {
       try {
-         ByteArrayOutputStream os = new ByteArrayOutputStream(_strings.length * 128);
          FastWriter fw = FastWriter.getInstance(context.getBroker());
          write(fw,context);
          String ret = fw.toString();
