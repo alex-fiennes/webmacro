@@ -36,7 +36,7 @@ import org.webmacro.Context;
  */
 public class BlockBuilder implements Builder {
 
-   private static final int INITIAL_SIZE = 64;
+   private static final int INITIAL_SIZE = 65;
 
    private static Macro[] mArray = new Macro[0];
    private static String[] sArray = new String[0];
@@ -56,6 +56,8 @@ public class BlockBuilder implements Builder {
 
    public interface BlockIterator extends Iterator {
 
+      public String getName();
+
       public int getLineNo();
 
       public int getColNo();
@@ -68,6 +70,10 @@ public class BlockBuilder implements Builder {
       public BBIterator() {
          size = elements.size();
          i = 0;
+      }
+
+      public String getName() {
+          return name;
       }
 
       public boolean hasNext() {
@@ -96,7 +102,6 @@ public class BlockBuilder implements Builder {
       ArrayList macros = new ArrayList((elements.size()));
       int[] ln = new int[elements.size()];
       int[] cn = new int[elements.size()];
-      int pos=0;
       Stack iterStack = new Stack();
       StringBuffer s = new StringBuffer();
       Context.TemplateEvaluationContext tec = bc.getTemplateEvaluationContext();
@@ -107,17 +112,29 @@ public class BlockBuilder implements Builder {
       // Macro objects and create a block.
 
       BlockIterator iter = new BBIterator();
-      tec._templateName = name;
       while (iter.hasNext()) {
          Object o = iter.next();
 
-         // track line/column numbers in the build context
-         // so that bc.getCurrentLocation() stays current
-         tec._lineNo = ln[pos];
-         tec._columnNo = cn[pos++];
+         if (o instanceof Builder) {
+            // track line/column numbers in the build context
+            // so that bc.getCurrentLocation() stays current
+            tec._templateName = iter.getName();
+            tec._lineNo = iter.getLineNo();
+            tec._columnNo = iter.getColNo();
 
-         if (o instanceof Builder)
-            o = ((Builder) o).build(bc);
+             try {
+                 o = ((Builder) o).build(bc);
+             } catch (BuildException be) {
+                 // restore line/column info to what it was before
+                 // we tried to build the block
+                 tec._templateName = iter.getName();
+                 tec._lineNo = iter.getLineNo();
+                 tec._columnNo = iter.getColNo();
+
+                 // and rethrow the exception
+                 throw be;
+             }
+         }
 
          if (o instanceof Block) {
             iterStack.push(iter);

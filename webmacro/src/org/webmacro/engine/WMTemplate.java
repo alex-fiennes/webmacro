@@ -181,7 +181,10 @@ abstract public class WMTemplate implements Template {
          }
          catch (Exception e) {
             _log.error("Error parsing template: " + this, e);
-            throw new BuildException("Error parsing template: " + this, e);
+            BuildException be = new BuildException("Error parsing template: " + this, e);
+            if (bc != null)
+                be.setContextLocation(bc.getCurrentLocation());
+            throw be;
          }
          finally {
             try {
