@@ -230,11 +230,17 @@ public class WMParser_impl implements WMParser_implConstants {
       if (arg.type == Directive.ArgType_GROUP)
         parse_arg_group(descriptor, args, i, da);
       else if (arg.type == Directive.ArgType_CHOICE) {
-        for (int j=0; j<arg.subordinateArgs; j++) {
-          // Each child is a GROUP, so we want to look at child's first child
-          ArgDescriptor child = args[arg.children[j]];
-          if (lookahead_keyword(args[child.children[0]].keyword))
-            parse_arg_group(descriptor, args, arg.children[j], da);
+        for (boolean more=true; more; ) {
+          for (int j=0; j<arg.subordinateArgs; j++) {
+            more = false;
+            // Each child is a GROUP, so we want to look at child's first child
+            ArgDescriptor child = args[arg.children[j]];
+            if (lookahead_keyword(args[child.children[0]].keyword)) {
+              parse_arg_group(descriptor, args, arg.children[j], da);
+              more = true;
+              break;
+            }
+          }
         }
       }
       else {
@@ -1682,18 +1688,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
-  final private boolean jj_3R_26() {
-    if (jj_3R_22()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_13() {
-    if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3R_59() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -2258,6 +2252,18 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3_12() {
     if (jj_scan_token(LBRACE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_26() {
+    if (jj_3R_22()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    if (jj_scan_token(WS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

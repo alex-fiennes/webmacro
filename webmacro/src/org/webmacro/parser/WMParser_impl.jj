@@ -403,11 +403,17 @@ void parse_args(DirectiveDescriptor descriptor,
       if (arg.type == Directive.ArgType_GROUP) 
         parse_arg_group(descriptor, args, i, da);
       else if (arg.type == Directive.ArgType_CHOICE) {
-        for (int j=0; j<arg.subordinateArgs; j++) {
-          // Each child is a GROUP, so we want to look at child's first child
-          ArgDescriptor child = args[arg.children[j]];
-          if (lookahead_keyword(args[child.children[0]].keyword)) 
-            parse_arg_group(descriptor, args, arg.children[j], da);
+        for (boolean more=true; more; ) {
+          for (int j=0; j<arg.subordinateArgs; j++) {
+            more = false;
+            // Each child is a GROUP, so we want to look at child's first child
+            ArgDescriptor child = args[arg.children[j]];
+            if (lookahead_keyword(args[child.children[0]].keyword)) {
+              parse_arg_group(descriptor, args, arg.children[j], da);
+              more = true;
+              break;
+            }
+          }
         }
       }
       else {
