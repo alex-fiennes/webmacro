@@ -41,7 +41,6 @@ public class SimpleCacheManager implements CacheManager {
    private Object[] _writeLocks = new Object[101];
    private int _cacheDuration;
    private String _resourceType;
-   private Settings _ourSettings;
    private boolean _reloadOnChange=true;
 
    private static final TimeLoop _tl;
@@ -72,23 +71,38 @@ public class SimpleCacheManager implements CacheManager {
    
    public void init(Broker b, Settings config, String resourceType) 
    throws InitException {
-      int cacheSize; 
+      int cacheSize, cacheFactor; 
+      Settings ourSettings, defaultSettings;
 
       _log = b.getLog("resource", "Object loading and caching");
       _resourceType = resourceType;
-      _ourSettings = new SubSettings(config, 
-                                     "SimpleCacheManager." + _resourceType);
-      cacheSize = _ourSettings.getIntegerSetting("CacheBuckets", 1001);
-      _cache = new ScalableMap(cacheSize);
-      _cacheDuration = _ourSettings.getIntegerSetting("ExpireTime", -1001);
-      if (_cacheDuration == -1001) 
-        _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
+
+      ourSettings = new SubSettings(config, 
+                                    "SimpleCacheManager." + _resourceType);
+      defaultSettings = new SubSettings(config, "SimpleCacheManager.*");
+
+      cacheSize = ourSettings.getIntegerSetting("CacheBuckets", 
+                    defaultSettings.getIntegerSetting("CacheBuckets", 
+                      ScalableMap.DEFAULT_SIZE));
+      cacheFactor = ourSettings.getIntegerSetting("CacheFactor", 
+                      defaultSettings.getIntegerSetting("CacheFactor", 
+                        ScalableMap.DEFAULT_FACTOR));
+      _cache = new ScalableMap(cacheFactor, cacheSize);
+
+      _cacheDuration = 
+        ourSettings.getIntegerSetting("ExpireTime", 
+          defaultSettings.getIntegerSetting("ExpireTime", 
+            config.getIntegerSetting("TemplateExpireTime", 0)));
       _reloadOnChange = 
-        (_ourSettings.containsKey("ReloadOnChange"))
-        ? _ourSettings.getBooleanSetting("ReloadOnChange")
-        : true;
+        (ourSettings.containsKey("ReloadOnChange"))
+        ? ourSettings.getBooleanSetting("ReloadOnChange")
+        : ((defaultSettings.containsKey("ReloadOnChange"))
+           ? defaultSettings.getBooleanSetting("ReloadOnChange") : true);
+      
       _log.info("SimpleCacheManager." + _resourceType + ": " 
-                + "buckets=" + cacheSize + "; expireTime=" + _cacheDuration
+                + "buckets=" + cacheSize 
+                + "; factor=" + cacheFactor
+                + "; expireTime=" + _cacheDuration
                 + "; reload=" + _reloadOnChange);
    }
 
