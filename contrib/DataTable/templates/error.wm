@@ -1,0 +1,15 @@
+#set $Response.ContentType = "text/html"
+<html><head><title>ERROR!</title></head>
+
+<body bgcolor="white">
+<h1><font color="green">ERROR!</font></h1>
+
+$error
+
+## If $error is a Throwable, display the StackTrace
+#if ($stackTrace) #begin
+  <h3>Technical details:</h3>
+  <pre>$stackTrace</pre>
+#end
+</body>
+</html>

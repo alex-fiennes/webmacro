@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<TITLE>About the DataTable Sample Application</TITLE>
+</HEAD>
+<BODY>
+<H2>About the DataTable Sample Application</H2>
+<P>
+The sample application uses a servlet named TableDemo.java which subclasses WMServlet and a template 
+called TableDemo.wm.  It is designed to illustrate most of the features of 
+the ResultSetDataTable.</P>
+<P>The demo uses the <a href="http://www.sourceforge.net/hypersonicsql">HypersonicSQL</a> database and 
+the <a href="www.protomatter.org">Protomatter</a> connection pooling software.  Both are pure-Java, open-source
+products.  The data is from the sample database from the Hypersonic SQL demo.  
+</P>
+<P><b>To use the HypersonicSQL sample database</b> - Make sure the database is running in client/server
+mode ("runServer"). Use the database manager application ("run DatabaseManager") and 
+select from the menu "Option|Insert test data" to create the sample tables.
+</P>
+<P>
+You can easily substitute any database and/or connection pool that works with JDBC.
+</P>
+<P><b>To get the demo working on your system</b> - you will either need to install the above packages, in addition
+to WebMacro, or modify the code to work with your own database. 
+
+Add the org.webmacro.datatable classes to your CLASSPATH and be sure to adjust the 
+TemplatePath in the WebMacro.properties file to point to the location of TableDemo.wm and the sub-template, TableNav.wm.
+</p>
+<p>
+The template uses a #use 'text' directive,
+to escape the JavaScript code, so you may have to modify the syntax of that directive to match your WebMacro 
+version.  
+</p>
+<p>
+<b>Using your own database</b> - You will need to modify the JDBC connection code and the SQL in 
+TableDemo.java, as well as the named column references in the template (e.g., $row.FIRSTNAME),
+to match your own database.
+<P>
+To see what the generated HTML looks like, click <a href="DemoSnapShot.html">here</a>.  (NOTE: this is just a 
+static page, so the links will not work.)</P>
+<P>To see the template code, click <a href="TableDemo.wm.txt">here</a>.
+</BODY>
+</HTML>

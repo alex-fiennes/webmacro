@@ -1,0 +1,88 @@
+## Source of the sample WebMacro template, TableDemo.wm.
+## NOTE: the #use syntax may need to be adjusted to work with different WebMacro versions
+
+#set $Response.ContentType = "text/html"
+#set $tableWidth=600
+<html>
+<head>
+	<title>ResultSetDataTable Demo</title>
+	<script>
+	  var curr = $tbl.SkipRows;
+	</script>
+	#use 'text' #begin
+	<script>
+	  function page(prevnext){
+	    document.location = "/servlet/TableDemo?cmd=" + prevnext
+	      + "&curr=" + curr + "&pageSize=" + document.forms[0].pageSize.value;
+	  }
+	  function next(){ page("next"); }
+	  function prev(){ page("prev"); }
+	  function top(){ page("top"); }
+	</script>
+	#end
+</head>
+<body>
+<h3>ResultSetDataTable Demo</h3>
+  <b>Table 1, fields by name</b>
+  #set $tbl.RowColors = ["\#999999", "\#FFFFFF"]
+  <table border="1" width="$tableWidth">
+    <tr>
+      <th>First Name</th><th>Last Name</th><th>ID</th>
+      <th>BadCol</th>
+    </tr>
+    #foreach $row in $tbl #begin
+      <tr bgcolor="$row.Color">
+        <td>$row.FIRSTNAME</td><td>$row.LASTNAME</td><td>$row.ID</td>
+        <td>$row.BADCOL</td>
+      </tr>
+    #end
+  </table>
+  #parse "TableNav.wm"
+
+<b>Table 2, fields by number, with row attributes</b>
+
+#set $tbl.ErrorString = "ERR: "
+#set $tbl.HideErrors = "false"
+##set $tbl.RowColors = ["\#FF00CC", "\#CC4400", "\#00CCCC"]
+#set $oldvals = $tbl.putRowAttribute("bgcolor", ["\#CC00CC", "\#4444CC", "\#FFAAAA"])
+#set $oldvals = $tbl.putRowAttribute("fgcolor", ["\#33FF33", "\#AAAA33", "\#005555"])
+#set $oldvals = $tbl.putRowAttribute("styleBegin", ["<i>", "<u>"])
+#set $oldvals = $tbl.putRowAttribute("styleEnd", ["</i>", "</u>"])
+  <table border="1" width="$tableWidth">
+    <tr bgcolor="\#888888">
+      <th>Field 3</th><th>Field 1</th><th>Field 2</th>
+      <th>Field 99</th>
+    </tr>
+    #foreach $row in $tbl #begin
+      <tr bgcolor="$row.Attributes.bgcolor">
+        <td>
+          <font color="$row.Attributes.fgcolor">
+            $row.Attributes.styleBegin;$row.get(3)$row.Attributes.styleEnd
+          </font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.get(1)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.get(2)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.get(99)</font></td>
+      </tr>
+    #end
+  </table>
+
+  #parse "TableNav.wm"
+
+<b>Table 3, iterate over fields dynamically</b>
+  <table border="1" width="$tableWidth">
+    <tr><th>Row \#</th>
+      #foreach $col in $tbl.ColumnNames
+        #begin <th>$col</th> #end
+    </tr>
+    #foreach $row in $tbl #begin
+      <tr>
+        <td>$row.RowNumber</td>
+        #foreach $col in $row
+          #begin <td>$col</td> #end
+      </tr>
+    #end
+  </table>
+  #parse "TableNav.wm"
+</body>
+</html>
+

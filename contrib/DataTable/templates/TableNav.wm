@@ -1,0 +1,25 @@
+<table width="$tableWidth">
+  <tr>
+    <td valign="top">
+    #if ($tbl.hasMore() || $tbl.SkipRows != 0) #begin
+      Go to
+      #if ($tbl.SkipRows != 0) #begin
+        ## not at first page, show "prev" link
+        <a href="javascript:top();">[top]</a>
+        <a href="javascript:prev();">[prev]</a>
+      #end
+      #if ($tbl.hasMore()) #begin
+        ## not at last page, show "next" link
+        <a href="javascript:next();">[next]</a>
+      #end
+      page.
+    #end
+  </td>
+  <td align="right">
+    <form>
+    Show <input type="text" name="pageSize" value="$tbl.MaxRows" size="2">
+    rows at a time.
+    </form>
+  </td>
+</tr>
+</table>
