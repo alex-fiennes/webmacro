@@ -170,7 +170,7 @@ public final class SimpleIdentityMap implements SimpleMap {
      * object into the map.
      */
     public Object remove(Object key) {
-        //processQueue();
+        processQueue();
         int hash = (System.identityHashCode(key) & 0x7FFFFFFF) % tab.length;
         Node last = null;
         synchronized (locks[hash]) {
