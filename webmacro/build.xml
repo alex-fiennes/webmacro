@@ -5,8 +5,8 @@
 
 <project name="WebMacro" default="compile" basedir=".">
 
-  <property name="version"        value="0.98p1"/>
-  <property name="app.name"       value="webmacro"/>
+  <property name="version"        value="1.0rc1" />
+  <property name="app.name"       value="webmacro" />
   <property name="tmpdir"         value="tmp" />
   <property name="classes"        value="classes"/>
   <property name="dist"           value="webmacro-${version}"/>

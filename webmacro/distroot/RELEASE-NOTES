@@ -1,16 +1,33 @@
-WebMacro 0.98p1
+WebMacro 1.0rc1
 ------------
                     
-This is a patch release for WebMacro 0.98 that fixes various whitespace handling
-bugs. 
+This is the first 1.0 release canidate.  We've worked hard to get here, and
+we hope WebMacro will (continue to) work hard for you.
 
+Should you encounter problems with this release, please submit a bug report
+to http://www.webmacro.org/bugzilla/.
 
 Changes in this Release
 -----------------------
 
-- Bug fixes to parse exceptions being thrown by new whitespace handling
+- Numerous fixes to how WebMacro handles input/output encoding.  Your DBCS
+templates should work now! (sebastian)
 
+- Bug fixes to parse exceptions being thrown by new whitespace handling (sebastian)
+ 
+- Improved logging output.  All log output contains line.column information
+for the causing $variable.  Error messages have been reworded to be easier
+to understand. (brian)
 
+- Many whitespace parsing fixes involving #comments, #directives, and $variables. (brian)
+
+- Configurable security options for limiting which methods can be called on a class.
+This allows the administrator of the WebMacro server to make sure his users don't
+abuse the system.  See webmacro.defaults (http://www.webmacro.org/WebMacroDefaults)
+for details. (keats)
+
+- Pluggable LogTargets.  You can (finally) plug in your own org.webmacro.util.LogTarget.
+By default, WebMacro logs to stderr. (eric)
 
 
 Recent Changes up to this Release

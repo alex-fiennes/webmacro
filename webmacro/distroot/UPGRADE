@@ -1,6 +1,11 @@
 Potential Pitfalls While Ugrading
 ---------------------------------
 
+If you are upgrading from early versions of WebMacro, you should
+probably read this file.  If you're upgrading from 0.97 or better, 
+you can (probably) ignore all of this.  :)
+
+
 1) WebMacro no longer requires a "WebMacro.properties" file (it is
 completely optional).  WebMacro now has a "WebMacro.defaults" file that
 is included in the .jar file.  This file is used as a base for WM's
