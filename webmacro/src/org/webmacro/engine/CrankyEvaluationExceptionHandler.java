@@ -58,15 +58,16 @@ public class CrankyEvaluationExceptionHandler
                         Exception problem) 
    throws PropertyException {
      if (_log != null)
-       _log.warning("Error evaluating variable " + variable.getVariableName()
-                    + ": " + problem, problem);
+       _log.error("Error evaluating $" + variable.getVariableName()
+                + " at " + context.getCurrentLocation(), problem);
 
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
      else 
-       throw new PropertyException("Error evaluating variable " 
-                                   + variable.getVariableName() + ": " 
-                                   + problem, problem);
+       throw new PropertyException("Error evaluating $" 
+                                   + variable.getVariableName()
+                                   + " at " + context.getCurrentLocation(), 
+                                   problem);
    }
 
    public String expand(Variable variable, 
@@ -74,14 +75,15 @@ public class CrankyEvaluationExceptionHandler
                         Exception problem) 
    throws PropertyException {
      if (_log != null)
-       _log.warning("Error expanding variable " + variable.getVariableName()
-                    + ": " + problem, problem);
+       _log.error("Error expanding $" + variable.getVariableName()
+                  + " at " + context.getCurrentLocation(), problem);
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
      else 
-       throw new PropertyException("Error evaluating variable " 
-                                   + variable.getVariableName() + ": " 
-                                   + problem, problem);
+       throw new PropertyException("Error expanding $" 
+                                   + variable.getVariableName() 
+                                   + " at " + context.getCurrentLocation(), 
+                                   problem);
    }
 
 

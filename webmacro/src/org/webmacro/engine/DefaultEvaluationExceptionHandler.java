@@ -59,7 +59,7 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
             if (_log != null)
                 _log.warning("Cannot evaluate $" + variable.getVariableName()
                            + " at " + context.getCurrentLocation()
-                           + ": Does not exist in context");
+                           + ": No such variable");
             return;
         } else if (problem instanceof PropertyException.NullValueException) {
             if (_log != null)
@@ -98,11 +98,11 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
                 _log.warning("Cannot expand $"
                            + variable.getVariableName()
                            + " at " + context.getCurrentLocation()
-                           + ": Does not exist in context");
+                           + ": No such variable");
             return errorString("Cannot expand $"
                            + variable.getVariableName()
                            + " at " + context.getCurrentLocation()
-                           + ": Does not exist in context");
+                           + ": No such variable");
         }
         else if (problem instanceof PropertyException.NullValueException) {
             if (_log != null)
