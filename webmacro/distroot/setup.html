@@ -7,7 +7,7 @@
 <center>
 <b>Set Up Guidelines
 <br>
-Updated For Release 1.0rc1</b></center>
+Updated For Release 1.0rc2</b></center>
 
 <p>
 
@@ -20,7 +20,8 @@ Updated For Release 1.0rc1</b></center>
 WebMacro is a free Java development package that allows you to keep
 HTML and presentational issues out of your Java servlet code--while
 providing web designers with a simple template language capable of
-displaying any Java object.  <p>
+displaying any Java object. In stand alone mode, it is a powerful
+language generation platform for java.  <p>
 
 Some basic guidelines for set-up:
 
@@ -30,17 +31,23 @@ Some basic guidelines for set-up:
      <p>
 <li> webmacro.defaults contains all the runtime default properties. DO
      NOT MODIFY this file. Instead override this file by placing a file
-     called WebMacro.properties in your classpath and making changes replacements
-     here. For example, in this file, you can specify a different cache manager.
+     called WebMacro.properties in your classpath and making changes or
+     replacements here. For secure 2.2+ Web Apps, place WebMacro.properties 
+     under your WEB-INF/ directory.
      <p>
-<li> We recommend you place the root directory for your templates in your classpath.
-     In this manner, the WebMacro resource provider will find them.<p>
+<li> We recommend you place the root directory for your templates 
+     in your classpath or your application root or for secured WEB applictions
+     in a jar file in the directory WEB-INF/lib/.
+     In this manner, the WebMacro resource provider will find them.
+     <p>
 <li> API documentation is provided with the release and is your
      principal source of coding guidelines along with the WebMacro
      wiki site.
      <p>
 <li> Examples contains a few example WebMacro programs and templates 
-     for you to look at to figure out how things work.
+     for you to look at to figure out how things work. Complete driving
+     instructions are found at the interactive WebMacro 
+     <a href="http://www.webmacro.org">site</a>.
      <p>
 </ul>
 
@@ -49,6 +56,9 @@ Some basic guidelines for set-up:
 <a name="Install"><h3>How To Use It</h3></a>
 
 <ul>
+
+  <li>Note: See also <a href="CONFIGURING-EXAMPLES">Configuring-Examples</a>
+  in this directory.<p>
 
   <li>This applies to the HelloWorld, Standalone, and GuestBook examples.
       <p>
@@ -81,7 +91,8 @@ Some basic guidelines for set-up:
 
 </ul>
 
-  Here is an example CLASSPATH: <pre>
+  Here is an example CLASSPATH: 
+  <pre>
 
 CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/examples:$JSDK_HOME
 
@@ -113,7 +124,8 @@ WebMacro ships with a webmacro.jar file compiled for JDK 1.2/1.3.
 
 To recompile WM, you will need to go to the CVS archive where you
 can find the ant build script and all the supporting libraries
-referenced during compilation.
+referenced during compilation. You must "check out" the sources and
+supporting files to compile and test WM.
 
 <a name="Overview"><h3>Overview of the WebMacro System: </h3></a>
 
@@ -124,12 +136,14 @@ referenced during compilation.
       <li> We think it is wrong to use markup for a scripting language
       <li> We think it is wrong to embed programs on a web page
       <li> We think it is wrong for web scripts to look like hard programming
+      <li> We feel that an API like WM should make it easy to do the
+      things you need to do when designing and deploying applications.
 
-      <li><b> We believe that programming and graphics design 
+      <li><b> We believe that programming and graphical page design 
               are separate tasks</b>
    </ul>
 
-   So we have designed a language very much like all the other, but which 
+   So we have designed a language that is simple to learn, but which 
    fits with our biases above.  <p>
 
    WebMacro presents two separate interfaces:  <ol>
@@ -155,6 +169,12 @@ referenced during compilation.
 
    This separation of program code and content is the fundamental idea 
    behind the WebMacro system.    <p>
+   
+   Lastly, WM is a powerful language for code generation, mail merging
+   and rule development. A WebMacro template can contain simple
+   business logic. When a template is evaluated, the simple logic can interact
+   with more complex java and state processing. This makes for a formidable
+   framework for language generation. WebMacro is a language platform.
 
 
 <a name="Overview"><h3>How it works: </h3></a>
@@ -184,10 +204,12 @@ synchronized either. Thus you get very good performance out of WebMacro
 since most of the code can avoid the overhead of synchronization locks. 
 <p> 
 Finally, WebMacro is a framework. Most of its behavior is loaded dynamically
-based on the configuration file, WebMacro.properties--the effect of this 
-is that you can radically alter the behavior of WebMacro by replacing 
-the classes named in WebMacro.properties with your own. There are a large
-number of "plug points" in the design to allow an advanced user to 
+based on the configuration file, WebMacro.defaults and if present, 
+WebMacro.properties.
+
+The effect of this is that you can radically alter the behavior of WebMacro 
+by replacing the classes named in WebMacro.properties with your own. 
+There are a large number of "plug points" in the design to allow an advanced user to 
 customize WebMacro extensively. 
 <p> 
 For an ordinary user, though, it's good enough to rely on the default 
