@@ -74,7 +74,7 @@ final public class URLTemplateProvider extends CachingProvider
 
     // INITIALIZATION
 
-    private static Broker _broker = null;
+    private Broker _broker = null;
 
     private static String _pathSeparator = ";";
     private String[] _templateDirectory = null;
