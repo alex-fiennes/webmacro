@@ -20,30 +20,15 @@
  * See www.webmacro.org for more information on the WebMacro project.  
  */
 
-
 package org.webmacro.util;
 
 /**
- * Interface for a simple map, that does not have
- * all the features of java.util.Map.
- * <br>
- * AbstractScalableMap uses an array of instances
- * of this interface.
- * @author skanthak@muehlheim.de
- */
-public interface SimpleMap {
-    public void put(Object key, Object value);
-    
+ * Interface for classes, that can create SimpleMap instances
+ **/
+public interface SimpleMapFactory {
     /**
-     * Get the value of 'key' back. Returns null if no such key.
-     */
-    public Object get(Object key);
-
-    /**
-     * Ensure that the key does not appear in the map
-     */
-    public Object remove(Object key);
-
-    public void clear();
-    
+     * Create a SimpleMap
+     * @return SimpleMap
+     **/
+    public abstract SimpleMap createSimpleMap();
 }
