@@ -904,15 +904,15 @@ final class DirectAccessor extends Accessor
                   Class s = sig[i];
                   Class a = args[i];
                   if (
-                      (s.equals(Integer.TYPE) && a.equals(Integer.class)) ||
-                      (s.equals(Boolean.TYPE) && a.equals(Boolean.class)) || 
-                      (s.equals(Character.TYPE) && a.equals(Character.class)) ||  
-                      (s.equals(Long.TYPE) && a.equals(Long.class)) ||  
-                      (s.equals(Short.TYPE) && a.equals(Short.class)) ||  
-                      (s.equals(Double.TYPE) && a.equals(Double.class)) ||  
-                      (s.equals(Float.TYPE) && a.equals(Float.class)) ||  
-                      (s.equals(Void.TYPE) && a.equals(Void.class)) ||  
-                      (s.equals(Byte.TYPE) && a.equals(Byte.class)) 
+                      (s == Integer.TYPE && a == Integer.class) ||
+                      (s == Boolean.TYPE && a == Boolean.class) || 
+                      (s == Character.TYPE && a == Character.class) ||  
+                      (s == Long.TYPE && a == Long.class) ||  
+                      (s == Short.TYPE && a == Short.class) ||  
+                      (s == Double.TYPE && a == Double.class) ||  
+                      (s == Float.TYPE && a == Float.class) ||  
+                      (s == Void.TYPE && a == Void.class) ||  
+                      (s == Byte.TYPE && a == Byte.class) 
                       )
                   {
                       continue;
