@@ -78,11 +78,11 @@ Total Memory=$TotalMemory (MB)
 </tr>
 
 <tr>
-<td>Date and Time of Test</td><td>Wed Apr 04 14:04:01 PDT 2001</td>
+<td>Date and Time of Test</td><td>Wed Apr 04 14:37:24 PDT 2001</td>
 </tr>
 
 <tr>
-<td>Configuration Settings and Options</td><td>Standard Configuration. Running test under ant. 
+<td>Configuration Settings and Options</td><td>Standard Configuration. Running test under ant.</td>
 </tr>
 
 <tr>
@@ -91,26 +91,27 @@ Total Memory=$TotalMemory (MB)
 Sun Microsystems Inc. 
 1.3.0-C
 x86
-Total Memory=3876 (MB)
+Total Memory=7216 (MB)
 </td>
 </tr>
 
 <tr>
-<td>Iteration Count</td><td>10</td>
+<td>Iteration Count</td><td>1000</td>
 </tr>
 
 <tr>
-<td>Script Character Count</td><td>10132</td>
+<td>Script Character Count</td><td>10158</td>
 </tr>
 
 <tr>
-<td>Total Elapsed Time in Millis</td><td>761</td>
+<td>Total Elapsed Time in Millis</td><td>70832</td>
 </tr>
 
 <tr>
-<td>Average Time To Evaluate Script in Millis</td><td>76</td>
+<td>Average Time To Evaluate Script in Millis</td><td>70</td>
 </tr>
 </table>
+
 
 
 </td></tr></table>

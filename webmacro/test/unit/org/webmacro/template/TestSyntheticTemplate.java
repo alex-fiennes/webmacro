@@ -65,7 +65,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     min = max;
     int contentSize = throwAway.length();
 
-    long tet, singleTet; int iterationCount = 12;
+    long tet, singleTet; int iterationCount = 1002;
     // begin load
     tet = System.currentTimeMillis();
     for (int index = 0; index < iterationCount; index++) {
