@@ -1,0 +1,81 @@
+<html>
+<head>
+	<TITLE>WebMacro Configuration</TITLE>
+</HEAD>
+<body bgcolor='#ffffcc'>
+<h2>WebMacro Configuration</h2>
+<h3>Current Settings</h3>
+JSDK Version: $JSDK_Version<br>
+ContextPath: $Request.ContextPath<br>
+<h4>Configuration File Locations</h4>
+WebMacro.defaults: $WEBMACRO_DEFAULTS<br>
+WebMacro.properties: $WEBMACRO_PROPERTIES<br>
+
+#alternate $color through ["#ffcc66", "#ffffcc"]
+<br>
+  <table border='1'>
+#foreach $Setting in $Settings indexing $i from 1
+    <tr bgcolor='$color'>
+       <td>$i</td>
+       <td>$Setting.Key</td>
+       <td>$Setting.Value&nbsp;</td>
+    </tr>
+#end
+  </table>
+
+<h3>Request Headers</h3>
+  <table border='1'>
+#foreach $hdr in $Request.HeaderNames indexing $i from 1
+    <tr bgcolor='$color'>
+       <td>$i</td>
+       <td>$hdr</td>
+       <td>$Request.getHeader($hdr)&nbsp;</td>
+    </tr>
+#end
+  </table>
+
+<h3>System Settings</h3>
+  <table border='1'>
+#foreach $Prop in $SysProps indexing $i from 1
+    <tr bgcolor='$color'>
+       <td>$i</td>
+       <td>$Prop.Key</td>
+       <td>$Prop.Value&nbsp;</td>
+    </tr>
+#end
+  </table>
+
+<h3>Servlet Initialization Parameters</h3>
+
+#if ($ServletParms.size()==0)
+  None
+#else
+  <table border='1'>
+  #foreach $Prop in $ServletParms indexing $i from 1
+    <tr bgcolor='$color'>
+       <td>$i</td>
+       <td>$Prop.Key</td>
+       <td>$Prop.Value&nbsp;</td>
+    </tr>
+  #end
+  </table>
+#end
+
+<h3>Servlet Context Attributes</h3>
+
+#if ($ServletContextAttributes.size()==0)
+  None
+#else
+  <table border='1'>
+  #foreach $Prop in $ServletContextAttributes indexing $i from 1
+    <tr bgcolor='$color'>
+       <td>$i</td>
+       <td>$Prop.Key</td>
+       <td>$Prop.Value&nbsp;</td>
+    </tr>
+  #end
+  </table>
+#end
+
+</body>
+</html>
