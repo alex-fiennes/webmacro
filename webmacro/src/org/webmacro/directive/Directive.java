@@ -28,18 +28,13 @@ public abstract class Directive implements Macro, Visitable {
   public static final int ArgType_LVALUE       = 2;
   public static final int ArgType_RVALUE       = 3;
   public static final int ArgType_KEYWORD      = 4;
-  public static final int ArgType_PUNCT        = 5;
+  public static final int ArgType_ASSIGN       = 5;
   public static final int ArgType_BLOCK        = 6;
   public static final int ArgType_LITBLOCK     = 7;
   public static final int ArgType_SUBDIRECTIVE = 8;
   public static final int ArgType_QUOTEDSTRING = 9;
   public static final int ArgType_GROUP        = 50;
   public static final int ArgType_CHOICE       = 51;
-
-  public static final int Punct_COMMA          = 1;
-  public static final int Punct_LPAREN         = 2;
-  public static final int Punct_RPAREN         = 3;
-  public static final int Punct_EQUALS         = 4;
 
   /**
    * Directives must implement a build() method.  The build method
@@ -67,10 +62,27 @@ public abstract class Directive implements Macro, Visitable {
         fw.flush();
         return os.toString("UTF8");
       } catch (IOException e) {
-        // @@@ Log something 
-        return "";
+         context.getBroker().getLog("engine").error(
+           "Directive.evaluate: IO exception on write to StringWriter", e);
+         return "";
       }
   }  
+
+  /**
+   * Convenience methods for directives to write HTML warnings into the output
+   * stream.  Eventually this will be parameterizable so that HTML is not
+   * assumed to be the only underlying language. 
+   */
+
+  protected static String getWarningText(String warning) 
+  throws IOException {
+    return "<!--\nWARNING: " + warning + " \n-->";
+  }
+
+  protected static void writeWarning(String warning, FastWriter writer) 
+  throws IOException {
+    writer.write(getWarningText(warning));
+  }
 
   public void accept(TemplateVisitor v) {
     v.visitUnknownMacro(this.getClass().getName(), this);
@@ -82,9 +94,9 @@ public abstract class Directive implements Macro, Visitable {
   public static class ArgDescriptor {
     public final int id;
     public final int type;
-    public boolean optional = false, repeating = false;
-    public int subordinateArgs = 0;
-    public int punctId;
+    public boolean optional = false;
+    public int subordinateArgs = 0, nextArg = 0;
+    public int[] children;
     public String keyword;
 
     protected ArgDescriptor(int id, int type) { 
@@ -103,10 +115,6 @@ public abstract class Directive implements Macro, Visitable {
     protected void setOptional(int subordinateArgs) {
       optional = true;
       this.subordinateArgs = subordinateArgs;
-    }
-
-    protected void setRepeating() {
-      repeating = true;
     }
   }
 
@@ -154,10 +162,9 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
-  public static class PunctArg extends ArgDescriptor {
-    public PunctArg(int id, int punctId) { 
-      super(id, ArgType_PUNCT); 
-      this.punctId = punctId;
+  public static class AssignmentArg extends ArgDescriptor {
+    public AssignmentArg() { 
+      super(0, ArgType_ASSIGN); 
     }
   }
 
@@ -165,14 +172,6 @@ public abstract class Directive implements Macro, Visitable {
     public OptionalGroup(int argCount) { 
       super(0, ArgType_GROUP); 
       setOptional(subordinateArgs);
-    }
-  }
-
-  public static class OptionalRepeatingGroup extends ArgDescriptor {
-    public OptionalRepeatingGroup(int argCount) { 
-      super(0, ArgType_GROUP); 
-      setOptional(subordinateArgs);
-      setRepeating();
     }
   }
 
@@ -186,6 +185,7 @@ public abstract class Directive implements Macro, Visitable {
   public static class Subdirective extends ArgDescriptor {
     public final String name; 
     public final ArgDescriptor[] args;
+    public boolean repeating = false;
     
     public Subdirective(int id, String name,
                         ArgDescriptor[] args) {
@@ -208,9 +208,10 @@ public abstract class Directive implements Macro, Visitable {
     public OptionalRepeatingSubdirective(int id, String name,
                                          ArgDescriptor[] args) {
       super(id, name, args);
-      setRepeating();
+      repeating = true;
     }
   }
+
 
 }
 
