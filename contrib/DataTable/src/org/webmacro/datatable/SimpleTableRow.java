@@ -12,6 +12,7 @@ public class SimpleTableRow extends AbstractMap
   private FieldSet fields;
   private DataTable _tbl;
   private RowAttribs _attribs;
+  private Object _data;
   
   /**
    * constructor
@@ -78,7 +79,14 @@ public class SimpleTableRow extends AbstractMap
   public Object getAttributes(){
     return _attribs;
   }
+  public Object getData(){
+      return _data;
+  }
+  public void setData(Object o){
+      _data = o;
+  }
   
+  public DataTable getDataTable(){ return _tbl; }
   /**
    * This class allows row attributes to be accessed within a WM template in a straightforward way.  
    * E.g., $row.Attribute.bgColor or $row.Attribute.fontSize.
