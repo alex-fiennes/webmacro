@@ -1,0 +1,7 @@
+these should all say pass:
+      NotInContext: #if($NotInContext) { fail } #else { pass }
+   VoidMethod call: #if($TestObject.voidMethod()) { fail } #else { pass }
+   NullMethod call: #if($TestObject.returnNull()) { fail } #else { pass }
+   
+   
+   
