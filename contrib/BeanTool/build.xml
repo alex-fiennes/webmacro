@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<project name="BeanTool" default="main" basedir=".">
+	<property name="build.compiler" value="jikes"/>
+
+	<property name="build" value="/tmp/fgallagh/webapps/beantool"/>
+	<property name="build.classes" value="${build}/WEB-INF/classes"/>
+	<property name="build.lib" value="${build}/WEB-INF/lib"/>
+	<property name="build.tmpl" value="${build}/WEB-INF/templates"/>
+	<property name="build.conf" value="${build}/WEB-INF"/>
+
+	<target name="prepare">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${build.lib}"/>
+	</target>
+
+	<target name="main" depends="prepare">
+		<javac
+			srcdir="src"
+			destdir="${build.classes}"
+			extdirs="lib"
+			debug="on"
+			deprecation="on"
+		/>
+        <copy todir="${build.tmpl}">
+            <fileset dir="templates"/>
+        </copy>
+
+        <copy todir="${build.classes}">
+            <fileset dir="app-conf" includes="**/WebMacro.properties"/>
+        </copy>
+        <copy todir="${build.conf}">
+            <fileset dir="app-conf" includes="**/web.xml"/>
+        </copy>
+
+		<copy todir="${build.lib}">
+            <fileset dir="lib" excludes="**/servlet.jar"/>
+        </copy>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<target name="all" depends="clean,main"/>
+	
+</project>

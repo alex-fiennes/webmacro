@@ -1,0 +1,52 @@
+<html><head><title>StockTicker</title></head>
+
+
+#set $Response.ContentType = "text/html"
+#if ($Response.setContentType("text/html")) {}
+
+<h1>BeanTool Test - StockTicker</h1>
+
+
+<hr>
+#set $bean = $Bean.create("org.webmacro.servlet.bean.StockTickerBean");
+#set $bean.Name = "NNDS MSFT ORCL IBM"
+$Bean.init($bean,"name")
+#if ($bean) {
+Create: $bean<br>
+} #else {
+No Bean!<br>
+}
+
+#set $xml = $bean.XML
+#set $quotes = $XML.getNodeList($xml,"/stock_quotes/stock_quote");
+
+<table border="1">
+<tr>
+    <th>Symbol</th>
+    <th>Ask</th>
+    <th>High</th>
+    <th>Low</th>
+    <th>Change</th>
+    <th>Time</th>
+</tr>
+#foreach $quote in $quotes #begin
+    <tr>
+        <td>$XML.getNodeValue($quote,"symbol/text()")</td> 
+        <td>$XML.getNodeValue($quote,"price[@type='ask']/@value")</td> 
+        <td>$XML.getNodeValue($quote,"price[@type='dayhigh']/@value")</td> 
+        <td>$XML.getNodeValue($quote,"price[@type='daylow']/@value")</td> 
+        <td>$XML.getNodeValue($quote,"change/text()")</td> 
+        <td>
+            $XML.getNodeValue($quote,"when/date/text()")
+            $XML.getNodeValue($quote,"when/time/text()") 
+        </td>
+    </tr>
+#end
+</table>
+
+<form>
+    <input type="text" name="name" value="$bean.Name"/>
+    <input type="submit">
+</form>
+
+</body></html>

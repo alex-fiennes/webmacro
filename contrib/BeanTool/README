@@ -1,0 +1,27 @@
+BeanTool
+========
+
+This is a proof-of-concept ContextTool to mimic some of the behaviour of JSP, whereby one can instantiate a Java class and configure if from a form post, matching form element names to bean properties.  The point is for a (technical) page author to be able to assemble smart pagelets without needing to have them explicity coded in the servlet.
+
+The simple example is a StockTicker bean.  As is, this is not actually a good example of my intention - I expect beans to be more independent of the enclosing application. 
+
+
+Compilation
+===========
+
+This is set up to use ant, so you'll need to edit build.xml appropriately, expecially wrt build location and maybe change build.compiler to "modern" if you don't have Jikes (why not?)
+
+You'll also need jasper.jar, which is part of Tomcat.   Note that you don't need Tomcat to run this, I just use some Jasper utility classes to do the class introspection. 
+
+To compile the example "stock ticker" you'll also need Apache Xalan which does the XPath stuff.
+
+Expected Enhancements
+=====================
+
+  - Session support
+  - custom introspector (or maybe can use WebMacro's) to avoid reliance on Jasper.
+  - expect to have bean name "aliases" in a config files somewhere.
+  - bean pooling
+
+
+Fergus Gallagher
