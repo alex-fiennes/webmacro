@@ -115,8 +115,8 @@ final public class Block implements Macro, Visitable
     final int len = _macros.length;
     for(int i = 0; i < len; i++) 
     {
-       v.visitMacro(_macros[i]);
        v.visitString(_strings[i]);
+       v.visitMacro(_macros[i]);
     }
     v.visitString(_strings[len]);
     v.endBlock(); 
