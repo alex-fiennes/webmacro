@@ -1,0 +1,46 @@
+<html>
+<center><h1>Release 0.3, 30 - Oct - 2001</h1></center>
+The examples directory contains some useful files in understanding
+how to use the management contribution as it pertains to Object Relational
+Mapping. This module is a work in process.
+<p>
+src/o/w/mgmt/impl contains some useful servlets. In particular, if you
+want to use this module out of the box, configure the servlet, 
+o.w.m.i.TemplateServlet.class, to handle *.tml files. Here is how my
+resin configuration file handles this for a host section:
+<pre>
+  servlet-mapping url-pattern='*.tml' servlet-name='template'
+  servlet servlet-name='template' servlet-class='org.webmacro.mgmt.impl.TemplateServlet'
+</pre>
+
+
+<h3>Object Relational Mapping and Code Generation</h3>
+<p>
+The management module contains an emerging platform for integrated data
+model design, sql generation, and java source file generation.
+<p>
+The system has a couple of moving parts. However, if you have the "template"
+servlet mentioned above serving up *.tml files, you will rock.
+<p>
+Run the example demo file <a href="examples/Credential.tml">Credential.tml</a>
+to see the O/R mapping magic in action.
+<ol>
+<li>Copy Credential.tml to your document root.
+<li>Be sure and copy mgmt.jar, resources.jar to your servlet lib directory.
+<li>Restart your server.
+<li>Point your browser to http://host/Credential.tml
+</ol>
+If you have configured this properly, you will get an output identical to
+<a href="examples/Credential.txt">Credential.txt</a> in your browser.
+<p>
+The template magic is in <a href="templates/org/opendoors/store">this directory
+</a>.
+The source code magic is in 
+<a href="src/org/opendoors/store/ORSchema.java">ORSchema.java</a>. The use
+of static inner classes makes it possible to keep all the relations tightly
+packed in a single file.
+<p>
+Enjoy.
+<p>
+<a href=mailto:lane@opendoors.com>Lane Sharman</a>
+  
