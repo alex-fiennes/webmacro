@@ -116,7 +116,7 @@ public class SimpleCacheManager implements CacheManager {
      * trying to look it up in a cache. If it's not there, then
      * call load(String) to load it into the cache.
      */
-   public Object get(final String query, CachingProviderMethods helper) 
+   public Object get(final Object query, ResourceLoader helper) 
    throws ResourceException {
       ScmCacheElement r;
       Object o = null;
