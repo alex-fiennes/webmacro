@@ -1,4 +1,5 @@
 
+-- fixed bug in or condition
 -- added SelectList example class in util
 -- fixed problem with abstract subclass
 -- added super.destroy() to WMServlet.destroy()
