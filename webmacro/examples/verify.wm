@@ -1,5 +1,5 @@
-<html><head><title>Verify!</title></head>
 #set $Response.ContentType = "text/html"
+<html><head><title>Verify!</title></head>
 
 <body bgcolor="white">
 <h1><font color="green">Verify recieved form input!</font></h1>
