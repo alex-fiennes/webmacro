@@ -9,7 +9,7 @@ import org.webmacro.Context;
 */
 public class TestSyntheticTemplate extends TemplateTestCase {
 
-  private static final int iterationCount = 3;
+  private static final int iterationCount = 1002;
 
   private static final String fileName = "org/webmacro/template/synthetictest.wm";
   private static final String reportName = "org/webmacro/template/syntheticreport.wm";
@@ -49,6 +49,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     tet = System.currentTimeMillis() - tet;
     if (value.length() < 10000) 
       fail("Total character count must exceed 10,000 characters");
+    Thread.sleep(2500); // let the immutable cache save to its immutable map
   }
 
   /**
