@@ -36,7 +36,9 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
       subdirectives = new Object[desc.subdirectives.length];
     try {
       directive = (Directive) desc.dirClass.newInstance();
-    } catch (Exception e) { /* @@@ */ };
+    } catch (Exception e) { 
+      // If directive is null, we'll throw a build exception when we build
+    };
   }
 
   private int findSubdirectiveIndex(int id) 
@@ -122,6 +124,9 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
   }
 
   public Object build(BuildContext bc) throws BuildException {
+    if (directive == null) 
+      throw new BuildException("Error instantiating Directive object for #" 
+                               + desc.name);
     return directive.build(this, bc);
   }
 
