@@ -31,62 +31,94 @@ public class TestWhitespace extends TemplateTestCase {
       context.put ("Array", new String[] {"one", "two", "three"});
    }
 
-   public void testWithIf () throws Exception {
-      String tmpl = "#if (true) { pass } #else { fail }";
-      assertStringTemplateEquals (tmpl, "pass ");
 
-      tmpl = "#if (true) {  pass  } #else {  fail  }";
-      assertStringTemplateEquals (tmpl, "pass  ");
+   //
+   // test whitespace before a directive
+   //
 
-      tmpl = "#if (true) {pass} #else {fail}";
+   public void testBeforeDirective1 () throws Exception {
+      String tmpl = "  \n#if(true){pass}";      
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+ 
+   public void testBeforeDirective2 () throws Exception {
+      String tmpl = "\n   #if(true){pass}";
       assertStringTemplateEquals (tmpl, "pass");
    }
 
-   public void testWithElse () throws Exception {
-      String tmpl = "#if (false) { fail } #else { pass }";
-      assertStringTemplateEquals (tmpl, "pass ");
-   } 
- 
-   public void testEatLeadingWSNL1 () throws Exception {
-      String tmpl = "\n  \n#if (true) {WSNL1} #else {fail}";
-      assertStringTemplateEquals (tmpl, "\nWSNL1");
-   }
- 
-   public void testEatLeadingWSNL2 () throws Exception {
-      String tmpl = "           \n#if (true) {WSNL2} #else {fail}";
-      assertStringTemplateEquals (tmpl, "WSNL2");
-   }
-  
-   public void testEatLeadingWSNL3 () throws Exception {
-      String tmpl = "\n   #if (true) {WSNL3} #else {fail}";
-      assertStringTemplateEquals (tmpl, "WSNL3");
-   }
- 
-   public void testEatLeadingWSNL4 () throws Exception {
-      String tmpl = "\n\n#if (true) {WSNL4} #else {fail}";
-      assertStringTemplateEquals (tmpl, "\nWSNL4");
-   }
- 
-   public void testEatLeadingWSNL5 () throws Exception {
-      String tmpl = "\n\n   #if (true) {WSNL5} #else {fail}";
-      assertStringTemplateEquals (tmpl, "\nWSNL5");
-   }
-
-   public void testWithForeach1 () throws Exception {
-      String tmpl = "#foreach $a in $Array { $a }";
-      assertStringTemplateEquals (tmpl, "one two three ");
-   }
-
-   public void testWithForeach2 () throws Exception {
-      String tmpl = "#foreach $a in $Array { $a}";
-      assertStringTemplateEquals (tmpl, "onetwothree");
-
-      tmpl = "#foreach $a in $Array {\n$a}";
-      assertStringTemplateEquals (tmpl, "onetwothree");
+   public void testBeforeDirective3 () throws Exception {
+      String tmpl = "\n  \n#if(true){pass}";  
+      assertStringTemplateEquals (tmpl, "\npass");
    } 
 
-   public void testWithForeach3 () throws Exception {
-      String tmpl = "#foreach $a in $Array {\n$a\n}\n";
-      assertStringTemplateEquals (tmpl, "one\ntwo\nthree\n");
+
+   //
+   // test whitespace after a directive
+   //
+
+   public void testAfterDirective () throws Exception {
+      String tmpl = "#set $a = \"foo\"   \npass";   
+      assertStringTemplateEquals (tmpl, "\npass");
    }
+
+
+   // 
+   // test whitespace after a begin 
+   //
+
+   public void testAfterBeginBlock1 () throws Exception {
+      String tmpl = "#if(true)#begin  \npass#end";             
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+
+   public void testAfterBeginBlock2 () throws Exception {
+      String tmpl = "#if(true){  \npass}";            
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+
+   public void testAfterBeginBlock3 () throws Exception {
+      String tmpl = "#if(true)  \npass #end";
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+
+
+   //
+   // test whitespace before an end
+   //
+
+   public void testBeforeEnd1 () throws Exception {
+      String tmpl = "#if(true)#begin pass\n#end";
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+ 
+   public void testBeforeEnd2 () throws Exception {
+      String tmpl = "#if(true){pass\n}";
+      assertStringTemplateEquals (tmpl, "pass\n");
+   }
+ 
+   public void testBeforeEnd3 () throws Exception {
+      String tmpl = "#if(true) pass\n#end";
+      assertStringTemplateEquals (tmpl, "pass");
+   }   
+
+
+   //
+   // test whitespace after an end
+   //
+
+   public void testAfterEndBlock1 () throws Exception {
+      String tmpl = "#if(true)#begin pass #end\n";
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+ 
+   public void testAfterEndBlock2 () throws Exception {
+      String tmpl = "#if(true){pass}\n";
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+
+   public void testAfterEndBlock3 () throws Exception {
+      String tmpl = "#if(true) pass #end\n";
+      assertStringTemplateEquals (tmpl, "pass");
+   }
+
 }
