@@ -45,7 +45,7 @@ import org.webmacro.util.LogSystem;
  * @see org.webmacro.Broker
  */
 abstract public class WMServlet extends HttpServlet implements WebMacro {
-
+   
    private WebMacro _wm = null;
    private Broker _broker = null;
    private WebContext _wcPrototype;
@@ -55,40 +55,40 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * call the variable used in the ERROR_TEMPLATE
     */
    final static String ERROR_VARIABLE = "ErrorVariable";
-
+   
    /**
     * The name of the error template we will use if something
     * goes wrong
     */
    final static String ERROR_TEMPLATE = "ErrorTemplate";
-
+   
    /**
     * Defaults for error variable and error template
     */
    final static String ERROR_TEMPLATE_DEFAULT = "error.wm";
    final static String ERROR_VARIABLE_DEFAULT = "error";
-
+   
    /**
     * Log object used to write out messages
     */
    private Log _log;
-
+   
    /**
     * null means all OK
     */
    private String _problem = "Not yet initialized: Your servlet API tried to access WebMacro without first calling init()!!!";
-
+   
    /**
     * This is the old-style init method, it just calls init(), after
     * handing the ServletConfig object to the superclass
     * @exception ServletException if it failed to initialize
     */
    final public synchronized void init(ServletConfig sc)
-         throws ServletException {
+   throws ServletException {
       super.init(sc);
       init();
    }
-
+   
    /**
     * This method is called by the servlet runner--do not call it. It
     * must not be overidden because it manages a shared instance
@@ -96,13 +96,13 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * is called just after the broker is initialized.
     */
    final public synchronized void init() {
-
+      
       if (_started) {
          return;
       }
-
+      
       // locate a Broker
-
+      
       if (_wm == null) {
          try {
             _wm = initWebMacro();
@@ -110,28 +110,28 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          }
          catch (InitException e) {
             _problem = "Could not initialize the broker!\n\n"
-                  + "*** Check that WebMacro.properties was in your servlet\n"
-                  + "*** classpath, in a similar place to webmacro.jar \n"
-                  + "*** and that all values were set correctly.\n\n"
-                  + e.getMessage();
+            + "*** Check that WebMacro.properties was in your servlet\n"
+            + "*** classpath, in a similar place to webmacro.jar \n"
+            + "*** and that all values were set correctly.\n\n"
+            + e.getMessage();
             Log sysLog = LogSystem.getSystemLog("servlet");
             sysLog.error(_problem, e);
             return;
          }
       }
       _log = _broker.getLog("servlet", "WMServlet lifecycle information");
-
+      
       // set up WebContext
       try {
          _wcPrototype = initWebContext();
       }
       catch (InitException e) {
          _log.error("Failed to initialize a WebContext, the initWebContext\n"
-                    + "method returned an exception", e);
+         + "method returned an exception", e);
          _problem = e.getMessage();
          return;
       }
-
+      
       try {
          if (_log.loggingDebug()) {
             java.net.URL url = getBroker().getResource(Broker.WEBMACRO_PROPERTIES);
@@ -145,15 +145,15 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       }
       catch (ServletException e) {
          _problem = "WebMacro application code failed to initialize: \n"
-               + e + "\n" + "This error is the result of a failure in the\n"
-               + "code supplied by the application programmer.\n";
+         + e + "\n" + "This error is the result of a failure in the\n"
+         + "code supplied by the application programmer.\n";
          _log.error(_problem, e);
       }
       _log.notice("started: " + this);
       _started = true;
-
+      
    }
-
+   
    /**
     * This method is called by the servlet runner--do not call it. It
     * must not be overidden because it manages a shared instance of
@@ -168,17 +168,17 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       _started = false;
       super.destroy();
    }
-
+   
    /**
     * Check whether or not the broker we are using has been shut down
     */
    final public boolean isDestroyed() {
       return _wm.isDestroyed();
    }
-
-
+   
+   
    // SERVLET API METHODS
-
+   
    /**
     * Process an incoming GET request: Builds a WebContext up and then
     * passes it to the handle() method. You can overide this if you want,
@@ -191,10 +191,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @exception IOException if we can't write to the output stream
     */
    final protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-         throws ServletException, IOException {
+   throws ServletException, IOException {
       doRequest(req, resp);
    }
-
+   
    /**
     * Behaves exactly like doGet() except that it reads data from POST
     * before doing exactly the same thing. This means that you can use
@@ -208,24 +208,24 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @exception IOException if we can't read/write to the streams we got
     */
    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-         throws ServletException, IOException {
+   throws ServletException, IOException {
       doRequest(req, resp);
    }
-
+   
    final private void doRequest(
-         HttpServletRequest req, HttpServletResponse resp)
-         throws IOException {
-
+   HttpServletRequest req, HttpServletResponse resp)
+   throws IOException {
+      
       WebContext context = null;
-
+      
       if (_problem != null) {
          init();
          if (_problem != null) {
             try {
                resp.setContentType("text/html");
                FastWriter out = getFastWriter(resp.getOutputStream(),
-                                              resp.getCharacterEncoding());
-
+               resp.getCharacterEncoding());
+               
                out.write("<html><head><title>WebMacro Error</title></head>");
                out.write("<body><h1><font color=\"red\">WebMacro Error: ");
                out.write("</font></h1><pre>");
@@ -241,14 +241,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
             return;
          }
       }
-
-
+      
+      
       boolean timing = false;
       try {
          context = newContext(req, resp);
          timing = Flags.PROFILE && context.isTiming();
          if (timing) context.startTiming("WMServlet", req.getRequestURI());
-
+         
          Template t;
          try {
             if (timing) context.startTiming("handle");
@@ -257,7 +257,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          finally {
             if (timing) context.stopTiming();
          }
-
+         
          if (t != null) {
             execute(t, context);
          }
@@ -275,9 +275,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          }
          _log.error("Your handler failed to handle the request:" + this, e);
          Template tmpl = error(context,
-                               "Your handler was unable to process the request successfully " +
-                               "for some reason. Here are the details:<p>" +
-                               "<pre>" + e + "</pre>");
+         "Your handler was unable to process the request successfully " +
+         "for some reason. Here are the details:<p>" +
+         "<pre>" + e + "</pre>");
          execute(tmpl, context);
       }
       catch (Exception e) {
@@ -286,10 +286,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          }
          _log.error("Your handler failed to handle the request:" + this, e);
          Template tmpl = error(context,
-                               "The handler WebMacro used to handle this request failed for " +
-                               "some reason. This is likely a bug in the handler written " +
-                               "for this application. Here are the details:<p>" +
-                               "<pre>" + e + "</pre>");
+         "The handler WebMacro used to handle this request failed for " +
+         "some reason. This is likely a bug in the handler written " +
+         "for this application. Here are the details:<p>" +
+         "<pre>" + e + "</pre>");
          execute(tmpl, context);
       }
       finally {
@@ -297,10 +297,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          context.recycle();
       }
    }
-
-
+   
+   
    // CONVENIENCE METHODS & ACCESS TO THE BROKER
-
+   
    /**
     * Create an error template using the built in error handler.
     * This is useful for returning error messages on failure;
@@ -311,18 +311,19 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     */
    final protected Template error(WebContext context, String error) {
       Template tmpl = null;
-      Handler hand = new ErrorHandler();
+      //Handler hand = new ErrorHandler();
       try {
          context.put(getConfig(ERROR_VARIABLE, ERROR_VARIABLE_DEFAULT),
-                     error);
-         tmpl = hand.accept(context);
+         error);
+         //tmpl = hand.accept(context);
+         tmpl = getErrorTemplate();
       }
       catch (Exception e2) {
          _log.error("Unable to use ErrorHandler", e2);
       }
       return tmpl;
    }
-
+   
    /**
     * This object is used to access components that have been plugged
     * into WebMacro; it is shared between all instances of this class and
@@ -339,7 +340,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       // complaining that it has been shut down, or they'll get a null here.
       return _broker;
    }
-
+   
    /**
     * Get a Log object which can be used to write to the log file.
     * Messages to the logfile will be associated with the supplied
@@ -350,7 +351,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    final public Log getLog(String type, String description) {
       return _broker.getLog(type, description);
    }
-
+   
    /**
     * Get a Log object which can be used to write to the log file.
     * Messages to the logfile will be associated with the supplied
@@ -359,7 +360,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    final public Log getLog(String type) {
       return _broker.getLog(type, type);
    }
-
+   
    /**
     * Retrieve a template from the "template" provider. Equivalent to
     * getBroker().get(TemplateProvider.TYPE,key)
@@ -367,10 +368,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @exception ResourceException if the template coult not be loaded
     */
    final public Template getTemplate(String key)
-         throws ResourceException {
+   throws ResourceException {
       return _wm.getTemplate(key);
    }
-
+   
    /**
     * Retrieve a URL. This is largely equivalent to creating a URL
     * object and requesting its content, though it will sit in
@@ -378,21 +379,21 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * The content will be returned as an Object.
     */
    final public String getURL(String url)
-         throws ResourceException {
+   throws ResourceException {
       return _wm.getURL(url);
    }
-
-
+   
+   
    /**
     * Retrieve configuration information from the "config" provider.
     * Equivalent to getBroker().get(Config.TYPE,key)
     * @exception NotFoundException could not locate requested information
     */
    final public String getConfig(String key)
-         throws NotFoundException {
+   throws NotFoundException {
       return _wm.getConfig(key);
    }
-
+   
    /**
     * Retrieve configuration information from the "config" provider.
     * Return specified default if key could not be found
@@ -405,21 +406,21 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          return defaultValue;
       }
    }
-
+   
    /**
     * Create a new Context object
     */
    final public Context getContext() {
       return _wm.getContext();
    }
-
+   
    /**
     * Create a new WebContext object
     */
    final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse res) {
       return _wm.getWebContext(req, res);
    }
-
+   
    /**
     * Convenience method for writing a template to an OutputStream.
     * This method takes care of all the typical work involved
@@ -440,14 +441,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     *                           evaluation phase
     */
    public void writeTemplate(String templateName, java.io.OutputStream out,
-                             Context context)
-         throws java.io.IOException, ResourceException, PropertyException {
-
+   Context context)
+   throws java.io.IOException, ResourceException, PropertyException {
+      
       writeTemplate(templateName, out,
-                    getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING),
-                    context);
+      getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING),
+      context);
    }
-
+   
    /**
     * Convienence method for writing a template to an OutputStream.
     * This method takes care of all the typical work involved
@@ -468,52 +469,52 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     *                           evaluation phase
     */
    public void writeTemplate(String templateName, java.io.OutputStream out,
-                             String encoding, Context context)
-         throws java.io.IOException, ResourceException, PropertyException {
-
+   String encoding, Context context)
+   throws java.io.IOException, ResourceException, PropertyException {
+      
       if (encoding == null)
          encoding = getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
-
+      
       Template tmpl = getTemplate(templateName);
       FastWriter fw = getFastWriter(out, encoding);
       tmpl.write(fw, context);
       fw.close();
    }
-
-
+   
+   
    // DELEGATE-TO METHODS -- COMMON THINGS MADE EASIER
-
+   
    /**
     * This method takes a populated context and a template and
     * writes out the interpreted template to the context's output
     * stream.
     */
    final protected void execute(Template tmpl, WebContext c)
-         throws IOException {
+   throws IOException {
       FastWriter fw = null;
       boolean timing = Flags.PROFILE && c.isTiming();
       try {
          if (timing) c.startTiming("Template.write", tmpl);
          try {
             HttpServletResponse resp = c.getResponse();
-
+            
             Locale locale = (Locale) tmpl.getParam(
-                  WMConstants.TEMPLATE_LOCALE);
+            WMConstants.TEMPLATE_LOCALE);
             if (_log.loggingDebug())
                _log.debug("TemplateLocale=" + locale);
             if (locale != null) {
                setLocale(resp, locale);
             }
-
+            
             String encoding = (String) tmpl.getParam(
-                  WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            WMConstants.TEMPLATE_OUTPUT_ENCODING);
             if (encoding == null) {
                encoding = resp.getCharacterEncoding();
             }
-
+            
             if (_log.loggingDebug())
                _log.debug("Using output encoding " + encoding);
-
+            
             // get a fastwriter with no output stream, forcing
             // fastwriter to buffer the output internally.
             // this is necessary to be compatible with JSDK 2.3
@@ -521,7 +522,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
             // which could be happening during the template evaluation
             fw = FastWriter.getInstance(_broker, encoding);
             tmpl.write(fw, c);
-
+            
             // now write the FW buffer to the response output stream
             writeFastWriter(resp, fw);
          }
@@ -549,29 +550,29 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       }
       catch (Exception e) {
          String error =
+         "WebMacro encountered an error while executing a template:\n"
+         + ((tmpl != null) ?  (tmpl + ": " + e + "\n") :
+            ("The template failed to load; double check the "
+            + "TemplatePath in your webmacro.properties file."));
+            _log.error(error, e);
+            try {
+               Template errorTemplate = error(c,
                "WebMacro encountered an error while executing a template:\n"
-               + ((tmpl != null) ?  (tmpl + ": " + e + "\n") :
-               ("The template failed to load; double check the "
-               + "TemplatePath in your webmacro.properties file."));
-         _log.error(error, e);
-         try {
-            Template errorTemplate = error(c,
-                                           "WebMacro encountered an error while executing a template:\n"
-                                           + ((tmpl != null) ?  (tmpl + ": ")
-                                              : ("The template failed to load; double check the "
-                                                 + "TemplatePath in your webmacro.properties file."))
-                                           + "\n<pre>" + e + "</pre>\n");
-
-            if (fw == null)
-               fw = FastWriter.getInstance(_broker);
-            fw.reset(fw.getOutputStream());
-            errorTemplate.write(fw, c);
-            // now write the FW buffer to the response output stream
-            writeFastWriter(c.getResponse(), fw);
-         }
-         catch (Exception errExcept) {
-            _log.error("Error writing error template!", errExcept);
-         }
+               + ((tmpl != null) ?  (tmpl + ": ")
+               : ("The template failed to load; double check the "
+               + "TemplatePath in your webmacro.properties file."))
+               + "\n<pre>" + e + "</pre>\n");
+               
+               if (fw == null)
+                  fw = FastWriter.getInstance(_broker);
+               fw.reset(fw.getOutputStream());
+               errorTemplate.write(fw, c);
+               // now write the FW buffer to the response output stream
+               writeFastWriter(c.getResponse(), fw);
+            }
+            catch (Exception errExcept) {
+               _log.error("Error writing error template!", errExcept);
+            }
       }
       finally {
          try {
@@ -586,7 +587,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          }
       }
    }
-
+   
    /**
     * Helper method to write out a FastWriter (that has bufferd
     * the response) to a ServletResponse. This method will try to use
@@ -596,7 +597,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @param fw FastWriter, that has response buffered
     */
    private void writeFastWriter(HttpServletResponse response, FastWriter fw)
-         throws IOException {
+   throws IOException {
       OutputStream out;
       // We'll check, if the OutputStream is available
       try {
@@ -605,7 +606,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       catch (IllegalStateException e) {
          // Here comes a quick hack, we need a cleaner
          // solution in a future release. (skanthak)
-
+         
          // this means, that the ServletOutputStream is
          // not available, because the Writer has already
          // be used. We have to use it, although its
@@ -621,10 +622,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          response.getWriter().write(fw.toString());
       }
    }
-
+   
    // FRAMEWORK TEMPLATE METHODS--PLUG YOUR CODE IN HERE
-
-
+   
+   
    /**
     * This method is called at the beginning of a request and is
     * responsible for providing a Context for the request. The
@@ -635,11 +636,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * HandlerException if something goes wrong.
     */
    public WebContext newContext(
-         HttpServletRequest req, HttpServletResponse resp)
-         throws HandlerException {
+   HttpServletRequest req, HttpServletResponse resp)
+   throws HandlerException {
       return _wcPrototype.newInstance(req, resp);
    }
-
+   
    /**
     * This method is called to handle the processing of a request. It
     * should analyze the data in the request, put whatever values are
@@ -650,9 +651,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @param context contains all relevant data structures, incl builtins.
     */
    public abstract Template handle(WebContext context)
-         throws HandlerException;
-
-
+   throws HandlerException;
+   
+   
    /**
     * This method is called at the end of a request and is responsible
     * for cleaning up the Context at the end of the request. You may
@@ -661,10 +662,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * need to close. The default implementation calls wc.clear().
     */
    public void destroyContext(WebContext wc)
-         throws HandlerException {
+   throws HandlerException {
    }
-
-
+   
+   
    /**
     * Override this method to implement any startup/init code
     * you require. The broker will have been created before this
@@ -675,7 +676,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     */
    protected void start() throws ServletException {
    }
-
+   
    /**
     * Override this method to implement any shutdown code you require.
     * The broker may be destroyed just after this method exits. This
@@ -684,8 +685,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     */
    protected void stop() {
    }
-
-
+   
+   
    /**
     * This method returns the WebMacro object which will be used to load,
     * access, and manage the Broker. The default implementation is to
@@ -696,7 +697,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    public WebMacro initWebMacro() throws InitException {
       return new WM(this);
    }
-
+   
    /**
     * This method must return a cloneable WebContext which can be
     * cloned for use in responding to individual requests. Each
@@ -707,7 +708,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    public WebContext initWebContext() throws InitException {
       return new WebContext(_broker);
    }
-
+   
    /**
     * Set the locale on the response.  The reflection trickery is because
     * this is only defined for JSDK 2.2+
@@ -715,9 +716,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    private void setLocale(HttpServletResponse resp, Locale locale) {
       try {
          Method m = HttpServletResponse.class.getMethod(
-               "setLocale",
-               new Class[]
-               {Locale.class});
+         "setLocale",
+         new Class[]
+         {Locale.class});
          m.invoke(resp, new Locale[]
          {locale});
          if (_log.loggingDebug())
@@ -728,7 +729,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
             _log.debug("Error set locale to " + locale + ": " + e.getClass());
       }
    }
-
+   
    /**
     * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
     * A FastWriter is used when writing templates to an output stream
@@ -738,7 +739,43 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @param enctype the Encoding type to use
     */
    public FastWriter getFastWriter(OutputStream out, String enctype)
-         throws UnsupportedEncodingException {
+   throws UnsupportedEncodingException {
       return _wm.getFastWriter(out, enctype);
    }
+   
+   
+   private static final String DEFAULT_ERROR_TEXT =
+   "<HTML><HEAD><TITLE>Error</TITLE></HEAD>\n"
+   + "#set $Response.ContentType = \"text/html\"\n"
+   + "<BODY><H1>Error</H1>"
+   + "<HR>$error</BODY></HTML>";
+   
+   private Template _errorTemplate = null;
+   
+   /**
+    * Gets a template for displaying an error message.  
+    * Tries to get configured template, then default template
+    * and lastly constructs a string template.
+    * @return A Template which can be used to format an error message
+    */
+   public Template getErrorTemplate(){
+      String templateName;
+      
+      try {
+         templateName = (String) _broker.get("config", ERROR_TEMPLATE);
+      }
+      catch (ResourceException e) {
+         templateName = ERROR_TEMPLATE_DEFAULT;
+      }
+      
+      try {
+         _errorTemplate = (Template) _broker.get("template", templateName);
+      }
+      catch (ResourceException e) {
+         _errorTemplate = new org.webmacro.engine.StringTemplate(_broker, DEFAULT_ERROR_TEXT,
+         "WebMacro default error template");
+      }
+      return _errorTemplate;
+   }
+   
 }
