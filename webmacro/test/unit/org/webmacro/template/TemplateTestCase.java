@@ -166,9 +166,8 @@ public abstract class TemplateTestCase extends TestCase
 
     /** Asserts that the given template text evalutes to the given result text
      * when evaluated against the current context */
-
-    public void assertStringTemplateEquals (String templateText,
-                                            String resultText)
+    private void assertStringTemplate(String templateText,
+                                     String resultText, boolean equals)
     {
         String result = null;
 
@@ -189,13 +188,32 @@ public abstract class TemplateTestCase extends TestCase
         if (result == null)
             return;
 
-        if (!result.equals(resultText))
+        if (result.equals(resultText) != equals)
         {
             System.err.println("Execution of /" + templateText + "/"
-                    + " yielded /" + result + "/, expecting /"
-                    + resultText + "/");
+                    + " yielded /" + result + "/, " + (equals ? "" : " not ")+
+                    "expecting /" + resultText + "/");
             assertTrue(false);
         }
+    }
+
+
+    /** Asserts that the given template text evalutes to the given result text
+     * when evaluated against the current context */
+
+    public void assertStringTemplateEquals (String templateText,
+                                            String resultText)
+    {
+        assertStringTemplate( templateText, resultText, true);
+    }
+
+    /** Asserts that the given template text evalutes to the given result text
+     * when evaluated against the current context */
+
+    public void assertStringTemplateNotEquals (String templateText,
+                                            String resultText)
+    {
+        assertStringTemplate( templateText, resultText, false);
     }
 
 

@@ -1,6 +1,7 @@
 package org.webmacro.template;
 
 import org.webmacro.Context;
+import org.webmacro.PropertyException;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 
 import java.util.HashMap;
@@ -199,5 +200,12 @@ public class TestGetSet extends TemplateTestCase
     {
         String tmpl = "$TestObject.getArray().length";
         assertStringTemplateEquals(tmpl, "2");
+    }
+
+    /** Make sure we are not evaluating stuff that doesn't exist */
+    public void testNonExistentProperties () throws Exception
+    {
+        String tmpl = "$TestObject.Int.Int.Int.Int";
+        assertStringTemplateThrows( tmpl, PropertyException.class );
     }
 }

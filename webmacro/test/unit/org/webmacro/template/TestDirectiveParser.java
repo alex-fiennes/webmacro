@@ -70,6 +70,12 @@ public class TestDirectiveParser extends TemplateTestCase
 
     }
 
+    public void testQuotedDirective () throws Exception
+    {
+        assertStringTemplateEquals( "#if (true) ok #end", "ok");
+        assertStringTemplateEquals( "x#if (true) ok #end", "xok" );
+    }
+
 
     public static class DirectiveOne extends BaseDirective
     {
