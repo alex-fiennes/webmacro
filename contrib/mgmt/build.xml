@@ -1,0 +1,81 @@
+<!--
+    In order to build mgmt, set
+    JAVACC_HOME as an environment variable
+    to your jdk home.
+ -->
+
+<project name="Management" default="compile" basedir=".">
+
+  <property name="app.name"       value="mgmt"/>
+  <property name="classes"        value="classes"/>
+  <property name="dist"           value="mgmt"/>
+  <property name="javadoc"        value="javadoc"/>
+  <property name="jar"            value="${app.name}.jar"/>
+  <property name="src.jar"        value="${app.name}-src.jar"/>
+  <property environment="ENV" />
+  <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
+
+  <path id="class.path">
+    <!-- the following gets the standard jar files which mgmt depends on -->
+    <fileset dir="../lib">
+      <include name="webmacro-0.97a.jar" />
+    </fileset>
+    <pathelement location="${classes}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+  <property name="classpath.resolved" refid="class.path"/>
+
+  <target name="prepare">
+    <mkdir  dir="${classes}"/>
+    <mkdir  dir="${javadoc}"/>
+    <mkdir  dir="${dist}"/>
+  </target>
+
+
+  <target name="clean" >
+    <delete dir="${classes}"/>
+    <delete dir="${javadoc}"/>
+    <delete dir="${dist}"/>
+    <delete file="${jar}"/>
+    <delete file="${src.jar}"/>
+  </target>
+
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="src" destdir="${classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath refid="class.path" />
+    </javac>
+  </target>
+
+
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="src" destdir="${javadoc}"  
+             packagenames="org.webmacro.*" author="true" version="true" 
+             use="true">
+      <classpath refid="class.path" />
+    </javadoc>
+  </target>
+
+
+  <target name="jar" depends="prepare,compile">
+    <jar jarfile="${jar}" basedir="${classes}"/>
+    <jar jarfile="${src.jar}" basedir="." 
+         includes="src/**,build.xml"/>
+  </target>
+
+  <target name="dist" depends="prepare,compile,jar,javadoc">
+    <mkdir dir="${dist}/api" />
+    <copy todir="${dist}/api">
+      <fileset dir="${javadoc}"/>
+    </copy>
+    <copy todir="${dist}" file="${src.jar}"/>
+    <copy todir="${dist}" file="${jar}"/>
+  </target>
+
+  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+
+
+</project>
+
+
