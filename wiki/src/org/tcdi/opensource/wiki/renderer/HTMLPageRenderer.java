@@ -112,12 +112,10 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderGT() {
-        System.err.println ("render: >");
         return "&gt;";
     }
     
     protected String renderLT() {
-        System.err.println ("render: <");
         return "&lt;";
     }
     

@@ -82,13 +82,11 @@ public class DefaultPageBuilder implements WikiPageBuilder {
     }
     
     public void gt() {
-        System.err.println ("build: >");
         newData ();
         _currentData.setType (WikiDataTypes.GT);
     }
     
     public void lt() {
-        System.err.println ("build: <");
         newData ();
         _currentData.setType (WikiDataTypes.LT);
     }
