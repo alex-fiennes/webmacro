@@ -15,7 +15,7 @@ public abstract class TemplateTestCase extends TestCase {
 
    /** our WebMacro instance */
    protected WebMacro _wm;
-       
+
    /** context to use for each template */
    protected Context _context;
 
@@ -26,9 +26,9 @@ public abstract class TemplateTestCase extends TestCase {
    protected void setUp() throws Exception {
       init();
    }
-  
+
    /**
-    * create a default-configured instance of WebMacro.  Subclasses may 
+    * create a default-configured instance of WebMacro.  Subclasses may
     * override if WM needs to be created/configured differently.
     */
    protected WebMacro createWebMacro () throws Exception
@@ -51,8 +51,8 @@ public abstract class TemplateTestCase extends TestCase {
       // let subclasses stuff the context with custom data
       stuffContext (_context);
    }
-   
-   /** 
+
+   /**
     * stuff the provided context with custom variables and objects<p>
     *
     * @throws Exception if something goes wrong while stuffing context
@@ -114,14 +114,14 @@ public abstract class TemplateTestCase extends TestCase {
    */
   public void assertTemplateEquals (String templateName, String resultText) throws Exception {
      String result = null;
-     
+
      try {
        result = executeStringTemplate (templateFileToString(templateName));
      } catch (Exception e) {
         System.err.println ("Execution of /" + templateName + "/ threw " + e.getClass()
                           + ", expecting /" + resultText + "/");
      }
-     
+
      if (result == null || !result.equals(resultText)) {
         System.err.println ("/" + templateName + "/ does not "
                           + "evaluate to /" + resultText + "/ "
@@ -133,18 +133,18 @@ public abstract class TemplateTestCase extends TestCase {
   /** Asserts that the given template text evalutes to the given result text
    * when evaluated against the current context */
 
-  public void assertStringTemplateEquals(String templateText, 
+  public void assertStringTemplateEquals(String templateText,
                                          String resultText) {
     String result = null;
 
-    try { 
+    try {
       result = executeStringTemplate(templateText);
     }
     catch (Exception e) {
-      System.err.println("Execution of /" + templateText + "/" 
-                         + " threw " + e.getClass() 
+      System.err.println("Execution of /" + templateText + "/"
+                         + " threw " + e.getClass()
                          + "(" + e.getMessage() + ")"
-                         + ", expecting /" 
+                         + ", expecting /"
                          + resultText + "/");
       e.printStackTrace();
       assert(false);
@@ -153,8 +153,8 @@ public abstract class TemplateTestCase extends TestCase {
       return;
 
     if (!result.equals(resultText)) {
-      System.err.println("Execution of /" + templateText + "/" 
-                         + " yielded /" + result + "/, expecting /" 
+      System.err.println("Execution of /" + templateText + "/"
+                         + " yielded /" + result + "/, expecting /"
                          + resultText + "/");
       assert(false);
     }
@@ -164,9 +164,9 @@ public abstract class TemplateTestCase extends TestCase {
    * when evaluated against the current context, and the message text
    * matches the specified RE */
 
-  public void assertStringTemplateThrows(String templateText, 
+  public void assertStringTemplateThrows(String templateText,
                                          Class exceptionClass,
-                                         String messageMatchText) 
+                                         String messageMatchText)
   throws Exception {
     String result = null;
     Exception caught = null;
@@ -178,13 +178,13 @@ public abstract class TemplateTestCase extends TestCase {
       caught = e;
     }
     if (caught == null) {
-      System.err.println("Execution of /" + templateText + "/" 
+      System.err.println("Execution of /" + templateText + "/"
                          + " yielded /" + result + "/, expecting throw "
                          + exceptionClass);
       assert(false);
     }
     else if (!exceptionClass.isAssignableFrom(caught.getClass())) {
-      System.err.println("Execution of /" + templateText + "/" 
+      System.err.println("Execution of /" + templateText + "/"
                          + " threw " + caught.getClass() + ", expecting "
                          + exceptionClass);
       assert(false);
@@ -202,8 +202,8 @@ public abstract class TemplateTestCase extends TestCase {
 
   /** Asserts that the given template text throws the given exception
    * when evaluated against the current context */
-  public void assertStringTemplateThrows(String templateText, 
-                                         Class exceptionClass) 
+  public void assertStringTemplateThrows(String templateText,
+                                         Class exceptionClass)
   throws Exception {
     assertStringTemplateThrows(templateText, exceptionClass, null);
   }
@@ -211,17 +211,17 @@ public abstract class TemplateTestCase extends TestCase {
   /** Asserts that the given template text matches the given regular
    * expression when evaluated against the current context */
 
-  public void assertStringTemplateMatches(String templateText, 
-                                          String resultPattern) 
+  public void assertStringTemplateMatches(String templateText,
+                                          String resultPattern)
   throws Exception {
     String result = null;
 
-    try { 
+    try {
       result = executeStringTemplate(templateText);
     }
     catch (Exception e) {
-      System.err.println("Execution of /" + templateText + "/" 
-                         + " threw " + e.getClass() + "/, expecting match /" 
+      System.err.println("Execution of /" + templateText + "/"
+                         + " threw " + e.getClass() + "/, expecting match /"
                          + resultPattern + "/");
       assert(false);
     }
@@ -230,15 +230,15 @@ public abstract class TemplateTestCase extends TestCase {
 
     RE re = new RE(resultPattern);
     if (!re.match(result)) {
-      System.err.println("Execution of /" + templateText + "/" 
-                         + " yielded /" + result + "/, expecting match /" 
+      System.err.println("Execution of /" + templateText + "/"
+                         + " yielded /" + result + "/, expecting match /"
                          + resultPattern + "/");
       assert(false);
     }
   }
 
 
-  public void assertStringTemplateThrowsWithCaught(String templateText, 
+  public void assertStringTemplateThrowsWithCaught(String templateText,
                                          Class exceptionClass) {
     String result = null;
     Throwable caught = null;
@@ -249,8 +249,8 @@ public abstract class TemplateTestCase extends TestCase {
     catch (Exception e) {
       caught = e;
       if (!(caught instanceof PropertyException)) {
-        System.err.println("Execution of /" + templateText + "/" 
-                               + " yielded /" + caught.getClass()  
+        System.err.println("Execution of /" + templateText + "/"
+                               + " yielded /" + caught.getClass()
                                + "/, expecting throw PropertyException");
         assert(false);
       } else {
@@ -258,32 +258,32 @@ public abstract class TemplateTestCase extends TestCase {
       }
     }
     if (caught == null) {
-      System.err.println("Execution of /" + templateText + "/" 
+      System.err.println("Execution of /" + templateText + "/"
                          + " yielded /" + result + "/, expecting throw "
                          + "PropertyException with caught exception "
                          + exceptionClass);
       assert(false);
     }
     else if (!exceptionClass.isAssignableFrom(caught.getClass())) {
-      System.err.println("Execution of /" + templateText + "/" 
+      System.err.println("Execution of /" + templateText + "/"
                          + " threw " + caught.getClass() + ", expecting throw "
                          + "PropertyException with caught exception "
                          + exceptionClass);
       assert(false);
     }
   }
-  
+
   /** Asserts that the specified expression is considered true or false
    * depending on the value of 'yesno' */
   public void assertExpr(String expr, boolean yesno) {
-    assertStringTemplateEquals("#if (" + expr +") {Yes} #else {No}", 
+    assertStringTemplateEquals("#if (" + expr +") {Yes} #else {No}",
                                yesno? "Yes" : "No");
   }
 
   /** Asserts that the specified expression evaluates to the desired
    * boolean result */
   public void assertBooleanExpr(String expr, boolean result) {
-    assertStringTemplateEquals("#set $result=(" + expr + ") $result", 
+    assertStringTemplateEquals("#set $result=(" + expr + ") $result",
                                result? "true" : "false");
   }
 }

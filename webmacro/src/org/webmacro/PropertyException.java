@@ -70,6 +70,18 @@ public class PropertyException extends ContextException
    }
 
 
+   /**
+    * Overloaded to return the <code>reason</code> specified during construction
+    * <b>plus</b> the context location, if any.
+    */
+   public String getMessage () {
+      String msg = super.getMessage();
+      if (_contextLocation != null && msg != null)
+          msg += " at " + _contextLocation;
+
+      return msg;
+   }
+
    // Subclasses
 
 
@@ -82,7 +94,7 @@ public class PropertyException extends ContextException
      public String variableName;
 
      public NoSuchVariableException(String variableName) {
-       super("Attempt to evaluate unbound variable $" + variableName);
+       super("No such variable: $" + variableName);
 
        this.variableName = variableName;
      }
@@ -98,8 +110,7 @@ public class PropertyException extends ContextException
      public String variableName;
 
      public NullToStringException(String variableName) {
-       super("Attempt to expand variable whose toString() returns null: $"
-             + variableName);
+       super(".toString() returns null: $" + variableName);
 
        this.variableName = variableName;
      }
@@ -115,7 +126,7 @@ public class PropertyException extends ContextException
      public String variableName;
 
      public NullValueException(String variableName) {
-       super("Attempt to dereference null value $" + variableName);
+       super("Value is null: $" + variableName);
        this.variableName = variableName;
      }
    }
@@ -240,8 +251,6 @@ public class PropertyException extends ContextException
          this.propertyName = propertyName;
       }
    }
-
-
 }
 
 
