@@ -93,7 +93,8 @@ public class GuestBook extends WMServlet
     
       // return the appropriate template
       try {
-         return getTemplate(templateName);
+         Template t = getTemplate(templateName);
+         return t;
       } catch (Exception e) {
          throw new HandlerException("Could not locate template: " 
                  + templateName);

@@ -53,7 +53,12 @@ abstract public class CachingProvider implements Provider
      */
    public Object get(final String query) throws NotFoundException
    {
-      TimedReference r = (TimedReference) _cache.get(query);
+      TimedReference r;
+      try {
+         r = (TimedReference) _cache.get(query);
+      } catch (NullPointerException e) {
+         throw new NotFoundException(this + " is not initialized", e);
+      }
       Object o = null;
       if (r != null) {
          o = r.get();

@@ -56,6 +56,7 @@ public class WM implements WebMacro
    private Provider _tmplProvider;
    private Provider _urlProvider;
    private Provider _configProvider;
+   private Log _log;
 
    public WM() throws InitException
    {
@@ -83,12 +84,15 @@ public class WM implements WebMacro
          _owner = owner;
          _broker = broker;
          _alive = true;
+         _log = _broker.getLog("wm");
+         _log.info("new " + this);
       }
    
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
       } catch (NotFoundException nfe) {
+         _log.error("Could not load configuration", nfe);
          throw new InitException("Could not locate provider:\n  " + nfe 
             + "\nThis implies that WebMacro is badly misconfigured, you\n"
             + "should double check that all configuration files and\n"
@@ -113,9 +117,13 @@ public class WM implements WebMacro
       if (_alive) {
          _alive = false;
          _owner.done();
+         _log.info("shutdown " + this);
       }
    }
 
+   public String toString() {
+      return "WebMacro(" + _broker.getName() + ")";
+   }
 
    /**
      * This message returns false until you destroy() this object, subsequently it 

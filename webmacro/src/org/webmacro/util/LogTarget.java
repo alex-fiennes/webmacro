@@ -23,6 +23,11 @@ public interface LogTarget {
      */
    public void attach(LogSource l);
 
+   /**
+     * Get the name of this log, eg: what file it writes to
+     */
+   public String getName();
+
 }
 
 

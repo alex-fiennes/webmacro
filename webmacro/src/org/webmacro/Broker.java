@@ -151,7 +151,7 @@ final public class Broker
       throws InitException
    {
       _lm = new LogManager(config);
-      _log = _lm.getLog("broker");
+      _log = _lm.getLog("wm");
       _log.notice("start: " + name);
 
       _name = name;
@@ -194,6 +194,7 @@ final public class Broker
    {
       p.init(this,_config);
       _providers.put(p.getType(),p);
+      _log.info("Loaded provider " + p);
    }
 
    /**
@@ -249,10 +250,12 @@ final public class Broker
      * Shut down the broker
      */
    synchronized public void shutdown() {
+      _log.notice("shutting down");
       Enumeration e = _providers.elements();
       _providers = null;
       while (e.hasMoreElements()) {
          Provider pr = (Provider) e.nextElement();
+         _log.info("stopping: " + pr);
          pr.destroy();
       }
    }

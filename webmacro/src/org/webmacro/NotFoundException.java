@@ -24,6 +24,9 @@ package org.webmacro;
   * You asked for something that is not currently available.
   */
 public class NotFoundException extends WebMacroException {
+   public NotFoundException(String reason, Exception e) {
+      super(reason,e);
+   }
    public NotFoundException(String reason) {
       super(reason);
    }

@@ -64,6 +64,7 @@ final public class TemplateProvider extends CachingProvider
      */
    public void init(Broker b, Properties config) throws InitException
    {
+      super.init(b,config);
       _broker = b;
       _log = b.getLog("resource");
 

@@ -16,6 +16,8 @@ public class LogFile implements LogTarget {
    boolean _trace;
    PrintStream _out;
    MessageFormat _mf; 
+   String _defaultLevel;
+   String _name;
 
    /**
      * Create a new LogFile instance. The LogFile can be configured 
@@ -24,8 +26,7 @@ public class LogFile implements LogTarget {
      * <p>
      * The levels Properties maps a log name to a log level string
      * describing what level of logging is desired for that target. 
-     * You can use the special name * to refer to all targets. The 
-     * levels correspond to severity levels: ALL, DEBUG, INFO, 
+     * The levels correspond to severity levels: ALL, DEBUG, INFO, 
      * NOTICE, WARNING, ERROR, and NONE.
      * <p>
      * @param fileName where the log should write, null means System.err
@@ -33,21 +34,31 @@ public class LogFile implements LogTarget {
      * @param trace true if this log should trace out exceptions
      * @param flush true if this log should flush after every message
      */
-   public LogFile(String file, String format, Properties levels, boolean trace) 
+   public LogFile(String file, String format, String defaultLevel, Properties levels, boolean trace) 
       throws IOException
    {
-      this(((file != null) ? 
+      this(file, ((file != null) ? 
            new PrintStream(new FileOutputStream(file,true)) : System.err),
-           format, levels, trace);
+           format, defaultLevel, levels, trace);
    }
 
    public 
-   LogFile(PrintStream out, String format, Properties levels, boolean trace)
+   LogFile(String name, PrintStream out, String format, String defaultLevel, Properties levels, boolean trace)
    {
       _mf = new MessageFormat(format);
       _levels = levels;
       _trace = trace;
       _out = out;
+      _defaultLevel = defaultLevel;
+      _name = name;
+   }
+
+   public String toString() {
+      return getName();
+   }
+
+   public String getName() {
+      return "LogFile(" + _name + ", " + _defaultLevel + ", " + _levels + ")";
    }
 
    private Object[] _args = new Object[4];
@@ -73,7 +84,7 @@ public class LogFile implements LogTarget {
       String name = l.getName();
       String level = _levels.getProperty(name);
       if (level == null) {
-         level = (String) _levels.getProperty("*");
+         level = _defaultLevel;
       }
       l.addTarget(this, level);   
    }

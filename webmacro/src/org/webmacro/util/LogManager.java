@@ -18,9 +18,12 @@ public class LogManager {
 
    private Hashtable  _sources = new Hashtable();
    private List _targets = new LinkedList();
+   private Log _log;
 
 
    public LogManager(Properties config) {
+
+      _log = getLog("log");
 
       String fileName = config.getProperty("LogFile", null);
       if ( ("System.error").equalsIgnoreCase(fileName)
@@ -34,11 +37,14 @@ public class LogManager {
          config.getProperty("LogFormat", "{0,time,medium} {1}:{2} {3}");
       String strace =
          config.getProperty("LogExceptions", null);
+      String logLevel = 
+         config.getProperty("LogLevel", "NOTICE");
+
       if (strace == null) {
          strace = config.getProperty("LogTraceExceptions", "false");
       }
       boolean trace = 
-         (strace.equalsIgnoreCase("true") || strace.equalsIgnoreCase("yes"));
+         ("true".equalsIgnoreCase(strace) || "yes".equalsIgnoreCase(strace));
 
       Enumeration e = config.propertyNames();
       Properties levels = new Properties();
@@ -53,12 +59,13 @@ public class LogManager {
   
       LogFile lf;
       try {
-         lf = new LogFile(fileName, format, levels, trace); 
+         lf = new LogFile(fileName, format, logLevel, levels, trace); 
       } catch (IOException ioe) {
-         lf = new LogFile(System.err, format, levels, trace);
+         lf = new LogFile("System.err", System.err, format, logLevel, levels, trace);
          lf.log("LOG", "ERROR", "Unable to write to logfile: " + format, ioe);
       }
       addTarget(lf);
+
    }
 
    /**
@@ -68,6 +75,9 @@ public class LogManager {
       LogSource l = (LogSource) _sources.get(name);
       if (l != null) {
          return l;
+      }
+      if (_log != null) {
+         _log.info("source: " + name);
       }
       l = new LogSource(name);
       _sources.put(name,l);
@@ -88,6 +98,9 @@ public class LogManager {
       while (s.hasMoreElements()) {
          LogSource l = (LogSource) s.nextElement();
          t.attach(l);
+      }
+      if (_log != null) {
+         _log.info("target: " + t);
       }
    }
 
