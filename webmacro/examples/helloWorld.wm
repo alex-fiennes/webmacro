@@ -16,7 +16,7 @@
 <h1>WebMacro is working!</h1>
 <ul>
 #set $go = "<font color=red size=+1><b>$Hello</b></font>"
-#foreach $count in [ five four three two one $go ] {
+#foreach $count in [ "five", "four", "three", "two", "one", "$go" ] {
     <li>$count
 }
 </ul>
