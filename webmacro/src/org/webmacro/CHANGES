@@ -1,3 +1,8 @@
+-- 16-Oct-2000 e_ridge: The internal map type of o.wm.Context is now a 
+   java.util.Map object.  A .setGlobalVarialbes(Map globalMap) method 
+   has been added to allow one to quickly load a context with a 
+   pre-created Map.
+
 -- Radical change: the logging API has been completely redone. Now 
    a Log is associated with a particular instance of a Broker, 
    rather than static. This is important for co-branded sites. 
