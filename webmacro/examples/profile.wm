@@ -4,7 +4,7 @@
 
 <h1>WebMacro Profile Statistics</h1>
 
-<b>Profiling Status: $status</b>
+<b>Profiling Status: <pre>$status</pre></b>
 <p>
 #if (!$compiled) {
    <b>PROFILING WAS NOT ENABLED IN org.webmacro.Flags</b>

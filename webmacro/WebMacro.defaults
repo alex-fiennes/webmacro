@@ -27,6 +27,14 @@
 TemplateExpireTime: 20000
 
 
+# Character encoding. This is ONLY the encoding that is used to 
+# parse templates. It does not determine the encoding that is 
+# returned to the browser. WebMacro will translate templates from
+# this encoding to whatever encoding the browser requests. See 
+# the FastWriter class to learn how to control output encoding.
+TemplateEncoding: UTF-8
+
+
 # LogLevel can be: ALL, DEBUG, INFO, NOTICE, WARNING, ERROR, or NONE
 # in order of most information to least information displayed.
 # The top level "LogLevel" setting controls the default log level

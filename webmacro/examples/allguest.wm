@@ -1,3 +1,4 @@
+#profile allGuest {
 <html><head><title>View GuestBook!</title></head>
 #set $Response.ContentType = "text/html"
 
@@ -15,11 +16,9 @@
 #profile "registryLoop" 
 #begin
    #foreach $guest in $registry {
-      <TR>
-         <TD align="center">$guest.Name</TD>
-         <TD align="center">$guest.Email</TD>
-         <TD align="center">$guest.Comment</TD>
-      </TR>
+      #profile parseGuest {
+         #parse "guest.wm"
+      }
    } 
    </TABLE>
 #end
@@ -28,3 +27,4 @@
 See Guests</a>
 
 </body></html>
+}
