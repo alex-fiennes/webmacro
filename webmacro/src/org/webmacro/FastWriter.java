@@ -105,13 +105,13 @@ public class FastWriter extends Writer
    public FastWriter(Broker broker, OutputStream out, String encoding)
       throws UnsupportedEncodingException
    {
-      _encoding = encoding;
+      _encoding = hackEncoding(encoding);
       _bstream = new ByteBufferOutputStream(DEFAULT_BUFFER_SIZE);
-      _bwriter = new OutputStreamWriter(_bstream, encoding);
+      _bwriter = new OutputStreamWriter(_bstream, _encoding);
 
       // fetch our encoder from the broker
       try {
-         _encoder = (Encoder) broker.get(EncoderProvider.TYPE, encoding);
+         _encoder = (Encoder) broker.get(EncoderProvider.TYPE, _encoding);
       } catch (ResourceException re) {
           throw new UnsupportedEncodingException(re.getMessage());
       }
@@ -121,6 +121,23 @@ public class FastWriter extends Writer
 
       _out = out;
    }
+
+    /**
+     * Workaround for problems with resin-2.0.3, which
+     * gives CPxxxx as a character encoding, but java
+     * knows only Cpxxxx. This method converts encoding
+     * to a form understood by java.
+     * <br>
+     * We should remove it some time after resin
+     * has been fixed
+     */
+    private static String hackEncoding(String encoding) {
+        if (encoding.toLowerCase().startsWith("cp") &&
+            !encoding.startsWith("Cp")) {
+            encoding = "Cp".concat(encoding.substring(2));
+        }
+        return encoding;
+    }
 
    /**
      * Create a new FastWriter with no output stream target. You can
