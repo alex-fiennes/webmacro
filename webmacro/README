@@ -11,8 +11,8 @@ release find it to be very stable, despite the "alpha" label.
 Potential Pitfalls While Ugrading
 ---------------------------------
 
-0) WebMacro no longer requires a "WebMacro.properties" file to exist (it is
-completely optional now).  WebMacro now has a "WebMacro.defaults" file that
+0) WebMacro no longer requires a "WebMacro.properties" file (it is
+completely optional).  WebMacro now has a "WebMacro.defaults" file that
 is included in the .jar file.  This file is used as a base for WM's
 configuration.  If you find you need to change values, simply create a 
 "WebMacro.properties" file and include *only* the keys you need to change.
