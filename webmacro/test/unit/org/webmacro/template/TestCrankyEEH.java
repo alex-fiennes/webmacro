@@ -123,7 +123,7 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    public void testEvalThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()",
+      assertStringTemplateThrows ("#set $foo=$TestObject.throwException()",
                                    org.webmacro.PropertyException.class);
    }
 
