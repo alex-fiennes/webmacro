@@ -48,6 +48,8 @@ public class BeanDirective extends Directive {
     private static final int BEAN_INITARGS = 8;
     private static final int BEAN_INITARGS_VAL = 9;
     private static final int BEAN_TYPE_STATIC = 10;
+    private static final int BEAN_ON_NEW = 11;
+    private static final int BEAN_ON_NEW_BLOCK = 12;
     
     private static int[] BEAN_SCOPES = {
         BEAN_SCOPE_GLOBAL, BEAN_SCOPE_APPLICATION,
@@ -61,6 +63,7 @@ public class BeanDirective extends Directive {
     private boolean  isStaticClass;
     private Object   initArgObj;
     private Object[] initArgs;
+    private Block    onNewBlock;
     private Log      _log;
     private List     _impliedPackages;
     private List     _allowedPackages;
@@ -86,7 +89,10 @@ public class BeanDirective extends Directive {
         new KeywordArg(BEAN_TYPE_STATIC, "static"),
         new OptionalGroup(2),
         new KeywordArg(BEAN_INITARGS, "initArgs"),
-        new RValueArg(BEAN_INITARGS_VAL)
+        new RValueArg(BEAN_INITARGS_VAL),
+        new OptionalGroup(2),
+        new KeywordArg(BEAN_ON_NEW, "onNew"),
+        new BlockArg(BEAN_ON_NEW_BLOCK)
     };
     
     private static final DirectiveDescriptor
@@ -130,6 +136,7 @@ public class BeanDirective extends Directive {
             if (initArgObj instanceof Builder)
                 initArgObj = ((Builder)initArgObj).build(bc);
         }
+        onNewBlock = (Block)builder.getArg(BEAN_ON_NEW_BLOCK, bc);                
         
         if (DEBUG) 
             System.err.println("DBG: #bean, target="+target
@@ -142,6 +149,8 @@ public class BeanDirective extends Directive {
     throws PropertyException, IOException {
         Map globalBeans = BeanConf.globalBeans;
         Map appBeans = beanConf.appBeans;
+        boolean isNew = false;
+        
         try {
             while (initArgObj instanceof Macro) 
                 initArgObj = ((Macro) initArgObj).evaluate(context);
@@ -169,6 +178,7 @@ public class BeanDirective extends Directive {
                                 //o = c.newInstance();
                                 o = instantiate(_className, initArgs);
                             }
+                            isNew = true;
                             globalBeans.put(targetName,o);
                         }
                     }
@@ -179,6 +189,7 @@ public class BeanDirective extends Directive {
                         o = appBeans.get(targetName);
                         if (o == null){
                             o = instantiate(_className, initArgs);
+                            isNew = true;
                             appBeans.put(targetName, o);
                         }
                     }
@@ -193,6 +204,7 @@ public class BeanDirective extends Directive {
                             o = session.getAttribute(targetName);
                             if (o == null){
                                 o = instantiate(_className, initArgs);
+                                isNew = true;
                                 session.setAttribute(targetName, o);
                             }
                         }
@@ -205,7 +217,7 @@ public class BeanDirective extends Directive {
                     // NOTE: page beans always overwrite anything in the context 
                     // with the same name
                     o = instantiate(_className, initArgs);
-                    
+                    isNew = true;
                     if (o != null){
                         Class[] paramTypes = { Context.class };
                         try {
@@ -234,6 +246,9 @@ public class BeanDirective extends Directive {
             context.getBroker().getLog("engine").error(errorText, e);
             writeWarning(errorText, context, out);
         }
+        if (isNew && onNewBlock != null)
+          onNewBlock.write(out, context);
+            
     }
     
     public void accept(TemplateVisitor v) {
