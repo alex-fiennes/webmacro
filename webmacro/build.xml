@@ -141,6 +141,12 @@
     </ant>
   </target>
 
+  <target name="test-compile" >
+    <ant antfile="test/build.xml" target="unit-compile">
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
   <target name="all" depends="clean,prepare,compile,javadoc,dist,test-unit"/>
 
   <!--
