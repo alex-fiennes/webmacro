@@ -443,6 +443,20 @@ public class Broker
    }
 
    /**
+    * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+    * A FastWriter is used when writing templates to an output stream
+    *
+    * @param out The output stream the FastWriter should write to.  Typically
+    *           this will be your ServletOutputStream.  It can be null if
+    *           only want the fast writer to buffer the output.
+    * @param enctype the Encoding type to use
+    */
+   final public FastWriter getFastWriter (OutputStream out, String enctype)
+                                          throws UnsupportedEncodingException {
+       return FastWriter.getInstance (this, out, enctype);
+   }
+
+   /**
     * Get the EvaluationExceptionHandler 
     */
    public EvaluationExceptionHandler getEvaluationExceptionHandler() {

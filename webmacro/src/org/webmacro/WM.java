@@ -202,7 +202,8 @@ public class WM implements WebMacro
     * A FastWriter is used when writing templates to an output stream
     *
     * @param out The output stream the FastWriter should write to.  Typically
-    *           this will be your ServletOutputStream
+    *           this will be your ServletOutputStream.  It can be null if
+    *           only want the fast writer to buffer the output.
     * @param enctype the Encoding type to use
     */
    final public FastWriter getFastWriter (OutputStream out, String enctype)
