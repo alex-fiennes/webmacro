@@ -1,0 +1,84 @@
+<html>
+<!-- 
+Author: Lane Sharman
+Date		Revision History
+11-Oct-01	Initial Draft of performance reporting template
+
+Usage: This is a report to catch snapshot performance of
+typical webmacro operations.
+-->
+<head>
+<title>WebMacro Peformance Area Report</title>
+<STYLE TYPE="text/css">
+BODY, TABLE, TD, TH, P, H3, H4, H5 {font: 12px Arial; color: #000000;}
+</style>
+</head>
+<body>
+
+<table align=center>
+<tr><th align=center bgcolor="#C0C0C0">Current Performance Report</th></tr>
+
+<td>
+
+##
+## data table here:
+
+<table>
+<tr>
+<td>WebMacro Build Tested</td><td>CVS Version</td>
+</tr>
+
+<tr>
+<td>Date and Time of Test</td><td>$Today</td>
+</tr>
+
+<tr>
+<td>Configuration Settings and Options</td><td>Using Default Configuration. Running test under ant.</td>
+</tr>
+
+<tr>
+<td>Host Description</td>
+<td>
+$SystemProperty.get("java.vm.vendor") 
+$SystemProperty.get("java.runtime.version")
+$SystemProperty.get("os.arch")
+Total Memory=$TotalMemory (MB)
+</td>
+</tr>
+
+<tr>
+<td>Iteration Count</td><td>$IterationCount</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis: Java Public Access</td><td>$TETPublicAccess</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis: Java Method Accesors (Get/Set)</td><td>$TETPrivateAccess</td>
+</tr>
+
+
+</table>
+## end data table
+
+</td></tr></table>
+
+<hr>
+
+<table align=center>
+<tr><th align=center bgcolor="#C0C0C0">Historical Performance Values
+<br><a href="mailto:lane@opendoors.com">Baseline Mediator and Overlord</a>
+</th></tr>
+<td>
+
+## the following table is created by viewing the html output.
+## paste in the html when you are convinced it has historical value.
+## if it does, paste it in here and commit to cvs!
+
+
+</td></tr></table>
+
+</body></html>
+
+
