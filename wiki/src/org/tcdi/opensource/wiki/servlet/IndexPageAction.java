@@ -32,9 +32,9 @@ import org.tcdi.opensource.wiki.*;
 import org.webmacro.servlet.WebContext;
 
 /**
- *  Builds the list of recently changed WikiPages
+ *  Builds a nice index page, sorted and linked.
  *
- * @author    e_ridge
+ * @author    Christian Aust
  */
 public class IndexPageAction implements PageAction {
    private String wikiPageName = "IndexPage";
@@ -54,7 +54,7 @@ public class IndexPageAction implements PageAction {
 
 
    /**
-    *  template is the "RecentChangesAction.Template" configuration option
+    *  template is the "IndexPageAction.Template" configuration option
     *
     * @param  wiki  Description of the Parameter
     * @param  page  Description of the Parameter
@@ -66,7 +66,7 @@ public class IndexPageAction implements PageAction {
 
 
    /**
-    *  no page name for this action
+    *  Returns our page name "IndexPage"
     *
     * @param  wiki  Description of the Parameter
     * @param  wc    Description of the Parameter
@@ -78,9 +78,8 @@ public class IndexPageAction implements PageAction {
 
 
    /**
-    *  If it's a GET request, we simply display the login template. If it's a
-    *  POST request, do process the login request, set the cookie, and redirect
-    *  to the start page.
+    *  Builds the list of pages, sorts it and builds a list of all letters from
+    *  A-Z
     *
     * @param  wiki                                Description of the Parameter
     * @param  wc                                  Description of the Parameter
@@ -104,7 +103,7 @@ public class IndexPageAction implements PageAction {
          pages.add(p);
       }
 
-      // sort it descending by date last modified
+      // sort it ascending, not case sensitive
       Collections.sort(pages,
          new Comparator() {
             public int compare(Object o1, Object o2) {
