@@ -56,6 +56,10 @@ import org.tcdi.opensource.wiki.renderer.*;
 public class TextPageRenderer extends WikiPageRenderer {
     private WikiSystem _wiki;
 
+    public TextPageRenderer (WikiURLRenderer urlRenderer) {
+        this (urlRenderer, null);
+    }
+
     public TextPageRenderer (WikiURLRenderer urlRenderer, WikiSystem wiki) {
         super (urlRenderer);
         _wiki = wiki;
