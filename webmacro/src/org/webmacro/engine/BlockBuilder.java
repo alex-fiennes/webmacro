@@ -33,64 +33,51 @@ import java.lang.reflect.*;
   */
 public class BlockBuilder extends Vector implements Builder
 {
-   /**
-     * Create a block with the least number of elements
-     */
-   final public Object build(BuildContext bc) 
-      throws BuildException
+   final public Object build(BuildContext bc) throws BuildException
    {
-      Vector block = new Vector(20);
-      StringBuffer buf = new StringBuffer(512);
-      flatten(bc, block, buf, elementData);
-      if (buf.length() > 0) {
-         block.addElement(new StringMacroAdapter(buf.toString()));
-      }
-      Macro[] result = new Macro[block.size()];
-      block.copyInto(result);
-      return new Block(result);       
-   }
-
-   /**
-     * Merge sub-blocks and concatenate non-Macro elements
-     */
-   private void flatten(BuildContext bc,
-                        Vector block, 
-                        StringBuffer buf,  
-                        Object[] elements)
-      throws BuildException
-   {
-      for (int i=0; i<elements.length; i++) {
-         Object o = elements[i];
-         if (o instanceof BlockBuilder) 
-            flatten(bc, block, buf, ((BlockBuilder) o).elementData);
-         else {
-            if (o instanceof Builder) 
+      ArrayList content = new ArrayList(size());
+      {
+         Iterator i = iterator();
+         while (i.hasNext()) {
+            Object o = i.next();
+            if (o instanceof Builder) {
                o = ((Builder) o).build(bc);
-
-            // BG: There are cases where DirectiveBuilder will return a 
-            // Block.  I'd like to flatten the embedded Block out so that
-            // we can merge leading strings inside the block with trailing
-            // strings outside the block, but this is slightly complicated
-            // as the strings inside the block will already have been wrapped
-            // with StringMacroAdapter and converted to bytes.  Given that,
-            // I don't see a lot of point to unrolling the block at this time.
-            if (o instanceof Macro) {
-               if (buf.length() > 0) {
-                  block.addElement(new StringMacroAdapter(buf.toString()));
-                  buf.setLength(0);
-               }
-               block.addElement((Macro) o);
-            } 
-            else {
-               if (o != null) {
-                  buf.append(o.toString());
-               }
+            }
+            if (o instanceof Block) {
+               ((Block) o).appendTo(content); 
+            } else {
+               content.add(o);
             }
          }
-      }
+     } 
+   
+     // flatten everything and view the content as being: 
+     //        string (macro string)* string
+     // store that as an array of strings and an array of 
+     // Macro objects and create a block.
+
+     ArrayList strings = new ArrayList((size() + 1) / 2);
+     ArrayList macros = new ArrayList((size() + 1) / 2);  
+     {
+        Iterator i = content.iterator();        
+        StringBuffer s = new StringBuffer();
+        while (i.hasNext()) {
+           Object o = i.next();
+
+           if (o instanceof Macro) {
+              strings.add(s.toString());
+              s = new StringBuffer(); // do not reuse: othewise all strings will contain char[] of max length!!
+              macros.add(o);
+           } else if (o != null) {
+              s.append(o.toString()); 
+           }
+        }
+        strings.add(s.toString());
+     }
+   
+     Macro m[] = (Macro[]) macros.toArray(new Macro[macros.size()]);
+     String s[] = (String[]) strings.toArray(new String[strings.size()]);
+     return new Block(s,m);
    }
 }
-
-
-
 

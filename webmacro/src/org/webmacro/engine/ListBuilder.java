@@ -45,7 +45,7 @@ public final class ListBuilder extends Vector implements Builder
       }
 
       if (isMacro) {
-         return new List(c);
+         return new ListMacro(c);
       } else {
          return c;
       }
@@ -58,7 +58,7 @@ public final class ListBuilder extends Vector implements Builder
   * the items in an array initializer; and the arguments to a 
   * method call. 
   */
-class List implements Macro
+class ListMacro implements Macro
 {
 
    final private Object[] _content; // the list data
@@ -66,7 +66,7 @@ class List implements Macro
    /**
      * create a new list
      */
-   List(Object[] content) {
+   ListMacro(Object[] content) {
       _content = content;
    }
 

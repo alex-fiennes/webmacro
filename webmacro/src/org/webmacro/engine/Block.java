@@ -19,10 +19,9 @@
 
 
 package org.webmacro.engine;
+import java.util.*;
 import java.io.*;
 import org.webmacro.*;
-import org.webmacro.util.*;
-
 
 
 /**
@@ -32,17 +31,26 @@ import org.webmacro.util.*;
 final public class Block implements Macro, Visitable
 {
 
-   final private Macro[] _content;
+   private final String[] _strings;
+   private final Macro[] _macros;
+   private final int _length;
+   private final int _remainder;
 
    /**
-     * Create a new Block
+     * A Block must be constructed from a BlockBuilder. The format
+     * of a block is:  String (Macro String)* String 
+     * and the constructor expects to receive two arrays matching
+     * this structure. The output of the block will be the first
+     * string, followed by the first macro, followed by the second 
+     * string, followed by the second macro, etc., and terminated 
+     * by the final string.
      */
-   public Block(Macro[] content) {
-      _content = content;
-   }
+   protected Block(String[] strings, Macro[] macros) {
+      _strings = strings;
+      _macros = macros;
 
-   Macro[] getContent() {
-      return _content;
+      _length = _macros.length;
+      _remainder = 10 - _length % 10;
    }
 
    /**
@@ -52,24 +60,70 @@ final public class Block implements Macro, Visitable
      * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(final FastWriter out, final Context context) 
+   final public void write(final FastWriter out, final Context context) 
       throws PropertyException, IOException
    {
-      int len = _content.length;
-      for(int i = 0; i < len; i++) {
-         _content[i].write(out,context);
+      int i = 0;  
+      final byte[][] bcontent = out.getEncodingCache().encode(_strings);
+      byte[] b;
+
+      switch(_remainder) {
+         case 1: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 2: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 3: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 4: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 5: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 6: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 7: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 8: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         case 9: b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
       }
+
+      while (i < _length) {
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+         b=bcontent[i]; out.write(b,0,b.length); _macros[i++].write(out,context);
+      }
+      b=bcontent[_length]; out.write(b,0,b.length);
    }
+
+   final void appendTo(List l) {
+      final int len = _macros.length;
+      for (int i = 0; i < _macros.length; i++) {
+         l.add(_strings[i]);
+         l.add(_macros[i]);
+      }
+      l.add(_strings[len]);
+   }
+
+  final public void accept(TemplateVisitor v) { 
+    v.beginBlock();
+    final int len = _macros.length;
+    for(int i = 0; i < len; i++) 
+    {
+       v.visitMacro(_macros[i]);
+       v.visitString(_strings[i]);
+    }
+    v.visitString(_strings[len]);
+    v.endBlock(); 
+  } 
 
    /**
      * same as out but returns a String
      * <p>
      * @exception PropertyException if required data was missing from context
      */
-   public Object evaluate(Context context) throws PropertyException
+   final public Object evaluate(Context context) throws PropertyException
    {
       try {
-         ByteArrayOutputStream os = new ByteArrayOutputStream(_content.length * 16 + 256);
+         ByteArrayOutputStream os = new ByteArrayOutputStream(_strings.length * 128);
          FastWriter fw = FastWriter.getInstance();
          write(fw,context);
          String ret = fw.toString();
@@ -81,11 +135,5 @@ final public class Block implements Macro, Visitable
       }
    }
 
-  public void accept(TemplateVisitor v) { 
-    v.beginBlock();
-    for(int i = 0; i < _content.length; i++) 
-      v.visitMacro(_content[i]);
-    v.endBlock(); 
-  } 
 }
 

@@ -105,6 +105,14 @@ final public class FastWriter extends Writer
    }
 
    /**
+     * Get the encoding cache used by this FastWriter to transform 
+     * char[] data into byte[] data.
+     */
+   public EncodingCache getEncodingCache() {
+      return _cache;
+   }
+
+   /**
      * Get the output stream this FastWriter sends output to. It 
      * may be null, in which case output is not sent anywhere.
      */
@@ -143,7 +151,6 @@ final public class FastWriter extends Writer
    {
       write(cbuf, 0, cbuf.length);
    }
-
 
    /**
      * Write characters to to the output stream performing slow unicode
@@ -190,16 +197,24 @@ final public class FastWriter extends Writer
      * Write a string to the underlying output stream, performing
      * unicode conversion.
      */
-   public void write(String s) 
+   public void write(final String s) 
    {
-      write(s,0,s.length());
+      final int len = s.length();
+      try{
+      	s.getChars(0,len,_cbuf,0);
+      	write(_cbuf,0,len);
+      } catch (IndexOutOfBoundsException e) {
+        _cbuf = new char[len + (len - _cbuf.length)]; 
+      	s.getChars(0,len,_cbuf,0);
+      	write(_cbuf,0,len);
+      }
    }
 
    /*
     * Write a string to the underlying output stream, performing
     * unicode conversion.
     */
-   public void write(String s, int off, int len) 
+   public void write(final String s, final int off, final int len) 
    {
       try{
       	s.getChars(off,off + len,_cbuf,0);
@@ -216,15 +231,34 @@ final public class FastWriter extends Writer
      * unicode conversion if necessary--try and read the encoding
      * from an encoding cache if possible.
      */
-   public void writeStatic(String s) 
+   public void writeStatic(final String s) 
    {
       if (_encodeProperly) {
          if (_buffered) bflush();
-         _bstream.write(_cache.encode(s));
+	 byte[] b = _cache.encode(s);
+         _bstream.write(b,0,b.length);
       } else {
          write(s,0,s.length());
       }
    }
+
+   /**
+     * Write raw bytes to the underlying stream. These bytes must be
+     * properly encoded with the encoding returned by getEncoding().
+     */
+  public void write(byte[] rawBytes) {
+     if (_buffered) bflush();
+     _bstream.write(rawBytes);
+  }
+
+  /**
+    * Write raw bytes to the underlying stream. Tehse bytes must be 
+    * properly encoded witht he encoding returned by getEncoding()
+    */
+  public void write(byte[] rawBytes, int offset, int len) {
+     if (_buffered) bflush();
+     _bstream.write(rawBytes, offset, len);
+  }
 
   public void bflush() {
      try { 
