@@ -295,7 +295,7 @@ Object parse_arg(ArgDescriptor arg) {
     return Conditional();
       
   case Directive.ArgType_BLOCK: {
-    OptionalWsNl();
+    OptionalWsNlWs();
     SetState(DEFAULT);
     BlockBuilder b = Block();
     SetState(WM);
@@ -304,7 +304,7 @@ Object parse_arg(ArgDescriptor arg) {
   }
 
   case Directive.ArgType_LITBLOCK: {
-    OptionalWsNl();
+    OptionalWsNlWs();
     SetState(DEFAULT);
     BlockBuilder b = LiteralBlock();
     SetState(WM);
@@ -443,10 +443,16 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
 
 /* Utility productions used by above JavaCode productions (State: WM) */
 
-void OptionalWsNl() : {
+void OptionalWsNlWs() : {
 }
 {
   [ <WS> ] [ <NEWLINE> [ <WS> ] ]
+}
+
+void OptionalWsNl() : {
+}
+{
+  [ <WS> ] [ <NEWLINE> ]
 }
 
 void OptionalWs() : {
@@ -458,7 +464,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 { 
-  OptionalWsNl() <POUND> <WORD> [ <WS> ] 
+  OptionalWsNlWs() <POUND> <WORD> [ <WS> ] 
 }
 
 
@@ -851,19 +857,23 @@ BlockBuilder LiteralBlock() : {
 
 BlockBuilder Block() : {
   ParserBlockBuilder block = new ParserBlockBuilder();
+  boolean first = true;
   Token t;
 }
 { 
   ( 
     LOOKAHEAD(<LBRACE>) 
     ( <LBRACE> 
-      ( WMContent(block) 
-        | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
-      ) * <RBRACE> { block.eatTrailingWs(); } )
+      ( ( 
+          WMContent(block) { if (first) block.eatLeadingWsNl(); }
+          | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
+        ) { first = false; } 
+      ) * <RBRACE> )
   | ( [ <BEGIN> ] 
-      ( WMContent(block) 
-        | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
-      ) * <END> { block.eatTrailingWs(); } )
+      ( ( WMContent(block) { if (first) block.eatLeadingWsNl(); }
+          | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
+        ) { first = false; }
+      ) * <END> )
   )
   { return block; }
 }

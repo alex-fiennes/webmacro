@@ -34,6 +34,12 @@ public class TestWhitespace extends TemplateTestCase {
    public void testWithIf () throws Exception {
       String tmpl = "#if (true) { pass } #else { fail }";
       assertStringTemplateEquals (tmpl, "pass ");
+
+      tmpl = "#if (true) {  pass  } #else {  fail  }";
+      assertStringTemplateEquals (tmpl, "pass  ");
+
+      tmpl = "#if (true) {pass} #else {fail}";
+      assertStringTemplateEquals (tmpl, "pass");
    }
 
    public void testWithElse () throws Exception {
@@ -49,10 +55,13 @@ public class TestWhitespace extends TemplateTestCase {
    public void testWithForeach2 () throws Exception {
       String tmpl = "#foreach $a in $Array { $a}";
       assertStringTemplateEquals (tmpl, "onetwothree");
+
+      tmpl = "#foreach $a in $Array {\n$a}";
+      assertStringTemplateEquals (tmpl, "onetwothree");
    } 
 
    public void testWithForeach3 () throws Exception {
       String tmpl = "#foreach $a in $Array {\n$a\n}\n";
-      assertStringTemplateEquals (tmpl, "one\ntwo\three\n");
+      assertStringTemplateEquals (tmpl, "one\ntwo\nthree\n\n");
    }
 }
