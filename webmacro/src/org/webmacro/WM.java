@@ -50,7 +50,7 @@ public class WM implements WebMacro
    final private static Map _brokers = new HashMap();
    final private static BrokerOwner _default = new BrokerOwner();
    final private Context _context;
-   private WebContext _webContext = null;
+   final private WebContext _webContext;
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
@@ -96,6 +96,7 @@ public class WM implements WebMacro
             _log = _broker.getLog("wm", "WebMacro instance lifecycle");
             _log.info("new " + this);
             _context = new Context(_broker);
+            _webContext = new WebContext(_broker);
             _contextCache = new ThreadLocal() {
                public Object initialValue() { return new ScalablePool(); }
             };
@@ -110,6 +111,7 @@ public class WM implements WebMacro
             _context = null;
             _contextCache = null;
             _webContextCache = null;
+            _webContext = null;
          }
       }
   
@@ -129,14 +131,15 @@ public class WM implements WebMacro
 
 
    /**
-     * Call this method when you are finished with WebMacro. If you don't call this 
-     * method, the Broker and all of WebMacro's caches may not be properly 
-     * shut down, potentially resulting in loss of data, and wasted memory. This 
-     * method is called in the finalizer, but it is best to call it as soon as you
-     * know you are done with WebMacro.
+     * Call this method when you are finished with WebMacro. If you
+     * don't call this method, the Broker and all of WebMacro's caches
+     * may not be properly shut down, potentially resulting in loss of
+     * data, and wasted memory. This method is called in the
+     * finalizer, but it is best to call it as soon as you know you
+     * are done with WebMacro.
      * <p>
-     * After a call to destroy() attempts to use this object may yield unpredicatble
-     * results.
+     * After a call to destroy() attempts to use this object may yield
+     * unpredicatble results.  
      */
    final public void destroy() {
       if (_alive) {
@@ -151,20 +154,20 @@ public class WM implements WebMacro
    }
 
    /**
-     * This message returns false until you destroy() this object, subsequently it 
-     * returns true. Do not attempt to use this object after it has been destroyed.
-     */
+     * This message returns false until you destroy() this object,
+     * subsequently it returns true. Do not attempt to use this object
+     * after it has been destroyed.  */
    final public boolean isDestroyed() {
       return !_alive;
    }
 
 
    /**
-     * You should never call this method, on any object. Leave it up to the garbage
-     * collector. If you want to shut this object down, call destroy() instead. If 
-     * you subclass this message, be sure to call super.finalize() since this is one 
-     * of the cases where it matters. 
-     */
+     * You should never call this method, on any object. Leave it up
+     * to the garbage collector. If you want to shut this object down,
+     * call destroy() instead. If you subclass this message, be sure
+     * to call super.finalize() since this is one of the cases where
+     * it matters.  */
    protected void finalize() throws Throwable {
       destroy();
       super.finalize();
@@ -198,9 +201,11 @@ public class WM implements WebMacro
       Pool cpool = (Pool) _contextCache.get();
       Context c = (Context) cpool.get();
       if (c == null) {
-         c = (Context) _context.clone();
+        c = (Context) _context.clone();
+        c.setPool(cpool);
       }
-      c.setPool(cpool);
+      else
+        c.clear();
       return c;
    }
 
@@ -216,10 +221,11 @@ public class WM implements WebMacro
       Pool cpool = (Pool) _webContextCache.get();
       WebContext c = (WebContext) cpool.get();
       if (c == null) {
-         c = _webContext.newInstance(req,resp);
+        c = _webContext.newInstance(req,resp);
+        c.setPool(cpool);
       }
-      Context ctx = c;
-      ctx.setPool(cpool);
+      else
+        c.reinitialize(req, resp);
       return c;   
    }
 

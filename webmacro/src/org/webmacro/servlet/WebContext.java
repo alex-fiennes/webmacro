@@ -61,7 +61,7 @@ public class WebContext extends Context
    /**
      * Log configuration errors, context errors, etc.
      */
-   private Log _log;
+   final private Log _log;
 
    /**
      * The request for this http connect
@@ -122,6 +122,15 @@ public class WebContext extends Context
       _request = null;
       _response = null;
       super.clear();
+   }
+
+   /**
+     * Reinitalized a WebContext for a new request
+     */
+   public void reinitialize(HttpServletRequest req, HttpServletResponse resp) {
+     clear();
+     _request = req;
+     _response = resp;
    }
 
    /**
