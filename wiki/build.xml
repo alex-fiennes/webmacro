@@ -51,10 +51,6 @@
 		<jar	jarfile="${file.resources}"
 			basedir="${dir.templates}"
 		/>
-		<jar	jarfile="${file.resources}"
-			basedir="${dir.etc}"
-			update="true"
-		/>
 	</target>
 
         <target name="dist" depends="prepare,compile,jar,resources">
@@ -68,7 +64,7 @@
 			<fileset dir="./" includes="*.jar" />
 		</copy>
 		<copy todir="${dir.dist}/WEB-INF">
-			<fileset dir="${dir.etc}" includes="Wiki.properties" />
+			<fileset dir="${dir.etc}" />
 		</copy>
 	</target>
 
