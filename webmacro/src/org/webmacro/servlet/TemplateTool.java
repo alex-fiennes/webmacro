@@ -124,6 +124,7 @@ public class TemplateTool implements org.webmacro.ContextTool {
             org.webmacro.util.Pool pool = c.getPool();
             _context = (pool==null) ? c.cloneContext()
                 : (Context)c.getPool().get();
+            if (_context == null) _context = c.cloneContext();
         }
         
         /** Construct a MacroTemplate with a StringTemplate
