@@ -232,6 +232,10 @@ final public class Block implements Macro, Visitable {
          return !done;
       }
 
+      public String getName() {
+          return block.getTemplateName();
+      }
+
       public int getLineNo() {
          return block.getLineNo(i - 1);
       }
