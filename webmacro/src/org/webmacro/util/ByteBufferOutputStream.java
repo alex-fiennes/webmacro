@@ -36,7 +36,6 @@ final public class ByteBufferOutputStream extends OutputStream
      */
    public ByteBufferOutputStream(int size) 
    {
-      // _initialSize = size;
       _buf = new byte[size];   
       _pos = 0;
    }
@@ -47,11 +46,6 @@ final public class ByteBufferOutputStream extends OutputStream
    public void reset() {
       _pos = 0;
    }
- 
-   public void resize (int size) {
-      if (size >-1)
-         _buf = new byte[size];
-   }
 
    public void write(int i) {
       write((byte) i);
@@ -61,7 +55,10 @@ final public class ByteBufferOutputStream extends OutputStream
      * Copy an array of bytes on to the end of the buffer
      */
    public void write(byte[] b) {
-      write(b,0,b.length); 
+      int len = b.length;
+      ensureCapacity (len);
+      System.arraycopy (b, 0, _buf, _pos, len);
+      _pos += len;
    }
 
    /**
@@ -69,7 +66,7 @@ final public class ByteBufferOutputStream extends OutputStream
      */
    public void write(byte[] b, int offset, int len) {
       ensureCapacity (len);
-      System.arraycopy(b, 0, _buf, _pos, len);
+      System.arraycopy (b, 0, _buf, _pos, len);
       _pos += len;
    }
 
@@ -86,11 +83,13 @@ final public class ByteBufferOutputStream extends OutputStream
      * Make sure the buffer contains space for len more bytes.
      */
    public final void ensureCapacity(int len) {
-      if (_buf.length < _pos + len) {
+      if (_buf.length < _pos+len) {
          int blen = _buf.length;
-         while (blen < _pos + len) {
-            blen += blen;
+
+         while (blen < _pos+len) {
+            blen *= 2;
          }
+
          byte[] tmp = new byte[blen];
          System.arraycopy(_buf,0,tmp,0,_pos);
          _buf = tmp;

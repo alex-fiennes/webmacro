@@ -88,6 +88,7 @@ final public class FastWriter extends Writer
    private boolean _buffered;
 
    final private static Hashtable _writerCache = new Hashtable();
+   private Pool _myPool;
 
    /**
     * Create a FastWriter to the target outputstream. You must specify
@@ -170,13 +171,6 @@ final public class FastWriter extends Writer
    public boolean getAsciiHack() 
    {
       return !_encodeProperly;
-   }
-
-   /** 
-    * resize the internal FW buffer
-    */
-   public void resize (int size) {
-      _bstream.resize (size);
    }
 
    /**
@@ -283,7 +277,7 @@ final public class FastWriter extends Writer
    }
 
    /**
-     * Write a string tot he underlying output stream, performing
+     * Write a string to the underlying output stream, performing
      * unicode conversion if necessary--try and read the encoding
      * from an encoding cache if possible.
      */
@@ -454,11 +448,17 @@ final public class FastWriter extends Writer
          _out.close();
          _out = null;
       }
-      Pool p = (Pool) _writerCache.get(_encoding);
-      if (p == null) {
-         p = new UPool(7);
-         _writerCache.put(_encoding,p);
+
+      try {
+         _myPool.put (this);
+      } catch (NullPointerException e) {
+         // get/create the pool this FW should be using
+         _myPool = (Pool) _writerCache.get (_encoding);
+         if (_myPool == null) {
+            _myPool = new UPool (7);
+            _writerCache.put(_encoding, _myPool);
+         }
+         _myPool.put (this);
       }
-      p.put(this);
    }
 }
