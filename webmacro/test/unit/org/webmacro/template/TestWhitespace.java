@@ -121,4 +121,13 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals (tmpl, "pass");
    }
 
+   public void testSpacesInParens() throws Exception {
+      String assn = "#set $s=\"String\" ";
+      assertStringTemplateEquals(assn + "$s", "String");
+      assertStringTemplateEquals(assn + "$s.substring(1,4)", "tri");
+      assertStringTemplateEquals(assn + "$s.substring( 1,4)", "tri");
+      assertStringTemplateEquals(assn + "$s.substring( 1 ,4)", "tri");
+      assertStringTemplateEquals(assn + "$s.substring( 1 , 4)", "tri");
+      assertStringTemplateEquals(assn + "$s.substring( 1 , 4 )", "tri");
+   }
 }

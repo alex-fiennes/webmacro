@@ -639,7 +639,7 @@ ListBuilder ArgList() : {
   Object e;
 }
 {
-  [ e=Expression() [<WS>] { list.addElement(e); } 
+  [ [<WS>] e=Expression() [<WS>] { list.addElement(e); } 
     ( 
       <COMMA> [ <WS> ] e=Expression() [<WS>] { list.addElement(e); } 
     ) * 
@@ -651,7 +651,7 @@ ListBuilder BracketList() : {
   ListBuilder list;
 }
 {
-  <LBRACKET> [<WS>] list=ArgList() <RBRACKET> 
+  <LBRACKET> list=ArgList() <RBRACKET> 
   { return list; }
 }
 
