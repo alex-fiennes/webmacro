@@ -146,14 +146,38 @@ public class Broker
     * themselves, then they don't have to call it.
     */
    protected void initLog() {
-      try {
-         LogTarget lt = new LogFile(_config);
-         _ls.addTarget(lt);
-         _log.notice("starting " + this.getClass().getName() 
-                     + ": " + _name);
-      } catch (IOException e) {
-         _log.error("Failed to open logfile", e);
-      }
+       final LogTargetFactory ltf = LogTargetFactory.getInstance ();
+       final Broker broker = this;
+       
+       if (!_config.containsKey ("LogTargets")) {
+          // no log targets defined so just start with the 
+          // standard LogFile
+           try {
+              _ls.addTarget (new LogFile(_config));
+           } catch (IOException e) {
+              _log.error ("Failed to open logfile", e);
+           }
+       } else {
+           // use whatever was defined in the configuration for this broker
+           _config.processListSetting("LogTargets", 
+                    new Settings.ListSettingHandler () {
+                        public void processSetting(String settingKey, 
+                               String settingValue) {
+                            try {
+                                LogTarget lt = ltf.createLogTarget (broker, 
+                                                              settingValue, 
+                                                              _config);
+                                _ls.addTarget (lt);
+                            } catch (LogTargetFactory.LogCreationException e) {
+                                _log.error ("Broker unable to init log " 
+                                            + settingValue, e);
+                            }
+                        }
+                    }
+           );
+       }
+       
+       _log.notice("starting " + this.getClass().getName() + ": " + _name);
    }
 
    private class SettingHandler extends Settings.ListSettingHandler {
