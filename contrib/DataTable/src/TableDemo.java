@@ -16,6 +16,7 @@ import org.webmacro.datatable.*;
 public class TableDemo extends WMServlet {
     final static public boolean DEBUG = true;
     private Log _log = null;
+    private Connection _conn = null;
     
     final static public String jdbcUrl = "jdbc:protomatter:pool:hyperPool";
     
@@ -111,10 +112,20 @@ public class TableDemo extends WMServlet {
      * This is called when the servlet environment shuts down the servlet
      * via the shutdown() method. The default implementation does nothing.
      */
-    protected void stop() {}
+    protected void stop() {
+        try {
+            _conn.close();
+        } catch (Exception e){
+            e.printStackTrace(System.err);
+        }
+    }
     
     private void createPool(){
-      /*
+      /* 
+       // NOTE: the following code illustrates how to set up a connection pool
+       // using Protomatter.  It has been commented out so that the demo
+       // can be distributed and run without the extra jars
+       
     // initialization params are kept in a Hashtable
     Hashtable args = new Hashtable();
        
@@ -163,17 +174,21 @@ public class TableDemo extends WMServlet {
        */
     }
     
-    private Connection _conn = null;
     public Connection getConnection() throws Exception {
-        //return DriverManager.getConnection(jdbcUrl); //, _jdbcUser, _jdbcPass);
-        if (_conn == null)
+        if (_conn == null){
             Class.forName("org.hsqldb.jdbcDriver");
-        _conn = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost", "sa", "");
+            java.net.URL dburl = getClass().getResource("/tabledemo.data");
+            String dbfile = dburl.getFile();
+            dbfile = dbfile.substring(0, dbfile.lastIndexOf('.'));
+            System.out.println("dbfile=" + dbfile);
+            //_conn = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost", "sa", "");
+            _conn = DriverManager.getConnection("jdbc:hsqldb:" + dbfile, "sa", "");
+        }
         return _conn;
     }
     
     static public void releaseConnection(Connection conn){
-        try { conn.close(); } catch (Exception e){}
+        //try { conn.close(); } catch (Exception e){}
     }
     
     private void test(){
@@ -242,7 +257,6 @@ public class TableDemo extends WMServlet {
     
     /** test harness */
     static public void main(String[] args){
-        //TODO: create and load table
         TableDemo demo = new TableDemo();
         demo.test();
     }
