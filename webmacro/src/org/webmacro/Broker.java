@@ -109,7 +109,9 @@ public class Broker
       this((Broker) null, fileName);
       String propertySource = WEBMACRO_DEFAULTS + ", " + fileName;
       loadDefaultSettings();
-      loadSettings(fileName, false);
+      boolean loaded = loadSettings(fileName, false);
+      if (!loaded) 
+        propertySource += "(not found)";
       if (_config.getBooleanSetting("LoadSystemProperties")) {
          loadSystemSettings();
          propertySource += ", " + "(System Properties)";
@@ -258,14 +260,15 @@ public class Broker
       _config.load(_defaultSettings);
    }
 
-   protected void loadSettings(String name, 
-                               boolean optional) throws InitException
+   protected boolean loadSettings(String name, 
+                                  boolean optional) throws InitException
    {
       URL u = getResource(name);
       if (u != null) {
          // _log.notice("Loading properties file " + name);
          try {
             _config.load(u);
+            return true;
          } catch (IOException e) {
             _log.notice("Attempting to load properties file " + name);
             if (!optional)
@@ -274,10 +277,10 @@ public class Broker
          }
       }
       else {
-         _log.notice("Unable to load settings from file " + name);
          if (!optional)
             throw new InitException("Error reading settings from " + name);
       }
+      return false;
    }
 
    protected void loadSystemSettings() {
