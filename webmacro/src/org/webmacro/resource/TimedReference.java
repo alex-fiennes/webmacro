@@ -32,8 +32,8 @@ import java.lang.ref.SoftReference;
   * released no later than the specified timeout.
   */
 public class TimedReference extends SoftReference {
-   final long _timeout;
-
+   public final long _timeout;
+   
    /**
      * Construct a soft reference, specifying how long the 
      * reference is valid for. Beyond the specified timeout 
@@ -44,12 +44,14 @@ public class TimedReference extends SoftReference {
       _timeout = timeout;
    }
 
-   /**
-     * Return the number of milliseconds this object is valid
-     * for, beginning with the creation time.
-     */
-   public long getTimeout() {
-      return _timeout;
+  /**
+   * The CachingProvider calls shouldReload to ask the reference whether
+   * it has changed since we loaded it.  Subclasses should define an 
+   * implementation if this if it makes sense to.  Otherwise, the default
+   * returns false, which means the item is replaced when it expires from
+   * the cache.
+   */
+   public boolean shouldReload() {
+      return false;
    }
-
 }
