@@ -399,7 +399,6 @@ final class ParseTool
       }
 
       _buf = m.buf.toString();
-System.out.println("2--- _buf now equal: " + _buf);
       _pos = 0;
       _len = _buf.length();
       _last = -1;

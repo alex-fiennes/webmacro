@@ -283,6 +283,7 @@ public class WMParser implements Parser
             // successfully read some kind of child, or we're quitting
             // so write the string we've built up 
             b.addElement(str.toString());
+            str.setLength(0);
 
 	    if (child != null) {
                b.addElement(child);
