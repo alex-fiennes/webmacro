@@ -23,8 +23,11 @@ import junit.framework.*;
  */
 public abstract class EncodingTestCase extends TestCase {
     public static final String TEMPLATE_FILENAME = "org.webmacro.template.TestEncoding.wm";
+    public static final String TEMPLATE_FILENAME_UTF8 = "org.webmacro.templateTestEncoding-utf8.wm";
+
     protected WebMacro wm;
-    
+    protected WebMacro wmUTF8;
+
     protected String template;
     protected String expected;
     protected String encoding;
@@ -38,11 +41,11 @@ public abstract class EncodingTestCase extends TestCase {
         this.expected = getExpected();
         this.encoding = getEncoding();
         createWebMacro();
-        createFile();
+        createFiles();
     }
 
     protected void tearDown() throws Exception {
-        deleteFile();
+        deleteFiles();
     }
 
     /**
@@ -67,26 +70,50 @@ public abstract class EncodingTestCase extends TestCase {
     protected abstract void stuffContext(Context context);
     
     protected void createWebMacro() throws Exception {
+        File f = new File("WebMacro.properties-".concat(encoding));
+        PrintWriter w = new PrintWriter(new FileWriter(f));
+        w.println("TemplateEncoding: ".concat(encoding));
+        w.close();
+        
+        f = new File("WebMacro.properties-UTF8");
+        w = new PrintWriter(new FileWriter(f));
+        w.println("TemplateEncoding: UTF8");
+        w.close();
+        
         if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
             System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
-        System.getProperties().setProperty("org.webmacro.TemplateEncoding",encoding);
-        wm = new WM();
+        wm = new WM("WebMacro.properties-".concat(encoding));
+
+        wmUTF8 = new WM("WebMacro.properties-UTF8");
     }
 
-    protected void createFile() throws IOException {
+    protected void createFiles() throws IOException {
         File f = new File(TEMPLATE_FILENAME);
         Writer writer = new OutputStreamWriter(new FileOutputStream(f),encoding);
         writer.write(template);
         writer.close();
+        
+        f = new File(TEMPLATE_FILENAME_UTF8);
+        writer = new OutputStreamWriter(new FileOutputStream(f),"UTF8");
+        writer.write(template);
+        writer.close();
+        
     }
 
-    protected void deleteFile() throws IOException {
-        File f = new File(TEMPLATE_FILENAME);
+    protected void deleteFile(String filename) throws IOException {
+        File f = new File(filename);
         if (f.exists())
             f.delete();
     }
 
-    private Context getContext() {
+    protected void deleteFiles() throws IOException {
+        deleteFile(TEMPLATE_FILENAME);
+        deleteFile(TEMPLATE_FILENAME_UTF8);
+        deleteFile("WebMacro.properties-".concat(encoding));
+        deleteFile("WebMacro.properties-UTF8");
+    }
+    
+    private Context getContext(WebMacro wm) {
         Context context = wm.getContext();
         stuffContext(context);
         return context;
@@ -96,7 +123,7 @@ public abstract class EncodingTestCase extends TestCase {
         assertEquals("Input Encoding is not "+encoding,
                      wm.getConfig("TemplateEncoding"),encoding);
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
-        String evaluated = t.evaluate(getContext()).toString();
+        String evaluated = t.evaluate(getContext(wm)).toString();
         assertEquals("Template evaluated to \""+evaluated+"\" instead of \""+expected+"\"",
                      evaluated,expected);
     }
@@ -107,7 +134,7 @@ public abstract class EncodingTestCase extends TestCase {
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         FastWriter fw = wm.getFastWriter(bos,encoding);
-        t.write(fw,getContext());
+        t.write(fw,getContext(wm));
         fw.flush();
         fw.close();
         assertByteArrayEquals(bos.toByteArray(),expected.getBytes(encoding));
@@ -119,10 +146,19 @@ public abstract class EncodingTestCase extends TestCase {
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         FastWriter fw = wm.getFastWriter(bos,"UTF8");
-        t.write(fw,getContext());
+        t.write(fw,getContext(wm));
         fw.flush();
         fw.close();
         assertByteArrayEquals(bos.toByteArray(),expected.getBytes("UTF8"));
+    }
+
+    public void testUTF8InputEncoding() throws Exception {
+        assertEquals("InputEncoding is not UFT8",
+                     wmUTF8.getConfig("TemplateEncoding"),"UTF8");
+        Template t = wmUTF8.getTemplate(TEMPLATE_FILENAME_UTF8);
+        String evaluated = t.evaluate(getContext(wmUTF8)).toString();
+        assertEquals("Template evaluated to \""+evaluated+"\" instead of \""+expected+"\"",
+                     expected,evaluated);
     }
 
     protected void assertByteArrayEquals(byte[] a,byte[] b) throws Exception {
