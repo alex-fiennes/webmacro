@@ -30,7 +30,12 @@ public class AlternateDirective extends Directive {
   public Object build(DirectiveBuilder builder, 
                       BuildContext bc) 
   throws BuildException {
-    target = (Variable) builder.getArg(ALTERNATE_TARGET, bc);
+    try {
+      target = (Variable) builder.getArg(ALTERNATE_TARGET, bc);
+    } 
+    catch (ClassCastException e) {
+      throw new NotVariableBuildException(myDescr.name, e);
+    }
     list = builder.getArg(ALTERNATE_LIST, bc);
     return this;
   }

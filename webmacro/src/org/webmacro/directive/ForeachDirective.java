@@ -56,8 +56,13 @@ public class ForeachDirective extends Directive {
   public Object build(DirectiveBuilder builder, 
                       BuildContext bc) 
   throws BuildException {
-    target = (Variable) builder.getArg(FOREACH_TARGET, bc);
-    index  = (Variable) builder.getArg(FOREACH_INDEX, bc);
+    try {
+      target = (Variable) builder.getArg(FOREACH_TARGET, bc);
+      index  = (Variable) builder.getArg(FOREACH_INDEX, bc);
+    }
+    catch (ClassCastException e) {
+      throw new NotVariableBuildException(myDescr.name, e);
+    }
     list   = builder.getArg(FOREACH_LIST, bc);
     body   = (Block) builder.getArg(FOREACH_BODY, bc);
     indexFromExpr = builder.getArg(FOREACH_FROM, bc);

@@ -34,7 +34,12 @@ public class SetDirective extends Directive {
   public Object build(DirectiveBuilder builder, 
                       BuildContext bc) 
   throws BuildException {
-    target = (Variable) builder.getArg(SET_TARGET, bc);
+    try {
+      target = (Variable) builder.getArg(SET_TARGET, bc);
+    }
+    catch (ClassCastException e) {
+      throw new NotVariableBuildException(myDescr.name, e);
+    }
     result = builder.getArg(SET_RESULT, bc);
     return this;
   }

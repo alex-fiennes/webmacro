@@ -18,9 +18,6 @@ public class ParamDirective extends Directive {
   private static final int PARAM_TARGET = 1;
   private static final int PARAM_RESULT = 2;
 
-  private static final String SIMPLE_VAR_EXC =  
-    "#param: Attribute variable must have only one term.";
-
   private static final ArgDescriptor[] 
     myArgs = new ArgDescriptor[] {
       new LValueArg(PARAM_TARGET), 
@@ -44,9 +41,12 @@ public class ParamDirective extends Directive {
       target = (Variable) builder.getArg(PARAM_TARGET, bc);
       result = builder.getArg(PARAM_RESULT, bc);
       if (!target.isSimpleName()) 
-        throw new BuildException(SIMPLE_VAR_EXC);
+        throw new NotSimpleVariableBuildException(myDescr.name);
 
       target.setValue(bc, result);
+    }
+    catch (ClassCastException e) {
+      throw new NotVariableBuildException(myDescr.name, e);
     }
     catch (ContextException e) {
       throw new BuildException("#param: Exception setting variable " 

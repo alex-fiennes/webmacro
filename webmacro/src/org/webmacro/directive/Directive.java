@@ -91,7 +91,13 @@ public abstract class Directive implements Macro, Visitable {
   /* Nested static classes */ 
 
 
-  public static class ArgDescriptor {
+  /**
+   * ArgDescriptor is the base class for all the different types
+   * of argument descriptors, like ConditionalArg, KeywordArg, RValueArg,
+   * etc.  
+   */
+
+  public static abstract class ArgDescriptor {
     public final int id;
     public final int type;
     public boolean optional = false;
@@ -211,6 +217,30 @@ public abstract class Directive implements Macro, Visitable {
       repeating = true;
     }
   }
+
+
+  // Utility exception classes for use by directives
+
+  public static class NotVariableBuildException extends BuildException {
+    public NotVariableBuildException(String directive) {
+      super("#" + directive + ": Argument must be a variable");
+    }
+
+    public NotVariableBuildException(String directive, Exception e) {
+      super("#" + directive + ": Argument must be a variable", e);
+    }
+  }
+
+  public static class NotSimpleVariableBuildException extends BuildException {
+    public NotSimpleVariableBuildException(String directive) {
+      super("#" + directive + ": Argument must be a simple variable");
+    }
+
+    public NotSimpleVariableBuildException(String directive, Exception e) {
+      super("#" + directive + ": Argument must be a simple variable", e);
+    }
+  }
+
 
 
 }
