@@ -59,6 +59,10 @@ public final class ArgsHolder implements DirectiveArgs
     throw new BuildException("Invalid argument ID " + id + " requested ");
   }
 
+  /**
+   * Get the argument at the specified <code>index</code>.  This is different than getting
+   * an argument by it's <code>id</code>
+   */
   public Object getExactArg (int idx) throws BuildException {
      return buildArgs[idx];
   }
