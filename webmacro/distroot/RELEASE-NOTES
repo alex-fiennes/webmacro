@@ -1,11 +1,11 @@
-WebMacro 1.1final
+WebMacro 2.0
 ---------------
                     
-This is WebMacro 1.1.
+This is WebMacro 2.0.
 
-WM 1.1 includes new features such as #macro, #count, $functions(), and numerous bugfixes.
+WM 2.0 includes new features such as #templet, #eval, and numerous bugfixes and
+better web docs.
 
-WebMacro is alive, and this production quality release is proof!
 
 The best place for information about WebMacro is our website:
     http://www.webmacro.org/
@@ -21,199 +21,23 @@ Please visit http://www.webmacro.org/MailingList for details.
 Changes in this Release
 -----------------------
 
-- Fix for Tomcat and template loading from .jar files (Sebastian)
+- You can build WM in a minimalist fashion for embedded systems. See
+the ant file for this.
 
-- Fix NPE's when calling methods using the 'null' keyword
+- A powerul new feature has been added allowing for blocks
+to be created as templets and evaluated. This is addition to the
+macro calling facility.
 
-- Add .tmpl as a recognized template file extension for #parse and #include
+- Some small signature changes to methods require you to recompile
+source code which imports files from webmacro.jar
 
-Changes prior to this Release
------------------------------
+- In addition to WMServlet.java, a servlet TemplateServlet.java is
+in the distro. It shows how to improve performance by creating an
+immutable global context which acts as constants context for the life
+of the application (or until it is refreshed). 
 
-- cleanup to various error messages (eric)
+- Generally, this release represents a very stable runtime for
+use as an embedded text processing engine in any context, web or otherwise.
 
-- make line/column info available in more situations (eric)
-
-- fix stupid warnings in IncludeDirective (eric)
-
-- expanded test cases (eric)
-
-- avoid exception throwing in ContextTool creation (keats) 
-
-- more #macro's (lane)
-
-- WebMacro.properties settings for default FastWriter buffer size and 
-max pool size (eric) 
-
-- more documentation concerning new features (brian, keats, lane)
-
-- fixed bugs 69, 66, and 59 (eric)
-
-- WMServlet.doGet() is no longer "final" (eric)
-
-- logging API now accepts Throwable instead of Exception. (eric)
-   This one might require you to recompile your classes.
-
-- the syntax for #default has changed to:
-     #default $x = 3
-
-- #if now honors the exception handling rules of the active EvaluationExceptionHandler. (eric)
-     For example, #if($foo.noSuchMethod()) now throws exceptions when using Default and CrankyEEH
-    whereas previously it did not.
-
-- fixed parser bug where a missing #end or } would not throw an exception, but would instead
-consider the end of the file as the end of the block. (eric)
-
-- releases can now be downloaded in binary and/or source form. (eric)
-
-- find out which version of WM you have with this simple command:
-  java -jar webmacro.jar
-
-- started a macros/ area to keep useful #macro's (lane)
-
-- additional unit tests for #macros, parser bugs, and other things (lane, eric)
-
-- added #macro directive (brian)
-
-- added #count directive (eric)
-
-- added $functions() (keats)
-
-- cleanup some error messages (eric)
-
-- moved to SourceForge (eric)
-
-- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
-
-- Fixed "characters get dropped" when parsing templates (brian)
-
-- More encoding tests.  TestWindows1251Encoding and TestISO88591Encoding
-
-- Better error output for NoSuchMethod exceptions
-
-- CGI/Form helper methods in WebContext are no longer @deprecated
-
-- WEB-INF/ searched for WebMacro.properties before any other resource
-location is searched for 2.2+ servlet containers.
-
-- Parser fixes related to line/column numbers and excessive #'s
-
-- More test cases
-
-- Workarounds for encoding issues with Resin
-
-- Numerous fixes to how WebMacro handles input/output encoding.  Your DBCS
-templates should work now! (sebastian)
-
-- Bug fixes to parse exceptions being thrown by new whitespace handling (sebastian)
- 
-- Improved logging output.  All log output contains line.column information
-for the causing $variable.  Error messages have been reworded to be easier
-to understand. (brian)
-
-- Many whitespace parsing fixes involving #comments, #directives, and 
-$variables. (brian)
-
-- Configurable security options for limiting which methods can be called on a class.
-This allows the administrator of the WebMacro server to make sure his users don't
-abuse the system.  See webmacro.defaults (http://www.webmacro.org/WebMacroDefaults)
-for details. (keats)
-
-- Better security for 2.2+ Web Apps.
-You can place a WebMacro.properties file in the WEB-INF/ directory of your
-web application and it will be found there before searching the resource
-locations of the servlet class loader. Also, templates can be placed in a 
-jar file and located in WEB-INF/lib/myTemplates.jar for more secure, faster
-lookup. (lane)
-
-- Contrib
-There are really some excellent resources in the contrib section of the release
-and you should look them up for how to use WebMacro. For example, the module
-contrib/mgmt has a WM friendly class, ORSchema.java, which provides an
-Object/Relational Design tool for code-generating sql and java class files.
-Check out the many other useful contrib modules. (lane) 
-
-- Pluggable LogTargets.  You can (finally) plug in your own 
-org.webmacro.util.LogTarget. By default, WebMacro logs to stderr. (eric)
-
-- Improved #include directive.  #parse has been deprecated.  #include directive
-can now do everything #parse did along with what #include has always done.  See 
-the javadocs for org.webmacro.directive.IncludeDirective for usage information.
-
-Note that although #parse has been deprecated, it is still configured for use.  
-However, you should replace #parse with #include in your templates
-
-- Improved whitespace handling.  
-See http://www.servlets.com/archive/servlet/ReadMsg?msgId=111505&listName=webmacro
-for an explanation of how it works.
-
-- added a #type directive that allows template to force the class type
-of Context variables.  See the javadocs for org.webmacro.directive.TypeDirective
-for usage information.
-
-- org.webmacro.Broker now has a local cache where you can store untyped state 
-information that needs to be tied to a specific Broker (WebMacro) instance.
-
-- Directives can now get the name they've been configured as (which could be
-different than the name specified by the DirectiveDescriptor) by calling
-(in build()):
-   String myName = builder.getName();
-
-- Fixed bug #37 in WMServlet where getOutputStream() was being called before the 
-content-type was being set.  This is violation of the JSDK 2.3 spec.
-
-- Removed old, unused sources related to the old parser
-
-- New Context Tools:  $Math, $Variable, $Type, and $Text.  See the javadocs
-for org.webmacro.MathTool, VariableTool, TypeTool, and TextTool for
-usage information.
-
-- the directives #encode, #escape, and #silence are disabled by default.
-They are currently broken, and the same result can be acheived using the
-$Text tool:
-   $Text.URLEncode("Some String value here")
-   $Text.HTMLEncode("Some <html> text here")
-  
-- numerous bug fixes to the parser
-
-- tighter integration with the EvaluationExceptionHandler
-
-- improved logging messages
-
-- Refactor Broker to allow tighter integration with servlet containers -- load 
-templates, property files from WAR file or servlet zone, log to servlet log;
-
-- Pluggable cache manager interface -- use for resources, encodings, 
-PropertyOperator?; multiple cache managers include VeryFastCache; expose cache
-configuration parameters so administrators can tweak them
-
-- Simplified configuration mechanism for Providers, Directives, Tools, Parsers
-
-- Use broker to laod templates, property files
-
-- Make LogFormat configurable; allow logging to servlet log. 
-
-- Better error handling; filter exceptions through EvaluationExceptionHandler?, 
-reset output when template evaluation throws so the user can see what happened
-
-- CheckTemplate tool, StreamTemplate and TemplateDumper tools
-
-- ANT build support
-
-- JUnit test framework
-
-- More defaults so its harder to misconfigure WM
-
-- performance enhancements
-
-- Improved block syntax -- #if .. #else .. #endif
-
-- Do arithmetic as int instead of long
-
-- Allow access to .length field of arrays
-
-- TemplatePath is now optional; you can run WM with an empty .properties
-
-- Load settings from system properties and web.xml as well as .properties
 
 EOF
