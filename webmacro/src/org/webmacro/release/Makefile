@@ -29,6 +29,7 @@ DOCS =		org/webmacro/webroot/*.html \
 		org/webmacro/webroot/api \
 		org/webmacro/webroot/mkdoc \
 		org/webmacro/CHANGES \
+		org/webmacro/CREDITS \
 		org/webmacro/webroot/LICENSE \
 		org/webmacro/webroot/COPYING
 
