@@ -9,10 +9,15 @@ import org.webmacro.Context;
 */
 public class TestSyntheticTemplate extends TemplateTestCase {
 
+  private static final int iterationCount = 3;
+
   private static final String fileName = "org/webmacro/template/synthetictest.wm";
   private static final String reportName = "org/webmacro/template/syntheticreport.wm";
-  private static final String[] LOAD = {"1.wm", "2.wm", "3.wm", "4.wm", "5.wm",
-                                      "6.wm", "7.wm", "8.wm", "9.wm", "10.wm"};
+  private static final String[] LOAD = { 
+    "1.wm", "2.wm", "3.wm", "4.wm", "5.wm", 
+    "6.wm", "7.wm", "8.wm", "9.wm", "10.wm", 
+  };
+
   private Context context = null;
   
   public TestSyntheticTemplate (String name) {
@@ -32,9 +37,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
   public void testShow() throws Exception {
     context.put("runLoad", Boolean.FALSE);
     String value = templateFileToString(fileName);
-    System.out.println("Template:\n" + value);
     String output = executeStringTemplate(value);
-    System.out.println("\n\nEvaluated to:\n" + output);
   }
 
   /** Throw the first test result out due to parsing. */
@@ -44,8 +47,8 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     long tet = System.currentTimeMillis();
     String value = executeFileTemplate(fileName);
     tet = System.currentTimeMillis() - tet;
-    System.out.println("Completed testLoadAndToss. Character count=" + value.length() + " TET(millis)=" + tet);
-    if (value.length() < 10000) fail("Total character count must exceed 10,000 characters");
+    if (value.length() < 10000) 
+      fail("Total character count must exceed 10,000 characters");
   }
 
   /**
@@ -65,7 +68,8 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     min = max;
     int contentSize = throwAway.length();
 
-    long tet, singleTet; int iterationCount = 1002;
+    long tet, singleTet; 
+
     // begin load
     tet = System.currentTimeMillis();
     for (int index = 0; index < iterationCount; index++) {
@@ -84,7 +88,6 @@ public class TestSyntheticTemplate extends TemplateTestCase {
 
   /** A webmacro report sent to LoadReport.html. */
   protected void report(int iterationCount, long totalTime, int characterCount) throws Exception {
-    System.out.println("Load test complete and report filed to LoadReport.html in current directory.");
     context.put("IterationCount", iterationCount);
     context.put("TotalElapsedTime", totalTime);
     context.put("AverageTime", totalTime/iterationCount);

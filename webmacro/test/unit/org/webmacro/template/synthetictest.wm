@@ -24,8 +24,7 @@ tools.
 synthetictest.wmt depends on synthetictest.java
 }
 ## test include which includes a zero length file using the provided home property
-#set $home = "/release/webmacro/test/unit"
-#include "$home/org/webmacro/template/load/0.wm"
+#include "org/webmacro/template/load/0.wm"
 
 ## test parsing the file:
 #parse "org/webmacro/template/load/0.wm"
@@ -35,9 +34,9 @@ synthetictest.wmt depends on synthetictest.java
 #set $file = "0.wm"
 
 ## test include and parse using variable references
-#include "$(home)/$(dir)/$(file)"
+#include "$(dir)/$(file)"
 #parse "$(dir)/$(file)"
-#include "$home/$dir/$file"
+#include "$dir/$file"
 #parse "$dir/$file"
 
 ##
