@@ -1,6 +1,5 @@
 <project name="WebMacro.Tests" default="all" basedir=".">
   <property name="test.root" value="test"/>
-  <property name="template.root" value="${test.root}/templates"/>
   <property name="unit.root" value="${test.root}/unit"/>
   <property name="unit.classes" value="${test.root}/unit-classes"/>
   <property name="unit.reports" value="${test.root}/unit-reports"/>
@@ -24,27 +23,6 @@
     <pathelement path="${java.class.path}" />
   </path>
 
-
-  <target name="templates-clean">
-    <delete>
-      <fileset dir="${template.root}" includes="**/*.class,**/*.wm.out"/>
-    </delete>
-  </target>
-
-  <target name="templates-compile">
-    <javac srcdir="${template.root}" destdir="${template.root}"
-           debug="on" optimize="off" deprecation="off" includes="*.java">
-      <classpath refid="template.class.path"/>
-    </javac>
-  </target>
-
-  <target name="templates" depends="templates-compile">
-    <exec executable="sh" failonerror="yes">
-      <arg line="${template.root}/test-templates.sh"/>
-      <arg line="${template.root}"/>
-      <env key="CLASSPATH" path="${class.path.resolved}"/>
-    </exec>
-  </target>
 
   <target name="unit-clean">
     <delete dir="${unit.classes}"/>
@@ -93,7 +71,7 @@
     </junit>
   </target>
 
-  <target name="all" depends="templates,unit" />
-  <target name="clean" depends="unit-clean,templates-clean" />
+  <target name="all" depends="unit" />
+  <target name="clean" depends="unit-clean" />
 </project>
 
