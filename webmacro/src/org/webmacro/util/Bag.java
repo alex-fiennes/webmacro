@@ -19,6 +19,7 @@
 
 
 package org.webmacro.util;
+import org.webmacro.*;
 
 /**
   * A dictionary like interface, but more restricted--provides a common
