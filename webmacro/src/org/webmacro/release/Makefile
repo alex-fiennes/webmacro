@@ -8,6 +8,7 @@ TARGETS = 	webmacro/webmacro.jar \
 		webmacro/IMPORTANT \
 		webmacro/RELEASE-NOTES.html \
 		webmacro/collections.jar \
+		webmacro/contrib \
 		webmacro/README.html 
 
 SOURCES =	org/webmacro/servlet/*.java \
@@ -66,9 +67,15 @@ dist: version $(TARGETS)
 org/webmacro:
 	cvs co org/webmacro
 
+contrib:
+	cvs co contrib
+
 webmacro: org/webmacro
 	cvs update org/webmacro
 	mkdir webmacro
+
+webmacro/contrib: webmacro contrib
+	cp -pR contrib webmacro/contrib
 
 webmacro/webmacro.jar:	webmacro
 	CLASSPATH=$(CLASSPATH) javac -O $(SOURCES)
@@ -112,4 +119,8 @@ prompt-version:
 	@echo version is: `cat version`
 
 clean:
-	rm -rf org webmacro version *.zip *.tgz
+	rm -rf org webmacro contrib version *.zip *.tgz
+
+tidy:
+	rm -rf webmacro version *.zip *.tgz 
+	find . -name '*.class' | xargs rm -f
