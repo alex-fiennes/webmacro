@@ -29,11 +29,20 @@ public class TestTemplate extends AbstractTemplateEvaluator
         
     }
     
+    /** 
+     * the toString() method of this class returns null
+     */
+    public static class TestObject2
+    {
+       public String toString () { return null; }  
+    }
+    
     public void stuffContext (Context c) throws Exception
     {
         Object nullObject = null;
         
         c.put ("NullObject", nullObject);
         c.put ("TestObject", new TestObject ("Eric", "Ridge"));
+        c.put ("TestObject2", new TestObject2 ());
     }
 }
