@@ -1,8 +1,7 @@
-                      WebMacro 0.96a1 (alpha one)
-                           aka: brian-sandbox                                                 
+                            WebMacro 0.97a1
                     -------------------------------
                     
-This is a prelease of what WebMacro 1.0 is going to be.  If you are
+This is a prelease of what WebMacro 1.0 is shaping up to be.  If you are
 currently using WebMacro in a production environment, you should not upgrade
 to this release.  However, if you're new to WebMacro or want to stay
 bleeding-edge, feel free to upgrade.  Those of us that have tested this
