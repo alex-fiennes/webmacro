@@ -23,7 +23,7 @@
 package org.webmacro.resource;
 
 import org.webmacro.*;
-import org.webmacro.engine.FileTemplate;
+import org.webmacro.util.Settings;
 import java.io.File;
 
 /**
@@ -34,42 +34,22 @@ import java.io.File;
  * @author Sebastian Kanthak (skanthak@muehlheim.de)
  */
 public class FileTemplateLoader extends AbstractTemplateLoader {
-
-    /** 
-     * ReloadContext for file templates.  Uses last-modified to determine
-     * if resource should be reloaded.
-     */
-    private static class FTReloadContext extends CacheReloadContext {
-        private File file;
-        private long lastModified;
-
-        public FTReloadContext(File f, long lastModified) {
-            this.file = f;
-            this.lastModified = lastModified;
-        }
-
-        public boolean shouldReload() {
-            return (lastModified != file.lastModified());
-        }
+    private String path;
+    
+    public void setConfig(String config) {
+        this.path = config;
     }
-
+    
     /**
      * Tries to load a template by interpreting query as
      * a path relative to the path set by setPath.
      */
-    public final Template load(String query,CacheElement ce) {
+    public final Template load(String query,CacheElement ce) throws ResourceException {
         File tFile = new File(path,query);
         if (tFile.isFile() && tFile.canRead()) {
             if (log.loggingDebug())
                 log.debug("FileTemplateProvider: Found template "+tFile.getAbsolutePath());
-            Template template = new FileTemplate(broker,tFile);
-            if (ce != null) {
-                CacheReloadContext reloadContext = 
-                    new FTReloadContext(tFile, tFile.lastModified());
-                ce.setReloadContext(reloadDelay.decorate("file",
-                                                         reloadContext));
-            }
-            return template;
+            return helper.load(tFile,ce);
         } else {
             return null;
         }

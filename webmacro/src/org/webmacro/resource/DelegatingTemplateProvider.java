@@ -25,7 +25,8 @@ package org.webmacro.resource;
 
 import org.webmacro.*;
 import org.webmacro.util.Settings;
-import java.util.StringTokenizer;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Alternative implementation of a TemplateProvider that uses TemplateLoader to do the actual work.
@@ -58,6 +59,7 @@ import java.util.StringTokenizer;
 public class DelegatingTemplateProvider extends CachingProvider {
     private Broker broker;
     private Log log;
+    private TemplateLoaderFactory factory;
     private TemplateLoader[] templateLoaders;
 
     public void init(Broker broker,Settings config) throws InitException {
@@ -65,17 +67,22 @@ public class DelegatingTemplateProvider extends CachingProvider {
         this.broker = broker;
         log = broker.getLog("resource","DelegatingTemplateProvider");
 
-        String templatePath = config.getSetting("TemplatePath","");
-        log.info("DelegatingTemplateProvider: Using TemplatePath "+templatePath);
-        StringTokenizer tokenizer = new StringTokenizer(templatePath,
-                                                        System.getProperty("path.separator"));
-        templateLoaders = new TemplateLoader[tokenizer.countTokens()];
-        for (int i=0; i < templateLoaders.length; i++) {
-            String loader = tokenizer.nextToken();
-            templateLoaders[i] = createTemplateLoader(config,loader);
-        }
-    }
+        String factoryClass = config.getSetting("TemplateLoaderFactory","");
+        log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory "+factoryClass);
+        factory = createFactory(factoryClass);
 
+        List loaders = new ArrayList();
+        int i = 0;
+        String loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i+1)));
+        while (loader != null) {
+            loaders.add(factory.getTemplateLoader(broker,loader));
+            i++;
+            loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i+1)));
+        }
+        templateLoaders = new TemplateLoader[loaders.size()];
+        loaders.toArray(templateLoaders);
+    }
+    
     public String getType() {
         return "template";
     }
@@ -95,38 +102,18 @@ public class DelegatingTemplateProvider extends CachingProvider {
         throw new NotFoundException("Could not locate template "+query);
     }
 
-    protected TemplateLoader createTemplateLoader(Settings config,String loader) throws InitException {
-        String loaderType;
-        String path;
-        if (loader.startsWith("<")) {
-            int index = loader.indexOf(">");
-            if (index == -1)
-                throw new InitException("Malformed template loader: "+loader);
-            loaderType = loader.substring(1,index);
-            index++;
-            path = (index < loader.length()) ? loader.substring(index) : "";
-        } else {
-            loaderType = "default";
-            path = loader;
-        }
-        String classname = config.getSetting("TemplateLoader.".concat(loaderType));
-        if (classname == null) {
-            throw new InitException("No class definition for template loader "+loaderType+" found");
-        }
+    protected TemplateLoaderFactory createFactory(String classname) throws InitException {
         try {
-            TemplateLoader result = (TemplateLoader)Class.forName(classname).newInstance();
-            result.init(broker,config);
-            result.setPath(path);
-            return result;
+            return (TemplateLoaderFactory)Class.forName(classname).newInstance();
         } catch (ClassNotFoundException e) {
-            throw new InitException("Class "+classname+" for template loader "+loaderType+" not found",e);
+            throw new InitException("Class "+classname+" for template loader factory not found",e);
         } catch (InstantiationException e) {
-            throw new InitException("Could not instantiate class "+classname+" for template loader "+loaderType,e);
+            throw new InitException("Could not instantiate class "+classname+" for template loader factory",e);
         } catch (IllegalAccessException e) {
-            throw new InitException("Could not instantiate class "+classname+" for template loader "+loaderType,e);
+            throw new InitException("Could not instantiate class "+classname+" for template loader facory",e);
         } catch (ClassCastException e) {
-            throw new InitException("Class "+classname+" for template loader"+loaderType+" does not implement "+
-                                    "interface org.webmacro.resource.TemplateLoader",e);
+            throw new InitException("Class "+classname+" for template loader factory does not implement "+
+                                    "interface org.webmacro.resource.TemplateLoaderFactory",e);
         }
     }
 }

@@ -31,20 +31,14 @@ import org.webmacro.util.Settings;
  * @author Sebastian Kanthak <skanthak@muehlheim.de>
  */
 public abstract class AbstractTemplateLoader implements TemplateLoader {
-    /**
-     * Reload delay decorator to create reload context,
-     * that limit checks for reload based on protocol.
-     */
-    protected ReloadDelayDecorator reloadDelay;
-    
     /** Our broker */
     protected Broker broker;
 
-    /** Path to search for templates */
-    protected String path;
-
     /** Log to use */
     protected Log log;
+
+    /** Helper class for loading templates from files or URLs */
+    protected TemplateLoaderHelper helper;
 
     /**
      * Sets up broker, reloadDelayDecorator and log.
@@ -53,15 +47,8 @@ public abstract class AbstractTemplateLoader implements TemplateLoader {
      */
     public void init(Broker b,Settings config) throws InitException {
         this.broker = b;
-        reloadDelay = new ReloadDelayDecorator();
-        reloadDelay.init(b,config);
         log = b.getLog("resource","Loading templates");
-    }
-
-    /**
-     * Sets the path where to search for templates
-     */
-    public void setPath(String value) {
-        this.path = value;
+        helper = new TemplateLoaderHelper();
+        helper.init(b,config);
     }
 }

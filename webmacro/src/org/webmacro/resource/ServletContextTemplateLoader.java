@@ -43,9 +43,10 @@ import javax.servlet.ServletContext;
  * "WEB-INF/templates/foo/bar.wm" in your web-app directory.
  * @author Sebastian Kanthak (skanthak@muehlheim.de)
  */
-public class ServletContextTemplateLoader extends URLBasedTemplateLoader {
+public class ServletContextTemplateLoader extends AbstractTemplateLoader {
     private ServletContext loader;
-    
+    private String path;
+
     public void init(Broker broker,Settings config) throws InitException {
         super.init(broker,config);
         if (broker instanceof ServletBroker) {
@@ -56,13 +57,17 @@ public class ServletContextTemplateLoader extends URLBasedTemplateLoader {
         }
     }
     
+    public void setConfig(String config) {
+        this.path = config;
+    }
+
     public Template load(String query,CacheElement ce) throws ResourceException {
         try {
             URL url = loader.getResource(path.concat(query));
-            if (log.loggingDebug() && url != null) {
+            if (url != null && log.loggingDebug()) {
                 log.debug("ServletContextTemplateProvider: Found Template "+url.toString());
             }
-            return (url != null) ? load(url,ce) : null;
+            return (url != null) ? helper.load(url,ce) : null;
         } catch (MalformedURLException e) {
             throw new InvalidResourceException("ServletContextTemplateLoader: Could not load "+query,e);
         }

@@ -39,25 +39,29 @@ public interface TemplateLoader {
     void init(Broker b,Settings settings) throws InitException;
 
     /**
-     * Set the path on which this template loader should search for templates.
-     * The meaning of path may depend on the actual implementation. Generally
-     * speaking, path should be prepended to each query, so that queries are
-     * relative to path
-     * @param path for this template loader
+     * Set the config options for this template loader.
+     * The config option is the path after the colon (":") in
+     * the TemplatePath setting for this loader.<br>
+     * This can be an path as well as JDBC settings or something
+     * completely different.
+     * @param config config options for this template loader
      */
-    void setPath(String path);
+    void setConfig(String config) throws InitException;
 
     /**
      * Try to load a template.
-     * This method will create and return a template found in the loaction
+     * This method will create and return a template found in the location
      * described by query or return null, if no such template exists. If
-     * a resource is found at the location, but no template could created
+     * a resource is found at the location, but no template could be created
      * for some reason, a ResourceException is thrown.
      * <br>
      * The method should set a reload context on the cache element to enable
-     * reload-on-demand for this template.
+     * reload-on-demand for this template. However it should first check
+     * if cache element is not equal to null, since this means, that no
+     * cache is used.
      * @param query location to load template from
-     * @param ce cache element that will be used for this template.
+     * @param ce cache element that will be used for this template or null
+     * if no cache is used.
      * @exception ResourceException if an error occured while loading the template
      */
     Template load(String query,CacheElement ce) throws ResourceException;

@@ -36,19 +36,24 @@ import java.net.URL;
  * "templates/foo/bar.wm" in your classpath.
  * @author Sebastian Kanthak (skanthak@muehlheim.de)
  */
-public class ClassPathTemplateLoader extends URLBasedTemplateLoader {
+public class ClassPathTemplateLoader extends AbstractTemplateLoader {
     private ClassLoader loader;
-    
+    private String path;
+
     public void init(Broker broker,Settings config) throws InitException {
         super.init(broker,config);
         loader = broker.getClassLoader();
     }
     
+    public void setConfig(String config) {
+        this.path = config;
+    }
+
     public Template load(String query,CacheElement ce) throws ResourceException {
         URL url = loader.getResource(path.concat(query));
-        if (log.loggingDebug() && url != null) {
+        if (url != null && log.loggingDebug()) {
             log.debug("ClassPathTemplateProvider: Found Template "+url.toString());
         }
-        return (url != null) ? load(url,ce) : null;
+        return (url != null) ? helper.load(url,ce) : null;
     }
 }
