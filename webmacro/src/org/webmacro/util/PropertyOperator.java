@@ -1029,6 +1029,14 @@ abstract class MethodAccessor extends Accessor
             PropertyOperator.invoke(_setMethods[i],inst,args);
             return true;
          }
+         else if (_setParams[i].isPrimitive()){ 
+            try {
+               PropertyOperator.invoke(_setMethods[i],inst,args);
+               return true;
+            } catch (Exception e){
+             // ignore exception
+            }
+         }
       }
       return false;
    }
