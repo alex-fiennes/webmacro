@@ -90,6 +90,7 @@ public class WM implements WebMacro
       _contextCache = new ThreadLocal() {
             public Object initialValue() { return new ScalablePool(); }
          };
+      _webContext = new WebContext (_broker);
       _webContextCache = new ThreadLocal() {
             public Object initialValue() { return new ScalablePool(); }
          };
