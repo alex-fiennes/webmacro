@@ -87,13 +87,11 @@ public class Broker
    protected Broker() throws InitException
    {
       this((Broker) null, WEBMACRO_PROPERTIES);
-      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
+      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
+        + ", " + "(System Properties)";
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
-      if (_config.getBooleanSetting("LoadSystemProperties")) {
-         loadSystemSettings();
-         propertySource += ", " + "(System Properties)";
-      }
+      loadSystemSettings();
       initLog();
       _log.notice("Loaded settings from " + propertySource);
       init();
@@ -112,10 +110,8 @@ public class Broker
       boolean loaded = loadSettings(fileName, false);
       if (!loaded) 
         propertySource += "(not found)";
-      if (_config.getBooleanSetting("LoadSystemProperties")) {
-         loadSystemSettings();
-         propertySource += ", " + "(System Properties)";
-      }
+      loadSystemSettings();
+      propertySource += ", " + "(System Properties)";
       initLog();
       _log.notice("Loaded settings from " + propertySource);
       init();

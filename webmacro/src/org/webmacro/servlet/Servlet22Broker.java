@@ -45,14 +45,11 @@ public class Servlet22Broker extends ServletBroker {
    protected Servlet22Broker(ServletContext sc) throws InitException {
       super(sc);
       String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
-        + ", (WAR file)";
+        + ", (WAR file)" +  ", " + "(System Properties)";
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
       loadServletSettings(Broker.SETTINGS_PREFIX);
-      if (_config.getBooleanSetting("LoadSystemProperties")) {
-         loadSystemSettings();
-         propertySource += ", " + "(System Properties)";
-      }
+      loadSystemSettings();
       if (_config.getBooleanSetting("LogUsingServletLog"))
         _ls.addTarget(new ServletLog(_servletContext, _config));
       else

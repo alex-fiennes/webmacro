@@ -5,8 +5,15 @@
 # set the actual live values in WebMacro.properties and that will
 # override the settings in this file. 
 #
-# You can change any setting in this file by moving it to your 
-# WebMacro.properties file and setting it there.
+# You can override any setting in this file by setting it 
+# in WebMacro.properties
+#
+# Search order for properties is: 
+#   default properties file (WebMacro.defaults)
+#   application properties file (WebMacro.properties or other)
+#   servlet context arguments (2.2 and later, prefixed with org.webmacro)
+#   system properties (prefixed with org.webmacro)
+
 
 ###########################################################
 #
@@ -96,15 +103,6 @@ Profile.rate: 0
 # The default is 2 minutes (120000 milliseconds)
 
 Profile.time: 120000
-
-# Should we also look for properties in the System properties?  
-# Search order for properties is: 
-#   default properties file (WebMacro.defaults)
-#   application properties file (WebMacro.properties or other)
-#   system properties (prefixed with org.webmacro)
-#   servlet context arguments (2.2 and later, prefixed with org.webmacro)
-
-LoadSystemProperties: TRUE
 
 
 ###########################################################
