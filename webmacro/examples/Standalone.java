@@ -114,12 +114,7 @@ public class Standalone extends HttpServlet
    public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 
       try {
-         java.io.Writer out = null;
-
          try {
-
-            // get the stream we intend to write to
-            out = resp.getWriter();
 
             // create a context for the current request
             WebContext c = _wm.getWebContext(req,resp);
@@ -139,17 +134,27 @@ public class Standalone extends HttpServlet
             // get the template we intend to execute
             Template t = _wm.getTemplate("standalone.wm");
 
+            // Create FastWriter for fast output encoding
+            FastWriter fw = new FastWriter(resp.getOutputStream(),
+                                           resp.getCharacterEncoding());
             // write the template to the output, using our context
-            t.write(new FastWriter(resp.getOutputStream(), "UTF8"), c);
-
+            t.write(fw, c);
+            fw.close();
          } catch (org.webmacro.NotFoundException e) {
-         out.write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");
+             FastWriter out = new FastWriter(resp.getOutputStream(),
+                                             resp.getCharacterEncoding());
+             
+             out.write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");
+             out.close();
          } catch (org.webmacro.ContextException e) {
-            out.write("ERROR!  Could not locate required data in the Context.");
+             FastWriter out = new FastWriter(resp.getOutputStream(),
+                                             resp.getCharacterEncoding());
+             out.write("ERROR!  Could not locate required data in the Context.");
+             out.close();
          }
       } catch (java.io.IOException e) {
-         // what else can we do?
-         System.out.println("ERROR: IOException while writing to servlet output stream.");
+          // what else can we do?
+          System.out.println("ERROR: IOException while writing to servlet output stream.");
       }
    }
 
