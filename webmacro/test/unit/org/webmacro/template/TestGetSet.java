@@ -202,6 +202,7 @@ public class TestGetSet extends TemplateTestCase
 
    public void testBinarySetBoolean() throws Exception {
       String tmpl = "#set $TestObject.Bool=true";
+      assertStringTemplateEquals(tmpl, "");
       assertTrue(to.bool);
    }
     /** call the ".length" field of an array */
