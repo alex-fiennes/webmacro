@@ -5,11 +5,11 @@
  * This software is the confidential intellectual property of
  * of Semiotek Inc.; it is copyrighted and licensed, not sold.
  * You may use it under the terms of the GNU General Public License,
- * version 2, as published by the Free Software Foundation. If you 
+ * version 2, as published by the Free Software Foundation. If you
  * do not want to use the GPL, you may still use the software after
  * purchasing a proprietary developers license from Semiotek Inc.
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
@@ -32,11 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
-  * This class implements the WebMacro Manager interface. You can instantiate 
+  * This class implements the WebMacro Manager interface. You can instantiate
   * this yourself if you want to use WebMacro in standalone mode, rather than
-  * subclassing from org.webmacro.servlet.WMServlet. This is actually the 
-  * same class used by the servlet framework to manage access to the broker 
-  * there, so you really don't lose much of anything by choosing to go 
+  * subclassing from org.webmacro.servlet.WMServlet. This is actually the
+  * same class used by the servlet framework to manage access to the broker
+  * there, so you really don't lose much of anything by choosing to go
   * standalone by using this object. All you have to do is come up with
   * your own context objects.
   */
@@ -88,6 +88,7 @@ public class WM implements WebMacro
          _owner = owner;
          _broker = broker;
          _context = new Context(_broker);
+         _webContext = new WebContext(_broker);
          _contextCache = new ThreadLocal() {
             public Object initialValue() { return new SimpleStack(); }
          };
@@ -104,13 +105,13 @@ public class WM implements WebMacro
             _log.error("Failed to initialized WebMacro from: " + config);
          }
       }
-  
+
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
       } catch (NotFoundException nfe) {
          _log.error("Could not load configuration", nfe);
-         throw new InitException("Could not locate provider:\n  " + nfe 
+         throw new InitException("Could not locate provider:\n  " + nfe
             + "\nThis implies that WebMacro is badly misconfigured, you\n"
             + "should double check that all configuration files and\n"
             + "options are set up correctly. In a default install of\n"
@@ -121,9 +122,9 @@ public class WM implements WebMacro
 
 
    /**
-     * Call this method when you are finished with WebMacro. If you don't call this 
-     * method, the Broker and all of WebMacro's caches may not be properly 
-     * shut down, potentially resulting in loss of data, and wasted memory. This 
+     * Call this method when you are finished with WebMacro. If you don't call this
+     * method, the Broker and all of WebMacro's caches may not be properly
+     * shut down, potentially resulting in loss of data, and wasted memory. This
      * method is called in the finalizer, but it is best to call it as soon as you
      * know you are done with WebMacro.
      * <p>
@@ -143,7 +144,7 @@ public class WM implements WebMacro
    }
 
    /**
-     * This message returns false until you destroy() this object, subsequently it 
+     * This message returns false until you destroy() this object, subsequently it
      * returns true. Do not attempt to use this object after it has been destroyed.
      */
    final public boolean isDestroyed() {
@@ -153,9 +154,9 @@ public class WM implements WebMacro
 
    /**
      * You should never call this method, on any object. Leave it up to the garbage
-     * collector. If you want to shut this object down, call destroy() instead. If 
-     * you subclass this message, be sure to call super.finalize() since this is one 
-     * of the cases where it matters. 
+     * collector. If you want to shut this object down, call destroy() instead. If
+     * you subclass this message, be sure to call super.finalize() since this is one
+     * of the cases where it matters.
      */
    protected void finalize() throws Throwable {
       destroy();
@@ -167,23 +168,23 @@ public class WM implements WebMacro
      * This object is used to access components that have been plugged
      * into WebMacro; it is shared between all instances of this class and
      * its subclasses. It is created when the first instance is initialized,
-     * and deleted when the last instance is shut down. If you attempt to 
-     * access it after the last servlet has been shutdown, it will either 
+     * and deleted when the last instance is shut down. If you attempt to
+     * access it after the last servlet has been shutdown, it will either
      * be in a shutdown state or else null.
      */
    final public Broker getBroker() {
       // this method can be unsynch. because the broker manages its own
-      // state, plus the only time the _broker will be shutdown or null 
-      // is after the last servlet has shutdown--so why would anyone be 
+      // state, plus the only time the _broker will be shutdown or null
+      // is after the last servlet has shutdown--so why would anyone be
       // accessing us then? if they do the _broker will throw exceptions
       // complaining that it has been shut down, or they'll get a null here.
       return _broker;
    }
 
    /**
-     * Instantiate a new context from a pool. This method is more 
-     * efficient, in terms of object creation, than creating a 
-     * Context directly. The Context will return to the pool 
+     * Instantiate a new context from a pool. This method is more
+     * efficient, in terms of object creation, than creating a
+     * Context directly. The Context will return to the pool
      * when Context.recycle() is called.
      */
    final public Context getContext() {
@@ -198,12 +199,12 @@ public class WM implements WebMacro
 
    /**
      * Instantiate a new webcontext from a pool. This method is more
-     * efficient, in terms of object creation, than creating a 
+     * efficient, in terms of object creation, than creating a
      * WebContext object directly. The WebContext will return to
      * the pool when WebContext.recycle() is called.
      */
-   final public WebContext getWebContext(HttpServletRequest req, 
-            HttpServletResponse resp) 
+   final public WebContext getWebContext(HttpServletRequest req,
+            HttpServletResponse resp)
    {
       SimpleStack cstack = (SimpleStack) _webContextCache.get();
       WebContext c = (WebContext) cstack.pop();
@@ -211,7 +212,7 @@ public class WM implements WebMacro
          c = _webContext.newInstance(req,resp);
       }
       c.setContextPool(cstack);
-      return c;   
+      return c;
    }
 
 
@@ -219,18 +220,18 @@ public class WM implements WebMacro
      * Retrieve a template from the "template" provider.
      * @exception NotFoundException if the template was not found
      */
-   final public Template getTemplate(String key) 
+   final public Template getTemplate(String key)
       throws NotFoundException
    {
-      return (Template) _tmplProvider.get(key); 
+      return (Template) _tmplProvider.get(key);
    }
 
    /**
-     * Retrieve a URL from the "url" provider. Equivalent to 
+     * Retrieve a URL from the "url" provider. Equivalent to
      * getBroker().getValue("url",url)
      * @exception NotFoundException if the template was not found
      */
-   final public String getURL(String url) 
+   final public String getURL(String url)
       throws NotFoundException
    {
       return (String) _urlProvider.get(url);
@@ -241,7 +242,7 @@ public class WM implements WebMacro
      * Equivalent to getBroker().get("config",key)
      * @exception NotFoundException could not locate requested information
      */
-   final public String getConfig(String key) 
+   final public String getConfig(String key)
       throws NotFoundException
    {
       return (String) _broker.get("config", key);
@@ -275,7 +276,7 @@ final class BrokerOwner {
       _brokerUsers = 0;
    }
 
-   synchronized Broker init() throws InitException 
+   synchronized Broker init() throws InitException
    {
       _brokerUsers++;
       if (_broker == null) {
@@ -284,7 +285,7 @@ final class BrokerOwner {
          } catch (InitException e) {
 e.printStackTrace();
             _broker = null;
-            _brokerUsers = 0; 
+            _brokerUsers = 0;
             throw e; // rethrow
          } catch (Throwable t) {
             _broker = null;
@@ -314,7 +315,7 @@ e.printStackTrace();
    synchronized void done() {
          _brokerUsers--;
          if ((_brokerUsers == 0) && (_broker != null)) {
-            _broker.shutdown(); 
+            _broker.shutdown();
             _broker = null;
          }
    }
