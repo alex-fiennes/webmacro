@@ -1,121 +1,242 @@
 #comment {
+
   formControls.wmm
+
   Macros for formatting urls and windows using java script
+
 }
+
+
 
 ## choiceList(optionData, formatProps) where:
+
 ## arg1 corresponds to the data 
+
 ## arg2 provides format values as to type of list
+
 #macro choiceList($optionData, $formatProps) {
+
 <select 
+
   name=$optionData.name 
+
   $formatProps.type 
+
   size="$formatProps.size">
 
+
+
 #foreach $option in $optionData.options {
+
     <option 
+
       #if ($option.value != ""){ value="$option.value"} 
+
       #if ($optionData.selectedOption == "$option.value") { selected}>
+
     $option.label
+
     </option>
+
 }
+
 </select>
+
 }
+
+
 
 ## choiceRadio(optionData, formatProps) where:
+
 ## arg1 corresponds to the data 
+
 ## arg2 provides format values as to type of list
+
 ## Formats a choice using radio button controls
+
 #macro choiceRadio($optionData, $formatProps) {
+
 #foreach $option in $optionData.options {
+
     <input type="radio" name="$optionData.name"
+
     #if ($option.value != ""){ value="$option.value"}
+
     #if ($optionData.selectedOption == "$option.value") { checked }> $option.label
+
 }
+
 }
+
+
 
 ## buttonAction(actionData, formatProps) where:
+
 ## arg1 corresponds to the data 
+
 ## arg2 provides format values as to type of list
+
 ## Formats a choice using radio button controls
+
 #macro buttonAction($actionData, $formatProps) {
+
 #foreach $action in $actionData.actions {
+
   <input 
+
 		#if ($formatProps.closeWindow) { onClick="window.close()" }
+
 		type=submit name="$action.name" value="$action.value">&nbsp;
+
 }
+
 }
+
+
 
 ## buttonImageAction(actionData, formatProps) where:
+
 ## arg1 corresponds to the data 
+
 ## arg2 provides format values as to type of list
+
 ## Formats a choice using radio button controls
+
 #macro buttonImageAction($actionData, $formatProps) {
+
 #foreach $action in $actionData.actions {
+
   <INPUT TYPE="IMAGE"
+
     ALIGN="$formatProps.imageAlign"
+
     NAME="$action.name"
+
     SRC="$action.url"
+
   >&nbsp;
-}
+
 }
 
-## textInput(textData, formatProps) where:
-## arg1 corresponds to the data 
-## arg2 provides format values for the text
-## Formats a choice using radio button controls
-#macro textInput($textData, $formatProps) {
-<INPUT TYPE="TEXT"
-  MAXLENGTH="textData.maxChars"
-  NAME="textData.name"
-  SIZE="$formatProps.charLength"
-  VALUE="textData.value"
->
 }
+
+
+
+## textInput(textData, formatProps) where:
+
+## arg1 corresponds to the data 
+
+## arg2 provides format values for the text
+
+## Formats a choice using radio button controls
+
+#macro textInput($textData, $formatProps) {
+
+<INPUT TYPE="TEXT"
+
+  MAXLENGTH="$textData.MaxChars"
+
+  NAME="$textData.Name"
+
+  SIZE="$formatProps.CharLength"
+
+  VALUE="$textData.Value"
+
+>
+
+}
+
+
+
+
+
 
 
 
 
 ## dateControl(dateValues, formatProps) where:
+
 ## arg1 corresponds to the values for the date control 
+
 ## arg2 provides formatting options for the date control.
+
 #macro dateControl($dateValues, $formatProps) {
+
   #if ($formatProps.euro) {
+
       <select name=$dateValues.dayName>
+
       
+
       #foreach $day in $dateValues.days {
+
         <option #if ($day.value != ""){ value="$day.value"} #if ($optionData.selectedOption == "$day.value") { selected } >$day.label</option>
+
       }
+
       </select>
+
       -
+
       <select name=$dateValues.monthName>
+
       
+
       #foreach $month in $dateValues.months {
+
         <option #if ($month.value != ""){ value="$month.value"} #if ($optionData.selectedOption == "$month.value") { selected } >$month.label</option>
+
       }
+
       </select>
+
       -
+
   }
+
   #else {
+
       <select name=$dateValues.monthName>
+
       
+
       #foreach $month in $dateValues.months {
+
         <option #if ($month.value != ""){ value="$month.value"} #if ($optionData.selectedOption == "$month.value") { selected } >$month.label</option>
+
       }
+
       </select>
+
       -
+
       <select name=$dateValues.dayName>
+
       
+
       #foreach $day in $dateValues.days {
+
         <option #if ($day.value != ""){ value="$day.value"} #if ($optionData.selectedOption == "$day.value") { selected } >$day.label</option>
+
       }
+
       </select>
+
       -
+
   }
+
   <select name=$dateValues.yearName>
+
   
+
   #foreach $year in $dateValues.years {
+
     <option #if ($year.value != ""){ value="$year.value"} #if ($optionData.selectedOption == "$year.value") { selected } >$year.label</option>
+
   }
+
   </select>
+
 }
+
