@@ -60,7 +60,7 @@ public class Broker
    final protected Settings _config = new Settings();
    final protected String _name;
    final protected LogSystem _ls;
-   final protected Log _log;
+   protected Log _log;
    protected ProfileCategory _prof;
    private EvaluationExceptionHandler _eeHandler;
 
