@@ -1,0 +1,38 @@
+General 
+======== 
+This tree contains the wiki resources for building a help space. This site
+contains authored pages as well as templates designed for help.
+
+cvs Site Description
+====================
+htdocs/
+htdocs/images
+	Static html pages which are not mutable, the site style file, 
+site-stye.css, and the images for the help site under the images directory.
+
+templates/
+	The templates used for running the site.
+
+etc/
+	This is the directory where you will find the most leverage in editing. 
+It contains the values used in the templates, the site style file, and 
+formatting control. Each property file in etc/ serves a specific purpose and 
+each file should be edited by the designer responsible for creating the kind of 
+look and feel deemed compatible with other sub-sites.
+	
+VLH-1998/
+	This directory contains a default page, WikiHelp, and a default user, 
+admin, with a password, 99ducks. Other default pages can be added under 
+	
+VLH-1998/Pages-help
+	You may additional pages to this directory as pre-authored pages.
+	
+VLH-1998/Users-help
+	You may add additional users to this as pre-authorized users in addition 
+to admin.
+	
+
+	
+
+are the templates for building the help space.
+

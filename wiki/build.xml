@@ -1,5 +1,5 @@
 <project name="wiki" default="compile" basedir=".">
-	<property name="dir.install"   value="/www/wiki" />
+	<property name="dir.install"   value="/deploy/wiki.accredia.net" />
 
 	<property name="app.name" value="wiki" />
 	<property name="dir.class" value="./class" />
