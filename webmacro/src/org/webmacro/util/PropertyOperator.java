@@ -818,7 +818,7 @@ final public class PropertyOperator
   */
 abstract class Accessor {
 
-   final String _name;
+   private String _name;
 
    Accessor(String name) {
       _name = name;
@@ -886,7 +886,7 @@ abstract class Accessor {
   */
 final class FieldAccessor extends Accessor
 {
-   final Field _field;
+   private Field _field;
 
    FieldAccessor(final Field f) {
       super(f.getName());

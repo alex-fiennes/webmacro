@@ -77,8 +77,8 @@ abstract public class ResourceEvent
    implements BrokerRequest, Observer, java.beans.PropertyChangeListener
 {
 
-   final private String type;
-   final private String name;
+   private String type;
+   private String name;
 
    private Object resource;          // our underlying resource
    private boolean valid = true;     // we are still valid...

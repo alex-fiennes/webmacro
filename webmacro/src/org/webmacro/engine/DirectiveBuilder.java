@@ -26,7 +26,7 @@ final class DirectiveBuilder implements Cloneable, Builder
    private boolean _isParser = false;
    private Method _build = null;
    private int _buildArgs = 0;
-   private final String _name;
+   private String _name;
    private Class _directiveClass;
 
    /**

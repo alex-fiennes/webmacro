@@ -12,7 +12,7 @@ import org.webmacro.*;
 final class Argument
 {
 
-   final private String _name;
+   private String _name;
    private Object _value;
 
    /**

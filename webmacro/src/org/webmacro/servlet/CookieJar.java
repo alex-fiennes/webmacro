@@ -37,8 +37,8 @@ import org.webmacro.*;
 final public class CookieJar
 {
 
-   final private Cookie[] jar;
-   final private HttpServletResponse res;
+   private Cookie[] jar;
+   private HttpServletResponse res;
 
    /**
      * Read the form data from the supplied Request object

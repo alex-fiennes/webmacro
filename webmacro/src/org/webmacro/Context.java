@@ -28,7 +28,7 @@ import com.sun.java.util.collections.Map;
   */
 public class Context implements Cloneable {
 
-   final private Broker _broker;
+   private Broker _broker;
 
    private Object _bean; // root of property introspection
 

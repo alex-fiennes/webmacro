@@ -32,8 +32,8 @@ package org.webmacro.util;
 final public class Constant
 {
 
-   final private String name;
-   final private int order;
+   private String name;
+   private int order;
 
    public Constant(String name, int ord)
    {

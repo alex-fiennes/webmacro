@@ -39,9 +39,9 @@ import org.webmacro.*;
 final public class PropertyMethod implements Named
 {
 
-   final private Object _args;
-   final private String _name;
-   final private boolean _reference;
+   private Object _args;
+   private String _name;
+   private boolean _reference;
 
    /**
      * Create a new PropertyMethod

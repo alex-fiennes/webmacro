@@ -11,7 +11,7 @@ import org.webmacro.*;
 final public class MacroAdapter implements Macro
 {
 
-   final private Object _self;
+   private Object _self;
 
    private MacroAdapter(Object wrapMe) 
       throws BuildException
@@ -81,7 +81,7 @@ final public class MacroAdapter implements Macro
 final class StringMacroAdapter implements Macro
 {
 
-   final private char[] _self;
+   private char[] _self;
    private String _cache = null; // assume this will not be used most times
 
    public StringMacroAdapter(String wrapMe) 
