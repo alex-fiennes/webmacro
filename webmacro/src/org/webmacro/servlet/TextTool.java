@@ -245,8 +245,8 @@ public class TextTool implements ContextTool
     // ContextTool implementation methods
     //
     
-    /** private contsructor.  Does nothing */
-    private TextTool () 
+    /** default contsructor.  Does nothing */
+    public TextTool () 
     {
     }
 

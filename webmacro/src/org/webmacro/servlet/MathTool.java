@@ -109,8 +109,8 @@ public class MathTool implements ContextTool
     // ContextTool implementation methods
     //
     
-    /** private contsructor.  Does nothing */
-    private MathTool () 
+    /** default contsructor.  Does nothing */
+    public MathTool () 
     {
     }
 
