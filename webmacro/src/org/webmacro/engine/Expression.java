@@ -23,8 +23,6 @@ public abstract class Expression {
       return false;
     else if (o instanceof Boolean)
       return ((Boolean) o).booleanValue();
-    else if (isNumber(o))
-      return (numberValue(o) != 0);
     else 
       return (o != null);
   }
