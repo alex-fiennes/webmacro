@@ -46,6 +46,31 @@ public class TestWhitespace extends TemplateTestCase {
       String tmpl = "#if (false) { fail } #else { pass }";
       assertStringTemplateEquals (tmpl, "pass ");
    } 
+ 
+   public void testEatLeadingWSNL1 () throws Exception {
+      String tmpl = "\n  \n#if (true) {WSNL1} #else {fail}";
+      assertStringTemplateEquals (tmpl, "\nWSNL1");
+   }
+ 
+   public void testEatLeadingWSNL2 () throws Exception {
+      String tmpl = "           \n#if (true) {WSNL2} #else {fail}";
+      assertStringTemplateEquals (tmpl, "WSNL2");
+   }
+  
+   public void testEatLeadingWSNL3 () throws Exception {
+      String tmpl = "\n   #if (true) {WSNL3} #else {fail}";
+      assertStringTemplateEquals (tmpl, "WSNL3");
+   }
+ 
+   public void testEatLeadingWSNL4 () throws Exception {
+      String tmpl = "\n\n#if (true) {WSNL4} #else {fail}";
+      assertStringTemplateEquals (tmpl, "\nWSNL4");
+   }
+ 
+   public void testEatLeadingWSNL5 () throws Exception {
+      String tmpl = "\n\n   #if (true) {WSNL5} #else {fail}";
+      assertStringTemplateEquals (tmpl, "\nWSNL5");
+   }
 
    public void testWithForeach1 () throws Exception {
       String tmpl = "#foreach $a in $Array { $a }";
