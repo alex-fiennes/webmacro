@@ -1,8 +1,8 @@
 
 package org.webmacro;
 
-
 import java.util.*;
+import java.lang.reflect.Method;
 import org.webmacro.*;
 import org.webmacro.util.*;
 
@@ -39,6 +39,8 @@ public class Context implements Cloneable {
    private Broker _broker;
 
    private Object _bean; // root of property introspection
+   private Method _beanGet = null; // get method, if any, of _bean
+   private Method _beanPut = null; // put method, if any, of _bean
 
    private Map _toolbox; // contains tool initializers
    private Map _tools = null;   // contains in-use tools
@@ -235,7 +237,6 @@ public class Context implements Cloneable {
       _globals = globalMap;
    }
 
-
    /**
      * Return the root of introspection, the top level bean for this 
      * context which properties reference into. If this returns null, 
@@ -250,6 +251,11 @@ public class Context implements Cloneable {
      */
    final public void setBean(Object bean) {
       _bean = bean;
+      // check if "bean" has set and get methods like a Map
+      try {
+        _beanGet = bean.getClass().getMethod("get", new Class[]{ java.lang.Object.class });
+        _beanPut = bean.getClass().getMethod("put", new Class[]{ java.lang.Object.class, java.lang.Object.class });
+      } catch (Exception e){}
    }
 
    /**
@@ -303,7 +309,14 @@ public class Context implements Cloneable {
      * Retrieve a local value from this Context. 
      */
    final public Object get(Object name) {
-      return (_globals != null) ? _globals.get(name) : null;
+      //return (_globals != null) ? _globals.get(name) : null;
+      if (_globals != null) return _globals.get(name);
+      if (_beanGet != null){
+        try {
+          return _beanGet.invoke(_bean, new Object[]{ name });
+        } catch (Exception e){}
+      }
+      return null;
    }
 
    /**
@@ -311,7 +324,13 @@ public class Context implements Cloneable {
      */
    final public void put(Object name, Object value) {
       if (_globals == null) {
-         getGlobalVariables().put(name,value);
+         if (_beanPut != null){
+            try {
+              _beanPut.invoke(_bean, new Object[]{ name, value });
+            } catch (Exception e){}
+         } else {
+            getGlobalVariables().put(name,value);
+         }
       } else {
          _globals.put(name,value);
       }
