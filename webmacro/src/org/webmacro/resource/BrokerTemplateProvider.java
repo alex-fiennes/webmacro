@@ -62,10 +62,6 @@ final public class BrokerTemplateProvider extends CachingProvider
       return _helper.load(name);
    }
 
-   final public boolean shouldReload (String fileName, TimedReference ref) {
-      return _helper.shouldReload(fileName, ref);
-   }
-
 }
 
 

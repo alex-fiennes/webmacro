@@ -53,18 +53,6 @@ final public class BrokerTemplateProviderHelper
    private int _cacheDuration;
    private Log _log;
 
-   private static class BTPTimedReference extends TimedReference {
-      long lastModified;
-      URL url;
-
-      BTPTimedReference(Object referent, long timeout, 
-                        URL url, long lastModified) {
-         super(referent, timeout);
-         this.url = url;
-         this.lastModified = lastModified;
-      }
-   }
-
    /**
      * Create a new TemplateProvider that uses the specified directory
      * as the source for Template objects that it will return
@@ -85,7 +73,7 @@ final public class BrokerTemplateProviderHelper
    {
       Template t = null;
       URL tUrl;
-      BTPTimedReference ret = null;
+      TimedReference ret = null;
 
       tUrl = findTemplate(name);
       try {
@@ -95,7 +83,7 @@ final public class BrokerTemplateProviderHelper
                                 new InputStreamReader(
                                   UrlProvider.getUrlInputStream(tUrl)));
          t.parse ();
-         ret = new BTPTimedReference(t, _cacheDuration, tUrl, lastMod);
+         ret = new UrlTemplateTimedReference(t, _cacheDuration, tUrl, lastMod);
       }
       catch (NullPointerException npe) {
          _log.warning ("BrokerTemplateProvider: Template not found: " + name, 
@@ -113,23 +101,6 @@ final public class BrokerTemplateProviderHelper
       return ret;
    }
 
-
-   /**
-     * if the cached last modified value of the template file
-     * differs from the current last modified value of the template file
-     * return true.  Otherwise, return false
-     *
-     * @return true if template should be reloaded
-     */
-   final public boolean shouldReload (String fileName, TimedReference ref) {
-      if (ref == null)
-         return true;
-      else {
-         BTPTimedReference myRef = (BTPTimedReference) ref;
-         long lastMod = UrlProvider.getUrlLastModified(myRef.url);
-         return (myRef.lastModified != lastMod);
-      }
-   }
 
    // IMPLEMENTATION
 

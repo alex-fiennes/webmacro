@@ -58,27 +58,6 @@ abstract public class CachingProvider implements Provider,
       throws NotFoundException; 
 
    /**
-     * Should this object be loaded again, or is the cache value
-     * valid?  It provides you with the cached value, so you can cache
-     * things relevant to the search for this resource.  The ref may
-     * be null.
-     *
-     * You should implement one version of shouldReload.  
-     * Regardless of return value, CachingProvider will still reload
-     * the object if CachingProvider's cache is invalid */
-   public boolean shouldReload(String query, TimedReference ref) {
-      return false;
-   }
-
-   /**
-     * You should implement one version of shouldReload; this one
-     * is really just for backward compatibility with old providers.  
-     */
-   public boolean shouldReload(String query) {
-      return shouldReload(query, null);
-   }
-
-   /**
      * If you override this method be sure and call super.init(...)
      */
    public void init(Broker b, Settings config) throws InitException
@@ -125,7 +104,7 @@ abstract public class CachingProvider implements Provider,
       }
       // should the template be reloaded, regardless of cached status?
       if (o != null) 
-         reload = shouldReload(query, r);
+         reload = r.shouldReload();
 
       if (o == null || reload) {
 
@@ -149,17 +128,17 @@ abstract public class CachingProvider implements Provider,
                   o = r.get();
                }
                try {
-                  _log.debug("cached: " + query + " for " + r.getTimeout());
+                  _log.debug("cached: " + query + " for " + r._timeout);
                   // if timeout of TimedReference is < 0,
                   // then don't schedule a removal from cache
-                  if (r.getTimeout() >= 0) {   
+                  if (r._timeout >= 0) {   
                      _tl.scheduleTime( 
                         new Runnable() { 
                            public void run() { 
                               _cache.remove(query); 
                               _log.debug("cache expired: " + query);
                            } 
-                        }, r.getTimeout());
+                        }, r._timeout);
                   }
                } catch (Exception e) {
                   _log.error("CachingProvider caught an exception", e);

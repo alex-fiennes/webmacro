@@ -62,18 +62,6 @@ final public class TemplateProvider extends CachingProvider
       }
    }
 
-   private static class TPTimedReference extends TimedReference {
-      File file;
-      long lastModified;
-
-      TPTimedReference(Object referent, long timeout, 
-                       File file, long lastModified) {
-         super(referent, timeout);
-         this.file = file;
-         this.lastModified = lastModified;
-      }
-   }
-
    /**
      * Create a new TemplateProvider that uses the specified directory
      * as the source for Template objects that it will return
@@ -126,8 +114,8 @@ final public class TemplateProvider extends CachingProvider
       if (tFile != null) {
          try {
             Template t = new FileTemplate (_broker, tFile);
-            ret = new TPTimedReference(t, _cacheDuration, 
-                                       tFile, tFile.lastModified());
+            ret = new FileTemplateTimedReference(t, _cacheDuration, 
+                                                 tFile, tFile.lastModified());
          }
          catch (NullPointerException npe) {
             _log.warning ("TemplateProvider: Template not found: " + name, 
@@ -152,31 +140,6 @@ final public class TemplateProvider extends CachingProvider
       return ret;
    }
 
-
-   private boolean testReference(String fileName, TimedReference ref) {
-      // This must have been the BrokerTemplateProviderHelper; dispatch to it
-      return _btpHelper.shouldReload(fileName, ref);
-   }
-
-   private boolean testReference(String fileName, TPTimedReference ref) {
-      // This is one of ours
-      TPTimedReference myRef = (TPTimedReference) ref;
-      return (myRef.lastModified != myRef.file.lastModified());
-   }
-
-   /**
-     * if the cached last modified value of the template file
-     * differs from the current last modified value of the template file
-     * return true.  Otherwise, return false
-     *
-     * @return true if template should be reloaded
-     */
-   final public boolean shouldReload(String fileName, TimedReference ref) {
-      if (ref == null)
-         return true;
-      else 
-         return testReference(fileName, ref);
-   }
 
    // IMPLEMENTATION
 

@@ -109,15 +109,6 @@ final public class UrlProvider extends CachingProvider
       }
    }
 	
-	/**
-	  * Always return false.  It is not possible to decide if an object
-	  * fetched from a URL should be reloaded or not.  Returning false
-	  * will cause the CachingProvider to load() only when it's cache
-	  * has expired.
-	  */
-	final public boolean shouldReload (String name) {
-		return false;
-	}
 
    /**
     * Utility routine to get the last modification date for a URL.  

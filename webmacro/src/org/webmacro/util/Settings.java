@@ -146,8 +146,8 @@ public class Settings {
          if (prefix == null)
             _props.setProperty(key, props.getProperty(key));
          else if (key.startsWith(dotPrefix)) 
-            _props.setProperty(key, props.getProperty(key)
-                                         .substring(dotPrefix.length()));
+            _props.setProperty(key.substring(dotPrefix.length()), 
+                               props.getProperty(key));
       }
    }
 
