@@ -7,6 +7,7 @@ we should see:  Eric Ridge
 $TestObject
 
 use an object that *does* exist in the context, but who's toString() method returns null:
+we should see a 1 line warning that although the object exists, it's value is null
 $TestObject2
 
 use an object not in the Context:
@@ -19,6 +20,11 @@ we should see:
    Ridge == Ridge
 $TestObject.FirstName == $TestObject.getFirstName()
 $TestObject.LastName == $TestObject.getLastName()
+
+use a method that doesn't exist in as a sub-property:
+we should see a 1 line warning that TestObject.FirstName.NotThere is a method that doesn't exist
+$TestObject.FirstName.NotThere
+
 
 use method of TestObject that returns null:
 we should see a 1 line warning that the method call returned null
