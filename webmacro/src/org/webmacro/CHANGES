@@ -1,3 +1,6 @@
+-- Jan-2000 fergus: added a "sand box" in examples for end-users to play around
+    with
+
 -- Jan-2000 fergus: added a simple build script to run the example servlets 
     under Tomcat 3.2.  Added under contrib/Tomcat/3.2/
 
