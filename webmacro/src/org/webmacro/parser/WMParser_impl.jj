@@ -666,12 +666,16 @@ Token RelOp() : {
 }
 
 Object CExpression() : {
+  // Note that CExpression is a little different from other binary
+  // expression rules, as we don't want to accept a == b == c
+  // Thanks to Aldona Majorek for pointing this out
+
   Object e1, e2=null;
   Token op=null;
 }
 {
   e1=AExpression() 
-  [ LOOKAHEAD(2) [<WS>] op=RelOp() [<WS>] e2=CExpression() ]
+  [ LOOKAHEAD(2) [<WS>] op=RelOp() [<WS>] e2=AExpression() ]
   { 
     if (op == null) 
       return e1;
@@ -688,23 +692,31 @@ Object CExpression() : {
   } 
 }
 
-Object BExpression() : {
+Object AndExpression() : {
   Object e1, e2=null;
-  Token op=null;
 }
 {
   e1=CExpression() 
-  [ LOOKAHEAD(2) [<WS>] ( op=<OP_AND> | op=<OP_OR> ) [<WS>] 
-    e2=BExpression() ]
+  [ LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=AndExpression() ]
   { 
-    if (op == null) 
+    if (e2 == null) 
       return e1;
-    else if (op.kind == OP_AND) 
-      return new Expression.AndBuilder(e1, e2);
-    else if (op.kind == OP_OR) 
-      return new Expression.OrBuilder(e1, e2);
     else 
-      throw new ParseException("internal parser error in BExpression()");
+      return new Expression.AndBuilder(e1, e2);
+  }
+}
+
+Object OrExpression() : {
+  Object e1, e2=null;
+}
+{
+  e1=AndExpression() 
+  [ LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=OrExpression() ]
+  { 
+    if (e2 == null) 
+      return e1;
+    else 
+      return new Expression.OrBuilder(e1, e2);
   }
 }
 
@@ -712,7 +724,7 @@ Object Expression() : {
   Object e=null;
 }
 { 
-  e=BExpression() { return e; }
+  e=OrExpression() { return e; }
 }
 
 
