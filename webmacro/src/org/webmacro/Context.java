@@ -335,15 +335,18 @@ public class Context implements Cloneable {
    public final Object getProperty(final Object[] names) 
       throws PropertyException, ContextException
    {
+      // 2-Sep-2000 -- Fixed by keats - tools weren't being checked if bean set
+      Object ret = null;
       if (_bean == null) {
-         Object ret = getLocal(names);
-         if (ret == null) {
-            ret = getTool(names);
-         }
-         return ret;
+         ret = getLocal(names);
       } else {
-         return PropertyOperator.getProperty(this,_bean,names);
+         //return PropertyOperator.getProperty(this,_bean,names);
+        ret = PropertyOperator.getProperty(this,_bean,names);
       }
+      if (ret == null){
+        ret = getTool(names);
+      }
+      return ret;
    }
 
    /**
