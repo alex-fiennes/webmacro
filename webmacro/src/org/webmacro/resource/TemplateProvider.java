@@ -108,7 +108,8 @@ final public class TemplateProvider extends CachingProvider
    {
       TimedReference ret = null;
 
-      _log.info("Loading template: " + name);
+      if (_log.loggingInfo())
+         _log.info("Loading template: " + name);
 
       File tFile = findFileTemplate(name);
       if (tFile != null) {
@@ -152,12 +153,14 @@ final public class TemplateProvider extends CachingProvider
    final private File findFileTemplate(String fileName)
    {
       if (_templateDirectory != null) {
-         _log.debug("Looking for template in TemplatePath: " + fileName);
+         if (_log.loggingDebug())
+             _log.debug("Looking for template in TemplatePath: " + fileName);
          for (int i=0; i <_templateDirectory.length; i++) {
             String dir = _templateDirectory[i];
             File tFile  = new File(dir,fileName);
             if (tFile.canRead()) {
-               _log.debug("TemplateProvider: Found "+fileName+" in "+dir);
+               if (_log.loggingDebug())
+                  _log.debug("TemplateProvider: Found "+fileName+" in "+dir);
                return tFile;
             }      
          }

@@ -58,7 +58,8 @@ final public class BrokerTemplateProvider extends CachingProvider
 
    final public TimedReference load(String name) throws NotFoundException 
    {
-      _log.info("Loading template: " + name);
+      if (_log.loggingInfo())
+         _log.info("Loading template: " + name);
       return _helper.load(name);
    }
 

@@ -147,8 +147,9 @@ final public class LogSystem {
      */
    synchronized public Log getLog(String type, String description) {
       LogSource l = (LogSource) _logs.get(type);
-      if (l != null) return l;
 
+      if (l != null) 
+        return l;
       l = new LogSource(_category,type,description);
       _logs.put(type,l);
 

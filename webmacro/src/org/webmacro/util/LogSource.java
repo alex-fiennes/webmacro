@@ -224,6 +224,22 @@ public class LogSource implements Log {
    }
 
 
+   public boolean loggingDebug() { 
+      return (_targets[LogSystem.DEBUG] != null);
+   }
+
+   public boolean loggingInfo() { 
+      return (_targets[LogSystem.INFO] != null);
+   }
+
+   public boolean loggingNotice() { 
+      return (_targets[LogSystem.NOTICE] != null);
+   }
+
+   public boolean loggingWarning() { 
+      return (_targets[LogSystem.WARNING] != null);
+   }
+
    protected void log(int level, String msg, Exception e) {
       LogTarget[] targets = _targets[level];
       if (targets == null) { return; }

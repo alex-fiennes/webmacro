@@ -435,7 +435,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
             Locale locale = (Locale) tmpl.getParam(
                WMConstants.TEMPLATE_LOCALE);
-            _log.debug("TemplateLocale="+locale);
+            if (_log.loggingDebug())
+               _log.debug("TemplateLocale="+locale);
             if (locale != null) {
                setLocale(resp, locale);
             }
@@ -446,7 +447,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                encoding = resp.getCharacterEncoding();
             }
             
-            _log.debug("Using output encoding "+encoding);
+            if (_log.loggingDebug())
+               _log.debug("Using output encoding "+encoding);
             fw = FastWriter.getInstance(
                   resp.getOutputStream(), encoding);
             tmpl.write(fw, c);
@@ -576,10 +578,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             "setLocale", 
             new Class[] {Locale.class});
          m.invoke(resp, new Locale[] {locale});
-         _log.debug("Successfully set locale to "+locale);
+         if (_log.loggingDebug())
+            _log.debug("Successfully set locale to "+locale);
       }
       catch (Exception e) {
-         _log.debug("Error set locale to "+locale+": "+e.getClass());
+         if (_log.loggingDebug())
+            _log.debug("Error set locale to "+locale+": "+e.getClass());
       }
    }
 }

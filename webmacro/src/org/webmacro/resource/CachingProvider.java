@@ -128,7 +128,8 @@ abstract public class CachingProvider implements Provider,
                   o = r.get();
                }
                try {
-                  _log.debug("cached: " + query + " for " + r._timeout);
+                  if (_log.loggingDebug())
+                     _log.debug("cached: " + query + " for " + r._timeout);
                   // if timeout of TimedReference is < 0,
                   // then don't schedule a removal from cache
                   if (r._timeout >= 0) {   
@@ -136,7 +137,8 @@ abstract public class CachingProvider implements Provider,
                         new Runnable() { 
                            public void run() { 
                               _cache.remove(query); 
-                              _log.debug("cache expired: " + query);
+                              if (_log.loggingDebug())
+                                 _log.debug("cache expired: " + query);
                            } 
                         }, r._timeout);
                   }

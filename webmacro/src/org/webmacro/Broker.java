@@ -161,10 +161,13 @@ public class Broker
    protected void init() throws InitException {
 
       // Write out our properties as debug records
-      String[] properties = _config.getKeys();
-      for (int i=0; i<properties.length; i++) 
-         _log.debug("Property " + properties[i] + ": " 
-                    + _config.getSetting(properties[i]));
+      if (_log.loggingDebug()) {
+         String[] properties = _config.getKeys();
+         Arrays.sort(properties);
+         for (int i=0; i<properties.length; i++) 
+            _log.debug("Property " + properties[i] + ": " 
+                       + _config.getSetting(properties[i]));
+      }
 
       // set up profiling
       ProfileSystem ps = ProfileSystem.getInstance();
