@@ -1,0 +1,30 @@
+This is a quick and easy integration of WebMacro into Spring.
+
+The two interesting classes are:
+
+WMFactoryBean: A Factory bean that can be used to create&configure a WM instance. The WM 
+instance will be backed up by a special SpringBroker.
+
+WebMacroViewResolver: A view resolver to return WebMacro views. The views are just a thin 
+wrapper around WebMacro templates and are using WebMacro's caching behaviour (instead of 
+Spring's). You usually feed a WMFactoryBean instance into a WebMacroViewResolver to provide 
+it with a WM instance.
+
+The typical set-up in your beans-definition could look like this:
+
+    <bean id="viewResolver" class="org.webmacro.spring.WebMacroViewResolver">
+        <property name="webmacro"><ref local="webmacro"/></property>
+        <property name="requestContextAttribute"><value>spring</value></property>
+        <property name="suffix"><value>.html</value></property>
+    </bean>
+
+    <bean id="webmacro" class="org.webmacro.spring.WMFactoryBean">
+        <property name="templatePrefix"><value>/WEB-INF/templates</value></property>
+        <property name="wmProperties">
+            <props>
+                <!-- any special settings you need come here instead of
+                     a WebMacro.properties file -->
+            </props>
+        </property>
+    </bean>
+
