@@ -17,49 +17,24 @@ completely wrong!  Please feel free to email me (ebr@tcdi.com)
 with suggestions.
 
 
-Building Wiki
--------------
-
-Building has been made as simple as possible thanks to ANT.  But
-before you can build Wiki, you need to set a few configuration
-options.
-
-
-Configuration
--------------
-
-First, you need to decide where you are going to install Wiki.
-This is important because it is this directory where Wiki will
-store it's full-text index, pages, and users.
-
-Once you've decided, open ./build.xml and change the value of
-the first defined property to the install directory:
-
-   <property name="dir.install"   value="/usr/local/wiki" />
-
-
-Compiling
----------
-
-Now that you've configured Wiki, you need to compile it.
-
-> ant compile
-
-This will compile all the source files and build 2 jar files
-in the current directory:  wiki.jar and wiki-resources.jar.
-You don't actually need to do anything with these, but they are
-there incase you like to snoop.
-
-
 Installing
 ----------
 
-Okay, since Wiki is compiled, just do this:
+Before you can install Wiki, you need to make 2 decisions:
+   1) what directory to install in?
+   2) which Wiki site to install?
 
-> ant install
 
-Wiki is now installed into the directory you set in build.xml.
-The directory structure will look something like this:
+Once you've decided, simply run ant install:
+
+> ant install -Ddir.install=<answer to 1> -Dsite.name=<answer to 2>
+
+If you fail to specify either -D parameter, ant will tell you about it!
+
+This will install the specified Wiki site to the specified installation 
+directory.  If you chose /usr/local/wiki as the install directory, you
+should end put with a directory structure similiar to this:
+
 
 /usr/local/wiki/
                /deploy/
@@ -72,8 +47,9 @@ The directory structure will look something like this:
                               /lib/
                                   /*.jar
 
-Next you need to tell your servlet container about
-the web-app.
+
+
+The next step is telling your servlet runner about it's new web-app.
 
 
 Configuring Resin 
@@ -82,16 +58,33 @@ Configuring Resin
 Edit your resin.conf file and set the "app-dir" for your <http-server>
 to "/usr/local/wiki/deploy":
 
-   <http-server app-dir='/usr/local/wiki/deploy'>
-        ... other resin options here ...
-   </http-server>
+   <http-server app-dir='/usr/local/wiki/deploy' />
 
-Restart Resin, and point your browser to:
 
-http://localhost/WebMacro
+Wiki comes preconfigured with a WEB-INF/ directory and a web.xml file
+that should handle everything for you.
+
+Once you've setup the new webapp, restart Resin, and point your 
+browser to:
+
+http://localhost/StartPage
+
+
+You should see a page that says something like
+   "The page StartPage does not exist, but that's okay!  You
+can create it by clicking here".
+
+Before you can create the page, you do need to register yourself
+with the site.  So click the "Register" link in the top-left of the
+web-page.
+
+After you've registered yourself, you are free to create pages and to
+start building your Wiki!
+
                      
 
 Configuring Tomcat
 ------------------
 
-I have no idea.  Would somebody like to contribute? 
+I have no idea.  Would somebody like to contribute?  It should be
+very similiar to Configuring Resin above.
