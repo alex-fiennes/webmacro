@@ -29,10 +29,10 @@ import org.webmacro.util.*;
 import org.webmacro.profile.*;
 import java.util.*;
 
-import org.webmacro.servlet.WebContext;
+import org.webmacro.servlet.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 
 /**
@@ -48,14 +48,12 @@ public class WM implements WebMacro
 {
 
    final private static Map _brokers = new HashMap();
-   final private static BrokerOwner _default = new BrokerOwner();
    final private Context _context;
-   final private WebContext _webContext;
+   private WebContext _webContext = null;
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
    final private Broker _broker;      // cache for rapid access
-   final private BrokerOwner _owner; // mgr that loads/unloads broker
 
    private boolean _alive = false;   // so we don't unload twice
 
@@ -66,59 +64,41 @@ public class WM implements WebMacro
    final private ThreadLocal _contextCache;
    final private ThreadLocal _webContextCache;
 
+
    public WM() throws InitException
    {
-      this(null);
+      this(Broker.getBroker());
    }
 
-   public WM(String config) throws InitException
-   {
-      BrokerOwner owner = null;
-      Broker broker = null;
-      try {
-         if (config == null) {
-            owner = _default;
-         } else {
-            synchronized(_brokers) {
-               owner = (BrokerOwner) _brokers.get(config);
-               if (owner == null) {
-                  owner = new BrokerOwner(config);
-                  _brokers.put(config,owner);
-               }
-            }
-         }
-         broker = owner.init();
-      } finally {
-         _owner = owner;
-         _broker = broker;
-         if (_broker != null) {
-            _alive = true;
-            _log = _broker.getLog("wm", "WebMacro instance lifecycle");
-            _log.info("new " + this);
-            _context = new Context(_broker);
-            _webContext = new WebContext(_broker);
-            _contextCache = new ThreadLocal() {
-               public Object initialValue() { return new ScalablePool(); }
-            };
-            _webContextCache = new ThreadLocal() {
-               public Object initialValue() { return new ScalablePool(); }
-            };
+   public WM(String config) throws InitException {
+      this(Broker.getBroker(config));
+   }
 
-         } else {
-            _alive = false;
-            _log = LogSystem.getSystemLog("wm");
-            _log.error("Failed to initialized WebMacro from: " + config);
-            _context = null;
-            _contextCache = null;
-            _webContextCache = null;
-            _webContext = null;
-         }
-      }
-  
+   public WM(ServletContext sc) throws InitException {
+      this(ServletBroker.getBroker(sc));
+   }
+
+   protected WM(Broker broker) throws InitException {
+      if (broker == null) 
+         throw new InitException("No Broker passed to WM()");
+
+      _broker = broker;
+      _alive = true;
+      _log = _broker.getLog("wm", "WebMacro instance lifecycle");
+      _log.info("new " + this);
+      _context = new Context(_broker);
+      _contextCache = new ThreadLocal() {
+            public Object initialValue() { return new ScalablePool(); }
+         };
+      _webContextCache = new ThreadLocal() {
+            public Object initialValue() { return new ScalablePool(); }
+         };
+      
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
-      } catch (NotFoundException nfe) {
+      } 
+      catch (NotFoundException nfe) {
          _log.error("Could not load configuration", nfe);
          throw new InitException("Could not locate provider; "
             + "This implies that WebMacro is badly misconfigured, you\n"
@@ -129,22 +109,20 @@ public class WM implements WebMacro
       }
    }
 
-
    /**
-     * Call this method when you are finished with WebMacro. If you
-     * don't call this method, the Broker and all of WebMacro's caches
-     * may not be properly shut down, potentially resulting in loss of
-     * data, and wasted memory. This method is called in the
-     * finalizer, but it is best to call it as soon as you know you
-     * are done with WebMacro.
+     * Call this method when you are finished with WebMacro. If you don't call this 
+     * method, the Broker and all of WebMacro's caches may not be properly 
+     * shut down, potentially resulting in loss of data, and wasted memory. This 
+     * method is called in the finalizer, but it is best to call it as soon as you
+     * know you are done with WebMacro.
      * <p>
-     * After a call to destroy() attempts to use this object may yield
-     * unpredicatble results.  
+     * After a call to destroy() attempts to use this object may yield unpredicatble
+     * results.
      */
    final public void destroy() {
       if (_alive) {
          _alive = false;
-         _owner.done();
+         _webContext = null;
          _log.info("shutdown " + this);
       }
    }
@@ -154,23 +132,27 @@ public class WM implements WebMacro
    }
 
    /**
-     * This message returns false until you destroy() this object,
-     * subsequently it returns true. Do not attempt to use this object
-     * after it has been destroyed.  */
+     * This message returns false until you destroy() this object, subsequently it 
+     * returns true. Do not attempt to use this object after it has been destroyed.
+     */
    final public boolean isDestroyed() {
       return !_alive;
    }
 
 
    /**
-     * You should never call this method, on any object. Leave it up
-     * to the garbage collector. If you want to shut this object down,
-     * call destroy() instead. If you subclass this message, be sure
-     * to call super.finalize() since this is one of the cases where
-     * it matters.  */
+     * You should never call this method, on any object. Leave it up to the garbage
+     * collector. If you want to shut this object down, call destroy() instead. If 
+     * you subclass this message, be sure to call super.finalize() since this is one 
+     * of the cases where it matters. 
+     */
    protected void finalize() throws Throwable {
-      destroy();
-      super.finalize();
+      try {
+         destroy();
+      }
+      finally {
+         super.finalize();
+      }
    }
 
 
@@ -201,11 +183,9 @@ public class WM implements WebMacro
       Pool cpool = (Pool) _contextCache.get();
       Context c = (Context) cpool.get();
       if (c == null) {
-        c = (Context) _context.clone();
-        c.setPool(cpool);
+         c = (Context) _context.clone();
       }
-      else
-        c.clear();
+      c.setPool(cpool);
       return c;
    }
 
@@ -221,11 +201,10 @@ public class WM implements WebMacro
       Pool cpool = (Pool) _webContextCache.get();
       WebContext c = (WebContext) cpool.get();
       if (c == null) {
-        c = _webContext.newInstance(req,resp);
-        c.setPool(cpool);
+         c = _webContext.newInstance(req,resp);
       }
-      else
-        c.reinitialize(req, resp);
+      Context ctx = c;
+      ctx.setPool(cpool);
       return c;   
    }
 
@@ -281,63 +260,3 @@ public class WM implements WebMacro
 
 }
 
-
-final class BrokerOwner {
-
-   /*final*/ String _config;
-   private Broker _broker;
-   private static int _brokerUsers = 0;
-
-   BrokerOwner() {
-      this(null);
-   }
-
-   BrokerOwner(String config) {
-      _config = config;
-      _broker = null;
-      _brokerUsers = 0;
-   }
-
-   synchronized Broker init() throws InitException 
-   {
-      _brokerUsers++;
-      if (_broker == null) {
-         try {
-            _broker = (_config == null) ?  new Broker() : new Broker(_config);
-         } catch (InitException e) {
-e.printStackTrace();
-            _broker = null;
-            _brokerUsers = 0; 
-            throw e; // rethrow
-         } catch (Throwable t) {
-            _broker = null;
-            _brokerUsers = 0;
-            throw new InitException(
-"An unexpected exception was raised during initialization. This is bad,\n" +
-"there is either a bug in WebMacro, or your configuration is messed up.\n" +
-"\nHere are some clues: if you got a ClassNotFound exception, either\n" +
-"something is missing from your classpath (odd since this code ran)\n" +
-"or your JVM is failing some important classfile due to bytecode problems\n" +
-"and then claiming that, it does not exist... you might also see some kind\n" +
-"of VerifyException or error in that case. If you suspect something like\n" +
-"this is happening, recompile the WebMacro base classes with your own Java\n" +
-"compiler and libraries--usually that helps. It could also be that your\n" +
-"JVM is not new enough. Again you could try recompiling, but if it is\n" +
-"older than Java 1.1.7 you might be out of luck. If none of this helps,\n" +
-"please join the WebMacro mailing list and let us know about the problem,\n" +
-"because yet another possibility is WebMacro has a bug--and anyway, we \n" +
-"might know a workaround, or at least like to hear about the bug.\n", t);
-
-         }
-      }
-      return _broker;
-   }
-
-   synchronized void done() {
-         _brokerUsers--;
-         if ((_brokerUsers == 0) && (_broker != null)) {
-            _broker.shutdown(); 
-            _broker = null;
-         }
-   }
-}
