@@ -12,8 +12,9 @@ import java.sql.*;
  * @see SimpleTableRow
  */
 public class ResultSetDataTable extends SimpleDataTable {
+  final static public int DEFAULT_MAX_ROWS = 1000;
   private ResultSet _rs = null;
-  private int _maxRows = 20;
+  private int _maxRows = DEFAULT_MAX_ROWS;
   private int _skipRows = 0;
   private boolean _hasMore = false;
   private boolean _hideErrs = true;
@@ -136,6 +137,11 @@ public class ResultSetDataTable extends SimpleDataTable {
   
   // convenience methods that encapsulate ResultSet creation
   public static ResultSetDataTable create(
+      Connection conn, String sql) throws SQLException
+  {
+    return create(conn, sql, DEFAULT_MAX_ROWS, 0);
+  }
+  public static ResultSetDataTable create(
       Connection conn, String sql, int maxRows) throws SQLException
   {
     return create(conn, sql, maxRows, 0);
@@ -147,6 +153,11 @@ public class ResultSetDataTable extends SimpleDataTable {
     ResultSetDataTable rsdt = create(stmt, sql, maxRows, skipRows);
     stmt.close();
     return rsdt;
+  }
+  public static ResultSetDataTable create(
+      Statement stmt, String sql) throws SQLException
+  {  
+    return create(stmt, sql, DEFAULT_MAX_ROWS, 0);
   }
   public static ResultSetDataTable create(
       Statement stmt, String sql, int maxRows) throws SQLException
@@ -172,3 +183,4 @@ public class ResultSetDataTable extends SimpleDataTable {
     return sb.toString(); 
   }
 }
+

@@ -12,6 +12,7 @@ import java.util.*;
  */
 public class SimpleDataTable extends ArrayList implements DataTable {
   private String[] _colNames = null;
+  private boolean _caseSensitive = false;
   //private Object[] _rowColors = null;
   
   /** HashMap that can hold custom attributes for table rows */
@@ -25,7 +26,18 @@ public class SimpleDataTable extends ArrayList implements DataTable {
   }
   /** NOTE: 1-based index */
   public String getColumnName(int i){ return _colNames[i-1]; }
-  public void setColumnNames(String[] colNames){ _colNames = colNames; }
+  public void setColumnNames(String[] colNames){ 
+    if (_caseSensitive){
+      _colNames = colNames; 
+    } else {
+      _colNames = new String[colNames.length];
+      for (int i=0; i<colNames.length; i++){
+        _colNames[i] = colNames[i].toUpperCase();
+      }
+    }
+  }
+  public boolean isCaseSensitive(){ return _caseSensitive; }
+  public void setCaseSensitive(boolean cs){ _caseSensitive = cs; }
   public void addRow(Object[] vals){ add(new SimpleTableRow(this, vals)); }
   public void addRow(List vals){ addRow(vals.toArray()); }
   public int getSize(){ return size(); }
@@ -59,3 +71,4 @@ public class SimpleDataTable extends ArrayList implements DataTable {
     return oldVals;
   }  
 }
+

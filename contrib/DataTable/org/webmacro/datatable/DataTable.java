@@ -89,4 +89,10 @@ public interface DataTable extends java.util.List {
    */
   
   public Map getRowAttributes();
+  
+  /*
+   * indicates if column names are to be case sensitive.
+   */
+  public boolean isCaseSensitive();
 }
+
