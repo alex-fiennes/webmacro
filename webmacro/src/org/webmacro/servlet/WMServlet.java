@@ -556,7 +556,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 tmpl.write (fw, c);
                 
                 // now write the FW buffer to the response output stream
-                fw.writeTo (c.getResponse().getOutputStream ());
+                writeFastWriter(resp,fw);
             } finally {
                if (timing) c.stopTiming ();
             }
@@ -594,7 +594,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 fw.reset (fw.getOutputStream ());
                 errorTemplate.write (fw, c);
                 // now write the FW buffer to the response output stream
-                fw.writeTo (c.getResponse().getOutputStream ());
+                writeFastWriter(c.getResponse(),fw);
             } catch (Exception errExcept) { 
                 _log.error("Error writing error template!", errExcept);
             }
@@ -611,6 +611,39 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
     }
     
+    /**
+     * Helper method to write out a FastWriter (that has bufferd
+     * the response) to a ServletResponse. This method will try to use
+     * the response's OutputStream first and if this fails, fall back
+     * to its Writer.
+     * @param response where to write fast writer to
+     * @param fw FastWriter, that has response buffered
+     */
+    private void writeFastWriter(HttpServletResponse response,FastWriter fw) 
+        throws IOException {
+        OutputStream out;
+        // We'll check, if the OutputStream is available
+        try {
+            out = response.getOutputStream();
+        } catch (IllegalStateException e) {
+            // Here comes a quick hack, we need a cleaner
+            // solution in a future release. (skanthak)
+                    
+            // this means, that the ServletOutputStream is
+            // not available, because the Writer has already
+            // be used. We have to use it, although its
+            // much slower, especially, because we need to
+            // revert the encoding process now
+            out = null;
+            _log.debug("Using Writer instead of OutputStream");
+        }
+        if (out != null) {
+            fw.writeTo(out);
+        } else {
+            response.getWriter().write(fw.toString());
+        }
+    }
+
     // FRAMEWORK TEMPLATE METHODS--PLUG YOUR CODE IN HERE
     
     
