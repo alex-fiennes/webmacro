@@ -56,6 +56,13 @@ public abstract class Expression {
             || o instanceof Byte);
   }
 
+  public static Object numberObject(long result, Object op1, Object op2) {
+     if (op1.getClass() == Long.class || op2.getClass() == Long.class)
+        return new Long(result);
+     else 
+        return new Integer((int) result);
+  }
+
   public static long numberValue(Object o) {
     return ((Number) o).longValue();
   }
@@ -147,7 +154,7 @@ public abstract class Expression {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Add requires numeric operands");
       else
-        return new Long(numberValue(l) + numberValue(r));
+        return numberObject(numberValue(l) + numberValue(r), l, r);
     }
   }
 
@@ -159,7 +166,7 @@ public abstract class Expression {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Subtract requires numeric operands");
       else
-        return new Long(numberValue(l) - numberValue(r));
+        return numberObject(numberValue(l) - numberValue(r), l, r);
     }
   }
 
@@ -171,7 +178,7 @@ public abstract class Expression {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Multiply requires numeric operands");
       else
-        return new Long(numberValue(l) * numberValue(r));
+        return numberObject(numberValue(l) * numberValue(r), l, r);
     }
   }
 
@@ -187,7 +194,7 @@ public abstract class Expression {
         if (denom == 0)
           throw new PropertyException("Divide by zero");
         else 
-          return new Long(numberValue(l) / denom);
+          return numberObject(numberValue(l) / denom, l, r);
       }
     }
   }
@@ -419,7 +426,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) + numberValue(r));
+          return numberObject(numberValue(l) + numberValue(r), l, r);
         else
           throw new BuildException("Add requires numeric operands");
       }
@@ -434,7 +441,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) - numberValue(r));
+          return numberObject(numberValue(l) - numberValue(r), l, r);
         else
           throw new BuildException("Subtract requires numeric operands");
       }
@@ -449,7 +456,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) * numberValue(r));
+          return numberObject(numberValue(l) * numberValue(r), l, r);
         else
           throw new BuildException("Multiply requires numeric operands");
       }
@@ -468,7 +475,7 @@ public abstract class Expression {
           if (denom == 0)
             throw new BuildException("Divide by zero");
           else 
-            return new Long(numberValue(l) / denom);
+            return numberObject(numberValue(l) / denom, l, r);
         }
         else
           throw new BuildException("Divide requires numeric operands");
