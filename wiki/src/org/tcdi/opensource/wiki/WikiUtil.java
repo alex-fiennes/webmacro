@@ -42,6 +42,7 @@ package org.tcdi.opensource.wiki;
 
 import java.security.*;
 import java.util.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * A simple singleton to provide easy access to some
@@ -173,8 +174,8 @@ public class WikiUtil {
      * takes a byte[] and converts it to a char[]
      * that is safe to store as a cookie.
      */
-    private static char[] makeCookieSafe(byte[] bytes) {
-        char[] chars = new String(bytes).toCharArray();
+    private static char[] makeCookieSafe(byte[] bytes) throws UnsupportedEncodingException {
+        char[] chars = new String(bytes, "ISO-8859-1").toCharArray();
         int BOT = 48;
         int TOP = 125;
         
