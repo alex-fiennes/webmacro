@@ -40,6 +40,8 @@ public class ForeachDirective extends Directive {
   private static final int FOREACH_LIMIT      = 8;
   private static final int FOREACH_FROM_K     = 9;
   private static final int FOREACH_FROM       = 10;
+  
+  private static final UndefinedMacro UNDEF = UndefinedMacro.getInstance();
 
   private Variable target, index;
   private Object   list, indexFromExpr, limitExpr;
@@ -99,7 +101,7 @@ public class ForeachDirective extends Directive {
     int loopLimit=-1, loopStart=1, loopIndex=0;
 
     l = list;
-    while (l instanceof Macro) 
+    while (l instanceof Macro && l != UNDEF) 
       l = ((Macro) l).evaluate(context);
 
     if (limitExpr != null) {
