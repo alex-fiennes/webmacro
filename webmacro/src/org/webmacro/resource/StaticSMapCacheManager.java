@@ -106,6 +106,17 @@ public class StaticSMapCacheManager implements CacheManager {
       return o;
    }
 
+   /**
+    * This method throws an exception because this kind of a cache
+    * does not support individual element invalidation.
+    */
+  public void invalidate(final Object query) {
+    throw new IllegalStateException(
+      "Cannot invalidate an element in a Static Cache");
+  }
+
+   
+
    public String toString() {
       return NAME+"(type = " + _resourceType + ")";
    }

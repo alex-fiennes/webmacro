@@ -52,111 +52,117 @@ import org.webmacro.util.*;
 
 public class GenerationalCacheManager implements CacheManager {
 
-    private UpdateableCache cache;
-    private Log log;
-    private CacheFactory cacheFactory;
-    private String resourceType;
-    private boolean reloadOnChange = false;
+  private UpdateableCache cache;
+  private Log log;
+  private CacheFactory cacheFactory;
+  private String resourceType;
+  private boolean reloadOnChange = false;
 
-    public GenerationalCacheManager() { }
+  public GenerationalCacheManager() { }
 
-    public void init(Broker b, Settings config, String resourceType)
-                        throws InitException {
-      Settings s = new SubSettings(config, "GenerationalCacheManager." + resourceType);
-      Settings def = new SubSettings(config, "GenerationalCacheManager.*");
-      if (s.containsKey("ReloadOnChange")) {
-        reloadOnChange = s.getBooleanSetting("ReloadOnChange"); // for this resource type
-      }
-      else if (def.containsKey("ReloadOnChange")) {
-        reloadOnChange = def.getBooleanSetting("ReloadOnChange"); // all resource types
-      }
-       
-      cacheFactory = new CacheFactory(def.getAsProperties()); // uses the union
-       
-      this.cache = cacheFactory.initialize(null);
-      this.log = b.getLog("resource");
-      this.resourceType = resourceType;
+  public void init(Broker b, Settings config, String resourceType)
+                      throws InitException {
+    Settings s = new SubSettings(config, "GenerationalCacheManager." + resourceType);
+    Settings def = new SubSettings(config, "GenerationalCacheManager.*");
+    if (s.containsKey("ReloadOnChange")) {
+      reloadOnChange = s.getBooleanSetting("ReloadOnChange"); // for this resource type
     }
-
-    public void flush() {
-      cache.invalidateAll();
+    else if (def.containsKey("ReloadOnChange")) {
+      reloadOnChange = def.getBooleanSetting("ReloadOnChange"); // all resource types
     }
+     
+    cacheFactory = new CacheFactory(def.getAsProperties()); // uses the union
+     
+    this.cache = cacheFactory.initialize(null);
+    this.log = b.getLog("resource");
+    this.resourceType = resourceType;
+  }
 
-    public void destroy() {
-       cacheFactory.destroy(cache);
+  public void flush() {
+    cache.invalidateAll();
+  }
+
+  public void destroy() {
+     cacheFactory.destroy(cache);
+  }
+
+  /**
+   * Get the cached value and load
+   * it if it is not present or reloading
+   * is required.
+   */
+  public Object get(final Object query, ResourceLoader helper)
+                  throws ResourceException  {
+    if (reloadOnChange)
+      return getReloadable(query, helper);
+    else
+      return getUnreloadable(query, helper);
+  }
+
+  public Object getUnreloadable(final Object query, ResourceLoader helper)
+                  throws ResourceException  {
+    Object o = cache.get(query);
+    if (o == null) {
+       o = helper.load(query, null);
+       if (o != null)
+          cache.put(query, o);
     }
+    return o;
+  }
 
-    /**
-     * Get the cached value and load
-     * it if it is not present or reloading
-     * is required.
-     */
-    public Object get(final Object query, ResourceLoader helper)
+
+  public Object getReloadable(final Object query, ResourceLoader helper)
                     throws ResourceException  {
-      if (reloadOnChange)
-        return getReloadable(query, helper);
-      else
-        return getUnreloadable(query, helper);
-    }
-
-    public Object getUnreloadable(final Object query, ResourceLoader helper)
-                    throws ResourceException  {
-      Object o = cache.get(query);
-      if (o == null) {
-         o = helper.load(query, null);
-         if (o != null)
-            cache.put(query, o);
+    Object o = null;
+    ScmCacheElement r = (ScmCacheElement) cache.get(query);
+    if (r != null)
+      o = r.value;  // if you're using soft refs
+    boolean reload = false;
+    if (o != null && r.reloadContext != null && reloadOnChange)
+      reload = r.reloadContext.shouldReload();
+    if (o == null || reload) {
+      if (r == null)
+        r = new ScmCacheElement();
+      o = helper.load(query, r);
+      if (o != null) {
+        r.value = o;
+        cache.put(query, r);
       }
-      return o;
     }
+    return o;
+  }
+
+  /** Invalidate an entry in the cache. */
+  public void invalidate(final Object query) {
+    cache.invalidate(query);
+  }
+    
 
 
-    public Object getReloadable(final Object query, ResourceLoader helper)
-                      throws ResourceException  {
-      Object o = null;
-      ScmCacheElement r = (ScmCacheElement) cache.get(query);
-      if (r != null)
-        o = r.value;  // if you're using soft refs
-      boolean reload = false;
-      if (o != null && r.reloadContext != null && reloadOnChange)
-        reload = r.reloadContext.shouldReload();
-      if (o == null || reload) {
-        if (r == null)
-          r = new ScmCacheElement();
-        o = helper.load(query, r);
-        if (o != null) {
-          r.value = o;
-          cache.put(query, r);
-        }
-      }
-      return o;
-    }
+  /** This manager supports reloading and so this returns true. */
+  public boolean supportsReload() {
+     return true;
+  }
 
-    /** This manager supports reloading and so this returns true. */
-    public boolean supportsReload() {
-       return true;
-    }
+  /** Returns the wm type of resource it is caching. */
+  public String getResourceType() {
+    return resourceType;
+  }
 
-    /** Returns the wm type of resource it is caching. */
-    public String getResourceType() {
-      return resourceType;
-    }
+  /**
+   * A caching element
+   * smart enough to reload itself.
+   * <p>
+   * Note: SoftReference is a huge overhead hit so
+   * it has been obsoleted in favor of straight obj refs.
+   */
+  private static class ScmCacheElement extends CacheElement {
+     private Object value;
+     private CacheReloadContext reloadContext = null;
 
-
-    /**
-     * A caching element with
-     * smart enough to reload itself.
-     * <p>
-     * Note: SoftReference is a huge overhead hit so
-     * it has been obsoleted in favor of straight obj refs.
-     */
-    private static class ScmCacheElement extends CacheElement {
-       private Object value;
-       private CacheReloadContext reloadContext = null;
-
-       public void setReloadContext(CacheReloadContext rc) {
-          this.reloadContext = rc;
-       }
-    }
+     public void setReloadContext(CacheReloadContext rc) {
+        this.reloadContext = rc;
+     }
+  }
 
 }

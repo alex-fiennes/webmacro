@@ -56,4 +56,7 @@ public class TrivialCacheManager implements CacheManager {
       return false;
    }
 
+   public void invalidate(final Object query) {
+   }
+
 }

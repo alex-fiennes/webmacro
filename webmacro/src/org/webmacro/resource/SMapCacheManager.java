@@ -197,6 +197,15 @@ public class SMapCacheManager implements CacheManager {
       return o;
    }
 
+  /** Removes a specific entry from the cache. */
+  public void invalidate(final Object query) {
+    int lockIndex = query.hashCode() % _writeLocks.length;
+    if (lockIndex < 0) lockIndex = -lockIndex;
+    synchronized(_writeLocks[lockIndex]) {
+      _cache.remove(query);
+    }
+  }
+
    public String toString() {
       return NAME + "(type = " + _resourceType + ")";
    }

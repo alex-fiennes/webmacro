@@ -59,7 +59,14 @@ public interface CacheManager {
      * to load the resource if the resource was not in the cache.  
      */
    public Object get(final Object query, ResourceLoader helper) 
-     throws ResourceException; 
+     throws ResourceException;
+
+   /**
+     * Invalidates an entry in the cache. Depending on the
+     * the implementation, the actual removal from the cache
+     * may or may not be immediate.
+     */
+   public void invalidate(final Object query);
 
    /**
      * Does this cache manager support reloading of resources if the

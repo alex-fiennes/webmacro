@@ -98,6 +98,14 @@ public class HMapCacheManager implements CacheManager {
       return o;
    }
 
+  /**
+   * Throws an exception because this implementation
+   * does not support element invalidation.
+   */
+  public void invalidate(final Object query) {
+    throw new IllegalStateException("HMap does not support invalidation");
+  }
+
    public String toString() {
       return NAME+"(type = " + _resourceType + ")";
    }
