@@ -77,7 +77,13 @@ final public class UrlProvider implements ResourceProvider
    {
 
       try {
-         URL u = new URL(evt.getName());
+         String name = evt.getName();
+         URL u;
+         if (name.indexOf(":") < 3) {
+            u = new URL("file",null,-1,name); 
+         } else {
+            u = new URL(name);
+         }
          Reader in = new InputStreamReader(u.openStream());
 
          char buf[] = new char[512];
