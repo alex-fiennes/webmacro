@@ -45,7 +45,7 @@ public final class BuildContext extends Context
      * Find out whether the named variable is a tool, local variable,
      * or property variable.
      */
-   protected Object getVariableType(String name) {
+   public Object getVariableType(String name) {
       return _types.get(name);
    }
 
@@ -53,7 +53,7 @@ public final class BuildContext extends Context
      * Declare whether the named variable is to be treated as a tool,
      * local variable, or property variable type.
      */
-   protected void setVariableType(String name, Object type)  {
+   public void setVariableType(String name, Object type)  {
       if (name == null) {
          return;
       } 
