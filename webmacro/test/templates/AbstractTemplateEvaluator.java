@@ -75,6 +75,7 @@ public abstract class AbstractTemplateEvaluator
     public void test () throws Exception
     {
         long start, stop;
+        double seconds;
         String banner = null;
         
         FastWriter fw = FastWriter.getInstance (System.out, "UTF8");
@@ -95,10 +96,9 @@ public abstract class AbstractTemplateEvaluator
             fw.flush ();
 
             // print a little banner at the end of the output
-            banner = "------" + _templateFilenames[x] + " finished --------";
-            System.err.println (banner);
-            System.err.println ( ( ((double) stop - start) / 1000) + " seconds.");
-            System.err.println (repeat ('-', banner.length()));
+            seconds = ( ((double) stop - start) / 1000);
+            banner = "------" + _templateFilenames[x] + " finished in " + seconds + " seconds --------";
+            System.err.println (seconds);
         }
     }    
     
