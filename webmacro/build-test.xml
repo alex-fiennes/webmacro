@@ -1,0 +1,13 @@
+<project name="WebMacro.Tests" default="all" basedir=".">
+
+  <target name="templates">
+    <exec executable="sh" failonerror="yes">
+      <arg line="test/templates/test-templates.sh"/>
+      <arg line="test/templates"/>
+      <arg line="${classes}"/>
+    </exec>
+  </target>
+
+  <target name="all" depends="templates" />
+</project>
+
