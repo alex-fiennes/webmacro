@@ -209,7 +209,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException
    { 
-      doRequest(_wc.clone(req,resp));
+      WebContext wc = _wc.clone(req,resp);
+      doRequest(wc);
+      wc.clear();
    }
 
    /**
