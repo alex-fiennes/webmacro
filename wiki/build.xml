@@ -1,16 +1,10 @@
 <project name="wiki" default="compile" basedir=".">
-	<property name="dir.install"   value="/deploy/wiki.accredia.net" />
-
 	<property name="app.name" value="wiki" />
 	<property name="dir.class" value="./class" />
 	<property name="dir.src"   value="./src" />
 	<property name="dir.lib"   value="./lib" />
-        <property name="dir.templates" value="./templates" />
-        <property name="dir.etc"       value="./etc" />
-	<property name="dir.htdocs"    value="./htdocs" />
 
 	<property name="file.jar"  value="./wiki.jar" />
-	<property name="file.resources" value="./wiki-resources.jar" />
 
 	<path id="path.class">
 		<fileset dir="${dir.lib}">
@@ -27,8 +21,6 @@
 	<target name="clean">
 		<delete dir="${dir.class}" />
 		<delete file="${file.jar}" />
-		<delete file="${file.resources}" />
-                <delete dir="${dir.install}/deploy" />
 	</target>
 
 	<target name="compile" depends="prepare">
@@ -48,33 +40,19 @@
 		/>
 	</target>
 
-	<target name="resources">
-		<jar	jarfile="${file.resources}"
-			basedir="${dir.templates}"
-		/>
+        <target name="verify.dir.install" unless="dir.install">
+        	<fail message="Please define dir.install" />
+        </target>
+        <target name="verify.site.name" unless="site.name">
+		<fail message="Please specify the site.name to install" />
 	</target>
 
-        <target name="install" depends="prepare,compile,jar,resources">
-		<mkdir dir="${dir.install}" />
-		<mkdir dir="${dir.install}/deploy" />
-		<mkdir dir="${dir.install}/deploy/WEB-INF/lib" />
-		<copy todir="${dir.install}/deploy">
-			<fileset dir="${dir.htdocs}" />
-		</copy>
-		<copy todir="${dir.install}/deploy/WEB-INF/lib">
-			<fileset dir="${dir.lib}" />
-			<fileset dir="./" includes="*.jar" />
-		</copy>
-		<copy todir="${dir.install}/deploy/WEB-INF">
-			<fileset dir="${dir.etc}" />
-			<filterset>
-				<filter token="INSTALL_DIR" value="${dir.install}" />
-			</filterset>
-		</copy>
-	</target>
-
-	<target name="all" depends="clean,prepare,compile,jar,resources,install">
-
+	<target name="install" depends="verify.dir.install,verify.site.name,prepare,compile,jar">
+		<ant antfile="build.xml" 
+                     inheritAll="false"
+                     dir="builds/${site.name}/">
+			<property name="dir.install" value="${dir.install}" />
+		</ant>
 	</target>
 
 </project>
