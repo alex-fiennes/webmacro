@@ -146,7 +146,7 @@ final public class TemplateProvider extends CachingProvider
          File tFile  = new File(dir,fileName);
          if (tFile.canRead()) {
             try {
-               t = new FileTemplate(_broker,tFile,encoding);
+               t = new FileTemplate(_broker,tFile,"UTF8");
                t.parse();
                return t;
             } catch (Exception e) {

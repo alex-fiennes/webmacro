@@ -4,7 +4,7 @@ package org.webmacro.resource;
 import org.webmacro.*;
 import org.webmacro.util.*;
 import java.util.Properties;
-import java.util.Hashtable;
+import org.webmacro.util.ScalableMap;
 import java.lang.ref.Reference;
 import org.webmacro.util.TimeLoop;
 import org.webmacro.Log;
@@ -12,7 +12,9 @@ import org.webmacro.Log;
 abstract public class CachingProvider implements Provider
 {
 
-   private Hashtable _cache;
+   private ScalableMap _cache;
+   private Object[] _writeLocks = new Object[101];
+
    private static final TimeLoop _tl;
    private Log _log;
 
@@ -37,7 +39,7 @@ abstract public class CachingProvider implements Provider
    public void init(Broker b, Properties config) throws InitException
    {
       _log = b.getLog("resource");
-      _cache = new Hashtable();
+      _cache = new ScalableMap(1001);
    }
 
    /**
@@ -74,21 +76,32 @@ abstract public class CachingProvider implements Provider
          o = r.get();
       }
       if (o == null) {
-         r = load(query);
-         if (r != null) {
-            _cache.put(query,r);
+         // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
+         // this looks like double-checked locking but it isn't, we
+         // synchrnoized on a less expensive lock inside r.get().
+         // the following ilne lets us simultaneously load up to 
+         // writeLocks.length resources.
+         synchronized(_writeLocks[ query.hashCode() % _writeLocks.length])
+         {
             o = r.get();
-            try {
-               _log.debug("cached: " + query + " for " + r.getTimeout());
-               _tl.scheduleTime( 
-                  new Runnable() { 
-                     public void run() { 
-                        _cache.remove(query); 
-                        _log.debug("cache expired: " + query);
-                     } 
-                  }, r.getTimeout());
-            } catch (Exception e) {
-               _log.error("CachingProvider caught an exception", e);
+            if (o == null) {
+               r = load(query);
+               if (r != null) {
+                  _cache.put(query,r);
+               }
+               o = r.get();
+               try {
+                  _log.debug("cached: " + query + " for " + r.getTimeout());
+                  _tl.scheduleTime( 
+                     new Runnable() { 
+                        public void run() { 
+                           _cache.remove(query); 
+                           _log.debug("cache expired: " + query);
+                        } 
+                     }, r.getTimeout());
+               } catch (Exception e) {
+                  _log.error("CachingProvider caught an exception", e);
+               }
             }
          } 
       }
