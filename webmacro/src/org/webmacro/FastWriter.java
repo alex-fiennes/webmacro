@@ -297,12 +297,12 @@ final public class FastWriter extends Writer
       SimpleStack ss = (SimpleStack) _writerCache.get(encoding);
       if (ss != null) {
          fw = (FastWriter) ss.pop();
-         fw.reset(out);
+         if (fw != null) {
+            fw.reset(out);
+            return fw;
+         }
       }
-      if (fw == null) {
-         fw = new FastWriter(out,encoding);
-      } 
-      return fw;
+      return new FastWriter(out,encoding);
    }
 
    /**

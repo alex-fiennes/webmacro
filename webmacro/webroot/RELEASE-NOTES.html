@@ -4,6 +4,49 @@
 
 <body bgcolor="white">
 
+<h2>WebMacro 21-11-2000: RELEASE NOTES</h2>
+
+Here are the key changes in this snapshot:
+<p>
+<ul>
+<li><b>FastWriter buffering:</b><br>
+    FastWriter now buffers all output until an explicit flush(). The
+    consequence of this is that you will not see any output from your
+    template at all until you flush the page. The good news is this 
+    fixes bugs on several peoples platforms whereby they could not 
+    set the content type from the template. The bad news is that it 
+    hurts time-to-first-byte and may reduce perceived performance. We
+    will likely come back and address this with some flushing at 
+    specific points to alleviate the time-to-first-byte problem. 
+    <p>
+    You can also extract the contents written to FastWriter with a
+    couple of useful methods: writeTo(outstream), toString(), and
+    toByteArray().
+    <p>
+<li><b>Character encoding issues:</b><br>
+    As of this release the only place you need to set the character 
+    encoding for <i>output</i> is on FastWriter. When you create the
+    FastWriter select the character encoding you wish to send back to
+    the users browser. There are still some issues with where the 
+    character encoding for templates is read from--currently it 
+    defaults to UTF8.
+    <p>
+<li><b>ContextTool.destroy(Object):</b><br>
+    Context tools are used to initialize objects on a template on 
+    demand. There is a need to be able to clean these objects up
+    as well so a destroy() method has been added. When a Context
+    is clear()'d your ContextTool's destroy method will be called
+    and passed back whatever object your init() method returned. 
+    This allows pooling, caching, and other cleaning up.
+    <p>
+<li><b>Bug Fixes & More</b>:<br>
+    setBean() fixed up by keats, some synchronization issues addressed,
+    and some tinkering with the URLTemplateProvider replacement for
+    TemplateProvider. 
+</ul>
+ 
+
+
 <h2>WebMacro 0.94: RELEASE NOTES</h2>
 
 The release notes describe the changes for each version,

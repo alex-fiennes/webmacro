@@ -92,7 +92,7 @@ $(PROJECT): build doc jar web src $(DIST_FILES)
 build: .build
 .build: $(SOURCEFILES) 
 	@echo compiling: $(notdir $(filter %.java, $?))
-	@$(JAVAC) $(JAVAC_FLAGS) $(filter %.java, $?) 
+	$(JAVAC) $(JAVAC_FLAGS) $(filter %.java, $?) 
 	@$(TOUCH) .build
 
 doc:    .doc
