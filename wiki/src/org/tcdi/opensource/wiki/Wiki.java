@@ -371,6 +371,11 @@ final public class Wiki implements WikiSystem, QueueListener {
             }
         }
 
+        Collections.sort(l, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
+            }
+        });
         _pageNames = (String[]) l.toArray(new String[0]);
         _pageLookup = pageLookup;
     }
