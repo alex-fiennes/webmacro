@@ -30,6 +30,7 @@ final public class ByteBufferOutputStream extends OutputStream
 {
    private byte[] _buf;
    private int _pos;
+   private final int _initialSize;
 
    /**
      * Create a new ByteBuffer with the specified capacity
@@ -38,15 +39,18 @@ final public class ByteBufferOutputStream extends OutputStream
    {
       _buf = new byte[size];   
       _pos = 0;
+      _initialSize = size;
    }
 
    /**
-     * Clear the contents of the byte buffer
+     * Clear the contents of the byte buffer.  Also shrinks the byte buffer
+     * to the size specified during construction of this ByteBufferOutputStream
      */
    public void reset() {
       _pos = 0;
+      _buf = new byte[_initialSize];
    }
-
+   
    public void write(int i) {
       write((byte) i);
    }
