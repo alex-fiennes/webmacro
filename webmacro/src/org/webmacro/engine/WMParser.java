@@ -104,7 +104,7 @@ public class WMParser implements Parser
                }
                break;
 
-            case in.EOF:
+            case ParseTool.EOF:
                return c;
 
             case '>':
@@ -258,7 +258,7 @@ public class WMParser implements Parser
                }
                break; 
                
-	    case in.EOF: // end this block
+	    case ParseTool.EOF: // end this block
                str.append(ws.toString()); // preserve whitespace at EOF
 	       inBlock = false; // breaks the loop
 	       break; 

@@ -4,8 +4,6 @@ import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
 
-import com.sun.java.util.collections.Map;
-import com.sun.java.util.collections.HashMap;
 
 /**
   * Contains data structures which are manipulated during the 

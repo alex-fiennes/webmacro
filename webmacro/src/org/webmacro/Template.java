@@ -23,8 +23,6 @@ package org.webmacro;
 import java.util.*;
 import java.io.*;
 
-import com.sun.java.util.collections.Map;
-
 public interface Template extends Filter
 {
 

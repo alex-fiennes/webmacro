@@ -24,7 +24,6 @@ import org.webmacro.*;
 import java.util.*;
 import java.io.*;
 import org.webmacro.util.*;
-import com.sun.java.util.collections.Iterator;
 
 /**
   * This directive is used to iterate through the members of a list. 
@@ -116,43 +115,29 @@ final class ForeachDirective implements Directive
          }
       }
 
-      Iterator iter;
       try {
-         iter = PropertyOperator.getIterator(list);
-      } catch (Exception e) {
-         throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
-      }
-      Object listItem;
-
-      // deals with an empty list substitute appropriate variables and 
-      // prints block out once
-      if (iter == null) {
-	 listItem = "<!--\n " +  _list + ": is empty \n-->";   
-         try {
-            _iterVar.setValue(context, listItem);
-         } catch (ContextException e) {
-            Engine.log.exception(e);
-            Engine.log.error("Unable to resolve list" + _list);
-            out.write("<!--\n Unable to resolve list " + _list + " \n-->");
-         }
-         _body.write(out, context);
-
-      // iterates through all items including null ones which will
-      // print error messages
-      } else {
-         while(iter.hasNext()) {
-            if ((listItem = iter.next()) == null) {
-	       listItem = "<!--\n " +  _list + ": contained a null item \n-->";   
-	    }
-            try {
-               _iterVar.setValue(context, listItem);
+         if (list instanceof Object[]) {
+            Object[] alist = (Object[]) list;
+            for (int i = 0; i < alist.length; i++) {
+               _iterVar.setValue(context, alist[i]);
                _body.write(out, context);
-            } catch (ContextException e) {
-               Engine.log.exception(e);
-               Engine.log.error("unable to set a list item of list: " + _list); 
-               out.write("<!--\n Unable to resolve list " + _list + " \n-->");
+            }
+         } else {
+            Iterator iter;
+            try {
+               iter = PropertyOperator.getIterator(list);
+            } catch (Exception e) {
+               throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
+            }
+            while(iter.hasNext()) {
+               _iterVar.setValue(context, iter.next());
+               _body.write(out, context);
             }
          }
+      } catch (ContextException e) {
+         Engine.log.exception(e);
+         Engine.log.error("unable to set a list item of list: " + _list); 
+         out.write("<!--\n Unable to resolve list " + _list + " \n-->");
       }
    }
 

@@ -21,8 +21,6 @@
 package org.webmacro.util;
 import java.util.*;
 
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.UnsupportedOperationException;
 
 /**
   * This provides an iterator interface to an array

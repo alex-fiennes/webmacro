@@ -25,8 +25,6 @@ import java.io.*;
 import org.webmacro.util.*;
 import org.webmacro.*;
 
-import com.sun.java.util.collections.Map;
-
 /**
   * Template objects represent the user defined layout into which the 
   * webmacro package will substitute values. It is a very simple kind of

@@ -22,8 +22,6 @@ package org.webmacro.util;
 
 import java.util.*;
 
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.UnsupportedOperationException;
 
 /**
   * Allow a Java 1.1 enumeration to be used as a JDK 1.2 style Iterator

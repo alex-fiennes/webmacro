@@ -32,7 +32,7 @@ import org.webmacro.*;
   * #set $thing = a.get("thing")
   * <p>
   * The arguments supplied to a PropertyMethod can be a list 
-  * including PropertyReference objects which need to be resolved
+  * including Macro objects which need to be resolved
   * against a context. The introspection process will supply the 
   * context and resolve these references at execution time.
   */
@@ -46,7 +46,7 @@ final public class PropertyMethod implements Named
    /**
      * Create a new PropertyMethod
      * @param name the name of the method to call
-     * @param args the arguments, including PropertyReference objects
+     * @param args the arguments, including Macro objects
      */
    public PropertyMethod(String name, Object[] args)
    {
@@ -58,9 +58,9 @@ final public class PropertyMethod implements Named
    /**
      * Create a new PropertyMethod
      * @param name the name of the method to call
-     * @param args the arguments, including PropertyReference objects
+     * @param args the arguments, including Macro objects
      */
-   public PropertyMethod(String name, PropertyReference args)
+   public PropertyMethod(String name, Macro args)
    {
       _name = name;
       _args = args;
@@ -99,16 +99,16 @@ final public class PropertyMethod implements Named
    /**
      * Return the arguments for this method, after resolving them
      * against the supplied context. Any arguments which are of 
-     * type PropertyReference will be resolved into a regular 
-     * object via the PropertyReference.evaluate method.
-     * @exception ContextException a PropertyReference in the arguments failed to resolve against the supplied context
+     * type Macro will be resolved into a regular 
+     * object via the Macro.evaluate method.
+     * @exception ContextException a Macro in the arguments failed to resolve against the supplied context
      */
    final public Object[] getArguments(Context context)
       throws ContextException
    {
       Object[] argList;
       if (_reference) {
-         argList = (Object[]) ((PropertyReference) _args).evaluate(context);
+         argList = (Object[]) ((Macro) _args).evaluate(context);
       } else {
          argList = (Object[]) _args;
       }
@@ -116,8 +116,8 @@ final public class PropertyMethod implements Named
       Object ret[] = new Object[ argList.length ];
       System.arraycopy(argList,0,ret,0,argList.length);
       for (int i = 0; i < ret.length; i++) {
-         while (ret[i] instanceof PropertyReference) {
-            Object repl = ((PropertyReference) ret[i]).evaluate(context);
+         while (ret[i] instanceof Macro) {
+            Object repl = ((Macro) ret[i]).evaluate(context);
             if (repl == ret[i]) {
                break; // avoid infinite loop
             }

@@ -51,7 +51,8 @@ final public class Block implements Macro
    public void write(final Writer out, final Context context) 
       throws ContextException, IOException
    {
-      for(int i = 0; i < _content.length; i++) {
+      int len = _content.length;
+      for(int i = 0; i < len; i++) {
          _content[i].write(out,context);
       }
    }

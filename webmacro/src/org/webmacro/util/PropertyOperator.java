@@ -23,7 +23,6 @@ import java.util.*;
 import java.lang.reflect.*;
 import org.webmacro.*;
 
-import com.sun.java.util.collections.Iterator;
 
 /**
   * This class knows how to extract properties from objects efficiently.
@@ -153,7 +152,15 @@ final public class PropertyOperator
    static final public Iterator getIterator(Object instance)
       throws PropertyException
    {
-      return getOperator(instance.getClass()).findIterator(instance);
+      if (instance instanceof Object[]) {
+         return new ArrayIterator((Object[])instance);
+      } else if (instance instanceof Iterator) {
+         return (Iterator) instance;
+      } else if (instance instanceof Enumeration) {
+         return new EnumIterator((Enumeration)instance);
+      } else {
+         return getOperator(instance.getClass()).findIterator(instance);
+      }
    }
 
    // operator cache
@@ -161,7 +168,7 @@ final public class PropertyOperator
    /**
      * Private cache of all the property operators constructed so far
      */
-   static final private Hashtable _operators = new Hashtable();
+   static private RefMap _operators = new RefMap();
 
 
    /**
@@ -172,8 +179,18 @@ final public class PropertyOperator
    {
       PropertyOperator o = (PropertyOperator) _operators.get(type);
       if (o == null) {
-         o = new PropertyOperator(type);
-         _operators.put(type,o);
+         synchronized (_operators) {
+            // if ((_operators.size() * 2) > _operators.capacity()) {
+            // _operators = _operators.copy(_operators.capacity() * 2 + 1);
+            // }
+
+            try {
+               o = new PropertyOperator(type);
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+            _operators.put(type,o); 
+         }
       }
       return o;
    }
@@ -181,22 +198,22 @@ final public class PropertyOperator
    /**
      * My accessors for fields, and binary methods
      */
-   final private Hashtable _unaryAccessors = new Hashtable();
+   final private HashMap _unaryAccessors = new HashMap();
 
    /**
      * Accessors that require an additional property name
      */
-   final private Hashtable _binaryAccessors = new Hashtable();
+   final private HashMap _binaryAccessors = new HashMap();
 
    /**
      * Accessors for direct method calls
      */
-   final private Hashtable _directAccessors = new Hashtable();
+   final private HashMap _directAccessors = new HashMap();
 
    /**
      * Hash table accessor
      */
-   private BinaryMethodAccessor hashAccessor;
+   private BinaryMethodAccessor _hashAccessor;
 
    /**
      * The iterator method we found
@@ -209,7 +226,7 @@ final public class PropertyOperator
      * may appear more than once in the vector if it is declared in more
      * than one superclass or interface.
      */
-   private void getAllMethods(Hashtable meths, Class c)
+   private void getAllMethods(HashMap meths, Class c)
       throws SecurityException
    {
       if (Modifier.isPublic( c.getModifiers() ) ) {
@@ -268,7 +285,7 @@ final public class PropertyOperator
       }
    }
 
-   private void addMethod(Hashtable hm, Method m) {
+   private void addMethod(HashMap hm, Method m) {
       String name = m.getName();
       Object o = hm.get( name );
       if (o == null) {
@@ -311,11 +328,11 @@ final public class PropertyOperator
      */
    private Vector getMethods(Class c) {
       Vector v = new Vector();
-      Hashtable h = new Hashtable();
+      HashMap h = new HashMap();
       getAllMethods(h,c);
-      Enumeration enum = h.elements();
-      while (enum.hasMoreElements()) {
-         Object elem = enum.nextElement();
+      Iterator iter = h.values().iterator();
+      while (iter.hasNext()) {
+         Object elem = iter.next();
 
          if (elem instanceof Method) {
             v.addElement( elem );
@@ -418,16 +435,16 @@ final public class PropertyOperator
                           ((plength == 1) && name.equals("get"))))
             {
                // hashtable get/put
-               if (hashAccessor != null) {
+               if (_hashAccessor != null) {
                   if (_debug) {
                      _log.debug("Updating hash accessor: " + meth);
                   }
-                  hashAccessor.addMethod(meth,params);
+                  _hashAccessor.addMethod(meth,params);
                } else {
                   if (_debug) {
                      _log.debug("Creating a new hash accessor: " + meth);
                   }
-                  hashAccessor = new BinaryMethodAccessor(propName,meth,params);
+                  _hashAccessor = new BinaryMethodAccessor(propName,meth,params);
                }
             } else if ((plength > 0) && (params[0].isInstance("string")) &&
                        (((plength == 1) && name.startsWith("get")) ||
@@ -574,7 +591,7 @@ final public class PropertyOperator
 
       // hash?
       if (acc == null) {
-         acc = hashAccessor;
+         acc = _hashAccessor;
          try {
             if (acc != null) {
                if (_debug) {
@@ -718,8 +735,8 @@ final public class PropertyOperator
          if ((unaryOp != null) && unaryOp.set(instance,value)) {
             return true;
          }
-         if (hashAccessor != null) {
-            return hashAccessor.set(instance,(String) names[pos],value);
+         if (_hashAccessor != null) {
+            return _hashAccessor.set(instance,(String) names[pos],value);
          }
       } catch(NoSuchMethodException e) {
          // fall through
@@ -739,13 +756,7 @@ final public class PropertyOperator
    private Iterator findIterator(Object instance)
       throws PropertyException
    {
-      if (instance instanceof Object[]) {
-         return new ArrayIterator((Object[])instance);
-      } else if (instance instanceof Iterator) {
-         return (Iterator) instance;
-      } else if (instance instanceof Enumeration) {
-         return new EnumIterator((Enumeration)instance);
-      } else if (iteratorMethod != null) {
+      if (iteratorMethod != null) {
          try {
                Object ret = invoke(iteratorMethod,instance,null);
             if (ret instanceof Iterator) {
@@ -1073,12 +1084,6 @@ abstract class MethodAccessor extends Accessor
       }
    }
 
-   final Object getImpl(final Object instance, final Object[] args) 
-      throws PropertyException, NoSuchMethodException
-   {
-      return PropertyOperator.invoke(_getMethod,instance,args);      
-   }
-
    final boolean setImpl(final Object inst, final Object[] args) 
       throws PropertyException, NoSuchMethodException
    {
@@ -1116,7 +1121,7 @@ final class UnaryMethodAccessor extends MethodAccessor
    final Object get(final Object instance)
       throws PropertyException, NoSuchMethodException
    {
-      return getImpl(instance,null);
+      return PropertyOperator.invoke(_getMethod,instance,null);      
    }
 
    final boolean set(final Object instance, final Object value) 
@@ -1151,7 +1156,7 @@ final class BinaryMethodAccessor extends MethodAccessor
    {
       Object[] args = new Object[1];
       args[0] = prop;
-      return getImpl(instance,args);
+      return PropertyOperator.invoke(_getMethod,instance,args);      
    }
 
    final boolean set(final Object instance, String prop, Object value)

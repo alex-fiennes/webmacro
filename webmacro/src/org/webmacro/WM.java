@@ -29,8 +29,6 @@ import org.webmacro.servlet.WebContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.java.util.collections.Map;
-import com.sun.java.util.collections.HashMap;
 
 /**
   * This class implements the WebMacro Manager interface. You can instantiate 

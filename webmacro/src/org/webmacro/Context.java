@@ -5,8 +5,6 @@ package org.webmacro;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
-import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.Map;
 
 /**
   * A Context contains all of the data you wish to display in a WebMacro 
@@ -392,16 +390,17 @@ public class Context implements Cloneable {
    public final Object getLocal(final Object[] names) 
       throws PropertyException, ContextException
    {
-      if ((names.length == 0) || (_locals == null)) {
+      int len = names.length;
+      if ((_locals == null) || (len == 0)) {
          return null;
       } else {
          Object res = get(names[0]);
-         if (names.length == 1) {
+         if (len == 1) {
             return res;
          } else if (res == null) {
             return null;
          } else {
-            return PropertyOperator.getProperty(this,get(names[0]),names,1);
+            return PropertyOperator.getProperty(this,res,names,1);
          }
       } 
    }
