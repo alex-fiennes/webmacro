@@ -26,6 +26,8 @@ public class SetDirective extends Directive {
     return myDescr;
   }
 
+  public SetDirective() {}
+
   public SetDirective(Variable target, Object result) {
     this.target = target;
     this.result = result;
