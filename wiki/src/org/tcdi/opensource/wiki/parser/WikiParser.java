@@ -110,7 +110,7 @@ public class WikiParser implements WikiParserConstants {
         if (_headerName != null || _colorName != null) {
             builder.endColorOrHeader();
             String word = t.image.substring(1);
-            if (builder.getWikiSystem().isWikiPageReference (word))
+            if (builder.isWikiTermReference (word))
                 builder.wikiTerm (word);
             else
                 builder.word (word);
@@ -146,7 +146,7 @@ public class WikiParser implements WikiParserConstants {
         break;
       case WIKI_TERM:
         t = jj_consume_token(WIKI_TERM);
-        if (builder.getWikiSystem().isWikiPageReference (t.image))
+        if (builder.isWikiTermReference (t.image))
             builder.wikiTerm (t.image);
         else
             builder.word (t.image);

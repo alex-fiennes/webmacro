@@ -106,7 +106,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
         if (_headerName != null || _colorName != null) {
             builder.endColorOrHeader();
             String word = t.image.substring(1);
-            if (builder.getWikiSystem().isWikiPageReference (word))
+            if (builder.isWikiTermReference (word))
                 builder.wikiTerm (word);
             else
                 builder.word (word);
@@ -134,7 +134,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
   | t = <RULE>          { builder.ruler(); }
   | t = <EMAIL>         { builder.email(t.image); }
   | t = <WIKI_TERM>     { 
-        if (builder.getWikiSystem().isWikiPageReference (t.image))
+        if (builder.isWikiTermReference (t.image))
             builder.wikiTerm (t.image);
         else
             builder.word (t.image);

@@ -49,17 +49,25 @@ import org.tcdi.opensource.wiki.*;
  * @author  e_ridge
  */
 public class DefaultPageBuilder implements WikiPageBuilder {
-    protected WikiSystem _wiki;
+    protected WikiTermMatcher _matcher;
     protected boolean _bold, _underline, _italic, _color, _header, _space;
     protected String _currentHeader = null;
     protected StringBuffer _text = new StringBuffer ();
     protected List _data = new ArrayList ();
     protected WikiData _currentData = new WikiData ();
     
-    public void init(WikiSystem wiki) {
-        _wiki = wiki;
+    public DefaultPageBuilder () {
+        this (null);
+    }
+    
+    public DefaultPageBuilder (WikiTermMatcher matcher) {
+        _matcher = matcher;
     }
 
+    public void init(WikiTermMatcher matcher) {
+        _matcher = matcher;
+    }
+    
     public void endColorOrHeader() {
         if (_color)
             color (null);
@@ -217,13 +225,14 @@ public class DefaultPageBuilder implements WikiPageBuilder {
         _currentData = new WikiData ();
     }
     
-    public WikiSystem getWikiSystem() {
-        return _wiki;
-    }
-    
     public void indent(int many) {
         newData();
         _currentData.setType (WikiDataTypes.INDENT);
         _currentData.setData (""+many);
+    }
+    
+    /** is the specified string a valid WikiTerm?  */
+    public boolean isWikiTermReference (String word) {
+        return _matcher == null ? false : _matcher.isWikiTermReference (word);
     }
 }

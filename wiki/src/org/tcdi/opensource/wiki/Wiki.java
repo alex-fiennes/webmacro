@@ -393,11 +393,11 @@ final public class Wiki implements WikiSystem, QueueListener {
         this.savePage (page);
     }
     
-    /**
+   /**
      * Is the specified String a Wiki page reference?
      */
-    public boolean isWikiPageReference(String image) {
-        char[] chars = image.toCharArray();
+    public boolean isWikiTermReference(String word) {
+        char[] chars = word.toCharArray();
         int ucase=0, lcase=0;
         for (int x=0; x<chars.length; x++) {
             char c = chars[x];
@@ -426,5 +426,4 @@ final public class Wiki implements WikiSystem, QueueListener {
     public String getStartPage() {
         return _properties.getProperty("StartPage").trim();
     }
-    
 }

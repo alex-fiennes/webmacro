@@ -50,7 +50,7 @@ import org.tcdi.opensource.wiki.renderer.*;
  *
  * @author Eric B. Ridge
  */
-public interface WikiSystem {
+public interface WikiSystem extends WikiTermMatcher {
     /**
      * @param title the title of the WikiPage to retrieve.  This should be a propertly formed WikiTerm
      * @return the WikiPage of the specified title
@@ -197,9 +197,9 @@ public interface WikiSystem {
     public void parsePage (WikiPage page) throws Exception;
     
     /**
-     * Is the specified String a Wiki page reference?
+     * Is the specified String a WikiTerm (page name) reference?
      */
-    public boolean isWikiPageReference (String image);
+    public boolean isWikiTermReference (String word);
     
     /**
      * What page renderer should be used?

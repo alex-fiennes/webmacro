@@ -50,18 +50,12 @@ import org.tcdi.opensource.wiki.*;
  *
  * @author  e_ridge
  */
-public interface WikiPageBuilder {
+public interface WikiPageBuilder extends WikiTermMatcher {
 
-    /** initialize this WikiPageBuilder to use the specified WikiSystem.
-     *  The WikiSystem is typically used for looking up other WikiPage's
-     */
-    public void init (WikiSystem wiki);
+    public void init (WikiTermMatcher matcher);
     
     /** return the completed WikiPage */
     public WikiPage getPage ();
-    
-    /** which WikiSystem instance were we initialized with? */
-    public WikiSystem getWikiSystem ();
     
     /** toggle bolding of text */
     public void bold ();
