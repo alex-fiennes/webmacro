@@ -82,13 +82,32 @@ public class TestSyntheticTemplate extends TemplateTestCase {
       if (singleTet > max) max = singleTet;
     }
     tet = System.currentTimeMillis()-tet;
+
+    // test load using threads:
+    ThreadLoad threadLoad = new ThreadLoad();
+    threadLoad.execute();
+    
+    
     report(iterationCount-2,
             tet - max - min,
-            contentSize);
+            contentSize,
+            threadLoad.tet,
+            threadLoad.worstCase,
+            threadLoad.bestCase,
+            threadLoad.threadCount,
+            threadLoad.threadedIterations,
+            threadLoad.duration);
   }
 
   /** A webmacro report sent to LoadReport.html. */
-  protected void report(int iterationCount, long totalTime, int characterCount) throws Exception {
+  protected void report(int iterationCount, long totalTime,
+                        int characterCount,
+                        long threadTet,
+                        long worstCase,
+                        long bestCase,
+                        int threadCount,
+                        int threadedIterations,
+                        long threadDuration) throws Exception {
     context.put("IterationCount", iterationCount);
     context.put("TotalElapsedTime", totalTime);
     context.put("AverageTime", totalTime/iterationCount);
@@ -97,11 +116,72 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     context.put("TotalMemory", Runtime.getRuntime().totalMemory()/1024);
     context.put("ScriptValue", templateFileToString(fileName));
     context.put("Today", new java.util.Date());
+    context.put("ThreadDuration", threadDuration);
+    context.put("ThreadTotalWaitTime", threadTet-totalTime);
+    context.put("ThreadAverageTime", threadTet/
+              (threadCount*threadedIterations) );
+
+    context.put("ThreadWorstCase", worstCase);
+    context.put("ThreadBestCase", bestCase);
+    context.put("ThreadCount", threadCount);
+    context.put("ThreadIterations", threadedIterations);
     String report = executeFileTemplate(reportName);
    	PrintWriter p = new PrintWriter( new FileOutputStream("LoadReport.html") );
    	p.write(report);
    	p.close();
   }
 
+  /**
+   * This class performs a load test but divides the load into a
+   * proportional number of of threads.
+   * <p>
+   * execute() to execute the load and then extract the metrics.
+   * <p>
+   * The worst and best case are not thrown out.
+   */
+  class ThreadLoad {
+    int threadCount = 2; // be sure to divide into iterationcount-2 evenly
+    int threadedIterations = (iterationCount-2) / threadCount;
+    long tet = 0;
+    long worstCase = 0;
+    long bestCase = 9999999999l;
+    long duration;
 
+    void execute() throws Exception {
+      ThreadTest[] threadTest = new ThreadTest[threadCount];
+      for (int index = 0; index < threadCount; index++)
+        threadTest[index] = new ThreadTest();
+      duration = System.currentTimeMillis();
+      for (int index = 0; index < threadCount; index++)
+        threadTest[index].start();
+      Thread.sleep(1000); // allows the threads to start
+      for (int index = 0; index < threadCount; index++) {
+        threadTest[index].join();
+        Thread.yield();
+      }
+      duration = System.currentTimeMillis() - duration;
+      for (int index = 0; index < threadCount; index++)
+        tet += threadTest[index].tet;
+    }
+
+    class ThreadTest extends Thread {
+      long tet = 0;
+      public void run() {
+        this.tet = System.currentTimeMillis();
+        for (int index = 0; index < threadedIterations; index++) {
+          long it = System.currentTimeMillis();
+          try {
+            String value = executeFileTemplate(fileName);
+            Thread.yield(); // allow other threads time to run as well;
+          }
+          catch (Exception e) {fail("Evaluation failed in thread");}
+          it = System.currentTimeMillis() - it;
+          if (it < bestCase) bestCase = it;
+          if (it > worstCase) worstCase = it;
+        }
+        this.tet = System.currentTimeMillis() - tet;
+      }
+    }
+  }
+  
 }
