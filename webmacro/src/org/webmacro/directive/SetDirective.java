@@ -26,6 +26,11 @@ public class SetDirective extends Directive {
     return myDescr;
   }
 
+  public SetDirective(Variable target, Object result) {
+    this.target = target;
+    this.result = result;
+  }
+
   public Object build(DirectiveBuilder builder, 
                       BuildContext bc) 
   throws BuildException {
