@@ -252,7 +252,7 @@ public class TextTool implements ContextTool
      * convert a <code>byte[]</code> to a String using the specified
      * encoding
      */
-    public static String bytesToString (byte[] bytes, String encoding) {
+    public static String bytesToString (byte[] bytes, String encoding) throws UnsupportedEncodingException {
       return new String (bytes, encoding);
     }
     
