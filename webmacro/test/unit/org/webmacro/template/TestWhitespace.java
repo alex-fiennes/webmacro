@@ -27,10 +27,10 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
 
-   public void testTabs() throws Exception { 
-     assertStringTemplateEquals("\t#if (true) { pass }\n\t#else { fail }", 
+   public void testTabs() throws Exception {
+     assertStringTemplateEquals("\t#if (true) { pass }\n\t#else { fail }",
                                 " pass ");
-     assertStringTemplateEquals("\t#if (true) \t#begin pass \t#end\t#else \t#begin fail \t#end", 
+     assertStringTemplateEquals("\t#if (true) \t#begin pass \t#end\t#else \t#begin fail \t#end",
                                 "pass ");
    }
 
@@ -82,11 +82,16 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals("#set $a=1\n#set $b=2\n", "");
       assertStringTemplateEquals("Hello\n#if(true)\n{ Brian }\n", "Hello Brian ");
    }
- 
+
    public void testBeforeSubdirective () throws Exception {
       assertStringTemplateEquals ("#if(true){pass} #else{fail}", "pass");
       assertStringTemplateEquals ("#if(true){pass} \n#else{fail}", "pass");
       assertStringTemplateEquals ("#if(true){pass} \n #else{fail}", "pass");
+	  assertStringTemplateEquals ("#if(true){pass}\n\n#else{fail}", "pass");
+	  assertStringTemplateEquals ("#if(true){pass} \n \n #else{fail}", "pass");
+	  assertStringTemplateEquals ("#if(true){pass}\n\n\n\n\n\n\n\n\n\n#else{fail}", "pass");
+	  assertStringTemplateEquals ("#if(true){pass}       \n\n \n \n\n      \n \n\n \n\n        #else{fail}", "pass");
+	  assertStringTemplateEquals ("#if(true){pass}\n   \n \n \n       \n      \n \n\n \n\n#else{fail}", "pass");
    }
 
    //
@@ -99,8 +104,8 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
 
-   // 
-   // test whitespace after a begin 
+   //
+   // test whitespace after a begin
    //
 
    public void testAfterBegin () throws Exception {
@@ -143,7 +148,7 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals ("#if(true) pass \n #end", "pass \n");
       assertStringTemplateEquals ("#if(true) pass  \n  #end", "pass  \n ");
    }
- 
+
    //
    // test whitespace after an end
    //
@@ -211,7 +216,7 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
    public void testColor() throws Exception {
-      assertStringTemplateEquals("layer-background-color:#FFFFCC", 
+      assertStringTemplateEquals("layer-background-color:#FFFFCC",
                                  "layer-background-color:#FFFFCC");
    }
 

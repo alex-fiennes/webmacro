@@ -325,9 +325,14 @@ TOKEN_MGR_DECLS : {
 JAVACODE
 Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
   int n=1;
-  if (getToken(n).kind == WS)            ++n;
-  if (getToken(n).kind == NEWLINE)       ++n;
-  if (getToken(n).kind == WS)            ++n;
+//  if (getToken(n).kind == WS)            ++n;
+//  if (getToken(n).kind == NEWLINE)       ++n;
+//  if (getToken(n).kind == WS)            ++n;
+  Token t = getToken(n);
+  while ( t.kind == WS || t.kind == NEWLINE ) {
+     t = getToken(++n);
+  }
+
   if (getToken(n).kind == POUND
       && getToken(n+1).kind == WORD) {
     String word = getToken(n+1).image;
@@ -636,7 +641,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 {
-  [ LOOKAHEAD( [<WS>]<NEWLINE>[<WS>] ) [<WS>]<NEWLINE>[<WS>] ] <POUND> <WORD> [ <WS> ]
+  [ LOOKAHEAD( ([<WS>]<NEWLINE>[<WS>])+ ) ([<WS>]<NEWLINE>[<WS>])+ ] <POUND> <WORD> [ <WS> ]
 }
 
 
