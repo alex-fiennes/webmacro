@@ -317,7 +317,7 @@ public final class BackupCharStream implements CharStream
      else
         return new String(otherBuf.buffer, tokenBeginPos, 
                           otherBuf.dataLen - tokenBeginPos) 
-          + new String(curBuf.buffer, 0, curBuf.curPos + 1);
+          + new String(curBuf.buffer, 0, curBuf.curPos);
   }
 
   public final char[] GetSuffix(int len)
