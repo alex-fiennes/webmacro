@@ -269,7 +269,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          _log.error("Your handler failed to handle the request:" + this, e);
          Template tmpl = error(context,
             "Your handler was unable to process the request successfully " +
-            "for some reason. Here are the details:<p>" + e);
+            "for some reason. Here are the details:<p>" +
+            "<pre>" + e + "</pre>");
          execute(tmpl,context);  
       } catch (Exception e) {
          if (context == null) {
@@ -279,7 +280,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          Template tmpl = error(context,
             "The handler WebMacro used to handle this request failed for " +
             "some reason. This is likely a bug in the handler written " +
-            "for this application. Here are the details:<p>" + e);
+            "for this application. Here are the details:<p>" + 
+            "<pre>" + e + "</pre>");
          execute(tmpl,_wcPrototype.newInstance(req,resp));  
       } finally {
          if (timing) context.stopTiming();

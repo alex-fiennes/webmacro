@@ -83,8 +83,7 @@ public class HelloWorld extends WMServlet
             + "Since your servlet runner may have d fewifferent classpath \n"
             + "settings, check that webmacro.properties is in the same \n"
             + "classpath that was used to load webmacro.jar. \n"
-            + "\n"
-            + "Here is the actual exception that was raised:\n" + e);
+            + "\n", e);
 
       }
 
