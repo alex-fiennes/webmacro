@@ -44,6 +44,12 @@ final public class EncodingCache {
       _length = length;
       _cache = new BucketNode[_size];
 
+      if ((encoding == null) || 
+         encoding.equalsIgnoreCase("UNICODE") || 
+         encoding.equalsIgnoreCase("UTF16")) 
+      {
+         throw new UnsupportedEncodingException("The encoding you specified is invalid: " + encoding + ". Note that the UNICODE and UTF16 encodings are not supported by WebMacro because they prefix the stream with a market indicating whether the stream is big endian or little endian. Instead choose the byte ordering yourself by using the UTF-16BE or UTF-16LE encodings.");
+      }
       _encoding = encoding;
       for (int i = 0; i < _size; i++) {
          _cache[i] = new BucketNode(null,null,null);
@@ -102,15 +108,22 @@ final public class EncodingCache {
    }
 
    public static void main(String arg[]) {
+
       try {
-         EncodingCache ec = new EncodingCache("UTF8", 11, 3);
+      /**
+         byte[] prefix = getPrefix(arg[0]);
+         System.out.println("Prefix for " + arg[0] + " is " + prefix.length + " bytes long");
+      */
+         EncodingCache ec = new EncodingCache("UTF16-LE", 11, 3);
          BufferedReader in = new 
                   BufferedReader(new InputStreamReader(System.in));
          String s;
          while ((s = in.readLine()) != null) {
-            s = s.intern();
-            System.out.print("Encoding string: " + s + " --> [");
-            System.out.write( ec.getEncoding(s) );
+            String s1 = s.intern();
+            byte b[] = ec.getEncoding(s1);
+            String s2 = new String(b, "UTF16-LE");
+            System.out.print("Encoding string: " + s1 + " --> [");
+            System.out.print( s2 );
             System.out.println("]");
          }
       } catch (Exception e) {

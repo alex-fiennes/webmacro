@@ -320,7 +320,7 @@ final public class FastWriter extends Writer
    public static FastWriter getInstance() 
    {
       try {
-         return getInstance(null,"UNICODE");
+         return getInstance(null,"UTF16-LE");
       } catch (UnsupportedEncodingException e) {
          e.printStackTrace(); // never gonna happen
          return null;
