@@ -15,6 +15,7 @@ public class TestVariables extends TemplateTestCase {
 
   protected void stuffContext(Context context) {
     context.put("TestObject", new TestObject());
+    context.put("NullObject", null);
   }
 
   protected void setUp() throws Exception {
@@ -49,6 +50,10 @@ public class TestVariables extends TemplateTestCase {
     assertStringTemplateEquals("$TestObject.voidMethod()", "");
     assertStringTemplateThrows("$TestObject.noSuchMethod()", 
                                PropertyException.NoSuchMethodException.class);
+    assertStringTemplateThrows("$NoSuchObject", 
+                               PropertyException.NoSuchVariableException.class);
+    assertStringTemplateThrows("$NullObject", 
+                               PropertyException.NullVariableException.class);
   }
 
   public void testDefaultEEHEval() throws Exception {
