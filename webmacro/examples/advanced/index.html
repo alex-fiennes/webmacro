@@ -1,12 +1,16 @@
 <html>
 <center>
-Templates, Java Class Files, References Used In Production With Current Release
+Templates, Java Class Files, Further Reference
 <br>Last Updated 2-July-2001
 </center>
 <p>
  
 <a href=wizard.tml>wizard.tml</a> An example of how to render a form relying exclusively on introspection
-obtain the "View", the labels, the controls, the values. Labels are rendered in a locale sensitive manner.
+obtain the "View", the labels, the controls, the values. Labels are rendered in a locale sensitive manner:
+<pre>
+$field.MetaField.getLabel($User.Locale):
+</pre>
+achieves label localization in the WM script.
 
 <p>
 <a href=wizardform.tml>wizardform.tml</a> An example of to interact with server state variables
@@ -18,7 +22,7 @@ and then how to evaluate conditions and parse in the correct template.
 
 <p>
 <a href=view.tml>view.tml</a> An example of a complete object report showing the "peers" of a logical
-view.
+view. In most web apps, views will be linked together as logical pages.
 
 <p>
 <hr size=1 width=50%>
@@ -65,8 +69,33 @@ objects are persisted as elements in a <a href=http://engineering.acctiva.org>Ve
 <p>
 
 These are specimens contributed by Lane Sharman. Others are more than welcome to add to this file
-which is maintained as index.html in cvs.
+which is maintained as index.html in cvs under the examples directory.
 <p>
 The examples are best viewed with a text editor, not a browser.
+<p>
+
+<hr size=1 width=50%>
+<p>
+Other example resources:
+
+<p>
+<a href=http://wiki.webmacro.org/WebMacroScriptLanguage>Scripting</a> tutorial
+under development by Keats Kirsch.
+
+<p>
+<a href=http://wiki.webmacro.org/SiteMap>Map</a> of the WM wiki site with many good development links.
+Be sure to check the date on the bottom of the page for when it was last edited. Some pages
+are out of date.
+<p>
+Many have generously contributed ideas and approaches in the current
+distribution. Check these out for ideas on how to solve a particular
+problem using WebMacro.
+
+<p>
+<a href=http://engineering.acctiva.org/jldap>jldap</a> 
+Practice at Open Doors Software for creating a java language for data acquistion and presentment for
+web applications we write.
+
+
 </html>
 
