@@ -61,7 +61,7 @@ import org.webmacro.*;
   * <li>public Component()
   * </ol>
   * It is an error if a component does not even have the no-argument 
-  * constructor. If you declare one of teh constructors with an argument
+  * constructor. If you declare one of the constructors with an argument
   * then your component will have some extra information available with
   * which to configure itself when it is instantiated by the ComponentMap.
   */
