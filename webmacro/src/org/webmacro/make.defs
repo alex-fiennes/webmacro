@@ -14,18 +14,7 @@ JAR=$(JAVABIN)/jar
 JAVADOC=$(JAVABIN)/javadoc
 
 TARGETS := $(SOURCES:.java=.class)
-	
 
-%.class : %.java
+%.class: %.java
 	echo compiling $<
 	$(JAVAC) $(JFLAGS) $< 
-
-all: 
-	@echo incremental build
-	@$(MAKE) $(TARGETS)
-
-everything: 
-	$(JAVAC) $(JFLAGS) $(SOURCES) 
-
-clean:
-	$(RMFILE) $(TARGETS)
