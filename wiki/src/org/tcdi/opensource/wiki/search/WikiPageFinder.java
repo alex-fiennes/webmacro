@@ -78,6 +78,6 @@ public interface WikiPageFinder {
      * return a list of pages that match the <code>query</code>.  The query
      * is implementation specific
      */
-    public FindResult[] findPages (WikiSystem wiki, String query) throws FinderException;
+    public WikiPageFinder.FindResult[] findPages (WikiSystem wiki, String query) throws WikiPageFinder.FinderException;
     
 }

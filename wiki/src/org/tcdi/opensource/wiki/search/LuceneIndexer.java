@@ -64,14 +64,14 @@ import org.tcdi.opensource.wiki.renderer.*;
  */
 public class LuceneIndexer implements WikiPageIndexer {
     
-    static Object _mutex = new Object ();
+    static Object _lock = new Object ();
     
-    public synchronized void index(WikiSystem wiki, WikiPage page) throws IndexerException {
+    public synchronized void index(WikiSystem wiki, WikiPage page) throws WikiPageIndexer.IndexerException {
         try {
             Document doc = createDocument(wiki, page);
 
             if (doc != null) {
-                synchronized (_mutex) {
+                synchronized (_lock) {
                     File f = new File (wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
                     IndexWriter writer = new IndexWriter(f, new StopAnalyzer(), 
                                                          !f.exists());
@@ -83,7 +83,7 @@ public class LuceneIndexer implements WikiPageIndexer {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IndexerException(e.toString());
+            throw new WikiPageIndexer.IndexerException(e.toString());
         }
     }
     

@@ -58,5 +58,5 @@ public interface WikiPageIndexer {
     }
   
     /** (full-text) index the specified page */
-    public void index (WikiSystem wiki, WikiPage page) throws IndexerException;
+    public void index (WikiSystem wiki, WikiPage page) throws WikiPageIndexer.IndexerException;
 }

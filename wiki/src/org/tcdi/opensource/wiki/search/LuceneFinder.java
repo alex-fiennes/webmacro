@@ -70,14 +70,14 @@ public class LuceneFinder implements WikiPageFinder {
      * return an array of pages that match the <code>query</code>.  The query
      * is implementation specific
      */
-    public FindResult[] findPages(WikiSystem wiki, String query) throws FinderException {
+    public WikiPageFinder.FindResult[] findPages(WikiSystem wiki, String query) throws WikiPageFinder.FinderException {
         try {
             Searcher searcher = null;
             Analyzer analyzer = new StopAnalyzer();
             Query q = QueryParser.parse(query, "text", analyzer);
             Hits hits = null;
             
-            synchronized (LuceneIndexer._mutex) {
+            synchronized (LuceneIndexer._lock) {
                 searcher = new IndexSearcher(wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
                 hits = searcher.search(q);
             }
@@ -113,10 +113,10 @@ public class LuceneFinder implements WikiPageFinder {
                 }
             }
 
-            synchronized (LuceneIndexer._mutex) {
+            synchronized (LuceneIndexer._lock) {
                 searcher.close ();
             }
-            FindResult[] results = (FindResult[]) pages.toArray (new FindResult[0]);
+            WikiPageFinder.FindResult[] results = (FindResult[]) pages.toArray (new WikiPageFinder.FindResult[0]);
 
             Arrays.sort (results, new Comparator () {
                             public int compare (Object o1, Object o2) {
@@ -129,7 +129,7 @@ public class LuceneFinder implements WikiPageFinder {
             return results;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FinderException (e.toString());
+            throw new WikiPageFinder.FinderException (e.toString());
         }
     }
 }
