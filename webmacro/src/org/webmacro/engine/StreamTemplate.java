@@ -94,7 +94,7 @@ public class StreamTemplate extends WMTemplate
 
       try {
          wm = new WM();
-         context = new Context(null);
+         context = wm.getContext();
          Object names[] = { "prop" };
          context.setProperty(names, "Example property");
       } catch (Exception e) {
