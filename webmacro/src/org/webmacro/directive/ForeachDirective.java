@@ -96,7 +96,7 @@ public class ForeachDirective extends Directive {
     throws PropertyException, IOException {
 
     Object l, limit, from;
-    long loopLimit=-1, loopStart=1, loopIndex=0;
+    int loopLimit=-1, loopStart=1, loopIndex=0;
 
     l = list;
     while (l instanceof Macro) 
@@ -107,9 +107,12 @@ public class ForeachDirective extends Directive {
       while (limit instanceof Macro)
         limit = ((Macro) limit).evaluate(context);
       if (Expression.isNumber(limit)) 
-        loopLimit = Expression.numberValue(limit);
-      else
-        throw new PropertyException("#foreach: Cannot evaluate limit");
+        loopLimit = (int) Expression.numberValue(limit);
+      else {
+        String warning = "#foreach: Cannot evaluate limit";
+        context.getLog("engine").warning(warning);
+        writeWarning(warning, context, out);
+      }
     }
 
     if (index != null && indexFromExpr != null) {
@@ -117,31 +120,38 @@ public class ForeachDirective extends Directive {
       while (from instanceof Macro)
         from = ((Macro) from).evaluate(context);
       if (Expression.isNumber(from)) 
-        loopStart = Expression.numberValue(from);
-      else
-        throw new PropertyException("#foreach: Cannot evaluate loop start");
+        loopStart = (int) Expression.numberValue(from);
+      else {
+        String warning = "#foreach: Cannot evaluate loop start";
+        context.getLog("engine").warning(warning);
+        writeWarning(warning, context, out);
+      }
     }
 
+    Iterator iter;
     try {
-      Iterator iter;
+      iter = PropertyOperator.getIterator(l);
+    } catch (Exception e) {
+      String warning = "#foreach: list argument is not a list: " + l;
+      context.getLog("engine").warning(warning, e);
+      writeWarning(warning, context, out);
+      return;
+    }
+    while(iter.hasNext()
+          && ((loopLimit == -1) 
+              || (loopLimit > loopIndex))) {
       try {
-        iter = PropertyOperator.getIterator(l);
-      } catch (Exception e) {
-        throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
-      }
-      while(iter.hasNext()
-            && ((loopLimit == -1) 
-                || (loopLimit > loopIndex))) {
         target.setValue(context, iter.next());
         if (index != null) 
-          index.setValue(context, new Long(loopIndex + loopStart));
-        body.write(out, context);
-        ++loopIndex;
+          index.setValue(context, new Integer(loopIndex + loopStart));
       }
-    } catch (PropertyException e) {
-      String errorText = "#foreach: Unable to set list index";
-      context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, context, out);
+      catch (PropertyException e) {
+        String errorText = "#foreach: Unable to set list index";
+        context.getBroker().getLog("engine").error(errorText);
+        writeWarning(errorText, context, out);
+      }
+      body.write(out, context);
+      ++loopIndex;
     }
   } 
 

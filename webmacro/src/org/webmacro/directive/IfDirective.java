@@ -181,7 +181,17 @@ class IfDirective extends Directive {
     throws PropertyException, IOException {
 
     for (int i=0; i<nConditions; i++) {
-      if (Expression.isTrue(conditions[i].evaluate(context))) {
+      boolean b=false;
+
+      try {
+        b = Expression.isTrue(conditions[i].evaluate(context));
+      }
+      catch (Exception e) {
+        String warning = "#if: Error evaluating condition";
+        context.getLog("engine").warning(warning, e);
+        writeWarning(warning, context, out);
+      }
+      if (b) {
         blocks[i].write(out, context);
         return;
       }
