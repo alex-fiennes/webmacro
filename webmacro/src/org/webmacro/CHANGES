@@ -1,3 +1,6 @@
+-- Jan-2000 fergus: imported ContextDebugger from Alex Jeannopoulos into
+   contrib
+
 -- Jan-2000 fergus: added LocaleTool.  Gives access to Locales from within
    templates.  This is especially useful for setting the correct response
    encoding without resorting to setting ";charset=xxxx" in the content type.
