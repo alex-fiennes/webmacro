@@ -20,7 +20,7 @@ public class ParserBlockBuilder extends BlockBuilder {
   } 
 
   final public void eatTrailingWs() {
-    int i, j, nChars=0;
+    int i, j;
 
     i = size() - 1;
     if ( i < 0 || i+1 == literalMark ) 
@@ -43,7 +43,7 @@ public class ParserBlockBuilder extends BlockBuilder {
 
 
   final public void eatTrailingWsNl() {
-    int i, j, nChars=0;
+    int i, j;
 
     i = size() - 1;
     if ( i < 0 || i+1 == literalMark ) 
