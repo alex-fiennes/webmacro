@@ -29,19 +29,17 @@ public class TestWhitespace extends TemplateTestCase {
                 new DefaultEvaluationExceptionHandler ());
 
       context.put ("Array", new String[] {"one", "two", "three"});
-
    }
 
-   public void testWithIF () throws Exception {
+   public void testWithIf () throws Exception {
       String tmpl = "#if (true) { pass } #else { fail }";
       assertStringTemplateEquals (tmpl, "pass ");
    }
 
-   public void testWithELSE () throws Exception {
+   public void testWithElse () throws Exception {
       String tmpl = "#if (false) { fail } #else { true }";
       assertStringTemplateEquals (tmpl, "pass ");
-   }
- 
+   } 
 
    public void testWithForeach1 () throws Exception {
       String tmpl = "#foreach $a in $Array { $a }";
@@ -51,13 +49,10 @@ public class TestWhitespace extends TemplateTestCase {
    public void testWithForeach2 () throws Exception {
       String tmpl = "#foreach $a in $Array { $a}";
       assertStringTemplateEquals (tmpl, "onetwothree");
-      
    } 
 
    public void testWithForeach3 () throws Exception {
       String tmpl = "#foreach $a in $Array {\n$a\n}\n";
       assertStringTemplateEquals (tmpl, "one\ntwo\three\n");
    }
-
-
 }
