@@ -16,6 +16,7 @@ Contents:
 
 <ul>
 
+   <li><a href="#New">About WebMacro</a>
    <li><a href="#About">About WebMacro</a>
    <li><a href="#Contact">Where to learn more</a>
    <li><a href="#License">Licensing</a>
@@ -28,6 +29,38 @@ Contents:
 </ul>
 
 
+<a name="About"><h2>New in this Release</h2></a>
+
+Encoding problems should be fixed. You can pass an encoding to a 
+template when you load it like this: getTemplate(":UTF8:/template.wm") 
+If you leave off the :encoding: from the beginning of the name then
+the encoding is assumed to be UTF8. In order to support this you 
+must also set the same encoding on FastWriter when you create 
+it in standalone mode. 
+<p>
+There are three not-yet-standard directives added: #escape (HTML escaping),
+#encode (URL encoding), and #silence (shut off warnings of nulls). They
+They all take a single variable name as their argument and apply their
+operation to all of its subsequent users. For example "#escape $foo" 
+would cause $foo and $foo.bar both to be HTML escaped. These are 
+here partly because they are probaly going to become standard 
+directives, and to demonstrate how to access and use the filtering
+API in webmacro.
+<p>
+A couple of bugs fixed: especially problems surrounding setBean
+<p>
+There is an experimental parser in org/webmacro/parser and in 
+org/webmacro/directive, please try it out and let us know! It is
+not ready for production use yet.
+<p>
+The C-Blocks configuration setting has been removed. C-Blocks are 
+now never recognized except following a directive. 
+<p>
+Some performance improvements. Notably, if you use the WM internal
+APIs you have to switch to using a FastWriter. PLEASE NOT: you 
+must flush the FastWriter when youa re done writing to it.
+<p>
+
 
 <a name="About"><h2>About WebMacro</h2></a>
 
@@ -36,14 +69,13 @@ HTML and presentational issues out of your Java servlet code--while
 providing web designers with a simple template language capable of
 displaying any Java object.  <p>
 
-WebMacro was mostly written by Justin Wells, with a lot of help from 
-Yuen-Ping Leung, and crucial support from the WebMacro mailing list.  <p>
-
 WebMacro is available for use under the GNU GPL (v2), and the Semiotek
 Public License Version 1.0 (SPL). You may use it under whichever of
 these two licenses you prefer. The terms of the GNU GPL appear in 
 the file "COPYING", the terms of the Semiotek Public License are
 as follows:<p>
+
+See the file "CREDITS" to learn who helped develop WebMacro.<p>
 
 <pre>
 /* ====================================================================
