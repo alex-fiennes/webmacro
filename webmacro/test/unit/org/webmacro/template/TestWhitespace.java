@@ -62,6 +62,6 @@ public class TestWhitespace extends TemplateTestCase {
 
    public void testWithForeach3 () throws Exception {
       String tmpl = "#foreach $a in $Array {\n$a\n}\n";
-      assertStringTemplateEquals (tmpl, "one\ntwo\nthree\n\n");
+      assertStringTemplateEquals (tmpl, "one\ntwo\nthree\n");
    }
 }
