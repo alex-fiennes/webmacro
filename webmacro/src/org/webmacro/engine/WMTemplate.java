@@ -123,7 +123,7 @@ abstract public class WMTemplate implements Template
    /**
      * Template API
      */
-   public final void parse() throws IOException, TemplateException
+   public void parse() throws IOException, TemplateException
    {
       Block newContent = null;
       Map newParameters = null;
@@ -213,6 +213,28 @@ abstract public class WMTemplate implements Template
 
    public void accept(TemplateVisitor v) { _content.accept(v); }
 
+
+    /**
+     * return the default encoding either from the WebMacro config
+     * or the JVM settings
+     *
+     * Note for Unix users: you may need to set the environmental variable
+     * LC_ALL=[locale] to get the default one set up.
+     */
+
+    protected final String getDefaultEncoding()
+    {
+        try
+        {
+            return(String) _broker.get("config", WMConstants.TEMPLATE_INPUT_ENCODING);
+        }
+        catch (Exception e)
+        {
+            return System.getProperty("file.encoding");
+        }
+    }
+
+
    /**
      * Template API
      */
@@ -231,5 +253,13 @@ abstract public class WMTemplate implements Template
    {
       return _parameters;
    }
+   
+   public void setParam(String key, Object value) 
+   {
+      _parameters.put(key,value);
+   }
+
+
+
 }
 

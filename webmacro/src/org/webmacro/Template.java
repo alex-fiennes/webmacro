@@ -52,7 +52,7 @@ public interface Template extends Macro, Visitable
      * this method may throw ParseException or IOException if there is some
      * failure in accessing or parsing the template.
      * @exception IOException if an error occurred reading the template
-     * @exception ParseException if an error occurred parsing the template
+     * @exception TemplateException if an error occurred parsing the template
      */
    public Object getParam(String name) throws IOException, TemplateException;
 
@@ -61,7 +61,20 @@ public interface Template extends Macro, Visitable
      * that have been set in the template. getParam(Object) can be used
      * to look up any particular parameter.
      */
+
+   /**
+     * set a parameter.  Occasinally it's necessary to provide parameters 
+     * externally.  Although these might be considered of a different nature to
+     * those set by #param, they can be stored as such.
+     *
+     * One example might be the output character encoding which is needed 
+     * when the template is played.
+     */
+   
+   public void setParam(String key, Object value);
+
    public Map getParameters();
+   
 
 }
 
