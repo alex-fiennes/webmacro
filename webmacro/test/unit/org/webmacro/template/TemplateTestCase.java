@@ -42,7 +42,8 @@ public abstract class TemplateTestCase extends TestCase {
     */
    public void init () throws Exception
    {
-      System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
+      if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
+         System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
       _wm = createWebMacro ();
       _context = _wm.getContext ();
 
