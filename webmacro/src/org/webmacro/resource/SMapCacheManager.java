@@ -48,7 +48,7 @@ public class SMapCacheManager implements CacheManager {
    private boolean _delayReloadChecks=false;
    private long _checkForReloadDelay;
 
-   private static final TimeLoop _tl;
+   private static TimeLoop _tl;
    private Log _log;
 
    private static final long DURATION = 1000;
