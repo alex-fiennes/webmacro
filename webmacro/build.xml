@@ -1,0 +1,86 @@
+<project name="WebMacro" default="compile" basedir=".">
+
+  <property name="app.name"       value="webmacro"/>
+  <property name="classes"        value="classes"/>
+  <property name="dist"           value="webmacro"/>
+  <property name="javadoc"        value="javadoc"/>
+  <property name="jar"            value="${app.name}.jar"/>
+  <property name="src.jar"        value="${app.name}-src.jar"/>
+
+  <property name="javacc.home"    value="/usr/local/java_tools/javacc" />
+  <taskdef name="javacc" 
+   classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
+
+  <target name="prepare">
+    <mkdir  dir="${classes}"/>
+    <mkdir  dir="${javadoc}"/>
+    <mkdir  dir="${dist}"/>
+  </target>
+
+
+  <target name="clean">
+    <delete dir="${classes}"/>
+    <delete dir="${javadoc}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+
+  <target name="compile" depends="prepare">
+    <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
+            javacchome="${javacc.home}" />
+
+    <javac srcdir="src" destdir="${classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath>
+        <fileset dir="lib">
+          <include name="*.jar" /> <include name="*.zip" />
+        </fileset>
+        <pathelement location="${classes}" />
+      </classpath>
+    </javac>
+  </target>
+
+
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="src" destdir="${javadoc}"  
+             packagenames="org.webmacro.*" author="true" version="true" 
+             use="true">
+      <classpath>
+        <fileset dir="lib">
+          <include name="*.jar" /> <include name="*.zip" />
+        </fileset>
+        <pathelement location="${classes}" />
+      </classpath>
+    </javadoc>
+  </target>
+
+
+  <target name="jar" depends="prepare,compile">
+    <jar jarfile="${jar}" basedir="${classes}"/>
+    <jar jarfile="${src.jar}" basedir="." 
+         includes="src/**,webroot/**,build.xml"/>
+  </target>
+
+  <target name="dist" depends="prepare,compile,jar,javadoc">
+    <mkdir dir="${dist}/webroot" />
+    <copy todir="${dist}/webroot">
+      <fileset dir="webroot"/>
+    </copy>
+    <mkdir dir="${dist}/api" />
+    <copy todir="${dist}/api">
+      <fileset dir="${javadoc}"/>
+    </copy>
+    <copy todir="${dist}" file="${src.jar}"/>
+    <copy todir="${dist}" file="${jar}"/>
+    <copy todir="${dist}">
+      <fileset dir="webroot" 
+               includes="LICENSE,CREDITS,README.html,RELEASE-NOTES.html"/>
+    </copy>
+  </target>
+
+  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+
+
+</project>
+
+
