@@ -27,6 +27,9 @@ import org.webmacro.*;
 
 public abstract class Expression { 
 
+  final private static org.webmacro.engine.UndefinedMacro UNDEF 
+    = org.webmacro.engine.UndefinedMacro.getInstance();
+  
   public abstract static class ExpressionBase implements Macro, Visitable {
     protected ExpressionBase() {}
 
@@ -45,7 +48,10 @@ public abstract class Expression {
       return false;
     else if (o instanceof Boolean)
       return ((Boolean) o).booleanValue();
-    else 
+    //  added by Keats 30-Nov-01
+    else if (o == UNDEF)
+      return false;
+    else
       return (o != null);
   }
 
