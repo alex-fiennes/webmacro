@@ -93,7 +93,8 @@ public class TypeDirective extends Directive {
      * configure directive for this run and return 'this'
      */
     public Object build (DirectiveBuilder builder,  BuildContext bc) throws BuildException {
-        if (!isEnabled (bc.getBroker()))
+       
+        if (!isEnabled (builder.getName(), bc.getBroker()))
             return null;
         
         String classname = (String) builder.getArg (TYPE_CLASSNAME, bc);
@@ -168,9 +169,9 @@ public class TypeDirective extends Directive {
      * Check the configuration and see if we're enabled or not.  By default, we 
      * are <b>enabled</b>, even if the configuration key doesn't exist.
      */
-    private final boolean isEnabled (Broker broker) {
+    private final boolean isEnabled (String directiveName, Broker broker) {
         Settings s = broker.getSettings ();
-        return s.getBooleanSetting ("TypeDirective.Enabled", true);
+        return s.getBooleanSetting (directiveName + ".Enabled", true);
     }
     
     //

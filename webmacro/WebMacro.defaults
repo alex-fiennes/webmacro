@@ -172,7 +172,7 @@ Directives.type:       org.webmacro.directive.TypeDirective
 # Directive Configuration
 #
 
-TypeDirective.Enabled = true
+type.Enabled = true
 
 
 # The following are tools which are added to your WebContext. You can 
