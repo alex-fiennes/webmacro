@@ -1061,41 +1061,6 @@ final class DirectAccessor extends Accessor {
       _methods.addElement(m);
    }
 
-
-   final boolean matches(Class[] sig, Class[] args) {
-      if (args.length != sig.length)
-         return false;
-
-      try {
-         for (int i = 0; i < sig.length; i++) {
-            Class s = sig[i];
-            Class a = args[i];
-            if (s.isPrimitive()) {
-               if ((s == Integer.TYPE && a == Integer.class) ||
-                     (s == Boolean.TYPE && a == Boolean.class) ||
-                     (s == Character.TYPE && a == Character.class) ||
-                     (s == Long.TYPE && a == Long.class) ||
-                     (s == Short.TYPE && a == Short.class) ||
-                     (s == Double.TYPE && a == Double.class) ||
-                     (s == Float.TYPE && a == Float.class) ||
-                     (s == Void.TYPE && a == Void.class) ||
-                     (s == Byte.TYPE && a == Byte.class))
-                  continue;
-               else
-                  return false;
-            }
-            else if (a == null || s.isAssignableFrom(a))
-               continue;
-            else
-               return false;
-         }
-      }
-      catch (NullPointerException e) {
-         return false; // XXX: block nulls, isAssign... throws this
-      }
-      return true;
-   }
-
    final Object get(Object instance, Object[] args)
          throws PropertyException, NoSuchMethodException {
       Class[] types = new Class[args.length];
@@ -1111,8 +1076,8 @@ final class DirectAccessor extends Accessor {
       for (int i = 0; i < _methods.size(); i++) {
          Method m = (Method) _methods.elementAt(i);
          Class[] sig = m.getParameterTypes();
-         if (matches(sig, types)) {
-            return PropertyOperator.invoke(m, instance, args);
+         if (IntrospectionUtils.matches(sig,types)) {
+            return PropertyOperator.invoke(m,instance,args);
          }
       }
 
