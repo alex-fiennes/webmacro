@@ -37,7 +37,7 @@ public interface CachingProviderMethods {
    /**
      * Load an object from permanent storage (or construct it) on
      * demand.  */
-   public CacheableElement load(String query)
+   public Object load(String query, CacheElement ce)
       throws ResourceException; 
 
    /**

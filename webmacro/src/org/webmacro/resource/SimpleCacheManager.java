@@ -53,6 +53,15 @@ public class SimpleCacheManager implements CacheManager {
       _tl.start();
    }
 
+   private static class ScmCacheElement extends CacheElement {
+      private SoftReference reference; 
+      private CacheReloadContext reloadContext = null;
+
+      public void setReloadContext(CacheReloadContext rc) { 
+         this.reloadContext = rc;
+      }
+   }
+
    public SimpleCacheManager() { 
       for (int i=0; i<_writeLocks.length; i++) {
         _writeLocks[i] = new Object();
@@ -82,6 +91,10 @@ public class SimpleCacheManager implements CacheManager {
       _cache = null;
    }
 
+   public boolean supportsReload() {
+      return true;
+   }
+
    /**
      * Get the object associated with the specific query, first 
      * trying to look it up in a cache. If it's not there, then
@@ -89,22 +102,22 @@ public class SimpleCacheManager implements CacheManager {
      */
    public Object get(final String query, CachingProviderMethods helper) 
    throws ResourceException {
-      CacheableElement r;
+      ScmCacheElement r;
       Object o = null;
-      boolean reload = true;
+      boolean reload = false;
 
       // bg; Reordered this logic to only call shouldReload if we have a 
       // candidate for reloading.  
       try {
-         r = (CacheableElement) _cache.get(query);
+         r = (ScmCacheElement) _cache.get(query);
          if (r != null) 
-            o = ((SoftReference) r._resource).get();
+            o = r.reference.get();
       } catch (NullPointerException e) {
          throw new ResourceException(this + " is not initialized", e);
       }
       // should the template be reloaded, regardless of cached status?
-      if (o != null) 
-         reload = r.shouldReload();
+      if (o != null && r.reloadContext != null) 
+         reload = r.reloadContext.shouldReload();
 
       if (o == null || reload) {
 
@@ -118,14 +131,15 @@ public class SimpleCacheManager implements CacheManager {
          if (lockIndex < 0) lockIndex = -lockIndex;
          synchronized(_writeLocks[lockIndex])
          {
-            r = (CacheableElement) _cache.get(query);
+            r = (ScmCacheElement) _cache.get(query);
             if (r != null)
-               o = ((SoftReference) r._resource).get();
+               o = r.reference.get();
+            else 
+               r = new ScmCacheElement();
             if (o == null || reload) {
-               r = helper.load(query);
-               if (r != null) {
-                  o = r._resource;
-                  r._resource = new SoftReference(o);
+               o = helper.load(query, r);
+               if (o != null) {
+                  r.reference = new SoftReference(o);
                   _cache.put(query, r);
                }
                try {
