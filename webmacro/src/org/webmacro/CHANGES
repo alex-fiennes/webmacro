@@ -1,4 +1,13 @@
 
+-- WMTemplate has an overridable getParser() method to support alternates
+-- switched to com.sun.java.util.collections in JDK1.1
+-- InvalidContextException is deprecated, now ContextException
+-- script language now has #local, #tool, and #property declarations for
+   variables, so that you can exactly specify which you mean in 
+   sub-templates
+-- Context is now an intelligent object containing a variety of kinds of 
+   things: local variables, a bean, methods to access properties of the 
+   bean, tools, methods to access tools and register them 
 -- use directive no longer uses the getMarker() mechanism; the expectation
    now is that it takes a complete block delimited by either { .. } or 
    by #begin .. #end. 
