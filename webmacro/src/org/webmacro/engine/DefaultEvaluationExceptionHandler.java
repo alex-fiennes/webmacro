@@ -75,25 +75,20 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
 
 
       // log the warning message
-      if (_log != null)
+      if (_log != null) {
          _log.error(problem.getMessage());
+      }
 
 
-      //
       // we want to silently ignore these exceptions
-      //
       if (problem instanceof PropertyException.NoSuchVariableException
             || problem instanceof PropertyException.NullValueException
             || problem instanceof PropertyException.NullToStringException) {
 
          return;
-
-         //
-         // but we need to complain about anything else
-         //
       }
       else {
-
+         // but we need to complain about anything else
          throw (PropertyException) problem;
 
       }
@@ -116,26 +111,20 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
       }
 
       // log the error message
-      if (_log != null)
+      if (_log != null) {
          _log.error(problem.getMessage());
+      }
 
-
-      //
       // we just want to return an error message for these exceptions
-      //
       if (problem instanceof PropertyException.NoSuchVariableException
             || problem instanceof PropertyException.UndefinedVariableException
             || problem instanceof PropertyException.NullValueException
             || problem instanceof PropertyException.NullToStringException) {
 
          return errorString(problem.getMessage());
-
-         //
-         // but we need to complain about anything else
-         //
       }
       else {
-
+         // but we need to complain about anything else
          throw (PropertyException) problem;
       }
    }
