@@ -34,6 +34,9 @@ public class TestBlocks extends TemplateTestCase {
    public void testBeginEnd () throws Exception {
       String tmpl = "#if (true) #begin pass #end #else #begin fail #end";
       assertStringTemplateEquals (tmpl, "pass");
+
+      tmpl = "#if (true)\n #begin pass\n #end\n #else\n #begin fail\n #end";
+      assertStringTemplateEquals (tmpl, "pass");
    }
 
    public void testOnlyEnd () throws Exception {
