@@ -1,3 +1,9 @@
+-- Jan-2000 fergus: added NativeAsciiReader.java for use with URLTemplate.  
+   Any files read with the pseudo encoding "native_ascii" are read as if they
+   were converted to unicode escape syntax with the JDK utility 
+   native2ascii.   Thus one can translate all ones templates at deployment time
+   ('ant' has this facility built in) and have a single global encoding.
+
 -- Jan-2000 fergus: upgraded WM, WMServlet & Broker to use the earlier change
    to Settings.  By default WMSerlvet will pass through the classloader of the
    servlet, which may be different from the classloader that loads in WebMacro
