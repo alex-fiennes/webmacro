@@ -102,16 +102,22 @@ public class Settings {
      * Load settings from the supplied fileName, searching for 
      * the file along the classpath, using external classloader
      */
-   public void load(String fileName, ClassLoader cl) throws InitException, IOException 
+   public void load(String fileName, ClassLoader _cl) throws InitException, IOException 
    {  
       if (debugClassLoaders) {     
-          System.out.println("Loading settings from "+fileName);
-          System.out.println("Settings class ClassLoader: "+Settings.class.getClassLoader());
-          System.out.println("Given ClassLoader: "+cl);
+         System.out.println("Loading settings from "+fileName);
+         System.out.println("Settings class ClassLoader: "+Settings.class.getClassLoader());
+         System.out.println("Given ClassLoader: "+_cl);
       }
       URL u = null;
-      if (cl != null) {
-         u = cl.getResource(fileName);
+      if (_cl != null) {
+         u = _cl.getResource(fileName);
+      }
+      if (u == null) {
+         _cl = Settings.class.getClassLoader();
+         if (_cl != null) {
+            u = _cl.getResource(fileName);
+         }
       }
       if (u == null) {
          u = ClassLoader.getSystemResource(fileName);
@@ -126,7 +132,7 @@ public class Settings {
          error.append("\n");
          error.append("   my classpath:\n");
          try {
-            buildPath(error, fileName, cl.getResources("."));
+            buildPath(error, fileName, _cl.getResources("."));
          } catch (Exception e) { }
          error.append("\n");
          error.append("   system classpath:\n");
