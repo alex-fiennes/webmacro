@@ -41,6 +41,15 @@ abstract public class CachingProvider implements Provider
    abstract public TimedReference load(String query)
       throws NotFoundException; 
 
+
+	/**
+	  * should object be loaded again?  or is the cache value valid?<p>
+	  *
+	  * regardless of return value, CachingProvider will still reload
+	  * the object if CachingProvider's cache is invalid
+	  */
+	abstract public boolean shouldReload(String query);
+
    /**
      * If you over-ride this method be sure and call super.init(...)
      */
@@ -77,7 +86,7 @@ abstract public class CachingProvider implements Provider
       Object prof = null;
       if (Flags.PROFILE && (_prof != null)) prof = _prof.start(query);
       try {
-
+			boolean reload = shouldReload (query);	// should the template be reloaded, regardless of cached status?
          TimedReference r;
          try {
             r = (TimedReference) _cache.get(query);
@@ -88,7 +97,7 @@ abstract public class CachingProvider implements Provider
          if (r != null) {
             o = r.get();
          }
-         if (o == null) {
+         if (o == null || reload) {
             // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
             // this looks like double-checked locking but it isn't, we
             // synchronized on a less expensive lock inside _cache.get()
@@ -102,7 +111,7 @@ abstract public class CachingProvider implements Provider
                if (r != null){ 
                  o = r.get();
                }
-               if (o == null) {
+               if (o == null || reload) {
                   r = load(query);
                   if (r != null) {
                      _cache.put(query,r);
@@ -110,13 +119,15 @@ abstract public class CachingProvider implements Provider
                   o = r.get();
                   try {
                      _log.debug("cached: " + query + " for " + r.getTimeout());
-                     _tl.scheduleTime( 
-                        new Runnable() { 
-                           public void run() { 
-                              _cache.remove(query); 
-                              _log.debug("cache expired: " + query);
-                           } 
-                        }, r.getTimeout());
+							 if (r.getTimeout() >= 0) {	// if timeout of TimedReference is < 0,then don't schedule a removal from cache
+	                     _tl.scheduleTime( 
+	                        new Runnable() { 
+	                           public void run() { 
+	                              _cache.remove(query); 
+	                              _log.debug("cache expired: " + query);
+	                           } 
+	                        }, r.getTimeout());
+							 }
                   } catch (Exception e) {
                      _log.error("CachingProvider caught an exception", e);
                   }
