@@ -18,15 +18,19 @@ public class TestArithmetic extends TemplateTestCase {
   private String[] 
     integers = new String[] { "in5", "in2", "in1", "i0", "i1", "i2", "i5" },
     longs = new String[] { "ln5", "ln2", "ln1", "l0", "l1", "l2", "l5" },
-    shorts = new String[] { "sn5", "sn2", "sn1", "s0", "s1", "s2", "s5" };
+    shorts = new String[] { "sn5", "sn2", "sn1", "s0", "s1", "s2", "s5" },
+    bS = new String[] { "btrue", "bfalse" };
   private int[] values = new int[] { -5, -2, -1, 0, 1, 2, 5};
-  
+  private boolean[] bV = new boolean[] { true, false };
+
   protected void stuffContext(Context c) {
     for (int i=0; i<N; i++) {
       c.put(integers[i], new Integer((int) values[i]));
       c.put(longs[i], new Long(values[i]));
       c.put(shorts[i], new Short((short) values[i]));
     }
+    for (int i=0; i<2; i++) 
+      c.put(bS[i], new Boolean(bV[i]));
   }
 
   protected void setUp() throws Exception {
@@ -48,6 +52,11 @@ public class TestArithmetic extends TemplateTestCase {
                                Integer.toString(result));
   }
   
+  public void assertBooleanExpr(String expr, boolean result) {
+    assertStringTemplateEquals("#set $result=(" + expr + ") $result", 
+                               result? "true" : "false");
+  }
+  
   public void assertBinaryExpr(String a, String b, String op, 
                                int result) {
     assertArithmeticExpr("$" + a + " " + op + " " + "$" + b, result);
@@ -60,7 +69,48 @@ public class TestArithmetic extends TemplateTestCase {
   public void testAssociativity() {
     assertArithmeticExpr("1 + 2 + 3 - 2 -1 + -4 - -4", 
                           1 + 2 + 3 - 2 -1 + -4 - -4);
-    assertArithmeticExpr("1 + 1 - 1 + 1", 1 + 1 - 1 + 1);
+    assertArithmeticExpr("1 + 1 - 1 + 1", 
+                          1 + 1 - 1 + 1);
+    assertArithmeticExpr("1 * 2 * 3 / 2 * -4 / -4", 
+                          1 * 2 * 3 / 2 * -4 / -4);
+  }
+
+  public void testBoolean() {
+    for (int i=0; i<2; i++) 
+      for (int j=0; j<2; j++) {
+        assertBooleanExpr("$" + bS[i] + " AND " + "$" + bS[j],
+                          bV[i] && bV[j]);
+        assertBooleanExpr("$" + bS[i] + " && " + "$" + bS[j],
+                          bV[i] && bV[j]);
+        assertBooleanExpr("$" + bS[i] + " OR " + "$" + bS[j],
+                          bV[i] || bV[j]);
+        assertBooleanExpr("$" + bS[i] + " || " + "$" + bS[j],
+                          bV[i] || bV[j]);
+
+        assertBooleanExpr("$" + bS[i] + " && " + "!$" + bS[j],
+                          bV[i] && !bV[j]);
+        assertBooleanExpr("!$" + bS[i] + " && " + "$" + bS[j],
+                          !bV[i] && bV[j]);
+        assertBooleanExpr("!$" + bS[i] + " && " + "!$" + bS[j],
+                          !bV[i] && !bV[j]);
+
+        assertBooleanExpr("$" + bS[i] + " || " + "!$" + bS[j],
+                          bV[i] || !bV[j]);
+        assertBooleanExpr("!$" + bS[i] + " || " + "$" + bS[j],
+                          !bV[i] || bV[j]);
+        assertBooleanExpr("!$" + bS[i] + " || " + "!$" + bS[j],
+                          !bV[i] || !bV[j]);
+
+        // De Morgan's laws
+        assertBooleanExpr("!($" + bS[i] + " || " + "$" + bS[j] + ")",
+                          !bV[i] && !bV[j]);
+        assertBooleanExpr("!($" + bS[i] + " && " + "$" + bS[j] + ")",
+                          !bV[i] || !bV[j]);
+        assertBooleanExpr("(!$" + bS[i] + " || " + "!$" + bS[j] + ")",
+                          !(bV[i] && bV[j]));
+        assertBooleanExpr("(!$" + bS[i] + " && " + "!$" + bS[j] + ")",
+                          !(bV[i] || bV[j]));
+      }
   }
 
   public void testBinary()  {
