@@ -174,7 +174,12 @@ public class TemplateTool implements org.webmacro.ContextTool {
             _context.put("args", args);
             return eval();
         }
-        
+               
+        public Object eval(java.util.Map map) throws PropertyException {
+            _context.putAll(map);
+            return eval();
+        }
+
         /** Copies all variables from the current request context into the context
          * of the macro.
          */        
