@@ -17,7 +17,7 @@ import org.apache.regexp.RE;
  * The file /etc/password should exist on your
  * filesystem and contain "root:" somewhere in it
  * 
- * And your computer will need access to http://www.yahoo.com/
+ * And your computer will need access to http://www.webmacro.org/
  */
 public class TestParseInclude extends TemplateTestCase {
 
@@ -46,14 +46,24 @@ public class TestParseInclude extends TemplateTestCase {
                                  "pass");
    }
 
+   /** test a template that is greater than 2k in size */
+   public void testBigTemplate () throws Exception {
+      // read in a big template 
+      // and trim off whitespace to make matching easier
+      String tmpl = templateFileToString ("org/webmacro/template/big_template.wm");
+      tmpl = tmpl.trim ();
+
+      assertStringTemplateMatches (tmpl, "pass$");
+   }
+
    public void testInclude () throws Exception {
       // include /etc/password
       assertStringTemplateMatches ("#include \"/etc/passwd\"", 
                                    ".*root:.*");
 
       // include http://www.yahoo.com/
-      assertStringTemplateMatches ("#include \"http://www.yahoo.com\"",
-                                   ".*Yahoo\\!.*");
+      assertStringTemplateMatches ("#include \"http://www.webmacro.org\"",
+                                   ".*WebMacro.*");
 
    }
 
