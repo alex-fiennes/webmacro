@@ -55,7 +55,6 @@ public class WM implements WebMacro
 
    private Provider _tmplProvider;
    private Provider _urlProvider;
-   private Provider _configProvider;
    private Log _log;
 
    public WM() throws InitException
