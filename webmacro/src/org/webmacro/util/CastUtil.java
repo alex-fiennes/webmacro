@@ -180,6 +180,10 @@ public class CastUtil extends java.lang.Object
         return d;
     }
 
+    public static String toString(java.lang.Object o) {
+	    return (o != null ? o.toString() : null);
+    }
+
     static public void main (String[] args)
     {
         CastUtil cu = CastUtil.getInstance();
