@@ -1,3 +1,5 @@
+-- Feb-2000 brian: Fixed context-recycling bug in WM; make FastWrite not final
+
 -- Feb-2000 brian: Integrated Keat's PropertyOperator changes so we can
    put arrays of primitives into the context and iterate on them; add 
    convenience methods so we can add primitives to the context too. 
