@@ -5,7 +5,8 @@ package org.webmacro;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
-import org.webmacro.util.java2.*;
+import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.Map;
 
 /**
   * A Context is the execution context of a WebMacro request. It represents
@@ -31,13 +32,13 @@ public class Context implements Cloneable {
 
    private Object _bean; // root of property introspection
 
-   private HashMap _toolbox; // contains tool initializers
-   private HashMap _tools = null;   // contains in-use tools
+   private Map _toolbox; // contains tool initializers
+   private Map _tools = null;   // contains in-use tools
 
-   private HashMap _locals = null; // local variables
+   private Map _locals = null; // local variables
 
    private Object[] _beanState = null; // managed by push/pop
-   private HashMap[] _localState = null; // managed by push/pop
+   private Map[] _localState = null; // managed by push/pop
    private int _state = 0; // managed by push/pop
 
    /**
@@ -61,12 +62,12 @@ public class Context implements Cloneable {
 
    /**
      * Create a new context working from the specified broker with the 
-     * tools available in the supplied toolbox HashMap. If a bean 
+     * tools available in the supplied toolbox Map. If a bean 
      * is specified (bean != null) then it will be used for property
      * introspection, otherwise property introspection will work with 
      * the local variables stored in this context.
      */
-   public Context(final Broker broker, final HashMap toolbox, 
+   public Context(final Broker broker, final Map toolbox, 
          final Object bean)
    {
       _broker = broker;
@@ -267,7 +268,7 @@ public class Context implements Cloneable {
    /**
      * Get the local variables as a HashMap
      */
-   final public HashMap getLocalVariables() {
+   final public Map getLocalVariables() {
       if (_locals == null) {
          _locals = new HashMap();
       }

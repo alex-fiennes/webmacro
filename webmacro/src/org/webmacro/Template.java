@@ -22,7 +22,8 @@ package org.webmacro;
 
 import java.util.*;
 import java.io.*;
-import org.webmacro.util.java2.*;
+
+import com.sun.java.util.collections.Map;
 
 public interface Template extends Filter
 {
@@ -62,7 +63,7 @@ public interface Template extends Filter
      * that have been set in the template. getParam(Object) can be used
      * to look up any particular parameter.
      */
-   public HashMap getParameters();
+   public Map getParameters();
 
 }
 

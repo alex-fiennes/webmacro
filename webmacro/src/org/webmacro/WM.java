@@ -23,9 +23,10 @@ import org.webmacro.broker.*;
 import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
-import org.webmacro.util.java2.*;
 import java.util.*;
 
+import com.sun.java.util.collections.Map;
+import com.sun.java.util.collections.HashMap;
 
 /**
   * This class implements the WebMacro Manager interface. You can instantiate 
@@ -39,7 +40,7 @@ import java.util.*;
 public class WM implements WebMacro
 {
 
-   final private static HashMap _brokers = new HashMap();
+   final private static Map _brokers = new HashMap();
    final private static BrokerOwner _default = new BrokerOwner();
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER

@@ -20,7 +20,6 @@
 
 package org.webmacro.servlet;
 
-import org.webmacro.util.java2.*;
 import org.webmacro.*;
 import java.util.*;
 import java.lang.reflect.*;
