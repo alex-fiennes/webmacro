@@ -186,7 +186,6 @@ TOKEN_MGR_DECLS : {
   <NULL:      "null">
 | <TRUE:      "true">
 | <FALSE:     "false">
-| <WORD:      <_IDENTIFIER> > 
 | <WS:        (<_WHITESPACE>)+ >
 | <NEWLINE:   <_NEWLINE> >
 | <LPAREN:    "(">
@@ -200,16 +199,17 @@ TOKEN_MGR_DECLS : {
 | <OP_GE:     ">=">
 | <OP_EQ:     "==">
 | <OP_SET:    "=">
-| <OP_NE:     "!=">
+| <OP_NE:     "!=" | "<>">
 | <OP_PLUS:   "+">
 | <OP_MINUS:  "-">
 | <OP_MULT:   "*">
 | <OP_DIV:    "/">
-| <OP_AND:    "&&">
-| <OP_OR:     "||">
-| <OP_NOT:    "!">
+| <OP_AND:    "&&" | "AND">
+| <OP_OR:     "||" | "OR">
+| <OP_NOT:    "!"  | "NOT">
 | <COMMA:     ",">
 | <SEMI:      ";">
+| <WORD:      <_IDENTIFIER> > 
 | <NUMBER:    (<_NUM_CHAR>)+>
 | <OTHER:     ( ~[] ) >
 }
@@ -606,7 +606,7 @@ Object Term() : {
     | <NULL>           { e = null; } 
     | <TRUE>           { e = Boolean.TRUE; } 
     | <FALSE>          { e = Boolean.FALSE; }
-    | <OP_NOT>e=Term() { e = new Expression.NotBuilder(e); }
+    | <OP_NOT> [<WS>] e=Term() { e = new Expression.NotBuilder(e); }
     | t=<NUMBER>           
       { try { e = new Long(t.image); } 
         catch (NumberFormatException ex) { e=null; } }
@@ -661,7 +661,8 @@ Token RelOp() : {
   Token t;
 }
 {
-  ( t=<OP_EQ> | t=<OP_NE> | t=<OP_GT> | t=<OP_GE> | t=<OP_LE> | t=<OP_LT> )
+  ( t=<OP_EQ> | t=<OP_SET> | t=<OP_NE> 
+    | t=<OP_GT> | t=<OP_GE> | t=<OP_LE> | t=<OP_LT> )
   { return t; }
 }
 
@@ -681,6 +682,7 @@ Object CExpression() : {
       return e1;
     else switch (op.kind) {
       case OP_EQ:  return new Expression.CompareEqBuilder(e1, e2);
+      case OP_SET: return new Expression.CompareEqBuilder(e1, e2);
       case OP_NE:  return new Expression.CompareNeBuilder(e1, e2);
       case OP_GT:  return new Expression.CompareGtBuilder(e1, e2);
       case OP_GE:  return new Expression.CompareGeBuilder(e1, e2);
