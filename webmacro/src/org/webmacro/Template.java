@@ -81,5 +81,14 @@ public interface Template extends Macro, Visitable
    public String getName();
 
    public void setName(String name);
+
+   /**
+    * Get a Map containing all #macros defined for this template.
+    * The returned Map can be <code>null</code> if this Template
+    * does not contain Macros, or if this Template has not been
+    * parsed yet.
+    * @return
+    */
+   public Map getMacros();
 }
 

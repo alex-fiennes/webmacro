@@ -25,7 +25,6 @@ package org.webmacro.engine;
 
 import java.util.*;
 import java.io.*;
-import org.webmacro.util.*;
 import org.webmacro.*;
 
 /**
@@ -76,6 +75,12 @@ abstract public class WMTemplate implements Template
      * Template parameters
      */
    private Map _parameters;
+
+  /**
+   * Template Macros
+   */
+   private Map _macros;
+
 
    /**
      * Create a new Template. Constructors must supply a broker.
@@ -141,6 +146,7 @@ abstract public class WMTemplate implements Template
    {
       Block newContent = null;
       Map newParameters = null;
+      Map newMacros = null;
       Reader in = null;
       try {
          Parser parser = getParser();
@@ -149,6 +155,7 @@ abstract public class WMTemplate implements Template
          in.close();
          BuildContext bc = new BuildContext(_broker);
          newParameters = bc.getMap();
+         newMacros = bc.getMacros();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;
@@ -164,12 +171,22 @@ abstract public class WMTemplate implements Template
       } finally {
          try { in.close(); } catch (Exception e) { }
          _parameters = newParameters;
-         _content = newContent; 
+         _content = newContent;
+         _macros = newMacros;
       }
    }
 
+    /**
+     * Get the #macros' defined for this template.
+     *
+     * @return the #macro's defined for this template, or null if this template has
+     * not yet beed <code>parse()'d</code>.
+     */
+    public Map getMacros() {
+        return _macros;
+    }
 
-   /**
+    /**
      * Parse the Template against the supplied context data and 
      * return it as a string. If the operation fails for some reason, 
      * such as unable to read template or unable to introspect the context
@@ -198,7 +215,6 @@ abstract public class WMTemplate implements Template
      * be written to the stream in that case.)
      * <p>
      * @exception IOException if there is a problem writing to the Writer
-     * @return whether the operation was a success
      */
    public final void write(FastWriter out, Context data) 
      throws IOException, PropertyException
