@@ -130,17 +130,10 @@ public class CountDirective extends org.webmacro.directive.Directive {
                 throw new PropertyException ("Step value cannot be null");
         }
 
-        // negate the step, if necessary
-        if ((start > end && step > 0) || (start < end && step < 0))
-            step = -step;
-
         // just do it
-        for (; ; start+=step) {
+        for (; start<=end; start+=step) {
             _iterator.setValue(context, new Integer(start));
             _body.write(out, context);
-
-            if (start==end)
-                break;
         }
     }
 }
