@@ -27,7 +27,11 @@ import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
 
 /**
+ * A ContextTool which allows one to snoop information about an object
+ * in the active Context.
+ *
  * @author Zeljko Trogrlic
+ * @author Eric B. Ridge (mailto: ebr@tcdi.com)
  */
 
 public class VariableTool implements ContextTool {
@@ -48,7 +52,36 @@ public class VariableTool implements ContextTool {
    public void destroy(Object o) {
    }
 
+   /**
+    * Is the specified object <code>name</code> defined in the active
+    * Context?
+    */
    public boolean isDefined(Object name) {
       return context.containsKey(name);
+   }
+   
+   /**
+    * Is the specified object, <code>obj</code>, an instance of the
+    * specified <code>className</code>?<p>
+    *
+    * If either parameter is <code>null</code> this method returns false.<br>
+    * If <code>className</code> cannot be found, this method returns false.<br>
+    *
+    * @param obj an Object from your template Context
+    * @param className the <b>fully-qualified</b> class name to check 
+    */
+   public boolean isInstanceOf(Object obj, String className) {
+      try {
+         return (obj != null && className != null) 
+             && (obj.getClass().isAssignableFrom (Class.forName(className)));     
+      } catch (ClassNotFoundException cnfe) {
+         context.getBroker().getLog("VariableTool")
+                            .error ("VariableTool could not locate the class: /" 
+                                    + className + "/");
+      } catch (Exception e) {
+         context.getBroker().getLog("VariableTool")
+                            .error ("An unexpected exception occured", e);
+      }
+      return false; 
    }
 }
