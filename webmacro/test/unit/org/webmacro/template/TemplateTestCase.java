@@ -79,7 +79,9 @@ public abstract class TemplateTestCase extends TestCase {
 	 	byte[] value = new byte[in.available()];
 	 	in.read(value);
 	 	in.close();
-	 	return value.toString();
+	 	String string = new String(value);
+	 	System.out.println("file content=" + string);
+	 	return string;
 	}
 
 	/**
