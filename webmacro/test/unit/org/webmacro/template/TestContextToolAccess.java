@@ -19,7 +19,7 @@ public class TestContextToolAccess extends TemplateTestCase
 
     public void testContextToolMethodCall()
     {
-        assertStringTemplateEquals("$Text.HTMLEncode('&amp;')", "&");
+        assertStringTemplateEquals("$Text.HTMLEncode('&')", "&amp;");
     }
 
     protected void stuffContext( Context context ) throws Exception
