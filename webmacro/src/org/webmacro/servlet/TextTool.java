@@ -245,14 +245,14 @@ public class TextTool implements ContextTool
      * encoding
      */
     public static String bytesToString (byte[] bytes) {
-      return new String (bytes)  
+      return new String (bytes);  
     }
     
     /**
      * convert a <code>byte[]</code> to a String using the specified
      * encoding
      */
-    public Static String bytesToString (byte[] bytes, String encoding) {
+    public static String bytesToString (byte[] bytes, String encoding) {
       return new String (bytes, encoding);
     }
     
