@@ -267,13 +267,14 @@ WebContextTools.Cookie: org.webmacro.servlet.CookieTool
 WebContextTools.Response: org.webmacro.servlet.ResponseTool 
 WebContextTools.Request: org.webmacro.servlet.RequestTool 
 WebContextTools.Session: org.webmacro.servlet.SessionTool
-WebContextTools.Math: org.webmacro.servlet.MathTool
-WebContextTools.Text: org.webmacro.servlet.TextTool
-WebContextTools.Type: org.webmacro.servlet.TypeTool
-WebContextTools.Variable: org.webmacro.servlet.VariableTool
 
 ContextTools:
 
+ContextTools.Math: org.webmacro.servlet.MathTool
+ContextTools.Text: org.webmacro.servlet.TextTool
+ContextTools.Type: org.webmacro.servlet.TypeTool
+ContextTools.Variable: org.webmacro.servlet.VariableTool
+ContextTools.List: org.webmacro.servlet.ListTool
 
 # The following are the parsers available to WebMacro. The parser 
 # which answers to "wm" will be used for most things, but you can  
