@@ -58,7 +58,7 @@ public class CrankyEvaluationExceptionHandler
                         Exception problem) 
    throws PropertyException {
      if (_log != null)
-       _log.error("Error evaluating $" + variable.getVariableName()
+       _log.warning("Error evaluating $" + variable.getVariableName()
                 + " at " + context.getCurrentLocation(), problem);
 
      if (problem instanceof PropertyException)
@@ -75,7 +75,7 @@ public class CrankyEvaluationExceptionHandler
                         Exception problem) 
    throws PropertyException {
      if (_log != null)
-       _log.error("Error expanding $" + variable.getVariableName()
+       _log.warning("Error expanding $" + variable.getVariableName()
                   + " at " + context.getCurrentLocation(), problem);
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
