@@ -84,16 +84,15 @@
             <fileset dir="${dest.classes}">
             </fileset>
         </copy>
-        
     </target>
 
     <target name="examplewebapp" depends="webapp">
         <javac
 			srcdir="examples"
-			destdir="${dest.classes}"
+			destdir="${webapp.classes}"
 			debug="on"
             extdirs="lib"
-            includes="examples/**/*.java"
+            includes="*.java"
         />
         <copy todir="${webapp.tmpl}" >
             <fileset dir="examples">
