@@ -41,6 +41,8 @@ public class SimpleCacheManager implements CacheManager {
    private Object[] _writeLocks = new Object[101];
    private int _cacheDuration;
    private String _resourceType;
+   private Settings _ourSettings;
+   private boolean _reloadOnChange=true;
 
    private static final TimeLoop _tl;
    private Log _log;
@@ -70,10 +72,24 @@ public class SimpleCacheManager implements CacheManager {
    
    public void init(Broker b, Settings config, String resourceType) 
    throws InitException {
+      int cacheSize; 
+
       _log = b.getLog("resource", "Object loading and caching");
-      _cache = new ScalableMap(1001);
-      _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
       _resourceType = resourceType;
+      _ourSettings = new SubSettings(config, 
+                                     "SimpleCacheManager." + _resourceType);
+      cacheSize = _ourSettings.getIntegerSetting("CacheBuckets", 1001);
+      _cache = new ScalableMap(cacheSize);
+      _cacheDuration = _ourSettings.getIntegerSetting("ExpireTime", -1001);
+      if (_cacheDuration == -1001) 
+        _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
+      _reloadOnChange = 
+        (_ourSettings.containsKey("ReloadOnChange"))
+        ? _ourSettings.getBooleanSetting("ReloadOnChange")
+        : true;
+      _log.info("SimpleCacheManager." + _resourceType + ": " 
+                + "buckets=" + cacheSize + "; expireTime=" + _cacheDuration
+                + "; reload=" + _reloadOnChange);
    }
 
    /**
@@ -92,7 +108,7 @@ public class SimpleCacheManager implements CacheManager {
    }
 
    public boolean supportsReload() {
-      return true;
+      return _reloadOnChange;
    }
 
    /**
@@ -116,7 +132,7 @@ public class SimpleCacheManager implements CacheManager {
          throw new ResourceException(this + " is not initialized", e);
       }
       // should the template be reloaded, regardless of cached status?
-      if (o != null && r.reloadContext != null) 
+      if (o != null && r.reloadContext != null && _reloadOnChange) 
          reload = r.reloadContext.shouldReload();
 
       if (o == null || reload) {
