@@ -877,6 +877,9 @@ final class PropertyOperator
             instance + " with " +args.length + " parameters " +
             " threw an exception: " + e,e);
       } catch (InvocationTargetException e) {
+         // if this is a wrapped UndefinedVariableException, unwrap and rethrow it
+         if (e.getTargetException() instanceof PropertyException.UndefinedVariableException)
+             throw (PropertyException)e.getTargetException();             
          throw new PropertyException(
             "Attempt to invoke method " + meth + " on object " 
             + instance + " of " + instance.getClass() + 
