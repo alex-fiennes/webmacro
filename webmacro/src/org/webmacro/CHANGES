@@ -1,3 +1,5 @@
+-- fixed "co-brand" bug: TemplateProvider had a static broker, whereas
+   it needed to be per-instance of template provider
 -- renamed #silent to #silence, #htmlescape to #escape
 -- removed setEncoding()/getEncoding() from context and added it to 
    the constructor for a template

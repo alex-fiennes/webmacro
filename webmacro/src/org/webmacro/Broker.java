@@ -58,34 +58,6 @@ public interface Broker
    public Object getValue(final String type, final String name)
       throws InvalidTypeException, NotFoundException;
 
-  
-   /**
-     * Retrieve an object of the specified type, with the specified name.
-     * The "type" is used to determine what mechanism or plug-in is used
-     * to locate the object, and "name" identifies the particular object
-     * you are interested in.
-     * <p>
-     * @exception NotFoundException the resource could not be retrieved
-     * @exception InvalidTypeException you asked for an unknown type
-     */
-   public BrokerRequest request(final String type, final String name)
-      throws InvalidTypeException, NotFoundException;
-
-
-   /**
-     * Same as the previous request(type,name), except that now you can 
-     * also specify whether you want your request to be processed in a 
-     * seaprate thread (ASYNCHRONOUS), or the same thread (SYNCHRONOUS).
-     * <p>
-     * @exception NotFoundException the resource could not be retrieved
-     * @exception InvalidTypeException you asked for an unknown type
-     */
-   public BrokerRequest request(
-         final String type, 
-         final String name,
-         final boolean asynchronous)
-      throws InvalidTypeException, NotFoundException;
-
 }
 
 
