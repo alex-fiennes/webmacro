@@ -2,7 +2,6 @@ import org.webmacro.Context;
 
 public class TestTemplate extends AbstractTemplateEvaluator 
 {
-    
     public void stuffContext (Context c) throws Exception
     {
         int[] ints = new int[] { -2, -1, 0, 1, 2 };
