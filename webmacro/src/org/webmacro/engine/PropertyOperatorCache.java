@@ -34,6 +34,7 @@ final public class PropertyOperatorCache {
 
    private CacheManager _cache; 
    private Log _log;
+   private HashMap _restrictedClasses;
 
    public PropertyOperatorCache() { 
    }
@@ -60,8 +61,37 @@ final public class PropertyOperatorCache {
          }
       }
       _cache.init(b, config, "PropertyOperator");
+      _restrictedClasses = new HashMap(11);
+      String restrictList = b.getSetting("RestrictedClasses");
+      if (restrictList != null){
+         StringTokenizer stok = new StringTokenizer(restrictList, ",");
+         while (stok.hasMoreTokens()){
+             String className = stok.nextToken();
+             try {
+                 Class c = Class.forName(className);
+                 String okMethList = b.getSetting("RestrictedClasses.AllowedMethods." + className);
+                 ArrayList okMeths = null;
+                 if (okMethList != null){
+                     okMeths = new ArrayList(20);
+                     StringTokenizer stok2 = new StringTokenizer(okMethList, ",");
+                     while (stok2.hasMoreTokens()){
+                         okMeths.add(stok2.nextToken());
+                     }
+                 }
+                 _restrictedClasses.put(c, okMeths);       
+             }
+             catch (Exception e){
+                 _log.error("Configuration error: restricted class " + className 
+                 + " cannot be loaded", e);
+             }
+         }
+      }
    }
 
+   Map getRestrictedClassMap(){
+       return _restrictedClasses;
+   }
+   
    final public PropertyOperator getOperator(final Class type)
    throws PropertyException {   
       Object o = _cache.get(type);
@@ -321,7 +351,41 @@ final class PropertyOperator
       }
    }
 
+   boolean isMethodAllowed(Method m){
+      Class c = m.getDeclaringClass();
+      Map restrictedClasses = _cache.getRestrictedClassMap();
+      if (restrictedClasses.containsKey(c)){
+          // this class is restricted, check if method is allowed
+          List okMeths = (List)restrictedClasses.get(c);
+          return (okMeths != null && okMeths.contains(m.getName()));
+      }
+      return true;
+   }
+   
+   boolean isMethodRestricted(Class c, String name){
+     // check if object is restricted
+     Map restrictedClassMap = _cache.getRestrictedClassMap();
+     if (!restrictedClassMap.containsKey(c)){
+         return false; // there are no restrictions on this class
+     }
+     else 
+     {
+         // restricted class, check method
+         Method[] meths = c.getMethods();
+         for (int i=0; i<meths.length; i++){
+             if (meths[i].getName().equals(name)){
+                // check if method is explicitly allowed
+                 List l = (List)restrictedClassMap.get(c);
+                 if (l != null)
+                     return !l.contains(name);
+             }
+        }
+     }
+     return false;
+   }
+   
    private void addMethod(HashMap hm, Method m) {
+      if (!isMethodAllowed(m)) return;
       String name = m.getName();
       Object o = hm.get( name );
       if (o == null) {
@@ -418,7 +482,7 @@ final class PropertyOperator
       for (int i = 0; i < methods.size(); i++) 
       {
          meth = ((Method) methods.elementAt(i));
-
+         if (!isMethodAllowed(meth)) continue;
          name = meth.getName();
          params = meth.getParameterTypes();
          int plength = params.length;
@@ -426,7 +490,7 @@ final class PropertyOperator
          // add direct accessor
          acc = (Accessor) _directAccessors.get(name);
          if (acc != null) {
-            ((DirectAccessor) acc).addMethod(meth,params); 
+            ((DirectAccessor) acc).addMethod(meth, params); 
          } else {
             acc = new DirectAccessor(name,meth,params);
             _directAccessors.put(name,acc);
@@ -447,7 +511,7 @@ final class PropertyOperator
                acc = (Accessor) _unaryAccessors.get(propName);
                if (acc != null) {
                   if (acc instanceof MethodAccessor) {
-                     ((MethodAccessor) acc).addMethod(meth,params);
+                     ((MethodAccessor) acc).addMethod(meth, params);
                   } 
                } else {
                   acc = new UnaryMethodAccessor(propName,meth,params);
@@ -460,7 +524,7 @@ final class PropertyOperator
             {
                // hashtable get/put
                if (_hashAccessor != null) {
-                  _hashAccessor.addMethod(meth,params);
+                  _hashAccessor.addMethod(meth, params);
                } else {
                   _hashAccessor = new BinaryMethodAccessor(propName,meth,params);
                }
@@ -471,12 +535,26 @@ final class PropertyOperator
                // binary get/set method
                acc = (Accessor) _binaryAccessors.get(propName);
                if (acc != null) {
-                  ((MethodAccessor) acc).addMethod(meth,params);
+                  ((MethodAccessor) acc).addMethod(meth, params);
                } else {
                   acc = new BinaryMethodAccessor(propName,meth,params);
                   _binaryAccessors.put(propName,acc);
                }
             }
+         } else if (name.startsWith("is") && meth.getReturnType() == java.lang.Boolean.TYPE){
+             if (plength == 0){
+               // unary accessor method
+                propName = name.substring(2);
+                acc = (Accessor) _unaryAccessors.get(propName);
+                if (acc != null) {
+                  if (acc instanceof MethodAccessor) {
+                     ((MethodAccessor) acc).addMethod(meth, params);
+                  } 
+                } else {
+                  acc = new UnaryMethodAccessor(propName,meth,params);
+                  _unaryAccessors.put(propName,acc);
+                }             
+             }
          } else if (name.equals("elements") || 
                     name.equals("enumeration") ||
                     name.equals("iterator") ||
@@ -535,6 +613,11 @@ final class PropertyOperator
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
          if (acc == null) {
+            if (isMethodRestricted(instance.getClass(), prop))
+                throw new PropertyException.RestrictedMethodException(
+                        pm.toString(), 
+                        fillInName(names, start), 
+                        instance.getClass().getName());
             throw new PropertyException.NoSuchMethodException(
                         pm.toString(), 
                         fillInName(names, start), 
@@ -603,6 +686,13 @@ final class PropertyOperator
       if (acc == null) {
          // user tried to access a property of a property that doesn't exist
          // ex:  $TestObject.FirstName.NotThere
+
+         // check if object is restricted
+         if (isMethodRestricted(instance.getClass(), "get" + prop)
+            || isMethodRestricted(instance.getClass(), "set" + prop))
+             throw new PropertyException.RestrictedPropertyException(
+                     prop, fillInName(names, start), 
+                     instance.getClass().getName());          
          throw new PropertyException.NoSuchPropertyException(
                      prop, fillInName(names, start), 
                      instance.getClass().getName());
@@ -954,7 +1044,7 @@ final class DirectAccessor extends Accessor
    DirectAccessor(final String name, final Method m, final Class[] params)
    {
       super(name);
-      addMethod(m,params);
+      addMethod(m, params);
    }
 
    final void addMethod(final Method m, Class[] params)
