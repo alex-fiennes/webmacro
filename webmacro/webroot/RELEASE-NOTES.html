@@ -11,6 +11,31 @@
 <li><a href="README.html">README</a>
 </ul>
 <hr>
+<h2>Webmacro 0.96a2: RELEASE NOTES</H2>
+
+Lots of changes and improvements!  
+- Refactor Broker to allow tighter integration with servlet containers -- load
+templates, property files from WAR file or servlet zone, log to servlet log;
+- Pluggable cache manager interface -- use for resources, encodings,
+PropertyOperator; multiple cache managers include VFC; expose cache
+configuration parameters so administrators can tweak them
+- Simplified configuration mechanism for Providers, Directives, Tools, Parsers
+- Use broker to laod templates, property files
+- Make LogFormat configurable; allow logging to servlet log
+- Better error handling; filter exceptions through EvaluationExceptionHandler,
+reset output when template evaluation throws so the user can see what happened
+- CheckTemplate tool, StreamTemplate and TemplateDumper tools
+- ANT build support
+- JUnit test framework
+- More defaults so its harder to misconfigure WM
+- performance enhancements
+- Improved block syntax -- #if .. #else .. #endif
+- Do arithmetic as int instead of long
+- Allow access to .length field of arrays
+- TemplatePath is now optional; you can run WM with an empty .properties
+- Load settings from system properties and web.xml as well as .properties
+
+
 <h2>Webmacro 0.95p1: RELEASE NOTES</H2>
 
 Fixed a bug in FastWriter/WMServlet which caused NullPointerExceptions

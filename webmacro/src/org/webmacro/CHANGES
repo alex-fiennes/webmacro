@@ -1,3 +1,11 @@
+-- Apr-2001 brian: simplified configuration so that each Provider, Directive,
+   Parser, and Tool has their own line; this makes it much easier for
+   users to customize WM.properties without risking incompatibility when the
+   next version comes along.  Also can get properties from the System props
+   by prefixing with org.webmacro.
+
+-- Apr-2001 brian: Added CheckTemplates tool
+
 -- Mar-2001 brian: Refactor cache manager (again) to move all the
    SoftReference stuff out of the providers.  The cache manager is now 
    completely decoupled from the caching providers.  All timeouts, soft

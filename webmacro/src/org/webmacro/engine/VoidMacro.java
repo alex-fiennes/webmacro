@@ -25,7 +25,8 @@ import org.webmacro.Log;
  * anything, we really only need 1 of them around.
  *
  * @author  e_ridge
- * @version */
+ * @since 0.96
+ */
 public final class VoidMacro implements Macro
 {
    public static final VoidMacro instance = new VoidMacro ();

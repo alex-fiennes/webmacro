@@ -9,7 +9,7 @@ package org.webmacro.util;
 /**
  *
  * @author  keats_kirsch
- * @version 
+ * @since 0.96
  */
 public class CastUtil extends java.lang.Object {
 

@@ -13,6 +13,7 @@
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
+  <property name="version"        value="0.96a2" />
 
   <taskdef name="javacc" 
            classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
@@ -73,7 +74,7 @@
   <target name="jar" depends="prepare,compile">
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
-         includes="src/**,webroot/**,build.xml"/>
+         includes="src/**,webroot/**,build.xml,test/**,contrib/**"/>
   </target>
 
   <target name="dist" depends="prepare,compile,jar,javadoc">
@@ -91,6 +92,11 @@
       <fileset dir="webroot" 
                includes="LICENSE,CREDITS,README.html,RELEASE-NOTES.html"/>
     </copy>
+    <mkdir dir="${dist}/examples" />
+    <copy todir="${dist}/examples">
+      <fileset dir="contrib"/>
+    </copy>
+    <touch file="${dist}/WM-VERSION-${version}"/>
   </target>
 
   <target name="contrib" depends="compile" >
