@@ -210,13 +210,13 @@ Directives.param:      org.webmacro.directive.ParamDirective
 Directives.type:       org.webmacro.directive.TypeDirective
 Directives.default:    org.webmacro.directive.DefaultDirective
 Directives.count:      org.webmacro.directive.CountDirective
+Directives.bean:    org.webmacro.directive.BeanDirective
 
 
 # these are currently broken
 #    Directives.encode:     org.webmacro.directive.EncodeDirective
 #    Directives.escape:     org.webmacro.directive.EscapeDirective
 #    Directives.silence:    org.webmacro.directive.SilenceDirective
-Directives.bean:    org.webmacro.directive.BeanDirective
 
 
 #
