@@ -31,6 +31,7 @@
  */
 package org.webmacro.servlet;
 
+import java.util.*;
 import javax.servlet.*;
 
 import org.webmacro.Broker;
@@ -55,7 +56,7 @@ abstract public class ServletBroker extends Broker {
          initLog();
    }
 
-   public static Broker getBroker(Servlet s) throws InitException {
+   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
       int minorVersion, majorVersion;
 
       ServletContext sc = s.getServletConfig().getServletContext();
@@ -71,14 +72,47 @@ abstract public class ServletBroker extends Broker {
       Broker b;
       if (majorVersion > 2
             || (majorVersion == 2 && minorVersion >= 2))
-         b = Servlet22Broker.getBroker(s);
+         b = Servlet22Broker.getBroker(s, additionalProperties);
       else
-         b = Servlet20Broker.getBroker(s);
+         b = Servlet20Broker.getBroker(s, additionalProperties);
       b.startClient();
       return b;
    }
 
+   public static Broker getBroker(Servlet s) throws InitException {
+       return getBroker(s, null);
+   }
+
    public ServletContext getServletContext() {
       return _servletContext;
+   }
+
+   protected static final class PropertiesPair {
+       private final Object obj;
+       private final Properties p;
+
+       public PropertiesPair(Object s, Properties p) {
+           this.obj = s;
+           this.p = p;
+       }
+
+       public boolean equals(Object o) {
+           if (this == o) return true;
+           if (!(o instanceof PropertiesPair)) return false;
+
+           final PropertiesPair servletPropertiesPair = (PropertiesPair) o;
+
+           if (!p.equals(servletPropertiesPair.p)) return false;
+           if (!obj.equals(servletPropertiesPair.obj)) return false;
+
+           return true;
+       }
+
+       public int hashCode() {
+           int result;
+           result = obj.hashCode();
+           result = 29 * result + p.hashCode();
+           return result;
+       }
    }
 }

@@ -53,8 +53,9 @@ public class Servlet22Broker extends ServletBroker {
     * for WebMacro.properties before looking
     * in the application root.
     */
-   protected Servlet22Broker(ServletContext sc,
-                             ClassLoader cl) throws InitException {
+   private Servlet22Broker(ServletContext sc,
+                           ClassLoader cl,
+                           Properties additionalProperties) throws InitException {
       super(sc);
       _servletClassLoader = cl;
       String propertySource = WEBMACRO_DEFAULTS;
@@ -66,8 +67,13 @@ public class Servlet22Broker extends ServletBroker {
          loadSettings(WEBMACRO_PROPERTIES, true);
          propertySource += ", " + WEBMACRO_PROPERTIES;
       }
-      propertySource += ", (WAR file)" + ", " + "(System Properties)";
+      propertySource += ", (WAR file)";
       loadServletSettings(Broker.SETTINGS_PREFIX);
+      if (additionalProperties != null && additionalProperties.keySet().size() > 0) {
+         propertySource += ", (additional Properties)";
+         loadSettings(additionalProperties);
+      }
+      propertySource += ", (System Properties)";
       loadSystemSettings();
       initLog(_config);
 
@@ -103,14 +109,18 @@ public class Servlet22Broker extends ServletBroker {
    }
 
 
-   public static Broker getBroker(Servlet s) throws InitException {
+   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
       ServletContext sc = s.getServletConfig().getServletContext();
       ClassLoader cl = s.getClass().getClassLoader();
       try {
-         Broker b = findBroker(sc);
+         Object key = sc;
+         if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+            key = new PropertiesPair(sc, additionalProperties);
+
+         Broker b = findBroker(key);
          if (b == null) {
-            b = new Servlet22Broker(sc, cl);
-            register(sc, b);
+            b = new Servlet22Broker(sc, cl, additionalProperties);
+            register(key, b);
          }
          else
             b.getLog("broker").notice("Servlet "
@@ -153,7 +163,7 @@ public class Servlet22Broker extends ServletBroker {
          if (u == null) {
             u = _servletClassLoader.getResource(name);
          }
-         if (u == null) 
+         if (u == null)
             u = super.getResource(name);
          return u;
       }

@@ -25,6 +25,7 @@ package org.webmacro.servlet;
 
 import java.io.*;
 import java.net.URL;
+import java.util.*;
 import javax.servlet.*;
 
 import org.webmacro.Broker;
@@ -44,15 +45,20 @@ public class Servlet20Broker extends ServletBroker {
 
    protected ClassLoader _servletClassLoader;
 
-   protected Servlet20Broker(ServletContext sc,
-                             ClassLoader cl) throws InitException {
+   private Servlet20Broker(ServletContext sc,
+                           ClassLoader cl,
+                           Properties additionalProperties) throws InitException {
       super(sc);
       _servletClassLoader = cl;
 
-      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
-            + ", " + "(System Properties)";
+      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
+      if (additionalProperties != null && additionalProperties.keySet().size() > 0) {
+         propertySource += ", (additional Properties)";
+         loadSettings(additionalProperties);
+      }
+      propertySource += ", (System Properties)";
       loadSystemSettings();
       initLog(_config);
 
@@ -60,14 +66,18 @@ public class Servlet20Broker extends ServletBroker {
       init();
    }
 
-   public static Broker getBroker(Servlet s) throws InitException {
+   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
       ServletContext sc = s.getServletConfig().getServletContext();
       ClassLoader cl = s.getClass().getClassLoader();
       try {
-         Broker b = findBroker(cl);
+         Object key = cl;
+         if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+            key = new PropertiesPair(cl, additionalProperties);
+
+         Broker b = findBroker(key);
          if (b == null) {
-            b = new Servlet20Broker(sc, cl);
-            register(cl, b);
+            b = new Servlet20Broker(sc, cl, additionalProperties);
+            register(key, b);
          }
          else
             b.getLog("broker").notice("Servlet " + s.getClass().getName()

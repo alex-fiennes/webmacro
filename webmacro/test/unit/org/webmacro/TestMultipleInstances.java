@@ -1,5 +1,7 @@
 package org.webmacro;
 
+import java.util.*;
+
 import junit.framework.TestCase;
 import org.webmacro.engine.StringTemplate;
 
@@ -56,6 +58,38 @@ public class TestMultipleInstances extends TestCase {
         assertTrue(output.equals("foo"));
     }
 
+
+    public void testDefaultConstructor() throws InitException {
+        WM wm1 = new WM();
+        WM wm2 = new WM();
+
+        assertEquals(wm1.toString(), wm2.toString());
+        assertEquals(wm1.getBroker(), wm2.getBroker());
+
+        Properties p3 = new Properties();
+        p3.put("foo", "goo");
+        p3.put("moo", "zoo");
+
+        Properties p4 = new Properties();
+        p4.put("foo", "goo");
+        p4.put("moo", "zoo");
+
+        Properties p5 = new Properties();
+        p5.put("foo", "goo");
+        p5.put("moo", "zoo");
+        p5.put("goo", "flu");
+
+        WM wm3 = new WM(p3);
+        WM wm4 = new WM(p4);
+        WM wm5 = new WM(p5);
+        assertTrue(wm1.getBroker() != wm3.getBroker());
+        assertTrue(wm3.getBroker() == wm4.getBroker());
+        assertTrue(wm3.getBroker() != wm5.getBroker());
+
+        p3.put("oops", "loops");
+        WM wm6 = new WM(p3);
+        assertTrue(wm3.getBroker() != wm6.getBroker());
+    }
 
     /** Execute a string as a template against the current context,
      *  and return the result. */

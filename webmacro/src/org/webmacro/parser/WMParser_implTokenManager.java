@@ -16,8 +16,6 @@ public class WMParser_implTokenManager implements WMParser_implConstants
 {
   // Required by SetState
   void backup(int n) { input_stream.backup(n); }
-  public  java.io.PrintStream debugStream = System.out;
-  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
 private final int jjStopStringLiteralDfa_4(int pos, long active0)
 {
    switch (pos)

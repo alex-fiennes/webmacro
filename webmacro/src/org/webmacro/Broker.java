@@ -121,6 +121,24 @@ public class Broker {
 		init();
 	}
 
+    /**
+     * Equivalent to Broker("WebMacro.properties"), except that it doesn't
+     * complain if WebMacro.properties can't be found, and it loads properties
+     * from a specified Properties.
+     */
+    protected Broker(Properties props) throws InitException {
+        this( ( Broker ) null, "Ad-hoc Properties " + props.hashCode());
+        String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
+            + ", (caller-supplied Properties), (System Properties)";
+        loadDefaultSettings();
+        loadSettings( WEBMACRO_PROPERTIES, true );
+        loadSettings(props);
+        loadSystemSettings();
+        initLog();
+        _log.notice( "Loaded settings from " + propertySource );
+        init();
+    }
+
 	/**
 	 * Search the classpath for the properties file under
 	 * the specified name.
@@ -369,6 +387,23 @@ public class Broker {
 		}
 	}
 
+    public static Broker getBroker(Properties p) throws InitException {
+        try {
+            Broker b = findBroker( p );
+            if ( b == null ) {
+                b = new Broker(p);
+                register( p, b );
+            }
+            b.startClient();
+            return b;
+        }
+        catch ( InitException e ) {
+            Log log = LogSystem.getSystemLog( "wm" );
+            log.error( "Failed to initialize WebMacro with default config" );
+            throw e;
+        }
+    }
+
 	public static Broker getBroker( String settingsFile ) throws InitException {
 		try {
 			Broker b = findBroker( settingsFile );
@@ -429,6 +464,10 @@ public class Broker {
 		}
 		return false;
 	}
+
+    protected void loadSettings(Properties p) {
+        _config.load( p );
+    }
 
 	protected void loadSystemSettings() {
 		// _log.notice("Loading properties from system properties");

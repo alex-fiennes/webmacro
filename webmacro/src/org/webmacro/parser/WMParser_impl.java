@@ -36,7 +36,6 @@ public class WMParser_impl implements WMParser_implConstants {
     this.stream = stream;
     this.broker = broker;
     this.templateName = templateName;
-
   }
 
   public WMParser_impl(Broker broker,

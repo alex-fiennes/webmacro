@@ -5,10 +5,8 @@
   <property name="unit.reports" value="${test.root}/unit-reports"/>
   <property name="test" value="Test*" />
 
-  <taskdef name="junit"
-   classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
-
   <path id="class.path">
+    <fileset dir="lib" includes="*.jar" />
     <pathelement path="${java.class.path}" />
   </path>
   <property name="class.path.resolved" refid="class.path"/>
@@ -23,6 +21,11 @@
     <pathelement location="${template.root}" />
     <pathelement path="${java.class.path}" />
   </path>
+
+    <taskdef name="junit"
+     classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" >
+        <classpath refid="class.path"/>
+    </taskdef>
 
 
   <target name="unit-clean">

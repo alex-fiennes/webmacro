@@ -24,6 +24,7 @@
 package org.webmacro;
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -72,6 +73,17 @@ public class WM implements WebMacro {
    }
 
    /**
+    * Constructs a WM which gets its properties (optionally) from the
+    * file WebMacro.properties, as found on the class path, and from properties
+    * specified in a provided Properties.  No servlet
+    * integration.  Templates will be loaded from the class path or from
+    * TemplatePath.   Most users will want to use the WM(Servlet) constructor.
+    */
+   public WM(Properties p) throws InitException {
+      this(Broker.getBroker(p));
+   }
+
+   /**
     * Constructs a WM which gets its properties from the file specified,
     * which must exist on the class path or be an absolute path.  No servlet
     * integration.  Templates will be loaded from the class path or from
@@ -89,6 +101,14 @@ public class WM implements WebMacro {
    public WM(Servlet s) throws InitException {
       this(ServletBroker.getBroker(s));
    }
+
+    /**
+     * Constructs a WM is tied to a Servlet broker, with an additional set of
+     * properties passed in from the caller.
+     */
+    public WM(Servlet s, Properties additionalProperties) throws InitException {
+       this(ServletBroker.getBroker(s, additionalProperties));
+    }
 
    /**
     * Constructs a WM from an arbitrary Broker.  Don't use this unless

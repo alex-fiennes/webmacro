@@ -54,9 +54,6 @@ Administrative targets:
     <property environment="ENV" />
     <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
 
-    <taskdef name="javacc"
-        classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
-
     <path id="class.path">
         <fileset dir="lib">
             <include name="*.jar" />
@@ -67,6 +64,11 @@ Administrative targets:
         <pathelement path="${java.class.path}" />
     </path>
     <property name="classpath.resolved" refid="class.path"/>
+
+    <taskdef name="javacc"
+        classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC">
+            <classpath refid="class.path"/>
+    </taskdef>
 
     <target name="prepare">
         <tstamp />
