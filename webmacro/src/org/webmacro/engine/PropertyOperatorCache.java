@@ -246,6 +246,66 @@ final public class PropertyOperatorCache
             return getOperator(instance).findIterator(instance);
     }
 
+    public static class Wrapper
+    {
+
+        private Map params = new Hashtable();
+
+        public String getParameters( String key )
+        {
+            return (String) params.get( key );
+        }
+
+        public void setParameters( String key, Object value )
+        {
+            params.put( key, value );
+        }
+    }
+
+    public static class Wrapper2
+    {
+
+        private Map params = new Hashtable();
+
+        public Wrapper2()
+        {
+            this.params.put( "Parameters", new Hashtable() );
+        }
+
+        public Object get( Object key )
+        {
+            return params.get( key );
+        }
+
+        public void put( Object key, Object value )
+        {
+            params.put( key, value );
+        }
+    }
+
+    public static void main( String[] args )
+    {
+        final String templateText =
+                "#set $test.Parameters.Name = 'marc'\n" +
+                "#set $test2.Parameters.Name = 'eric'\n" +
+                "Current value is: $test.Parameters.Name\n"+
+                "Current value2 is: $test2.Parameters.Name\n";
+        try
+        {
+            WebMacro wm = new WM( "testconfig.properties" );
+            Template t = new StringTemplate( wm.getBroker(), templateText );
+            Context context = wm.getContext();
+            context.put( "test", new Wrapper() );
+            context.put( "test2", new Wrapper2() );
+            t.write( System.out, context );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        }
+
+    }
+
 }
 
 
@@ -692,23 +752,23 @@ final class PropertyOperator
                                int start, int end)
             throws PropertyException
     {
-        String prop;
-        Object nextProp = null;
+        String propName;
+        Object nextPropValue = null;
         Accessor acc = null;
 
         if (names[start] instanceof String)
         {
-            prop = (String) names[start];
+            propName = (String) names[start];
         }
         else if (names[start] instanceof PropertyMethod)
         {
             PropertyMethod pm = (PropertyMethod) names[start];
-            prop = pm.getName();
-            acc = (Accessor) _directAccessors.get(prop);
+            propName = pm.getName();
+            acc = (Accessor) _directAccessors.get(propName);
             Object[] args = pm.getArguments(context);
             if (acc == null)
             {
-                if (isMethodRestricted(instance.getClass(), prop))
+                if (isMethodRestricted(instance.getClass(), propName))
                     throw new PropertyException.RestrictedMethodException(
                             pm.toString(),
                             fillInName(names, start),
@@ -720,7 +780,7 @@ final class PropertyOperator
             }
             try
             {
-                nextProp = acc.get(instance, args);
+                nextPropValue = acc.get(instance, args);
                 start++;
             }
             catch (NoSuchMethodException e)
@@ -734,18 +794,18 @@ final class PropertyOperator
         }
         else
         {
-            prop = names[start].toString();
+            propName = names[start].toString();
         }
 
         // unary?
         if (acc == null)
         {
-            acc = (Accessor) _unaryAccessors.get(prop);
+            acc = (Accessor) _unaryAccessors.get(propName);
             if (acc != null)
             {
                 try
                 {
-                    nextProp = acc.get(instance);
+                    nextPropValue = acc.get(instance);
                     start++;
                 }
                 catch (NoSuchMethodException e)
@@ -758,12 +818,13 @@ final class PropertyOperator
         // binary?
         if (acc == null)
         {
-            acc = (Accessor) _binaryAccessors.get(prop);
-            if ((acc != null) && ((start + 1) <= end))
+            acc = (Accessor) _binaryAccessors.get(propName);
+//            if ((acc != null) && ((start + 1) <= end))
+            if ((acc != null) && ((start + 1) <= names.length))
             {
                 try
                 {
-                    nextProp = acc.get(instance, (String) names[start + 1]);
+                    nextPropValue = acc.get(instance, (String) names[start + 1]);
                     start += 2;
                 }
                 catch (NoSuchMethodException e)
@@ -792,7 +853,7 @@ final class PropertyOperator
             {
                 if (acc != null)
                 {
-                    nextProp = acc.get(instance, prop);
+                    nextPropValue = acc.get(instance, propName);
                     start++;
                 }
             }
@@ -808,22 +869,22 @@ final class PropertyOperator
             // ex:  $TestObject.FirstName.NotThere
 
             // check if object is restricted
-            if (isMethodRestricted(instance.getClass(), "get" + prop)
-                    || isMethodRestricted(instance.getClass(), "set" + prop))
+            if (isMethodRestricted(instance.getClass(), "get" + propName)
+                    || isMethodRestricted(instance.getClass(), "set" + propName))
                 throw new PropertyException.RestrictedPropertyException(
-                        prop, fillInName(names, start),
+                        propName, fillInName(names, start),
                         instance.getClass().getName());
             throw new PropertyException.NoSuchPropertyException(
-                    prop, fillInName(names, start),
+                    propName, fillInName(names, start),
                     instance.getClass().getName());
         }
 
-        if (start <= end)
+        if ( start <= end)
         {
             try
             {
-                return _cache.getOperator(nextProp)
-                        .getProperty(context, nextProp, names, start, end);
+                return _cache.getOperator(nextPropValue)
+                        .getProperty(context, nextPropValue, names, start, end);
             }
             catch (NullPointerException e)
             {
@@ -833,7 +894,7 @@ final class PropertyOperator
         }
         else
         {
-            return nextProp;
+            return nextPropValue;
         }
     }
 
@@ -877,8 +938,7 @@ final class PropertyOperator
     {
         // names[pos] is what we could set from here
 
-        int parentPos = names.length - 1;
-        int binPos = parentPos - 1;
+        int binPos = names.length - 2;
 
         // if we're not yet at the binary-settable parent, go there
         if (pos < binPos)
@@ -930,6 +990,7 @@ final class PropertyOperator
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -1047,6 +1108,7 @@ final class PropertyOperator
                     "to use an undefined value, or a failure in that method.", e);
         }
     }
+
 }
 
 
