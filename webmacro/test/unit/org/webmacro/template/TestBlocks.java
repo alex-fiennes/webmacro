@@ -25,7 +25,6 @@ public class TestBlocks extends TemplateTestCase {
                 new DefaultEvaluationExceptionHandler ());
    }
 
-
    public void testBraces () throws Exception {
       String tmpl = "#if (true) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
@@ -90,5 +89,18 @@ public class TestBlocks extends TemplateTestCase {
 
       String output = executeStringTemplate (tmpl);
       assert (output.indexOf ("should not be here") == -1);
+   }
+
+   public void testNoEND1 () throws Exception {
+       String tmpl = "#if(true) pass";
+       assertStringTemplateThrows(tmpl, org.webmacro.engine.BuildException.class);
+   }
+   public void testNoEND2 () throws Exception {
+       String tmpl = "#if(true)#begin pass";
+       assertStringTemplateThrows(tmpl, org.webmacro.engine.BuildException.class);
+   }
+   public void testNoLBRACE () throws Exception {
+       String tmpl = "#if(true){ pass";
+       assertStringTemplateThrows(tmpl, org.webmacro.engine.BuildException.class);
    }
 }

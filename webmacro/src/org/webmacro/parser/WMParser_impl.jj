@@ -726,13 +726,13 @@ Object Conditional() : {
 
 // Used by VariableReference; shouldn't be used outside it
 Object ObjectRoot() : {
-  Token t; 
+  Token t;
   ListBuilder argList;
   Object element;
 }
 {
-  ( 
-    LOOKAHEAD(<WORD><LPAREN>) 
+  (
+    LOOKAHEAD(<WORD><LPAREN>)
       t=<WORD> <LPAREN> argList=ArgList() <RPAREN>
       { element = new FunctionCallBuilder((String) t.image, argList); }
     | t=<WORD> { element=t.image; }
@@ -1149,6 +1149,7 @@ BlockBuilder Block(Subdirective[] subdirectives) : {
     )
   | ( [ <BEGIN> EatWsNlOrSpace(block) ]
       ( WMContentNoDirective(block)
+        | (<EOF>) { throw new ParseException("Encountered EOF, expecting #end at " + token.beginLine + "." + token.beginColumn); }
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
         | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() })
           Directive(block)
