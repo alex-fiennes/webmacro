@@ -1,0 +1,13 @@
+<span class="title-big">[R] Task - $task.Id</span><br />
+<br />
+<span class="title">Info</span>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr>
+  <td nowrap><span class="key">&nbsp;&nbsp;Date for next Run&nbsp;</span></td>
+  <td nowrap>#if ($task.Rescheduling)
+    {<span class="value">$task.ImmediateScheduledDate - in $task.MillisToNextRun millis</span>}
+    #else (<span class="novalue">n/a</span>}
+  </td>
+ </tr>
+ <tr>
+</table>

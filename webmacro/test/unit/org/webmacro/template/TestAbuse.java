@@ -133,5 +133,10 @@ public class TestAbuse extends TemplateTestCase {
       assertStringTemplateEquals(assn + "$foo.substring(1)", "lah");
       assertStringTemplateEquals(assn + "$foo.substring(1);", "lah;");
    }
+
+    public void testNastyEndreTemplate() throws Exception {
+        String tmpl = templateFileToString("org/webmacro/template/nasty_endre.wm");
+        assertStringTemplateThrows(tmpl, org.webmacro.engine.BuildException.class);
+    }
 }
 
