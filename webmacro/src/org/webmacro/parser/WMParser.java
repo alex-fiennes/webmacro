@@ -70,7 +70,12 @@ public class WMParser implements Parser
       else
         parser = new WMParser_impl(_broker, in);
 
-      bb = parser.WMDocument();
+      try {
+        bb = parser.WMDocument();
+      }
+      catch (TokenMgrError e) {
+        throw new ParseException("Lexical error: " + e.toString());
+      }
     } 
     catch (ParseException e) {
       throw new org.webmacro.engine.ParseException("Parser Exception", e);
