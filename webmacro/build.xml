@@ -83,7 +83,7 @@
   <target name="jar" depends="prepare,compile">
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
-         includes="src/**,build.xml,test/**,contrib/**"/>
+         includes="src/**,build.xml,test/**"/>
   </target>
 
   <target name="dist" depends="prepare,compile,jar,javadoc">
@@ -104,18 +104,22 @@
     <copy todir="${dist}/examples">
       <fileset dir="examples" />
     </copy>
-    <mkdir dir="${dist}/contrib" />
-    <copy todir="${dist}/contrib">
-      <fileset dir="contrib" />
-    </copy>
+    <!--   don't put contrib in the distro anymore.
+        <mkdir dir="${dist}/contrib" />
+        <copy todir="${dist}/contrib">
+           <fileset dir="contrib" />
+        </copy>
+    -->
     <touch file="${dist}/WM-VERSION-${version}"/>
   </target>
 
+<!--
   <target name="contrib" depends="compile" >
     <ant antfile="contrib/build.xml" target="all" >
       <property name="java.class.path" value="${classpath.resolved}"/>
     </ant>
   </target>
+-->
 
   <target name="test" depends="compile" >
     <ant antfile="test/build.xml" target="all" >
