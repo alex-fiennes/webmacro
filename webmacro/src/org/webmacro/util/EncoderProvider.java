@@ -109,9 +109,8 @@ public class EncoderProvider implements Provider
    /**
     * Get the object associated with the specified query.
     */
-   public synchronized Object get(String query) throws ResourceException
+   public synchronized Object get(String encoding) throws ResourceException
    {
-      String encoding = (String)query;
       Encoder encoder = null;
       
       // make sure we're not inadvertently being called after we've

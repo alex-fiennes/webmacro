@@ -177,9 +177,15 @@ public class Encoder implements ResourceLoader
     * used by this encoder instance.
     */
    public final byte[] encode (String source)
-      throws ResourceException
+      throws UnsupportedEncodingException
    {
-      return (byte[]) _cache.get(source, this);
+      try {
+         return (byte[]) _cache.get(source, this);
+      }
+      catch (ResourceException e) {
+         throw new UnsupportedEncodingException("Encoder: Could not encode; " 
+                                                + e);
+      }
    }
 
    /**
@@ -193,9 +199,15 @@ public class Encoder implements ResourceLoader
     * used by this encoder instance.
     */
    public final byte[][] encode (Block source)
-      throws ResourceException
+      throws UnsupportedEncodingException
    {
-      return (byte[][]) _cache.get(source, this);
+      try {
+         return (byte[][]) _cache.get(source, this);
+      }
+      catch (ResourceException e) {
+         throw new UnsupportedEncodingException("Encoder: Could not encode; " 
+                                                + e);
+      }
    }
 
    /**
