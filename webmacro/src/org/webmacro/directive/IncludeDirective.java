@@ -333,7 +333,8 @@ public class IncludeDirective extends Directive {
        // make sure we're not trying to include ourself.
        // maybe there is a better way to handle this?
        if (context.getCurrentLocation().indexOf(_strFilename) > -1) {
-           throw makePropertyException(context.getCurrentLocation() + " tried to include itself!  You can't do this.");
+           String warning = context.getCurrentLocation() + " includes itself.";
+           writeWarning(warning, context, out);
        }
 
       // this should only be true if StrictCompatibility is set to false
