@@ -5,7 +5,6 @@ these should all say "pass":
      NullMethod call: #if($TestObject.returnNull()) { fail } #else { pass }
       BadMethod call: #if($TestObject.badMethod()) { fail } #else { pass }
          BadProperty: #if($TestObject.NoProperty) { fail } #else { pass }
-ThrowsException call: #if($TestObject.throwException()) { fail } #else { pass }
                false: #if(false) { fail } #else { pass }
                 true: #if(true) { pass } #else { fail }
 

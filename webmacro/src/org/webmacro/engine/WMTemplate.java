@@ -196,7 +196,7 @@ abstract public class WMTemplate implements Template
       } catch (TemplateException e) {
          _log.error("Template: Unable to parse template: " + this, e);
          out.write(data.getEvaluationExceptionHandler()
-                   .error("Template failed to parse. Reason: \n" 
+                   .errorString("Template failed to parse. Reason: \n" 
                           + e.toString()));
       }
 
@@ -204,12 +204,12 @@ abstract public class WMTemplate implements Template
          _content.write(out,data);
       } catch (PropertyException e) {
          String warning = 
-            "Template: Missing data in Context passed to template " + this;
+            "Template: Exception evaluating template " + this;
          _log.warning(warning, e);
          
          out.write(data.getEvaluationExceptionHandler()
-                   .warning("Could not interpret template. Reason: \n"
-                            + warning + "\n" + e.toString()));
+                   .warningString("Could not interpret template. Reason: \n"
+                                  + warning + "\n" + e.toString()));
       } 
    }
 

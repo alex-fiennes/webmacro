@@ -43,7 +43,6 @@ public class TestTemplate extends AbstractTemplateEvaluator
    public void stuffContext (Context c) throws Exception {
       Object nullObject = null;
                     
-      c.setEvaluationExceptionHandler(new ComplacentEvaluationExceptionHandler());
       c.put ("NullObject", nullObject);
       c.put ("TestObject", new TestObject ("Eric", "Ridge"));
       c.put ("TestObject2", new TestObject2 ());

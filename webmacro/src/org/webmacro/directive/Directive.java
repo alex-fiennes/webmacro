@@ -99,7 +99,7 @@ public abstract class Directive implements Macro, Visitable {
   protected static String getWarningText(String warning, Context context) 
   throws IOException, PropertyException {
     return context.getEvaluationExceptionHandler()
-      .warning("WARNING: " + warning);
+      .warningString("WARNING: " + warning);
   }
 
   /**

@@ -31,6 +31,8 @@
     <delete dir="${classes}"/>
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
+    <delete file="${jar}"/>
+    <delete file="${src.jar}"/>
   </target>
 
 
@@ -89,6 +91,12 @@
 
   <target name="test-unit" depends="compile" >
     <ant antfile="test/build.xml" target="unit" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-templates" depends="compile" >
+    <ant antfile="test/build.xml" target="templates" >
       <property name="java.class.path" value="${classpath.resolved}"/>
     </ant>
   </target>

@@ -24,8 +24,8 @@
 /**
  * DefaultEvaluationExceptionHandler
  *
- * An implementation of EvaluationExceptionHandler which simply writes
- * an HTML comment to the output.  Users who are generating non-HTML output
+ * An implementation of EvaluationExceptionHandler which throws under most
+ * error conditions.  Users who are generating non-HTML output
  * should replace the ExceptionHandler in their context with one that
  * generates the appropriate comments.  This should be the only place
  * in WM where HTML comments are generated into the output. 
@@ -42,28 +42,49 @@ import org.webmacro.Context;
 public class DefaultEvaluationExceptionHandler 
   implements EvaluationExceptionHandler {
 
-   public String handle(Variable variable, Context context, Exception problem)
-     throws PropertyException {
-     if (problem instanceof NullVariableException) {
-       return error("Value of $" + variable.getVariableName() + " is null");
-     }
-     else if (problem instanceof VariableNotInContextException) {
-        return error("Attempt to access nonexistent variable $" 
-                     + variable.getVariableName());
-     }
-     else if (problem instanceof PropertyException) {
-        return error(problem.getMessage());
-     }
-     else {
-       return error(variable.getVariableName() + ": " + problem.toString());
-     }
+   public void evaluate(Variable variable, 
+                        Context context, 
+                        Exception problem) 
+   throws PropertyException {
+      if (problem instanceof PropertyException.NoSuchVariableException) 
+         return;
+      else if (problem instanceof PropertyException.NullVariableException) 
+         return;
+      else if (problem instanceof PropertyException)
+         throw (PropertyException) problem;
+      else 
+         throw new PropertyException("Error evaluating variable " 
+                                     + variable.getVariableName() + ": " 
+                                     + problem, problem);
    }
 
-   public String warning(String warningText) {
+   public String expand(Variable variable, 
+                        Context context, 
+                        Exception problem) 
+   throws PropertyException {
+      if (problem instanceof PropertyException.NoSuchVariableException) {
+         return errorString("Attempt to access nonexistent variable $" 
+                            + variable.getVariableName());
+      }
+      else if (problem instanceof PropertyException.NullVariableException) {
+         return errorString("Attempt to access null variable $" 
+                            + variable.getVariableName());
+      }
+      else if (problem instanceof PropertyException)
+         throw (PropertyException) problem;
+      else 
+         throw new PropertyException("Error evaluating variable " 
+                                     + variable.getVariableName() + ": " 
+                                     + problem, problem);
+   }
+
+
+   public String warningString(String warningText) {
       return "<!-- " + warningText + " -->";
    }
 
-   public String error(String errorText) {
+
+   public String errorString(String errorText) {
       return "<!-- " + errorText + " -->";
    }
 }

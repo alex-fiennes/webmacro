@@ -41,14 +41,33 @@ import org.webmacro.Context;
 import org.webmacro.PropertyException;
 
 public interface EvaluationExceptionHandler {
-
-   public String handle(Variable variable, Context context, Exception problem)
+  
+   /**
+    * When an exception is detected in the process of expanding (writing)
+    * a variable reference, this method is consulted.  It either throws
+    * an exception, or it returns a String which can be written to the
+    * output in place of the property expansion.  
+    */
+   public String expand(Variable variable, 
+                        Context context, 
+                        Exception problem)
       throws PropertyException;
 
-   public String warning(String warningText)
+   /**
+    * When an exception is detected in the process of evaluating
+    * a variable reference, this method is consulted.  It either returns,
+    * in which case the caller is supposed to supply a default value (like
+    * null), or will throw.
+    */
+   public void evaluate(Variable variable, 
+                        Context context, 
+                        Exception problem)
+      throws PropertyException;
+
+   public String warningString(String warningText)
      throws PropertyException;
 
-   public String error(String errorText)
+   public String errorString(String errorText)
      throws PropertyException;
 
 }

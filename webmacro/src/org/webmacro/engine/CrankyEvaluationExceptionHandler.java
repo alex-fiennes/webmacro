@@ -40,7 +40,9 @@ import org.webmacro.Context;
 public class CrankyEvaluationExceptionHandler 
   implements EvaluationExceptionHandler {
 
-   public String handle(Variable variable, Context context, Exception problem)
+   public void evaluate(Variable variable, 
+                        Context context, 
+                        Exception problem) 
    throws PropertyException {
      if (problem instanceof PropertyException)
        throw (PropertyException) problem;
@@ -50,11 +52,25 @@ public class CrankyEvaluationExceptionHandler
                                    + problem, problem);
    }
 
-   public String warning(String warningText) throws PropertyException {
+   public String expand(Variable variable, 
+                        Context context, 
+                        Exception problem) 
+   throws PropertyException {
+     if (problem instanceof PropertyException)
+       throw (PropertyException) problem;
+     else 
+       throw new PropertyException("Error evaluating variable " 
+                                   + variable.getVariableName() + ": " 
+                                   + problem, problem);
+   }
+
+
+   public String warningString(String warningText) throws PropertyException {
       throw new PropertyException("Evaluation warning: " + warningText);
    }
 
-   public String error(String errorText) throws PropertyException {
+
+   public String errorString(String errorText) throws PropertyException {
       throw new PropertyException("Evaluation error: " + errorText);
    }
 }

@@ -5,7 +5,6 @@ these should all say "pass":
      NullMethod call: pass
       BadMethod call: pass
          BadProperty: pass
-ThrowsException call: pass
                false: pass
                 true: pass
 
