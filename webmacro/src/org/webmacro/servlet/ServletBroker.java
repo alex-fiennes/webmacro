@@ -74,4 +74,8 @@ abstract public class ServletBroker extends Broker {
       else
          return Servlet20Broker.getBroker(s);
    }
+
+    public ServletContext getServletContext() {
+        return _servletContext;
+    }
 }

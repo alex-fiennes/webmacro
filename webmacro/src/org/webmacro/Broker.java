@@ -606,6 +606,10 @@ public class Broker
       return _name;
    }
 
+    public ClassLoader getClassLoader() {
+        return _myClassLoader;
+    }
+
    /**
      * Test the broker or a provider. Reads from stdin: TYPE NAME
      */
