@@ -36,7 +36,7 @@ public final class ResourceManager implements ResourceMap
    /**
      * What type do we serve?
      */
-   final private String _type;
+   private String _type;
 
    /**
      * How many milliseconds do we cache stuff? less than 1 means forever
@@ -56,12 +56,12 @@ public final class ResourceManager implements ResourceMap
    /**
      * The broker that owns us
      */
-   final private ResourceBroker _broker;
+   private ResourceBroker _broker;
  
    /**
      * A list of all our providers
      */
-   final private Vector _providers = new Vector();
+   private Vector _providers = new Vector();
 
    /**
      * A hashtable containing all our resources. Lots of code 
@@ -69,12 +69,12 @@ public final class ResourceManager implements ResourceMap
      * that no further locks must be acquired within those 
      * synchronized blocks.
      */
-   final private Hashtable _resources = new Hashtable();
+   private Hashtable _resources = new Hashtable();
 
    /**
      * A hashtable containing all our worker threads
      */
-   final private Hashtable _workers = new Hashtable();
+   private Hashtable _workers = new Hashtable();
 
 
    // CONSTANTS
@@ -82,22 +82,22 @@ public final class ResourceManager implements ResourceMap
    /**
      * At what priority a worker thread whose work is irrelevant?
      */
-   final private static int _REVOKED_WORKER; // not quite the lowest
+   private static int _REVOKED_WORKER; // not quite the lowest
 
    /**
      * At what priority a worker thread whose work may be important?
      */
-   final private static int _BACKGROUND_WORKER;  // default priority
+   private static int _BACKGROUND_WORKER;  // default priority
 
    /**
      * At what priority a worker thread whose work is important?
      */
-   final private static int _NORMAL_WORKER;  // default priority
+   private static int _NORMAL_WORKER;  // default priority
 
    /**
      * At what priority a worker whose thread performs a critical task?
      */
-   final private static int _CRITICAL_WORKER; // same as everyone else
+   private static int _CRITICAL_WORKER; // same as everyone else
 
    static {
       int curPriority = Thread.currentThread().getPriority();
