@@ -26,7 +26,6 @@
 
 	<target name="clean">
 		<delete dir="${dir.class}" />
-		<delete dir="${dir.install}" />
 		<delete file="${file.jar}" />
 		<delete file="${file.resources}" />
 	</target>
