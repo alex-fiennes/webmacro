@@ -1,4 +1,4 @@
-options { STATIC = false; USER_CHAR_STREAM = true; UNICODE_INPUT = true; } 
+options { STATIC = false; USER_CHAR_STREAM = true; UNICODE_INPUT = true; }
 
 PARSER_BEGIN(WMParser_impl)
 
@@ -19,8 +19,8 @@ import org.webmacro.directive.Directive.Subdirective;
 /**
  * WMParser_impl
  *
- * JavaCC parser class for parsing WebMacro templates.  
- * The supported entry point is WMDocument, which returns a BlockBuilder. 
+ * JavaCC parser class for parsing WebMacro templates.
+ * The supported entry point is WMDocument, which returns a BlockBuilder.
  *
  * @author Brian Goetz
  */
@@ -32,8 +32,8 @@ public class WMParser_impl {
   private Stack blockStack = new Stack();
   private String templateName;
 
-  public WMParser_impl(Broker broker, 
-                       String templateName, 
+  public WMParser_impl(Broker broker,
+                       String templateName,
                        BackupCharStream stream) {
     this(stream);
     this.stream = stream;
@@ -41,8 +41,8 @@ public class WMParser_impl {
     this.templateName = templateName;
   }
 
-  public WMParser_impl(Broker broker, 
-                       String templateName, 
+  public WMParser_impl(Broker broker,
+                       String templateName,
                        java.io.Reader reader) {
     this(broker, templateName, new BackupCharStream(reader));
   }
@@ -59,10 +59,10 @@ public class WMParser_impl {
     Broker broker = wm.getBroker();
     WMParser_impl parser;
 
-    if (args.length >= 1) 
+    if (args.length >= 1)
       parser = new WMParser_impl(broker, args[0], new FileReader(args[0]));
-    else 
-      parser = new WMParser_impl(broker, "stdin", 
+    else
+      parser = new WMParser_impl(broker, "stdin",
                                  new InputStreamReader(System.in));
 
     Builder bb = parser.WMDocument();
@@ -80,8 +80,8 @@ public class WMParser_impl {
     } catch (Exception e) {
        e.printStackTrace();
     }
-  }     
-  
+  }
+
 
   // JavaCC hack for doing lexical state transitions syntactically
 
@@ -94,7 +94,7 @@ public class WMParser_impl {
       while (token.next != null) {
         Token t = token;
         // Find the token whose token.next is the last in the chain
-        while (t.next != null && t.next.next != null) 
+        while (t.next != null && t.next.next != null)
           t = t.next;
 
         // put it at the end of the new chain
@@ -103,7 +103,7 @@ public class WMParser_impl {
 
         // If there are special tokens, these go before the regular tokens,
         // so we want to push them back onto the input stream in the order
-        // we find them along the specialToken chain. 
+        // we find them along the specialToken chain.
 
         if (t.next.specialToken != null) {
           Token tt=t.next.specialToken;
@@ -122,7 +122,7 @@ public class WMParser_impl {
         root.next = root.next.next;
       }
       jj_ntk = -1;
-      token_source.SwitchTo(state); 
+      token_source.SwitchTo(state);
     }
   }
 
@@ -137,8 +137,8 @@ public class WMParser_impl {
     if (getToken(1).kind == POUND
         && getToken(2).kind == STUFF) {
       String word = getToken(2).image;
-      for (int i=0; i<subdirectives.length; i++) 
-        if (subdirectives[i].isBreaking 
+      for (int i=0; i<subdirectives.length; i++)
+        if (subdirectives[i].isBreaking
             && word.startsWith(subdirectives[i].name)
             && (word.length() == subdirectives[i].name.length()
                 || !Character.isJavaIdentifierPart(
@@ -146,14 +146,14 @@ public class WMParser_impl {
           retVal = false;
           break;
         }
-    } 
+    }
     return retVal;
-  } 
+  }
 
 
-  private static String SEMI_FEATURE = 
+  private static String SEMI_FEATURE =
     "Use of semicolon to delimit property reference -- use $( ) instead";
-  private static String DDOLLAR_FEATURE = 
+  private static String DDOLLAR_FEATURE =
     "Use of $$ to reference template property -- use single $ instead";
 
   // Warning routines
@@ -171,7 +171,7 @@ TOKEN_MGR_DECLS : {
 
 
 /*
-  
+
   This parser makes substantial (and nonstandard) use of JavaCC lexical
   states.  Because there are really two languages -- a free-form
   underlying document language, and the WebMacro language -- we only
@@ -181,34 +181,34 @@ TOKEN_MGR_DECLS : {
   communicate this to the lexical analyzer as well.  We do this
   through the SetState method, which changes the lexical state AND
   pushes back any lookahead tokens onto the input stream.  It assumes that
-  the backup function in the input stream works "as expected."  
+  the backup function in the input stream works "as expected."
 
-  The state management is somewhat complicated, so be careful with it.  
+  The state management is somewhat complicated, so be careful with it.
   In particular, we don't maintain a lexical state stack, although some
-  rules do this on their own.  Rules which change the state are marked.  
+  rules do this on their own.  Rules which change the state are marked.
 
-  The states are: 
+  The states are:
   DEFAULT: This is where we start, and in this state, we only recognize
            the minimal number of characters to identify a transition into
-           the WM state.  
-  WM:      We are in this state when we are parsing a WM directive. 
+           the WM state.
+  WM:      We are in this state when we are parsing a WM directive.
   QS:      We are in this state when we are parsing a quoted string in
-           an WM directive.  
+           an WM directive.
   SQS:     We are in this state when we are parsing a quoted string in
-           an WM directive, bounded by single quotes.  
+           an WM directive, bounded by single quotes.
   COMMENT: We are in this state when we are parsing a comment
 
   If there are any state dependencies, productions are tagged with comments
-  indicating this.  
-  "State: X" means that the rule expects to be in state X on entry and is 
-  in state X on exit.  
+  indicating this.
+  "State: X" means that the rule expects to be in state X on entry and is
+  in state X on exit.
   "State: X->Y" means that the rule expects to be in state X on entry and
-  is in state Y on exit.  
-  "State: preserved" means that there are not state dependencies.   
+  is in state Y on exit.
+  "State: preserved" means that there are not state dependencies.
 
   This parser also uses some JAVACODE productions, to account for the fact
-  that directives are pluggable.  Directives and directive arguments are 
-  parsed with JAVACODE productions. 
+  that directives are pluggable.  Directives and directive arguments are
+  parsed with JAVACODE productions.
 
  */
 
@@ -256,7 +256,7 @@ TOKEN_MGR_DECLS : {
 
 <DEFAULT, WM, QS, SQS> TOKEN : {
   <DOLLAR:    "$">
-| <QCHAR:     <_QCHAR> >  
+| <QCHAR:     <_QCHAR> >
 | <SLASH:     "\\">
 }
 
@@ -265,17 +265,18 @@ TOKEN_MGR_DECLS : {
 }
 
 <WM, QS> TOKEN : {
-  <QUOTE:     "\""> 
+  <QUOTE:     "\"">
 }
 
 <WM, SQS> TOKEN : {
-  <SQUOTE:     "\'"> 
+  <SQUOTE:     "\'">
 }
 
 <WM> TOKEN : {
   <NULL:      "null">
 | <TRUE:      "true">
 | <FALSE:     "false">
+| <UNDEFINED: "undefined">
 | <WS:        (<_WHITESPACE>)+ >
 | <NEWLINE:   <_NEWLINE> >
 | <LPAREN:    "(">
@@ -299,7 +300,7 @@ TOKEN_MGR_DECLS : {
 | <OP_NOT:    "!"  | "NOT">
 | <COMMA:     ",">
 | <SEMI:      ";">
-| <WORD:      <_IDENTIFIER> > 
+| <WORD:      <_IDENTIFIER> >
 | <NUMBER:    (<_NUM_CHAR>)+>
 | <OTHER:     ( ~[] ) >
 }
@@ -317,10 +318,10 @@ TOKEN_MGR_DECLS : {
 /* Lookahead Productions */
 /* ********************* */
 
-/* Used by JAVACODE productions to do lookahead.  
+/* Used by JAVACODE productions to do lookahead.
    All lookahead productions assume state WM unless otherwise stated */
 
-// is the next thing a subdirective? 
+// is the next thing a subdirective?
 JAVACODE
 Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
   int n=1;
@@ -330,38 +331,38 @@ Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
   if (getToken(n).kind == POUND
       && getToken(n+1).kind == WORD) {
     String word = getToken(n+1).image;
-    for (int i=0; i<subdirectives.length; i++) 
+    for (int i=0; i<subdirectives.length; i++)
       if (word.equals(subdirectives[i].name))
         return subdirectives[i];
   }
   return null;
-} 
+}
 
-// is the next thing the specified keyword? 
+// is the next thing the specified keyword?
 JAVACODE
 boolean lookahead_keyword(String keyword) {
   int n=1;
-  if (getToken(n).kind == WS) 
+  if (getToken(n).kind == WS)
     ++n;
   if (getToken(n).kind == WORD
       && getToken(n).image.equals(keyword))
     return true;
-  else 
+  else
     return false;
 }
 
-// is the next thing the specified keyword? 
+// is the next thing the specified keyword?
 JAVACODE
 boolean lookahead_arg(ArgDescriptor arg) {
   if (arg.type == Directive.ArgType_KEYWORD)
     return lookahead_keyword(arg.keyword);
   else if (arg.type == Directive.ArgType_ASSIGN) {
     int n=1;
-    if (getToken(n).kind == WS) 
+    if (getToken(n).kind == WS)
       ++n;
     return (getToken(n).kind == OP_SET);
   }
-  else 
+  else
     return false;
 }
 
@@ -371,16 +372,16 @@ boolean lookahead_arg(ArgDescriptor arg) {
 
 /* All argument parsing productions assume state WM */
 
-// parse_arg -- parses a directive argument and returns it.  If the 
+// parse_arg -- parses a directive argument and returns it.  If the
 // argument is optional and omitted, it returns null, otherwise will
 // throw a parse exception
 
-JAVACODE 
+JAVACODE
 Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   switch (arg.type) {
   case Directive.ArgType_CONDITION:
     return Conditional();
-      
+
   case Directive.ArgType_BLOCK: {
     BeforeBlock();
     SetState(DEFAULT);
@@ -417,14 +418,14 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
     return StringArg();
 
   case Directive.ArgType_ASSIGN:
-    Punct_EQ();     
+    Punct_EQ();
     return "=";
-    
+
   case Directive.ArgType_ARGLIST:
     return FormalArgList();
 
   case Directive.ArgType_KEYWORD:
-    if (arg.optional && !lookahead_keyword(arg.keyword)) 
+    if (arg.optional && !lookahead_keyword(arg.keyword))
       return null;
     else {
       Keyword(arg.keyword);
@@ -432,21 +433,21 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
     }
 
   default:
-    throw new ParseException("ParseDirectiveArg: Unknown argument type " 
+    throw new ParseException("ParseDirectiveArg: Unknown argument type "
                              + arg.type);
   }
 }
 
-// parse_arg_group -- parses a group of arguments.  If the group is optional, 
+// parse_arg_group -- parses a group of arguments.  If the group is optional,
 // it looks ahead for the group's starting keyword, returning false if the
-// group is not seen.  
+// group is not seen.
 
 JAVACODE
 boolean parse_arg_group(DirectiveDescriptor descriptor,
-                        ArgDescriptor[] args, int i, 
-                        DirectiveArgs da) 
+                        ArgDescriptor[] args, int i,
+                        DirectiveArgs da)
   throws BuildException {
-  if (args[i].optional) 
+  if (args[i].optional)
     if (!lookahead_arg(args[args[i].children[0]]))
       return false;
   for (int j=0; j<args[i].subordinateArgs; j++) {
@@ -468,10 +469,10 @@ boolean parse_arg_group(DirectiveDescriptor descriptor,
 // parse_arg_choice -- parse a choice-set (one-of a, b, c)
 
 JAVACODE
-void parse_arg_choice(DirectiveDescriptor descriptor, 
-                      ArgDescriptor[] args, 
+void parse_arg_choice(DirectiveDescriptor descriptor,
+                      ArgDescriptor[] args,
                       int i,
-                      DirectiveArgs da) 
+                      DirectiveArgs da)
 throws BuildException {
   boolean foundOne = false;
 
@@ -484,7 +485,7 @@ throws BuildException {
       if (lookahead_keyword(args[child.children[0]].keyword)) {
         foundOne = true;
         parse_arg_group(descriptor, args, args[i].children[j], da);
-        if (oc.repeating) 
+        if (oc.repeating)
           more = true;
         break;
       }
@@ -501,18 +502,18 @@ throws BuildException {
   }
 }
 
-//parse_args -- parse a whole directive's worth of arguments 
+//parse_args -- parse a whole directive's worth of arguments
 
-JAVACODE 
-void parse_args(DirectiveDescriptor descriptor, 
+JAVACODE
+void parse_args(DirectiveDescriptor descriptor,
                 ArgDescriptor[] args, DirectiveArgs da) {
   try {
     for (int i=0; i < args.length; ) {
       ArgDescriptor arg = args[i];
 
-      if (arg.type == Directive.ArgType_GROUP) 
+      if (arg.type == Directive.ArgType_GROUP)
         parse_arg_group(descriptor, args, i, da);
-      else if (arg.type == Directive.ArgType_CHOICE) 
+      else if (arg.type == Directive.ArgType_CHOICE)
         parse_arg_choice(descriptor, args, i, da);
       else {
         Object o = parse_arg(descriptor, arg);
@@ -539,29 +540,29 @@ Builder parse_directive(String directive) throws ParseException {
   DirectiveDescriptor descriptor=null;
   Subdirective subd;
 
-  try { 
-    descriptor = 
+  try {
+    descriptor =
       (DirectiveDescriptor) broker.get(DirectiveProvider.DIRECTIVE_KEY,
                                        directive);
     if (descriptor == null)
       return parse_macro(directive);
-    else if (!descriptor.valid) 
+    else if (!descriptor.valid)
       throw new ParseException("Descriptor for directive " + directive
                                + " is not valid");
   }
   catch (Exception e) {
-    throw new ParseException("No such directive #" + directive); 
+    throw new ParseException("No such directive #" + directive);
   }
   db = new DirectiveBuilder(descriptor);
   parse_args(descriptor, descriptor.args, db);
 
-  if (descriptor.subdirectives != null 
+  if (descriptor.subdirectives != null
       && descriptor.subdirectives.length > 0) {
     DirectiveArgs da;
 
     while ((subd = lookahead_subdirective(descriptor.subdirectives)) != null) {
       try {
-        if (!db.subdirectiveOk(subd.id)) 
+        if (!db.subdirectiveOk(subd.id))
           break;
         SubdirectiveStart();
         da = db.newSubdirective(subd.id);
@@ -572,7 +573,7 @@ Builder parse_directive(String directive) throws ParseException {
     }
   }
   OptionalWsNl();
-    
+
   return db;
 }
 
@@ -605,10 +606,10 @@ void EatWsNlOrSpace(BlockBuilder b) : {
 {
   { SetState(WM); }
   (
-      LOOKAHEAD(<NEWLINE>) <NEWLINE> 
-      | LOOKAHEAD(<WS>) 
-        ( w=<WS> [ LOOKAHEAD(<NEWLINE>) n=<NEWLINE> ] 
-          { if (n == null) b.addElement(w.image.substring(1)); } 
+      LOOKAHEAD(<NEWLINE>) <NEWLINE>
+      | LOOKAHEAD(<WS>)
+        ( w=<WS> [ LOOKAHEAD(<NEWLINE>) n=<NEWLINE> ]
+          { if (n == null) b.addElement(w.image.substring(1)); }
         )
   )?
   { SetState(entryState); }
@@ -629,17 +630,17 @@ void OptionalWsNl() : {
 void OptionalWs() : {
 }
 {
-  [ <WS> ] 
+  [ <WS> ]
 }
 
 void SubdirectiveStart() : {
 }
-{ 
-  [ LOOKAHEAD( [<WS>]<NEWLINE>[<WS>] ) [<WS>]<NEWLINE>[<WS>] ] <POUND> <WORD> [ <WS> ] 
+{
+  [ LOOKAHEAD( [<WS>]<NEWLINE>[<WS>] ) [<WS>]<NEWLINE>[<WS>] ] <POUND> <WORD> [ <WS> ]
 }
 
 
-/* Productions used by JavaCode productions to parse directive arguments. 
+/* Productions used by JavaCode productions to parse directive arguments.
    Correpond mostly to the defined argument types.  (State: WM) */
 
 Builder LValue() : {
@@ -689,9 +690,9 @@ void Keyword(String s) : {
 }
 {
   [ <WS> ] t=<WORD> [ <WS> ]
-  { 
-    if (!s.equals(t.image)) 
-      throw new ParseException("Encountered " + t.image + " at line " 
+  {
+    if (!s.equals(t.image))
+      throw new ParseException("Encountered " + t.image + " at line "
                                + t.beginLine + "; expecting " + s);
   }
 }
@@ -726,12 +727,12 @@ void VariableReferenceGuts(ArrayList v) : {
 }
 {
   t=<WORD> { v.add(t.image); }
-  ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; } 
-    [ <LPAREN> argList=ArgList() <RPAREN> 
+  ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; }
+    [ <LPAREN> argList=ArgList() <RPAREN>
       { element = new PropertyMethodBuilder((String) element, argList); }
-    ]  
+    ]
     { v.add(element); }
-  )*  
+  )*
 }
 
 Builder VariableReference() : {
@@ -739,15 +740,15 @@ Builder VariableReference() : {
   Token t;
 }
 {
-  <DOLLAR> 
-  [ <DOLLAR> { warnDeprecated(DDOLLAR_FEATURE); } ] 
+  <DOLLAR>
+  [ <DOLLAR> { warnDeprecated(DDOLLAR_FEATURE); } ]
   (
-    LOOKAHEAD(2) 
-    t=<WORD><SEMI> { v.add(t.image); warnDeprecated(SEMI_FEATURE); }  
-    | VariableReferenceGuts(v) 
+    LOOKAHEAD(2)
+    t=<WORD><SEMI> { v.add(t.image); warnDeprecated(SEMI_FEATURE); }
+    | VariableReferenceGuts(v)
     | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )
-  { 
+  {
     Object[] names = v.toArray();
     return new VariableBuilder(names, false);
   }
@@ -758,7 +759,7 @@ Builder VariableReference() : {
 /* Expression Productions */
 /* ********************** */
 
-/* Productions used in parsing WM expressions.  State: WM.  
+/* Productions used in parsing WM expressions.  State: WM.
    Most general expression type is Expression() */
 
 // State: preserved
@@ -769,24 +770,24 @@ Builder QuotedString() : {
   Object dr;
 }
 {
-  ( 
-    <QUOTE> { SetState(QS); } 
+  (
+    <QUOTE> { SetState(QS); }
     ( t=<QS_TEXT> { qs.addElement(t.image); }
-      | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
+      | t=<QCHAR> { qs.addElement(t.image.substring(1)); }
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference() 
+      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference()
         { qs.addElement(dr); }
-    ) * 
-    <QUOTE> 
+    ) *
+    <QUOTE>
   |
-    <SQUOTE> { SetState(SQS); } 
+    <SQUOTE> { SetState(SQS); }
     ( t=<SQS_TEXT> { qs.addElement(t.image); }
-      | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
+      | t=<QCHAR> { qs.addElement(t.image.substring(1)); }
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference() 
+      | LOOKAHEAD(t=<DOLLAR>) dr=DollarReference()
         { qs.addElement(dr); }
-    ) * 
-    <SQUOTE> 
+    ) *
+    <SQUOTE>
   )
   { SetState(entryState); }
   { return qs; }
@@ -807,11 +808,11 @@ ListBuilder ArgList() : {
   Object e;
 }
 {
-  [ [<WS>] e=Expression() [<WS>] { list.addElement(e); } 
-    ( 
-      <COMMA> [ <WS> ] e=Expression() [<WS>] { list.addElement(e); } 
-    ) * 
-  ] 
+  [ [<WS>] e=Expression() [<WS>] { list.addElement(e); }
+    (
+      <COMMA> [ <WS> ] e=Expression() [<WS>] { list.addElement(e); }
+    ) *
+  ]
   { return list; }
 }
 
@@ -819,7 +820,7 @@ ListBuilder BracketList() : {
   ListBuilder list;
 }
 {
-  <LBRACKET> list=ArgList() <RBRACKET> 
+  <LBRACKET> list=ArgList() <RBRACKET>
   { return list; }
 }
 
@@ -828,13 +829,13 @@ Object[] FormalArgList() : {
   Token name;
 }
 {
-  [ <LPAREN> 
-    [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); } 
-    ( 
-      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); } 
-    ) * 
-  ] 
-    <RPAREN> 
+  [ <LPAREN>
+    [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
+    (
+      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
+    ) *
+  ]
+    <RPAREN>
   ]
   { return list.toArray(); }
 }
@@ -853,22 +854,23 @@ Object Term() : {
   Token t;
 }
 {
-  ( 
-    e=VariableReference() 
+  (
+    e=VariableReference()
     | <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN>
     | e=QuotedString()
-    | e=BracketList() 
-    | <NULL>           { e = null; } 
-    | <TRUE>           { e = Boolean.TRUE; } 
+    | e=BracketList()
+    | <NULL>           { e = null; }
+    | <TRUE>           { e = Boolean.TRUE; }
     | <FALSE>          { e = Boolean.FALSE; }
+    | <UNDEFINED>      { e = org.webmacro.engine.UndefinedMacro.getInstance(); }
     | <OP_NOT> [<WS>] e=Term() { e = new Expression.NotBuilder(e); }
-    | t=<NUMBER>           
-      { try { e = new Integer(t.image); } 
+    | t=<NUMBER>
+      { try { e = new Integer(t.image); }
         catch (NumberFormatException ex) { e=null; } }
-    | <OP_MINUS>t=<NUMBER> 
+    | <OP_MINUS>t=<NUMBER>
       { try { int i = Integer.parseInt(t.image); e = new Integer(-i); }
         catch (NumberFormatException ex) { e=null; } }
-  ) 
+  )
   { return e; }
 }
 
@@ -877,15 +879,15 @@ Object Factor() : {
   Token op;
 }
 {
-  e=Term() 
+  e=Term()
   (
-    LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) [<WS>] e2=Term() 
-    { 
-      if (op.kind == OP_MULT) 
+    LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) [<WS>] e2=Term()
+    {
+      if (op.kind == OP_MULT)
         e = new Expression.MultiplyBuilder(e, e2);
-      else if (op.kind == OP_DIV) 
+      else if (op.kind == OP_DIV)
         e = new Expression.DivideBuilder(e, e2);
-      else 
+      else
         throw new ParseException("internal parser error in Factor()");
     }
   )*
@@ -897,15 +899,15 @@ Object AExpression() : {
   Token op;
 }
 {
-  e=Factor() 
-  ( 
-    LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) [<WS>] e2=Factor() 
-    { 
-      if (op.kind == OP_PLUS) 
+  e=Factor()
+  (
+    LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) [<WS>] e2=Factor()
+    {
+      if (op.kind == OP_PLUS)
         e = new Expression.AddBuilder(e, e2);
-      else if (op.kind == OP_MINUS) 
+      else if (op.kind == OP_MINUS)
         e = new Expression.SubtractBuilder(e, e2);
-      else 
+      else
         throw new ParseException("internal parser error in AExpression()");
     }
   )*
@@ -914,11 +916,11 @@ Object AExpression() : {
   }
 }
 
-Token RelOp() : { 
+Token RelOp() : {
   Token t;
 }
 {
-  ( t=<OP_EQ> | t=<OP_SET> | t=<OP_NE> 
+  ( t=<OP_EQ> | t=<OP_SET> | t=<OP_NE>
     | t=<OP_GT> | t=<OP_GE> | t=<OP_LE> | t=<OP_LT> )
   { return t; }
 }
@@ -932,10 +934,10 @@ Object CExpression() : {
   Token op=null;
 }
 {
-  e1=AExpression() 
+  e1=AExpression()
   [ LOOKAHEAD(2) [<WS>] op=RelOp() [<WS>] e2=AExpression() ]
-  { 
-    if (op == null) 
+  {
+    if (op == null)
       return e1;
     else switch (op.kind) {
       case OP_EQ:  return new Expression.CompareEqBuilder(e1, e2);
@@ -945,20 +947,20 @@ Object CExpression() : {
       case OP_GE:  return new Expression.CompareGeBuilder(e1, e2);
       case OP_LE:  return new Expression.CompareLeBuilder(e1, e2);
       case OP_LT:  return new Expression.CompareLtBuilder(e1, e2);
-      default:   
+      default:
         throw new ParseException("internal parser error in CExpression()");
     }
-  } 
+  }
 }
 
 Object AndExpression() : {
   Object e, e2;
 }
 {
-  e=CExpression() 
+  e=CExpression()
   (
-    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression() 
-    { 
+    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression()
+    {
       e = new Expression.AndBuilder(e, e2);
     }
   )*
@@ -969,10 +971,10 @@ Object OrExpression() : {
   Object e, e2;
 }
 {
-  e=AndExpression() 
+  e=AndExpression()
   (
-    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression() 
-    { 
+    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression()
+    {
       e = new Expression.OrBuilder(e, e2);
     }
   )*
@@ -982,7 +984,7 @@ Object OrExpression() : {
 Object Expression() : {
   Object e=null;
 }
-{ 
+{
   e=OrExpression() { return e; }
 }
 
@@ -997,7 +999,7 @@ JAVACODE void EatWsNl() {
   int entryState = token_source.curLexState;
   SetState(WM);
   OptionalWsNl();
-  SetState(entryState); 
+  SetState(entryState);
 }
 
 // Parses an entire directive.  Treats # as text if the previous character
@@ -1009,12 +1011,12 @@ void Directive(ParserBlockBuilder b) : {
 }
 {
   <POUND>
-  { SetState(WM); } 
-  ( LOOKAHEAD(<WORD>, { b.directiveOk() } ) 
-       t=<WORD> [ <WS> ] o=parse_directive(t.image) 
+  { SetState(WM); }
+  ( LOOKAHEAD(<WORD>, { b.directiveOk() } )
+       t=<WORD> [ <WS> ] o=parse_directive(t.image)
        { b.eatTrailingWsNl(); b.addElement(o, t.beginLine, t.beginColumn); }
     | { b.addElement("#"); }
-  ) 
+  )
   { SetState(DEFAULT); }
 }
 
@@ -1024,11 +1026,11 @@ void Comment(ParserBlockBuilder b) : {
 }
 {
   <POUNDPOUND>
-  { SetState(COMMENT); } 
-  ( LOOKAHEAD( { b.directiveOk() } ) 
+  { SetState(COMMENT); }
+  ( LOOKAHEAD( { b.directiveOk() } )
       [ <RESTOFLINE> ] { b.eatTrailingWsNl(); }
     | { b.addElement("##"); }
-  ) 
+  )
   { SetState(DEFAULT); }
 }
 
@@ -1039,12 +1041,12 @@ Object DollarReference() : {
 {
   { SetState(WM); }
   ( LOOKAHEAD(<DOLLAR> [ <DOLLAR> ] [ <LPAREN> ] <WORD>)
-      o=VariableReference() 
+      o=VariableReference()
     | <DOLLAR> { o = "$"; }
   )
-  { 
-    SetState(entryState); 
-    return o; 
+  {
+    SetState(entryState);
+    return o;
   }
 }
 
@@ -1056,11 +1058,11 @@ void WMContent(ParserBlockBuilder b) : {
   ( t=<STUFF>       { b.addElement(t.image); }
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
-    | Directive(b) 
+    | Directive(b)
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference() 
+    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference()
       { b.addElement(dr, t.beginLine, t.beginColumn); }
-  ) 
+  )
 }
 
 void WMContentNoDirective(ParserBlockBuilder b) : {
@@ -1072,16 +1074,16 @@ void WMContentNoDirective(ParserBlockBuilder b) : {
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference() 
+    | LOOKAHEAD(<DOLLAR>) { t=getToken(1); } dr=DollarReference()
       { b.addElement(dr, t.beginLine, t.beginColumn); }
-  ) 
+  )
 }
 
 void LiteralWMContent(ParserBlockBuilder b) : {
   Token t;
 }
 {
-  ( 
+  (
     t=<QCHAR> { b.addElement(t.image.substring(1)); }
     | ( t=<STUFF> | t=<SLASH> | t=<POUND> | t=<DOLLAR> | t=<POUNDPOUND> )
       { b.addElement(t.image); }
@@ -1093,17 +1095,17 @@ BlockBuilder LiteralBlock() : {
   Token t;
 }
 {
-  ( 
-    LOOKAHEAD(<LBRACE>) 
-    ( <LBRACE>    
-      ( LiteralWMContent(block) 
-        | ( t=<BEGIN> | t=<END> )     { block.addElement(t.image); }
-      ) * 
-      <RBRACE> )
-  | ( [ <BEGIN> ] 
+  (
+    LOOKAHEAD(<LBRACE>)
+    ( <LBRACE>
       ( LiteralWMContent(block)
-        | ( t=<LBRACE> | t=<RBRACE> ) { block.addElement(t.image); } 
-      ) * 
+        | ( t=<BEGIN> | t=<END> )     { block.addElement(t.image); }
+      ) *
+      <RBRACE> )
+  | ( [ <BEGIN> ]
+      ( LiteralWMContent(block)
+        | ( t=<LBRACE> | t=<RBRACE> ) { block.addElement(t.image); }
+      ) *
       <END> )
   )
   { return block; }
@@ -1113,23 +1115,23 @@ BlockBuilder Block(Subdirective[] subdirectives) : {
   ParserBlockBuilder block = new ParserBlockBuilder(templateName);
   Token t;
 }
-{ 
+{
   { blockStack.push(subdirectives); }
-  ( 
-    LOOKAHEAD(<LBRACE>) 
-    ( <LBRACE> EatWsNlIfNl(block) 
-      ( 
-        WMContent(block) 
+  (
+    LOOKAHEAD(<LBRACE>)
+    ( <LBRACE> EatWsNlIfNl(block)
+      (
+        WMContent(block)
         | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
-      ) * 
-      <RBRACE> 
+      ) *
+      <RBRACE>
     )
-  | ( [ <BEGIN> EatWsNlOrSpace(block) ] 
-      ( WMContentNoDirective(block) 
+  | ( [ <BEGIN> EatWsNlOrSpace(block) ]
+      ( WMContentNoDirective(block)
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
-        | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() }) 
+        | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() })
           Directive(block)
-     ) * [ <END> { block.eatOneWs(); } ] 
+     ) * [ <END> { block.eatOneWs(); } ]
     )
   )
   { blockStack.pop(); }
@@ -1141,12 +1143,12 @@ BlockBuilder WMDocument() : {
   Token t;
 }
 {
-  ( 
+  (
     ( WMContent(block)
       | (t=<BEGIN> | t=<END> | t=<LBRACE> | t=<RBRACE>)
         { block.addElement(t.image); }
     )
-  ) * <EOF> 
+  ) * <EOF>
   { return block; }
 }
 

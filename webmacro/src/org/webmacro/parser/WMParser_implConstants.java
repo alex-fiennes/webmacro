@@ -31,34 +31,35 @@ public interface WMParser_implConstants {
   int NULL = 26;
   int TRUE = 27;
   int FALSE = 28;
-  int WS = 29;
-  int NEWLINE = 30;
-  int LPAREN = 31;
-  int RPAREN = 32;
-  int LBRACKET = 33;
-  int RBRACKET = 34;
-  int DOT = 35;
-  int OP_LT = 36;
-  int OP_LE = 37;
-  int OP_GT = 38;
-  int OP_GE = 39;
-  int OP_EQ = 40;
-  int OP_SET = 41;
-  int OP_NE = 42;
-  int OP_PLUS = 43;
-  int OP_MINUS = 44;
-  int OP_MULT = 45;
-  int OP_DIV = 46;
-  int OP_AND = 47;
-  int OP_OR = 48;
-  int OP_NOT = 49;
-  int COMMA = 50;
-  int SEMI = 51;
-  int WORD = 52;
-  int NUMBER = 53;
-  int OTHER = 54;
-  int QS_TEXT = 55;
-  int SQS_TEXT = 56;
+  int UNDEFINED = 29;
+  int WS = 30;
+  int NEWLINE = 31;
+  int LPAREN = 32;
+  int RPAREN = 33;
+  int LBRACKET = 34;
+  int RBRACKET = 35;
+  int DOT = 36;
+  int OP_LT = 37;
+  int OP_LE = 38;
+  int OP_GT = 39;
+  int OP_GE = 40;
+  int OP_EQ = 41;
+  int OP_SET = 42;
+  int OP_NE = 43;
+  int OP_PLUS = 44;
+  int OP_MINUS = 45;
+  int OP_MULT = 46;
+  int OP_DIV = 47;
+  int OP_AND = 48;
+  int OP_OR = 49;
+  int OP_NOT = 50;
+  int COMMA = 51;
+  int SEMI = 52;
+  int WORD = 53;
+  int NUMBER = 54;
+  int OTHER = 55;
+  int QS_TEXT = 56;
+  int SQS_TEXT = 57;
 
   int SQS = 0;
   int QS = 1;
@@ -96,6 +97,7 @@ public interface WMParser_implConstants {
     "\"null\"",
     "\"true\"",
     "\"false\"",
+    "\"undefined\"",
     "<WS>",
     "<NEWLINE>",
     "\"(\"",

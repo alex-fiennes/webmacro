@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,15 +9,15 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 package org.webmacro.engine;
@@ -25,16 +25,16 @@ package org.webmacro.engine;
 import java.io.*;
 import org.webmacro.*;
 
-public abstract class Expression { 
+public abstract class Expression {
 
-  final private static org.webmacro.engine.UndefinedMacro UNDEF 
+  final private static org.webmacro.engine.UndefinedMacro UNDEF
     = org.webmacro.engine.UndefinedMacro.getInstance();
-  
+
   public abstract static class ExpressionBase implements Macro, Visitable {
     protected ExpressionBase() {}
 
-    // Macro methods 
-    final public void write(FastWriter out, Context context) 
+    // Macro methods
+    final public void write(FastWriter out, Context context)
       throws PropertyException, IOException {
       out.write(evaluate(context).toString());
     }
@@ -44,14 +44,14 @@ public abstract class Expression {
   final private static Boolean FALSE = Boolean.FALSE;
 
   public static boolean isTrue(Object o) {
-    if (o == null) 
+    if (o == null)
       return false;
     else if (o instanceof Boolean)
       return ((Boolean) o).booleanValue();
     //  added by Keats 30-Nov-01
-    else if (o == UNDEF)
+    else if (o == UNDEF) {
       return false;
-    else
+    } else
       return (o != null);
   }
 
@@ -62,7 +62,7 @@ public abstract class Expression {
   public static Object numberObject(long result, Object op1, Object op2) {
      if (op1.getClass() == Long.class || op2.getClass() == Long.class)
         return new Long(result);
-     else 
+     else
         return new Integer((int) result);
   }
 
@@ -73,19 +73,19 @@ public abstract class Expression {
   public abstract static class BinaryOperation extends ExpressionBase {
 
     private Object _l, _r;
-    
+
     BinaryOperation(Object l, Object r) { _l = l; _r = r; }
 
     public abstract Object operate(Object l, Object r) throws PropertyException;
 
-    public Object evaluate(Context context) 
+    public Object evaluate(Context context)
       throws PropertyException  {
       Object l, r;
 
-      try { 
+      try {
         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
       } catch (Exception e) { l = null; }
-      try { 
+      try {
         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
       } catch (Exception e) { r = null; }
 
@@ -94,7 +94,7 @@ public abstract class Expression {
 
     public abstract String getName();
 
-    public void accept(TemplateVisitor v) { 
+    public void accept(TemplateVisitor v) {
       v.visitBinaryOperation(getName(), _l, _r);
     }
   }
@@ -102,12 +102,12 @@ public abstract class Expression {
   public abstract static class UnaryOperation extends ExpressionBase {
 
     private Object _o;
-    
+
     UnaryOperation(Object o) { _o = o; }
 
     public abstract Object operate(Object o);
 
-    public Object evaluate(Context context) 
+    public Object evaluate(Context context)
       throws PropertyException {
       Object o = (_o instanceof Macro) ? ((Macro) _o).evaluate(context) : _o;
 
@@ -116,26 +116,26 @@ public abstract class Expression {
 
     public abstract String getName();
 
-    public void accept(TemplateVisitor v) { 
+    public void accept(TemplateVisitor v) {
       v.visitUnaryOperation(getName(), _o);
     }
   }
 
   public static class AndOperation extends ExpressionBase {
     private Object _l, _r;
-    
+
     public AndOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public Object evaluate(Context context) 
+    public Object evaluate(Context context)
       throws PropertyException  {
       Object l, r;
 
-      try { 
+      try {
         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
       } catch (Exception e) { l = null; }
-      if (!isTrue(l)) 
+      if (!isTrue(l))
         return FALSE;
-      try { 
+      try {
         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
       } catch (Exception e) { r = null; }
       if (!isTrue(r))
@@ -144,26 +144,26 @@ public abstract class Expression {
       return TRUE;
     }
 
-    public void accept(TemplateVisitor v) { 
+    public void accept(TemplateVisitor v) {
       v.visitBinaryOperation("And", _l, _r);
     }
   }
 
   public static class OrOperation extends ExpressionBase {
     private Object _l, _r;
-    
+
     public OrOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public Object evaluate(Context context) 
+    public Object evaluate(Context context)
       throws PropertyException  {
       Object l, r;
 
-      try { 
+      try {
         l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
       } catch (Exception e) { l = null; }
-      if (isTrue(l)) 
+      if (isTrue(l))
         return TRUE;
-      try { 
+      try {
         r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
       } catch (Exception e) { r = null; }
       if (isTrue(r))
@@ -172,7 +172,7 @@ public abstract class Expression {
       return FALSE;
     }
 
-    public void accept(TemplateVisitor v) { 
+    public void accept(TemplateVisitor v) {
       v.visitBinaryOperation("Or", _l, _r);
     }
   }
@@ -234,7 +234,7 @@ public abstract class Expression {
         long denom = numberValue(r);
         if (denom == 0)
           throw new PropertyException("Divide by zero");
-        else 
+        else
           return numberObject(numberValue(l) / denom, l, r);
       }
     }
@@ -243,7 +243,7 @@ public abstract class Expression {
 
   public abstract static class Compare extends BinaryOperation {
     public Compare(Object l, Object r) { super(l, r); }
-    
+
     public abstract Boolean compare(String l, String r);
     public abstract Boolean compare(long l, long r);
     public Boolean compare(Object l, Object r) {
@@ -260,26 +260,26 @@ public abstract class Expression {
       if (lIsNumber && rIsNumber)
         b = compare(numberValue(l), numberValue(r));
       else {
-        boolean lIsString = (l instanceof String), 
+        boolean lIsString = (l instanceof String),
           rIsString = (r instanceof String);
 
-        if (lIsString && rIsString) 
+        if (lIsString && rIsString)
           b = compare((String) l, (String) r);
-        else if (lIsString && rIsNumber) 
+        else if (lIsString && rIsNumber)
           b = compare((String) l, Long.toString(numberValue(r)));
-        else if (lIsNumber && rIsString) 
+        else if (lIsNumber && rIsString)
           b = compare(Long.toString(numberValue(l)), (String) r);
-        else if (l == null) 
+        else if (l == null)
           b = compareNull(r);
-        else if (r == null) 
+        else if (r == null)
           b = compareNull(l);
-        else 
+        else
           b = compare(l, r);
       }
 
       if (b == null)
         throw new PropertyException("Objects not comparable");
-      else 
+      else
         return b;
     }
   }
@@ -388,15 +388,15 @@ public abstract class Expression {
 
     public abstract Object build(Object l, Object r) throws BuildException;
 
-    public Object build(BuildContext pc) 
+    public Object build(BuildContext pc)
       throws BuildException {
       Object l, r;
       l = (_l instanceof Builder) ? ((Builder) _l).build(pc) : _l;
       r = (_r instanceof Builder) ? ((Builder) _r).build(pc) : _r;
-      
+
       return build(l, r);
     }
-  } 
+  }
 
   public abstract static class UnaryOperationBuilder implements Builder {
 
@@ -406,14 +406,14 @@ public abstract class Expression {
 
     public abstract Object build(Object o) throws BuildException;
 
-    public Object build(BuildContext pc) 
+    public Object build(BuildContext pc)
       throws BuildException {
       Object o;
       o = (_o instanceof Builder) ? ((Builder) _o).build(pc) : _o;
-      
+
       return build(o);
     }
-  } 
+  }
 
 
   public static class AndBuilder extends BinaryOperationBuilder {
@@ -421,15 +421,15 @@ public abstract class Expression {
 
     public Object build(Object l, Object r) {
       if (l instanceof Macro) {
-        if (r instanceof Macro) 
+        if (r instanceof Macro)
           return new AndOperation(l, r);
-        else 
+        else
           return isTrue(r) ? l : FALSE;
       }
       else {
         if (r instanceof Macro)
           return isTrue(l) ? r : FALSE;
-        else 
+        else
           return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
       }
     }
@@ -440,15 +440,15 @@ public abstract class Expression {
 
     public Object build(Object l, Object r) {
       if (l instanceof Macro) {
-        if (r instanceof Macro) 
+        if (r instanceof Macro)
           return new OrOperation(l, r);
-        else 
+        else
           return isTrue(r) ? TRUE : l;
       }
       else {
         if (r instanceof Macro)
           return isTrue(l) ? TRUE : r;
-        else 
+        else
           return (isTrue(l) || isTrue(r)) ? TRUE : FALSE;
       }
     }
@@ -458,9 +458,9 @@ public abstract class Expression {
     public NotBuilder(Object o) { super(o); }
 
     public Object build(Object o) {
-      if (o instanceof Macro) 
+      if (o instanceof Macro)
         return new NotOperation(o);
-      else 
+      else
         return !isTrue(o) ? TRUE : FALSE;
     }
   }
@@ -521,7 +521,7 @@ public abstract class Expression {
           long denom = numberValue(r);
           if (denom == 0)
             throw new BuildException("Divide by zero");
-          else 
+          else
             return numberObject(numberValue(l) / denom, l, r);
         }
         else
@@ -540,7 +540,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
@@ -556,7 +556,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
@@ -572,7 +572,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
@@ -588,7 +588,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
@@ -604,7 +604,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
@@ -620,7 +620,7 @@ public abstract class Expression {
 
       if ((l instanceof Macro) || (r instanceof Macro))
         return c;
-      else 
+      else
         try {
           return c.operate(l, r);
         }
