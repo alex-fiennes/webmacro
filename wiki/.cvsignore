@@ -1,5 +1,3 @@
-builds/*.jar
+builds
 class
 *.jar
-
-
