@@ -1,10 +1,7 @@
 
 FormHandler - Version 0.7 - EARLY PREVIEW VERSION
-===========================
 
-The formhandler package is ment to ease the hassle in developing an interactive web interface. It can be thought of as a transparent web interface for the modification of an object, your subclass of FormHandler.
-
-An object has information and actions. Likewise your  FormHandler object has public variables (persistent information) and it has doActions (actions, specifically methods that start with 'do'). 
+The formhandler package is meant to ease the hassle in developing an interactive web interface. It can be thought of as a transparent web interface for the modification of an object, your subclass of FormHandler. And like java objects, which has information and actions, your FormHandler object has public variables (persistent information) and it has doActions (methods, which for security reasons, start with 'do'). 
 
 I do not consider this release quality. I had most of this working about 8 months ago, but school got in the way. This summer ('01) I am, amazingly, not taking any classes. In my spare time over the past 2 weeks most parts of the code has been re-implemented, and many core features changed. I am sure many other changes will be made as we discover better ways of interaction. 
 
@@ -77,8 +74,6 @@ Top (easy) priorities:
 #. Create a ignore-empty-value validator wrapper, useful to wrap say an optional email address. (Email validator would complain of no value cuz its not a valid email address...)
 
 #. Add the optional passing of the WebContext as the first parameter to doAction methods.
-
-#. Create a FormHandler base servlet subclasses from WMServlet...?
 
 
 
