@@ -39,6 +39,7 @@ public class TestTemplate extends AbstractTemplateEvaluator
     
     public void stuffContext (Context c) throws Exception
     {
+        c.setEvaluationExceptionHandler (new org.webmacro.engine.CrankyEvaluationExceptionHandler());
         Object nullObject = null;
         
         c.put ("NullObject", nullObject);
