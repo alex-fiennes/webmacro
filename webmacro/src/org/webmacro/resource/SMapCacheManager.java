@@ -76,9 +76,8 @@ public class SMapCacheManager implements CacheManager {
 
    private static final class DirectScmCacheElement extends MyCacheElement {
       private Object object; 
-      private CacheReloadContext reloadContext = null;
 
-      public Object getObject() { return object;; }
+      public Object getObject() { return object; }
       public void setObject(Object o) { object = o; }
    }
 
@@ -227,8 +226,11 @@ public class SMapCacheManager implements CacheManager {
      * trying to look it up in a cache. If it's not there, return null.
      */
    public Object get(final Object query) {
-      
-      return _cache.get(query);
+      MyCacheElement r = (MyCacheElement) _cache.get(query);
+      if (r != null)
+        return r.getObject();
+      else 
+        return null;
    }
 
    /**
