@@ -135,6 +135,10 @@ public class Context {
       if (names.length == 0) {
          return null;
       } else if (_bean == null) {
+         Object res = get(names[0]);
+         if (names.length == 1) {
+            return res;
+         } 
          return PropertyOperator.getProperty(this,get(names[0]),names,1);
       } else {
          return PropertyOperator.getProperty(this,_bean,names);
@@ -150,6 +154,10 @@ public class Context {
       if (names.length == 0) {
          return false;
       } else if (_bean == null) {
+         if (names.length == 1) {
+            put(names[0], value);
+            return true;
+         }
          return PropertyOperator.setProperty(this,get(names[0]),names,1,value);
       } else {
          return PropertyOperator.setProperty(this,_bean,names,value);      
