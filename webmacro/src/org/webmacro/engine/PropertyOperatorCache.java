@@ -235,6 +235,11 @@ final class PropertyOperator
      */
    private Method iteratorMethod = null;
 
+   /**
+    * An accessor for array lengths
+    */
+   private static LengthAccessor _lengthAccessor = new LengthAccessor();
+
    /** 
     * The property operator cache 
     */
@@ -388,6 +393,8 @@ final class PropertyOperator
             _unaryAccessors.put(acc.getName(),acc);
          } 
       }
+      if (target.isArray()) 
+        _unaryAccessors.put("length", _lengthAccessor);
 
       // introspect methods second
 
@@ -898,6 +905,35 @@ final class FieldAccessor extends Accessor
 
 
 /**
+  * An accessor that knows how to get/set from a field
+  */
+final class LengthAccessor extends Accessor
+{
+   LengthAccessor() {
+      super("length");
+   }
+
+   final Object get(final Object instance)
+      throws PropertyException
+   {
+      Object[] array = (Object[]) instance;
+      try {
+         return new Integer(java.lang.reflect.Array.getLength(array));
+      } catch (Exception e) {
+         throw new PropertyException("Unable to fetch length of object " 
+                                     + instance + " of " + instance.getClass(),
+                                     e);
+      }
+   }
+
+   final boolean set(final Object instance, final Object value)
+      throws PropertyException {
+      throw new PropertyException("Cannot set length of array");
+   }
+}
+
+
+/**
   * accessor for direct method calls, rather than property-style
   */
 final class DirectAccessor extends Accessor
@@ -919,38 +955,35 @@ final class DirectAccessor extends Accessor
 
    final boolean matches(Class[] sig, Class[] args)
    {
-      if (args.length != sig.length) {
+      if (args.length != sig.length) 
          return false;
-      }
 
-      for (int i = 0; i < sig.length; i++) {
-         try {
-            if (! sig[i].isAssignableFrom(args[i]))
-            {
-               if (sig[i].isPrimitive())
-               {
-                  Class s = sig[i];
-                  Class a = args[i];
-                  if (
-                      (s == Integer.TYPE && a == Integer.class) ||
-                      (s == Boolean.TYPE && a == Boolean.class) || 
-                      (s == Character.TYPE && a == Character.class) ||  
-                      (s == Long.TYPE && a == Long.class) ||  
-                      (s == Short.TYPE && a == Short.class) ||  
-                      (s == Double.TYPE && a == Double.class) ||  
-                      (s == Float.TYPE && a == Float.class) ||  
-                      (s == Void.TYPE && a == Void.class) ||  
-                      (s == Byte.TYPE && a == Byte.class) 
-                      )
-                  {
-                      continue;
-                  }
-               }
-               return false;
+      try {
+         for (int i = 0; i < sig.length; i++) {
+            Class s = sig[i];
+            Class a = args[i];
+            if (s.isPrimitive()) {
+               if ((s == Integer.TYPE && a == Integer.class) ||
+                   (s == Boolean.TYPE && a == Boolean.class) || 
+                   (s == Character.TYPE && a == Character.class) ||  
+                   (s == Long.TYPE && a == Long.class) ||  
+                   (s == Short.TYPE && a == Short.class) ||  
+                   (s == Double.TYPE && a == Double.class) ||  
+                   (s == Float.TYPE && a == Float.class) ||  
+                   (s == Void.TYPE && a == Void.class) ||  
+                   (s == Byte.TYPE && a == Byte.class)) 
+                  continue;
+               else
+                  return false;
             }
-         } catch (NullPointerException e) {
-            return false; // XXX: block nulls, isAssign... throws this
+            else if (a == null || s.isAssignableFrom(a)) 
+               continue;
+            else 
+               return false;
          }
+      }
+      catch (NullPointerException e) {
+         return false; // XXX: block nulls, isAssign... throws this
       }
       return true;
    }
@@ -998,10 +1031,11 @@ final class DirectAccessor extends Accessor
 
 abstract class MethodAccessor extends Accessor
 {
-   Method _getMethod;           // only one get method allowed
-   Method[] _setMethods = null; // may be multiple set methods
-   Class[]  _setParams = null;  // variable arg type for set meth N
-   int setCount = 0;            // how many set methods do we have
+   protected Method _getMethod;           // only one get method allowed
+   private Method[] _setMethods = null; // may be multiple set methods
+   private Class[]  _setParams = null;  // variable arg type for set meth N
+   private Class[]  _setPrimitiveType = null;
+   private int setCount = 0;            // how many set methods do we have
 
    abstract int numArgsGet();
    abstract int numArgsSet();
@@ -1011,6 +1045,29 @@ abstract class MethodAccessor extends Accessor
    {
       super(name);
       addMethod(m,params);
+   }
+
+   private Class getWrapperClass(Class s) {
+      if (s == Integer.TYPE)
+         return Integer.class;
+      else if (s == Boolean.TYPE)
+         return Boolean.class;
+      else if (s == Character.TYPE)
+         return Character.class;
+      else if (s == Long.TYPE)
+         return Long.class;
+      else if (s == Short.TYPE)
+         return Short.class;
+      else if (s == Double.TYPE)
+         return Double.class;
+      else if (s == Float.TYPE)
+         return Float.class;
+      else if (s == Void.TYPE)
+         return Void.class;
+      else if (s == Byte.TYPE)
+         return Byte.class;
+      else 
+         return null;
    }
 
    final void addMethod(final Method m, Class[] params) 
@@ -1027,18 +1084,25 @@ abstract class MethodAccessor extends Accessor
          if (_setMethods == null) {
             _setMethods = new Method[1];
             _setParams = new Class[1];
+            _setPrimitiveType = new Class[1];
          } else if (_setMethods.length <= setCount) {
-            Method[] tmpMethods = new Method[ (setCount + 1) * 2 ];
-            Class[] tmpParams  = new Class[(setCount + 1) * 2 ];
+            Method[] tmpMethods  = new Method[ (setCount + 1) * 2 ];
+            Class[] tmpParams    = new Class[(setCount + 1) * 2 ];
+            Class[] tmpPrimitive = new Class[(setCount + 1) * 2 ];
             System.arraycopy(_setMethods,0,tmpMethods,0,_setMethods.length);
             System.arraycopy(_setParams,0,tmpParams,0,_setParams.length);
+            System.arraycopy(_setPrimitiveType,0,tmpPrimitive,0,_setParams.length);
             _setMethods = tmpMethods;
             _setParams = tmpParams;
+            _setPrimitiveType = tmpPrimitive;
          }
 
          // record the method, and the type of the variable parameter
          _setMethods[setCount - 1] = m;
          _setParams[setCount - 1] = params[setArgsLength - 1];
+         if (_setParams[setCount-1].isPrimitive())
+            _setPrimitiveType[setCount-1] 
+               = getWrapperClass(_setParams[setCount-1]);
 
       } else {
          throw new PropertyException("PropertyOperator FAILED for method " 
@@ -1053,17 +1117,20 @@ abstract class MethodAccessor extends Accessor
       for (int i = 0; i < setCount; i++) {
          Object arg = args[args.length - 1];
          // XXX: null values are blocked by the next line
-         if (_setParams[i].isInstance(args[args.length - 1])) {
+         if (_setParams[i].isPrimitive()) {
+            if (arg.getClass() == _setPrimitiveType[i]) {
+               try {
+                  PropertyOperator.invoke(_setMethods[i],inst,args);
+                  return true;
+               } catch (Exception e){
+                  // ignore exception
+               }
+            }
+         }
+         else if (arg == null 
+                  || _setParams[i].isInstance(args[args.length - 1])) {
             PropertyOperator.invoke(_setMethods[i],inst,args);
             return true;
-         }
-         else if (_setParams[i].isPrimitive()){ 
-            try {
-               PropertyOperator.invoke(_setMethods[i],inst,args);
-               return true;
-            } catch (Exception e){
-             // ignore exception
-            }
          }
       }
       return false;

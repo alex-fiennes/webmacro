@@ -105,7 +105,10 @@ public class WMParser_impl {
       String word = getToken(2).image;
       for (int i=0; i<subdirectives.length; i++) 
         if (subdirectives[i].isBreaking 
-            && word.startsWith(subdirectives[i].name)) {
+            && word.startsWith(subdirectives[i].name)
+            && (word.length() == subdirectives[i].name.length()
+                || !Character.isJavaIdentifierPart(
+                      word.charAt(subdirectives[i].name.length())))) {
           retVal = false;
           break;
         }
@@ -452,8 +455,10 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
     DirectiveArgs da;
 
     while ((subd = lookahead_subdirective(descriptor.subdirectives)) != null) {
-      SubdirectiveStart();
       try {
+        if (!db.subdirectiveOk(subd.id)) 
+          break;
+        SubdirectiveStart();
         da = db.newSubdirective(subd.id);
       } catch (BuildException e) {
         throw new ParseException("BuildException", e);

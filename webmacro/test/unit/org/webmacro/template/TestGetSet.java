@@ -17,8 +17,8 @@ public class TestGetSet extends TemplateTestCase {
     public static int intField;
     public static long longField;
     private Map map = new HashMap ();
-    private Object obj = null;
-    private Object[] objArray = new Object[] { "one", "two" };
+    Object obj = null;
+    Object[] objArray = new Object[] { "one", "two" };
 
     private static int intValue;
     public static void setInt(int i) { intValue = i; }
@@ -45,7 +45,7 @@ public class TestGetSet extends TemplateTestCase {
     }
   }
 
-  public static TestObject to = new TestObject();
+  public static TestObject to = new TestObject(), to2 = new TestObject();
 
    public TestGetSet (String name) {
       super (name);
@@ -59,7 +59,6 @@ public class TestGetSet extends TemplateTestCase {
       context.put ("two", (int) 2);
       context.put ("twoLong", (long) 2);
 
-      TestObject to2 = new TestObject ();
       to2.intField = 1;
       to2.put ("Value", new TestObject ());
       context.put ("TestObject2", to2);
@@ -112,9 +111,11 @@ public class TestGetSet extends TemplateTestCase {
 
    /** same as test3, but use the null via a variable reference */
    public void testPassANull2 () throws Exception {
-      String tmpl = "#set $foo = null\n"
-                  + "$TestObject2.setObjectValue($foo)";
-      assertStringTemplateEquals (tmpl, "");
+      assertStringTemplateEquals("#set $foo = null", "");
+      assertBooleanExpr("$foo == null", true);
+      to2.obj = new Object();
+      assertStringTemplateEquals("$TestObject2.setObjectValue($foo)", "");
+      assert(to2.obj == null);
    }
 
    /** call the ".length" field of an array */
