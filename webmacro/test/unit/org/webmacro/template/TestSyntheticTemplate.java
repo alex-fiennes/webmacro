@@ -9,7 +9,7 @@ import org.webmacro.Context;
 */
 public class TestSyntheticTemplate extends TemplateTestCase {
 
-  private static final int iterationCount = 12;
+  private static final int iterationCount = 1002;
 
   private static final String fileName = "org/webmacro/template/synthetictest.wm";
   private static final String reportName = "org/webmacro/template/syntheticreport.wm";
@@ -23,6 +23,21 @@ public class TestSyntheticTemplate extends TemplateTestCase {
   public TestSyntheticTemplate (String name) {
     super (name);
   }
+
+ 	public static Test suite() {
+		TestSuite suite= new TestSuite();
+
+		suite.addTest(
+			new TestSyntheticTemplate("load") {
+				 protected void runTest() throws Exception {
+				  testLoadAndToss();
+				  testLoad();
+				 }
+			}
+		);
+		return suite;
+  }
+
 
   protected void stuffContext (Context context) throws Exception {
     // keep the context throughout the test pattern
@@ -140,7 +155,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
    * The worst and best case are not thrown out.
    */
   class ThreadLoad {
-    int threadCount = 2; // be sure to divide into iterationcount-2 evenly
+    int threadCount = 20; // be sure to divide into iterationcount-2 evenly
     int threadedIterations = (iterationCount-2) / threadCount;
     long tet = 0;
     long worstCase = 0;
