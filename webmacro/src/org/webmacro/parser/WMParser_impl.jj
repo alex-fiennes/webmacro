@@ -324,7 +324,7 @@ Object parse_arg(ArgDescriptor arg) {
   default:
     throw new ParseException("ParseDirectiveArg: Unknown argument type " 
                              + arg.type);
-  };
+  }
 }
 
 // parse_arg_group -- parses a group of arguments.  If the group is optional, 
