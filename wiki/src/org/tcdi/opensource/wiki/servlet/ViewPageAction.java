@@ -71,7 +71,7 @@ public class ViewPageAction implements PageAction {
         Enumeration enum = wc.getRequest().getParameterNames();
 
         // don't accept if we have request parameters
-        while (enum.hasMoreElements())
+        if (enum.hasMoreElements())
             return false;
         
         // and then only accept if this is a get request
@@ -94,9 +94,12 @@ public class ViewPageAction implements PageAction {
      */
     public String getTemplateName(WikiSystem wiki, WikiPage page) {
         Properties props = wiki.getProperties();
-        String template = props.getProperty (page.getTitle());
-        return template == null ? props.getProperty ("ViewPageAction.Template") 
-                                : template;
+	String template = props.getProperty ("ViewPageAction.Template");
+        if (page != null) {
+            template = props.getProperty (page.getTitle());
+        } 
+
+	return template;
     }
     
     /**

@@ -32,8 +32,8 @@
 
 	<target name="compile" depends="prepare">
 		<javac  destdir="${dir.class}"
-			debug="off"
-			optimize="on"
+			debug="on"
+			optimize="off"
 			deprecation="off"
 		>
 			<src path="${dir.src}" />

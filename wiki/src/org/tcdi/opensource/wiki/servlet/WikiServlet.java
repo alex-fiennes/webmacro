@@ -112,7 +112,7 @@ public class WikiServlet extends WMServlet {
             wikiPage = _wiki.getPage (pageName);
 
         // stuff the webcontext with useful stuff
-        stuffContext (wc, wikiPage, user);
+        stuffContext (wc, wikiPage, user, pageName);
         
         if (action == null)
             throw new HandlerException ("Unable to find a PageAction to handle"
@@ -184,12 +184,13 @@ public class WikiServlet extends WMServlet {
     /**
      * stuff the context with objects required by most templates
      */
-    private void stuffContext (WebContext wc, WikiPage page, WikiUser user) {
+    private void stuffContext (WebContext wc, WikiPage page, WikiUser user, String pageName) {
         wc.put ("Wiki", _wiki);
         wc.put ("WikiUtil", WikiUtil.getInstance());
         wc.put ("Renderer", _wiki.getPageRenderer());
         wc.put ("Page", page);
         wc.put ("User", user);
+        wc.put ("PageName", pageName);
     }
     
     /**

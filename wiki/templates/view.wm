@@ -15,7 +15,7 @@
          You have requested a page that doesn't exist.
          #if ($User) {
             But that's okay!<p>
-            You can create the page by <a href="ControllerPage?define=$WikiUtil.formatAsWikiTitle($PageName)">clicking here</a>.
+            You can create the page $PageName by <a href="ControllerPage?edit=$WikiUtil.formatAsWikiTitle($PageName)">clicking here</a>.
          }            
       }
 </tr>

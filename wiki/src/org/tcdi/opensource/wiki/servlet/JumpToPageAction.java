@@ -66,8 +66,6 @@ public class JumpToPageAction implements PageAction {
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
         String pageName = wc.getForm ("jump");
         pageName = WikiUtil.guessWikiTitle(pageName, wiki);
-        if (!wiki.containsPage(pageName))
-            throw new PageActionException ("That page does not exist");
         
         throw new RedirectException (pageName);
     }
