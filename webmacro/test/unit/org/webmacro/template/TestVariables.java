@@ -50,10 +50,10 @@ public class TestVariables extends TemplateTestCase {
     assertStringTemplateEquals("$TestObject.voidMethod()", "");
     assertStringTemplateThrows("$TestObject.noSuchMethod()", 
                                PropertyException.NoSuchMethodException.class);
-    assertStringTemplateThrows("$NoSuchObject", 
-                               PropertyException.NoSuchVariableException.class);
+    assertStringTemplateMatches("$NoSuchObject", 
+                              "^<!-- .* nonexistent .* \\$NoSuchObject -->$");
     assertStringTemplateThrows("$NullObject", 
-                               PropertyException.NullVariableException.class);
+                              PropertyException.NullVariableException.class);
   }
 
   public void testDefaultEEHEval() throws Exception {
