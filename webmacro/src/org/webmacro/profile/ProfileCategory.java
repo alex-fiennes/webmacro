@@ -2,6 +2,7 @@
 package org.webmacro.profile;
 
 import org.webmacro.util.Pool;
+import org.webmacro.util.ScalablePool;
 import java.util.*;
 
 /**
@@ -10,7 +11,7 @@ import java.util.*;
 public class ProfileCategory 
 {
 
-   private final Pool _pool = new Pool();
+   private final Pool _pool = new ScalablePool();
 
    private final LinkedList _profiles = new LinkedList();
    private int _sharedProfiles = 0;

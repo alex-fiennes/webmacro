@@ -12,7 +12,7 @@ final public class Atomizer {
 
    final HashMap _atoms;
    Object[] _values;
-   final Pool _freeAtoms = new Pool();
+   final Pool _freeAtoms = new ScalablePool();
    int _max = 0;
 
    /**
