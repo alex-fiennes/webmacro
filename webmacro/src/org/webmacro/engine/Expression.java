@@ -252,21 +252,27 @@ public abstract class Expression {
 
     public Object operate(Object l, Object r) throws PropertyException {
       Boolean b=null;
+      boolean lIsNumber = isNumber(l), rIsNumber=isNumber(r);
 
-      if ((l instanceof String) && (r instanceof String)) 
-        b = compare((String) l, (String) r);
-      else if (isNumber(l) && isNumber(r))
+      if (lIsNumber && rIsNumber)
         b = compare(numberValue(l), numberValue(r));
-      else if (l instanceof String && isNumber(r)) 
-        b = compare((String) l, Long.toString(numberValue(r)));
-      else if (isNumber(l) && r instanceof String) 
-        b = compare(Long.toString(numberValue(l)), (String) r);
-      else if (l == null) 
-        b = compareNull(r);
-      else if (r == null) 
-        b = compareNull(l);
-      else 
-        b = compare(l, r);
+      else {
+        boolean lIsString = (l instanceof String), 
+          rIsString = (r instanceof String);
+
+        if (lIsString && rIsString) 
+          b = compare((String) l, (String) r);
+        else if (lIsString && rIsNumber) 
+          b = compare((String) l, Long.toString(numberValue(r)));
+        else if (lIsNumber && rIsString) 
+          b = compare(Long.toString(numberValue(l)), (String) r);
+        else if (l == null) 
+          b = compareNull(r);
+        else if (r == null) 
+          b = compareNull(l);
+        else 
+          b = compare(l, r);
+      }
 
       if (b == null)
         throw new PropertyException("Objects not comparable");
@@ -618,6 +624,4 @@ public abstract class Expression {
         catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
-
-
 }
