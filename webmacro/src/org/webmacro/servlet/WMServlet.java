@@ -48,8 +48,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
    private WebMacro _wm = null;
    private Broker _broker = null;
-   private WebContext _wc;
+   private WebContext _wcPrototype;
    private boolean _started = false;
+
+   private final Stack _writerCache = new Stack();
 
    /**
      * The name of the config entry we look for to find out what to 
@@ -124,7 +126,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
       // set up WebContext
       try {
-         _wc = initWebContext();
+         _wcPrototype = initWebContext();
       } catch (InitException e) {
          _log.exception(e);
          _log.error("Failed to initialize a WebContext, the initWebContext\n"
@@ -148,30 +150,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    }
 
    /**
-     * This method returns the WebMacro object which will be used to load,
-     * access, and manage the Broker. The default implementation is to 
-     * return a new WM() object. You could override it and return a WM 
-     * object constructed with a particular configuration file, or some 
-     * other implementation of the WebMacro interface.
-     */
-   public WebMacro initWebMacro() throws InitException
-   {
-      return new WM();
-   }
-
-   /**
-     * This method must return a cloneable WebContext which can be 
-     * cloned for use in responding to individual requests. Each 
-     * incoming request will receive a clone of the returned object
-     * as its context. The default implementation is to return 
-     * a new WebContext(getBroker());
-     */
-   public WebContext initWebContext() throws InitException
-   {
-      return new WebContext(_broker);
-   }
-
-   /**
      * This method is called by the servlet runner--do not call it. It 
      * must not be overidden because it manages a shared instance of 
      * the broker--you can overide the stop() method instead, which 
@@ -182,6 +160,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       _wm.destroy();
       _wm = null;
       _started = false;
+      _writerCache.removeAllElements();
       super.destroy();
    }
 
@@ -209,9 +188,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException
    { 
-      WebContext wc = _wc.clone(req,resp);
-      doRequest(wc);
-      wc.clear();
+      doRequest(req,resp);
    }
 
    /**
@@ -229,17 +206,28 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException
    {
-       doRequest(_wc.clone(req,resp));
+       doRequest(req,resp);
    }
 
-   final private void doRequest(WebContext context)
+   final private void doRequest(
+         HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException
    {
+
+      WebContext context = null;
+
       if (_problem != null) {
          init();
          if (_problem != null) {
             try { 
-               Writer out = context.getResponse().getWriter();
+               resp.setContentType("text/html");
+               Writer out = resp.getWriter();
+               out.write("<html><head><title>WebMacro Error</title></head>");
+               out.write("<body><h1><font color=\"red\">WebMacro Error: ");
+               out.write("</font></h1><pre>");
                out.write(_problem); 
+               out.write("</pre>");
+               out.write("Please contat the server administrator");
                out.flush();
                out.close();
             } catch (Exception e) {
@@ -249,24 +237,32 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          }
       }
       try {
-        /* context.getRequest().setContentType("text/html"); */
+        context = newContext(req,resp);
         Template t = handle(context);
         if (t != null) {
           execute(t,context);
         }
+        destroyContext(context);
+        context.clear();
       } catch (HandlerException e) {
+         if (context == null) {
+            context = _wcPrototype.newInstance(req,resp);
+         }
          _log.exception(e);
-         Template tmpl = error(context, 
+         Template tmpl = error(context,
             "Your handler was unable to process the request successfully " +
             "for some reason. Here are the details:<p>" + e);
          execute(tmpl,context);  
       } catch (Exception e) {
+         if (context == null) {
+            context = _wcPrototype.newInstance(req,resp);
+         }
          _log.exception(e);
-         Template tmpl = error(context, 
+         Template tmpl = error(context,
             "The handler WebMacro used to handle this request failed for " +
             "some reason. This is likely a bug in the handler written " +
             "for this application. Here are the details:<p>" + e);
-         execute(tmpl,context);  
+         execute(tmpl,_wcPrototype.newInstance(req,resp));  
       }
    }
 
@@ -362,9 +358,16 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       Writer out = null;
       try {
          out = c.getResponse().getWriter();
-         BufferedWriter bw = new BufferedWriter(out);
-         tmpl.write(bw, c);
-         bw.flush();
+         QueueWriter qw = (QueueWriter) _writerCache.pop();
+         if (qw == null) {
+            qw = new QueueWriter(1024);
+         }
+         tmpl.write(qw, c);
+         c.getResponse().setContentLength(qw.size());
+         qw.writeTo(out);
+         out.flush();
+         qw.reset();
+         _writerCache.push(qw);
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {
@@ -391,22 +394,51 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
    // FRAMEWORK TEMPLATE METHODS--PLUG YOUR CODE IN HERE
 
+
    /**
-     * Override this method and put your controller code here.
-     * This is the primary method that you will write.
-     * Use the many other methods on this object to assist you.
-     * Your job is to process the input, put whatever will be 
-     * needed into the WebContext hash, locate the appropriate
-     * template, and return it.
+     * This method is called at the beginning of a request and is 
+     * responsible for providing a Context for the request. The 
+     * default implementation calls WebContext.newInstance(req,resp) 
+     * on the WebContext prototype returned by the initWebContext() method.
+     * This is probably suitable for most servlets, though you can override
+     * it and do something different if you like. You can throw a 
+     * HandlerException if something goes wrong.
+     */
+   public WebContext newContext(
+         HttpServletRequest req, HttpServletResponse resp) 
+      throws HandlerException
+   {
+      return _wcPrototype.newInstance(req,resp);
+   }
+
+   /**
+     * This method is called to handle the processing of a request. It 
+     * should analyze the data in the request, put whatever values are 
+     * required into the context, and return the appropriate view.
      * @see getTemplate
-     * @see getConfig
-     * @see getBroker
      * @return the template to be rendered by the WebMacro engine
      * @exception HandlerException throw this to produce vanilla error messages
      * @param context contains all relevant data structures, incl builtins.
      */
-   protected abstract Template handle(WebContext context)
+   public abstract Template handle(WebContext context)
          throws HandlerException;
+
+
+   /**
+     * This method is called at the end of a request and is responsible
+     * for cleaning up the Context at the end of the request. You may
+     * not need to do anything here, but it is sometimes important if
+     * you have an open database connection in your context that you 
+     * need to close. The default implementation does nothing. By the
+     * time this method has been called all data will have been 
+     * returned to the user and the connection to the user closed. 
+     */
+   public void destroyContext(WebContext wc) 
+      throws HandlerException
+   {
+      // does nothing
+   }
+
 
    /**
      * Override this method to implement any startup/init code 
@@ -418,7 +450,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    protected void start() throws ServletException { }
       
-
    /**
      * Override this method to implement any shutdown code you require.
      * The broker may be destroyed just after this method exits. This 
@@ -427,6 +458,30 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    protected void stop() { }
 
+
+   /**
+     * This method returns the WebMacro object which will be used to load,
+     * access, and manage the Broker. The default implementation is to 
+     * return a new WM() object. You could override it and return a WM 
+     * object constructed with a particular configuration file, or some 
+     * other implementation of the WebMacro interface.
+     */
+   public WebMacro initWebMacro() throws InitException
+   {
+      return new WM();
+   }
+
+   /**
+     * This method must return a cloneable WebContext which can be 
+     * cloned for use in responding to individual requests. Each 
+     * incoming request will receive a clone of the returned object
+     * as its context. The default implementation is to return 
+     * a new WebContext(getBroker());
+     */
+   public WebContext initWebContext() throws InitException
+   {
+      return new WebContext(_broker);
+   }
 
 }
 

@@ -83,7 +83,7 @@ public class Context implements Cloneable {
      * clone will share tools and the broker with its parent. It will
      * have a null property bean.
      */
-   public Object clone() {
+   protected Object clone() {
       Context c = null;
       try {
          c = (Context) super.clone();

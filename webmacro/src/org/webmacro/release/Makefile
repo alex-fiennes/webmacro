@@ -37,6 +37,10 @@ EXAMPLES =	org/webmacro/examples/*.wm \
                 org/webmacro/examples/README \
 		org/webmacro/examples/*.properties
 
+snapshot: date-version dist
+
+release: prompt-version dist
+
 dist: version $(TARGETS) 
 	flip -m webmacro/RELEASE-NOTES.html
 	flip -m webmacro/README.html
@@ -57,10 +61,12 @@ dist: version $(TARGETS)
 	flip -u webmacro/IMPORTANT
 	tar -czf webmacro.`cat version`.tgz webmacro
 
-snapshot: date-version dist
 
-webmacro: 
+org/webmacro:
 	cvs co org/webmacro
+
+webmacro: org/webmacro
+	cvs update org/webmacro
 	mkdir webmacro
 
 webmacro/webmacro.jar:	webmacro
@@ -92,12 +98,13 @@ webmacro/IMPORTANT: webmacro
 	cp org/webmacro/webroot/IMPORTANT webmacro
 
 webmacro/collections.jar:
-	cp org/webmacro/webroot/
+	cp org/webmacro/lib/collections.jar webmacro
 
 date-version:
 	@date +%d-%m-%Y > version
 	@echo snapshot version is: `cat version`
-version: 
+
+prompt-version: 
 	@echo
 	@echo -n "enter version id: " 
 	@sh -c 'read VERSION && echo $$VERSION' > version

@@ -39,11 +39,22 @@ import org.webmacro.util.*;
   * and several others--see the WebMacro.properties file for the actual 
   * list, and a description of what's been loaded.
   * <p>
+  * This class is made to be prototyped. You create
+  * a prototypical instance of the WebContext containing all the desired
+  * tools and a broker. You then use the newInstance(req,resp) method
+  * to create an instance of the WebContext to use versus a particular 
+  * request. 
+  * <p>
+  * IMPLEMENTATION NOTE: If you subclass this method you must provide a 
+  * sensible implementation of the clone() method. This class uses clone()
+  * to create instances of the prototype in the newInstance method. You
+  * should also be sure and implement the clear() method as well.
+  * <p>
   * @see org.webmacro.servlet.Reactor
   * @see org.webmacro.util.Property
   * @see org.webmacro.util.Map
   */
-final public class WebContext extends Context 
+public class WebContext extends Context 
 {
 
    // raw data fields that are always set, final, and available to the package
@@ -92,7 +103,7 @@ final public class WebContext extends Context
      * Create a new WebContext like this one, only with new values
      * for request and response
      */
-   final public WebContext clone(
+   final public WebContext newInstance(
          final HttpServletRequest req, 
          final HttpServletResponse resp) 
    {
@@ -147,11 +158,9 @@ final public class WebContext extends Context
       return _response; 
    }
 
-
    // LEGACY METHODS
 
-
-   public String getForm(String field) {
+   final public String getForm(String field) {
       try {
          Bag ct = (Bag) getTool("Form");
          return (String) ct.get(field);
@@ -162,7 +171,7 @@ final public class WebContext extends Context
       }
    }
 
-   public String[] getFormList(String field) {
+   final public String[] getFormList(String field) {
       try {
           Bag ct = (Bag) getTool("FormList");
          return (String[]) ct.get(field);
@@ -173,7 +182,7 @@ final public class WebContext extends Context
       }
    }
 
-   public CGI_Impersonator getCGI() {
+   final public CGI_Impersonator getCGI() {
       try {
          return (CGI_Impersonator) getTool("CGI");
       } catch (Exception e) {
@@ -183,7 +192,7 @@ final public class WebContext extends Context
       }
    }
 
-   public Cookie getCookie(String name) {
+   final public Cookie getCookie(String name) {
       try {
          CookieJar cj = (CookieJar) getTool("Cookie");
          return (Cookie) cj.get(name);
@@ -194,7 +203,7 @@ final public class WebContext extends Context
       }
    }
 
-   public void setCookie(String name, String value) {
+   final public void setCookie(String name, String value) {
       try {
          CookieJar cj = (CookieJar) getTool("Cookie");
          cj.set(name, value);
@@ -204,7 +213,7 @@ final public class WebContext extends Context
       }
    }
 
-   public HttpSession getSession() {
+   final public HttpSession getSession() {
       try {
          return (HttpSession) getTool("Session");
       } catch (Exception e) {

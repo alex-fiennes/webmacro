@@ -228,16 +228,19 @@ final public class QueueWriter extends Writer
 
       char cary[] = "Hello, brave new world".toCharArray();
 
-      for (int i = 0; i < arg.length; i++) {
-         qw.write(arg[i],1,arg[i].length() - 2);
-         // qw.write(arg[i]);
-         qw.write(' ');
-         qw.write(cary,7,6);
-      }
+      for (int j = 0; j < 2; j++) {
+         for (int i = 0; i < arg.length; i++) {
+            qw.write(arg[i],1,arg[i].length() - 2);
+            // qw.write(arg[i]);
+            qw.write(' ');
+            qw.write(cary,7,6);
+         }
 
-      System.out.println("Count: " + qw.count);
-      System.out.println("- - - - Output - - - -");
-      System.out.println(qw.toString());
+         System.out.println("Count: " + qw.count);
+         System.out.println("- - - - Output - - - -");
+         System.out.println(qw.toString());
+         qw.reset();
+      } 
    }
 
 }
