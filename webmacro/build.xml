@@ -80,6 +80,10 @@
     </copy>
   </target>
 
+  <target name="test" depends="compile" >
+    <ant antfile="build-test.xml" target="all" />
+  </target>
+
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
 
   <!--
