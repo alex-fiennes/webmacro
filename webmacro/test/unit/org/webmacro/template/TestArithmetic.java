@@ -67,6 +67,16 @@ public class TestArithmetic extends TemplateTestCase {
                           1 * 2 * 3 / 2 * -4 / -4);
   }
 
+  public void testParenRounding() {
+    assertArithmeticExpr("(((48984375/100)*100)/100)*100-100+100",
+                          (((48984375/100)*100)/100)*100-100+100
+                        );
+    // embed some spaces for readability:
+    assertArithmeticExpr("(((48984375 / 100) * 100) / 100) * 100 - 100 + 100",
+                          (((48984375 / 100) * 100) / 100) * 100 - 100 + 100
+                        );
+  }
+
   public void testBoolean() {
     for (int i=0; i<2; i++) 
       for (int j=0; j<2; j++) {
