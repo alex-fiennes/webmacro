@@ -42,7 +42,15 @@ abstract public class ServletBroker extends Broker {
 
    protected ServletContext _servletContext;
 
-   protected ServletBroker(ServletContext sc) throws InitException {
+     /**
+      * Tracks ServletContexts we have been instantiated for, to prevent
+      * duplicate log targets where multiple ServletBroker instances are
+      * created. We use WeakHashMap instead of Set because it does the
+      * key polled removal for us.
+      */
+     private static Map servletContextsWithLogTargets = new WeakHashMap();
+
+     protected ServletBroker(ServletContext sc) throws InitException {
       super((Broker) null, sc.toString());
       _servletContext = sc;
    }
@@ -51,12 +59,24 @@ abstract public class ServletBroker extends Broker {
       String logFile = config.getSetting("LogFile");
       if ((logFile == null || logFile.equals(""))
             && _config.getBooleanSetting("LogUsingServletLog"))
-         _ls.addTarget(new ServletLog(_servletContext, _config));
+         addLogTarget();
       else
          initLog();
    }
 
-   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
+     private void addLogTarget()
+     {
+          synchronized (servletContextsWithLogTargets)
+          {
+               if (!servletContextsWithLogTargets.containsKey(_servletContext))
+               {
+                    _ls.addTarget( new ServletLog( _servletContext, _config ));
+                    servletContextsWithLogTargets.put( _servletContext, Boolean.TRUE);
+               }
+          }
+     }
+
+     public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
       int minorVersion, majorVersion;
 
       ServletContext sc = s.getServletConfig().getServletContext();
