@@ -131,7 +131,7 @@ public class StreamTemplate extends WMTemplate
          context = wm.getContext();
          Object names[] = { "prop" };
          context.setProperty(names, "Example property");
-         encoding = wm.getConfig("TemplateEncoding");
+         encoding = wm.getConfig(WMConstants.TEMPLATE_INPUT_ENCODING);
       } catch (Exception e) {
          e.printStackTrace();
       }
