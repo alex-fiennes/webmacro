@@ -41,6 +41,10 @@ final public class Block implements Macro, Visitable
       _content = content;
    }
 
+   Macro[] getContent() {
+      return _content;
+   }
+
    /**
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.

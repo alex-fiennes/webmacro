@@ -95,7 +95,7 @@ final class IfDirective implements Directive, Visitable
    {
       if (cond instanceof Macro) {
          Macro elseMacro = (elseDir != null) ? 
-            MacroAdapter.createMacro(elseDir,rc.getEncoding()) : null;
+            MacroAdapter.createMacro(elseDir) : null;
          return new IfDirective(cond, body, elseMacro);  
       } else {
          return (cond.test(rc)) ? body : elseDir;

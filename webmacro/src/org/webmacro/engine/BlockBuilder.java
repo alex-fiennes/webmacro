@@ -33,7 +33,6 @@ import java.lang.reflect.*;
   */
 public class BlockBuilder extends Vector implements Builder
 {
-
    /**
      * Create a block with the least number of elements
      */
@@ -42,9 +41,10 @@ public class BlockBuilder extends Vector implements Builder
    {
       Vector block = new Vector(20);
       StringBuffer buf = new StringBuffer(512);
-      flatten(bc,block,buf,elements());
+      flatten(bc, block, buf, elementData);
       if (buf.length() > 0) {
-         block.addElement(MacroAdapter.createMacro(buf.toString(),bc.getEncoding()));
+         block.addElement(new StringMacroAdapter(buf.toString(),
+                                                 bc.getEncoding()));
       }
       Macro[] result = new Macro[block.size()];
       block.copyInto(result);
@@ -55,26 +55,31 @@ public class BlockBuilder extends Vector implements Builder
      * Merge sub-blocks and concatenate non-Macro elements
      */
    private void flatten(BuildContext bc,
-         Vector block, StringBuffer buf,  Enumeration e)
+                        Vector block, 
+                        StringBuffer buf,  
+                        Object[] elements)
       throws BuildException
    {
-      while(e.hasMoreElements()) {
-         Object cur = e.nextElement();
-         Object o = cur;
-         if (o instanceof BlockBuilder) {
-            Enumeration e2 = ((BlockBuilder) o).elements();
-            flatten(bc,block,buf,e2);
-         } else {
-            if (o instanceof Builder) {
+      for (int i=0; i<elements.length; i++) {
+         Object o = elements[i];
+         if (o instanceof BlockBuilder) 
+            flatten(bc, block, buf, ((BlockBuilder) o).elementData);
+         else {
+            if (o instanceof Builder) 
                o = ((Builder) o).build(bc);
+
+            if (o instanceof Block) {
+              flatten(bc, block, buf, ((Block) o).getContent());
             }
-            if (o instanceof Macro) {
+            else if (o instanceof Macro) {
                if (buf.length() > 0) {
-                  block.addElement(MacroAdapter.createMacro(buf.toString(),bc.getEncoding()));
+                  block.addElement(new StringMacroAdapter(buf.toString(),
+                                                          bc.getEncoding()));
                   buf.setLength(0);
                }
                block.addElement((Macro) o);
-            } else {
+            } 
+            else {
                if (o != null) {
                   buf.append(o.toString());
                }
