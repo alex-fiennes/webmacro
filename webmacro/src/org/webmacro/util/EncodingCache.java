@@ -32,6 +32,10 @@ final public class EncodingCache {
       this(encoding,1001,11);
    }
 
+   public String getEncodingName() {
+      return _encoding;
+   }
+
    /**
      * Create a new EncodingCache with space for buckets * length
      * encoded strings. Buckets is the number of hashtable buckets

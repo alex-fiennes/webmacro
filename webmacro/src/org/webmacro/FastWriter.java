@@ -321,9 +321,9 @@ final public class FastWriter extends Writer
       throws UnsupportedEncodingException
    {
       FastWriter fw = null;
-      SimpleStack ss = (SimpleStack) _writerCache.get(encoding);
-      if (ss != null) {
-         fw = (FastWriter) ss.pop();
+      Pool p = (Pool) _writerCache.get(encoding);
+      if (p != null) {
+         fw = (FastWriter) p.get();
          if (fw != null) {
             fw.reset(out);
             return fw;
@@ -367,12 +367,12 @@ final public class FastWriter extends Writer
          _out.close();
          _out = null;
       }
-      SimpleStack ss = (SimpleStack) _writerCache.get(_encoding);
-      if (ss == null) {
-         ss = new SimpleStack();
-         _writerCache.put(_encoding,ss);
+      Pool p = (Pool) _writerCache.get(_encoding);
+      if (p == null) {
+         p = new UPool(7);
+         _writerCache.put(_encoding,p);
       }
-      ss.push(this);
+      p.put(this);
    }
 
    public static void main(String arg[]) {

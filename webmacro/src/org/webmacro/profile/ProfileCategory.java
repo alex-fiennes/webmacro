@@ -1,7 +1,7 @@
 
 package org.webmacro.profile;
 
-import org.webmacro.util.SimpleStack;
+import org.webmacro.util.Pool;
 import java.util.*;
 
 /**
@@ -10,7 +10,7 @@ import java.util.*;
 public class ProfileCategory 
 {
 
-   private final SimpleStack _pool = new SimpleStack();
+   private final Pool _pool = new Pool();
 
    private final LinkedList _profiles = new LinkedList();
    private int _sharedProfiles = 0;
@@ -58,7 +58,7 @@ public class ProfileCategory
       }
       _sampleCount = 0;
 
-      Profile p = (Profile) _pool.pop();
+      Profile p = (Profile) _pool.get();
       if (p == null) {
          p = new Profile(this);
       }
@@ -99,7 +99,7 @@ public class ProfileCategory
             _timestamp = wmp.timestamp;
             if (_timestamp < cutoff) {
                _profiles.removeFirst();
-               if (_timestamp > _sharedTimestamp) _pool.push(wmp);
+               if (_timestamp > _sharedTimestamp) _pool.put(wmp);
             }
          }
       } catch (NoSuchElementException e) {

@@ -280,7 +280,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          execute(tmpl,_wcPrototype.newInstance(req,resp));  
       } finally {
          if (timing) context.stopTiming();
-         context.clear();
+         context.recycle();
       }
    }
 

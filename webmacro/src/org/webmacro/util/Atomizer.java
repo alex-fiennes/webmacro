@@ -12,7 +12,7 @@ final public class Atomizer {
 
    final HashMap _atoms;
    Object[] _values;
-   final SimpleStack _freeAtoms = new SimpleStack();
+   final Pool _freeAtoms = new Pool();
    int _max = 0;
 
    /**
@@ -50,7 +50,7 @@ final public class Atomizer {
       Integer atom = (Integer) _atoms.get(o);
       int i;
       if (atom == null) {
-         atom = (Integer) _freeAtoms.pop();
+         atom = (Integer) _freeAtoms.get();
          if (atom == null) {
             atom = new Integer(_max++);
          }
@@ -101,7 +101,7 @@ final public class Atomizer {
       Integer atom = (Integer) _atoms.remove(o);
       if (atom == null) { return; }
       _values[atom.intValue()] = null;
-      _freeAtoms.push(atom);
+      _freeAtoms.put(atom);
    }
 
    /**

@@ -41,8 +41,12 @@ final public class ByteBufferOutputStream extends OutputStream
      * Copy an array of bytes on to the end of the buffer
      */
    public void write(byte[] b, int offset, int len) {
-      ensureCapacity(len);
-      System.arraycopy(b, 0, _buf, _pos, len);
+      try {
+         System.arraycopy(b, 0, _buf, _pos, len);
+      } catch (ArrayIndexOutOfBoundsException e) {
+         ensureCapacity(len);
+         System.arraycopy(b, 0, _buf, _pos, len);
+      }
       _pos += len;
    }
 
@@ -50,8 +54,13 @@ final public class ByteBufferOutputStream extends OutputStream
      * Append a single byte
      */
    public void write(byte b) {
-      ensureCapacity(1); 
-      _buf[_pos++] = b;
+      try {
+         _buf[_pos] = b;
+      } catch (ArrayIndexOutOfBoundsException e) {
+         ensureCapacity(1);
+         _buf[_pos] = b;
+      }
+      _pos++;
    }
 
    /**

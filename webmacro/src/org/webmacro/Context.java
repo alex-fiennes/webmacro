@@ -48,6 +48,18 @@ public class Context implements Cloneable {
 
    private Locale _locale = Locale.getDefault();
 
+   private SimpleStack _contextCache = null;
+
+   /**
+     * This method expects to get a THREAD LOCAL pool in which to 
+     * deposit objects. The Stack is therefore an unsynchronized 
+     * pool. You must externally arrange that no two contexts try
+     * and access the same pool at the same time.
+     */
+   final protected void setContextPool(SimpleStack pool) {
+      _contextCache = pool;
+   }
+
    /**
      * Log configuration errors, context errors, etc.
      */
@@ -140,6 +152,16 @@ public class Context implements Cloneable {
       }
    }
 
+   /**
+     * This method calls clear and then recycles the context back
+     * to the pool it came from, if any.
+     */
+   public void recycle() {
+      clear();
+      if (_contextCache != null) {
+         _contextCache.push(this);
+      }
+   }
 
    // INITIALIZATION: TOOL CONFIGURATION
 

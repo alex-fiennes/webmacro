@@ -1,4 +1,9 @@
 
+-- Nov-2000 justin: Added some new pool classes and moved some of
+   the pooling to thread local storage. Added Context.recycle() 
+   to promote good object re-use. Applied these new pools to a  
+   variety of key points in the code.
+
 -- Nov-2000 justin: Fixed a character encoding bug and added in a 
    new template directive. You can now set the encoding for an input
    file with TemplateEncoding in your WebMacro.properties file. 

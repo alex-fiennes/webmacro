@@ -14,7 +14,7 @@ final public class SimpleStack
    private Object[] _stack;
    private int _count = 0;
 
-   public synchronized void push(final Object o) {
+   public void push(final Object o) {
       if (o == null) {
          return;
       }
@@ -23,7 +23,7 @@ final public class SimpleStack
       _count++;
    }
 
-   public synchronized Object pop() {
+   public Object pop() {
       if (_count == 0) {
          return null;
       }
@@ -33,7 +33,7 @@ final public class SimpleStack
       return ret;
    }
 
-   public synchronized int size() {
+   public int size() {
       return _count;
    }
 
@@ -41,7 +41,7 @@ final public class SimpleStack
       return (_count == 0);
    }
 
-   public synchronized void clear() {
+   public void clear() {
       for (int i = 0; i < _stack.length; i++) {
          _stack[i] = null;
       }

@@ -45,7 +45,7 @@ public class WM implements WebMacro
 
    final private static Map _brokers = new HashMap();
    final private static BrokerOwner _default = new BrokerOwner();
-   private Context _context = null;
+   final private Context _context;
    private WebContext _webContext = null;
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
@@ -58,6 +58,9 @@ public class WM implements WebMacro
    final private Provider _tmplProvider;
    final private Provider _urlProvider;
    final private Log _log;
+
+   final private ThreadLocal _contextCache;
+   final private ThreadLocal _webContextCache;
 
    public WM() throws InitException
    {
@@ -84,6 +87,13 @@ public class WM implements WebMacro
       } finally {
          _owner = owner;
          _broker = broker;
+         _context = new Context(_broker);
+         _contextCache = new ThreadLocal() {
+            public Object initialValue() { return new SimpleStack(); }
+         };
+         _webContextCache = new ThreadLocal() {
+            public Object initialValue() { return new SimpleStack(); }
+         };
          if (_broker != null) {
             _alive = true;
             _log = _broker.getLog("wm");
@@ -170,19 +180,38 @@ public class WM implements WebMacro
       return _broker;
    }
 
+   /**
+     * Instantiate a new context from a pool. This method is more 
+     * efficient, in terms of object creation, than creating a 
+     * Context directly. The Context will return to the pool 
+     * when Context.recycle() is called.
+     */
    final public Context getContext() {
-      if (_context == null) {
-         _context = new Context(getBroker());
+      SimpleStack cstack = (SimpleStack) _contextCache.get();
+      Context c = (Context) cstack.pop();
+      if (c == null) {
+         c = (Context) _context.clone();
       }
-      return (Context) _context.clone();
+      c.setContextPool(cstack);
+      return c;
    }
 
-   final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse resp) {
-
-      if (_webContext == null) {
-         _webContext = new WebContext(getBroker());
+   /**
+     * Instantiate a new webcontext from a pool. This method is more
+     * efficient, in terms of object creation, than creating a 
+     * WebContext object directly. The WebContext will return to
+     * the pool when WebContext.recycle() is called.
+     */
+   final public WebContext getWebContext(HttpServletRequest req, 
+            HttpServletResponse resp) 
+   {
+      SimpleStack cstack = (SimpleStack) _webContextCache.get();
+      WebContext c = (WebContext) cstack.pop();
+      if (c == null) {
+         c = _webContext.newInstance(req,resp);
       }
-      return _webContext.newInstance(req,resp);
+      c.setContextPool(cstack);
+      return c;   
    }
 
 
