@@ -5,14 +5,34 @@ package org.webmacro;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
+import org.webmacro.util.java2.*;
 
+/**
+  * A Context is the execution context of a WebMacro request. It represents
+  * the data associated with a specific user of a Macro. The Context class 
+  * is not threaded--the expectation is that each use of a Macro will occur
+  * in its own thread. You can have multiple threads, each with its own 
+  * Context, accessing the same Macro. A Context contains a reference to 
+  * the broker in use for this request, a collection of Context tools, 
+  * local variables, and a bean object representing the Context's data.
+  * <p>
+  * Historical Note: In previous versions of WebMacro a Context was an 
+  * object of arbitrary type. That corresponds to Context.getBean()
+  * in the current implementation. 
+  * <p>
+  * A Context is cloneable so that you can efficiently create a new 
+  * context from an existing one. The cloned context will not share 
+  * local variables with its sibling, but will share the same tools 
+  * (including tool instances), and the same broker.
+  */
 public class Context implements Cloneable {
 
    final private Broker _broker;
-   final private Hashtable _toolbox;
-   final private Hashtable _tools;
 
-   private Hashtable _locals;
+   private HashMap _toolbox; // contains tool initializers
+   private HashMap _tools;   // contains in-use tools
+
+   private HashMap _locals;
    private Object _bean;
 
    /**
@@ -29,31 +49,31 @@ public class Context implements Cloneable {
       _bean = null;
       _tools = null;
       _toolbox = null;
-      _locals = new Hashtable();
+      _locals = null;
    }
 
    /**
      * Create a new context working from the specified broker with the 
-     * tools available in the supplied toolbox Hashtable. If a bean 
+     * tools available in the supplied toolbox HashMap. If a bean 
      * is specified (bean != null) then it will be used for property
      * introspection, otherwise property introspection will work with 
      * the local variables stored in this context.
      */
-   public Context(final Broker broker, final Hashtable toolbox, 
+   public Context(final Broker broker, final HashMap toolbox, 
          final Object bean)
    {
       _broker = broker;
       _bean = bean;
       _toolbox = toolbox;
-      _tools = new Hashtable();
-      _locals = new Hashtable();
+      _tools = null;
+      _locals = null;
    }
 
 
    /**
      * All subclasses must provide sensible clone implementations
      */
-   public Object clone() {
+   protected Object clone() {
       try {
          return super.clone();
       } catch (CloneNotSupportedException cnse) { 
@@ -62,12 +82,12 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Create a new context base don this one, but using the specified 
+     * Create a new context based on this one, but using the specified 
      * bean instead of this one
      */
    public Context clone(Object bean) {
       Context c = (Context) clone();
-      c._locals = new Hashtable();;
+      c._locals = null;
       c._bean = bean;
       return c;
    }
@@ -76,10 +96,15 @@ public class Context implements Cloneable {
      * Clear the context of its non-shared data
      */
    public void clear() {
-      _tools.clear();
-      _locals.clear();
+      if (_tools != null) {
+         _tools.clear();
+         _tools = null;
+      }
+      if (_locals != null) {
+         _locals.clear();
+         _locals = null;
+      }
       _bean = null;
-      _locals = null;
    }
 
    /**
@@ -95,35 +120,41 @@ public class Context implements Cloneable {
      * Retrieve a local value from this Context
      */
    final public Object get(Object name) {
-      return _locals.get(name);
+      return (_locals != null) ? _locals.get(name) : null;
    }
 
    /**
      * Set a local value in this Context
      */
    final public void put(Object name, Object value) {
+      if (_locals == null) {
+         _locals = new HashMap();
+      }
       _locals.put(name,value);
    }
 
    /**
-     * Get the local variables as a Hashtable
+     * Get the local variables as a HashMap
      */
-   final public Hashtable getLocalVariables() {
+   final public HashMap getLocalVariables() {
+      if (_locals == null) {
+         _locals = new HashMap();
+      }
       return _locals;
    }
 
 
    /**
      * Subclasses can use this method to register new ContextTools
-     * into a prototypical context.
+     * during construction or initialization of the Context. 
      */
    final protected void addTool(String name, ContextTool tool) 
       throws InvalidContextException
    {
       if (_toolbox == null) {
-         throw new InvalidContextException("No tools in this context.");
+         _toolbox = new HashMap();
       }
-      _tools.put(name,tool);
+      _toolbox.put(name,tool);
    }
 
    /**
@@ -141,7 +172,8 @@ public class Context implements Cloneable {
    /**
      * Add the tools specified in the StringTokenized list of tools
      * passed as an argument. The list of tools passed should be a list
-     * of class names which can be loaded and introspected. 
+     * of class names which can be loaded and introspected. It is expected
+     * this method will be used during construction or initialization.
      */
    final protected void addTools(String tools) {
       Enumeration tenum = new StringTokenizer(tools);
@@ -183,14 +215,17 @@ public class Context implements Cloneable {
    final public Object getTool(String name) 
       throws InvalidContextException
    {
-      if (_toolbox == null) {
-         throw new InvalidContextException("No tools in this context.");
-      }
       try {
-         Object ret = _tools.get(name);
+         if (_toolbox == null) {
+            return null;
+         }
+         Object ret = (_tools != null) ? _tools.get(name) : null;
          if (ret == null) {
             ContextTool tool = (ContextTool) _toolbox.get(name);
             if (tool != null) {
+               if (_tools == null) {
+                  _tools = new HashMap();
+               }
                ret = tool.init(this);
                _tools.put(name,ret);
             }

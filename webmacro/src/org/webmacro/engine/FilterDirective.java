@@ -66,7 +66,7 @@ final class FilterDirective implements Directive
             rhs = ((Macro) rhs).evaluate(rc);
          }
       } catch (InvalidContextException e) {
-         throw new BuildException("You can only specify statically resolvable terms in a filter directive, since it is resolved at compile time: " + e);
+         throw new BuildException("Your filter resolved to a Macro, but You can only specify statically resolvable terms in a filter directive, since it is resolved at compile time (ie: context not available): " + e);
       }
 
       if (rhs instanceof Filter) {

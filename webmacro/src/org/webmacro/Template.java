@@ -62,7 +62,7 @@ public interface Template extends Filter
      * that have been set in the template. getParam(Object) can be used
      * to look up any particular parameter.
      */
-   public Iterator getParameterNames() throws IOException, TemplateException;
+   public HashMap getParameters();
 
 }
 

@@ -62,7 +62,7 @@ abstract public class WMTemplate implements Template
    /**
      * Template parameters
      */
-   private Hashtable myParameters;
+   private HashMap myParameters;
 
    /**
      * Template filters
@@ -113,7 +113,7 @@ abstract public class WMTemplate implements Template
       // be written to main memory at the close.
 
       Block newContent = null;
-      Hashtable newParameters = null;
+      HashMap newParameters = null;
       Reader source = null;
       Hashtable newFilters = null;
       try {
@@ -255,20 +255,9 @@ abstract public class WMTemplate implements Template
       }
    }
 
-   public Iterator getParameterNames()
-      throws IOException, TemplateException
+   public HashMap getParameters()
    {
-      Hashtable params = myParameters;
-      if (params == null) {
-         synchronized(this) {
-            parse();
-            params = myParameters;
-         }
-      }
-      if (params == null) {
-         throw new TemplateException("Parse failed: parameters unavailable.");
-      }
-      return new EnumIterator(params.keys());
+      return myParameters;
    }
 
    /**

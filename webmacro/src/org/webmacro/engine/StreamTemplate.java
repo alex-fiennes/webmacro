@@ -119,14 +119,6 @@ public class StreamTemplate extends WMTemplate
       context.put("fruits", fruits);
       context.put("flipper", new TestObject("flip",false));
 
-      System.out.println("*** CONTEXT ***");
-      {
-         Enumeration elem = context.getLocalVariables().keys();
-         while (elem.hasMoreElements()) {
-            Object key = elem.nextElement();
-            System.out.println("context: " + key + " --> " + context.get(key));
-         }
-      }
       System.out.println("- - - - - - - - - - - - - - - - - - - -");
 
       try {
@@ -134,14 +126,6 @@ public class StreamTemplate extends WMTemplate
                new InputStreamReader(System.in));
          t1.parse();
 
-         System.out.println("*** PARAMETERS ***");
-         {
-            Iterator i = t1.getParameterNames();
-            while (i.hasNext()) {
-               String key = (String) i.next();
-               System.out.println("param: " + key + " --> " + t1.getParam(key));
-            }
-         }
          Writer w = new OutputStreamWriter(System.out);
 
          System.out.println("*** RESULT ***");
