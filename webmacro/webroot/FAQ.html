@@ -75,7 +75,7 @@ To join the mailing list <a href="http://lists.semiotek.com/mailman/listinfo/web
 <h3><font color="green">How much does it cost?</font></h3>
 
 WebMacro is free under the GNU Public License and the Semiotek Public
-License (SPL). See the <a href="License.html">License</a> page
+License (SPL). See the <A href="License.html">License</A> page
 for details.
 <p>
 
@@ -105,7 +105,7 @@ gains market share and beta testers, and you get WebMacro for free!
 
 WebMacro was designed and implemented primarily by Justin Wells at
 Semiotek Inc.; initially with a lot of help from Yuen-Ping Leung.
-Now it is supported by a team of <a href="CREDITS">core developers</a>.
+Now it is supported by a team of <A href="CREDITS">core developers</A>.
 <p>
 The people on the mailing list also deserve a lot of credit as well: many
 of the design ideas, and a large number of bug fixes, are due to 
@@ -114,8 +114,8 @@ helpful list members! WebMacro's README gives them better credit.
 Semiotek Inc. is a consulting company in Toronto, Ontario. We work 
 primiarliy with large OO web projects, especially in Java. If you 
 have some web design or programming you need done, perhaps using
-WebMacro, you might contact us: 
-<a href="mailto:info@semiotek.com">info@semiotek.com</a>
+WebMacro, you might contact Semiotek at: 
+<A href="mailto:info@semiotek.com">info@semiotek.com</A>
 
 
 <h3><font color="green">How do I contact you?</font></h3>
@@ -123,56 +123,48 @@ WebMacro, you might contact us:
 Use the mailing list for support, feature requests, bug reports, general 
 queries about WebMacro, and so forth--we read it!  However for
 other issues, such as support and consulting services, information
-about Semiotek Inc., etc., you should contact us via the general address: 
-<a href="mailto:info@webmacro.org">info@webmacro.org</a>
+about Semiotek Inc., etc., you should contact us via the mailing list: 
+<A href="mailto:webmacro@semiotek.com">info@webmacro.org</A>
 
 <h3><font color="green">I can't get the WebMacro examples to work</font></h3>
 
 <ul>
 <li>Be sure that you have compiled them. They are not in the WebMacro.jar
     file and are shipped as source code. Once compiled, they must be in 
-    your classpath.<p>
+    your classpath.<p></p>
 
 <li>Be sure that the WebMacro.properties file is in your classpath, and
     that you have edited it to contain the correct values. It is sometimes
     confusing to know what CLASSPATH to use--put the properties file in
-    the same place you put webmacro.jar<p>
+    the same place you put webmacro.jar<p></p>
 
 <li>Check your classpath carefully. Most problems with WebMacro are 
     either incorrect paths in the WebMacro.properties file, or else 
-    incorrect classpaths.<p>
+    incorrect classpaths.<p></p>
 
 <li>Under NT: The \ character does not behave as expected in a Java
    properties file.  Instead of being a file separator, it is the
    escape character. You either have to use the Unix style / character,
    or escape the \ (by doubling it) to name a path in WebMacro.properties.
    Thus the path C:\webmacro\examples should be written either as
-   C:/webmacro/examples or as C:\\webmacro\\examples<p>
+   C:/webmacro/examples or as C:\\webmacro\\examples<p></p>
 
-<li>Make sure you have JDK 1.1.6 or later. In particular, bugs in 
-    JDK 1.1.3 prevent WebMacro from functioning correctly on NT and
-    some other platforms.
+<li>Make sure you have JDK 1.2 or later. 
 
-<li>The GuestBook example should work as a traditional servlet. The
-    configuration for TestWM is trickier and requires you to register
-    Reactor as the servlet for the TestWM URL.
+<li>The GuestBook example should work as a traditional 
+    servlet.</li>        
+    
+             
+           
 
 </ul>
 
 <h3><font color="green">I have trouble compiling the WebMacro sources</font></h3>
-
-First, you need to have at least JDK 1.1.6 to compile WebMacro. 
-<p>
-Second, you cannot use javac under JDK 1.1.6 and 1.1.7 since it has 
-some bugs (with respect to final and static variables). Instead, use 
-the jikes compiler which is freely available from IBM. 
-<a href="Links.html">Check here</a> for a link to jikes.
-<p>
-Third, to compile WebMacro under Java2 you will have to edit the 
-sources to fix minor incompatibilities. I have mirrored some of
-the Java2 classes to make a future migration easier--in particular,
-the classes in com/semiotek/util/java2 must be deleted to avoid 
-conflicts with the built in collection API.
+            
+         
+         
+ WebMacro requires version 1.2 of the JDK.&nbsp; Both 
+the IBM and SUN JDK's work great!
 
 <h3><font color="green">Why don't updates to my templates show up in the running version?</font></h3>
 
@@ -192,53 +184,51 @@ will highlight WebMacro directives in templates.
 <p>
 
 <h3><font color="green">Can I use JavaScript in a WebMacro template?</font></h3>
+  <P>Yes!&nbsp; It is very easy.<BR><BR>To use JavaScript anywhere in your 
+  Template, use the #use directive like this:</P>
+  <P>#use "text"<BR>&nbsp;&nbsp; &lt;script 
+  language="javascript"&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var foo = 
+  true;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (foo == true) 
+  {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alert ("Hello, 
+  World!");<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else 
+  {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert ("Goodbye, 
+  World!");<BR>&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp; 
+  &lt;/script&gt;<BR>#end<BR><BR>&nbsp;The best way to use JavaScript inside a 
+  WebMacro block directive is this:</P>
+  <P>#if ($myVar == true)<BR>&nbsp;&nbsp; &lt;script 
+  language="javascript"&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var foo = 
+  true;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (foo == true) 
+  {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alert ("Hello, 
+  World!");<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else 
+  {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert ("Goodbye, 
+  World!");<BR>&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp; 
+  &lt;/script&gt;<BR>#end</P>
+  <P>  As long as you&nbsp;use #end to end your WebMacro blocks, you can include 
+  any javascript in the block!&nbsp; No longer are you required.&nbsp; Note 
+  however that WebMacro will still try to do evaluation inside your javascript 
+  blocks.&nbsp; So WebMacro variable references such as $myVar will still be 
+  expanded via WebMacro.<BR><BR>
+<hr>
 
-Yes. Use the #begin and #end tokens to delimit blocks so that there
-is no conflig with { and } characters. You need to escape the $'s 
-in your JavaScript with \ characters: \$foo. 
-<P>
-Alternately you can surround a JavaScript block with a #use 
-directive to disable parsing:
-<pre>
-  #use 'text' 
-  #begin
-    Javascipt here will not be parsed, $foo { and } are safe
-  #end
-</pre>
+  <P></P>
 
-The WebMacro escape character \ will still be in effect within
-the #use block, though. To bring JavaScript in without having
-to escape anything load it in with a #include directive:
-<pre>
-   #include "somefile.js"
-</pre>
-
-<br>
-You only need to do this for blocks of JavaScript which include 
-{, }, #, or $ characters which are meaningful to WebMacro.
-
-<h3><font color="green">Under WebMacro 0.75.3 and earlier I get errors in the log 
-    indicating a problem with UserDB</font></h3>
-
-Ignore them. UserDB is a prototype class that is broken under 0.75.3, and
-not actually used by any of the example code. To turn these errors off, 
-edit your WebMacro properties file and remove the line which loads the
-UserProvider. It isn't needed.
+            
+              
+           
+   
  
 </blockquote>
-<!--TAIL-->
-<hr>
 <center>
 <font size="+2">
-<a href="Download.html">Download</a>  |
+<A href="Download.html">Download</A>  |
 <a href="http://wiki.webmacro.org">Wiki Docs</a> |
-<a href="tutorial/index.html">Tutorial</a>  
+<A href="tutorial/index.html">Tutorial</A>  
 </font> <p> 
-<a href="api/index.html">api</a> |
-<a href="Introduction.html">introduction</a> |
-<a href="Servlet.html">servlet design</a> |
-<a href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing list</a> |<a href="License.html">licensing</a> |
-<a href="RELEASE-NOTES.html">release notes</a> | 
-<a href="README.html">readme</a> 
-</center>
+<A href="api/index.html">api</A> |
+<A href="Introduction.html">introduction</A> |
+<A href="Servlet.html">servlet design</A> |
+<a href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing list</a> |<A href="License.html">licensing</A> |
+<A href="RELEASE-NOTES.html">release notes</A> | 
+<A href="README.html">readme</A> 
+</center></P>
 </body></html>
