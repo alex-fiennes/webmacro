@@ -70,12 +70,7 @@ final public class TemplateProvider extends CachingProvider
       _log = b.getLog("resource", "Object loading and caching");
 
       try {
-         try {
-            String cacheStr = config.getSetting("TemplateExpireTime", "0");
-            _cacheDuration = Integer.valueOf(cacheStr).intValue();
-         } catch (Exception ee) {
-            // use default
-         }
+         _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
          _templatePath = config.getSetting("TemplatePath");
          StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
