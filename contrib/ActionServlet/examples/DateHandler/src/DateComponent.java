@@ -1,7 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import org.webmacro.as.ActionServlet;
 
 /**
  * ActionServlet component that demonstrates <TT>CompositeTypeHandler</TT> usage.
@@ -11,8 +10,6 @@ import org.webmacro.as.ActionServlet;
 public class DateComponent {
     private static SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy", Locale.US);
     private Date date;
-
-    public DateComponent(ActionServlet as) {}
 
     /** 
      * Implements 'OK' action.

@@ -1,3 +1,16 @@
+Changes from 0.8 to 0.85
+28-Dec-2001
+------------------------
+- Components with default or public non-parametric constructor are also suported
+- Component can have "static" persistence if all its invoked methods are static
+- 'value' attribute of <on-return> may contain "SomeClass.FIELD" and "*" (any)
+- 'value' attribute of <on-return> may contain also boolean or integer value
+- <on-return> element has new 'assign-to' attribute (maps value to $variable)
+- ActionServlet_0_8.dtd-> ActionServlet_0_85.dtd
+- ActionServlet.jar: now contains 'Readme' file, dtds moved to 'dtd' directory
+- small changes in docs and examples (history now available under "What's new?")
+
+
 Changes from 0.7 to 0.8
 9-Dec-2001
 -----------------------
@@ -12,8 +25,8 @@ Changes from 0.7 to 0.8
 - build.xml improved, properties moved to build.properties
 - LoginServlet Tutorial improved
 - added new "Why use ActionServlet?" document
-- added more license documents is doc\licenses directory
-- added new "Related projects" section in index.html
+- added more license documents to doc\licenses directory
+- added new "Related projects" section to index.html
 - servlet.jar is now included in ActionServlet\lib
 - minor exception logging refinements
 - bugfix: session reaper now works properly in Tomcat 4.0
@@ -30,7 +43,7 @@ Changes from 0.7 to 0.8
   - global LogLevel set to NOTICE in WebMacro.properties
 
 
-Changes from 0.7 to 0.61.1
+Changes from 0.61.1 to 0.7
 8-Nov-2001
 --------------------------
 - <output-variable> can be nested also in <on-return> element
@@ -141,3 +154,29 @@ Changes from 0.5 to 0.52
 - small clarifications to LoginServlet tutorial
 - added OutputVars example
 - "component" attribute is optional also for <template> element
+
+
+Changes before version 0.52
+---------------------------
+
+14-Jun-2001: v0.5
+- few enhancements and changes
+- new tutorial
+- bug and doc fixes
+
+31-Jan-2001: v0.5 Beta
+- introduced the concept of components
+- XML config (ActionConfig)
+- easy HTML forms distinguishing
+
+14-Aug-2000: v0.45
+- tiny changes
+
+26-Apr-2000: v0.44
+- added newSession() method
+
+14-Mar-2000: v0.43
+- small doc fixes
+
+24-Feb-2000: v0.42
+- first public release

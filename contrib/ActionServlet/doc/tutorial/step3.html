@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.8<P>
+version 0.85<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -75,17 +75,13 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE><P>
 
 ActionConfig has a simple XML format. Each component has defined <TT>name</TT>, <TT>class</TT> and persistence
-(one of: <TT>application</TT>/<TT>session</TT>/<TT>request</TT>) and zero or more <TT>&lt;action&gt;</TT> subelements. Here is bound <FONT COLOR="green"><TT><B>Login</B></TT></FONT>
+(one of: <TT>application</TT>/<TT>session</TT>/<TT>request</TT>/<TT>static</TT>) and zero or more <TT>&lt;action&gt;</TT> subelements. Here is bound <FONT COLOR="green"><TT><B>Login</B></TT></FONT>
 action to <TT>Authenticator.login(String userName, String password)</TT> method.
 Return values OK and BAD_USERNAME_OR_PASSWORD are mapped to templates names by
 <TT>&lt;on-return&gt;</TT> elements.<P>
 
-The template with an <TT>is-new-session</TT> attribute set to <TT>true</TT> is shown upon a new session (when the user
+The template with the <TT>is-new-session</TT> attribute set to <TT>true</TT> is shown upon a new session (when the user
 first visits the servlet's page).
-
-<HR WIDTH="100%">
-Note: For full description of ActionConfig structure see <A HREF="../specification.html#config">Specification</A>.
-
 </TD></TR></TABLE>
 
 <P><CENTER>

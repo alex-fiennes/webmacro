@@ -1,4 +1,4 @@
-import org.webmacro.as.*;
+import org.webmacro.as.ActionException;
 
 /**
  * ActionServlet component that implements an enhanced calculator.
@@ -6,13 +6,6 @@ import org.webmacro.as.*;
  * @author Petr Toman
  */
 public class Calculator2 extends Calculator {
-    /**
-     * Component constructor.
-     */
-    public Calculator2(ActionServlet as) {
-        super(as);
-    }
-
     /**
      * Handles sin(x).
      *

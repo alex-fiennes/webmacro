@@ -1,5 +1,5 @@
 /*
- *    Action Servlet is an extension of the WebMacro servlet framework, which
+ *    ActionServlet is an extension of the WebMacro servlet framework, which
  *    provides an easy mapping of HTTP requests to methods of Java components.
  *
  *    Copyright (C) 1999-2001  Petr Toman
@@ -119,11 +119,6 @@ public class ActionServlet extends WMServlet {
      * Action.invoke(...) methods.
      */
     final Hashtable lastActions = new Hashtable();
-
-    /**
-     * Used for initialization of components.
-     */
-    private Object[] _this = new Object[] {this};
 
     /**
      * ActionServlet class name.
@@ -459,25 +454,28 @@ public class ActionServlet extends WMServlet {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             docBuilder.setEntityResolver(new EntityResolver() {
-                private String PATH = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/";
-                private String DTD6 = "ActionServlet_0_6.dtd";
-                private String DTD7 = "ActionServlet_0_7.dtd";
-                private String DTD8 = "ActionServlet_0_8.dtd";
+                private final String PATH = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/";
+                private final String DTD6 = "ActionServlet_0_6.dtd";
+                private final String DTD7 = "ActionServlet_0_7.dtd";
+                private final String DTD8 = "ActionServlet_0_8.dtd";
+                private final String DTD85= "ActionServlet_0_85.dtd";
+                private final String DEFAULT_DTD = DTD85;
 
                 public InputSource resolveEntity (String publicId, String systemId) {
-                    String DTD = DTD8;
+                    String DTD = DEFAULT_DTD;
 
                     if ((PATH + DTD6).equals(systemId)) DTD = DTD6;
                         else if ((PATH + DTD7).equals(systemId)) DTD = DTD7;
+                            else if ((PATH + DTD8).equals(systemId)) DTD = DTD8;
 
                     try {
                         if (systemId == null || (PATH + DTD).equals(systemId)) {
-                            InputStream is = getClass().getResourceAsStream("/" + DTD);
+                            InputStream is = getClass().getResourceAsStream("/dtd/" + DTD);
                             return new InputSource(new InputStreamReader(is));
                         }
 
                         if (!DTD.equals(DTD8) || !(PATH + DTD).equals(systemId))
-                            log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + PATH + DTD8 + "\"");
+                            log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + PATH + DEFAULT_DTD + "\"");
                     } catch (Exception e) {
                         log.error("Error while loading '" + DTD + "'" + ": " + e.getMessage(), e);
                     }
@@ -763,40 +761,54 @@ public class ActionServlet extends WMServlet {
         String componentName = element.getAttribute("name");
         String componentClassName = element.getAttribute("class");
         String persistenceStr     = element.getAttribute("persistence");
-        Class componentClass = null;
-        Constructor constructor;
+        Class componentClass;
+        Constructor constructor = null;
         int persistence;
-        boolean consOne = true;
+        int numberOfConstructorParameters = -1;
 
         try {
             componentClass = loader.loadClass(componentClassName);
-            constructor = componentClass.getConstructor(new Class[]{ActionServlet.class});
         } catch(ClassNotFoundException e) {
             throw new InitException("Cannot find component class '" + componentClassName +
                       (loader instanceof ASClassLoader? ("' in the repository '" +
                       ((ASClassLoader)loader).repository + "'"):"'"));
-        } catch(NoSuchMethodException e) {
-            try {
-                constructor = componentClass.getConstructor(new Class[]{ActionServlet.class,String.class});
-                consOne = false;
-            } catch (NoSuchMethodException ex) {
-                throw new InitException("Component class '" + componentClassName +
-                          "' does not have a public constructor with a parameter " +
-                          "of type 'org.webmacro.as.ActionServlet' and (optionally) " +
-                          "second of type 'java.lang.String'");
-            }
         }
 
-        try {
-            componentClass.getMethod("destroy", null);
-            if (!Destroyed.class.isAssignableFrom(componentClass))
-                log.warning("Component class '" + componentClassName + "' has destroy() method, " +
-                            "but does not implement org.webmacro.as.Destroyed interface");
-        } catch (NoSuchMethodException e) {}
+        if (!"static".equals(persistenceStr)) {
+            try {
+                constructor = componentClass.getConstructor(new Class[]{ActionServlet.class,String.class});
+                numberOfConstructorParameters = 2;
+            } catch(NoSuchMethodException e) {
+                try {
+                    constructor = componentClass.getConstructor(new Class[]{ActionServlet.class});
+                    numberOfConstructorParameters = 1;
+                } catch (NoSuchMethodException ex) {
+                    try {
+                        constructor = componentClass.getConstructor(new Class[]{});
+                        numberOfConstructorParameters = 0;
+                    } catch (NoSuchMethodException exc) {
+                        throw new InitException("Component class '" + componentClassName +
+                                  "' does not have a public non-parametric constructor nor " +
+                                  "a public constructor with a single parameter " +
+                                  "of type 'org.webmacro.as.ActionServlet' nor " +
+                                  "a public constructor with parameters " +
+                                  "of type 'org.webmacro.as.ActionServlet' and 'String'");
+                    }
+                }
+            }
+
+            try {
+                componentClass.getMethod("destroy", null);
+                if (!Destroyed.class.isAssignableFrom(componentClass))
+                    log.warning("Component class '" + componentClassName + "' has destroy() method, " +
+                                "but does not implement org.webmacro.as.Destroyed interface");
+            } catch (NoSuchMethodException e) {}
+        }
 
         if (persistenceStr.equals("application")) persistence = ComponentData.PERSISTENCE_APPLICATION;
             else if (persistenceStr.equals("session")) persistence = ComponentData.PERSISTENCE_SESSION;
-               else persistence = ComponentData.PERSISTENCE_REQUEST;
+                else if (persistenceStr.equals("static")) persistence = ComponentData.PERSISTENCE_STATIC;
+                    else persistence = ComponentData.PERSISTENCE_REQUEST;
 
         // component 'class' name must be unique in the application
         if (componentClasses.containsKey(componentName))
@@ -804,7 +816,7 @@ public class ActionServlet extends WMServlet {
                                     componentClassName + "' defined in ActionConfig");
 
         componentClasses.put(componentName, new ComponentData(componentName, componentClass,
-                                            constructor, consOne, persistence));
+                                            constructor, numberOfConstructorParameters, persistence));
     }
 
     /**
@@ -867,7 +879,7 @@ public class ActionServlet extends WMServlet {
     private void parseOnReturns(ComponentData componentData,
                                 Hashtable onReturns, Hashtable onReturnsOutputVars,
                                 NodeList list) throws InitException {
-        String value, showTemplate;
+        String value, assignTo, showTemplate;
 
         for(int i=0; i < list.getLength(); i++) {
             Node node = list.item(i);
@@ -875,7 +887,11 @@ public class ActionServlet extends WMServlet {
             // <on-return>
             if ("on-return".equals(node.getNodeName())) {
                 value = ((Element)node).getAttribute("value");
+                assignTo = ((Element)node).getAttribute("assign-to");
                 showTemplate = ((Element)node).getAttribute("show-template");
+
+                if (value.length() == 0)
+                    throw new InitException("Empty attribute 'value' found while <on-return> element.");
 
                 if (onReturns.containsKey(value))
                    throw new InitException("Attribute 'value' must be unique among <on-return> " +
@@ -892,26 +908,58 @@ public class ActionServlet extends WMServlet {
                         parseOutputVariable(outputVariables, (Element)node2);
                 }
 
-                if ("void".equals(value)) {
-                    onReturns.put("void", showTemplate);
+                Class clazz = componentData.componentClass;
+                Object realValue = null;
 
-                    if (!outputVariables.isEmpty())
-                        onReturnsOutputVars.put("void", outputVariables);
-                } else try {
-                    Field f = componentData.componentClass.getField(value);
-                    if (!Modifier.isPublic(f.getModifiers()) ||
-                        !Modifier.isStatic(f.getModifiers()) ||
-                        !Modifier.isFinal(f.getModifiers()))
-                        throw new NoSuchFieldException();
+                // support for "void" (methods)
+                if ("void".equals(value)) realValue = "void";
+                else if (Character.isDigit(value.charAt(0))) {
+                    // support for direct number
+                    try {
+                        realValue = new Integer(value);
+                    } catch (NumberFormatException e) {
+                       throw new InitException("Attribute 'value' of <on-return> " +
+                                               "starts with a digit, but is not an integer: " + value);
+                    }
+                }
+                // support for boolean value
+                else if (value.equalsIgnoreCase("true")) realValue = Boolean.TRUE;
+                else if (value.equalsIgnoreCase("false")) realValue = Boolean.FALSE;
+                // support for "*" (any)
+                else if (value.equals("*")) realValue = "*";
+                else {
+                    // support for 'SomeClass.FIELD' definition of value attribute
+                    int j = value.lastIndexOf('.');
 
-                    onReturns.put(f.get(null), showTemplate);
+                    if (j != -1 && j < value.length()-1) {
+                        String className = value.substring(0, j);
+                        try {
+                            clazz = loader.loadClass(className);
+                            value = value.substring(j+1);
+                        } catch (ClassNotFoundException ex) {
+                            throw new InitException("No class of name '" + className + "' found while parsing 'value' " +
+                                                    "attribute of <on-return> element.");
+                        }
+                    }
 
-                    if (!outputVariables.isEmpty())
-                        onReturnsOutputVars.put(f.get(null), outputVariables);
-                } catch(NoSuchFieldException e) {
-                    throw new InitException("No \"public static final\" field of name '" + value + "' found in component " +
-                    "class '" + componentData.componentClass.getName() + "' (error while parsing <on-return> element)");
-                } catch(IllegalAccessException e) {/* can't happen */}
+                    try {
+                        // get field's value
+                        Field f = clazz.getField(value);
+                        if (!Modifier.isPublic(f.getModifiers()) ||
+                            !Modifier.isStatic(f.getModifiers()) ||
+                            !Modifier.isFinal(f.getModifiers()))
+                            throw new NoSuchFieldException();
+
+                        realValue = f.get(null);
+                    } catch(NoSuchFieldException ex) {
+                        throw new InitException("No \"public static final\" field of name '" + value + "' found in " +
+                        "class '" + clazz.getName() + "' (error while parsing <on-return> element)");
+                    } catch(IllegalAccessException ex) {/* can't happen */}
+                }
+
+                onReturns.put(realValue, new String[] {"".equals(assignTo)?null:assignTo.trim(), showTemplate.trim()});
+                if (!outputVariables.isEmpty())
+                    onReturnsOutputVars.put(realValue, outputVariables);
             }
         }
     }
@@ -1066,7 +1114,9 @@ public class ActionServlet extends WMServlet {
                 }
 
                 // object of which method will be invoked
-                Object component = getComponent(action.componentData.componentName, true);
+                Object component = null;
+                if (action.componentData.persistence != action.componentData.PERSISTENCE_STATIC)
+                    component = getComponent(action.componentData.componentName, true);
 
                 return action.invoke(context, action.componentData.componentName, component, params);
             } catch (ConversionException e) {
@@ -1090,7 +1140,7 @@ public class ActionServlet extends WMServlet {
     }
 
     /**
-     * Returns action method assigned to the given <TT>form</TT> and <TTaction</TT>.
+     * Returns action method assigned to the given <TT>form</TT> and <TT>action</TT>.
      *
      * @return null if not assigned
      */
@@ -1212,62 +1262,54 @@ public class ActionServlet extends WMServlet {
 
         Object component = null;
 
-        try {
-            // get component instance
-            switch(componentData.persistence) {
-                case ComponentData.PERSISTENCE_APPLICATION:
-                    component = applicationComponents.get(componentData.componentName);
+        // get component instance
+        switch(componentData.persistence) {
+            case ComponentData.PERSISTENCE_APPLICATION:
+                component = applicationComponents.get(componentData.componentName);
 
-                    if (create && component == null) {
-                        log.debug("Creating component '" + componentData.componentName + "' (" +
-                                  componentData.componentClass.getName() + ".class)");
-                        if (componentData.consOne) component = componentData.constructor.newInstance(_this);
-                           else component = componentData.constructor.newInstance(new Object[] {this, componentData.componentName});
-                        applicationComponents.put(componentData.componentName, component);
-                    }
-                break;
-
-                case ComponentData.PERSISTENCE_SESSION:
-                    String id = null;
-
-                    try {
-                        id = getSessionId();
-                    } catch (IllegalStateException e) {
-                        throw new IllegalStateException("Cannot call 'ActionServlet.getComponent()'" +
-                                                        " from a non-session thread");
-                    }
-
-                    Hashtable components = (Hashtable) sessionComponents.get(id);
-
-                    if (components == null)
-                        sessionComponents.put(id, components = new Hashtable());
-
-                    component = components.get(componentData.componentName);
-
-                    if (create && component == null) {
-                        log.debug("Creating component '" + componentData.componentName + "' (" +
-                                  componentData.componentClass.getName() + ".class)");
-                        if (componentData.consOne) component = componentData.constructor.newInstance(_this);
-                            else component = componentData.constructor.newInstance(new Object[] {this, componentData.componentName});
-                        components.put(componentData.componentName, component);
-                    }
-                break;
-
-                default:    // ComponentData.PERSISTENCE_REQUEST
+                if (create && component == null) {
                     log.debug("Creating component '" + componentData.componentName + "' (" +
                               componentData.componentClass.getName() + ".class)");
-                    if (componentData.consOne) component = componentData.constructor.newInstance(_this);
-                        else component = componentData.constructor.newInstance(new Object[] {this, componentData.componentName});
-            }
-        } catch(InvocationTargetException e) {
-            log.error("Error while invoking constructor of component '" +
-                      componentData.componentName + "'", e);
-        } catch(InstantiationException e) {
-            log.error("Cannot instantiate component '" +
-                      componentData.componentName + "'", e);
-        } catch(IllegalAccessException e) {
-            log.error("Cannot access component '" +
-                      componentData.componentName + "'", e);
+                    component = componentData.newInstance(this);
+                    applicationComponents.put(componentData.componentName, component);
+                }
+            break;
+
+            case ComponentData.PERSISTENCE_SESSION:
+                String id = null;
+
+                try {
+                    id = getSessionId();
+                } catch (IllegalStateException e) {
+                    throw new IllegalStateException("Cannot call 'ActionServlet.getComponent()'" +
+                                                    " from a non-session thread");
+                }
+
+                Hashtable components = (Hashtable) sessionComponents.get(id);
+
+                if (components == null)
+                    sessionComponents.put(id, components = new Hashtable());
+
+                component = components.get(componentData.componentName);
+
+                if (create && component == null) {
+                    log.debug("Creating component '" + componentData.componentName + "' (" +
+                              componentData.componentClass.getName() + ".class)");
+                    component = componentData.newInstance(this);
+                    components.put(componentData.componentName, component);
+                }
+            break;
+
+            case ComponentData.PERSISTENCE_STATIC:
+                log.error("Attempt to create static component '" + componentData.componentName + "' (" +
+                          componentData.componentClass.getName() + ".class)");
+                component = null;
+            break;
+
+            default:    // ComponentData.PERSISTENCE_REQUEST
+                log.debug("Creating component '" + componentData.componentName + "' (" +
+                          componentData.componentClass.getName() + ".class)");
+                component = componentData.newInstance(this);
         }
 
         return component;
@@ -1392,8 +1434,8 @@ public class ActionServlet extends WMServlet {
                                        String action,
                                        ConversionException e) throws ActionException {
         log.error("Conversion error occurred when handling action '" +
-                  (form == null?"": (form + "'.'")) + action + 
-                  "' (field: '" + e.getParameterName() + "')", 
+                  (form == null?"": (form + "'.'")) + action +
+                  "' (field: '" + e.getParameterName() + "')",
                   e.detail == null || !(e.detail instanceof Exception)? e: (Exception) e.detail);
 
         return error(context, "Conversion error occurred when handling action '" +

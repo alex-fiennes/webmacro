@@ -45,7 +45,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.8<P>
+version 0.85<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -113,11 +113,17 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 	 "shopping carts" etc.
  <LI><TT>"request"</TT> persistence - for each HTTP request is created a new component
      object (except for page reload, which uses the same component).
+ <LI><TT>"static"</TT> persistence - may be used if only static action methods of the 
+     component class are invoked (component is never instantiated).
  </UL>
 
- <P>Each component class must have a public constructor with a single parameter of type 
- <TT>org.webmacro.as.ActionServlet</TT>, optionally it can have a second parameter of type
- <TT>java.lang.String</TT> which will be passed the component name from ActionConfig.
+ <P>Each component class must have either:
+ <UL>
+ <LI>a default of public non-parametric constructor (like JavaBeans) or
+ <LI>a public constructor with a single parameter of type <TT>org.webmacro.as.ActionServlet</TT> or
+ <LI>a public constructor with parameters of type <TT>org.webmacro.as.ActionServlet</TT> and
+ <TT>java.lang.String</TT> (which will be passed the component name from ActionConfig).
+ </UL>
 
  <P>If the component wants to be notified when it 
  is no longer used by ActionServlet, it should implement 
@@ -128,7 +134,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  implement the behaviour of a component. Each action method must be declared <TT>public</TT>.
  To parameters of action method are passed values of HTTP parameters automatically
  converted to Java types by <A HREF="#tha">type handlers</A>}. The return values can be mapped 
- onto template names by  <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A>
+ to template names by <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A>
  element.<P>
 
  The action method to be invoked is chosen after the name of parameter '<B>action</B>' and,
@@ -385,13 +391,26 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  <B>1.5.7 Zero or more <A NAME="el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements</B><P>
  can be specified inside <TT>&lt;component&gt;</TT> element after <TT>&lt;action&gt;</TT>s
  or inside <TT>&lt;action&gt;</TT> after <TT>&lt;output-variable&gt;</TT>s (the latter case 
- is used to override component's <TT>&lt;on-return&gt;</TT>s). Each <TT>&lt;on-return&gt;</TT> 
- has two attributes:
+ is used to override component's <TT>&lt;on-return&gt;</TT>s).<P>
+ 
+ Each <TT>&lt;on-return&gt;</TT> can have attributes:
 
  <UL>
- <LI><TT>value</TT> - contains the <EM>name</EM>(!) of <TT>public static final</TT> field
- of the component, which value will be compared to the return value of invoked action method.
- A special name "<TT>void</TT>" is reserved for mapping of methods with <TT>void</TT> return type.
+ <LI><TT>value</TT> - which contains:
+ 
+ <UL>
+ <LI>name of <TT>public static final</TT> field of the nesting component class or
+ <LI>fully qualified name of <TT>public static final</TT> field<BR>
+ <I>(in these two cases the field's value will be compared to the return value of 
+ invoked action method)</I> or
+ <LI>a boolean (true/false - case insensitive) or 
+ <LI>an integer value or
+ <LI>a special name "<TT>void</TT>" - reserved for mapping of methods with <TT>void</TT> return type - or
+ <LI>a special name "<TT>*</TT>" - for any returned value.
+ </UL>
+ 
+ <LI><TT>assign-to</TT> - contains the name of $variable, which the returned value will be assigned to (optional),
+ 
  <LI><TT>show-template</TT> - contains the name of template to be shown if the values
  match.
  </UL><P>
@@ -406,28 +425,35 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
         return <B>OK</B>;
     }
 
-    int secondMethod() {
-        return <B>OK</B>;
+    boolean secondMethod() {
+        return <B>true</B>;
     }
 
-    <B>void</B> thirdMethod() {}
+    int thirdMethod(int number) {
+        return number * 2;
+    }
+
+    <B>void</B> fourthMethod() {}
  }
 
  &lt;component class="MyComponent" ...&gt;
     &lt;action name="action1" method="firstMethod()"/&gt;
     &lt;action name="action2" method="secondMethod()"&gt;
-       &lt;on-return value="<B>OK</B>" show-template="AnotherTemplate.wm"/&gt;
+       &lt;on-return value="<B>true</B>" show-template="Template1.wm"/&gt;
     &lt;/action&gt;
-    &lt;action name="action3" method="thirdMethod()"/&gt;
+    &lt;action name="action3" method="thirdMethod()"&gt;
+       &lt;on-return value="<B>*</B>" assign-to="result" show-template="Template2.wm"/&gt;
+    &lt;/action&gt;
+    &lt;action name="action4" method="fourthMethod()"/&gt;
 
-    &lt;on-return value="<B>OK</B>" show-template="SomeTemplate.wm"/&gt;
-    &lt;on-return value="<B>void</B>" show-template="YetAnotherTemplate.wm"/&gt;
+    &lt;on-return value="<B>OK</B>" show-template="Template3.wm"/&gt;
+    &lt;on-return value="<B>void</B>" show-template="Template4.wm"/&gt;
  &lt;/component&gt;</PRE>
 
- If "action1" is invoked, "SomeTemplate.wm" will be displayed.
- If "action2" is invoked, "AnotherTemplate.wm" will be displayed.
- If "action3" is invoked, "YetAnotherTemplate.wm" will be displayed.<P>
-
+ If "action1" is invoked, "Template3.wm" will be displayed.
+ If "action2" is invoked, "Template1.wm" will be displayed.
+ If "action3" is invoked, "Template2.wm" will be displayed (and return value assigned to $result).
+ If "action4" is invoked, "Template4.wm" will be displayed.<P>
 
  <A NAME="allinone"></A>
  <B>1.5.8 All-in-one example</B><P>

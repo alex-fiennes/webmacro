@@ -1,5 +1,5 @@
 /*
- *    Action Servlet is an extension of the WebMacro servlet framework, which
+ *    ActionServlet is an extension of the WebMacro servlet framework, which
  *    provides an easy mapping of HTTP requests to methods of Java components.
  *
  *    Copyright (C) 1999-2001  Petr Toman
@@ -89,7 +89,7 @@ final class Action {
 
     /**
      * Table of &lt;on-return&gt; elements for this action:
-     * key = field value, value = template name (of template to be displayed)
+     * key = (field) value, value = template name (of template to be displayed)
      */
     private final Hashtable onReturns;
 
@@ -649,26 +649,42 @@ final class Action {
             }
 
             Template template;
-            String templateName = null;
-            boolean overridenOnReturn = false;
+            String[] onReturnVals = null;
+            boolean overridenOnReturn = false, any = false;
 
             // process <on-return>
             if (onReturns != null)
-                templateName = (String) onReturns.get(retTypeIsVoid?"void":retValue);
+                onReturnVals = (String[]) onReturns.get(retTypeIsVoid?"void":retValue);
 
-            if (templateName == null) {
+            if (onReturnVals == null) {
                 ComponentData componentData = (ComponentData) servlet.componentClasses.get(componentName);
-                templateName = (String) componentData.onReturns.get(retTypeIsVoid?"void":retValue);
+                onReturnVals = (String[]) componentData.onReturns.get(retTypeIsVoid?"void":retValue);
             } else overridenOnReturn = true;
 
-            if (templateName == null) template = servlet.onReturn(context, formName, actionName, retValue);
+            // check for "*" (any)
+            if (onReturnVals == null) {
+                if (onReturns != null) onReturnVals = (String[]) onReturns.get("*");
+
+                if (onReturnVals == null) {
+                    ComponentData componentData = (ComponentData) servlet.componentClasses.get(componentName);
+                    onReturnVals = (String[]) componentData.onReturns.get("*");
+                } else overridenOnReturn = false;
+
+                if (onReturnVals != null) any = true;
+            }
+
+            if (onReturnVals == null) template = servlet.onReturn(context, formName, actionName, retValue);
             else {
-               template = servlet.getWMTemplate(templateName);
+               template = servlet.getWMTemplate(onReturnVals[1]);
                if (template == null)
-                   throw new ActionException("Cannot find template of name '" + templateName + "' " +
+                   throw new ActionException("Cannot find template of name '" + onReturnVals[1] + "' " +
                                              "returned by action '" + (formName==null?"":
                                              formName+"'.'") + actionName + "'");
             }
+
+            // return value: assign-to $variable
+            if (onReturnVals != null && onReturnVals[0] != null)
+                context.put(onReturnVals[0], retValue);
 
             // set <output-variable>s of action
             for (Enumeration e = outputVariables.elements(); e.hasMoreElements(); )
@@ -676,17 +692,20 @@ final class Action {
 
             // set <output-variable>s of <on-return>
             Vector onReturnsOutputVars;
+            if (any) retValue = "*";
+                else if (retTypeIsVoid) retValue = "void";
 
             if (overridenOnReturn)
-                onReturnsOutputVars = this.onReturnsOutputVars == null? null: (Vector) this.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
-            else onReturnsOutputVars = (Vector) componentData.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
+                onReturnsOutputVars = this.onReturnsOutputVars == null? null: (Vector) this.onReturnsOutputVars.get(retValue);
+            else onReturnsOutputVars = (Vector) componentData.onReturnsOutputVars.get(retValue);
 
             if (onReturnsOutputVars != null)
                 for (Enumeration e = onReturnsOutputVars.elements(); e.hasMoreElements(); )
                     ((OutputVariable) e.nextElement()).evaluate(context);
 
             // check template is loaded by getWMTemplate()
-            if ((templateName = (String) servlet.templatesNames.get(template)) == null)
+            String templateName = (String) servlet.templatesNames.get(template);
+            if (templateName == null)
                 throw new ActionException("Template '" + template.getName() + "' was not loaded by 'ActionServlet.getWMTemplate()'");
 
             // set <output-variable>s of template

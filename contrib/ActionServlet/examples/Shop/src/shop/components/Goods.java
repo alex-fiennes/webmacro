@@ -9,13 +9,7 @@ import shop.types.Item;
  *
  * @author Petr Toman
  */
-public class Goods extends SimpleDbComponent {
-    public static final int OK = 0;
-    public static final int ITEM_EXISTS = 1;
-    public static final int NO_SUCH_ITEM = 2;
-    public static final int NOT_SO_MANY_ITEMS_IN_GOODS = 3;
-    public static final int NOT_ADMIN = 4;
-
+public class Goods extends SimpleDbComponent implements Errors {
     /** Last added/edited item.*/
     public Item item;
 

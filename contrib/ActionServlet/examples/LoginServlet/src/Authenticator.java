@@ -1,5 +1,3 @@
-import org.webmacro.as.ActionServlet;
-
 /**
  * A simple component for authenticating users.
  *
@@ -7,18 +5,13 @@ import org.webmacro.as.ActionServlet;
  */
 public class Authenticator {
     /** Return code. */
-    public static final int OK = 1;
+    public static final int OK = 0;
 
     /** Return code. */
-    public static final int BAD_USERNAME_OR_PASSWORD = 2;
+    public static final int BAD_USERNAME_OR_PASSWORD = 1;
 
     /** Indicates that bad user name or bassword was entered. */
     private boolean isLoggedIn = false;
-
-    /**
-     * Component constructor.
-     */
-    public Authenticator(ActionServlet as) {}
 
     /** 
      * Implements 'Login' action.

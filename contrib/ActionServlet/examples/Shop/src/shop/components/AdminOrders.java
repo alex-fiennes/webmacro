@@ -8,12 +8,7 @@ import org.webmacro.as.ActionServlet;
  *
  * @author Petr Toman
  */
-public class AdminOrders extends SimpleDbComponent {
-    public static final int OK = 0;
-    public static final int NO_SUCH_ID = 1;
-    public static final int CANNOT_CHANGE_STATUS = 2;
-    public static final int NOT_ADMIN = 3;
-
+public class AdminOrders extends SimpleDbComponent implements Errors {
     private ConnectionManager cm;
     private Authenticator auth;
 

@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.8<P>
+version 0.85<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -58,10 +58,8 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 <P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
 <PRE>
 <B>public class Authenticator</B> {
-   public static final int <B>OK</B> = 1;
-   public static final int <B>BAD_USERNAME_OR_PASSWORD</B> = 2;
-
-   public Authenticator(org.webmacro.as.ActionServlet as) {}
+   public static final int <B>OK</B> = 0;
+   public static final int <B>BAD_USERNAME_OR_PASSWORD</B> = 1;
 
    <B>public String <FONT COLOR="green">login</FONT>(String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)</B> {
       <I>// verify user name and password - here: only John may log in</I>
@@ -79,14 +77,8 @@ is nested inside <TT><B>Authenticator</B></TT> class, which defines the <EM>Acti
 
 <HR WIDTH="100%">
 
-Note 1: Components are instantiated by <EM>ActionServlet</EM> and must have a public 
-        constructor with a single parameter of type <TT>org.webmacro.as.ActionServlet</TT>
-        (optionally it can have a second parameter of type <TT>java.lang.String</TT> 
-        which will be passed the component name).<P>
-
-Note2: Action method must be defined as public and usually returns a value - an error code or 
-       a template name (see <A HREF="../specification.html">Specification</A> 
-       for more info).<P>
+Note: Each action method must be defined as public and usually returns a value - an error code or 
+      a template name.<P>
 </TD></TR></TABLE>
 
 <P><CENTER>

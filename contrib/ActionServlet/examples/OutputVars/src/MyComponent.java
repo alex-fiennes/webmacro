@@ -1,13 +1,9 @@
-import org.webmacro.as.ActionServlet;
-
 /**
  * Component for &lt;output-variable&gt; demonstration.
  *
  * @author Petr Toman
  */
 public class MyComponent {
-    public MyComponent(ActionServlet as) {}
-
     /** 
      * Implements 'myAction1' action.
      */

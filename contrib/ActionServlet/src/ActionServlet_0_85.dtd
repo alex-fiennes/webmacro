@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Action Servlet 0.85 DTD -->
+
+<!ELEMENT application (properties?, templates?, type-handlers?, components)>
+
+<!ELEMENT properties (property+)>
+<!ELEMENT templates (template+)>
+<!ELEMENT type-handlers (type-handler+)>
+<!ELEMENT components (component+)>
+
+<!ELEMENT property EMPTY>
+<!ELEMENT template (output-variable*)>
+<!ELEMENT type-handler EMPTY>
+<!ELEMENT component (action*, on-return*)>
+<!ELEMENT action (output-variable*, on-return*)>
+<!ELEMENT on-return (output-variable*)>
+
+<!ELEMENT output-variable EMPTY>
+
+<!ATTLIST application
+   repository CDATA #IMPLIED>
+
+<!ATTLIST property
+   component CDATA #IMPLIED
+   name CDATA #REQUIRED
+   value CDATA #REQUIRED>
+
+<!ATTLIST template
+   name CDATA #REQUIRED
+   is-new-session (true | false) "false">
+
+<!ATTLIST type-handler
+   type CDATA #REQUIRED
+   class CDATA #REQUIRED>
+
+<!ATTLIST component
+   name CDATA #REQUIRED
+   class CDATA #REQUIRED
+   persistence (application | session | request | static) #REQUIRED>
+
+<!ATTLIST action
+   form CDATA #IMPLIED
+   name CDATA #REQUIRED
+   method CDATA #REQUIRED>
+
+<!ATTLIST on-return
+   value CDATA #REQUIRED
+   assign-to CDATA #IMPLIED
+   show-template CDATA #REQUIRED>
+
+<!ATTLIST output-variable
+   name CDATA #REQUIRED
+   component CDATA #IMPLIED
+   value CDATA #REQUIRED
+   if CDATA #IMPLIED>

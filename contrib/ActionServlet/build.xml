@@ -7,6 +7,9 @@
    <!-- include properties from file -->
    <property file="build.properties"/>
 
+   <!-- ActionServlet version -->
+   <property name="version" value="0.85"/>
+
    <!-- classpath settings -->
    <path id="class.path">
       <pathelement location="${WebMacro.home}/webmacro.jar"/>
@@ -20,7 +23,7 @@
       <pathelement path="${java.class.path}"/>
    </path>
 
-   <!-- test prerequisities -->
+   <!-- test prerequisites -->
    <target name="available">
       <available file="${ActionServlet.home}" property="ActionServlet.present"/>
       <available file="${WebMacro.home}/webmacro.jar" property="webmacro.present"/>
@@ -99,7 +102,7 @@
       <javadoc sourcepath="src"
                destdir="doc/api"  
                packagenames="org.webmacro.as"
-               windowtitle="ActionServlet 0.8 API"
+               windowtitle="ActionServlet ${version} API"
                nodeprecated="true"
                use="true">
          <classpath refid="class.path"/>
@@ -148,8 +151,12 @@
       <jar jarfile="lib/ActionServlet.jar" whenempty="fail">
          <fileset dir="lib/classes"/>
 
-         <fileset dir="src" >
+         <zipfileset dir="src" prefix="dtd">
             <include name="ActionServlet_*.dtd"/>
+         </zipfileset>
+
+         <fileset dir=".">
+            <include name="Readme"/>
          </fileset>
       </jar>
    </target>
@@ -393,7 +400,7 @@
    <target name="dist" depends="all">
       <mkdir dir="dist"/>
 
-      <zip zipfile="dist/ActionServlet_0_8.zip"
+      <zip zipfile="dist/ActionServlet_${version}.zip"
            basedir="."
            excludes="**">
          <zipfileset dir="." prefix="ActionServlet">

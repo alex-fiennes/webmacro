@@ -8,10 +8,7 @@ import org.webmacro.as.ActionServlet;
  *
  * @author Petr Toman
  */
-public class Authenticator {
-    public static final int OK = 0;
-    public static final int BAD_USERNAME_OR_PASSWORD = 1;
-
+public class Authenticator implements Errors {
     /** This user. */
     private String user;
 

@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.8<P>
+version 0.85<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -76,8 +76,9 @@ With these wizards you can easily create the basic structure of your web applica
 	<LI><EM>ActionServlet</EM>
 	<UL>
 	<LI><A HREF="doc/advertisment.txt">Advertisment</A>
+        <LI><A HREF="doc/whatsnew.txt">What's new?</A> (changelog)
 	<LI><A HREF="doc/whyuseas.html">Why use ActionServlet?</A>
-	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet Tutorial</A>
+	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet Tutorial</A><TT> &nbsp;&nbsp; &lt;-- start here!</TT>
 	<LI>ActionServlet <A HREF="doc/specification.html">Specification</A>
 	<LI>ActionServlet <A HREF="doc/guidelines.html">Design Guidelines</A>
 	<LI>Full <A HREF="doc/api/index.html">API documentation</A>
@@ -93,7 +94,8 @@ With these wizards you can easily create the basic structure of your web applica
 
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!-- 
-   if (location.hostname != "dione.zcu.cz") document.write("<!--");
+   var wwwsite = "dione.zcu.cz";
+   if (location.hostname != wwwsite) document.write("<!--");
 // -->
 </SCRIPT>
 
@@ -106,11 +108,11 @@ With these wizards you can easily create the basic structure of your web applica
 <TD COLSPAN=2>...requires also</TD>
 <TD>...has examples<BR>configured for</TD>
 <TR><TD ROWSPAN=2>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_8.zip">ActionServlet_0_8.zip</A>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0.85.zip">ActionServlet_0.85.zip</A>
 </TD><TD>
 <A HREF="http://java.sun.com/j2se">JDK 1.2</A>+
 </TD><TD ROWSPAN=2>
-<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 1.0rc1</A>+
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 1.0</A>+
 </TD><TD ROWSPAN=2>
 <A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>,<BR>
 <A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.x/4.0</A><SUP><FONT COLOR="red">*</FONT></SUP>
@@ -124,12 +126,14 @@ With these wizards you can easily create the basic structure of your web applica
 <TABLE WIDTH="490" ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="1" CELLPADDING=3 CELLSPACING=1>
 <TR ALIGN="center" BGCOLOR="#D0D0D0">
 <TD>ASWizards...<BR><SMALL>(sources &amp; docs included)</SMALL></TD>
-<TD>...requires also</TD>
+<TD COLSPAN=2>...requires also</TD>
 <TD>...has example<BR>configured for</TD>
 </TR><TR>
-<TD><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB_1_1.zip">ASWizards_JB_1_1.zip</A></TD>
-<TD>ActionServlet 0.8,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
-<TD><A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.x/4.0</A><SUP><FONT COLOR="red">*</FONT></SUP></TD>
+<TD ROWSPAN=2><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB_1.15.zip">ASWizards_JB_1.15.zip</A></TD>
+<TD COLSPAN=2>ActionServlet 0.85</TD>
+<TD ROWSPAN=2><A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.x/4.0</A><SUP><FONT COLOR="red">*</FONT></SUP></TD></TR>
+<TR><TD><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
+<TD><A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+</TD>
 </TR></TABLE>
 </TD></TR><TR><TD>
 <SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2/2.3</EM></SMALL>
@@ -139,21 +143,21 @@ With these wizards you can easily create the basic structure of your web applica
 <FORM ACTION="http://dione.zcu.cz/cgi-bin/FormMail.pl" METHOD="POST">
 <INPUT TYPE="HIDDEN" NAME="recipient" VALUE="Petr.Toman@pinknet.cz">
 <INPUT TYPE="HIDDEN" NAME="subject" VALUE="AS: Subscribe">
-<INPUT NAME="e-mail" VALUE="" size="50">
+E-mail: <INPUT NAME="e-mail" VALUE="" size="50">
 <INPUT TYPE="HIDDEN" NAME="required" VALUE="e-mail">
 <INPUT TYPE=SUBMIT VALUE="Submit">
 </FORM>
 
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!-- 
-   if (location.hostname != "dione.zcu.cz") document.write("--><!--");
+   if (location.hostname != wwwsite) document.write("--><!--");
 // -->
 </SCRIPT>
 
 <P><LI><H3 CLASS="main">Latest news
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!-- 
-   if (location.hostname != "dione.zcu.cz") document.write("&amp; download");
+   if (location.hostname != wwwsite) document.write("&amp; download");
 // -->
 </SCRIPT>
 </H3>
@@ -161,32 +165,11 @@ With these wizards you can easily create the basic structure of your web applica
 <LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet"><TT>http://dione.zcu.cz/~toman40/ActionServlet</TT></A>
 </UL>
 
-<P><LI><H3 CLASS="main">History</H3>
-	<TABLE BORDER=0 CELLPADDING=2><TR><TD>
-	24.2. 2000: <B>version 0.42</B>: first public release</TD></TR><TR><TD>
-	14.3. 2000: <B>version 0.43</B>: small doc fixes</TD></TR><TR><TD>
-	26.4. 2000: <B>version 0.44</B>: added <TT>newSession()</TT> method</TD></TR><TR><TD>
-	14.8. 2000: <B>version 0.45</B>: tiny changes</TD></TR><TR><TD>
-        31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
-                    easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
-        14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
-        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: made compatible with WebMacro 0.95+, examples improvements</TD></TR><TR><TD>
-        24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: Servlet 2.2+ containers support</TD></TR><TR><TD>
-	17.9. 2001: <EM>ASWizards 1.0 for JBuilder</EM> released</TD></TR></TD></TR><TR><TD>
-	14.10. 2001: <B>version 0.6</B>: ActionConfig improvements, new Guidelines document, ...</TD></TR></TD></TR><TR><TD>
-	29.10. 2001: <B>version 0.61</B>: new <TT>&lt;property&gt;</TT> element in ActionConfig, new DbDemo</TD></TR></TD></TR><TR><TD>
-	8.11. 2001: <B>version 0.7</B>: Usage of <TT>&lt;ouput-variable&gt;</TT>s enhanced </TD></TR></TD></TR><TR><TD>
-	9.12. 2001: <B>version 0.8</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
-	12.12. 2001: <EM>ASWizards 1.1 for JBuilder</EM> released</TD></TR>
-	</TABLE>
-
 <P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>
 <B>ActionServlet 0.44</B>
 </TD></TR>
 <TR><TD ALIGN=CENTER>
-<A HREF="http://www.jars.com/classes/jresout.cgi?resource=6863">
-<IMG SRC="doc\images\r750.gif" BORDER="0">
-</A>
+<A HREF="http://www.jars.com/classes/jresout.cgi?resource=6863"><IMG SRC="doc\images\r750.gif" BORDER="0"></A>
 </TD></TR></TABLE>
 
 <P><LI><H3 CLASS="main">Related projects</H3>
@@ -195,6 +178,7 @@ With these wizards you can easily create the basic structure of your web applica
 <LI><A HREF="http://www.hyperqbs.org">HyperQbs</A>
 <LI><A HREF="http://jpublish.sourceforge.net">JPublish</A>
 <LI><A HREF="http://mav.sourceforge.net">Maverick</A>
+<LI><A HREF="http://melati.org">Melati</A>
 <LI><A HREF="http://www.niggle.org">Niggle</A>
 <LI><A HREF="http://jakarta.apache.org/turbine">Turbine</A>
 <LI><A HREF="http://sourceforge.net/projects/webwork">WebWork</A>

@@ -1,5 +1,4 @@
 import java.util.Vector;
-import org.webmacro.as.ActionServlet;
 
 /**
  * ActionServlet component that implements a guest book.
@@ -12,11 +11,6 @@ public class GuestBook {
      */
     public Vector book = new Vector();
 
-    /**
-     * Component constructor.
-     */
-    public GuestBook(ActionServlet as) {}
-   
     /**
      * Handles 'show' action.
      */

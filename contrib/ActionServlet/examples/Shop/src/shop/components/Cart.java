@@ -13,13 +13,7 @@ import org.webmacro.datatable.DataTable;
  *
  * @author Petr Toman
  */
-public class Cart extends SimpleDbComponent implements Destroyed {
-    public static final int OK = 0;
-    public static final int ZERO_OR_NEGATIVE_COUNT_ERR = 1;
-    public static final int NOT_AVAILABLE = 2;
-    public static final int NO_SUCH_ITEM = 3;
-    public static final int NOT_SO_MANY_ITEMS_IN_CART = 4;
-
+public class Cart extends SimpleDbComponent implements Destroyed, Errors {
     private ConnectionManager cm;
     private Authenticator auth;
     private String sessionId;

@@ -11,16 +11,7 @@ import shop.types.User;
  *
  * @author Petr Toman
  */
-public class Accounts extends SimpleDbComponent {
-    public static final int OK = 0;
-    public static final int ACCOUNT_EXISTS = 1;
-    public static final int BAD_PASSWORD_CONFIRM = 2;
-    public static final int FIELDS_NOT_FILLED = 3;
-    public static final int NOT_LOGGED_IN= 4;
-    public static final int ACCOUNT_DOES_NOT_EXIST = 5;
-    public static final int NOT_ADMIN = 6;
-    public static final int BAD_OLD_PASSWORD = 7;
-
+public class Accounts extends SimpleDbComponent implements Errors {
     /** Last edited user.*/
     public User user;
 

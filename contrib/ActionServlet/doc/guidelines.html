@@ -45,7 +45,7 @@ H3 {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.8<P>
+version 0.85<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -57,10 +57,9 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 <CENTER><H1>ActionServlet Design Guidelines</H1></CENTER>
 
 <H3>1. Create reusable components!</H3>
-This means you should not use WebContext in action methods:<P>
 
 <UL>
-<LI>for retrieving HTTP parameter values, if possible. Use parameter passing provided by ActionServlet instead.<P>
+<LI>Do not use WebContext for retrieving HTTP parameter values, if possible. Use parameter passing provided by ActionServlet instead.<P>
 
 <B>Example: non-reusable component</B><P>
 <PRE>
@@ -84,42 +83,39 @@ public MyComponent {
 
 <PRE>&lt;action name="ActionName" method="someMethod(String HTTPParameterName)"/&gt;</PRE>
 
-<LI>for assigning WebMacro variables.<P>
+<LI>Do not use WebContext for assigning WebMacro variables.<P>
 
 <B>Example: non-reusable component</B><P>
 <PRE>
 public MyComponent {
    public void someMethod(WebContext context) {
       <EM>// do something...</EM>
-      context.put("variable", someValue);
+      context.put("<B>variable</B>", <EM>someValue</EM>);
    }
 }</PRE>
 
 <B>Example: reusable component</B><P>
 <PRE>
-public <B>MyComponent</B> {
-   private int variable;
-
-   public void someMethod() {
-      variable = someValue;
-   }
-   
-   public int <B>getValue()</B> {
-      return variable;
+public MyComponent {
+   public int someMethod() {
+      <EM>// do something...</EM>
+      return <EM>someValue</EM>;
    }
 }</PRE>
 
 <EM>Advantage:</EM> You can map return value to any WebMacro variable without changing the
-                    component's code in ActionConfig by <A HREF="specification.html#el_outvar"><TT>&lt;output-variable&gt;</TT></A> element:
+                    component's code in ActionConfig by <A HREF="specification.html#el_onreturn"><TT>&lt;on-return&gt;</TT></A> element:
 
-<PRE>&lt;output-variable name="variable"
-                 component="<B>MyComponent</B>" value="<B>getValue()</B>"/&gt;</PRE>
+<PRE>&lt;on-return value="*" assign-to="<B>variable</B>" show-template="..."/&gt;</PRE>
+
+<P><EM>Note:</EM> <A HREF="specification.html#el_outvar"><TT>&lt;output-variable&gt;</TT></A> element
+can be also used to set $variables.
 </UL>
 		   
 <H3>2. Create self-describing components!</H3>
 This means you should action methods that return error codes instead of template names.
-ActionServlet forces you to declare error codes as <TT>public static final</TT> fields of
-the component.<P>
+ActionServlet gives you option to declare error codes as <TT>public static final</TT> fields of
+the component (or any other class/interface).<P>
 
 <B>Example: non self-describing component</B><P>
 <PRE>
@@ -133,7 +129,7 @@ public MyComponent {
 <B>Example: self-describing component</B><P>
 <PRE>
 public MyComponent {
-   public static final int <B>OK</B> = 1;
+   public static final int <B>OK</B> = 0;
 
    public String someMethod() {
       <EM>// do something...</EM>

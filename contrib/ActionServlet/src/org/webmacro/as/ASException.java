@@ -1,5 +1,5 @@
 /*
- *    Action Servlet is an extension of the WebMacro servlet framework, which
+ *    ActionServlet is an extension of the WebMacro servlet framework, which
  *    provides an easy mapping of HTTP requests to methods of Java components.
  *
  *    Copyright (C) 1999-2001  Petr Toman

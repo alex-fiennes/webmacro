@@ -19,6 +19,8 @@
    } #else {
       <LI><A TARGET="_top" HREF="$SERVLET?action=setLock&lock=false">Unlock room</A><P>
    }
+} #else {
+   <LI>Lock room<P>
 }
 
 </UL>

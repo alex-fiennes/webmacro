@@ -1,4 +1,4 @@
-import org.webmacro.as.*;
+import org.webmacro.as.ActionException;
 
 /**
  * ActionServlet component that implements a simple calculator.
@@ -39,9 +39,6 @@ public class Calculator {
      */
     protected boolean point = false;
 
-    ////////////////////////////// Constructor ////////////////////////////
-
-    public Calculator(ActionServlet as) {}
 
     ///////////////////////////// Action methods //////////////////////////
 

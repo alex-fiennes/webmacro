@@ -1,5 +1,4 @@
 import org.webmacro.servlet.WebContext;
-import org.webmacro.as.ActionServlet;
 
 /**
  * ActionServlet component that handles processing of two forms with 
@@ -8,8 +7,6 @@ import org.webmacro.as.ActionServlet;
  * @author Petr Toman
  */
 public class TwoForms {
-    public TwoForms(ActionServlet as) {}
-
     /** 
      * Implements 'Form1'.'OK' action.
      */

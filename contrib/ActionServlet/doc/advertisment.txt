@@ -2,7 +2,7 @@
 *    Easy mapping of HTTP requests to methods of    *
 *                  Java components                  *
 *                                                   *
-*                ActionServlet 0.8                  *
+*                ActionServlet 0.85                 *
 *        Copyright (c) 1999-2001 Petr Toman         *
 *                                                   *
 *     http://dione.zcu.cz/~toman40/ActionServlet    *

@@ -12,11 +12,7 @@ import shop.types.Item;
  *
  * @author Petr Toman
  */
-public class Orders extends SimpleDbComponent {
-    public static final int OK = 0;
-    public static final int SHOPPING_CART_EMPY = 1;
-    public static final int NOT_LOGGED_IN = 2;
-
+public class Orders extends SimpleDbComponent implements Errors {
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("d.M.yyyy HH:mm", Locale.US);
     private ConnectionManager cm;
     private Authenticator auth;
