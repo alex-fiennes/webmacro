@@ -449,6 +449,65 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     {
         return _wm.getWebContext (req,res);
     }
+
+   /**
+    * Convenience method for writing a template to an OutputStream.
+    * This method takes care of all the typical work involved
+    * in writing a template.<p>
+    *
+    * This method uses the default <code>TemplateEncoding</code> specified in
+    * WebMacro.defaults or your custom WebMacro.properties.
+    *
+    * @param templateName name of Template to write.  Must be accessible
+    *                     via TemplatePath
+    * @param out          where the output of the template should go
+    * @param context      The Context (can be a WebContext too) used
+    *                     during the template evaluation phase
+    * @throws java.io.IOException if the template cannot be written to the
+    *                             specified output stream
+    * @throws ResourceException if the template name specified cannot be found
+    * @throws PropertyException if a fatal error occured during the Template
+    *                           evaluation phase
+    */
+   public void writeTemplate (String templateName, java.io.OutputStream out,
+                              Context context)
+            throws java.io.IOException, ResourceException, PropertyException {
+
+      writeTemplate (templateName, out,
+                     getConfig ("TemplateEncoding"), context);
+   }
+
+   /**
+    * Convienence method for writing a template to an OutputStream.
+    * This method takes care of all the typical work involved
+    * in writing a template.
+    *
+    * @param templateName name of Template to write.  Must be accessible
+    *                     via TemplatePath
+    * @param out          where the output of the template should go
+    * @param encoding     character encoding to use when writing the template
+    *                     if the encoding is <code>null</code>, the default
+    *                     <code>TemplateEncoding</code> is used
+    * @param context      The Context (can be a WebContext too) used
+    *                     during the template evaluation phase
+    * @throws java.io.IOException if the template cannot be written to the
+    *                             specified output stream
+    * @throws ResourceException if the template name specified cannot be found
+    * @throws PropertyException if a fatal error occured during the Template
+    *                           evaluation phase
+    */
+   public void writeTemplate (String templateName, java.io.OutputStream out,
+                              String encoding, Context context)
+              throws java.io.IOException, ResourceException, PropertyException {
+
+      if (encoding == null)
+         encoding = getConfig ("TemplateEncoding");
+
+      Template tmpl = getTemplate (templateName);
+      FastWriter fw = getFastWriter (out, encoding);
+      tmpl.write (fw, context);
+      fw.close ();
+   }
     
     
     // DELEGATE-TO METHODS -- COMMON THINGS MADE EASIER

@@ -143,5 +143,52 @@ public interface WebMacro
    public org.webmacro.servlet.WebContext 
      getWebContext(javax.servlet.http.HttpServletRequest req, 
                    javax.servlet.http.HttpServletResponse resp);
+
+  
+   /**
+    * Convienence method for writing a template to an OutputStream.
+    * This method takes care of all the typical work involved
+    * in writing a template.<p>
+    *
+    * This method uses the <code>TemplateEncoding</code> defined in
+    * WebMacro.defaults, or your custom WebMacro.properties.
+    *
+    * @param templateName name of Template to write.  Must be accessible
+    *                     via TemplatePath
+    * @param out          where the output of the template should go
+    * @param context      The Context (can be a WebContext too) used
+    *                     during the template evaluation phase
+    * @throws java.io.IOException if the template cannot be written to the
+    *                             specified output stream
+    * @throws ResourceException if the template name specified cannot be found
+    * @throws PropertyException if a fatal error occured during the Template
+    *                           evaluation phase
+    */
+   public void writeTemplate (String templateName, java.io.OutputStream out,
+                              Context context)
+                        throws java.io.IOException, ResourceException, PropertyException;
+   /**
+    * Convienence method for writing a template to an OutputStream.
+    * This method takes care of all the typical work involved
+    * in writing a template.
+    *
+    * @param templateName name of Template to write.  Must be accessible
+    *                     via TemplatePath
+    * @param out          where the output of the template should go
+    * @param encoding     character encoding to use when writing the template
+    *                     if the encoding is <code>null</code>, the default
+    *                     <code>TemplateEncoding</code> is used
+    * @param context      The Context (can be a WebContext too) used
+    *                     during the template evaluation phase
+    * @throws java.io.IOException if the template cannot be written to the
+    *                             specified output stream
+    * @throws ResourceException if the template name specified cannot be found
+    * @throws PropertyException if a fatal error occured during the Template
+    *                           evaluation phase
+    */
+   public void writeTemplate (String templateName, java.io.OutputStream out,
+                              String encoding, Context context) 
+                        throws java.io.IOException, ResourceException, PropertyException;
+                                           
 }
 
