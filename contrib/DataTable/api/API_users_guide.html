@@ -28,13 +28,13 @@ the #foreach directive in a WebMacro template as follows:</p>
   &lt;th&gt;ANOTHER FIELD&lt;/th&gt;
   &lt;th&gt;YET ANOTHER&lt;/th&gt;
   &lt;/tr&gt;<br>
-  &lt;!-- #foreach $row in $tbl { --&gt;<br>
+  #foreach $row in $tbl {<br>
   &nbsp;&nbsp;&lt;tr&gt;
   &lt;td&gt;$row.A_FIELD&lt;/td&gt;
   &lt;td&gt;$row.ANOTHER_FIELD&lt;/td&gt;
   &lt;td&gt;$row.YET_ANOTHER&lt;/td&gt;
   &lt;/tr&gt;<br>
-  &lt;!-- } --&gt;<br>
+  }<br>
   &lt;/table&gt;
 </code>
 <p>This would produce a table like:</p>
@@ -50,7 +50,7 @@ SimpleTableRow is a map which allows column values to
 accessed by name, as above, or by index (starting at 1):
 </p>
 <code>
-  $row.get(1), $row.get(2), etc.
+  $row.itemAt(1), $row.itemAt(2), etc.
 </code>
 <p>
 Field names and values can also be iterated over:
@@ -74,7 +74,7 @@ public Template handle(WebContext context) throws HandlerException {<br>
     String sql = "SELECT a_field, another_field, yet_another FROM some_table";<br>
     try { <br>
       &nbsp;&nbsp;DataTable tbl = ResultSetDataTable.create(conn, sql, pageSize, skipRows);<br>
-      &nbsp;&nbsp;context.put("tbl", sdt); // place the table in the context<br>  
+      &nbsp;&nbsp;context.put("tbl", tbl); // place the table in the context<br>  
     } catch (Exception e){ <br>
       &nbsp;&nbsp;throw new HandlerException(e.getMessage()); <br>
     } finally { <br>
