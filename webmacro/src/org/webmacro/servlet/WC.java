@@ -103,7 +103,7 @@ final public class WC extends HashMap implements WebContext
                Class toolType = Class.forName(toolName);
                String varName = getToolName(toolName);
                Object tool = toolType.newInstance(); 
-               put(varName,toolType);
+               put(varName,tool);
             } catch (ClassNotFoundException ce) {
                _log.exception(ce);
                _log.error("Tool class " + toolName + " not found: " + ce);
@@ -214,11 +214,15 @@ final public class WC extends HashMap implements WebContext
    final public ContextTool getTool(String name) 
       throws InvalidContextException
    {
+      Object ret = null;
       try {
+         ret = getMacro(name);
          return (ContextTool) getMacro(name);
       } catch (ClassCastException ce) {
+         Class c = (ret == null) ? null : ret.getClass();
+         String v = (ret == null) ? "NULL" : ret.toString();
          throw new InvalidContextException("Not a tool, " + name +
-               " is a " + name.getClass());
+               " is a " + c + ": " + v);
       } 
    }
 
