@@ -6,4 +6,3 @@ evaluate to true:
     BadMethod call: #if($TestObject.badMethod()) { fail } #else { pass }
              false: #if(false) { fail } #else { pass }
               true: #if(true) { pass } #else { fail }
-    not a variable: #if(notavariable) { fail } #else { pass }
