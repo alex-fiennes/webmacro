@@ -115,4 +115,10 @@ abstract public class CachingProvider implements Provider,
    public String toString() {
       return "CachingProvider(type = " + getType() + ")";
    }
+
+   /** Returns the reference to the cache manager supporting the provider. */
+   public CacheManager getCacheManager() {
+      return _cache;
+   }
+   
 }
