@@ -18,8 +18,6 @@ import org.webmacro.util.*;
 public final class BuildContext extends Context
 {
 
-   private final HashMap _filters = new HashMap();
-
    private final Map _types = new HashMap();
 
    public BuildContext(Broker b) {
