@@ -96,7 +96,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * must not be overidden because it manages a shared instance
      * of the broker--you can overide the start() method instead, which
      * is called just after the broker is initialized.
-     * @exception ServletException if it failed to initialize
      */
    final public synchronized void init()
    {
