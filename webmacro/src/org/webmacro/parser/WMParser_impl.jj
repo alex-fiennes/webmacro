@@ -594,12 +594,15 @@ void VariableReferenceGuts(ArrayList v) : {
 
 Builder VariableReference() : {
   ArrayList v = new ArrayList();
+  Token t;
 }
 {
   <DOLLAR> 
   [ <DOLLAR> { warnDeprecated(DDOLLAR_FEATURE); } ] 
   (
-    VariableReferenceGuts(v) [ <SEMI> { warnDeprecated(SEMI_FEATURE); } ] 
+    LOOKAHEAD(2) 
+    t=<WORD><SEMI> { v.add(t.image); warnDeprecated(SEMI_FEATURE); }  
+    | VariableReferenceGuts(v) 
     | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )
   { 

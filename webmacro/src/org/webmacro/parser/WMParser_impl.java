@@ -589,6 +589,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final public Builder VariableReference() throws ParseException {
   ArrayList v = new ArrayList();
+  Token t;
     jj_consume_token(DOLLAR);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case DOLLAR:
@@ -599,28 +600,25 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[24] = jj_gen;
       ;
     }
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case WORD:
-      VariableReferenceGuts(v);
+    if (jj_2_2(2)) {
+      t = jj_consume_token(WORD);
+      jj_consume_token(SEMI);
+                     v.add(t.image); warnDeprecated(SEMI_FEATURE);
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case SEMI:
-        jj_consume_token(SEMI);
-                                        warnDeprecated(SEMI_FEATURE);
+      case WORD:
+        VariableReferenceGuts(v);
+        break;
+      case LPAREN:
+        jj_consume_token(LPAREN);
+        VariableReferenceGuts(v);
+        jj_consume_token(RPAREN);
         break;
       default:
         jj_la1[25] = jj_gen;
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      break;
-    case LPAREN:
-      jj_consume_token(LPAREN);
-      VariableReferenceGuts(v);
-      jj_consume_token(RPAREN);
-      break;
-    default:
-      jj_la1[26] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
     }
     Object[] names = v.toArray();
     {if (true) return new VariableBuilder(names, false);}
@@ -651,7 +649,7 @@ public class WMParser_impl implements WMParser_implConstants {
         ;
         break;
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[26] = jj_gen;
         break label_2;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -668,8 +666,8 @@ public class WMParser_impl implements WMParser_implConstants {
                   qs.addElement(t.image);
         break;
       default:
-        jj_la1[28] = jj_gen;
-        if (jj_2_2(2147483647)) {
+        jj_la1[27] = jj_gen;
+        if (jj_2_3(2147483647)) {
           DollarReference(qs);
         } else {
           jj_consume_token(-1);
@@ -703,7 +701,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[29] = jj_gen;
+        jj_la1[28] = jj_gen;
         ;
       }
       e = Expression();
@@ -712,7 +710,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[29] = jj_gen;
         ;
       }
                                    list.addElement(e);
@@ -723,7 +721,7 @@ public class WMParser_impl implements WMParser_implConstants {
           ;
           break;
         default:
-          jj_la1[31] = jj_gen;
+          jj_la1[30] = jj_gen;
           break label_3;
         }
         jj_consume_token(COMMA);
@@ -732,7 +730,7 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_consume_token(WS);
           break;
         default:
-          jj_la1[32] = jj_gen;
+          jj_la1[31] = jj_gen;
           ;
         }
         e = Expression();
@@ -741,14 +739,14 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_consume_token(WS);
           break;
         default:
-          jj_la1[33] = jj_gen;
+          jj_la1[32] = jj_gen;
           ;
         }
                                                list.addElement(e);
       }
       break;
     default:
-      jj_la1[34] = jj_gen;
+      jj_la1[33] = jj_gen;
       ;
     }
     {if (true) return list;}
@@ -801,7 +799,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[35] = jj_gen;
+        jj_la1[34] = jj_gen;
         ;
       }
       e = Term();
@@ -819,7 +817,7 @@ public class WMParser_impl implements WMParser_implConstants {
         catch (NumberFormatException ex) { e=null; }
       break;
     default:
-      jj_la1[36] = jj_gen;
+      jj_la1[35] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -833,7 +831,7 @@ public class WMParser_impl implements WMParser_implConstants {
     e = Term();
     label_4:
     while (true) {
-      if (jj_2_3(2)) {
+      if (jj_2_4(2)) {
         ;
       } else {
         break label_4;
@@ -843,7 +841,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[37] = jj_gen;
+        jj_la1[36] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -854,7 +852,7 @@ public class WMParser_impl implements WMParser_implConstants {
         op = jj_consume_token(OP_DIV);
         break;
       default:
-        jj_la1[38] = jj_gen;
+        jj_la1[37] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -863,7 +861,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[39] = jj_gen;
+        jj_la1[38] = jj_gen;
         ;
       }
       e2 = Term();
@@ -884,7 +882,7 @@ public class WMParser_impl implements WMParser_implConstants {
     e = Factor();
     label_5:
     while (true) {
-      if (jj_2_4(2)) {
+      if (jj_2_5(2)) {
         ;
       } else {
         break label_5;
@@ -894,7 +892,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[40] = jj_gen;
+        jj_la1[39] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -905,7 +903,7 @@ public class WMParser_impl implements WMParser_implConstants {
         op = jj_consume_token(OP_MINUS);
         break;
       default:
-        jj_la1[41] = jj_gen;
+        jj_la1[40] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -914,7 +912,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[42] = jj_gen;
+        jj_la1[41] = jj_gen;
         ;
       }
       e2 = Factor();
@@ -954,7 +952,7 @@ public class WMParser_impl implements WMParser_implConstants {
       t = jj_consume_token(OP_LT);
       break;
     default:
-      jj_la1[43] = jj_gen;
+      jj_la1[42] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -970,13 +968,13 @@ public class WMParser_impl implements WMParser_implConstants {
   Object e1, e2=null;
   Token op=null;
     e1 = AExpression();
-    if (jj_2_5(2)) {
+    if (jj_2_6(2)) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WS:
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[44] = jj_gen;
+        jj_la1[43] = jj_gen;
         ;
       }
       op = RelOp();
@@ -985,7 +983,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[45] = jj_gen;
+        jj_la1[44] = jj_gen;
         ;
       }
       e2 = AExpression();
@@ -1013,7 +1011,7 @@ public class WMParser_impl implements WMParser_implConstants {
     e = CExpression();
     label_6:
     while (true) {
-      if (jj_2_6(2)) {
+      if (jj_2_7(2)) {
         ;
       } else {
         break label_6;
@@ -1023,7 +1021,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[46] = jj_gen;
+        jj_la1[45] = jj_gen;
         ;
       }
       jj_consume_token(OP_AND);
@@ -1032,7 +1030,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[47] = jj_gen;
+        jj_la1[46] = jj_gen;
         ;
       }
       e2 = CExpression();
@@ -1047,7 +1045,7 @@ public class WMParser_impl implements WMParser_implConstants {
     e = AndExpression();
     label_7:
     while (true) {
-      if (jj_2_7(2)) {
+      if (jj_2_8(2)) {
         ;
       } else {
         break label_7;
@@ -1057,7 +1055,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[48] = jj_gen;
+        jj_la1[47] = jj_gen;
         ;
       }
       jj_consume_token(OP_OR);
@@ -1066,7 +1064,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[49] = jj_gen;
+        jj_la1[48] = jj_gen;
         ;
       }
       e2 = AndExpression();
@@ -1098,14 +1096,14 @@ public class WMParser_impl implements WMParser_implConstants {
   Subdirective s;
     jj_consume_token(POUND);
     SetState(WM);
-    if (jj_2_8(2147483647) && (b.directiveOk())) {
+    if (jj_2_9(2147483647) && (b.directiveOk())) {
       t = jj_consume_token(WORD);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WS:
         jj_consume_token(WS);
         break;
       default:
-        jj_la1[50] = jj_gen;
+        jj_la1[49] = jj_gen;
         ;
       }
       o = parse_directive(t.image);
@@ -1127,7 +1125,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(RESTOFLINE);
         break;
       default:
-        jj_la1[51] = jj_gen;
+        jj_la1[50] = jj_gen;
         ;
       }
                          b.eatTrailingWsNl();
@@ -1141,7 +1139,7 @@ public class WMParser_impl implements WMParser_implConstants {
   int entryState = token_source.curLexState;
   Object o;
     SetState(WM);
-    if (jj_2_9(2147483647)) {
+    if (jj_2_10(2147483647)) {
       o = VariableReference();
                               v.add(o);
     } else {
@@ -1151,7 +1149,7 @@ public class WMParser_impl implements WMParser_implConstants {
                  v.add("$");
         break;
       default:
-        jj_la1[52] = jj_gen;
+        jj_la1[51] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1182,8 +1180,8 @@ public class WMParser_impl implements WMParser_implConstants {
       Comment(b);
       break;
     default:
-      jj_la1[53] = jj_gen;
-      if (jj_2_10(2147483647)) {
+      jj_la1[52] = jj_gen;
+      if (jj_2_11(2147483647)) {
         DollarReference(b);
       } else {
         jj_consume_token(-1);
@@ -1212,8 +1210,8 @@ public class WMParser_impl implements WMParser_implConstants {
       Comment(b);
       break;
     default:
-      jj_la1[54] = jj_gen;
-      if (jj_2_11(2147483647)) {
+      jj_la1[53] = jj_gen;
+      if (jj_2_12(2147483647)) {
         DollarReference(b);
       } else {
         jj_consume_token(-1);
@@ -1251,14 +1249,14 @@ public class WMParser_impl implements WMParser_implConstants {
         t = jj_consume_token(POUNDPOUND);
         break;
       default:
-        jj_la1[55] = jj_gen;
+        jj_la1[54] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
         b.addElement(t.image);
       break;
     default:
-      jj_la1[56] = jj_gen;
+      jj_la1[55] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1267,7 +1265,7 @@ public class WMParser_impl implements WMParser_implConstants {
   final public BlockBuilder LiteralBlock() throws ParseException {
   ParserBlockBuilder block = new ParserBlockBuilder();
   Token t;
-    if (jj_2_12(2147483647)) {
+    if (jj_2_13(2147483647)) {
       jj_consume_token(LBRACE);
       label_8:
       while (true) {
@@ -1283,7 +1281,7 @@ public class WMParser_impl implements WMParser_implConstants {
           ;
           break;
         default:
-          jj_la1[57] = jj_gen;
+          jj_la1[56] = jj_gen;
           break label_8;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1305,14 +1303,14 @@ public class WMParser_impl implements WMParser_implConstants {
             t = jj_consume_token(END);
             break;
           default:
-            jj_la1[58] = jj_gen;
+            jj_la1[57] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
                                         block.addElement(t.image);
           break;
         default:
-          jj_la1[59] = jj_gen;
+          jj_la1[58] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1335,7 +1333,7 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_consume_token(BEGIN);
           break;
         default:
-          jj_la1[60] = jj_gen;
+          jj_la1[59] = jj_gen;
           ;
         }
         label_9:
@@ -1352,7 +1350,7 @@ public class WMParser_impl implements WMParser_implConstants {
             ;
             break;
           default:
-            jj_la1[61] = jj_gen;
+            jj_la1[60] = jj_gen;
             break label_9;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1374,14 +1372,14 @@ public class WMParser_impl implements WMParser_implConstants {
               t = jj_consume_token(RBRACE);
               break;
             default:
-              jj_la1[62] = jj_gen;
+              jj_la1[61] = jj_gen;
               jj_consume_token(-1);
               throw new ParseException();
             }
                                         block.addElement(t.image);
             break;
           default:
-            jj_la1[63] = jj_gen;
+            jj_la1[62] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1389,7 +1387,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(END);
         break;
       default:
-        jj_la1[64] = jj_gen;
+        jj_la1[63] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1420,7 +1418,7 @@ public class WMParser_impl implements WMParser_implConstants {
           ;
           break;
         default:
-          jj_la1[65] = jj_gen;
+          jj_la1[64] = jj_gen;
           break label_10;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1442,14 +1440,14 @@ public class WMParser_impl implements WMParser_implConstants {
             t = jj_consume_token(END);
             break;
           default:
-            jj_la1[66] = jj_gen;
+            jj_la1[65] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
                                       block.addElement(t.image);
           break;
         default:
-          jj_la1[67] = jj_gen;
+          jj_la1[66] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1458,19 +1456,19 @@ public class WMParser_impl implements WMParser_implConstants {
       EatWsNl();
       break;
     default:
-      jj_la1[72] = jj_gen;
+      jj_la1[71] = jj_gen;
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BEGIN:
         jj_consume_token(BEGIN);
         break;
       default:
-        jj_la1[68] = jj_gen;
+        jj_la1[67] = jj_gen;
         ;
       }
       EatWsNl();
       label_11:
       while (true) {
-        if (jj_2_13(1)) {
+        if (jj_2_14(1)) {
           ;
         } else {
           break label_11;
@@ -1493,15 +1491,15 @@ public class WMParser_impl implements WMParser_implConstants {
             t = jj_consume_token(RBRACE);
             break;
           default:
-            jj_la1[69] = jj_gen;
+            jj_la1[68] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
                                       block.addElement(t.image);
           break;
         default:
-          jj_la1[70] = jj_gen;
-          if (jj_2_14(2147483647) && (lookahead_not_breaking_subd())) {
+          jj_la1[69] = jj_gen;
+          if (jj_2_15(2147483647) && (lookahead_not_breaking_subd())) {
             Directive(block);
           } else {
             jj_consume_token(-1);
@@ -1514,7 +1512,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_consume_token(END);
         break;
       default:
-        jj_la1[71] = jj_gen;
+        jj_la1[70] = jj_gen;
         ;
       }
                       block.eatTrailingWsNl();
@@ -1544,7 +1542,7 @@ public class WMParser_impl implements WMParser_implConstants {
         ;
         break;
       default:
-        jj_la1[73] = jj_gen;
+        jj_la1[72] = jj_gen;
         break label_12;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1574,14 +1572,14 @@ public class WMParser_impl implements WMParser_implConstants {
           t = jj_consume_token(RBRACE);
           break;
         default:
-          jj_la1[74] = jj_gen;
+          jj_la1[73] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
           block.addElement(t.image);
         break;
       default:
-        jj_la1[75] = jj_gen;
+        jj_la1[74] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1689,8 +1687,27 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
+  final private boolean jj_2_15(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    boolean retval = !jj_3_15();
+    jj_save(14, xla);
+    return retval;
+  }
+
+  final private boolean jj_3R_28() {
+    if (jj_scan_token(WS)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3R_59() {
     if (jj_scan_token(DOLLAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_30() {
+    if (jj_scan_token(WS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1703,19 +1720,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_30() {
-    if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
+  final private boolean jj_3_4() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_13()) jj_scanpos = xsp;
@@ -1734,7 +1739,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_11() {
+  final private boolean jj_3_12() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -1758,7 +1763,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_7() {
+  final private boolean jj_3_8() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_30()) jj_scanpos = xsp;
@@ -1803,7 +1808,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_10() {
+  final private boolean jj_3_11() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -1901,7 +1906,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
+  final private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_27()) jj_scanpos = xsp;
@@ -1975,7 +1980,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
+  final private boolean jj_3_10() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     Token xsp;
@@ -2032,7 +2037,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_14() {
+  final private boolean jj_3_15() {
     if (jj_scan_token(POUND)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -2055,7 +2060,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_5() {
+  final private boolean jj_3_6() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_23()) jj_scanpos = xsp;
@@ -2070,7 +2075,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_2() {
+  final private boolean jj_3_3() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -2129,7 +2134,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_13() {
+  final private boolean jj_3_14() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_35()) {
@@ -2158,7 +2163,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_8() {
+  final private boolean jj_3_9() {
     if (jj_scan_token(WORD)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -2232,7 +2237,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_4() {
+  final private boolean jj_3_5() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_18()) jj_scanpos = xsp;
@@ -2251,7 +2256,7 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
+  final private boolean jj_3_13() {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
@@ -2269,6 +2274,14 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3_2() {
+    if (jj_scan_token(WORD)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(SEMI)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   public WMParser_implTokenManager token_source;
   public Token token, jj_nt;
   private int jj_ntk;
@@ -2277,10 +2290,10 @@ public class WMParser_impl implements WMParser_implConstants {
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[76];
-  final private int[] jj_la1_0 = {0x10000000,0x10000000,0x20000000,0x10000000,0x20000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x40000000,0x100000,0x0,0x40000000,0x700000,0x600000,0x10000000,0x10000000,0x0,0x10000000,0x10000000,0x5f100000,0x10000000,0x4f100000,0x10000000,0x0,0x10000000,0x10000000,0x0,0x10000000,0x0,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x40000,0x100000,0xe20800,0x620800,0xd20800,0xf20800,0xf23800,0x3000,0xf23800,0x1000,0xf2c800,0xc000,0xf2c800,0xf2f800,0xf23800,0x3000,0xf23800,0x1000,0xc000,0x72c800,0x2000,0x4000,0xf2f800,0xf000,0xf2f800,};
-  final private int[] jj_la1_1 = {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000,0x80000,0x400000,0x400000,0x0,0x0,0x20000,0x0,0x0,0x110801,0x0,0x110801,0x0,0x3000,0x0,0x0,0xc00,0x0,0x3f8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
-  final private JJCalls[] jj_2_rtns = new JJCalls[14];
+  final private int[] jj_la1 = new int[75];
+  final private int[] jj_la1_0 = {0x10000000,0x10000000,0x20000000,0x10000000,0x20000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x40000000,0x100000,0x40000000,0x700000,0x600000,0x10000000,0x10000000,0x0,0x10000000,0x10000000,0x5f100000,0x10000000,0x4f100000,0x10000000,0x0,0x10000000,0x10000000,0x0,0x10000000,0x0,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x10000000,0x40000,0x100000,0xe20800,0x620800,0xd20800,0xf20800,0xf23800,0x3000,0xf23800,0x1000,0xf2c800,0xc000,0xf2c800,0xf2f800,0xf23800,0x3000,0xf23800,0x1000,0xc000,0x72c800,0x2000,0x4000,0xf2f800,0xf000,0xf2f800,};
+  final private int[] jj_la1_1 = {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x400000,0x400000,0x0,0x0,0x20000,0x0,0x0,0x110801,0x0,0x110801,0x0,0x3000,0x0,0x0,0xc00,0x0,0x3f8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+  final private JJCalls[] jj_2_rtns = new JJCalls[15];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -2289,7 +2302,7 @@ public class WMParser_impl implements WMParser_implConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 76; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 75; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2298,7 +2311,7 @@ public class WMParser_impl implements WMParser_implConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 76; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 75; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2307,7 +2320,7 @@ public class WMParser_impl implements WMParser_implConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 76; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 75; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2316,7 +2329,7 @@ public class WMParser_impl implements WMParser_implConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 76; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 75; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2431,7 +2444,7 @@ public class WMParser_impl implements WMParser_implConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 76; i++) {
+    for (int i = 0; i < 75; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -2468,7 +2481,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 15; i++) {
       JJCalls p = jj_2_rtns[i];
       do {
         if (p.gen > jj_gen) {
@@ -2488,6 +2501,7 @@ public class WMParser_impl implements WMParser_implConstants {
             case 11: jj_3_12(); break;
             case 12: jj_3_13(); break;
             case 13: jj_3_14(); break;
+            case 14: jj_3_15(); break;
           }
         }
         p = p.next;

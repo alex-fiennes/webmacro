@@ -124,7 +124,14 @@ public class TestAbuse extends TemplateTestCase {
       assertStringTemplateEquals (tmpl, jscript);
    }
 
-   public void testParenSemi() throws Exception {
-      assertSTringTemplateEquals("#set $foo=\"blah\" $(foo);", "blah");
+   public void testSemi() throws Exception {
+      String assn = "#set $foo=\"blah\" ";
+      assertStringTemplateEquals(assn + "$(foo);", "blah;");
+      assertStringTemplateEquals(assn + "$(foo)", "blah");
+      assertStringTemplateEquals(assn + "$foo", "blah");
+      assertStringTemplateEquals(assn + "$foo;", "blah");
+      assertStringTemplateEquals(assn + "$foo.substring(1)", "lah");
+      assertStringTemplateEquals(assn + "$foo.substring(1);", "lah;");
    }
 }
+
