@@ -22,13 +22,13 @@ package org.webmacro.servlet;
 
 import java.util.*;
 import java.io.*;
+import java.lang.reflect.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.webmacro.*;
 import org.webmacro.util.*;
-
 
 /**
   * This is the abstract base class used by all WebMacro servlets. You
@@ -50,7 +50,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    private Broker _broker = null;
    private WebContext _wcPrototype;
    private boolean _started = false;
-
+   private final static ThreadLocal servletConfigStore = new ThreadLocal();
    /**
      * The name of the config entry we look for to find out what to 
      * call the variable used in the ERROR_TEMPLATE
@@ -67,7 +67,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * We put error messages into this variable for the ErrorTemplate
      */
    final static String ERROR_TEMPLATE_DEFAULT = "error.wm";
-
+   
    /**
      * Log object used to write out messages
      */
@@ -89,7 +89,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       super.init(sc);
       init();
    }
-
 
    /**
      * This method is called by the servlet runner--do not call it. It 
@@ -236,6 +235,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          }
       }
       
+
       boolean timing = false;
       try {
         context = newContext(req,resp);
@@ -414,8 +414,23 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (timing) c.startTiming("Template.write", tmpl);
          try {
             HttpServletResponse resp= c.getResponse();
+
+            Locale locale = (Locale) tmpl.getParam(
+               WMConstants.TEMPLATE_LOCALE);
+            _log.debug("TemplateLocale="+locale);
+            if (locale != null) {
+               setLocale(resp, locale);
+            }
+
+            String encoding = (String) tmpl.getParam(
+                WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            if (encoding==null) {
+               encoding = resp.getCharacterEncoding();
+            }
+            
+            _log.debug("Using output encoding "+encoding);
             fw = FastWriter.getInstance(
-                  resp.getOutputStream(), resp.getCharacterEncoding());
+                  resp.getOutputStream(), encoding);
             tmpl.write(fw, c);
          } finally {
             if (timing) c.stopTiming();
@@ -532,6 +547,21 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    {
       return new WebContext(_broker);
    }
-
+   
+   /**
+     * Set the locale on the response.  The reflection trickery is because 
+     * this is only defined for JSDK 2.2+
+     */
+   private void setLocale(HttpServletResponse resp, Locale locale) {
+      try {
+         Method m = HttpServletResponse.class.getMethod(
+            "setLocale", 
+            new Class[] {Locale.class});
+         m.invoke(resp, new Locale[] {locale});
+         _log.debug("Successfully set locale to "+locale);
+      }
+      catch (Exception e) {
+         _log.debug("Error set locale to "+locale+": "+e.getClass());
+      }
+   }
 }
-
