@@ -543,7 +543,7 @@ final public class Log
 
    // marcelh start 04092000 
    /**
-     * give severe error back.
+     * Gives the suffix back of the logfile (in case of a logfile per day situation).
      */
    private static String getLogFileSuffix()
    {
@@ -561,6 +561,9 @@ final public class Log
 		return strSevereError;
    }
 
+   /**
+     * set the severe error to empty.
+     */
    public static void setSevereError()
    {
 		strSevereError = "";
