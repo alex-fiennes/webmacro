@@ -18,6 +18,7 @@
     <pathelement location="${classes}" />
     <pathelement path="${java.class.path}" />
   </path>
+  <property name="classpath.resolved" refid="class.path"/>
 
   <target name="prepare">
     <mkdir  dir="${classes}"/>
@@ -81,11 +82,21 @@
   </target>
 
   <target name="test" depends="compile" >
-    <ant antfile="test/build.xml" target="all" />
+    <ant antfile="test/build.xml" target="all" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
   </target>
 
   <target name="test-unit" depends="compile" >
-    <ant antfile="test/build.xml" target="unit" />
+    <ant antfile="test/build.xml" target="unit" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-clean" depends="compile" >
+    <ant antfile="test/build.xml" target="clean">
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
   </target>
 
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>

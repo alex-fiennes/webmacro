@@ -95,7 +95,7 @@ public abstract class AbstractTemplateEvaluator
       String banner;
 
       // get a fast writer instance that sends to System.out
-      FastWriter fw = FastWriter.getInstance (out, "UTF8");
+      FastWriter fw = FastWriter.getInstance(_wm.getBroker(), out, "UTF8");
 
       // get the template from WM
       Template template = _wm.getTemplate (templateName);

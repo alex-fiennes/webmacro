@@ -12,7 +12,7 @@
 # the file to <template-filename>.baseline
 #
 # USAGE
-#	test-templates.sh <root-dir> [clean]
+#	test-templates.sh <root-dir> 
 #	if "clean" is specified, source files will be recompiled
 #
 
@@ -21,23 +21,11 @@ export ERROR=0
 
 if [ x$1 = "x" ]; then
 	echo "Usage:" 1>&2;
-	echo "     test-templates.sh <root-dir> [clean]" 1>&2;
+	echo "     test-templates.sh <root-dir>" 1>&2;
 	exit 1;
 fi
 
 ROOT_DIR=$1
-
-# if arg 2 == "clean", then nuke all existing .class files
-if [ x$2 = "xclean" ]; then
-	find $ROOT_DIR -name "*.class" -exec rm -f {} \;
-	find $ROOT_DIR -name "*.wm.out" -exec rm -f {} \;
-fi
-
-# compile base classes if they don't exist 
-if [ ! -f "$ROOT_DIR/TemplateEvaluatorMain.class" -o "$ROOT_DIR/TemplateEvaluatorMain.java" -nt "$ROOT_DIR/TemplateEvaluatorMain.class" ]; then
-	echo "Compiling base test classes" 1>&2;
-	javac -classpath $ROOT_DIR:$CLASSPATH -d $ROOT_DIR $ROOT_DIR/TemplateEvaluatorMain.java
-fi
 
 # walk all the directories, ignoring CVS
 for dir in `find $ROOT_DIR -type d -maxdepth 1 -mindepth 1 | grep -v CVS`; do
