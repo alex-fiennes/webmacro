@@ -311,4 +311,9 @@ GenerationalCacheManager.*.ReloadOnChange: true
 # The refresh rate for incorporating changes to the mutable image
 GenerationalCacheManager.*.RefreshRate: 1000
 
+# Classes that are restricted for use in templates
+RestrictedClasses=java.lang.Class
 
+# Methods of the Class class that are allowed in templates
+RestrictedClasses.AllowedMethods.java.lang.Class=\
+getName,isArray,isPrimitive,isAssignableFrom,isInstance
