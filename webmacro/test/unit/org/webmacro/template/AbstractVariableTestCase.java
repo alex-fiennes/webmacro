@@ -13,7 +13,13 @@ import junit.framework.*;
  TestCrankyEEH, TestComplacentEEH
 */
 public abstract class AbstractVariableTestCase extends TemplateTestCase {
-	
+
+    public static class ObjectWithNullMethod {
+         public Object getNull () {
+             return null;
+         }
+    }
+
    public AbstractVariableTestCase (String name) {
       super (name);
    }
@@ -108,6 +114,13 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
     assert(false);
   }
 
+  /**
+   * This is the old "... --possibly null?" error message.
+   * It has always thrown a PropertyExcpetion, and probably still should.
+   */
+  public void testEvaluationOfNullReturnValue() throws Exception {
+    assert(false);
+  }
 
 
    /** Below are a few objects that should be used to

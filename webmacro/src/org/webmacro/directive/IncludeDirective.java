@@ -349,7 +349,7 @@ public class IncludeDirective extends Directive {
                  + ((_type == TYPE_MACRO)    ? "MACRO"
                  : (_type == TYPE_TEMPLATE) ? "TEMPLATE"
                  : (_type == TYPE_TEXT)     ? "TEXT"
-                 : "UNKNOWN.  Throwing exceptin"));
+                 : "UNKNOWN.  Throwing exception"));
       }
 
       Object toInclude = getThingToInclude(broker, _type, _strFilename);

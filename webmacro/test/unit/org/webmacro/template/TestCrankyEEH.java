@@ -27,7 +27,7 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());
       context.put("enum",new ThrowingEnumeration());
-
+      context.put ("OWNM", new ObjectWithNullMethod());
    }
 
    public void testGoodVariable () throws Exception {
@@ -151,6 +151,15 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       assertStringTemplateThrowsWithCaught ("#foreach $a in $enum #begin #end",
                                    java.util.NoSuchElementException.class);
    }
+
+    /**
+     * This is the old "... --possibly null?" error message.
+     * It has always thrown a PropertyExcpetion, and probably still should.
+     */
+    public void testEvaluationOfNullReturnValue() throws Exception {
+        assertStringTemplateThrows ("$OWNM.Null.toString()", PropertyException.class);
+    }
+
 
   /*
    * this is clearly a silly class, bit it is designed to prove that WebMacro

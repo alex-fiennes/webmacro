@@ -238,6 +238,7 @@ public abstract class TemplateTestCase extends TestCase {
       System.err.println("Execution of /" + templateText + "/"
                          + " threw " + e.getClass() + "/, expecting match /"
                          + resultPattern + "/");
+      e.printStackTrace(System.err);
       assert(false);
     }
     if (result == null)

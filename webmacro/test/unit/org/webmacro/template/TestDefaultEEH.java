@@ -22,6 +22,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());
       context.put ("NullObject", null);
+      context.put ("OWNM", new ObjectWithNullMethod());
    }
 
    public void testGoodVariable () throws Exception {
@@ -125,6 +126,14 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
   // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
      assertStringTemplateMatches ("$NullObject",  "");
+   }
+
+   /**
+    * This is the old "... --possibly null?" error message.
+    * It has always thrown a PropertyExcpetion, and probably still should.
+    */
+   public void testEvaluationOfNullReturnValue() throws Exception {
+       assertStringTemplateThrows ("$OWNM.Null.toString()", PropertyException.class);
    }
 
    public void testEvalNullVariable () throws Exception {

@@ -715,10 +715,8 @@ final class PropertyOperator {
                   .getProperty(context, nextProp, names, start, end);
          }
          catch (NullPointerException e) {
-            // will we ever get here? --eric
-            throw new PropertyException("No way to access property " +
-                                        fillInName(names, start) + " on object " + instance + " of "
-                                        + instance.getClass() + "--possibly null?");
+             // $Foo.getNull().SomeProperty is what makes this happen
+             throw new PropertyException("$" + fillInName(names,start) + " is null.  Cannot access ." + names[end]);
          }
       }
       else {

@@ -96,7 +96,7 @@ public class TestAbuse extends TemplateTestCase {
 
    }
 
-   /** the infamous "but I want to put Javascript in an #if block!!" 
+   /** the infamous "but I want to put Javascript in an #if block!!"
 
        Currently fails when using { and }, but passes with 
        #begin and #end.  Any reason why?
