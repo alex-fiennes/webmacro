@@ -35,15 +35,16 @@ public class CheckConfig extends WMServlet {
             TreeMap sysPropMap = new TreeMap(sysProps);
             context.put("SysProps", sysPropMap.entrySet());
             
-            javax.servlet.ServletContext sc = this.getServletContext(); 
-
+            //javax.servlet.ServletConfig sconf = this.getServletConfig();
             TreeMap servletParms = new TreeMap();
-            Enumeration e = sc.getInitParameterNames();
+            Enumeration e = getInitParameterNames();
             while (e.hasMoreElements()) {
                 String key = (String) e.nextElement();
-                servletParms.put(key, sc.getInitParameter(key));
+                servletParms.put(key, getInitParameter(key));
             }
             context.put("ServletParms", servletParms.entrySet());
+
+            javax.servlet.ServletContext sc = this.getServletContext(); 
             
             TreeMap scAttribs = new TreeMap();
             Enumeration e2 = sc.getAttributeNames();
