@@ -202,6 +202,12 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
     return directive.build(this, bc);
   }
 
+  /**
+   * Get the name this directive was registered as 
+   */
+  public String getName() {
+    return desc.name;
+  }
 }
 
 

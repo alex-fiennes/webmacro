@@ -51,7 +51,7 @@ public final class DirectiveProvider implements Provider
       throws IntrospectionException, InitException
    {
       Class directive = null;
-      DirectiveDescriptor descriptor, oldDesc;
+      DirectiveDescriptor templateDesc, newDesc, oldDesc;
       try {
         directive = _broker.classForName(dirClassName);
       } catch (Exception e) {
@@ -61,25 +61,29 @@ public final class DirectiveProvider implements Provider
       // Make sure this class is an instance of o.w.directive.Directive
       if (Directive.class.isAssignableFrom(directive)) {
         try {
-          descriptor = (DirectiveDescriptor) 
+          templateDesc = (DirectiveDescriptor) 
             directive.getMethod("getDescriptor", null).invoke(null, null);
-          if (descriptor.dirClass == null)
-            descriptor.dirClass = directive;
+          newDesc = new DirectiveDescriptor(templateDesc.name,
+                                            templateDesc.dirClass,
+                                            templateDesc.args,
+                                            templateDesc.subdirectives);
+          if (newDesc.dirClass == null)
+            newDesc.dirClass = directive;
         } 
         catch (Exception e) {
           throw new IntrospectionException("Class " + dirClassName 
             + " does not have a getDescriptor() method", e);
         }
-        String name = (dirName != null && !dirName.equals(""))
-                    ? dirName : descriptor.name;
-        oldDesc = (DirectiveDescriptor) _descriptors.get(name);
+        newDesc.name = (dirName != null && !dirName.equals(""))
+          ? dirName : templateDesc.name;
+        oldDesc = (DirectiveDescriptor) _descriptors.get(newDesc.name);
         if (oldDesc == null) {
-          _descriptors.put(name, descriptor);
-          _log.info("Registered directive: " + name);
-        } else if (descriptor.dirClass != oldDesc.dirClass) {
+          _descriptors.put(newDesc.name, newDesc);
+          _log.info("Registered directive: " + newDesc.name);
+        } else if (newDesc.dirClass != oldDesc.dirClass) {
           throw new InitException("Attempt to register directive " + directive
              + " failed because " + oldDesc.dirClass.getName() 
-             + " is already registered for type " + name);
+             + " is already registered for type " + newDesc.name);
         }
       }
    }
