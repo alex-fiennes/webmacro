@@ -332,6 +332,18 @@ public class TextTool implements ContextTool
         return makeBlock(lines);
     }
     
+    /** Returns a new  string which is in upper case. */
+    public static String toUpperCase(String s) {
+      return s.toUpperCase();
+    }
+    
+    /** Returns a new  string which is in lower case. */
+    public static String toLowerCase(String s) {
+      return s.toLowerCase();
+    }
+    
+    
+    
     //
     // ContextTool implementation methods
     //
