@@ -71,7 +71,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    /**
     * Log object used to write out messages
     */
-   private Log _log;
+   protected Log _log;
    
    /**
     * null means all OK
@@ -313,7 +313,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       Template tmpl = null;
       //Handler hand = new ErrorHandler();
       try {
-         context.put(getConfig(ERROR_VARIABLE, ERROR_VARIABLE_DEFAULT),
+         context.put(getErrorVariableName(),
          error);
          //tmpl = hand.accept(context);
          tmpl = getErrorTemplate();
@@ -323,7 +323,15 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       }
       return tmpl;
    }
-   
+
+   /**
+    * <p>Returns the name of the error variable, as per the config.</p>
+    * @return Name to use for the error variable in templates
+    */
+   protected String getErrorVariableName(){
+      return getConfig(ERROR_VARIABLE, ERROR_VARIABLE_DEFAULT);
+   }
+
    /**
     * This object is used to access components that have been plugged
     * into WebMacro; it is shared between all instances of this class and
@@ -715,7 +723,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * Set the locale on the response.  The reflection trickery is because
     * this is only defined for JSDK 2.2+
     */
-   private void setLocale(HttpServletResponse resp, Locale locale) {
+   protected void setLocale(HttpServletResponse resp, Locale locale) {
       try {
          Method m = HttpServletResponse.class.getMethod(
          "setLocale",
@@ -761,15 +769,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @return A Template which can be used to format an error message
     */
    public Template getErrorTemplate(){
-      String templateName;
-      
-      try {
-         templateName = (String) _broker.get("config", ERROR_TEMPLATE);
-      }
-      catch (ResourceException e) {
-         templateName = ERROR_TEMPLATE_DEFAULT;
-      }
-      
+      String templateName = getErrorTemplateName();
+
       try {
          _errorTemplate = (Template) _broker.get("template", templateName);
       }
@@ -779,5 +780,18 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
       }
       return _errorTemplate;
    }
-   
+
+   protected String getErrorTemplateName(){
+      String templateName;
+
+      try {
+         templateName = (String) _broker.get("config", ERROR_TEMPLATE);
+      }
+      catch (ResourceException e) {
+         templateName = ERROR_TEMPLATE_DEFAULT;
+      }
+      return templateName;
+   }
+
+
 }
