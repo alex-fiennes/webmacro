@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,15 +9,15 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
@@ -32,7 +32,7 @@ import org.webmacro.util.*;
  *
  * Represents a (C-style) macro, which gets expanded during the
  * building of a template.  Not to be confused with Macro as used
- * by WebMacro, which is something else. 
+ * by WebMacro, which is something else.
  * @author Brian Goetz
  */
 
@@ -54,19 +54,27 @@ public class MacroDefinition
     return argNames;
   }
 
-  public Object expand(Object[] args, BuildContext bc) 
+  public String getName () {
+    return name;
+  }
+
+  public Object getMacroBody () {
+    return macroBody;
+  }
+
+  public Object expand(Object[] args, BuildContext bc)
   throws BuildException {
-    if (args.length != argNames.length) 
-      throw new BuildException("Macro #" + name + " invoked with " 
-                               + args.length + " arguments, expecting " 
+    if (args.length != argNames.length)
+      throw new BuildException("Macro #" + name + " invoked with "
+                               + args.length + " arguments, expecting "
                                + argNames.length + " arguments");
     if (macroBody instanceof Builder) {
-      if (bc instanceof MacroBuildContext) 
+      if (bc instanceof MacroBuildContext)
         bc = ((MacroBuildContext) bc).getRootContext();
       MacroBuildContext mbc = new MacroBuildContext(this, args, bc);
       return ((Builder) macroBody).build(mbc);
     }
-    else 
+    else
       return macroBody;
   }
 }
