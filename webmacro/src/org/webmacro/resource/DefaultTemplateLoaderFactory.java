@@ -59,7 +59,7 @@ public class DefaultTemplateLoaderFactory implements TemplateLoaderFactory {
             throw new InitException("No class found for template loader protocol "+protocol);
             
         try {
-            TemplateLoader loader = (TemplateLoader)Class.forName(classname).newInstance();
+            TemplateLoader loader = (TemplateLoader)b.classForName(classname).newInstance();
             loader.init(b,b.getSettings());
             loader.setConfig(options);
             return loader;
