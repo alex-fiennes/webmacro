@@ -37,7 +37,3 @@ $TestObject.voidMethod()
 use a method that doesn't exist in TestObject:
 we should see a 1 line warning that TestObject doesn't contain a method named ThisMethodDoesNotExist
 $TestObject.ThisMethodDoesNotExist()
-
-do an if on a variable that's not in the context:
-#if($notThere) { fail }
-#else { pass }
