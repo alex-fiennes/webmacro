@@ -11,6 +11,14 @@
   <taskdef name="javacc" 
    classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
 
+  <path id="class.path">
+    <fileset dir="lib">
+      <include name="*.jar" /> <include name="*.zip" />
+    </fileset>
+    <pathelement location="${classes}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
   <target name="prepare">
     <mkdir  dir="${classes}"/>
     <mkdir  dir="${javadoc}"/>
@@ -31,12 +39,7 @@
 
     <javac srcdir="src" destdir="${classes}"
            debug="on" optimize="off" deprecation="off">
-      <classpath>
-        <fileset dir="lib">
-          <include name="*.jar" /> <include name="*.zip" />
-        </fileset>
-        <pathelement location="${classes}" />
-      </classpath>
+      <classpath refid="class.path" />
     </javac>
   </target>
 
@@ -45,18 +48,16 @@
     <javadoc sourcepath="src" destdir="${javadoc}"  
              packagenames="org.webmacro.*" author="true" version="true" 
              use="true">
-      <classpath>
-        <fileset dir="lib">
-          <include name="*.jar" /> <include name="*.zip" />
-        </fileset>
-        <pathelement location="${classes}" />
-      </classpath>
+      <classpath refid="class.path" />
     </javadoc>
   </target>
 
 
   <target name="jar" depends="prepare,compile">
-    <copy todir="${classes}" file="WebMacro.defaults" />
+    <copy todir="${classes}">
+      <fileset dir="src" includes="**/*.properties" />
+      <fileset dir="." includes="WebMacro.defaults"/>
+    </copy>
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
          includes="src/**,webroot/**,build.xml"/>
@@ -81,6 +82,19 @@
 
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
 
+  <!--
+  <taskdef name="wmtemplates" 
+   classname="org.webmacro.tools.WMTemplateAntTask" >
+    <classpath refid="class.path" />
+  </taskdef>
+
+  <target name="templates">
+    <wmtemplates>
+      <fileset dir="." includes="*.wm"/>
+      <classpath refid="class.path" />
+    </wmtemplates>
+  </target>
+  -->
 
 </project>
 

@@ -250,6 +250,19 @@ public class Settings {
       return (String[]) _props.keySet().toArray(stringArray);
    }
 
+   /**
+     * Get the values from this settings object as a properties
+     */
+   public Properties getAsProperties() {
+      String[] keys = getKeys();
+      Properties p = new Properties();
+
+      for (int i=0; i<keys.length; i++) 
+         p.setProperty(keys[i], getSetting(keys[i]));
+
+      return p;
+   }
+
    /** 
     * Iterate through a list of settings.  If the settingName is
     * "foo", then the SettingHandler will be called once for each

@@ -46,15 +46,20 @@ public class Servlet20Broker extends ServletBroker {
       super(sc);
       _servletClassLoader = cl;
 
+      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
-      if (_config.getBooleanSetting("LoadSystemProperties")) 
+      if (_config.getBooleanSetting("LoadSystemProperties")) {
          loadSystemSettings();
+         propertySource += ", " + "(System Properties)";
+      }
 
       if (_config.getBooleanSetting("LogUsingServletLog"))
         _ls.addTarget(new ServletLog(_servletContext, _config));
       else
         initLog();
+
+      _log.notice("Loaded settings from " + propertySource);
       init();
    }
 

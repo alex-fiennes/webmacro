@@ -87,11 +87,15 @@ public class Broker
    protected Broker() throws InitException
    {
       this((Broker) null, WEBMACRO_PROPERTIES);
+      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
-      if (_config.getBooleanSetting("LoadSystemProperties")) 
+      if (_config.getBooleanSetting("LoadSystemProperties")) {
          loadSystemSettings();
+         propertySource += ", " + "(System Properties)";
+      }
       initLog();
+      _log.notice("Loaded settings from " + propertySource);
       init();
    }
 
@@ -103,11 +107,15 @@ public class Broker
    protected Broker(String fileName) throws InitException
    {
       this((Broker) null, fileName);
+      String propertySource = WEBMACRO_DEFAULTS + ", " + fileName;
       loadDefaultSettings();
-      loadSettings(WEBMACRO_PROPERTIES, false);
-      if (_config.getBooleanSetting("LoadSystemProperties")) 
+      loadSettings(fileName, false);
+      if (_config.getBooleanSetting("LoadSystemProperties")) {
          loadSystemSettings();
+         propertySource += ", " + "(System Properties)";
+      }
       initLog();
+      _log.notice("Loaded settings from " + propertySource);
       init();
    }
 
@@ -246,7 +254,7 @@ public class Broker
                                     e);
          }
       }
-      _log.notice("Loading properties file " + WEBMACRO_DEFAULTS);
+      // _log.notice("Loading properties file " + WEBMACRO_DEFAULTS);
       _config.load(_defaultSettings);
    }
 
@@ -255,10 +263,11 @@ public class Broker
    {
       URL u = getResource(name);
       if (u != null) {
-         _log.notice("Loading properties file " + name);
+         // _log.notice("Loading properties file " + name);
          try {
             _config.load(u);
          } catch (IOException e) {
+            _log.notice("Attempting to load properties file " + name);
             if (!optional)
                throw new InitException("Error reading settings from " + name, 
                                        e);
@@ -272,7 +281,7 @@ public class Broker
    }
 
    protected void loadSystemSettings() {
-      _log.notice("Loading properties from system properties");
+      // _log.notice("Loading properties from system properties");
       _config.load(System.getProperties(), SETTINGS_PREFIX);
    }
 
