@@ -81,22 +81,18 @@ public class WM implements WebMacro
             }
          }
          broker = owner.init();
-      } catch (Exception e) {
-         Log sysLog = LogManager.getSystemLog();
-         sysLog.error("Unable to load the broker for config: " + config, e);
       } finally {
-         if (broker == null) {
-            throw new InitException(
-                 "WebMacro was unable to create a broker, typically this\n"
-               + "means that there was a problem loading the properties\n"
-               + "file (" + config + "). Check your settings, your\n"
-               + "classpath, and make sure everything is in place.\n");
-            }
          _owner = owner;
          _broker = broker;
-         _alive = true;
-         _log = _broker.getLog("wm");
-         _log.info("new " + this);
+         if (_broker != null) {
+            _alive = true;
+            _log = _broker.getLog("wm");
+            _log.info("new " + this);
+         } else {
+            _alive = false;
+            _log = LogManager.getSystemLog();
+            _log.error("Failed to initialized WebMacro from: " + config);
+         }
       }
   
       try {

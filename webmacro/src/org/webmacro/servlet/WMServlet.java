@@ -112,13 +112,13 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             _wm = initWebMacro();
             _broker = _wm.getBroker();
          } catch (InitException e) {
-            _problem = "Could not initialize the broker!\n"
+            _problem = "Could not initialize the broker!\n\n"
                   + "*** Check that WebMacro.properties was in your servlet\n"
                   + "*** classpath, in a similar place to webmacro.jar \n"
-                  + "*** and that all values were set correctly.\n"
+                  + "*** and that all values were set correctly.\n\n"
                   + e.getMessage();
-            System.err.println(_problem);
-            e.printStackTrace(System.err);
+            Log sysLog = LogManager.getSystemLog();
+            sysLog.error(_problem, e);
             return;
          }
       }

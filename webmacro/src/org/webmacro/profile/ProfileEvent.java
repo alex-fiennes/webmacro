@@ -28,5 +28,11 @@ public interface ProfileEvent {
      */
    public int getDepth();
 
+   /**
+     * How long did the event last?
+     */
+   public int getDuration();
+
+
 }
 

@@ -122,7 +122,7 @@ final public class Broker
       while (e.hasMoreElements()) {
          b.append(e.nextElement().toString());
          b.append(fileName);
-         b.append("");
+         b.append("\n");
       }         
    }
 

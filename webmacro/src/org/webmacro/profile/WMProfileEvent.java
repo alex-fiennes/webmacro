@@ -9,14 +9,10 @@ package org.webmacro.profile;
 final public class WMProfileEvent implements ProfileEvent
 {
 
-   final String name;
-   long start;
-   long stop;
-   int depth;
-
-   public WMProfileEvent(String name) {
-      this.name = name;
-   }
+   String name = null;
+   long start = 0;
+   int duration = 0;
+   int depth = 0;
 
    /**
      * Milliseconds since Jan 1, 1970 that the event began
@@ -26,16 +22,23 @@ final public class WMProfileEvent implements ProfileEvent
    /**
      * Milliseconds, since Jan 1, 1970 that the event ended
      */
-   public long getStopTime() { return stop; }
+   public long getStopTime() { return start + duration; }
+
+   /**
+     * Duration that the event lasted
+     */
+   public int getDuration() { return duration; }
+
+   /**
+     * How many levels deep is this event in the tree?
+     */
+   public int getDepth() { return depth; }
+
 
    /**
      * Descriptive name of the event
      */
    public String getName() { return name; }
 
-   /**
-     * How many levels of nesting are we at? 
-     */
-   public int getDepth() { return depth; }
 }
 

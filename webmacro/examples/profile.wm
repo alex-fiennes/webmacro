@@ -11,22 +11,49 @@
 }
 <p>
 
-Profile categories:
-<ul>
-#foreach $cat in $cats {
-   <li>$cat
+#profile TemplateStats {
+   Profile categories:
+   <ul>
+   #profile categories {
+   #foreach $cat in $cats {
+      <li>$cat
+   </ul>
+   }
+
+   <p>
+   }
+
+   Profile Stats:
+   <ul>
+   #profile callgraph {
+      #foreach $node in $stats {
+         #profile node {
+            #set $callgraph = $node
+            #parse "callgraph.wm"
+         }
+      }
+   }
 </ul>
-
-<p>
 }
+#profile StaticText {
 
-Profile Stats:
-<ul>
-#foreach $node in $stats {
-   #set $callgraph = $node
-   #parse "callgraph.wm"
+   This profiling servlet displays results that are created by WebMacro
+   when profiling is enabled. There are three requirements for the 
+   collection of profiling data:
+   <ul>
+      <li>org.webmacro.Flags.PROFILE = true (and all code compiled that way)
+      <li>In WebMacro.properties Profile.rate = 1 (some positive value)
+      <li>In WebMacro.properties Profile.time = 120000 (some positive value)
+   </ul>
+
+   The next question is how you get profile data. WebMacro automatically
+   collects some data on its own if you use WMServlet and the Context. 
+   If you use WebMacro in standalone mode you have to instrument the 
+   code yourself by calling context.startTiming() and context.stopTiming()
+   in your code. 
+   <p>
+   In addition to that there is a \#profile directive which you can 
+   use to block off sections of your templates for specific timing.
 }
-</ul>
-
 
 </body></html>

@@ -33,6 +33,7 @@ PACKAGES = org.webmacro \
            org.webmacro.directive \
            org.webmacro.parser \
            org.webmacro.extractor \
+           org.webmacro.profile \
            org.webmacro.servlet 
 
 # where do the root files for the website live?
@@ -120,7 +121,7 @@ build: .build
 doc:    .doc
 .doc: $(DOC_DIR) $(SOURCEFILES)
 	@echo building javadoc in $(DOC_DIR)
-	@$(JAVADOC) $(JAVADOC_FLAGS) -d $(DOC_DIR) $(SOURCEFILES)
+	@$(JAVADOC) $(JAVADOC_FLAGS) -d $(DOC_DIR) $(PACKAGES)
 	@$(TOUCH) .doc
 
 jar: $(JARFILE) 
@@ -160,9 +161,9 @@ $(PROJECT_TGZ): all extras
 	$(FLIPU) $(NEWLINE_FILES)
 	$(TGZ) $(PROJECT_TGZ) $(PROJECT)
 
-clean: 
-	-$(RMFILE) $(TARGETS) .build 
+clean: distclean
+	-$(RMFILE) $(TARGETS) 
 
-distclean: clean
-	-$(RMFILE) $(PROJECT) .doc
+distclean: 
+	-$(RMFILE) $(PROJECT) .doc .build $(PROJECT_ZIP) $(PROJECT_TGZ)
 
