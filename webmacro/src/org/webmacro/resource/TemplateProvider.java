@@ -137,7 +137,7 @@ final public class TemplateProvider extends CachingProvider
      * to the directory managed by the template store. 
      * <p>
      * @param fileName relative to the current directory fo the store
-     * @returns a template matching that name, or null if one cannot be found
+     * @return a template matching that name, or null if one cannot be found
      */
    final public Template get(String fileName, String encoding) {
       for (int i=0; i < _templateDirectory.length; i++) {

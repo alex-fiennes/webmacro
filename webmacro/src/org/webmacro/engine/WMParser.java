@@ -510,7 +510,7 @@ e.printStackTrace();
      * Parse a term. A term is a name or a quoted string, or 
      * a variable, or a number.  
      * <p>
-     * @returns a String, Variable, or QuotedString 
+     * @return a String, Variable, or QuotedString 
      * @exception ParseToolException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */

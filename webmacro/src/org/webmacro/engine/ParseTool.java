@@ -370,7 +370,7 @@ final class ParseTool
      * data read will be built up in a buffer associated with the mark,
      * adding a slight cost to reads. You can only mark up to MAX_MARKS 
      * positions in the stream.
-     * @excpetion ParseToolException tried to mark more than MAX_MARKS positions
+     * @exception ParseToolException tried to mark more than MAX_MARKS positions
      */
    final public int mark() 
       throws ParseToolException
@@ -578,7 +578,7 @@ final class ParseTool
      * If the supplied word is the next thing on the stream, advance
      * past it and return true; else do not advance and return false;
      * @param word the word we are looking for
-     * @returns whether or not we found it
+     * @return whether or not we found it
      */
    public final boolean parseString(String str) 
       throws IOException, ParseToolException
