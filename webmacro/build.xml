@@ -41,6 +41,10 @@
            debug="on" optimize="off" deprecation="off">
       <classpath refid="class.path" />
     </javac>
+    <copy todir="${classes}">
+      <fileset dir="src" includes="**/*.properties" />
+      <fileset dir="." includes="WebMacro.defaults"/>
+    </copy>
   </target>
 
 
@@ -54,10 +58,6 @@
 
 
   <target name="jar" depends="prepare,compile">
-    <copy todir="${classes}">
-      <fileset dir="src" includes="**/*.properties" />
-      <fileset dir="." includes="WebMacro.defaults"/>
-    </copy>
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
          includes="src/**,webroot/**,build.xml"/>

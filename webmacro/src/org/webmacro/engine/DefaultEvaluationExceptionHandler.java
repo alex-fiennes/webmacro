@@ -44,16 +44,15 @@ public class DefaultEvaluationExceptionHandler
 
    public String handle(Variable variable, Context context, Exception problem)
      throws PropertyException {
-//         problem.printStackTrace ();
      if (problem instanceof NullVariableException) {
        return error("Value of $" + variable.getVariableName() + " is null");
      }
      else if (problem instanceof VariableNotInContextException) {
-        return error ("Attempt to access nonexistent variable $" 
-                      + variable.getVariableName());
+        return error("Attempt to access nonexistent variable $" 
+                     + variable.getVariableName());
      }
      else if (problem instanceof PropertyException) {
-        return error (problem.getMessage());
+        return error(problem.getMessage());
      }
      else {
        return error(variable.getVariableName() + ": " + problem.toString());

@@ -139,6 +139,7 @@ public class Context implements Map, Cloneable
          ct.destroy(m.getValue());
       }
       _initializedTools.clear();
+      _eeHandler = null;
       if (_prof != null) {
          stopTiming();
         _prof.destroy();

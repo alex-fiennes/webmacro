@@ -16,7 +16,7 @@ public class TestTemplate extends AbstractTemplateEvaluator
    public static class TestObject
    {
       String firstName;
-      String lastName;                    
+      String lastName;                    
       public TestObject (String firstName, String lastName)
       {
          this.firstName = firstName;
@@ -25,7 +25,7 @@ public class TestTemplate extends AbstractTemplateEvaluator
                  
       public String getFirstName () { return firstName; }
       public String getLastName () { return lastName; }
-      public String toString () { return firstName + " " + lastName; }      public String returnNull () { return null; }      public void voidMethod() { ; }
+      public String toString () { return firstName + " " + lastName; }      public String returnNull () { return null; }      public void voidMethod() { ; }
                  
    }
              

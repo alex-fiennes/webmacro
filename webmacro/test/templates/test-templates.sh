@@ -11,45 +11,41 @@
 # examine the output, and if the output is correct, rename
 # the file to <template-filename>.baseline
 #
-# The "WebMacro.defaults" file in this directory is the
-# one used to configure this testing system.
-#
 # USAGE
-#	test-templates.sh <path-to-webmacro.jar> [clean]
-#	if "clean" is the second argument, all source files
-#	will be recompiled
+#	test-templates.sh <root-dir> [clean]
+#	if "clean" is specified, source files will be recompiled
 #
 
+export ERROR=0
 
 if [ x$1 = "x" ]; then
 	echo "Usage:"
-	echo "     test-templates.sh <path-to-webmacro.jar> [clean]"
-	echo "     if 'clean' is the second argument, all source files will be recompiled"
+	echo "     test-templates.sh <root-dir> [clean]"
 	exit 1;
 fi
 
+ROOT_DIR=$1
+
 # if arg 2 == "clean", then nuke all existing .class files
 if [ x$2 = "xclean" ]; then
-	find ./ -name "*.class" -exec rm -f {} \;
+	find $ROOT_DIR -name "*.class" -exec rm -f {} \;
+	find $ROOT_DIR -name "*.wm.out" -exec rm -f {} \;
 fi
 
-WEBMACRO_JAR=$1
-ROOT_DIR=`pwd`
-
 # compile base classes if they don't exist 
-if [ ! -f "$ROOT_DIR/TemplateEvaluatorMain.class" ]; then
-	echo "Compiling base classes for testing"
-	javac -classpath $ROOT_DIR:$WEBMACRO_JAR -d $ROOT_DIR $ROOT_DIR/*.java
+if [ ! -f "$ROOT_DIR/TemplateEvaluatorMain.class" -o "$ROOT_DIR/TemplateEvaluatorMain.java" -nt "$ROOT_DIR/TemplateEvaluatorMain.class" ]; then
+	echo "Compiling base test classes"
+	javac -classpath $ROOT_DIR:$CLASSPATH -d $ROOT_DIR $ROOT_DIR/TemplateEvaluatorMain.java
 fi
 
 # walk all the directories, ignoring CVS
-for dir in `find ./ -type d -maxdepth 1 -mindepth 1 | grep -v CVS`; do
-	# compile the TestTemplate.java file
-	# if it exists in this directory
+for dir in `find $ROOT_DIR -type d -maxdepth 1 -mindepth 1 | grep -v CVS`; do
+	# compile the TestTemplate.java file if it exists in this directory
 	if [ -f $dir/TestTemplate.java ]; then
-		if [ ! -f $dir/TestTemplate.class ]; then
-			echo "Compiling $dir/TestTemplate.java"
-			javac -classpath $dir:$ROOT_DIR:$WEBMACRO_JAR -d $dir $dir/TestTemplate.java || exit;
+		if [ ! -f "$dir/TestTemplate.class" -o "$dir/TestTemplate.java" -nt "$dir/TestTemplate.class" ]; 
+                then
+                    echo "Compiling $dir/TestTemplate.java"
+                    javac -classpath $dir:$ROOT_DIR:$CLASSPATH -d $dir $dir/TestTemplate.java || exit;
 		fi
 	fi
 
@@ -57,16 +53,14 @@ for dir in `find ./ -type d -maxdepth 1 -mindepth 1 | grep -v CVS`; do
 
 		# run each template in this dir through our template evaluator
 		for template in `find $dir -type f -name \*.wm -maxdepth 1`; do
-			java -classpath $dir:$ROOT_DIR:$WEBMACRO_JAR -Dorg.webmacro.LogLevel=WARNING TemplateEvaluatorMain TestTemplate $template > $template.out || exit;
+			java -classpath $dir:$ROOT_DIR:$CLASSPATH -Dorg.webmacro.LogLevel=NONE TemplateEvaluatorMain TestTemplate `basename $template` > $template.out || exit;
 
 			if [ ! -f "$template.baseline" ]; then
-				echo "No baseline for $template.";
-				echo "You should examine $template.out and copy to $template.baseline if it is correct";
-				echo 
+				echo "No baseline found for $template.";
 			else
-				diff -x CVS -x "\*~" $template.out $template.baseline || exit
+				diff -x CVS -x "\*~" $template.out $template.baseline || ERROR=1
 			fi
 		done
 	fi
 done
-exit 0;
+exit $ERROR;

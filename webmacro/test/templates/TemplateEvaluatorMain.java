@@ -68,7 +68,7 @@ public class TemplateEvaluatorMain
             // possible exceptions, etc) are sent to System.err
             for (int x=0; x<templateFilenames.length; x++)
             {
-               System.err.println ("----- start: " + templateFilenames[x] + " -----");
+               System.err.println ("----- template " + templateFilenames[x] + " -----");
                try
                {
                   tester.evaluate (templateFilenames[x], System.out);
@@ -79,9 +79,9 @@ public class TemplateEvaluatorMain
                                       " failed with the following exception:");
                   e.printStackTrace (System.err);
                }
-               System.err.println ("----- end: " + templateFilenames[x]   +
-                                   " (" + tester.getEvaluationTime (1000) + 
-                                   " seconds) -----");
+//                 System.err.println ("----- end: " + templateFilenames[x]   +
+//                                     " (" + tester.getEvaluationTime (1000) + 
+//                                     " seconds) -----");
             }
         }
         catch (Exception e)
