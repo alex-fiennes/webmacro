@@ -217,7 +217,7 @@ public class TimeLoop extends Thread
             final int n = i;
             Thread th = new Thread() {
                public void run() {
-                  for(int i = 0; i < 5; i++) {
+                  for(int j = 0; j < 5; j++) {
                      try { sleep( 1000 * (n % 5 ) ); }
                      catch (Exception e) { e.printStackTrace(); }
                      t.scheduleRepeat(r3, 3);
