@@ -11,11 +11,15 @@ Changes in this Release
 -----------------------
 
 - Improved #include directive.  #parse has been deprecated.  #include directive
-can now easily do everything #parse did along with what #include does.  See the
-javadocs for org.webmacro.directive.IncludeDirective for usage information.
+can now do everything #parse did along with what #include has always done.  See 
+the javadocs for org.webmacro.directive.IncludeDirective for usage information.
 
 Note that although #parse has been deprecated, it is still configured for use.  
 However, you should replace #parse with #include in your templates
+
+- Improved whitespace handling.  
+See http://www.servlets.com/archive/servlet/ReadMsg?msgId=111505&listName=webmacro
+for an explanation of how it works.
 
 - added a #type directive that allows template to force the class type
 of Context variables.  See the javadocs for org.webmacro.directive.TypeDirective
