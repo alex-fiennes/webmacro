@@ -52,6 +52,14 @@
       <delete file="examples/as_examples.war"/>
    </target>
 
+   <!-- prevents unnecessary rebuild -->
+   <target name="jar.uptodate">
+      <uptodate property="jar.uptodate"
+                targetfile="lib/ActionServlet.jar">
+         <srcfiles dir= "src" includes="**/*.java"/>
+      </uptodate>
+   </target>
+
    <!-- compile ActionServlet sources -->
    <target name="compile" depends="prepare">
       <javac srcdir="src"
@@ -76,11 +84,13 @@
    </target>
 
    <!-- create ActionServlet.jar -->
-   <target name="jar" depends="compile">
+   <target name="jar" depends="jar.uptodate" unless="jar.uptodate">
+      <antcall target="compile"/>
+
       <jar jarfile="lib/ActionServlet.jar" whenempty="fail">
          <fileset dir="lib/classes"/>
 
-         <fileset dir="src" >
+         <fileset dir="src">
             <include name="ActionServlet_0_5.dtd"/>
          </fileset>
       </jar>
