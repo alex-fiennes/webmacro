@@ -78,6 +78,8 @@ public class ListUtil {
     if (arg instanceof Iterator) return ((Iterator)arg).hasNext();
     if (arg instanceof Enumeration)
       return ((Enumeration)arg).hasMoreElements();
+    // check for primitive arrays
+    if (arg.getClass().isArray()){ return java.lang.reflect.Array.getLength(arg) == 0; }
     return true;
   }
 
@@ -86,9 +88,10 @@ public class ListUtil {
    * type of the argument:
    * <ul>
    * <li>arg implements List: return the argument unchanged.</li>
-   * <li>arg is an array: wrap using Arrays.asList().</li>
+   * <li>arg is an object array: wrap using Arrays.asList().</li>
    * <li>arg is an Iterator or Enumeration: all the
    * elements are copied into a new ArrayList.</li>
+   * <li>arg is an Array of primitives: elements are copied into an ArrayList.</li>
    *   <ul>
    *     <li>If the Iterator is a ListIterator it is reset to the beginning</li>
    *     <li>Otherwise Iterators and Enumerations are exhausted by this method.</li>
@@ -108,25 +111,30 @@ public class ListUtil {
     } else if (arg instanceof Object[]){
       list = Arrays.asList((Object[])arg);
     } else if (arg instanceof Iterator){
-      list = new ArrayList();
-      Iterator iter = (Iterator)arg;
-      while (iter.hasNext()){
-        list.add(iter.next());
-      }
-      if (arg instanceof ListIterator){
-        ListIterator li = (ListIterator)arg;
-        while (li.hasPrevious()) li.previous();
-      }
+      list = iteratorToList((Iterator)arg);
     } else if (arg instanceof Enumeration){
-      list = new ArrayList();
-      Enumeration enum = (Enumeration)arg;
-      while (enum.hasMoreElements()){
-        list.add(enum.nextElement());
-      }
+      list = iteratorToList(new org.webmacro.util.EnumIterator((Enumeration)arg));
+    } else if (arg.getClass().isArray()){
+      // array of primitives
+      list = iteratorToList(new org.webmacro.util.PrimitiveArrayIterator(arg));
     } else {
+      // put the object into a single element list
       Object[] oa = new Object[1];
       oa[0] = arg;
       list = Arrays.asList(oa);
+    }
+    return list;
+  }
+  
+  static private List iteratorToList(Iterator iter){
+    List list = new ArrayList();
+    while (iter.hasNext()){
+      list.add(iter.next());
+    }
+    // rewind the Iterator if it is a ListIterator
+    if (iter instanceof ListIterator){
+      ListIterator li = (ListIterator)iter;
+      while (li.hasPrevious()) li.previous();
     }
     return list;
   }
@@ -160,6 +168,20 @@ public class ListUtil {
   }
 
   /**
+   * Allows access to elements in a array of primitives by position.  
+   * The index is zero based.
+   *
+   * @param arr the array of primitives
+   * @param pos the position (0 based) to retrieve from
+   */
+  public static Object getItem(Object arr, int pos){
+    if (!arr.getClass().isArray())
+      throw new IllegalArgumentException(
+        "The first argument must be of List or array type.");
+    return java.lang.reflect.Array.get(arr, pos);
+  }  
+  
+  /**
    * @param oa
    * @return number of elements in array argument
    */
@@ -174,7 +196,14 @@ public class ListUtil {
   public static int size(List list){
     return list.size();
   }
-
+  
+  public static int size(Object arr){
+    if (!arr.getClass().isArray())
+      throw new IllegalArgumentException(
+        "The argument must be of List or array type.");
+    return java.lang.reflect.Array.getLength(arr);
+  }
+    
   /**
    * @param list
    * @param o
@@ -193,6 +222,21 @@ public class ListUtil {
     return contains(Arrays.asList(oa), o);
   }
 
+  /**
+   * @param arr
+   * @param o
+   * @return true if array argument contains the object argument, else false
+   */
+  public static boolean contains(Object arr, Object o){
+    if (!arr.getClass().isArray())
+      throw new IllegalArgumentException(
+        "The argument must be of List or array type.");
+    for (int i=0; i<java.lang.reflect.Array.getLength(arr); i++){
+      if (o.equals(java.lang.reflect.Array.get(arr, i))) return true;
+    }
+    return false;
+  }
+ 
   /**
    * Splits list into multiple lists of equal size. If list size cannot be divided
    * by column count, last part is padded with nulls.
@@ -562,45 +606,56 @@ public class ListUtil {
     Iterator iter = l2.listIterator();
     List l3 = lu.toList(iter);
     out.println("toList(Iterator): " + l3 + ", iter.hasNext(): " + iter.hasNext());
-	// test split
-	out.println("List split with fill");
-	List splitList1 = split(l, 3, true);
-	for (Iterator it1 = splitList1.iterator(); it1.hasNext();) {
-		out.print("-: ");
-		List part = (List) it1.next();
-		for (Iterator it2 = part.iterator(); it2.hasNext();) {
-			out.print(it2.next() + ", ");
-		}
-		out.println("*");
-	}
-	out.println("List transposeSplit");
-	List splitList2 = transposeSplit(l, 3, false);
-	for (Iterator it1 = splitList2.iterator(); it1.hasNext();) {
-		out.print("-: ");
-		List part = (List) it1.next();
-		for (Iterator it2 = part.iterator(); it2.hasNext();) {
-			out.print(it2.next() + ", ");
-		}
-		out.println("*");
-	}
-	out.println("Array split");
-	Object[] splitArray1 = split(arr, 3, true);
-	for (int i = 0; i < splitArray1.length; ++i) {
-           out.print("-: ");
-           Object[] part = (Object[]) splitArray1[i];
-           for (int j = 0; j < part.length; ++j) {
-              out.print(part[j] + ", ");
-           }
-           out.println("*");
-	}
-	out.println("Array transposeSplit");
-	Object[][] splitArray3 = transposeSplit(arr, 3, true, "-");
-	for (int i = 0; i < splitArray3.length; ++i) {
-           out.print("-: ");
-           for (int j = 0; j < splitArray3[i].length; ++j) {
-              out.print(splitArray3[i][j] + ", ");
-           }
-           out.println("*");
-	}
+    
+    // test split
+    out.println("List split with fill");
+    List splitList1 = split(l, 3, true);
+    for (Iterator it1 = splitList1.iterator(); it1.hasNext();) {
+            out.print("-: ");
+            List part = (List) it1.next();
+            for (Iterator it2 = part.iterator(); it2.hasNext();) {
+                    out.print(it2.next() + ", ");
+            }
+            out.println("*");
+    }
+    out.println("List transposeSplit");
+    List splitList2 = transposeSplit(l, 3, false);
+    for (Iterator it1 = splitList2.iterator(); it1.hasNext();) {
+            out.print("-: ");
+            List part = (List) it1.next();
+            for (Iterator it2 = part.iterator(); it2.hasNext();) {
+                    out.print(it2.next() + ", ");
+            }
+            out.println("*");
+    }
+    out.println("Array split");
+    Object[] splitArray1 = split(arr, 3, true);
+    for (int i = 0; i < splitArray1.length; ++i) {
+       out.print("-: ");
+       Object[] part = (Object[]) splitArray1[i];
+       for (int j = 0; j < part.length; ++j) {
+          out.print(part[j] + ", ");
+       }
+       out.println("*");
+    }
+    out.println("Array transposeSplit");
+    Object[][] splitArray3 = transposeSplit(arr, 3, true, "-");
+    for (int i = 0; i < splitArray3.length; ++i) {
+       out.print("-: ");
+       for (int j = 0; j < splitArray3[i].length; ++j) {
+          out.print(splitArray3[i][j] + ", ");
+       }
+       out.println("*");
+    }
+    // test primitive arrays
+    int[] emptyInts = new int[0];
+    out.println("Empty array of int: isEmpty=" + isEmpty(emptyInts));
+    char[] chars = {'A', 'B', 'C'};
+    out.println("Array of char: isEmpty=" + isEmpty(chars) + ", size=" + size(chars));
+    out.println("contains 'C'=" + contains(chars, new Character('C')));
+    out.println("contains 'Z'=" + contains(chars, new Character('Z')));
+    out.println("toList=" + toList(chars));
+    float[] f = new float[]{ 1.1f, 2.2f, 3.3f };
+    out.println("getItem(floats, 0)=" + getItem(f, 0));
   }
 }
