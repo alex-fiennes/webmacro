@@ -49,7 +49,7 @@ final public class TemplateProvider implements ResourceProvider
 
    private static String pathSeparator_ = ";";
    private String templateDirectory_[] = null;
-   private static ResourceBroker _broker = null;
+   private ResourceBroker _broker = null;
 
    static {
       try {

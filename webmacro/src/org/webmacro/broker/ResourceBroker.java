@@ -153,7 +153,7 @@ final public class ResourceBroker implements Broker
    /**
      * contains the information providers indexed by type
      */
-   final private Hashtable _managers = new Hashtable();
+   final private RefMap _managers = new RefMap();
 
    /**
      * prevents activity from happening during/after a shutdown

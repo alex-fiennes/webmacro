@@ -11,6 +11,23 @@ and what you must do to tell everyone else about your change.
 I've tried not to specify very much here, leaving a lot to your 
 common sense--but do please try and follow what is specified.
 
+Read the policy carefully before committing any changes. The short
+story is:
+
+  -- Anyone can become a developer, just ask!
+
+  -- You need to build consensus before making a change
+
+  -- You must record your change in the CHANGES file, as well
+     as properly comment and document it. 
+
+  -- You must follow the coding standards set out here
+
+  -- You can escape this policy by submitting to /contrib 
+
+By submitting code to the WebMacro source repository you agree to be
+bound by this policy statement.
+
 
 BECOMING A DEVELOPER
 --------------------
@@ -137,5 +154,20 @@ Here is a checklist of things to consider before making a change:
      simple design. Be wary of quick hacks that fix your current
      problem but reduce the cleanliness of the framework.
 
+In general: TEST YOUR CODE BEFORE YOU COMMIT.
 
+
+LICENSING TERMS
+---------------
+
+You assign copyright for contributions of the core of WebMacro 
+to Semiotek Inc., and in return Semiotek Inc. promises that WebMacro
+will forever be available under an opensource software license that
+is compatible with the GNU General Public License. Current WebMacro
+is released under both the GNU General Public License and under 
+an Apache-style license called the Semiotek Public License. 
+
+You may submit material to /contrib under any opensource license 
+of your choice. Code in /contrib is considered to be outside of 
+the WebMacro core, and not subject to this policy document.
 

@@ -21,7 +21,7 @@ final public class FastWriter extends Writer
 
    final sun.io.CharToByteConverter _c2b; // sun.io?! ugh. thank you sun.
 
-   static private final int CSIZE = 512; // how much we buffer
+   static private final int CSIZE = 4096; // how much we buffer
    final char[] _cbuf = new char[CSIZE]; // buffer chars prior to convert
    int _cpos;                            // how much we used?
 
