@@ -359,6 +359,9 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   case Directive.ArgType_QUOTEDSTRING:
     return QuotedString();
 
+  case Directive.ArgType_STRING:
+    return StringArg();
+
   case Directive.ArgType_ASSIGN:
     Punct_EQ();     
     return "=";
@@ -683,6 +686,16 @@ Builder QuotedString() : {
   )
   { SetState(entryState); }
   { return qs; }
+}
+
+// State: WM
+Builder StringArg() : {
+  int entryState = token_source.curLexState;
+  Builder b;
+}
+{
+  ( b=QuotedString() | b=VariableReference())
+  { return b; }
 }
 
 ListBuilder ArgList() : {

@@ -56,6 +56,7 @@ public abstract class Directive implements Macro, Visitable {
   public static final int ArgType_LITBLOCK     = 7;
   public static final int ArgType_SUBDIRECTIVE = 8;
   public static final int ArgType_QUOTEDSTRING = 9;
+  public static final int ArgType_STRING       = 10;
   public static final int ArgType_GROUP        = 50;
   public static final int ArgType_CHOICE       = 51;
 
@@ -209,6 +210,17 @@ public abstract class Directive implements Macro, Visitable {
   public static class QuotedStringArg extends ArgDescriptor {
     public QuotedStringArg(int id) { 
       super(id, ArgType_QUOTEDSTRING); 
+    }
+  }
+
+  /**
+   * String argument type.  Accepts either a quoted string with embedded
+   * property references (e.g., "hello $foo"), or a single property
+   * reference ($something).  
+   */
+  public static class StringArg extends ArgDescriptor {
+    public StringArg(int id) { 
+      super(id, ArgType_STRING); 
     }
   }
 
