@@ -21,7 +21,7 @@ you wish to change.  WebMacro first loads it's .defaults, then if it exists
 loads WebMacro.properties overriding any values set by .defaults.
 
 Also, you no longer need to specify a TemplatePath.  WebMacro, depending on your
-execution environment, will automagically find your templates:
+execution environment will automagically find your templates:
 
 1) WM in standalone mode (ie, not in a servlet):
    If using the "new WM();" constructor, WebMacro will search for templates in
@@ -35,8 +35,8 @@ your system CLASSPATH
 means different things for different servlet runners, but will include either
 your "htdocs" directory or your WEB-INF/ directory/.war file.
 
+Here is an overview:
 
-Below is an overview of the examples included with this release:
 
    HelloWorld 
    ----------
