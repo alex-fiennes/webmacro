@@ -108,6 +108,7 @@ final public class TemplateProvider extends CachingProvider
      */
    final public TimedReference load(String name) throws NotFoundException 
    {
+      _log.info("Loading template: " + name);
       Template t = getTemplate(name);
       if (t == null) {
          throw new NotFoundException(
@@ -132,6 +133,7 @@ final public class TemplateProvider extends CachingProvider
          Template t;
          String dir = _templateDirectory[i];
          File tFile  = new File(dir,fileName);
+         _log.debug("Looking for template: " + tFile);
          if (tFile.canRead()) {
             try {
                t = new FileTemplate(_broker,tFile);
