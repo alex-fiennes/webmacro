@@ -11,7 +11,14 @@
 <li><a href="README.html">README</a>
 </ul>
 <hr>
-<h2>Webmacro 0.95beta5: RELEASE NOTES</H2>
+<h2>Webmacro 0.95p1: RELEASE NOTES</H2>
+
+Fixed a bug in FastWriter/WMServlet which caused NullPointerExceptions
+under very high loads, because the fastwriter was being returned to the
+pool twice, and in some cases, would be allocated to two different threads
+at once.  
+
+<h2>Webmacro 0.95: RELEASE NOTES</H2>
 
 Fixes bug in WebContext recycling
 Fixes bug where WM(String) constructor searched only class path, not the
