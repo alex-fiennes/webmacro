@@ -47,13 +47,13 @@ public class ParseDirective extends Directive {
       Template tmpl = (Template) context.getBroker().get("template", fname);
       tmpl.write(out,context);
     } catch (IOException e) {
-      String warning = "Error reading template " + fname;
+      String warning = "Error reading template: " + fname;
       context.getLog("engine").warning(warning, e);
-      out.write("<!--\nWARNING: " + warning + " \n-->");
+      writeWarning(warning, out);
     } catch (Exception e) {
       String warning = "Template not found: " + fname;
       context.getLog("engine").warning(warning,e);
-      out.write("<!--\nWARNING: " + warning + " \n-->");
+      writeWarning(warning, out);
     }
   }
   
