@@ -1,0 +1,22 @@
+******************************************************************************
+**                                                                          **
+*              "Easy mapping of user actions to servlet methods"             *
+*                                                                            *
+*          /---\     |               /----              |        |           *
+*          |   |    -+-  *           |                  |       -+-          *
+*          +---+ /-\ |   | /-\ |-\   \---\ /-\ +-- |  | |   /-\  |           *
+*          |   | |   |   | | | | |       | +-/ |   |  | |   +-/  |           *
+*          |   | \-/ \-/ | \-/ | |   ----/ \-- |    \/   \/ \--  \-/         *
+*                                                                            *
+*                               version 0.45                                 *
+*                                                                            *
+*                    Copyright (c) 1999-2000 Petr Toman                      *
+*                       E-mail: Petr.Toman@pinknet.cz                        *
+*                                                                            *
+*       For latest info see: http://dione.zcu.cz/~toman40/ActionServlet      *
+**                                                                          **
+******************************************************************************
+
+
+     This is an extension of the WebMacro library, which you can find at:
+                           http://www.webmacro.org

@@ -1,0 +1,8 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+	<P><CENTER>The user $userName has been 
+	successfully logged in.</CENTER><P>
+</BODY>
+</HTML>
+ 

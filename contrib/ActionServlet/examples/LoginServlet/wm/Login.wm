@@ -1,0 +1,15 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+	#if ($badLogin){
+		<P><FONT COLOR="red">Bad user name or password. 
+		Try again.</FONT><P>
+	}
+
+	<FORM ACTION="LoginServlet" METHOD="POST">
+		User name: <INPUT TYPE="Text" NAME="userName"><BR>
+		Password:  <INPUT TYPE="Password" NAME="password">
+		<INPUT TYPE="Submit" NAME="action" VALUE="Login">
+	</FORM>
+</BODY>
+</HTML>

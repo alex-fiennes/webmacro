@@ -1,0 +1,41 @@
+<html><head><title>GuestBook Example</title></head>
+#set $Response.Header.Content-Type = "text/html"
+
+<body bgcolor="white">
+<h1><font color="green">GuestBook Example</font></h1>
+<p> This sample webmacro script will collect form data and then interpret 
+the form data and return the information in a table.
+
+
+#if ($badEmail) {
+	<P><CENTER>
+	<FONT color="red">E-mail must have the format like:</FONT>
+	<TT>somebody@somewhere.xyz</TT>. <FONT color="red">Try again!</FONT>
+	</CENTER><P>
+}
+
+<FORM METHOD="POST" ACTION="GuestBook">
+<TABLE ALIGN="CENTER" width="600">
+
+#if ($name) {
+	<TR><TD font color="red">Your Name:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="name" VALUE="$name"></TD></TR>
+} #else {
+	<TR><TD font color="red">Your Name:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="name"></TD></TR>
+}
+<TR><TD font color="red">e-Mail:</TD><TD font color="green">
+<INPUT TYPE="TEXT" NAME="email" VALUE=""></TD></TR>
+<TR><TD font color="red">Comment:</TD><TD font color="green">
+<TEXTAREA NAME="comment" COLS="60" ROWS="25" WRAP="HARD">
+#if ($comment) {
+$comment
+} 
+</TEXTAREA></TD></TR> 
+<TR><TD ALIGN="CENTER" COLSPAN="2"><INPUT TYPE="SUBMIT" NAME="action" VALUE="SUBMIT"></TD></TR>
+</TABLE>
+</FORM>
+
+[ <a href="GuestBook?action=allguest">
+See Guests</a> ]
+
+
+</body></html>
