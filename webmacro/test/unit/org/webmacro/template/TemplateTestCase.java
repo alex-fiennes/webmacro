@@ -125,14 +125,14 @@ public abstract class TemplateTestCase extends TestCase
     }
 
 
-    public void assertEvalutionEquals (String eval, Object result) throws Exception
+    public void assertEvaluationEquals (String eval, Object result) throws Exception
     {
-        String template = "#set $assertEvalutionEquals = " + eval;
+        String template = "#set $assertEvaluationEquals = " + eval;
         executeStringTemplate(template);
         if (result == null)
-            assertTrue(_context.get("assertEvalutionEquals") == null);
+            assertTrue(_context.get("assertEvaluationEquals") == null);
         else
-            assertTrue(result == null ? "null" : result.toString(), result.equals(_context.get("assertEvalutionEquals")));
+            assertTrue(result == null ? "null" : result.toString(), result.equals(_context.get("assertEvaluationEquals")));
     }
 
 
