@@ -20,7 +20,7 @@ import org.opendoors.cache.UpdateableCache;
  * to the immutable / mutable
  * cache strategy of VFC.
  */
-class CacheImpl implements UpdateableCache  {
+public class CacheImpl implements UpdateableCache  {
 
   /**
    * The immutable cache with a volatile reference
@@ -36,7 +36,22 @@ class CacheImpl implements UpdateableCache  {
 
   /** The change control mutex. */
   Object changeControlMutex;
-
+  
+  /** The array containing the metrics. */
+  private long[] metrics = {0,0,0,0};
+  
+  /** The total number of accesses to the cache.  */
+  public final static int AccessCount = 0;
+  
+  /** The total number of access hits to the immutable cache */
+  public final static int ImmutableHitCount = 1;
+  
+  /** The total number of access hits to the mutable cache. */
+  public final static int MutableHitCount = 2;
+  
+  /** The total number of access faults returning null. */
+  public final static int AccessFaultCount = 3;
+  
   /**
    * Constructs and preloads the cache
    * and if there is a subclass of ChangeControl
@@ -85,6 +100,7 @@ class CacheImpl implements UpdateableCache  {
 	 * is not found in the mutable cache.
 	 * @param argument The key to the element in the cache.
 	 */
+
 	public Object get(Object argument) {
     HashMap h;
     synchronized (immutable) { h = immutable; }
@@ -96,6 +112,43 @@ class CacheImpl implements UpdateableCache  {
     }
     return o;
 	}
+  /**
+   * Uncomment out this method and comment the above
+   * get to enable performance metrics on the public
+   * variables.
+   */
+/*
+	public Object get(Object argument) {
+    metrics[AccessCount]++;
+    HashMap h;
+    synchronized (immutable) { h = immutable; }
+    Object o = h.get(argument);
+    if (o == null) {
+      synchronized (changeControlMutex) {
+        o = mutable.get(argument);
+        if (o == null) {metrics[AccessFaultCount]++;}
+        else {metrics[MutableHitCount]++;}
+      }
+    }
+    else { metrics[ImmutableHitCount]++; }
+    return o;
+	}
+*/
+  
+  /**
+   * Returns the metrics in the following order:
+   * <pre>
+   * [0] The total number of gets, accesses.
+   * [1] The number of accesses which resulted in a hit to the immutable cache.
+   * [2] The number of accesses which resulted in a hit to the mutable cache.
+   * [3] The number of accesses which resulted in a fault and a need to
+   * regenerate the cache entry.
+   * </pre>
+   */
+  public long[] getMetrics() {
+    return metrics;
+  }
+   
 
   /** Returns the elements in the cache as an array using the current image. */
   public Object[] values() {

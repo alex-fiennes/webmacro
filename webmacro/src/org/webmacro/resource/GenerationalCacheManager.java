@@ -196,5 +196,32 @@ public class GenerationalCacheManager implements CacheManager {
         this.reloadContext = rc;
      }
   }
+  
+  /**
+   * Returns cache instrumentation statistics. 
+   * <p>
+   * These statistics will be zero if the cache
+   * implementation is not using the instrumented get() routine.
+   * <p>
+   * Use of this routine is normally reserved for performance analysis
+   * and depends on recompiling org.opendoors.cache.immutable.CacheImpl
+   * @returns an array of longs with the following def.<br>
+   * <pre>
+   * [0] The total number of gets, accesses.
+   * [1] The number of accesses which resulted in a hit to the immutable cache.
+   * [2] The number of accesses which resulted in a hit to the mutable cache.
+   * [3] The number of accesses which resulted in a fault and a need to
+   * regenerate the cache entry.
+   * </pre>
+   * @see org.opendoors.cache.impl.CacheImpl
+   */
+   public long[] getMetrics() {
+     long[] values = {0,0,0,0}; // the default;
+     if (cache instanceof CacheImpl) {
+       CacheImpl impl = (CacheImpl) cache;
+       values = impl.getMetrics();
+     }
+     return values;
+   }
 
 }
