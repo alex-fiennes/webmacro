@@ -68,6 +68,9 @@ public class Broker
    protected ProfileCategory _prof;
    private EvaluationExceptionHandler _eeHandler;
 
+   /** a local map for one to dump stuff into, specific to this Broker */
+   private Hashtable _brokerLocal = new Hashtable();
+   
    /*
     * Constructors.  Callers shouldn't use them; they should use the
     * factory methods (getBroker). 
@@ -495,6 +498,28 @@ public class Broker
       return getProvider(type).get(query);
    }
 
+   /**
+    * Store a key/value in this Broker.  This is a utility feature for
+    * one to save data that is specific to this instance of WebMacro.<p>
+    *
+    * Please remember that you probably aren't the only one storing keys
+    * in here, so be specific with your key names.  Don't use names like
+    * <code>String</code> or <code>Foo</code>.  Instead, use 
+    * <code>IncludeDirective.String</code> and <code>IncludeDirective.Foo</code>.
+    */
+   public void setBrokerLocal (Object key, Object value) {
+      _brokerLocal.put (key, value);
+   }
+   
+   /**
+    * Get a value that was previously stored in this Broker.
+    *
+    * @see #setBrokerLocal
+    */
+   public Object getBrokerLocal (Object key) {
+      return _brokerLocal.get (key);
+   }
+   
    /**
      * Backwards compatible, calls get(String,String)
      * @deprecated call get(String,String) instead
