@@ -1,0 +1,28 @@
+
+JAVABIN=$(JAVA_HOME)/bin
+UNIXBIN=/usr/bin
+
+MKDIR=$(UNIXBIN)/mkdir
+RMFILE=$(UNIXBIN)/rm
+MAKE=$(UNIXBIN)/gmake -s
+
+JAVAC=$(JAVABIN)/javac
+JAR=$(JAVABIN)/jar
+JAVADOC=$(JAVABIN)/javadoc
+
+TARGETS := $(SOURCES:.java=.class)
+	
+
+%.class : %.java
+	echo compiling $<
+	$(JAVAC) $(JFLAGS) $< 
+
+all: 
+	@echo incremental build
+	@$(MAKE) $(TARGETS)
+
+everything: 
+	$(JAVAC) $(JFLAGS) $(SOURCES) 
+
+clean:
+	$(RMFILE) $(TARGETS)
