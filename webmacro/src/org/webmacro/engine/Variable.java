@@ -152,18 +152,33 @@ public abstract class Variable implements Macro, Visitable
             val = ((Macro) val).evaluate(context); // recurse
          } 
          return val;
-      } catch (NullPointerException e) {
+      } 
+      catch (NullPointerException e) {
          context.getLog("engine")
-           .warning("Variable: " + _vname + " does not exist");
+           .warning("Variable: $" + _vname + " does not exist");
          return context.getEvaluationExceptionHandler()
            .handle(this, context, new NullVariableException(_vname));
-      } catch (Exception e) {
+      } 
+      catch (PropertyException e) {
          context.getLog("engine")
-           .warning("Variable: exception evaluating " + _vname + ":\n" + e, e);
-         return context.getEvaluationExceptionHandler()
+           .warning("Variable: exception evaluating $" + _vname + ":\n" + e, 
+                    e);
+         // May throw
+         context.getEvaluationExceptionHandler()
            .handle(this, context, 
                    new PropertyException("Variable: exception evaluating " 
                                          + _vname, e));
+         return null;
+      }
+      catch (Exception e) {
+         context.getLog("engine")
+           .warning("Variable: exception evaluating " + _vname + ":\n" + e, e);
+         // May throw
+         context.getEvaluationExceptionHandler()
+           .handle(this, context, 
+                   new PropertyException("Variable: exception evaluating " 
+                                         + _vname, e));
+         return null;
       }
    }
 

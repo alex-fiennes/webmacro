@@ -68,7 +68,7 @@ public class TemplateEvaluatorMain
             // possible exceptions, etc) are sent to System.err
             for (int x=0; x<templateFilenames.length; x++)
             {
-               System.err.println ("----- template " + templateFilenames[x] + " -----");
+               System.err.println ("Processing " + templateFilenames[x]);
                try
                {
                   tester.evaluate (templateFilenames[x], System.out);

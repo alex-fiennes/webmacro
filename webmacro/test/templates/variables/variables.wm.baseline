@@ -1,0 +1,12 @@
+these should all say pass.  In other words, rouge variable references 
+should *never* evaluate to true:
+
+        NotInContext: pass
+     VoidMethod call: pass
+     NullMethod call: pass
+      BadMethod call: pass
+         BadProperty: pass
+ThrowsException call: pass
+               false: pass
+                true: pass
+
