@@ -57,7 +57,11 @@ public class Context implements Map, Cloneable
      * this string.
      */
    final protected void loadTools(String tools) {
-      _tools.load(tools);
+      _tools.load(tools, "Tool");
+      Iterator i = _tools.keys();
+      while (i.hasNext()) {
+         _log.info("Registered ContextTool:" + i.next());
+      }
    }
 
    /**

@@ -94,13 +94,34 @@ public class ComponentMap
      * semicolons, the load(String[]) will be called. 
      */
    public void load(String namelist) {
-      load(tokenize(namelist));
+      load(tokenize(namelist), "");
    }
 
    /**
-     * Process the list of component names
+     * Load the component map from the supplied namelist. The string
+     * will be separated by spaces, tabs, newlines, commas, and 
+     * semicolons, the load(String[]) will be called. The suffic 
+     * will be dropped from the end of component names as they are 
+     * registered, if they do not have an explicit name.
      */
-   public void load(String[] namelist) 
+   public void load(String namelist, String suffix) {
+      load(tokenize(namelist), suffix);
+   }
+
+     
+   /**
+     * Load the component map from the supplied name list.
+     */
+   public void load(String[] namelist) {
+      load(namelist, "");
+   }
+
+   /**
+     * Load the component map from the supplied name list. If key
+     * names are derived from class names then the supplied suffix
+     * will be dropped from the name. 
+     */
+   public void load(String[] namelist, String suffix) 
    {
       ClassLoader c = ComponentMap.class.getClassLoader();
       char[] buf = new char[8192];
@@ -124,7 +145,7 @@ public class ComponentMap
                _log.warning("ComponentMap: Error reading data from " + u, e);
             }
          } else {
-            add(name);
+            add(name,suffix);
          }
       }
    }
@@ -132,7 +153,7 @@ public class ComponentMap
    private static final Class[] _ctorArgs1 = { java.lang.String.class, org.webmacro.util.Settings.class };
    private static final Class[] _ctorArgs2 = { java.lang.String.class };
 
-   protected void add(String component) {
+   protected void add(String component, String suffix) {
 
       String key = null;
       String name = component;
@@ -152,10 +173,16 @@ public class ComponentMap
       }
       if (key == null) {
          key = c.getName();
+         int start = 0;
+         int end = key.length();
          int lastDot = key.lastIndexOf('.');
          if (lastDot != -1) {
-            key = key.substring(lastDot);
+            start = lastDot + 1;
          }
+         if (key.endsWith(suffix)) {
+            end -= suffix.length();
+         }
+         key = key.substring(start,end);
       }
 
       Object instance = null;
