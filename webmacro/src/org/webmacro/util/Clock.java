@@ -46,17 +46,23 @@ final public class Clock
    private static long dateTime = System.currentTimeMillis();
    private static Date date = new Date();
 
+    private static Object _lock = new Object();
    /**
      * The current date. This object is updated on the tick interval, 
      * but not faster than once per second.
      */
    public static Date getDate() {
-      synchronized(_clock) {
-         if ((TIME - dateTime) > 1000) {
-            date = new Date(TIME);
-         }
-         return date;
-      }
+       synchronized(_lock) {
+           if (_clock != null) {
+               if ((TIME - dateTime) > 1000) {
+                   date = new Date(TIME);
+               }
+           } else {
+               // clock is not started yet
+               date = new Date();
+           }
+           return date;
+       }
    }
 
    /**
@@ -87,25 +93,39 @@ final public class Clock
    /**
      * Set up the clock
      */
-   static private final Thread _clock = new Thread() 
-   {
-      synchronized public void run() {
-         while (true) {
-            TIME = System.currentTimeMillis();
-            try {
-               if (tickInterval == 0) wait();
-               else wait(tickInterval);
-            } catch (Exception e) { 
-               e.printStackTrace();
+   static private Thread _clock;
+
+    static class ClockThread extends Thread {
+        synchronized public void run() {
+            while (!Thread.currentThread().interrupted()) {
+                TIME = System.currentTimeMillis();
+                try {
+                    if (tickInterval == 0) wait();
+                    else wait(tickInterval);
+                } catch (InterruptedException e) { 
+                    break; // terminate
+                }
             }
-         }
-      }
-   };
-   static {
-      _clock.setDaemon(true);
-      _clock.setName("clock:" + tickInterval);
-      _clock.start();
-   }
+        }
+    }
+
+    static private int _count;
+
+    public static synchronized void startClient() {
+        if (_count++ == 0) {
+            _clock = new ClockThread();
+            _clock.setDaemon(true);
+            _clock.setName("clock:"+tickInterval);
+            _clock.start();
+        }
+    }
+
+    public static synchronized void stopClient() {
+        if (--_count == 0) {
+            _clock.interrupt();
+            _clock = null;
+        }
+    }
 
    public static void main(String arg[]) {
       setTickInterval(1000);

@@ -51,13 +51,12 @@ public class SMapCacheManager implements CacheManager {
    private static final long DURATION = 1000;
    private static final int PERIODS = 600; 
 
-   private static final TimeLoop _tl = new TimeLoop(DURATION,PERIODS);
-   private Log _log;
+    private final TimeLoop _tl = getTimeloop();
+    private static TimeLoop _tlInstance;
 
-   static {
-      _tl.setDaemon(true);
-      _tl.start();
-   }
+    private static int _tlCount;
+
+   private Log _log;
 
    private abstract class MyCacheElement extends CacheElement implements Cloneable { 
       private CacheReloadContext reloadContext = null;
@@ -82,6 +81,24 @@ public class SMapCacheManager implements CacheManager {
           }
       }
    }
+
+    private static synchronized TimeLoop getTimeloop() {
+        if (_tlCount == 0) {
+            _tlInstance = new TimeLoop(DURATION,PERIODS);
+            _tlInstance.setDaemon(true);
+            _tlInstance.start();
+        }
+        _tlCount++;
+        return _tlInstance;
+    }
+
+    private static synchronized void stopTimeloop() {
+        if (--_tlCount == 0) {
+            _tlInstance.interrupt();
+            _tlInstance = null;
+        }
+    }
+
 
    private final class SoftScmCacheElement extends MyCacheElement {
       private SoftReference reference; 
@@ -170,6 +187,7 @@ public class SMapCacheManager implements CacheManager {
    public void destroy() {
       // @@@ We should shut down TimeLoop too somehow
       _cache = null;
+      _tl.interrupt();
    }
 
    public boolean supportsReload() {

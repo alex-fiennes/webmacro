@@ -68,11 +68,14 @@ abstract public class ServletBroker extends Broker {
          minorVersion = 0;
       }
 
+      Broker b;
       if (majorVersion > 2 
           || (majorVersion == 2 && minorVersion >= 2))
-         return Servlet22Broker.getBroker(s);
+         b = Servlet22Broker.getBroker(s);
       else
-         return Servlet20Broker.getBroker(s);
+         b = Servlet20Broker.getBroker(s);
+      b.startClient();
+      return b;
    }
 
     public ServletContext getServletContext() {

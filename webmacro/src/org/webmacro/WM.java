@@ -148,6 +148,7 @@ public class WM implements WebMacro
          _alive = false;
          _webContext = null;
          _log.info("shutdown " + this);
+         _broker.stopClient();
       }
    }
 

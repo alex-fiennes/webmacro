@@ -70,7 +70,10 @@ public class Broker
 
    /** a local map for one to dump stuff into, specific to this Broker */
    private Map _brokerLocal = Collections.synchronizedMap (new HashMap());
-   
+
+    /** Reference count to detect unused brokers */
+    private int count;
+
    /*
     * Constructors.  Callers shouldn't use them; they should use the
     * factory methods (getBroker). 
@@ -263,6 +266,7 @@ public class Broker
             b = new Broker();
             register(WEBMACRO_PROPERTIES, b);
          }
+         b.startClient();
          return b;
       }
       catch (InitException e) {
@@ -279,6 +283,7 @@ public class Broker
             b = new Broker(settingsFile);
             register(settingsFile, b);
          }
+         b.startClient();
          return b;
       }
       catch (InitException e) {
@@ -577,6 +582,18 @@ public class Broker
       return get(type,query);
    }
 
+    public synchronized void startClient() {
+        if (count++ == 0) {
+            _log.info("starting clock");
+            Clock.startClient(); // start clock
+        }
+    }
+
+    public synchronized void stopClient() {
+        if (--count == 0) {
+            shutdown();
+        }
+    }
    /**
      * Shut down the broker
      */
@@ -589,6 +606,8 @@ public class Broker
          pr.destroy();
       }
       _providers.clear();
+      _log.info("stopping clock");
+      Clock.stopClient();
       _ls.flush();
    }
 

@@ -23,7 +23,7 @@
 
 package org.webmacro.resource;
 import  org.webmacro.*;
-import  org.webmacro.util.TimeLoop;
+import  org.webmacro.util.Clock;
 
 /**
  * TimedReloadContext acts as an Decorator for Reload context to support
@@ -41,23 +41,6 @@ public class TimedReloadContext extends CacheReloadContext {
     private CacheReloadContext reloadContext;
     private long nextCheck;
     private long checkInterval;
-    static volatile long now;
-    
-    static {
-        now = System.currentTimeMillis();
-        Thread timer = new Thread() {
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {}
-                        now = System.currentTimeMillis();
-                    }
-                }
-            };
-        timer.setDaemon(true);
-        timer.start();
-    }
 
     /**
      * Construct a new TimedReloadContext decorator.
@@ -71,7 +54,7 @@ public class TimedReloadContext extends CacheReloadContext {
         super();
         this.reloadContext = reloadContext;
         this.checkInterval = checkInterval;
-        this.nextCheck = now + checkInterval;
+        this.nextCheck = Clock.TIME + checkInterval;
     }
 
     /**
@@ -84,8 +67,8 @@ public class TimedReloadContext extends CacheReloadContext {
      **/
     public boolean shouldReload() {
         //long time = System.currentTimeMillis();
-        if (now >= nextCheck) {
-            nextCheck = now + checkInterval;
+        if (Clock.TIME >= nextCheck) {
+            nextCheck = Clock.TIME + checkInterval;
             return reloadContext.shouldReload();
         } else {
             return false;

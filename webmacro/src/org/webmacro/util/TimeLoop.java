@@ -87,7 +87,9 @@ public class TimeLoop extends Thread
          try {
             sleep(_duration);
          } catch (InterruptedException e) {
-            continue;
+             // this probably
+             // means, that we should terminate
+             break;
          }
          int newPeriod = now();
          while (period != newPeriod) {
