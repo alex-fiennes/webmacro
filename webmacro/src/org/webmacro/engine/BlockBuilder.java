@@ -44,7 +44,7 @@ final public class BlockBuilder extends Vector implements Builder
       StringBuffer buf = new StringBuffer(512);
       flatten(bc,block,buf,elements());
       if (buf.length() > 0) {
-         block.addElement(MacroAdapter.createMacro(buf.toString()));
+         block.addElement(MacroAdapter.createMacro(buf.toString(),bc.getEncoding()));
       }
       Macro[] result = new Macro[block.size()];
       block.copyInto(result);
@@ -70,7 +70,7 @@ final public class BlockBuilder extends Vector implements Builder
             }
             if (o instanceof Macro) {
                if (buf.length() > 0) {
-                  block.addElement(MacroAdapter.createMacro(buf.toString()));
+                  block.addElement(MacroAdapter.createMacro(buf.toString(),bc.getEncoding()));
                   buf.setLength(0);
                }
                block.addElement((Macro) o);

@@ -47,7 +47,7 @@ final public class MacroAdapter implements Macro
      * If wrapMe is not a Macro, wrap it and return it. If it
      * is a Macro already, just return it.
      */
-   public final static Macro createMacro(Object wrapMe) 
+   public final static Macro createMacro(Object wrapMe, String encoding) 
       throws BuildException
    {
       if (wrapMe == null) {
@@ -65,13 +65,13 @@ final public class MacroAdapter implements Macro
      * generic Object wrapper, but functionally equivalent (avoids
      * calling toString() when writing the object).
      */
-   public final static Macro createMacro(String wrapMe)
+   public final static Macro createMacro(String wrapMe, String encoding)
       throws BuildException
    {
       if (wrapMe == null) {
          throw new BuildException("Bug in WM: attempt to write null");
       }
-      return new StringMacroAdapter(wrapMe);
+      return new StringMacroAdapter(wrapMe, encoding);
    }
 
 }
@@ -85,10 +85,10 @@ final class StringMacroAdapter implements Macro
    private byte[] _self;
    private String _cache = null; // assume this will not be used most times
 
-   public StringMacroAdapter(String wrapMe) 
+   public StringMacroAdapter(String wrapMe, String encoding) 
    {
       try {
-         _self = wrapMe.getBytes("UTF8");
+         _self = wrapMe.getBytes(encoding);
       } catch (Exception e) {
          e.printStackTrace();
       }

@@ -152,10 +152,10 @@ final class ForeachDirective implements Directive
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-         FastWriter fw = new FastWriter(os, "UTF8");
+         FastWriter fw = new FastWriter(os, context.getEncoding());
          write(fw,context);
          fw.flush();
-         return os.toString("UTF8");
+         return os.toString(context.getEncoding());
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error("evaluate got IO exception on write to StringWriter");

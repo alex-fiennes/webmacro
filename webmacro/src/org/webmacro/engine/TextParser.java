@@ -37,6 +37,9 @@ public class TextParser implements Parser
       BlockBuilder bb = new BlockBuilder(); 
       char buf[] = new char[512];
       int num;
+
+      // no good choice here, let's try UTF8 here: we encode and 
+      // decode witht he same thing so it should be OK.
       ByteArrayOutputStream os = new ByteArrayOutputStream(256);
       FastWriter fw = new FastWriter(os, "UTF8");
       while ((num = in.read(buf)) != -1) {

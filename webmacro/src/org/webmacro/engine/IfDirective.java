@@ -95,7 +95,7 @@ final class IfDirective implements Directive
    {
       if (cond instanceof Macro) {
          Macro elseMacro = (elseDir != null) ? 
-            MacroAdapter.createMacro(elseDir) : null;
+            MacroAdapter.createMacro(elseDir,rc.getEncoding()) : null;
          return new IfDirective(cond, body, elseMacro);  
       } else {
          return (cond.test(rc)) ? body : elseDir;
@@ -119,10 +119,10 @@ final class IfDirective implements Directive
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-         FastWriter fw = new FastWriter(os, "UTF8");
+         FastWriter fw = new FastWriter(os, context.getEncoding());
          write(fw,context);
          fw.flush();
-         return os.toString("UTF8");
+         return os.toString(context.getEncoding());
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error(

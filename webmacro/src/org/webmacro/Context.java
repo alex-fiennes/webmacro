@@ -49,6 +49,9 @@ public class Context implements Cloneable {
    private Map[] _localState = null; // managed by push/pop
    private int _state = 0; // managed by push/pop
 
+   private Locale _locale = Locale.getDefault();
+   private String _encoding = "UTF8";
+
    /**
      * Log configuration errors, context errors, etc.
      */
@@ -120,6 +123,7 @@ public class Context implements Cloneable {
 
       c._locals = null;
       c._bean = null;
+      c._locale = _locale;
 
       return c;
    }
@@ -498,4 +502,35 @@ public class Context implements Cloneable {
          return PropertyOperator.setProperty(this,getTool(names[0]),names,1,value);
       } 
    }
+
+   /**
+     * Set the locale for this request
+     */
+   final public void setLocale(Locale l) {
+      _locale = l;
+   }
+
+   /**
+     * Get the locale for this request. This will return null if no 
+     * Locale has been set for the current request.
+     */
+   final public Locale getLocale() {
+      return _locale;
+   }
+
+   /**
+     * Get the encoding for this request. This will return null if
+     * no encoding has been set for the request.
+     */
+   final public String getEncoding() {
+      return _encoding;
+   }
+
+   /**
+     * Set the encoding for this request
+     */
+   final public void setEncoding(String encoding) {
+      _encoding = encoding;
+   }
+
 }
