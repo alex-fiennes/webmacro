@@ -24,6 +24,8 @@ package org.webmacro.directive;
 
 import java.io.*;
 import java.util.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
@@ -475,33 +477,45 @@ public class IncludeDirective extends Directive {
     * we check the Broker (Broker.getResource).
     */
    protected String getFile(Broker b, String name) throws PropertyException {
-      try {
-         return b.get("url", name).toString();
-      }
-      catch (ResourceException re) {
-         try {
+        try {
+            // first, ask the URL provider (if we have one) to find the file for us
+           return b.get("url", name).toString();
+        }
+        catch (Exception e) {
+            // for whatever reason, the URL provider couldn't find the file
+            // (maybe we don't have a URL provider?).  No matter, directly
+            // ask the Broker to load it as a resource
+            URL url = null;
+
             try {
-               // The UrlProvider knows, how to do this,
-               // so let him do the work for us
-               return b.get("url", name).toString();
+                url = b.getResource(name);
+                if (url == null) // doh!  the Broker couldn't find it either.  Guess it doesn't exist
+                    throw makePropertyException("Resource not found by URL provider or Broker");
+
+                // open a URLConnection...
+                URLConnection conn = url.openConnection();
+                StringBuffer sb = new StringBuffer ();
+                InputStream in = conn.getInputStream();
+                String enc = conn.getContentEncoding();
+                if (enc == null)
+                    enc = b.getSetting("TemplateEncoding");
+
+                // ...and stream the contents of the URL into a String
+                int cnt=0;
+                byte[] buff = new byte[4096];
+                while ( (cnt = in.read(buff)) > 0) {
+                    sb.append (new String (buff, 0, cnt, enc));
+                }
+                in.close();
+
+                // return the string form of the resource.
+                // This is what will be included in the template
+                return sb.toString();
             }
-            catch (NullPointerException npe) {
-               throw npe;
+            catch (IOException ioe) {
+               throw makePropertyException("Error streaming file from: " + url, ioe);
             }
-            catch (Exception e) {
-               throw makePropertyException("Found by Broker, but could not be retrieved", e);
-            }
-         }
-         catch (NullPointerException npe) {
-            throw makePropertyException("Not found by url provider or broker");
-         }
-         catch (Exception e) {
-            throw makePropertyException("Unexpected exception while getting from Broker", e);
-         }
-      }
-      catch (Exception e) {
-         throw makePropertyException("Unexpected exception while getting from url provider", e);
-      }
+        }
    }
 
    public void accept(TemplateVisitor v) {
