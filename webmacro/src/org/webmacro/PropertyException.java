@@ -112,7 +112,7 @@ public class PropertyException extends ContextException
    }
 
    /**
-    * NoSuchMethodException indicates that the variable did not have
+    * NoSuchMethodWithArgumentsException indicates that the variable did not have
     * the a method with the request name and argument list  
     */
    public static class NoSuchMethodWithArgumentsException extends PropertyException {
