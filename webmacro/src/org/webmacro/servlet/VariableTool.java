@@ -12,6 +12,9 @@ public class VariableTool implements ContextTool {
 
 	Context context;
 
+	public VariableTool() {
+    }
+
 	public VariableTool(Context newContext) {
 		context = newContext;
     }
