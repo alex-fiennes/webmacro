@@ -1,7 +1,7 @@
 
 JAVAHOME=/local/java
 JSDKHOME=/local/www/jsdk
-CLASSPATH=$(JAVAHOME)/lib/classes.zip:$(JSDKHOME)/src:.
+CLASSPATH=$(JAVAHOME)/lib/classes.zip:/local/java-lib/collections.jar:$(JSDKHOME)/src:.
 
 TARGETS = 	webmacro/webmacro.jar \
             	webmacro/src.zip \
@@ -16,7 +16,6 @@ SOURCES =	org/webmacro/servlet/*.java \
 		org/webmacro/resource/*.java \
 		org/webmacro/broker/*.java \
 		org/webmacro/util/*.java \
-		org/webmacro/util/java2/*.java \
                 org/webmacro/*.java
 
 CLASSES =	org/webmacro/servlet/*.class \
@@ -24,7 +23,6 @@ CLASSES =	org/webmacro/servlet/*.class \
 		org/webmacro/resource/*.class \
 		org/webmacro/broker/*.class \
 		org/webmacro/util/*.class \
-		org/webmacro/util/java2/*.class \
                 org/webmacro/*.class
 
 DOCS =		org/webmacro/webroot/*.html \
