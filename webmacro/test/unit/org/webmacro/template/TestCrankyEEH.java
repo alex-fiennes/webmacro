@@ -31,9 +31,9 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    public void testGoodVariable () throws Exception {
-      assertStringTemplateEquals ("$TestObject", "TestObject"); 
+      assertStringTemplateEquals ("$TestObject", "TestObject");
    }
-   
+
    public void testEvalGoodVariable () throws Exception {
       assertStringTemplateEquals("#set $foo=$TestObject", "");
       assertBooleanExpr("$foo == $TestObject", true);
@@ -41,7 +41,7 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    public void testGoodMethod () throws Exception {
-      assertStringTemplateEquals ("$TestObject.getString()", "String");   
+      assertStringTemplateEquals ("$TestObject.getString()", "String");
    }
 
    public void testEvalGoodMethod () throws Exception {
@@ -57,15 +57,14 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       assertStringTemplateEquals("#set $foo = $TestObject.property", "");
       assertStringTemplateEquals("$foo", "Property");
    }
-   
+
    public void testNoSuchVariable () throws Exception {
-      assertStringTemplateThrows ("$NotInContext", 
-        PropertyException.NoSuchVariableException.class);
+      assertStringTemplateThrows ("$NotInContext",
+        PropertyException.UndefinedVariableException.class);
    }
 
    public void testEvalNoSuchVariable () throws Exception {
-      assertStringTemplateThrows("#set $foo=$NotInContext", 
-        PropertyException.NoSuchVariableException.class);
+      assertStringTemplateEquals ("#set $foo=$NotInContext", "");
    }
 
    public void testNoSuchMethod () throws Exception {
@@ -73,22 +72,22 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
         PropertyException.NoSuchMethodException.class);
 
    }
-   
+
    public void testNoSuchMethodWithArguments () throws Exception {
       assertStringTemplateThrows ("$TestObject.toString('foo', false, 1)",
         PropertyException.NoSuchMethodWithArgumentsException.class);
-   }   
-  
+   }
+
    public void testEvalNoSuchMethod () throws Exception {
-      assertStringTemplateThrows("#set $foo=$TestObject.noSuchMethod()", 
+      assertStringTemplateThrows("#set $foo=$TestObject.noSuchMethod()",
         PropertyException.NoSuchMethodException.class);
    }
 
    public void testEvalNoSuchMethodWithArguments () throws Exception {
       assertStringTemplateThrows ("#set $foo=$TestObject.toString('foo', false, 1)",
         PropertyException.NoSuchMethodWithArgumentsException.class);
-   }   
-   
+   }
+
    public void testNoSuchProperty () throws Exception {
       assertStringTemplateThrows ("$TestObject.noSuchProperty",
         PropertyException.NoSuchPropertyException.class);
@@ -104,12 +103,12 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    public void testEvalVoidMethod () throws Exception {
-      assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()", 
+      assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()",
                                   PropertyException.VoidValueException.class);
    }
 
    public void testNullMethod () throws Exception {
-      assertStringTemplateThrows ("$TestObject.nullMethod()", 
+      assertStringTemplateThrows ("$TestObject.nullMethod()",
                                    PropertyException.NullValueException.class);
    }
 
@@ -119,19 +118,19 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    public void testThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$TestObject.throwException()", 
+      assertStringTemplateThrows ("$TestObject.throwException()",
                                    org.webmacro.PropertyException.class);
    }
 
    public void testEvalThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()", 
+      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()",
                                    org.webmacro.PropertyException.class);
    }
 
-   /** A variable in the context who's .toString() method returns null 
+   /** A variable in the context who's .toString() method returns null
     */
    public void testNullVariable () throws Exception {
-      assertStringTemplateThrows ("$NullTestObject", 
+      assertStringTemplateThrows ("$NullTestObject",
          PropertyException.NullToStringException.class);
    }
 
@@ -139,30 +138,30 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       assertStringTemplateEquals ("#set $foo=$NullTestObject", "");
       assertBooleanExpr("$foo == $NullTestObject", true);
    }
-   
+
    /*
     * test cases designed to check that the caught exception is recorded
     */
    public void testThrowsWithCaught () throws Exception {
-      assertStringTemplateThrowsWithCaught ("$enum.nextElement()", 
+      assertStringTemplateThrowsWithCaught ("$enum.nextElement()",
                                    java.util.NoSuchElementException.class);
    }
 
    public void testThrowsWithCaughtInForeach () throws Exception {
-      assertStringTemplateThrowsWithCaught ("#foreach $a in $enum #begin #end", 
+      assertStringTemplateThrowsWithCaught ("#foreach $a in $enum #begin #end",
                                    java.util.NoSuchElementException.class);
    }
-  
+
   /*
    * this is clearly a silly class, bit it is designed to prove that WebMacro
    * properly fills in the caught exception at all times
-   * 
+   *
    * in WM 0.97, an exception that occured when the nextElement() in a #foreach
-   * loop was called.  ie when the object was constructed instead of 
-   * accessed, causes a PropertyException to be Thrown without filling in the 
+   * loop was called.  ie when the object was constructed instead of
+   * accessed, causes a PropertyException to be Thrown without filling in the
    * caught exception.
    */
-  
+
   public class ThrowingEnumeration implements Enumeration {
       public boolean hasMoreElements() {
           return true;
@@ -170,6 +169,6 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       public Object nextElement() throws NoSuchElementException {
           throw new NoSuchElementException();
       }
-  }  
-   
+  }
+
  }

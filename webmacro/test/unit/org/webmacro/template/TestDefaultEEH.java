@@ -21,19 +21,20 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());
+      context.put ("NullObject", null);
    }
 
    public void testGoodVariable () throws Exception {
-      assertStringTemplateEquals ("$TestObject", "TestObject"); 
+      assertStringTemplateEquals ("$TestObject", "TestObject");
    }
-   
+
    public void testEvalGoodVariable () throws Exception {
       assertStringTemplateEquals("#set $foo=$TestObject", "");
       assertBooleanExpr("$foo == $TestObject", true);
    }
 
    public void testGoodMethod () throws Exception {
-      assertStringTemplateEquals ("$TestObject.getString()", "String");   
+      assertStringTemplateEquals ("$TestObject.getString()", "String");
    }
 
    public void testEvalGoodMethod () throws Exception {
@@ -52,13 +53,13 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
 
    public void testNoSuchVariable () throws Exception {
-      assertStringTemplateMatches ("$NotInContext", 
-        "^<!--.*No such variable.*-->$");
+      assertStringTemplateThrows ("$NotInContext",
+        PropertyException.UndefinedVariableException.class);
    }
 
    public void testEvalNoSuchVariable () throws Exception {
-      assertStringTemplateMatches("#set $foo=$NotInContext", "");
-      assertBooleanExpr("$foo == null", true);
+      assertStringTemplateEquals ("#set $foo=$NotInContext", "");
+      assertBooleanExpr("$foo == undefined", true);
    }
 
    public void testNoSuchMethod () throws Exception {
@@ -66,22 +67,22 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
         PropertyException.NoSuchMethodException.class);
 
    }
-   
+
    public void testNoSuchMethodWithArguments () throws Exception {
       assertStringTemplateThrows ("$TestObject.toString('foo', false, 1)",
         PropertyException.NoSuchMethodWithArgumentsException.class);
    }
-  
+
    public void testEvalNoSuchMethod () throws Exception {
-      assertStringTemplateThrows("#set $foo=$TestObject.noSuchMethod()", 
+      assertStringTemplateThrows("#set $foo=$TestObject.noSuchMethod()",
         PropertyException.NoSuchMethodException.class);
    }
 
    public void testEvalNoSuchMethodWithArguments () throws Exception {
       assertStringTemplateThrows ("#set $foo=$TestObject.toString('foo', false, 1)",
         PropertyException.NoSuchMethodWithArgumentsException.class);
-   }   
-   
+   }
+
    public void testNoSuchProperty () throws Exception {
       assertStringTemplateThrows ("$TestObject.noSuchProperty",
                                    PropertyException.NoSuchPropertyException.class);
@@ -98,12 +99,12 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
    }
 
    public void testEvalVoidMethod () throws Exception {
-      assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()", 
+      assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()",
                                   PropertyException.VoidValueException.class);
    }
 
    public void testNullMethod () throws Exception {
-      assertStringTemplateMatches ("$TestObject.nullMethod()", 
+      assertStringTemplateMatches ("$TestObject.nullMethod()",
         "^<!--.*Value is null.*-->$");
    }
 
@@ -113,23 +114,22 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
    }
 
    public void testThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$TestObject.throwException()", 
+      assertStringTemplateThrows ("$TestObject.throwException()",
                                    org.webmacro.PropertyException.class);
    }
 
    public void testEvalThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()", 
+      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()",
                                    org.webmacro.PropertyException.class);
    }
 
   // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
-     assertStringTemplateMatches ("$NullObject", 
-          "^<!--.*No such variable.*-->$");
+     assertStringTemplateMatches ("$NullObject",  "");
    }
 
    public void testEvalNullVariable () throws Exception {
-      assertStringTemplateMatches ("$set $foo=$NullObject", "");
+      assertStringTemplateMatches ("#set $foo=$NullObject", "");
       assertBooleanExpr("$foo == null", true);
    }
 }
