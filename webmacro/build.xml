@@ -41,9 +41,9 @@
     <delete dir="${classes}"/>
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
-    <delete dir="${tmpdir}"/>
     <delete file="${jar}"/>
     <delete file="${src.jar}"/>
+    <delete dir="${tmpdir}"/>
   </target>
 
 
@@ -53,24 +53,22 @@
   </target>
 
   <target name="compile" depends="prepare, precompile">
-    <exec executable="date" outputproperty="date" />
-    <copy todir="${tmpdir}">
+    <filter token="VERSION" value="${version}" />
+    <copy todir="${tmpdir}" filtering="true">
        <fileset dir="src" />
-       <filterset>
-          <filter token="VERSION" value="${version}" />
-          <filter token="BUILD_DATE" value="${date}" />
-       </filterset>
     </copy>
     <javac srcdir="${tmpdir}" destdir="${classes}"
            debug="on" optimize="off" deprecation="off">
       <classpath refid="class.path" />
     </javac>
+    
     <copy todir="${classes}">
       <fileset dir="${tmpdir}" includes="**/*.properties" />
       <fileset dir="." includes="WebMacro.defaults"/>
     </copy>
-    <delete dir="${tmpdir}" />
-  </target>
+    <touch file="${classes}/WM-VERSION-${version}" />
+ </target>
+
 
 
   <target name="javadoc" depends="prepare">
