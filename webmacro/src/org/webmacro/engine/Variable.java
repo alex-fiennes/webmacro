@@ -73,6 +73,11 @@ import org.webmacro.*;
 abstract class Variable implements Macro
 {
 
+
+   final static protected Object PROPERTY_TYPE = null;
+   final static protected Object LOCAL_TYPE = new Object();
+   final static protected Object TOOL_TYPE = new Object();
+
    /**
      * The name of this variable.
      */
