@@ -88,7 +88,7 @@ public abstract class WikiPageRenderer {
      */
     public String render (WikiPage page) throws RenderException {
         WikiData[] dataElement = page.getData();
-        StringBuffer sb = new StringBuffer (page.getUnparsedData().length());
+        StringBuffer sb = new StringBuffer (2048);
         
         for (int x=0; x<dataElement.length; x++) {
             int type = dataElement[x].getType ();
