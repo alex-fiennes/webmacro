@@ -60,6 +60,31 @@ public class TestAbuse extends TemplateTestCase {
       assertStringTemplateMatches (tmpl, "");
    }
 
+   /**
+    * The error message this produces is: 
+    *   Attempt to dereference null value $Object
+    * but $Object <b>isn't</b> null.   Only its
+    * toString() method returns null.  The message
+    * implies that $Object is null. 
+    *
+    * Can this be detected and say something like:
+    *     $Object's toString() method returned null.
+    *
+    * Probably requires another Exception type for EEH
+    * and friends.
+    */
+   public void testToStringIsNull () throws Exception {
+      Object obj = new Object () { 
+         public String toString () { return null; }
+      };
+
+      _context.put ("Object", obj);
+
+      assertStringTemplateEquals ("$Object",
+                                  "a better error message");
+
+   }
+
    /** the infamous "but I want to put Javascript in an #if block!!" 
 
        Currently fails when using { and }, but passes with 
