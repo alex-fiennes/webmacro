@@ -83,91 +83,64 @@ This document will give you a very brief overview of the package.
     you must put it in your CLASSPATH or register it with your
     servlet runner as you would with any other servlet.
     <p>
-    Another way to use WebMacro is to create classes which 
-    implement the Handler interface, such as the TestWM example.
-    This allows you to subclass from some other base class, but
-    complicates configuration slightly. In this case you use
-    org.webmacro.servlet.Reactor as your servlet. It is associated
-    with your handler via the URL.  Configure your servletrunner
-    with the following property information.  For the JSDK
-    "servletrunner", that means adding the following lines to
-    servlet.properties in the servlet
-    directory:<pre>
-
-             servlet.APPNAME.code=org.webmacro.servlet.Reactor
-   
-    </pre>"APPNAME" is the name of your application, it is a single word. It
-    becomes a part of the URL that people use to access your application.
-    Install one line like this for every application you intend to write
-    using the WebMacro package. Here is an example:<pre>
-
-             servlet.list.code=org.webmacro.servlet.Reactor
-             servlet.catalogue.code=org.webmacro.servlet.Reactor
-
-    </pre>This says you will have two appliactions. If you run WebMacro
-    using the JSDK servletrunner they will appear under the URLS:<pre>
-
-             /servlet/list/
-             /servlet/catalogue/
- 
-    </pre>The WebMacro package will take over the entire namespace under
-    these prefixes, and view any URL in those areas as being part of that
-    particular application.
+    You can also use WebMacro in "standalone" mode, which means you 
+    do not have to subclass from WMServlet. In this case, you instantiate
+    and maintain your own copy of the WebMacro master class. WebMacro
+    is provided with an example called "Standalone.java" demonstrating
+    how to use this technique. 
+    <p> 
+    In either case, you must install your servlet in your servlets 
+    directory and configure your servlet runner to serve it.
     <p>
-    You will probably prefer the simpler method, of subclassing 
-    from org.webmacro.servlet.WMServlet, with its simpler configuration.
-    Reactor is a subclass of WMServlet, so there is no real difference
-    between these two approaches.
-    
 
 <li>Edit the WebmMacro.properties configuration file. It specifies
     some things like the directory where templates are stored--if you
     do not se this, WebMacro won't be able to return anything at all 
     since it needs to find its templates to write data.
     <p>
+    The most important thing you must specify in WebMacro.properties 
+    is the TemplatePath. The default value probably won't work for 
+    your system. 
+    <p>
+    For production use, and for performance testing, you also probably
+    want to turn on template caching. Leave it turned off during 
+    development so that you can conveniently edit your templates.
 </ul>
 
 <h3><font color="green">Writing Your Application</font></h3>
 <ul>
 
-<li>Write the core of your application in Java. This means implementing 
-    the <b>org.webmacro.servlet.Handler</b> interface, or else subclassing
-    from <b>org.webmacro.servlet.WMServlet</b>.
+<li>Write the core of your application in Java. This means subclassing 
+    from org.webmacro.WMServlet, or else making use of the WebMacro 
+    interface and managing things yourself. 
     <p>
-    With the Handler approach:
-    <ul>
-    <li><i>String toString()</i> must return the same name you registered in the 
-        servlet.properties file--if your application was called "list" 
-        there, then toString() must return the word "list".
-    <li><i>Template accept(WebContext)</i> is the primary method you want to implement. 
-         Each connection to the server results in a call to your Handler's
-         accept method. 
-    </ul>
-
-    When WebMacro calls your Handler.accept() method or WMServlet.handle()
-    method it will pass you something called a <i>WebContext</i>.
-    This is basically a big Map that you can put whatever you want
-    into. The WebContext object also has a variety of helper objects
-    within it that you can use to query things about the state of
-    your application.
+    Subclass from WMServlet and implement the handle() method. You may 
+    also wish to implement the start() and stop() methods to handle 
+    initialization and shutdown of your servlet. 
     <p>
-    <b>The WebContext object is what you share with the Template.</b>
+    Your handle method is passed an object called a WebContext. A new 
+    Context is created for every request, and contains all of the state 
+    required to handle the current request. Your WebContext contains 
+    instances of HttpServletRequest and HttpServletResponse which you 
+    can access as required. 
+    <p> 
+    Implement your processing code as if you were writing a standalone 
+    Java application--with no HTML cluttering up your code. Place
+    all output objects in the Context using Context.put().
     <p>
-    Any variable that you put into the WebContext is available as a 
-    local variable to the template script. The WebContext is a JDK
-    1.2 style Map.  (it will actually be a subclass of java.util.Map
-    once JDK 1.2 is out).  <p> Your accept() method returns a
-    Template object. You can get these out of a TemplateStore. It
-    is the responsibility fo the accept() method to decide which
-    Template will be used to generate the HTML that is returned to
-    the browser.
+    Any object that you put into the WebContext is available as a 
+    local variable to the template script. WebMacro uses introspection
+    to analyze these objects and make their properties available as 
+    variables in the template. 
     <p>
-    You choose what view you will send back to the user by choosing which 
-    template to return. It is your responsibility to ensure that you have
-    populated the WebContext with all of the information the Template will
-    require.
+    Next you need to select a view to display to your user. Decide on a 
+    template you wish to return, and load it using the getTemplate() 
+    method. In WMServlet you simply return that template object; in the
+    standalone approach you will need to call its template.write() method
+    yourself to return output to the browser. 
+    <p> 
+    WebMacro takes care of everything else.
     <p>
-
 <li><b>Property Introspection</b>: Templates use "Propety Introspection" to
      access the data you put into the WebContext. You should understand what
      that means.
