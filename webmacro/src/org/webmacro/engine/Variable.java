@@ -149,7 +149,7 @@ abstract class Variable implements Macro
      * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   final public void write(Writer out, Context context) 
+   final public void write(FastWriter out, Context context) 
        throws ContextException, IOException
    {
       try {

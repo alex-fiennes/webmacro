@@ -70,7 +70,7 @@ class List implements Macro
       _content = content;
    }
 
-   public void write(Writer out, Context context)
+   public void write(FastWriter out, Context context)
       throws ContextException, IOException
    {
       out.write(evaluate(context).toString());

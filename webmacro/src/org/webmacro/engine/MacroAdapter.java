@@ -2,6 +2,7 @@
 package org.webmacro.engine;
 import java.io.*;
 import org.webmacro.*;
+import org.webmacro.util.*;
 
 /**
   * Looks like a Macro, but really it's not. Wrap any object as
@@ -36,7 +37,7 @@ final public class MacroAdapter implements Macro
    /**
      * Just calls toString() and writes that, context is ignored.
      */
-   public final void write(Writer out, Context context) 
+   public final void write(FastWriter out, Context context) 
       throws IOException
    {
       out.write(_self.toString());
@@ -81,13 +82,16 @@ final public class MacroAdapter implements Macro
 final class StringMacroAdapter implements Macro
 {
 
-   private char[] _self;
+   private byte[] _self;
    private String _cache = null; // assume this will not be used most times
 
    public StringMacroAdapter(String wrapMe) 
    {
-      _self = new char[wrapMe.length()];
-      wrapMe.getChars(0, _self.length, _self, 0);
+      try {
+         _self = wrapMe.getBytes("UTF8");
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 
    public final String toString() {
@@ -107,7 +111,7 @@ final class StringMacroAdapter implements Macro
    /**
      * Just calls toString() and writes that, context is ignored.
      */
-   public final void write(Writer out, Context context) 
+   public final void write(FastWriter out, Context context) 
       throws IOException
    {
       out.write(_self);

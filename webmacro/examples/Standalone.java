@@ -139,7 +139,7 @@ public class Standalone extends HttpServlet
             Template t = _wm.getTemplate("standalone.wm");
 
             // write the template to the output, using our context
-            t.write(resp.getWriter(), c);
+            t.write(new FastWriter(resp.getOutputStream(), "UTF8"), c);
 
          } catch (org.webmacro.NotFoundException e) {
          out.write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");

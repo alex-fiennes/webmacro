@@ -127,7 +127,7 @@ public class StreamTemplate extends WMTemplate
                new InputStreamReader(System.in));
          t1.parse();
 
-         Writer w = new OutputStreamWriter(System.out);
+         FastWriter w = new FastWriter(System.out, "UTF8");
 
          System.out.println("*** RESULT ***");
          t1.write(w,context);

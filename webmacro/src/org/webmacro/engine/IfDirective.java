@@ -118,9 +118,11 @@ final class IfDirective implements Directive
       throws ContextException
    {
       try {
-         StringWriter sw = new SizedStringWriter(512);
-         write(sw,context);
-         return sw.toString();
+         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
+         FastWriter fw = new FastWriter(os, "UTF8");
+         write(fw,context);
+         fw.flush();
+         return os.toString("UTF8");
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error(
@@ -135,7 +137,7 @@ final class IfDirective implements Directive
      * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(Writer out, Context context) 
+   public void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
 

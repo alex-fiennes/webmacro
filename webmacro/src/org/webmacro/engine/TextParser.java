@@ -37,11 +37,13 @@ public class TextParser implements Parser
       BlockBuilder bb = new BlockBuilder(); 
       char buf[] = new char[512];
       int num;
-      StringWriter sw = new StringWriter();
+      ByteArrayOutputStream os = new ByteArrayOutputStream(256);
+      FastWriter fw = new FastWriter(os, "UTF8");
       while ((num = in.read(buf)) != -1) {
-         sw.write(buf,0,num);
+         fw.write(buf,0,num);
       }
-      bb.addElement(sw.toString());
+      fw.flush();
+      bb.addElement(os.toString("UTF8"));
       in.close();
       return bb;
    } 

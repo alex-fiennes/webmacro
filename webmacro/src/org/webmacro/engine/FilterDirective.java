@@ -104,7 +104,7 @@ final class FilterDirective implements Directive
      * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   public final void write(Writer out, Context context) 
+   public final void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
       // do nothing

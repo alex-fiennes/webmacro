@@ -14,7 +14,7 @@ final class FilterMacro implements Macro
       _f = f;
    }
 
-   public void write(Writer out, Context context) 
+   public void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
       context.push(_m.evaluate(context));      

@@ -183,13 +183,15 @@ abstract public class WMTemplate implements Template
      */
    public final Object evaluate(Context data)
    {
-      StringWriter sw = new SizedStringWriter(4096); // 4 kilobytes arbitrary
       try {
-         write(sw,data);
-         return sw.toString();
+         ByteArrayOutputStream os = new ByteArrayOutputStream(512); 
+         FastWriter fw = new FastWriter(os, "UTF8");
+         fw.flush();
+         write(fw,data);
+         return os.toString("UTF8");
       } catch (IOException e) {
          _log.exception(e);
-         _log.error("Template: Could not write to StringWriter!");
+         _log.error("Template: Could not write to ByteArrayOutputStream!");
          return null;
       }
    }
@@ -206,7 +208,7 @@ abstract public class WMTemplate implements Template
      * @exception IOException if there is a problem writing to the Writer
      * @return whether the operation was a success
      */
-   public final void write(Writer out, Context data) 
+   public final void write(FastWriter out, Context data) 
       throws IOException
    {
 

@@ -91,9 +91,11 @@ class ParseDirective implements Directive
       throws ContextException
    {
       try {
-         StringWriter sw = new SizedStringWriter(512);
-         write(sw,context);
-         return sw.toString();
+         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
+         FastWriter fw = new FastWriter(os, "UTF8");
+         write(fw,context);
+         fw.flush();
+         return os.toString("UTF8");
       } catch(IOException e) {
          Engine.log.exception(e);
          Engine.log.warning(
@@ -111,7 +113,7 @@ class ParseDirective implements Directive
      * @exception IOException if an error occurred with out
      * @exception ContextException if required data was missing
      */
-   final public void write(Writer out, Context context) 
+   final public void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
 

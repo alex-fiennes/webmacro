@@ -38,7 +38,7 @@ public interface Macro extends org.webmacro.util.PropertyReference
      * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(Writer out, Context context) 
+   public void write(FastWriter out, Context context) 
       throws ContextException, IOException;
 
    /**

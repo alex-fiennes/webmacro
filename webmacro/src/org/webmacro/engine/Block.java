@@ -48,7 +48,7 @@ final public class Block implements Macro
      * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(final Writer out, final Context context) 
+   public void write(final FastWriter out, final Context context) 
       throws ContextException, IOException
    {
       int len = _content.length;
@@ -65,10 +65,11 @@ final public class Block implements Macro
    public Object evaluate(Context context) throws ContextException
    {
       try {
-         SizedStringWriter sw = 
-            new SizedStringWriter(_content.length * 16 + 256);
-         write(sw,context);
-         return sw.toString();
+         ByteArrayOutputStream os = new ByteArrayOutputStream(_content.length * 16 + 256);
+         FastWriter fw = new FastWriter(os, "UTF8");
+         write(fw,context);
+         fw.flush();
+         return os.toString("UTF8");
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error("StringWriter through an IOException!");

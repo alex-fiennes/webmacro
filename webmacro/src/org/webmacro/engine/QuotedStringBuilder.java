@@ -138,7 +138,7 @@ final class QuotedString extends Vector implements Macro
      * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   final public void write(Writer out, Context data) 
+   final public void write(FastWriter out, Context data) 
 	throws ContextException, IOException
    {
       out.write(evaluate(data).toString()); // evaluate never returns null

@@ -49,7 +49,7 @@ abstract public class Condition
    /**
      * Evaluate the condition and write it out
      */
-   final public void write(Writer out, Context context) 
+   final public void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
       out.write(evaluate(context).toString());

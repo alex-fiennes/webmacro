@@ -131,7 +131,7 @@ class IncludeDirective implements Directive
      * @exception IOException if an error occurred with out
      * @exception ContextException if required data was missing
      */
-   final public void write(Writer out, Context context) 
+   final public void write(FastWriter out, Context context) 
       throws ContextException, IOException
    {
       out.write((String) evaluate(context));

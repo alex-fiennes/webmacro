@@ -335,9 +335,7 @@ public class Context implements Cloneable {
    public final Object getProperty(final Object[] names) 
       throws PropertyException, ContextException
    {
-      if (names.length == 0) {
-         return null;
-      } else if (_bean == null) {
+      if (_bean == null) {
          Object ret = getLocal(names);
          if (ret == null) {
             ret = getTool(names);

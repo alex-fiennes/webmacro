@@ -221,7 +221,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (_problem != null) {
             try { 
                resp.setContentType("text/html");
-               Writer out = resp.getWriter();
+               FastWriter out = new FastWriter(resp.getOutputStream(), "UTF8");
                out.write("<html><head><title>WebMacro Error</title></head>");
                out.write("<body><h1><font color=\"red\">WebMacro Error: ");
                out.write("</font></h1><pre>");
@@ -373,17 +373,15 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    {
       Writer out = null;
       try {
-         out = c.getResponse().getWriter();
-         QueueWriter qw = (QueueWriter) _writerCache.pop();
-         if (qw == null) {
-            qw = new QueueWriter(1024);
+         FastWriter fw = (FastWriter) _writerCache.pop();
+         if (fw == null) {
+            fw = new FastWriter(c.getResponse().getOutputStream(), "UTF8");
+         } else {
+            fw.recycle(c.getResponse().getOutputStream(), "UTF8");
          }
-         tmpl.write(qw, c);
-         c.getResponse().setContentLength(qw.size());
-         qw.writeTo(out);
-         out.flush();
-         qw.reset();
-         _writerCache.push(qw);
+         tmpl.write(fw, c);
+         fw.close();
+         _writerCache.push(fw);
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {
