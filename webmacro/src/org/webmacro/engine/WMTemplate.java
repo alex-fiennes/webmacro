@@ -51,12 +51,12 @@ abstract public class WMTemplate implements Template
    /**
      * The resource broker used to resolve things in this template
      */
-   final private Broker _broker;
+   final protected Broker _broker;
 
    /**
      * Where we log our errors
      */
-   final private Log _log;
+   final protected Log _log;
 
    /**
      * What this template contains is a top level block
