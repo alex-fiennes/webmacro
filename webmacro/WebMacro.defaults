@@ -196,13 +196,15 @@ Directives.attribute:  org.webmacro.directive.AttributeDirective
 # SessionTool creates a $Session variable that resovles to the 
 # HttpSession of the current request.
 
-WebContextTools:  org.webmacro.servlet.CGITool \
-                  org.webmacro.servlet.FormTool \
-                  org.webmacro.servlet.FormListTool \
-                  org.webmacro.servlet.CookieTool \
-                  org.webmacro.servlet.ResponseTool \
-                  org.webmacro.servlet.RequestTool \
-                  org.webmacro.servlet.SessionTool
+WebContextTools: 
+
+WebContextTools.CGI:  org.webmacro.servlet.CGITool 
+WebContextTools.Form: org.webmacro.servlet.FormTool 
+WebContextTools.FormList: org.webmacro.servlet.FormListTool 
+WebContextTools.Cookie: org.webmacro.servlet.CookieTool 
+WebContextTools.Response: org.webmacro.servlet.ResponseTool 
+WebContextTools.Request: org.webmacro.servlet.RequestTool 
+WebContextTools.Session: org.webmacro.servlet.SessionTool
 
 ContextTools:
 

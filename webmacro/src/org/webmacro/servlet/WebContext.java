@@ -82,13 +82,7 @@ public class WebContext extends Context
    public WebContext(final Broker broker) 
    {
       super(broker);
-      _log = broker.getLog("webcon", "WebContext lifecycle information");
-      try {
-         String tools = (String) broker.get("config","WebContextTools");
-         loadTools(tools);
-      } catch (ResourceException ne) {
-         _log.warning("could not load WebContextTools from config", ne);
-      }
+      loadTools("WebContextTools");
    }
 
 

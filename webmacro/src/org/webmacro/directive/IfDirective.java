@@ -187,8 +187,8 @@ class IfDirective extends Directive {
         b = Expression.isTrue(conditions[i].evaluate(context));
       }
       catch (Exception e) {
-        String warning = "#if: Error evaluating condition";
-        context.getLog("engine").warning(warning, e);
+        String warning = "#if: Error evaluating condition: " + e;
+        context.getLog("engine").warning(warning);
         writeWarning(warning, context, out);
       }
       if (b) {

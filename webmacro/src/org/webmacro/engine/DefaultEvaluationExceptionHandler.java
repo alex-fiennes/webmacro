@@ -86,27 +86,39 @@ public class DefaultEvaluationExceptionHandler
                         Context context, 
                         Exception problem) 
    throws PropertyException {
-     if (_log != null)
-       _log.warning("Error expanding variable " + variable.getVariableName()
-                    + ": " + problem, problem);
       if (problem instanceof PropertyException.NoSuchVariableException) {
+        if (_log != null)
+          _log.warning("Error expanding variable " + variable.getVariableName()
+                       + ": " + problem);
          return errorString("Attempt to access nonexistent variable $" 
                             + variable.getVariableName());
       }
       else if (problem instanceof PropertyException.NullValueException) {
+        if (_log != null)
+          _log.warning("Error expanding variable " + variable.getVariableName()
+                       + ": " + problem);
          return errorString("Attempt to dereference null value $" 
                             + variable.getVariableName());
       }
       else if (problem instanceof 
                  PropertyException.NullToStringException) {
+        if (_log != null)
+          _log.warning("Error expanding variable " + variable.getVariableName()
+                       + ": " + problem);
          return errorString("Variable $" 
                             + variable.getVariableName()
                             + ".toString() returns null");
       }
       else if (problem instanceof PropertyException) {
+        if (_log != null)
+          _log.warning("Error expanding variable " + variable.getVariableName()
+                       + ": " + problem, problem);
          throw (PropertyException) problem;
       }
       else {
+        if (_log != null)
+          _log.warning("Error expanding variable " + variable.getVariableName()
+                       + ": " + problem, problem);
          throw new PropertyException("Error evaluating variable " 
                                      + variable.getVariableName() + ": " 
                                      + problem, problem);

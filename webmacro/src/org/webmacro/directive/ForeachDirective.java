@@ -133,7 +133,7 @@ public class ForeachDirective extends Directive {
       iter = context.getBroker()._propertyOperators.getIterator(l);
     } catch (Exception e) {
       String warning = "#foreach: list argument is not a list: " + l;
-      context.getLog("engine").warning(warning, e);
+      context.getLog("engine").warning(warning + "; " + e);
       writeWarning(warning, context, out);
       return;
     }

@@ -24,6 +24,7 @@
 package org.webmacro;
 
 import java.util.*;
+import java.lang.reflect.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
 import org.webmacro.engine.EvaluationExceptionHandler;
@@ -49,10 +50,9 @@ import org.webmacro.engine.EvaluationExceptionHandler;
   */
 public class Context implements Map, Cloneable
 {
-   final private Broker _broker;
-   final private ComponentMap _tools;
-   final private Log _log;
-
+   private Broker _broker;
+   private HashMap _tools = new HashMap();
+   private Log _log;
 
    private HashMap _initializedTools = new HashMap();
    private EvaluationExceptionHandler _eeHandler;
@@ -67,12 +67,20 @@ public class Context implements Map, Cloneable
       _prof = broker.newProfile();
       if (_prof != null) { startTiming("Context life"); }
       if (_prof != null) { startTiming("Context init"); }
-         _broker = broker;
-         _log = broker.getLog("context", "property and evaluation errors");
-         Settings config = broker.getSettings();
-         _tools = new ComponentMap(config);
-         loadTools(broker.getSetting("ContextTools"));
+      _broker = broker;
+      _log = broker.getLog("context", "property and evaluation errors");
+      loadTools("ContextTools");
       if (_prof != null) { stopTiming(); }
+   }
+
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            addTool(settingKey, settingValue, "Tool");
+         } catch (Exception e) {
+            _log.error("Provider (" + settingValue + ") failed to load", e);
+         }
+      }
    }
 
    /**
@@ -80,12 +88,8 @@ public class Context implements Map, Cloneable
      * the ComponentMap class for a description of the format of
      * this string.
      */
-   final protected void loadTools(String tools) {
-      _tools.load(tools, "Tool");
-      Iterator i = _tools.keys();
-      while (i.hasNext()) {
-         _log.info("Registered ContextTool:" + i.next());
-      }
+   final protected void loadTools(String keyName) {
+      _broker.getSettings().processListSetting(keyName, new SettingHandler());
    }
 
    /**
@@ -132,6 +136,7 @@ public class Context implements Map, Cloneable
      * but they must call super.clear() if they do so.
      */
    public void clear() {
+      _variables.clear();
       Iterator i = _initializedTools.entrySet().iterator();
       while (i.hasNext()) {
          Map.Entry m = (Map.Entry) i.next();
@@ -438,6 +443,87 @@ public class Context implements Map, Cloneable
    final public Collection values() {
       return _variables.values();
    }   
+
+   // Adding new tools to the context
+   private static final Class[] _ctorArgs1 = { 
+      java.lang.String.class, 
+      org.webmacro.util.Settings.class 
+   };
+   private static final Class[] _ctorArgs2 = { java.lang.String.class };
+
+   private void addTool(String key, String className, String suffix) {
+
+      Class c;
+      try {
+         c = Class.forName(className);
+      } catch (ClassNotFoundException e) {
+         _log.warning("Context: Could not locate class for context tool " 
+                      + className);
+         return;
+      }
+      if (key == null || key.equals("")) {
+         key = className;
+         int start = 0;
+         int end = key.length();
+         int lastDot = key.lastIndexOf('.');
+         if (lastDot != -1) {
+            start = lastDot + 1;
+         }
+         if (key.endsWith(suffix)) {
+            end -= suffix.length();
+         }
+         key = key.substring(start, end);
+      }
+
+      Object instance = null;
+      StringBuffer log = null;
+      try {
+         Constructor ctor = c.getConstructor(_ctorArgs1);
+         Object[] args = new Object[2];
+         args[0] = key;
+         args[1] = new SubSettings(_broker.getSettings(), key);
+         instance = ctor.newInstance(args);
+      } catch (Exception e) { 
+         log = new StringBuffer();
+         log.append("Error loading component key=");
+         log.append(key);
+         log.append(" class=");
+         log.append(c.toString());
+         log.append("\n");
+         log.append("Trying 2-argument constructor: ");
+         log.append(e.toString()); 
+         log.append("\n");
+      }
+
+      if (instance == null) {
+         try {
+            Constructor ctor = c.getConstructor(_ctorArgs2);
+            Object[] args = new Object[1];
+            args[0] = key;
+            instance = ctor.newInstance(args);
+         } catch (Exception e) { 
+            log.append("Trying 1-argument constructor: ");
+            log.append(e.toString());
+            log.append("\n");
+         }
+      }
+
+      if (instance == null) {
+         try {
+            instance = c.newInstance();
+         } catch (Exception e) {
+            log.append("Trying 0-argument constructor: ");
+            log.append(e.toString()); 
+            log.append("\n");
+            _log.warning(log.toString());
+            return;
+         }
+      }
+      _tools.put(key, instance);
+      _log.info("Registered ContextTool " + key);
+   }
+
+
 
    //////////////////////////////////////////////////////////////
 
