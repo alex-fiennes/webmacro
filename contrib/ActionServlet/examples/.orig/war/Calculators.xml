@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
+
+<application>
+   <templates>
+      <template name="Calculators.wm" is-new-session="true">
+         <output-variable name="display1" component="Calculator1" value="getDisplay()"/>
+         <output-variable name="display2" component="Calculator2" value="getDisplay()"/>
+      </template>
+   </templates>
+
+   <components>
+      <component name="Calculator1" class="Calculator" persistence="session">
+         <action form="1ST" name="0" method="digit(int action)"/>
+         <action form="1ST" name="1" method="digit(int action)"/>
+         <action form="1ST" name="2" method="digit(int action)"/>
+         <action form="1ST" name="3" method="digit(int action)"/>
+         <action form="1ST" name="4" method="digit(int action)"/>
+         <action form="1ST" name="5" method="digit(int action)"/>
+         <action form="1ST" name="6" method="digit(int action)"/>
+         <action form="1ST" name="7" method="digit(int action)"/>
+         <action form="1ST" name="8" method="digit(int action)"/>
+         <action form="1ST" name="9" method="digit(int action)"/>
+
+         <action form="1ST" name="." method="point()"/>
+         <action form="1ST" name="+/-" method="plusminus()"/>
+
+         <action form="1ST" name="+" method="operation(char action)"/>
+         <action form="1ST" name="-" method="operation(char action)"/>
+         <action form="1ST" name="*" method="operation(char action)"/>
+         <action form="1ST" name="/" method="operation(char action)"/>
+         <action form="1ST" name="=" method="operation(char action)"/>
+
+         <action form="1ST" name="CE" method="ce()"/>
+         <action form="1ST" name="C" method="c()"/>
+
+         <on-return value="OK" show-template="Calculators.wm"/>
+         <on-return value="ERROR" show-template="Calculators.wm"/>
+      </component>
+
+      <component name="Calculator2" class="Calculator2" persistence="session">
+         <action form="2ND" name="0" method="digit(int action)"/>
+         <action form="2ND" name="1" method="digit(int action)"/>
+         <action form="2ND" name="2" method="digit(int action)"/>
+         <action form="2ND" name="3" method="digit(int action)"/>
+         <action form="2ND" name="4" method="digit(int action)"/>
+         <action form="2ND" name="5" method="digit(int action)"/>
+         <action form="2ND" name="6" method="digit(int action)"/>
+         <action form="2ND" name="7" method="digit(int action)"/>
+         <action form="2ND" name="8" method="digit(int action)"/>
+         <action form="2ND" name="9" method="digit(int action)"/>
+
+         <action form="2ND" name="." method="point()"/>
+         <action form="2ND" name="+/-" method="plusminus()"/>
+
+         <action form="2ND" name="+" method="operation(char action)"/>
+         <action form="2ND" name="-" method="operation(char action)"/>
+         <action form="2ND" name="*" method="operation(char action)"/>
+         <action form="2ND" name="/" method="operation(char action)"/>
+         <action form="2ND" name="=" method="operation(char action)"/>
+
+         <action form="2ND" name="CE" method="ce()"/>
+         <action form="2ND" name="C" method="c()"/>
+
+         <action form="2ND" name="sin(x)" method="sin()"/>
+         <action form="2ND" name="cos(x)" method="cos()"/>
+         <action form="2ND" name="sqrt(x)" method="sqrt()"/>
+         <action form="2ND" name="x^y" method="pow()"/>
+
+         <on-return value="OK" show-template="Calculators.wm"/>
+         <on-return value="ERROR" show-template="Calculators.wm"/>
+      </component>
+   </components>
+</application>
