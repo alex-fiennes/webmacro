@@ -46,8 +46,6 @@ import javax.servlet.http.*;
   */
 public class WM implements WebMacro
 {
-
-   final private static Map _brokers = new HashMap();
    final private Context _context;
    private WebContext _webContext = null;
 
