@@ -25,7 +25,11 @@ package org.webmacro;
   * able to initialize itself. 
   */
 public class InitException extends WebMacroException {
-   public InitException(String reason) {
-      super(reason);
-   }
+  public InitException(String reason) {
+    super(reason);
+  }
+  
+  public InitException(String reason, Exception e) {
+    super(reason, e);
+  }
 }
