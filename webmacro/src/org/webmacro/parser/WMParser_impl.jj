@@ -628,42 +628,44 @@ Object Term() : {
 }
 
 Object Factor() : {
-  Object e1, e2=null;
-  Token op=null;
+  Object e, e2;
+  Token op;
 }
 {
-  e1=Term() 
-  [ LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) 
-                 [<WS>] e2=Factor() ]
-  { 
-    if (op == null)
-      return e1;
-    else if (op.kind == OP_MULT) 
-      return new Expression.MultiplyBuilder(e1, e2);
-    else if (op.kind == OP_DIV) 
-      return new Expression.DivideBuilder(e1, e2);
-    else 
-      throw new ParseException("internal parser error in Factor()");
-  }
+  e=Term() 
+  (
+    LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) [<WS>] e2=Term() 
+    { 
+      if (op.kind == OP_MULT) 
+        e = new Expression.MultiplyBuilder(e, e2);
+      else if (op.kind == OP_DIV) 
+        e = new Expression.DivideBuilder(e, e2);
+      else 
+        throw new ParseException("internal parser error in Factor()");
+    }
+  )*
+  { return e; }
 }
 
 Object AExpression() : {
-  Object e1, e2=null;
-  Token op=null;
+  Object e, e2;
+  Token op;
 }
 {
-  e1=Factor() 
-  [ LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) 
-                 [<WS>] e2=AExpression() ] 
-  { 
-    if (op == null)
-      return e1;
-    else if (op.kind == OP_PLUS) 
-      return new Expression.AddBuilder(e1, e2);
-    else if (op.kind == OP_MINUS) 
-      return new Expression.SubtractBuilder(e1, e2);
-    else 
-      throw new ParseException("internal parser error in AExpression()");
+  e=Factor() 
+  ( 
+    LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) [<WS>] e2=Factor() 
+    { 
+      if (op.kind == OP_PLUS) 
+        e = new Expression.AddBuilder(e, e2);
+      else if (op.kind == OP_MINUS) 
+        e = new Expression.SubtractBuilder(e, e2);
+      else 
+        throw new ParseException("internal parser error in AExpression()");
+    }
+  )*
+  {
+    return e;
   }
 }
 
@@ -705,31 +707,31 @@ Object CExpression() : {
 }
 
 Object AndExpression() : {
-  Object e1, e2=null;
+  Object e, e2;
 }
 {
-  e1=CExpression() 
-  [ LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=AndExpression() ]
-  { 
-    if (e2 == null) 
-      return e1;
-    else 
-      return new Expression.AndBuilder(e1, e2);
-  }
+  e=CExpression() 
+  (
+    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression() 
+    { 
+      e = new Expression.AndBuilder(e, e2);
+    }
+  )*
+  { return e; }
 }
 
 Object OrExpression() : {
-  Object e1, e2=null;
+  Object e, e2;
 }
 {
-  e1=AndExpression() 
-  [ LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=OrExpression() ]
-  { 
-    if (e2 == null) 
-      return e1;
-    else 
-      return new Expression.OrBuilder(e1, e2);
-  }
+  e=AndExpression() 
+  (
+    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression() 
+    { 
+      e = new Expression.OrBuilder(e, e2);
+    }
+  )*
+  { return e; }
 }
 
 Object Expression() : {
