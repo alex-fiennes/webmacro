@@ -52,12 +52,6 @@ abstract public class CachingProvider implements Provider,
    }
    
    /**
-     * Load an object from permanent storage (or construct it) on
-     * demand.  */
-   abstract public TimedReference load(String query)
-      throws NotFoundException; 
-
-   /**
      * If you override this method be sure and call super.init(...)
      */
    public void init(Broker b, Settings config) throws InitException
