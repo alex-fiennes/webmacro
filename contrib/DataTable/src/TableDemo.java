@@ -18,15 +18,15 @@ public class TableDemo extends WMServlet {
     private Log _log = null;
     private Connection _conn = null;
     
-    final static public String jdbcUrl = "jdbc:protomatter:pool:hyperPool";
+    //final static public String jdbcUrl = "jdbc:protomatter:pool:hyperPool";
     
     public Template handle(WebContext context) throws HandlerException {
         HttpSession sess = null;
         try {
-            String tplName = "TableDemo.wm"; //getRequestedTemplateName(context);
+            String tplName = "TableDemo.wm";
             Template t = getTemplate(tplName);
             
-            String sql = "SELECT * FROM address"; //FROM coffees";
+            String sql = "SELECT * FROM address";
             String cmd = context.getForm("cmd");
             String curr = context.getForm("curr");
             String pgsz = context.getForm("pageSize");
@@ -176,18 +176,23 @@ public class TableDemo extends WMServlet {
     
     public Connection getConnection() throws Exception {
         if (_conn == null){
+            // load the hsqldb JDBC driver
             Class.forName("org.hsqldb.jdbcDriver");
+            // find the database file
             java.net.URL dburl = getClass().getResource("/tabledemo.data");
             String dbfile = dburl.getFile();
+            // strip the extension off the file name
             dbfile = dbfile.substring(0, dbfile.lastIndexOf('.'));
-            System.out.println("dbfile=" + dbfile);
+            //System.out.println("dbfile=" + dbfile);
             //_conn = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost", "sa", "");
+            // connect to the hsqldb in embedded mode
             _conn = DriverManager.getConnection("jdbc:hsqldb:" + dbfile, "sa", "");
         }
         return _conn;
     }
     
     static public void releaseConnection(Connection conn){
+        // do nothing ... connection pool removed
         //try { conn.close(); } catch (Exception e){}
     }
     
