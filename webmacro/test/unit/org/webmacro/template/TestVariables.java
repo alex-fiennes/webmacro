@@ -6,7 +6,6 @@ import org.webmacro.*;
 import org.webmacro.util.*;
 
 import junit.framework.*;
-import org.apache.regexp.RE;
 
 public class TestVariables extends TemplateTestCase {
 
@@ -43,11 +42,17 @@ public class TestVariables extends TemplateTestCase {
 
   public void testDefaultEEHExpand() throws Exception {
     String result;
+    Exception caught = null;
 
-    result = executeStringTemplate("$TestObject");
-    assert(result.equals("TestObject"));
-    result = executeStringTemplate("");
-    assert(result.equals(""));
+    assertStringTemplateEquals("", "");
+    assertStringTemplateEquals("$TestObject", "TestObject");
+    assertStringTemplateEquals("$TestObject.voidMethod()", "");
+    assertStringTemplateThrows("$TestObject.noSuchMethod()", 
+                               PropertyException.NoSuchMethodException.class);
+  }
+
+  public void testDefaultEEHEval() throws Exception {
+    String result;
   }
 }
 
