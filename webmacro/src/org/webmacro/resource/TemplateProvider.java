@@ -269,11 +269,3 @@ final public class TemplateProvider implements ResourceProvider
 }
 
 
-final class TemplateFilter implements java.io.FilenameFilter
-{
-   public final boolean accept(File dir, String name) {
-      return name.endsWith(".wm");
-   }
-}
-
-

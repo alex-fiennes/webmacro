@@ -46,7 +46,7 @@ class IncludeDirective implements Directive
    /**
      * The filename we want to include--may be a macro
      */
-   final private Object _fileName;
+   final private Macro _fileName;
 
    /**
      * Create an include directive. Note that the supplied variable
@@ -56,23 +56,49 @@ class IncludeDirective implements Directive
      * <p>
      * @param fileName an object representing the file to read in
      */
-   IncludeDirective(Object fileName) {
+   IncludeDirective(Macro fileName) {
       _fileName = fileName;
    }
 
-
-   public static Object build(BuildContext rc, 
-         Object target)
+   static private String getFile(Context c, String name) 
+      throws GetFileException
    {
-      IncludeDirective id = new IncludeDirective(target);
-      if (! (target instanceof Macro)) {
-         try {
-            return (id.evaluate(null));
-         } catch (Exception e) {
-            // try again at runtime
+      String error = null;
+      String result = null;
+      String fileName = null;
+      try {
+         fileName = name.toString();
+         result = 
+            c.getBroker().getValue("url", fileName).toString();
+      } catch (InvalidTypeException it) {
+         error = "No URL provider registered in this broker.";
+      } catch (NotFoundException ne) {
+         error = "Cannot include " + fileName + ": NOT FOUND";
+      }  catch (NullPointerException ne) {
+         ne.printStackTrace();
+         error = "Could not load target " + name + ": NULL VALUE";
+      }
+      if (error != null) {
+         throw new GetFileException("#include failed: " + error);
+      }
+      return result;
+   }
+
+   public static Object build(BuildContext rc, Object target)
+      throws BuildException
+   {
+      if (target instanceof Macro) {
+         return new IncludeDirective((Macro) target);
+      }  else {
+         if (target == null) {
+            throw new BuildException("Cannot #include null filename");
          }
-      } 
-      return id;
+         try {
+            return getFile(rc,target.toString());
+         } catch(GetFileException e) {
+            throw new BuildException(e.getMessage());
+         }
+      }
    }
 
    /**
@@ -85,23 +111,16 @@ class IncludeDirective implements Directive
       throws InvalidContextException
    {
 
-      Object fname = null;
+      Object fname = _fileName.evaluate(context);
+      if (fname == null) {
+         throw new InvalidContextException(
+               "#include could not resolve filename: " +
+               "target argument resolved to a null.");
+      }
       try {
-         fname = (_fileName instanceof Macro) ?
-            ((Macro) _fileName).evaluate(context) : _fileName;
-
-         if (fname == null) {
-            throw new InvalidContextException("Attempt to include " 
-                  + _fileName + " which evaluates to null");
-         }
-         return context.getBroker().getValue("url",fname.toString());
-      } catch (NotFoundException e) {
-         throw new InvalidContextException("Attempt to include " 
-               + _fileName + " which evaluates to the non-existant " + fname 
-               + ": " + e); 
-      } catch (InvalidTypeException e) {
-         throw new InvalidContextException("Attempt to load URLs failed "
-               + " broker does not have a URL provider:" + e);
+         return getFile(context, fname.toString());
+      } catch (GetFileException e) {
+         throw new InvalidContextException(e.getMessage());
       }
    }  
 
@@ -120,3 +139,9 @@ class IncludeDirective implements Directive
    }
 }
 
+class GetFileException extends Exception
+{
+   GetFileException(String msg) {
+      super(msg);
+   }
+}

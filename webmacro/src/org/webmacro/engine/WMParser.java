@@ -42,6 +42,7 @@ public class WMParser implements Parser
 
    private final Broker _broker;
    private final boolean _cstyle;
+   private Hashtable _tools;
 
    final private static Builder END_BLOCK = new NullBuilder();
 
