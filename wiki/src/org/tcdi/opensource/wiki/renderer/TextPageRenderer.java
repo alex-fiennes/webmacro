@@ -53,112 +53,113 @@ import org.tcdi.opensource.wiki.renderer.*;
  *
  * @author  e_ridge
  */
-public class TextPageRenderer implements WikiPageRenderer {
-
+public class TextPageRenderer extends WikiPageRenderer {
     private WikiSystem _wiki;
- 
-    /**
-     * Initialize this WikiPageRenderer for use with the specified
-     * WikiSystem.  It should also use the specified URLRenderer for
-     * rendering URL's contained within a page
-     */
-    public void init(WikiSystem wiki) {
+
+    public TextPageRenderer (WikiURLRenderer urlRenderer, WikiSystem wiki) {
+        super (urlRenderer);
         _wiki = wiki;
     }
     
-    
-    /**
-     * Render the specified WikiPage and return the rendered results
-     * as a String
-     */
-    public String render(WikiPage page) throws RenderException {
-        if (page == null)
-            throw new RenderException ("Page is null");
-        
-        WikiData[] data = page.getData ();
-        StringBuffer sb = new StringBuffer (4096);
-        String title = page.getTitle ();
-        for (int x=0; x<data.length; x++) {
-            sb.append (renderWikiData (data[x], title));
-        }
-        
-        return sb.toString ();
+    protected String renderUnknown(WikiData data) {
+        return "";
     }
     
-    /**
-     * Render the specified WikiPage to the specified output stream.<p>
-     *
-     * This method should <b>not</b> close the output stream.
-     */
-    public void render(WikiPage page, OutputStream out) throws IOException, RenderException {
-        out.write (render (page).getBytes());
+    protected String renderEmail(String emailAddress) {
+        return emailAddress;
     }
     
+    /** @deprecated "javadoc" is now a URL type.  */
+    protected String renderJavaDoc(String className) {
+        return className;
+    }
     
-    /**
-     * render a specific WikiData object as a string
-     */
-    private final String renderWikiData(WikiData wikidata, String title) throws RenderException {
-        try {
-            Object obj = wikidata.getData();
-            String data = (obj == null) ? "" : obj.toString();
-            StringBuffer sb = new StringBuffer();
-            int type = wikidata.getType();
-            switch (type) {
-                case WikiDataTypes.PLAIN_TEXT:
-                    sb.append(data);
-                    break;
-                    
-                case WikiDataTypes.PAGE_REFERENCE:
-                        sb.append(data);
-                    break;
-                    
-                case WikiDataTypes.INDENT:
-                    int many = (data != null && data.length() > 0) ? Integer.parseInt(data) : 1;
-                    for (int x=0; x<=many; x++)
-                        sb.append(" ");
-                    break;
-                    
-                case WikiDataTypes.START_NAMED_HEADER:
-                case WikiDataTypes.END_NAMED_HEADER:
-                    break;
-                    
-                case WikiDataTypes.JAVADOC:
-                case WikiDataTypes.IMAGE:
-                case WikiDataTypes.URL:
-                    sb.append (data);
-                    break;
-                    
-                case WikiDataTypes.START_COLOR:
-                case WikiDataTypes.END_COLOR:
+    protected String renderGT() {
+        return ">";
+    }
+    
+    protected String renderLT() {
+        return "<";
+    }
+    
+    /** @deprecated "image" is now a URL type.  */
+    protected String renderImage(String imageLocation) {
+        return imageLocation;
+    }
+    
+    protected String renderQuotedBlock(String text) {
+        return text;
+    }
+    
+    protected String renderIndent(int many) {
+        StringBuffer sb = new StringBuffer (many*5);
+        for (int x=0; x<many; x++)
+            sb.append (" ");
+        
+        return sb.toString ();        
+    }
+    
+    protected String renderHeaderStart(String headerName) {
+        return "";
+    }    
+    
+    protected String renderHeaderEnd(String headerName) {
+        return "";
+    }
 
-                case WikiDataTypes.EMAIL:
-                    sb.append(data);
-                    break;
-                    
-                case WikiDataTypes.QUOTED_BLOCK:
-                    sb.append(org.webmacro.servlet.TextTool.HTMLEncode (data));
-                    break;
-               
-                case WikiDataTypes.SPACE:
-                    sb.append (" ");
-                    break;
-                    
-                case WikiDataTypes.LT:
-                    sb.append ("&lt;");
-                    break;
-                    
-                case WikiDataTypes.GT:
-                    sb.append ("&gt;");
-                    break;
-                    
-                default:
-                    break;
-            }
-            return sb.toString();
-        }
-        catch (Exception e) {
-            throw new RenderException (e.toString());
-        }
+    protected String renderWikiTerm(String term, String pageTitle) {
+        return term;
+    }    
+    
+    protected String renderColorStart(String color) {
+        return "";
     }
- }
+    
+    protected String renderColorEnd() {
+        return "";
+    }
+    
+    protected String renderSpace() {
+        return " ";
+    }
+    
+    protected String renderPlainText(String text) {
+        return text;
+    }
+    
+    protected String renderUnderlineStart() {
+        return "";
+    }
+    
+    protected String renderHorizLine() {
+        return "";
+    }
+    
+    protected String renderItalicEnd() {
+        return "";        
+    }
+    
+    protected String renderUnderlineEnd() {
+        return "";        
+    }
+    
+    protected String renderBoldEnd() {
+        return "";        
+    }
+    
+    protected String renderItalicStart() {
+        return "";        
+    }
+    
+    protected String renderBoldStart() {
+        return "";        
+    }
+    
+    protected String renderLineBreak() {
+        return "";        
+    }
+    
+    protected String renderParagraphBreak() {
+        return "";        
+    }    
+}

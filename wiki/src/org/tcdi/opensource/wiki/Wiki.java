@@ -275,18 +275,10 @@ final public class Wiki implements WikiSystem, QueueListener {
         try { _pageBuilderClass = Class.forName(_properties.getProperty("PageBuilder")); }
         catch (Exception e) { System.err.println ("Cannot load page builder class"); e.printStackTrace ();}
         
-        try {
-            String urlrendererClassname  = _properties.getProperty("URLRenderer");
-            String pagerendererClassname = _properties.getProperty("PageRenderer");
-            
-            // the page renderer
-            _pageRenderer = (WikiPageRenderer) Class.forName(pagerendererClassname).newInstance();
-            _pageRenderer.init(this);
-        } catch (Exception e) {
-            System.err.println ("Cannot create page renderer");
-            e.printStackTrace ();
-        }
+        // the page renderer
+        _pageRenderer = new HTMLPageRenderer (new HTMLURLRenderer (this), this);
         
+        // cache our internal list of page names, for fast lookup
         populatePageNames();
     }
     

@@ -53,18 +53,7 @@ import org.tcdi.opensource.wiki.*;
  * @see com.tcdi.opensource.wiki.renderer.HTMLPageRenderer
  * @author  e_ridge
  */
-public interface WikiPageRenderer {
-    
-    /**
-     * A WikiURLRenderer takes a URL (String) and generates a rendered version 
-     * of it.  PageRenderer's are encouraged to use their own URL Renderer
-     *
-     * @author  e_ridge
-     */
-    public static interface WikiURLRenderer {
-
-        public String render (String url);
-    }    
+public abstract class WikiPageRenderer {
     
     /** 
      * Exception thrown when a WikiPage cannot be rendered
@@ -74,23 +63,179 @@ public interface WikiPageRenderer {
             super (msg);
         }
     }
+
+    private final WikiURLRenderer _urlRenderer;
     
-    /**
-     * Initialize this WikiPageRenderer for use with the specified
-     * WikiSystem. 
-     */
-    public void init (WikiSystem wiki);
-    
-    /**
-     * Render the specified WikiPage and return the rendered results
-     * as a String
-     */
-    public String render (WikiPage page) throws RenderException;
+
+    public WikiPageRenderer (WikiURLRenderer urlRenderer) {
+        _urlRenderer = urlRenderer;
+    }
     
     /**
      * Render the specified WikiPage to the specified output stream.<p>
      *
      * This method should <b>not</b> close the output stream.
      */
-    public void render (WikiPage page, OutputStream out) throws IOException, RenderException;
+    public void render (WikiPage page, OutputStream out) throws IOException, RenderException {
+        out.write (render (page).getBytes());
+    }
+    
+    /**
+     * Render the specified WikiPage and return the rendered results
+     * as a String.  Delegates each WikiDataType off to implementation
+     * methods.  Except for URL's; they are delegated to the URLRenderer
+     * provided during construction of this class.
+     */
+    public String render (WikiPage page) throws RenderException {
+        WikiData[] dataElement = page.getData();
+        StringBuffer sb = new StringBuffer (page.getUnparsedData().length());
+        
+        for (int x=0; x<dataElement.length; x++) {
+            int type = dataElement[x].getType ();
+            String data = (String) dataElement[x].getData ();
+            String str = null;
+            
+            switch (type) {
+                case WikiDataTypes.START_BOLD:
+                    str = renderBoldStart ();
+                    break;
+                    
+                case WikiDataTypes.END_BOLD:
+                    str = renderBoldEnd ();
+                    break;
+                    
+                case WikiDataTypes.START_UNDERLINE:
+                    str = renderUnderlineStart();
+                    break;
+                
+                case WikiDataTypes.END_UNDERLINE:
+                    str = renderUnderlineEnd();
+                    break;
+                    
+                case WikiDataTypes.START_ITALIC:
+                    str = renderItalicStart();
+                    break;
+                    
+                case WikiDataTypes.END_ITALIC:
+                    str = renderItalicEnd();
+                    break;
+                    
+                case WikiDataTypes.PARAGRAPH_BREAK:
+                    str = renderParagraphBreak();
+                    break;
+                    
+                case WikiDataTypes.LINE_BREAK:
+                    str = renderLineBreak();
+                    break;
+                    
+                case WikiDataTypes.HORIZ_LINE:
+                    str = renderHorizLine();
+                    break;
+                    
+                case WikiDataTypes.PLAIN_TEXT:
+                    str = renderPlainText (data);
+                    break;
+                    
+                case WikiDataTypes.PAGE_REFERENCE:
+                    str = renderWikiTerm (data, page.getTitle());
+                    break;
+                    
+                case WikiDataTypes.INDENT:
+                    int many = (data != null && data.length() > 0) ? Integer.parseInt(data) : 1;
+                    str = renderIndent (many);
+                    break;
+                    
+                case WikiDataTypes.START_NAMED_HEADER:
+                    str = renderHeaderStart (data);
+                    break;
+                    
+                case WikiDataTypes.END_NAMED_HEADER:
+                    str = renderHeaderEnd (data);
+                    break;
+                    
+                case WikiDataTypes.URL:
+                    str = _urlRenderer.renderURL (data);
+                    break;
+                    
+                // @deprecated "image" is now a URL type.
+                case WikiDataTypes.IMAGE:
+                    str = renderImage (data);
+                    break;
+                    
+                // @deprecated "javadoc" is now a URL type.
+                case WikiDataTypes.JAVADOC:
+                    str = renderJavaDoc (data);
+                    break;
+                    
+                case WikiDataTypes.START_COLOR:
+                    str = renderColorStart (data);
+                    break;
+                    
+                case WikiDataTypes.END_COLOR:
+                    str = renderColorEnd ();
+                    break;
+
+                case WikiDataTypes.EMAIL:
+                    str = renderEmail (data);
+                    break;
+                    
+                case WikiDataTypes.QUOTED_BLOCK:
+                    str = renderQuotedBlock (data);
+                    break;
+               
+                case WikiDataTypes.SPACE:
+                    str = renderSpace ();
+                    break;
+                    
+                case WikiDataTypes.LT:
+                    str = renderLT ();
+                    break;
+                    
+                case WikiDataTypes.GT:
+                    str = renderGT ();
+                    break;
+                    
+                default:
+                    str = renderUnknown (dataElement[x]);
+            }  // esac
+            
+            if (str != null)
+                sb.append (str);
+        }  // for x
+        
+        return sb.toString ();
+    }
+    
+    //
+    // protectd, abstract methods
+    //
+    protected abstract String renderPlainText (String text);
+    protected abstract String renderWikiTerm (String toReference, String currentPageName);
+    protected abstract String renderIndent (int many);
+    protected abstract String renderHeaderStart (String headerName);
+    protected abstract String renderHeaderEnd (String headerName);
+    /** @deprecated "image" is now a URL type. */
+    protected abstract String renderImage (String imageLocation);
+    /** @deprecated "javadoc" is now a URL type. */
+    protected abstract String renderJavaDoc (String className);
+    protected abstract String renderColorStart (String color);
+    protected abstract String renderColorEnd ();
+    protected abstract String renderEmail (String emailAddress);
+    protected abstract String renderQuotedBlock (String text);
+    protected abstract String renderSpace ();
+    protected abstract String renderLT ();
+    protected abstract String renderGT ();
+    protected abstract String renderUnknown (WikiData data);
+ 
+    
+    protected abstract String renderBoldStart ();
+    protected abstract String renderBoldEnd ();
+    protected abstract String renderUnderlineStart ();
+    protected abstract String renderUnderlineEnd ();
+    protected abstract String renderItalicStart ();
+    protected abstract String renderItalicEnd ();
+    protected abstract String renderParagraphBreak ();
+    protected abstract String renderLineBreak ();
+    protected abstract String renderHorizLine ();
+    
 }

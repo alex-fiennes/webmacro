@@ -120,8 +120,8 @@ public class LuceneIndexer implements WikiPageIndexer {
         // the actual text of the page
         tmp = page.getUnparsedData();
         if (tmp != null) {
-            TextPageRenderer renderer = new TextPageRenderer ();
-            renderer.init (wiki);
+            WikiPageRenderer renderer = new TextPageRenderer (new TextURLRenderer(), wiki);
+
             try {
                 doc.add(Field.Text("text", renderer.render (page)));
             } catch (Exception e) {
