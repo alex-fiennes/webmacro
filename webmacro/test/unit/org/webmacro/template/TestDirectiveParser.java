@@ -70,10 +70,13 @@ public class TestDirectiveParser extends TemplateTestCase
 
     }
 
-    public void testQuotedDirective () throws Exception
+    public void testSmashedTogetherDirective () throws Exception
     {
         assertStringTemplateEquals( "#if (true) ok #end", "ok");
-        assertStringTemplateEquals( "x#if (true) ok #end", "xok" );
+        assertStringTemplateEquals( "x#if (true) ok #end", "x#if (true) ok #end" );
+        assertStringTemplateEquals( " #if (true) ok #end", "ok" );
+        assertStringTemplateEquals( "\"#if (true) ok #end", "\"#if (true) ok #end" );
+        assertStringTemplateEquals( "\" #if (true) ok #end", "\"ok" );
     }
 
 
