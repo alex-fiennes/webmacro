@@ -479,12 +479,14 @@ final public class PropertyOperator
          prop = pm.getName();
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
-
+         if (acc == null) {
+            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
+         }
          try {
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new PropertyException("No method " + pm + " on object " + instance);
+            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
          }
 
       } else {
