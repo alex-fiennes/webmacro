@@ -58,6 +58,9 @@ final public class FastWriter extends Writer
    private OutputStream _out;
 
    private byte[] _buf = new byte[512];
+
+   private char[] _cbuf = new char[512];
+
    private boolean _encodeProperly;  // are we in fast mode?
    private boolean _buffered;
 
@@ -119,7 +122,7 @@ final public class FastWriter extends Writer
     */
    public void setAsciiHack(boolean on) 
    {
-      bflush();
+      if (_buffered) bflush();
       _encodeProperly = !on;
    }
 
@@ -198,17 +201,13 @@ final public class FastWriter extends Writer
     */
    public void write(String s, int off, int len) 
    {
-      try {
-         if (_encodeProperly) {
-            _bwriter.write(s,off,len);
-            _buffered = true;
-         } else {
-            if (_buf.length < len) _buf = new byte[len];
-            s.getBytes(off,len,_buf,0);
-            _bstream.write(_buf,0,len);
-         }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+      try{
+      	s.getChars(off,off + len,_cbuf,0);
+      	write(_cbuf,0,len);
+      } catch (IndexOutOfBoundsException e) {
+        _cbuf = new char[len + (len - _cbuf.length)]; 
+      	s.getChars(off,off + len,_cbuf,0);
+      	write(_cbuf,0,len);
       }
    }
 
@@ -220,27 +219,20 @@ final public class FastWriter extends Writer
    public void writeStatic(String s) 
    {
       if (_encodeProperly) {
-         bflush();
-         _bstream.write(_cache.getEncoding(s));
+         if (_buffered) bflush();
+         _bstream.write(_cache.encode(s));
       } else {
          write(s,0,s.length());
       }
    }
 
-   /**
-     * Flush out all the buffers
-     */
-   private void bflush() 
-   {
-      try {
-         if (_buffered) { 
-            _bwriter.flush();
-            _buffered = false;
-         }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
-      }
+  public void bflush() {
+     try { 
+        _bwriter.flush(); 
+        _buffered = false; 
+     } catch (IOException e) { e.printStackTrace(); }
    }
+
 
    /**
      * Flush all data out to the OutputStream, if any, clearing 
@@ -252,7 +244,8 @@ final public class FastWriter extends Writer
      */
    public void flush() throws IOException
    {
-      bflush();
+      if (_buffered) bflush();
+
       if (_out != null) {
          writeTo(_out);
          _out.flush();
@@ -266,7 +259,8 @@ final public class FastWriter extends Writer
      */
    public int size() throws IOException
    {
-      bflush();
+      if (_buffered) bflush();
+
       return _bstream.size();
    }
 
@@ -276,30 +270,29 @@ final public class FastWriter extends Writer
      */
    public byte[] toByteArray() 
    {
-      bflush();
+      if (_buffered) bflush();
       return _bstream.getBytes();
    }
 
    /**
      * Copy the contents written so far into a String. 
      */
-    public String toString() 
-    {
-       try {
-          bflush();
-          return _bstream.toString(_encoding); 
-       } catch (UnsupportedEncodingException e) {
-          e.printStackTrace(); // never happen: we already used it
-          return null;
-       }
-    }
+   public String toString()  {
+      if (_buffered) bflush();
+      try {
+         return _bstream.toString(_encoding); 
+      } catch (UnsupportedEncodingException e) {
+         e.printStackTrace(); // never happen: we already used it
+         return null;
+      }
+   }
 
    /**
      * Copy the contents written so far to the suppiled output stream
      */
    public void writeTo(OutputStream out) throws IOException
    {
-      bflush();
+      if (_buffered) bflush();
       _bstream.writeTo(out);
    }
 
@@ -308,7 +301,7 @@ final public class FastWriter extends Writer
      * been generated so far.
      */
    public void reset(OutputStream out) {
-      bflush();
+      if (_buffered) bflush();
       _bstream.reset();
       _out = out;
    }
