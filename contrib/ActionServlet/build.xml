@@ -1,0 +1,313 @@
+<!--
+    build.xml for Ant 1.3 or higher (see http://jakarta.apache.org/ant)
+-->
+
+<project name="ActionServlet" default="jar" basedir=".">
+
+   <!-- ************************************************************* -->
+   <!-- ****** SET THE FOLLOWING PROPERTIES TO CORRECT VALUES! ****** -->
+   <!-- ** Note: On Windows systems use slash (/) as dir separator! * -->
+   <!-- ** Note: Don't use spaces in paths with JSDK configuration ** -->
+   <!-- ************************************************************* -->
+
+   <property name="webmacro.home" value="C:/Progra~1/webmacro"/>
+   <property name="ActionServlet.home" value="C:/Progra~1/ActionServlet"/>
+
+   <!-- At least one of the following two properties must be set! -->
+   <property name="jsdk.home" value="C:/Progra~1/JSDK2.0"/>
+   <property name="servlet.jar" value="C:/Progra~1/Tomcat-3.2.1/lib/servlet.jar"/>
+
+   <!-- ************************************************************* -->
+
+   <!-- classpath settings -->
+   <path id="class.path">
+      <pathelement location="${webmacro.home}/webmacro.jar"/>
+      <pathelement location="${servlet.jar}"/>
+      <pathelement location="${jsdk.home}/lib/jsdk.jar"/>
+
+      <fileset dir="lib">
+         <include name="jaxp.jar"/>
+         <include name="parser.jar"/>
+      </fileset>
+
+      <pathelement location="lib/classes"/>
+      <pathelement path="${java.class.path}"/>
+   </path>
+
+   <!-- tests prerequisities -->
+   <target name="available">
+      <available file="${webmacro.home}/webmacro.jar" property="webmacro.present"/>
+      <available classname="javax.servlet.http.HttpSession" property="servletapi.present">
+         <classpath refid="class.path"/>
+      </available>
+   </target>
+
+   <!-- tests prerequisities -->
+   <target name="webmacro.available" depends="available" unless="webmacro.present">
+      <fail message="You must set 'webmacro.home' property to correct value!"/>
+   </target>
+
+   <!-- tests prerequisities -->
+   <target name="servletapi.available" depends="available" unless="servletapi.present">
+      <fail message="You must set 'jsdk.home' or 'servlet.jar' property to correct value!"/>
+   </target>
+
+   <!-- prepare directories -->
+   <target name="prepare" depends="webmacro.available,servletapi.available">
+      <mkdir dir="lib/classes"/>
+      <mkdir dir="doc/api"/>
+
+      <uptodate property="jar.uptodate" targetfile="lib/ActionServlet.jar" >
+         <srcfiles dir= "src" includes="**/*.java"/>
+      </uptodate>
+   </target>
+
+   <!-- remove files to rebuild -->
+   <target name="clean">
+      <delete dir="dist"/>
+      <delete dir="lib/classes"/>
+      <delete dir="doc/api"/>
+      <delete file="lib/ActionServlet.jar" quiet="yes"/>
+
+      <delete>
+         <fileset dir="examples" includes="**/classes/*.class"/>
+         <fileset dir="examples" includes="**/config/*">
+            <exclude name=".orig/**/*"/>
+         </fileset>
+      </delete>
+
+      <delete file="examples/as_examples.war" quiet="yes"/>
+   </target>
+
+   <!-- compile ActionServlet sources -->
+   <target name="compile" depends="prepare" unless="jar.uptodate">
+      <javac srcdir="src"
+             destdir="lib/classes"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+   </target>
+
+   <!-- generate ActionServlet API documentation -->
+   <target name="javadoc" depends="prepare">
+      <javadoc sourcepath="src"
+               destdir="doc/api"  
+               packagenames="org.webmacro.as"
+               windowtitle="ActionServlet 0.61 API"
+               nodeprecated="true"
+               use="true">
+         <classpath refid="class.path"/>
+      </javadoc>
+   </target>
+
+   <!-- create ActionServlet.jar -->
+   <target name="jar" depends="compile">
+      <jar jarfile="lib/ActionServlet.jar" whenempty="fail">
+         <fileset dir="lib/classes"/>
+
+         <fileset dir="src" >
+            <include name="ActionServlet_0_6.dtd"/>
+         </fileset>
+      </jar>
+   </target>
+
+   <!-- compile examples and configure them for use with JSDK 2.0 -->
+   <target name="examples" depends="jar">
+      <javac srcdir="examples/Calculator/src"
+             destdir="examples/Calculator/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/Calculators/src"
+             destdir="examples/Calculators/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/DateHandler/src"
+             destdir="examples/DateHandler/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/GuestBook/src"
+             destdir="examples/GuestBook/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/LoginServlet/src"
+             destdir="examples/LoginServlet/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/DbDemo/src"
+             destdir="examples/DbDemo/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+         <classpath>
+            <pathelement location="examples/DbDemo/lib/datatable.jar"/>
+            <pathelement location="examples/DbDemo/lib/SimpleText.jar"/>
+         </classpath>
+      </javac>
+
+      <javac srcdir="examples/OutputVars/src"
+             destdir="examples/OutputVars/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <javac srcdir="examples/TwoForms/src"
+             destdir="examples/TwoForms/classes"
+             classpath="lib/ActionServlet.jar"
+             debug="on"
+             optimize="off"
+             deprecation="off">
+         <classpath refid="class.path"/>
+      </javac>
+
+      <!-- configure examples -->
+      <filter token="as.home" value="${ActionServlet.home}"/>
+
+      <copy todir="examples" filtering="true" overwrite="yes" includeEmptyDirs="yes">
+         <fileset dir="examples/.orig/jsdk">
+            <include name="**/*.*"/>
+         </fileset>
+      </copy>
+
+      <copy file="examples/.orig/war/DbDemo.xml.src" 
+            tofile="examples/.orig/war/DbDemo.xml" 
+            filtering="true" overwrite="yes"/>
+
+      <replace file="examples/env.bat" token="@webmacro.home@" value="${webmacro.home}"/>
+      <replace file="examples/env.bat" token="@jsdk.home@" value="${jsdk.home}"/>
+      <replace file="examples/env.bat" token="/" value="\"/>
+   </target>
+
+   <!-- create as_examples.war file -->
+   <target name="examples_war" depends="examples">
+      <war warfile="examples/as_examples.war"
+           webxml="examples/.orig/war/web.xml">
+         <classes dir="examples/Calculators/classes"/>
+         <classes dir="examples/DateHandler/classes"/>
+         <classes dir="examples/GuestBook/classes"/>
+         <classes dir="examples/DbDemo/classes"/>
+         <classes dir="examples/LoginServlet/classes"/>
+         <classes dir="examples/OutputVars/classes"/>
+         <classes dir="examples/TwoForms/classes"/>
+
+         <lib dir="lib">
+            <include name="ActionServlet.jar"/>
+            <include name="jaxp.jar"/>
+            <include name="parser.jar"/>
+         </lib>
+         <lib dir="${webmacro.home}">
+            <include name="webmacro.jar"/>
+         </lib>
+         <lib dir="${ActionServlet.home}/examples/DbDemo/lib">
+            <include name="datatable.jar"/>
+            <include name="SimpleText.jar"/>
+         </lib>
+
+         <zipfileset dir="examples/.orig/war" prefix="WEB-INF/classes">
+            <exclude name="index.html"/>
+            <exclude name="web.xml"/>
+            <exclude name="DbDemo.xml.src"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/Calculator/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/Calculators/wm" prefix="WEB-INF/classes">
+            <include name="*.inc"/>
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/DateHandler/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/GuestBook/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/DbDemo/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <include name="*.inc"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/LoginServlet/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/OutputVars/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <zipfileset dir="examples/TwoForms/wm" prefix="WEB-INF/classes">
+            <include name="*.wm"/>
+            <exclude name="error.wm"/>
+         </zipfileset>
+
+         <fileset dir="examples/.orig/war">
+            <include name="index.html"/>
+         </fileset>
+      </war>
+   </target>
+
+   <!-- make ActionServlet distribution -->
+   <target name="dist" depends="all">
+      <mkdir dir="dist"/>
+
+      <zip zipfile="dist/ActionServlet_0_61_1.zip"
+           basedir="."
+           excludes="**">
+         <zipfileset dir="." prefix="ActionServlet">
+            <exclude name="examples/as_examples.war"/>
+            <exclude name="project"/>
+            <exclude name="**/cvs/**"/>
+            <exclude name="dist/**"/>
+            <exclude name="lib/classes"/>
+            <exclude name="!!!*"/>
+         </zipfileset>
+      </zip>
+   </target>
+
+   <!-- make everything except dist -->
+   <target name="all"
+           depends="clean,prepare,compile,jar,javadoc,examples,examples_war">
+      <delete dir="lib/classes"/>
+   </target>
+</project>
