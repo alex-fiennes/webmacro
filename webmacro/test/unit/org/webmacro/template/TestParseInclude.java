@@ -51,6 +51,19 @@ public class TestParseInclude extends TemplateTestCase {
     }
 
     public void testInclude() throws Exception {
+        // include as a template
+        assertStringTemplateMatches("#include as template \"org/webmacro/template/test_parse.wm\"",
+                "pass");
+
+        // include as text
+        assertStringTemplateMatches("#include as text \"org/webmacro/template/test_parse.wm\"",
+                "pass");
+
+        // include as <something dynamic>
+        assertStringTemplateMatches("#include \"org/webmacro/template/test_parse.wm\"",
+                "pass");
+
+
         // include /etc/password
         assertStringTemplateMatches("#include \"/etc/passwd\"",
                 ".*root:.*");

@@ -23,7 +23,6 @@
 package org.webmacro.directive;
 
 import org.webmacro.*;
-import org.webmacro.engine.ParseException;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
@@ -430,15 +429,11 @@ public class IncludeDirective extends Directive {
      */
     protected Template getTemplate(Broker b, String name) throws PropertyException {
         try {
-            Template template = (Template) b.get("template", name);
-            template.parse();
-            return template;
+            return (Template) b.get("template", name);
         } catch (NotFoundException nfe) {
             throw makePropertyException("Not found by template provider");
         } catch (ResourceException re) {
             throw makePropertyException("Unable to get template", re);
-        } catch (BuildException be) {
-            throw makePropertyException("Unable to parse template", be);
         } catch (Exception e) {
             throw makePropertyException("Unexpected ectpion while getting template");
         }
