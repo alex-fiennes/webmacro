@@ -29,20 +29,26 @@ import org.webmacro.engine.StringTemplate;
 
 
 /**
- * WMEval encapsulates an instance of WebMacro for reuse.
+ * WMEval encapsulates an instance of WebMacro for reuse in any java application.
  * <p>
- * It parses a template stream consisting of rules and directives
- * and then makes the parsed entity available
- * for evaluation and execution multiple times against an object context.
+ * Its main benefit are a number of convenience methods for evaluating a template
+ * and directing output either to a supplied output stream or to a file.
  * <p>
- * The context can be preserved over multiple "writes" of different
+ * It can parse a single template stream and then evaluate that rule
+ * over a number of different contexts. And, it can maintain a single context
+ * and evaluate different templates over the same context.
+ * <p>
+ * The context can therefore be preserved over multiple "writes" of different
  * templates.
  * <p>
- * The directive stream can be anything but is often a rule stream.
+ * The template stream can be any text stream but is often a rule stream containing
+ * wm script directives.
  * <p>
- * The template, once parsed, is preserved and available using getRule().
- * This helper class is useful for evaluating WebMacro templates which
- * are mostly rule streams with some output.
+ * A template, once parsed, can be preserved and made available using setRule()
+ * and getRule().
+ * <p>
+ * This helper class is useful for evaluating WebMacro templates for which
+ * flexibility in managing the evaluation options is key.
  * @author Lane Sharman
  * @version 2.0
  */
@@ -144,7 +150,8 @@ public class WMEval {
 	}
 
 	/**
-	 * Evaluates the context belong to this instance.
+	 * Evaluates the context of this instance and the instance's 
+   * current template and current output stream using UTF8.
 	 */
 	public void assert() throws Exception {
 		assert(context, rule, out, "UTF8");
@@ -160,6 +167,9 @@ public class WMEval {
 
 	/**
 	 * Evaluate the supplied context and template to the provided output.
+   * @ rule the template provided.
+   * @ out an output stream.
+   * @ encoding the encoding for the output.
 	 */
 	public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
 		FastWriter w;
@@ -176,6 +186,28 @@ public class WMEval {
 	 public String assert(Context context, Template rule) throws Exception {
 		return rule.evaluate(context).toString();		
 	}
+  
+  /**
+   * Evaluates the context using a file template sending the output to a disk file.
+   * @param context The context to use.
+   * @param inputTemplateFileName The input template file in the resource path.
+   * @param outputFileName The absolute path to a file.
+   * @param append If true, the file will be opened for appending the output.
+   * @param encoding If null, the platform's encoding will be used.
+   * @return The output is also returned as a convenience.
+   */
+  public String assert(Context context, String templateResourceFile, 
+    String outputFileName, boolean append, String encoding) throws Exception {
+ 	  Template rule = wm.getTemplate(templateResourceFile);
+    String value = rule.evaluate(context).toString();
+    // output the file
+    OutputStream out = new FileOutputStream(outputFileName, append);
+    if (encoding == null) out.write(value.getBytes());
+    else out.write(value.getBytes(encoding));
+    out.close();
+    return value;
+  }
+
 	
 	/**
 	 * Free up resources when no longer needed.
