@@ -15,7 +15,7 @@ function getTemplate(url) {
     w.flush();
 }
 
-getTemplate("templates/encoding_utf8.wm");
-getTemplate("templates/encoding_iso8859_1.wm");
-getTemplate("templates/encoding_utf8.wm");
-getTemplate("templates/encoding_native_ascii.wm");
+getTemplate("templates/utf8/encoding_utf8.wm");
+getTemplate("templates/iso8859_1/encoding_iso8859_1.wm");
+getTemplate("templates/utf8/encoding_utf8.wm");
+getTemplate("templates/native_ascii/encoding_native_ascii.wm");
