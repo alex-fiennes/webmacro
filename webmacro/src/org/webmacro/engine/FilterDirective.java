@@ -27,10 +27,15 @@ import org.webmacro.util.*;
 import org.webmacro.*;
 
 /**
-  * This directive is used to set variables in the context data map 
-  * if a variable contains a dot operator the variable will be resolved
-  * accordingly. Expects the following syntax:
-  * #set $abc = Term 
+  * This directive is used to set the filter for a variable. Any 
+  * subsequent reference to the variable will be filtered through 
+  * the filter specified by this directive. A subsequent filter 
+  * directive may override that choice. Also, in a template, the 
+  * last filter declared for a variable is the "default" filter 
+  * for that variable and will be returned by getFilter(vname). 
+  * This default filter will be used to locate the filter for a 
+  * sub-property in a complex variable (a.b.c.d) where a filter 
+  * applies to the top level variable. (ie: a.getFilter(b.c.d)).
   */
 final class FilterDirective implements Directive
 {

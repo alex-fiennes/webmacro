@@ -120,6 +120,8 @@ public class StreamTemplate extends WMTemplate
       context.put("flipper", new TestObject("flip",false));
 
       System.out.println("- - - - - - - - - - - - - - - - - - - -");
+      System.out.println("Context contains: helloWorld, hello, file, TestObject[] fruits, SelectList sl(fruits, 3), TestObject flipper"); 
+      System.out.println("- - - - - - - - - - - - - - - - - - - -");
 
       try {
          Template t1 = new StreamTemplate(wm.getBroker(), 

@@ -78,7 +78,7 @@ final public class WebContext extends Context
       super(broker);
       try {
          String tools = (String) broker.getValue("config","TemplateTools");
-         addTools(tools);
+         registerTools(tools);
       } catch (InvalidTypeException it) {
          _log.exception(it);
          _log.error("config type not registered with broker!");

@@ -52,7 +52,12 @@ abstract public class WMTemplate implements Template
    /**
      * What this template contains is a top level block
      */
-   private Block myContent; 
+   private Block _content; 
+
+   /**
+     *
+     */
+   private final String _parserName;
 
    /**
      * Log
@@ -62,21 +67,29 @@ abstract public class WMTemplate implements Template
    /**
      * Template parameters
      */
-   private HashMap myParameters;
+   private HashMap _parameters;
 
    /**
      * Template filters
      */
-   private Hashtable myFilters;
+   private Hashtable _filters;
 
 
    /**
      * Create a new Template. Constructors must supply a broker.
      */
    protected WMTemplate(Broker broker) {
-      _broker = broker;
+      this(broker,"wm");
    }
 
+   /**
+     * Create a new Template specifying both the broker and the 
+     * parsing language.
+     */
+   protected WMTemplate(Broker broker, String parserName) {
+      _broker = broker;
+      _parserName = parserName;
+   }
 
    /**
      * Get the stream the template should be read from. Parse will 
@@ -92,6 +105,22 @@ abstract public class WMTemplate implements Template
      */
    public abstract String toString(); 
 
+
+   /**
+     * Subclasses can override this if they wish to invoke a parser
+     * other than the WM parser, or choose the parser on some more 
+     * complicated condition. This method will be called by parse();
+     */
+   protected Parser getParser() throws TemplateException {
+      try {
+         return (Parser) _broker.getValue("parser","wm"); 
+      } catch (Exception e) {
+         Engine.log.exception(e);
+         throw new TemplateException("Could not load parser type \"" + 
+               _parserName + "\": " + e);
+      }
+   }
+
    /**
      * Template API
      */
@@ -100,16 +129,16 @@ abstract public class WMTemplate implements Template
 
       // thread policy:
       //
-      // unsynchronized code elsewhere will access myContent. We must
-      // ensure that any data copied into myContent is ready for public 
+      // unsynchronized code elsewhere will access _content. We must
+      // ensure that any data copied into _content is ready for public 
       // use--which means dealing with two subtle issues. First, the Block
       // created by this method must be written back to main memory BEFORE
-      // being referenced by myContent. Second, once we add it to myContent,
-      // our copy of myContent has to be copied back to main memory as well.
+      // being referenced by _content. Second, once we add it to _content,
+      // our copy of _content has to be copied back to main memory as well.
       //
-      // Therefore we synchronize around the access to myContent so as to 
+      // Therefore we synchronize around the access to _content so as to 
       // accomplish both these things. newContent will be written to main 
-      // memory at the start of the synchronized block, and myContent will
+      // memory at the start of the synchronized block, and _content will
       // be written to main memory at the close.
 
       Block newContent = null;
@@ -117,14 +146,7 @@ abstract public class WMTemplate implements Template
       Reader source = null;
       Hashtable newFilters = null;
       try {
-         Parser parser;
-         try {
-            parser = (Parser) _broker.getValue("parser","wm"); 
-         } catch (Exception e) {
-            Engine.log.exception(e);
-            throw new TemplateException("Could not load \"wm\" parser:"
-                  + e);
-         }
+         Parser parser = getParser();
          Reader in = getReader();
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
@@ -143,9 +165,9 @@ abstract public class WMTemplate implements Template
       } finally {
          try { source.close(); } catch (Exception e) { }
          synchronized(this) {
-            myParameters = newParameters;
-            myFilters = newFilters;
-            myContent = newContent; 
+            _parameters = newParameters;
+            _filters = newFilters;
+            _content = newContent; 
          }
       }
    }
@@ -185,16 +207,16 @@ abstract public class WMTemplate implements Template
       throws IOException
    {
 
-      // thread policy: Access to myContent is unsynchronized here at 
+      // thread policy: Access to _content is unsynchronized here at 
       // the cost of having a slightly stale copy. This is OK, because 
       // you might have requested it slightly earlier anyway. You will 
       // always get a consistent copy--either the current one, or one 
       // that was the current one a few milliseconds ago. This is because
-      // a thread setting myContent may not update main memory immediately,
-      // and this thread may not update its copy of myContent immediately
+      // a thread setting _content may not update main memory immediately,
+      // and this thread may not update its copy of _content immediately
       // (it may have a stale copy it read earlier).
 
-      Block content = myContent; // copy to a local var in case it changes
+      Block content = _content; // copy to a local var in case it changes
 
       // Make sure that all the contents of "content" are up to date--that
       // our thread is fully synchronized with main memory, so that we don't
@@ -206,10 +228,10 @@ abstract public class WMTemplate implements Template
          try {
             synchronized(this) {
                // double check under the lock
-               if (myContent == null) {
+               if (_content == null) {
                   parse();   
                }
-               content = myContent;
+               content = _content;
             }
          } catch (Exception e) {
             _log.exception(e);
@@ -246,18 +268,18 @@ abstract public class WMTemplate implements Template
       // been parsed.
 
       try {
-         return myParameters.get(key);
+         return _parameters.get(key);
       } catch (NullPointerException e) {
          synchronized(this) {
             parse();
-            return myParameters.get(key);
+            return _parameters.get(key);
          }
       }
    }
 
    public HashMap getParameters()
    {
-      return myParameters;
+      return _parameters;
    }
 
    /**
@@ -265,7 +287,7 @@ abstract public class WMTemplate implements Template
      * property name
      */
    public Filter getFilter(String name) {
-      return (Filter) myFilters.get(name);
+      return (Filter) _filters.get(name);
    }
 
 }
