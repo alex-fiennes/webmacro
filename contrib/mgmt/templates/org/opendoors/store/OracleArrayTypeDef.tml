@@ -1,0 +1,11 @@
+## Oracle Array Type Template
+#bean $Now = "Date" page
+
+#foreach $element in $GenerationTarget {
+#if ($element.ArrayType) {
+-- Generated on $Now
+create type $GenerationTarget.SchemaName\.$element.SQLType as table of $GenerationTarget.SchemaName\.$element.ContainedType;
+
+}
+}
+

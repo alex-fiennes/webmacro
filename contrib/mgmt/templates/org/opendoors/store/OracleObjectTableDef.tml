@@ -1,0 +1,26 @@
+## Oracle Object Table Template
+#bean $Now = "Date" page
+
+-- Generated on $Now
+create table $TableTarget of $GenerationTarget.DistinctName
+#foreach $element in $GenerationTarget {
+  #if ($element.PrimaryKey) {
+
+    ($element.name primary key)
+}
+}
+#foreach $element in $GenerationTarget {
+  #if ($element.ArrayType) {
+    nested table $element.name 
+    store as $element.name$NestedTarget
+}
+};
+
+## test for null constraint
+#foreach $element in $GenerationTarget {
+
+#if ($element.nullConstrained) {
+alter table $TableTarget
+  add ( check ($element.name is not null) );
+}
+}

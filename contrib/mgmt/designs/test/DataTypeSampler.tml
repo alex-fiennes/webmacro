@@ -1,0 +1,132 @@
+#comment {
+file:  dd/defs/DataTypeSampler.tml 
+purpose: shows all mapped data types supported by OraJade.
+}
+##if ($Response) {#set $Response.ContentType = "text/plain"}
+## instantiate the java magic: ORSchema.class:
+#bean $ORSchema = "ORSchema" page
+
+## allocate a design instance to design a record
+## design a simple memo type
+#set $Memo = $ORSchema.Record
+#set $Memo.Name = "Memo"
+#set $Memo.SchemaName = "Def_100"
+
+#set $Field = $ORSchema.Entry
+#set $Field.type =  $ORSchema.TEXT_MAP
+#set $Field.name = "author"
+#set $Field.nullConstrained = true
+#set $Field.length = 80
+#set $added = $Memo.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type =  $ORSchema.TEXT_MAP
+#set $Field.name = "subject"
+#set $Field.nullConstrained = true
+#set $Field.length = 80
+#set $added = $Memo.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type =  $ORSchema.TEXT_MAP
+#set $Field.name = "body"
+#set $Field.nullConstrained = true
+#set $Field.length = 4000
+#set $added = $Memo.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.TIMESTAMP_MAP
+#set $Field.name = "recorded"
+#set $added = $Memo.add($Field)
+
+## now create the DataTypeSampler which will have a table of memos
+#set $DataTypeSamplerRecord = $ORSchema.Record
+
+## set the values for the record including the schema
+#set $DataTypeSamplerRecord.Name = "DataTypeSampler"
+#set $DataTypeSamplerRecord.SchemaName = "Def_100"
+
+## build every distinct mapped entry
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.TEXT_MAP
+#set $Field.name = "textMapping"
+#set $Field.length = 80
+#set $Field.primaryKey = true
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.CHAR_MAP
+#set $Field.name = "charMapping"
+#set $Field.nullConstrained = true
+#set $Field.length = 16
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.NUMBER_MAP
+#set $Field.name = "numberMapping"
+#set $Field.length = 8
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.BYTE_MAP
+#set $Field.name = "byteMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.INTEGER_MAP
+#set $Field.name = "integerMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.LONG_MAP
+#set $Field.name = "longMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.DOUBLE_MAP
+#set $Field.name = "doubleMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.TIMESTAMP_MAP
+#set $Field.name = "timestampMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.DATE_MAP
+#set $Field.name = "dateMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.TIME_MAP
+#set $Field.name = "timeMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.BLOB_MAP
+#set $Field.name = "blobMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.CLOB_MAP
+#set $Field.name = "clobMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.ObjectMapType("Memo")
+#set $Field.name = "objectMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.RefMapType("Memo")
+#set $Field.name = "refMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.ArrayMapType("MemoTable", "Memo")
+#set $Field.name = "arrayMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)
+
+#set $Field = $ORSchema.Entry
+#set $Field.type = $ORSchema.BOOLEAN_MAP
+#set $Field.name = "booleanMapping"
+#set $added = $DataTypeSamplerRecord.add($Field)

@@ -1,0 +1,2 @@
+#bean $System = "java.lang.System" static
+#set $basedir = $System.getProperty("user.dir")

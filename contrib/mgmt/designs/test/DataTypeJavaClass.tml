@@ -1,0 +1,12 @@
+#comment {
+  Design template: test/DataTypeSampler.tml
+  Output File Generated: com.orajade.test.Memo.java
+}
+#include "ApplicationSupport.tml"
+#set $OutputFileName = "$basedir/targets/javasrc/com/orajade/test/DataTypeSampler.java"
+#include "test/DataTypeSampler.tml"
+#set $GenerationTarget = $DataTypeSamplerRecord
+#set $PackageName = "com.orajade.test"
+#set $MemberScope = "public"
+#include "org/opendoors/store/SQLDataDef.tml"
+
