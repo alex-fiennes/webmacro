@@ -91,7 +91,13 @@ public class TestGetSet extends TemplateTestCase
         {
             return myProps;
         }
-
+    
+        private boolean bool = false;
+    
+        public void setBool(boolean val){
+            bool = val;
+        }
+        
     }
 
     public static TestObject to = new TestObject(), to2 = new TestObject();
@@ -194,7 +200,10 @@ public class TestGetSet extends TemplateTestCase
         assertStringTemplateEquals(tmpl, "123");
     }
 
-
+   public void testBinarySetBoolean() throws Exception {
+      String tmpl = "#set $TestObject.Bool=true";
+      assertTrue(to.bool);
+   }
     /** call the ".length" field of an array */
     public void testDotLengthOnArray ()
     {
