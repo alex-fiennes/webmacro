@@ -17,7 +17,7 @@ final class OrConditionBuilder implements Builder
    {
       Object l, r;
       l = _l.build(pc);
-      r = _l.build(pc);
+      r = _r.build(pc);
 
       return ((l instanceof Condition) && (r instanceof Condition)) ?
          (Object) new OrCondition((Condition) l, (Condition) r)
@@ -35,9 +35,13 @@ final class OrConditionBuilder implements Builder
 final class OrCondition extends Condition implements Macro {
    
    private final Condition _l,_r;
-   OrCondition(Condition l, Condition r) { _l = l; _r = r; }
+   OrCondition(Condition l, Condition r) { _l = l; _r = r; 
+      System.out.println("Condition: " + l + " || + " + r);
+   }
 
    public final boolean test(Object context) {
+      System.out.println("_l.test: " + _l.test(context));
+      System.out.println("_r.test: " + _r.test(context));
       return (_l.test(context) || _r.test(context));
    }
 }

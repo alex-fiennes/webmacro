@@ -36,7 +36,7 @@ import org.webmacro.*;
   *
   *     #if ($userID) {
   *        Your user id is: $userID
-  *     } else {
+  *     } #else {
   *        &lt;a href="register"&gt;Click here to register&lt;/a&gt;
   *     }
   *
