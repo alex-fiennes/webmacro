@@ -1,0 +1,22 @@
+<html>
+<head>
+#set $Response.ContentType = "text/html"
+<meta http-equiv="refresh" content="5; url=$SERVLET?action=show&target=ChatMessages.wm">
+</head>
+<body>
+
+#foreach $message in $messages {
+   [$message.date.getHours():$message.date.getMinutes():$message.date.getSeconds()] 
+
+   #if ($message.isPrivate) {***}
+
+   #if (!$message.isAction) {
+      <b><tt>$message.sender</tt></b>: $message.text
+   } #else {
+      <i>$message.text</i>
+   }
+   <BR>
+}
+
+<body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+#set $Response.ContentType = "text/html"
+<body>
+
+<TABLE BORDER=0 BGCOLOR="#D0D0D0" HEIGHT="100%"><TR><TD VALIGN=TOP>
+<TABLE BORDER=0 CELLPADDING=5><TR><TD>
+<BR><CENTER>
+<FONT SIZE="+2">Toolbar</FONT>
+</CENTER>
+
+<UL>
+<LI><A TARGET="_top" HREF="$SERVLET?action=Logoff">Logoff</A><P>
+<LI><A TARGET="messages" HREF="$SERVLET?action=show&target=ChatNewRoom.wm">New room</A><P>
+<LI><A TARGET="messages" HREF="$SERVLET?action=clear">Clear messages</A><P>
+
+#if ($currentRoom.name != "main") {
+   #if (!$currentRoom.isLocked) {
+      <LI><A TARGET="_top" HREF="$SERVLET?action=setLock&lock=true">Lock room</A><P>
+   } #else {
+      <LI><A TARGET="_top" HREF="$SERVLET?action=setLock&lock=false">Unlock room</A><P>
+   }
+}
+
+</UL>
+
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+
+</body>
+</html>

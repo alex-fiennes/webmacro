@@ -1,0 +1,28 @@
+<html>
+#set $Response.ContentType = "text/html"
+<body>
+
+<table border=0 width="100%">
+<form action="$SERVLET" method="post" target="_top">
+<tr><td>
+   $currentUser:
+</td><td>
+   <input type="text" name="message" size="30">
+</td><td>
+   to <select name="recipient">
+   <option value="this room">&lt;this room&gt;</option>
+   #foreach $user in $users {
+      #if ($currentUser != $user) {
+         <option value="$user">$user</option>
+      }
+   }
+</select>
+</td><td>
+   <input type="hidden" name="action" value="send">
+   <input type="submit" value="Send">
+</td></tr>
+</form>
+</table>
+
+</body>
+</html>

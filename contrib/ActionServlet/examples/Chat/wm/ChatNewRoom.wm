@@ -1,0 +1,35 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+
+<table align=center border=0 width="100%" height="100%">
+<tr><td align=center>
+
+   #if ($error) {
+      <P><FONT COLOR="red">$error</FONT><P>
+   }
+
+   <FORM METHOD="POST" ACTION="$SERVLET" TARGET="_top">
+   <TABLE BORDER=1 ALIGN=CENTER>
+   <tr><td bgcolor="gray" align=center colspan=2>
+      <font color="white" size="+2">New Room</font>
+   </td></tr>
+
+   <TR><TD>
+   <TABLE>
+   <TR><TD>
+      Room name:</TD><TD>
+      <INPUT TYPE="Text" NAME="room">
+      </TD></TR>
+      <TR><TD COLSPAN=2 ALIGN=CENTER>
+      <INPUT TYPE="Hidden" NAME="action" VALUE="join">
+      <INPUT TYPE="Submit" VALUE="Create">
+      </TD></TR></TABLE>
+   </TD></TR></TABLE>
+   </FORM>
+
+</td></tr>
+</table>
+
+</BODY>
+</HTML>
