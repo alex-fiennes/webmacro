@@ -161,19 +161,32 @@ public abstract class Variable implements Macro, Visitable
    /**
      * Look in the hashtable (context) for a value keyed to this variables 
      * name and write its value to the stream.
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      * @exception IOException if could not write to output stream
      */
    final public void write(FastWriter out, Context context) 
-       throws ContextException, IOException
+       throws PropertyException, IOException
    {
       try {
-         out.write(evaluate(context).toString());
+         Object val = getValue(context);
+         if (val instanceof Macro) {
+            ((Macro) val).write(out,context);
+         } else {
+            if (val != null) {
+               out.write(val.toString());
+            } else {
+               String warning = "Attempt to write out null variable: "
+                                 + _vname;
+               context.getLog("engine").warning(warning);
+               out.write("<!--\n warning: " + warning + " \n-->");
+            }
+         }
       } catch (Exception e) {
-         context.getLog("engine").warning("Variable: " + _vname + " is undefined",e);
-         out.write("<!--\n warning: attempt to write out undefined variable " 
-            + _vname + ": " + e + " \n-->");
-      } 
+         context.getLog("engine").warning("Variable: " + _vname + 
+               " failed to evaluate:" + e, e);
+         out.write("<!-- error: variable " + _vname + 
+               " failed to evaluate: " + e + " -->");
+      }
    }
 
    /**
@@ -194,13 +207,13 @@ public abstract class Variable implements Macro, Visitable
      * The code to get the value represented by the variable from the 
      * supplied context.
      */
-   public abstract Object getValue(Context context) throws ContextException;
+   public abstract Object getValue(Context context) throws PropertyException;
 
    /**
      * The code to set the value represented by the variable in the 
      * supplied context.
      */
-   public abstract void setValue(Context c, Object v) throws ContextException;
+   public abstract void setValue(Context c, Object v) throws PropertyException;
 
    /**
      * Return the String name of the variable prefixed with a string

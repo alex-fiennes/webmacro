@@ -55,7 +55,7 @@ public abstract class Directive implements Macro, Visitable {
 
   /* Convenience implementation of evaluate() which Directives can inherit */
   public Object evaluate(Context context)
-    throws ContextException {
+    throws PropertyException {
       try {
         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
         FastWriter fw = FastWriter.getInstance();

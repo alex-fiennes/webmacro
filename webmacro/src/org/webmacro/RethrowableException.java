@@ -44,7 +44,7 @@ package org.webmacro;
  * the exception was rethrown.  
  */
 public class RethrowableException extends Exception {
-  private Exception caught;
+  private Throwable caught;
 
   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
@@ -56,9 +56,12 @@ public class RethrowableException extends Exception {
     super(s);
   };
 
-  public RethrowableException(String s, Exception e) {
+  public RethrowableException(String s, Throwable e) {
     super(s + System.getProperty("line.separator") + e);
     caught = e;
+    while (caught instanceof RethrowableException) {
+      caught = ((RethrowableException) caught).caught;
+    }
   };
 
   public void printStackTrace() {

@@ -43,7 +43,7 @@ public class AttributeDirective extends Directive {
     catch (ClassCastException e) {
       throw new NotVariableBuildException(myDescr.name, e);
     }
-    catch (ContextException e) {
+    catch (PropertyException e) {
       throw new BuildException("#attribute: Exception setting variable " 
                                + target.toString(), e);
     }
@@ -51,7 +51,7 @@ public class AttributeDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
   } 
 
 }

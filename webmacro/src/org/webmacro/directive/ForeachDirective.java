@@ -71,7 +71,7 @@ public class ForeachDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
 
     Object l, limit, from;
     long loopLimit=-1, loopStart=1, loopIndex=0;
@@ -87,7 +87,7 @@ public class ForeachDirective extends Directive {
       if (Expression.isNumber(limit)) 
         loopLimit = Expression.numberValue(limit);
       else
-        throw new ContextException("#foreach: Cannot evaluate limit");
+        throw new PropertyException("#foreach: Cannot evaluate limit");
     }
 
     if (index != null && indexFromExpr != null) {
@@ -97,7 +97,7 @@ public class ForeachDirective extends Directive {
       if (Expression.isNumber(from)) 
         loopStart = Expression.numberValue(from);
       else
-        throw new ContextException("#foreach: Cannot evaluate loop start");
+        throw new PropertyException("#foreach: Cannot evaluate loop start");
     }
 
     try {
@@ -117,7 +117,7 @@ public class ForeachDirective extends Directive {
         try {
           iter = PropertyOperator.getIterator(l);
         } catch (Exception e) {
-          throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
+          throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
         }
         while(iter.hasNext()) {
           target.setValue(context, iter.next());
@@ -129,7 +129,7 @@ public class ForeachDirective extends Directive {
             break;
         }
       }
-    } catch (ContextException e) {
+    } catch (PropertyException e) {
       String errorText = "#foreach: Unable to set list index";
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, out);

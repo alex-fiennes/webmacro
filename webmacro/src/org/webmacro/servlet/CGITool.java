@@ -31,14 +31,14 @@ import java.io.*;
 public class CGITool implements ContextTool
 {
    public Object init(Context context) 
-      throws InvalidContextException
+      throws PropertyException
    {
       try {
          WebContext wc = (WebContext) context;
          CGI_Impersonator cgi = new CGI_Impersonator(wc.getRequest());
          return cgi;
       } catch (ClassCastException ce) {
-         throw new InvalidContextException(
+         throw new PropertyException(
                "CGITool only works with WebContext: " + ce);
       }
    }

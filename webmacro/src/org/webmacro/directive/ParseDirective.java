@@ -40,7 +40,7 @@ public class ParseDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
 
     String fname = template.evaluate(context).toString();
     try {

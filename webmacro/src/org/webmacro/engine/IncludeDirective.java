@@ -102,22 +102,22 @@ class IncludeDirective implements Directive
      * Apply the values in the supplied context to evaluate the 
      * include filename; then read that file in and return it as 
      * a string. 
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      */ 
    final public Object evaluate(Context context)
-      throws ContextException
+      throws PropertyException
    {
 
       Object fname = _fileName.evaluate(context);
       if (fname == null) {
-         throw new ContextException(
+         throw new PropertyException(
                "#include could not resolve filename: " +
                "target argument resolved to a null.");
       }
       try {
          return getFile(context, fname.toString());
       } catch (GetFileException e) {
-         throw new ContextException(e.getMessage());
+         throw new PropertyException(e.getMessage());
       }
    }  
 
@@ -127,10 +127,10 @@ class IncludeDirective implements Directive
      * to the supplied Writer.
      * <p>
      * @exception IOException if an error occurred with out
-     * @exception ContextException if required data was missing
+     * @exception PropertyException if required data was missing
      */
    final public void write(FastWriter out, Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
       out.write((String) evaluate(context));
    }

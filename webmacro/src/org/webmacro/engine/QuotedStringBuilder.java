@@ -105,10 +105,10 @@ final class QuotedString extends Vector implements Macro
    /**
      * Return the value of the quoted string, after substituting all 
      * contained variables and removing the quotation marks.
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      */
    public Object evaluate(Context data)
-      throws ContextException
+      throws PropertyException
    {
       Object o;
       StringBuffer str = new StringBuffer(96); 
@@ -120,7 +120,7 @@ final class QuotedString extends Vector implements Macro
             try {
 	       str.append(((Macro) o).evaluate(data));
             } catch (ClassCastException e) {
-               throw new ContextException(
+               throw new PropertyException(
                      "QuotedString: Expected macro or string, got: " + o);
             }
 	 }
@@ -135,11 +135,11 @@ final class QuotedString extends Vector implements Macro
      * required by the Macro superclass, we don't expect it to be used much
      * since a quoted string does not really appear in a Block (it appears
      * as the argument to a function or directive.)
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      * @exception IOException if could not write to output stream
      */
    final public void write(FastWriter out, Context data) 
-	throws ContextException, IOException
+	throws PropertyException, IOException
    {
       out.write(evaluate(data).toString()); // evaluate never returns null
    }

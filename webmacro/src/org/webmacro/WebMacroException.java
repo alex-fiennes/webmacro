@@ -33,7 +33,7 @@ public class WebMacroException extends RethrowableException {
     super(reason);
   }
 
-  public WebMacroException(String reason, Exception e) {
+  public WebMacroException(String reason, Throwable e) {
     super(reason, e);
   }
 }

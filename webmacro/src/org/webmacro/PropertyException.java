@@ -18,26 +18,26 @@
  */
 
 
-package org.webmacro.util;
-import org.webmacro.*;
+package org.webmacro;
 
 /**
-  * This is a generic interface which PropertyOperator users may 
-  * wish to subclass from. The intent is that implementors of this
-  * class may use PropertyOperator to examine the context in order
-  * to extract some kind of value, which is returned.
+  * A PropertyException indicates some failure to evaluate a 
+  * property in a context or against some other object. For 
+  * example, if you attempted to introspect for a value that 
+  * does not exist, or access a non-existant value in a context,
+  * or access a protected or private field. 
   */
-public interface PropertyReference
+public class PropertyException extends ContextException
 {
+   public PropertyException(String reason)
+   {
+      super(reason);
+   }
 
-   /**
-     * Apply this object to the supplied context and return 
-     * the appropriate reference.
-     * @param context An object which may be introspected for information
-     * @return The appropriate value given this context
-     * @exception ContextException required data not found in context
-     */
-   public Object evaluate(Context context) throws 
-      ContextException;
+   public PropertyException(String reason, Throwable e) 
+   {
+      super(reason, e);
+   }
 
 }
+

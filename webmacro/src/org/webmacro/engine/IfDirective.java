@@ -112,10 +112,10 @@ final class IfDirective implements Directive, Visitable
    /**
      * Evaluate the current macro and return it as a string. Same
      * basic operation as calling write.
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      */ 
    public Object evaluate(Context context)
-      throws ContextException
+      throws PropertyException
    {
       FastWriter fw = FastWriter.getInstance();
       try {
@@ -132,11 +132,11 @@ final class IfDirective implements Directive, Visitable
    /**
      * Interpret the directive and write it out to the supplied stream.
      * <p>
-     * @exception ContextException if required data was missing from context
+     * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(FastWriter out, Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
 
       if (myCondition.test(context)) 

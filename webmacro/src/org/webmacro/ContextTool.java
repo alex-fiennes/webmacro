@@ -14,7 +14,7 @@ public interface ContextTool {
      * themselves from this method; others may instantiate new objects
      * to hold the per-request state.
      */
-   public Object init(Context c) throws InvalidContextException;
+   public Object init(Context c) throws PropertyException;
 
    /**
      * At the end of processing this method will be called to 

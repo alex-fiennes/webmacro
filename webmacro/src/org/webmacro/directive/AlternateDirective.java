@@ -41,7 +41,7 @@ public class AlternateDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
     Object[] arr;
 
     try {
@@ -57,7 +57,7 @@ public class AlternateDirective extends Directive {
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, out);
     }
-    catch (ContextException e) {
+    catch (PropertyException e) {
       String errorText = "#alternate: Unable to set value: " + target
         + "\n" + e.toString();
       context.getBroker().getLog("engine").error(errorText);
@@ -84,7 +84,7 @@ class Alternator implements Macro {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
     Object o = evaluate(context);
     if (o != null) 
       out.write(o.toString());

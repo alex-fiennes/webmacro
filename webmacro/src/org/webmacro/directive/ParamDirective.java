@@ -48,7 +48,7 @@ public class ParamDirective extends Directive {
     catch (ClassCastException e) {
       throw new NotVariableBuildException(myDescr.name, e);
     }
-    catch (ContextException e) {
+    catch (PropertyException e) {
       throw new BuildException("#param: Exception setting variable " 
                                + target.toString(), e);
     }
@@ -56,7 +56,7 @@ public class ParamDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
   } 
 
 }

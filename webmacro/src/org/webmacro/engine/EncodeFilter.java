@@ -19,13 +19,13 @@ class Encoder implements Macro {
       _m = m;
    }
 
-   public Object evaluate(Context c) throws ContextException {
+   public Object evaluate(Context c) throws PropertyException {
       Object o = _m.evaluate(c);
       return (o != null) ? java.net.URLEncoder.encode(o.toString()) : "";
    }
 
    public void write(FastWriter out, Context c) 
-      throws IOException, ContextException
+      throws IOException, PropertyException
    {
       out.write(evaluate(c).toString());
    }

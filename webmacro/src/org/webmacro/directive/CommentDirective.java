@@ -27,7 +27,7 @@ public class CommentDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
   } 
 
   public void accept(TemplateVisitor v) {

@@ -18,7 +18,7 @@ class Silencer implements Macro {
       _m = m;
    }
 
-   public Object evaluate(Context c) throws ContextException {
+   public Object evaluate(Context c) throws PropertyException {
       Object o = _m.evaluate(c);
       if (o == null) {
          return "";
@@ -28,7 +28,7 @@ class Silencer implements Macro {
    }
 
    public void write(FastWriter out, Context c) 
-      throws IOException, ContextException
+      throws IOException, PropertyException
    {
       out.write(evaluate(c).toString());
    }

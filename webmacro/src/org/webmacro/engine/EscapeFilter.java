@@ -74,7 +74,7 @@ class EscapeFilterMacro implements Macro {
    * @param c context to evaluate against
    * @return html escaped string
    **/
-  public Object evaluate(Context c) throws ContextException {
+  public Object evaluate(Context c) throws PropertyException {
     Object o = _m.evaluate(c);
     return (o != null) ? HTMLEscaper.escape(o.toString()) : null;
   }
@@ -85,7 +85,7 @@ class EscapeFilterMacro implements Macro {
    * @param c context to evaluate against
    **/
   public void write(FastWriter out,Context c)
-    throws IOException,ContextException {
+    throws IOException,PropertyException {
     out.write(evaluate(c).toString());
   }
 }

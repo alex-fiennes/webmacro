@@ -49,11 +49,11 @@ final public class Block implements Macro, Visitable
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.
      * <p>
-     * @exception ContextException if required data was missing from context
+     * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(final FastWriter out, final Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
       int len = _content.length;
       for(int i = 0; i < len; i++) {
@@ -64,9 +64,9 @@ final public class Block implements Macro, Visitable
    /**
      * same as out but returns a String
      * <p>
-     * @exception ContextException if required data was missing from context
+     * @exception PropertyException if required data was missing from context
      */
-   public Object evaluate(Context context) throws ContextException
+   public Object evaluate(Context context) throws PropertyException
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(_content.length * 16 + 256);

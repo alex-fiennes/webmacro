@@ -37,7 +37,7 @@ public class ContextException extends WebMacroException
       super(reason);
    }
 
-   public ContextException(String reason, Exception e) 
+   public ContextException(String reason, Throwable e) 
    {
       super(reason, e);
    }

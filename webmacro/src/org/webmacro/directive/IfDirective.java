@@ -154,7 +154,7 @@ class IfDirective extends Directive {
 
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
 
     for (int i=0; i<nConditions; i++) {
       if (Expression.isTrue(conditions[i].evaluate(context))) {

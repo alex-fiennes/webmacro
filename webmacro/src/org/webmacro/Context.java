@@ -40,13 +40,11 @@ public class Context implements Cloneable {
    final private Broker _broker;
 
    private Object _bean; // root of property introspection
-   private Method _beanGet = null; // get method, if any, of _bean
-   private Method _beanPut = null; // put method, if any, of _bean
 
-   private Map _toolbox; // contains tool initializers
-   private Map _tools = null;   // contains in-use tools
+   final private Map _toolbox; // contains tool initializers
+   final private Map _tools = new HashMap();
 
-   private Map _globals = null; // local variables
+   private Map _globals = new HashMap();
 
    private Locale _locale = Locale.getDefault();
 
@@ -74,7 +72,7 @@ public class Context implements Cloneable {
       _log = _broker.getLog("context");
       _prof = _broker.newProfile();
       _bean = null;
-      _toolbox = null;
+      _toolbox = new HashMap();
       try {
          String tools = (String) broker.get("config","ContextTools");
          registerTools(tools);
@@ -113,8 +111,7 @@ public class Context implements Cloneable {
       } catch (CloneNotSupportedException e) {
          // Object supports clone
       }
-
-      c._globals = null;
+      c._globals = new HashMap();
       c._bean = null;
       c._locale = _locale;
       c._prof = _broker.newProfile();
@@ -127,16 +124,14 @@ public class Context implements Cloneable {
      * Clear the context of its non-shared data, preserving only the toolbox.
      */
    public void clear() {
-      if (_tools != null) {
-         Iterator i = _tools.entrySet().iterator();
-         while (i.hasNext()) {
-            Map.Entry m = (Map.Entry) i.next();
-            ContextTool tool = (ContextTool) _toolbox.get(m.getKey());
-            tool.destroy(m.getValue());
-         }
-      } 
-      _tools = null;
-      _globals = null;
+      Iterator i = _tools.entrySet().iterator();
+      while (i.hasNext()) {
+         Map.Entry m = (Map.Entry) i.next();
+         ContextTool tool = (ContextTool) _toolbox.get(m.getKey());
+         tool.destroy(m.getValue());
+      }
+      _tools.clear();
+      _globals.clear();
       _bean = null;
       if (_prof != null) _prof.destroy();
    }
@@ -152,11 +147,7 @@ public class Context implements Cloneable {
      * during construction or initialization of the Context. 
      */
    final protected void registerTool(String name, ContextTool tool) 
-      throws ContextException
    {
-      if (_toolbox == null) {
-         _toolbox = new HashMap();
-      }
       _toolbox.put(name,tool);
    }
 
@@ -195,9 +186,6 @@ public class Context implements Cloneable {
          } catch (IllegalAccessException ia) {
             _log.error("Tool class and methods must be public for "
                   + toolName, ia);
-         } catch (ContextException e) {
-            _log.error("ContextException thrown while registering "
-                  + "Tool: " + toolName, e);
          } catch (InstantiationException ie) {
             _log.error("Tool class " + toolName + " must have a public zero "
                   + "argument or default constructor", ie);
@@ -296,9 +284,6 @@ public class Context implements Cloneable {
      * Get the local variables as a HashMap
      */
    final public Map getGlobalVariables() {
-      if (_globals == null) {
-         _globals = new HashMap();
-      }
       return _globals;
    }
 
@@ -332,11 +317,6 @@ public class Context implements Cloneable {
      */
    final public void setBean(Object bean) {
       _bean = bean;
-      // check if "bean" has set and get methods like a Map
-      try {
-        _beanGet = bean.getClass().getMethod("get", new Class[]{ java.lang.Object.class });
-        _beanPut = bean.getClass().getMethod("put", new Class[]{ java.lang.Object.class, java.lang.Object.class });
-      } catch (Exception e){}
    }
 
    /**
@@ -348,38 +328,54 @@ public class Context implements Cloneable {
      * top level template, where there is no bean.
      */
    public final Object getProperty(final Object[] names) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      Object ret = null;
+      Object root;
+      Object name;
+
+      try {
+         name = names[0];
+      } catch (ArrayIndexOutOfBoundsException e) {
+         throw new PropertyException("Zero length property name",e);
+      }
+
       if (_bean == null) {
-         ret = getGlobal(names);
+         root = _globals.get(name);
+         if (root == null) {
+            root = getTool(name);
+         }
+         if (root == null) {
+            throw new PropertyException("Could not access $" + names[0] 
+               + " since there is no such property in the Context"
+               + " and no matching ContextTool has been registered.",null);
+         }
+         if (names.length == 1) {
+            return root;
+         } else {
+            return PropertyOperator.getProperty(this,root,names,1);
+         }
       } else {
-        // 13-Oct-00 - re-added by keats: consume the first PropertyException to allow tools to be checked
-        try {
-          ret = PropertyOperator.getProperty(this,_bean,names);
-        } catch (PropertyException pe){
-          // consume this exception and try again below, will get thrown again if appropriate
-        }
+         // bean: tool wins over bean property (avoid exception)
+         root = getTool(name); 
+         if ((root != null) && (names.length == 1)) {
+            return root;
+         }
+         return PropertyOperator.getProperty(this,
+               ((root == null) ? _bean : root), names, 0);
       }
-      if (ret == null){
-        ret = getTool(names);
-      }
-      return ret;
    }
 
    /**
      * Set the named property via introspection 
      */
    final public boolean setProperty(final Object[] names, final Object value) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      if (names.length == 0) {
-         return false;
-      } else if (_bean == null) {
-         return setGlobal(names, value) || setTool(names, value);
+      if (_bean == null) {
+         return setGlobal(names, value) || setTool(names, value);  
       } else {
-         return PropertyOperator.setProperty(this,_bean,names,value) || 
-               setTool(names, value);      
+         return setTool(names,value) || 
+               PropertyOperator.setProperty(this,_bean,names,value);
       }
    }
 
@@ -390,31 +386,14 @@ public class Context implements Cloneable {
      * Retrieve a local value from this Context. 
      */
    final public Object get(Object name) {
-      //return (_globals != null) ? _globals.get(name) : null;
-      if (_globals != null) return _globals.get(name);
-      if (_beanGet != null){
-        try {
-          return _beanGet.invoke(_bean, new Object[]{ name });
-        } catch (Exception e){}
-      }
-      return null;
+      return _globals.get(name);
    }
 
    /**
      * Set a local value in this Context
      */
    final public void put(Object name, Object value) {
-      if (_globals == null) {
-         if (_beanPut != null){
-            try {
-              _beanPut.invoke(_bean, new Object[]{ name, value });
-            } catch (Exception e){}
-         } else {
-            getGlobalVariables().put(name,value);
-         }
-      } else {
-         _globals.put(name,value);
-      }
+      _globals.put(name,value);
    }
 
    /**
@@ -422,17 +401,18 @@ public class Context implements Cloneable {
      * an advanced-use method.
      */
    public final Object getGlobal(final Object[] names) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      int len = names.length;
-      if ((_globals == null) || (len == 0)) {
-         return null;
-      } 
-      Object res = get(names[0]); 
-      if ((len == 1) || (res == null)) { 
-         return res; 
+      Object root;
+      try {
+         root = _globals.get(names[0]);
+      } catch (ArrayIndexOutOfBoundsException e) {
+         throw new PropertyException("Illegal property name: zero length",e);
       }
-      return PropertyOperator.getProperty(this,res,names,1);
+      if ((root == null) || (names.length == 1)) { 
+         return root; 
+      }
+         return PropertyOperator.getProperty(this,root,names,1);
    }
 
    /**
@@ -440,21 +420,23 @@ public class Context implements Cloneable {
      * an advanced-use method.
      */
    final public boolean setGlobal(final Object[] names, final Object value) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      if (names.length == 0) {
-         return false;
-      } 
       if (names.length == 1) {
          put(names[0], value);
          return true;
       } else {
-         Object parent = get(names[0]);
-         if (parent == null) {
-            return false;
-         } else {
-            return PropertyOperator.setProperty(this,parent,names,1,value);
+         Object root;
+         try {
+            root = _globals.get(names[0]);
+         } catch (ArrayIndexOutOfBoundsException e) {
+            throw new PropertyException(
+                     "Illegal property name: zero length",e);
          }
+         if (root == null) {
+            return false;
+         }
+         return PropertyOperator.setProperty(this,root,names,1,value);
       } 
    }
 
@@ -466,45 +448,40 @@ public class Context implements Cloneable {
      * null if there isn't one. This is an advanced-use method.
      */
    final public Object getTool(Object name) 
-      throws ContextException
+      throws PropertyException
    {
+      Object ret = _tools.get(name);
+      if (ret != null) return ret;
       try {
-         if (_toolbox == null) {
-            return null;
-         }
-         Object ret = (_tools != null) ? _tools.get(name) : null;
-         if (ret == null) {
-            ContextTool tool = (ContextTool) _toolbox.get(name);
-            if (tool != null) {
-               if (_tools == null) {
-                  _tools = new HashMap();
-               }
-               ret = tool.init(this);
-               _tools.put(name,ret);
-            }
+         ContextTool tool = (ContextTool) _toolbox.get(name);
+         if (tool != null) {
+            ret = tool.init(this);
+            _tools.put(name,ret);
          }
          return ret;
       } catch (ClassCastException ce) {
-         throw new ContextException("Tool" + name  
-               + " does not implement the ContextTool interface!");
+         throw new PropertyException("Tool" + name  
+               + " does not implement the ContextTool interface!",null);
       }
    }
+
    /**
      * Get the named tool variable via introspection. This is an 
      * advanced-use method.
      */
    public final Object getTool(final Object[] names) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      if ((names.length == 0) || (_toolbox == null)) {
-         return null;
-      } else {
-         Object res = getTool(names[0]);
-         if (names.length == 1) {
-            return res;
-         } 
-         return PropertyOperator.getProperty(this,getTool(names[0]),names,1);
+      Object root;
+      try {
+         root = getTool(names[0]);
+      } catch (ArrayIndexOutOfBoundsException e) {
+         throw new PropertyException("Illegal tool name: zero length",e);
+      }
+      if (names.length == 1) {
+         return root;
       } 
+      return PropertyOperator.getProperty(this,root,names,1);
    }
 
    /**
@@ -512,16 +489,18 @@ public class Context implements Cloneable {
      * advanced-use method.
      */
    final public boolean setTool(final Object[] names, final Object value) 
-      throws PropertyException, ContextException
+      throws PropertyException
    {
-      if (names.length == 0) {
-         return false;
-      } 
-      if (names.length == 1) {
-         throw new ContextException("Cannot reset tool in a running context. Tools can only be registered via the registerTool method.");
-      } else {
-         return PropertyOperator.setProperty(this,getTool(names[0]),names,1,value);
-      } 
+      Object root;
+      try {
+        root = getTool(names[0]);   
+      }  catch (ArrayIndexOutOfBoundsException e) {
+         throw new PropertyException("Illegal tool name: zero length",e);
+      }
+      if (names.length > 1) {
+         return PropertyOperator.setProperty(this,root,names,1,value);
+      }
+      return false; // cannot reset the tool itself!
    }
 
    /**
@@ -539,4 +518,13 @@ public class Context implements Cloneable {
       return _locale;
    }
 
+
+   private static final String propName(Object[] name) {
+      StringBuffer buf = new StringBuffer();
+      for (int i = 0; i < name.length; i++) {
+         if (i != 0) buf.append(".");
+         buf.append(name[i]);
+      }
+      return buf.toString();
+   }
 }

@@ -47,14 +47,14 @@ public class SetDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
 
     try {
       if (result instanceof Macro) 
         target.setValue(context, ((Macro) result).evaluate(context));
       else
         target.setValue(context, result);
-    } catch (ContextException e) {
+    } catch (PropertyException e) {
       String errorText = "#set: Unable to set value: " + target;
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, out);

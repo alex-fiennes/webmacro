@@ -98,11 +98,11 @@ final class ForeachDirective implements Directive, Visitable
    /**
      * Interpret the directive and write it out
      * <p>
-     * @exception ContextException if required data was missing from context
+     * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(FastWriter out, Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
       // now clobber values outside the loop:
       // Map listMap = new HashMap();
@@ -127,14 +127,14 @@ final class ForeachDirective implements Directive, Visitable
             try {
                iter = PropertyOperator.getIterator(list);
             } catch (Exception e) {
-               throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
+               throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
             }
             while(iter.hasNext()) {
                _iterVar.setValue(context, iter.next());
                _body.write(out, context);
             }
          }
-      } catch (ContextException e) {
+      } catch (PropertyException e) {
          context.getBroker().getLog("engine").error(
             "unable to set a list item of list: " + _list); 
          out.write("<!--\n Unable to resolve list " + _list + " \n-->");
@@ -145,10 +145,10 @@ final class ForeachDirective implements Directive, Visitable
      * Interpret the foreach directive by looking up the list reference
      * in the supplied context and iterating through it. Return the 
      * result as a string.
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      */ 
    public Object evaluate(Context context)
-      throws ContextException
+      throws PropertyException
    {
       FastWriter fw = FastWriter.getInstance();
       try {

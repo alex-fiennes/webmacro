@@ -101,10 +101,10 @@ final public class PropertyMethod implements Named
      * against the supplied context. Any arguments which are of 
      * type Macro will be resolved into a regular 
      * object via the Macro.evaluate method.
-     * @exception ContextException a Macro in the arguments failed to resolve against the supplied context
+     * @exception PropertyException a Macro in the arguments failed to resolve against the supplied context
      */
    final public Object[] getArguments(Context context)
-      throws ContextException
+      throws PropertyException
    {
       Object[] argList;
       if (_reference) {

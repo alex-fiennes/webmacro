@@ -31,14 +31,14 @@ import javax.servlet.*;
 public class SessionTool implements ContextTool
 {
    public Object init(Context context) 
-      throws InvalidContextException
+      throws PropertyException
    {
       try {
          WebContext wc = (WebContext) context;
          HttpSession s = wc.getRequest().getSession(true);
          return s;
       } catch (ClassCastException ce) {
-         throw new InvalidContextException(
+         throw new PropertyException(
                "SessionTool only works with WebContext: " + ce);
       }
    }

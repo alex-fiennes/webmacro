@@ -39,7 +39,7 @@ public class ToolDirective extends Directive {
   }
 
   public void write(FastWriter out, Context context) 
-    throws ContextException, IOException {
+    throws PropertyException, IOException {
   } 
 
 }

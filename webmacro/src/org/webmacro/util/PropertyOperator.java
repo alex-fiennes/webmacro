@@ -70,22 +70,17 @@ final public class PropertyOperator
      * @return the property described by the names, inside the instance
      * @exception PropertyException the property we'd like to look at
      * @exception SecurityExeption you are not permitted to try
-     * @exception ContextException one of the names is a PropertyReference which could not be evaluated against the supplied context
      */
    static final public Object getProperty(
          final Context context, final Object instance, 
          final Object[] names, int start) 
-      throws PropertyException, SecurityException, ContextException
+      throws PropertyException, SecurityException
    {
-      try {
-         if (instance == null) {
-            return null;
-         } else {
-            return getOperator(instance.getClass()).getProperty(
-               context,instance,names,start,names.length - 1);
-         }
-      } catch (NoSuchMethodException e) {
-         throw new PropertyException("No method to access property: " + e.getMessage(),e);
+      if (instance == null) {
+         return null;
+      } else {
+         return getOperator(instance.getClass()).getProperty(
+            context,instance,names,start,names.length - 1);
       }
    }
 
@@ -94,7 +89,7 @@ final public class PropertyOperator
      */
    static final public Object getProperty(
          final Context context, final Object instance, final Object[] names) 
-      throws PropertyException, SecurityException, ContextException
+      throws PropertyException, SecurityException
    {
       return getProperty(context, instance, names, 0);
    }
@@ -108,12 +103,11 @@ final public class PropertyOperator
      * @param value the new value the property is to be set to
      * @exception PropertyException not possible to set the property
      * @exception SecurityException you are not permitted to try
-     * @exception ContextException a PropertyReference in the argument names could not be resolved against the supplied context
      */
    static final public boolean setProperty(
          final Context context, Object instance, 
          final Object[] names, int start, final Object value) 
-      throws PropertyException, SecurityException, ContextException
+      throws PropertyException, SecurityException
    {
       try {
          if (instance == null) {
@@ -131,7 +125,7 @@ final public class PropertyOperator
    static final public boolean setProperty(
          final Context context, final Object instance, 
          final Object[] names, final Object value) 
-      throws PropertyException, SecurityException, ContextException
+      throws PropertyException, SecurityException
    { 
       return setProperty(context,instance,names,0,value);
    }
@@ -472,7 +466,7 @@ final public class PropertyOperator
    private Object getProperty(
          final Context context, final Object instance, final Object[] names, 
             int start, int end) 
-      throws PropertyException, NoSuchMethodException, ContextException
+      throws PropertyException
    {
       String prop;
       Object nextProp = null;
@@ -490,7 +484,7 @@ final public class PropertyOperator
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new NoSuchMethodException("No method " + pm + " on object " + instance);
+            throw new PropertyException("No method " + pm + " on object " + instance);
          }
 
       } else {
@@ -544,7 +538,7 @@ final public class PropertyOperator
       } 
       
       if (acc == null) {
-         throw new NoSuchMethodException("No public method on object " + 
+         throw new PropertyException("No public method on object " + 
                instance + " of " + instance.getClass() + 
                " for property " + names[start] + "--is this the right class?");
       }
@@ -555,7 +549,7 @@ final public class PropertyOperator
          } catch (NullPointerException e) {
             throw new PropertyException("No way to access property " + 
                   names[start] + " on object " + instance + " of " 
-                  + instance.getClass() + "--possibly null?",e);
+                  + instance.getClass() + "--possibly null?");
          }
       } else {
          return nextProp;
@@ -577,7 +571,7 @@ final public class PropertyOperator
      */
    private boolean setProperty(
          Context context, Object instance, Object[] names, Object value, int pos) 
-      throws PropertyException, NoSuchMethodException, ContextException
+      throws PropertyException, NoSuchMethodException
    {
       // names[pos] is what we could set from here
 
@@ -700,9 +694,6 @@ final public class PropertyOperator
             " raised an exception: " + e.getTargetException(),
             e.getTargetException());
       } catch (NullPointerException e) {
-         if (meth == null) {
-            throw new NoSuchMethodException("Null method");
-         }
          throw new PropertyException(
             "NullPointerException thrown from method " + meth +
             " on object " + instance + " -- most likely you have attempted " + 

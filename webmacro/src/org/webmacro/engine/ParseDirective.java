@@ -83,10 +83,10 @@ class ParseDirective implements Directive
      * include filename; then read that file in and return it as 
      * a string. If we are a parsing directive then the file will
      * be parsed before it is returned as a string.
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      */ 
    final public Object evaluate(Context context)
-      throws ContextException
+      throws PropertyException
    {
       try {
          FastWriter fw = FastWriter.getInstance();
@@ -108,10 +108,10 @@ class ParseDirective implements Directive
      * file will be parsed before it is written.
      * <p>
      * @exception IOException if an error occurred with out
-     * @exception ContextException if required data was missing
+     * @exception PropertyException if required data was missing
      */
    final public void write(FastWriter out, Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
 
       if (_fileName == null) {

@@ -33,14 +33,14 @@ import javax.servlet.*;
 public class FormTool implements ContextTool
 {
    public Object init(Context context) 
-      throws InvalidContextException
+      throws PropertyException
    {
       try {
          WebContext wc = (WebContext) context;
          Form fr = new Form(wc.getRequest());
          return fr;
       } catch (ClassCastException ce) {
-         throw new InvalidContextException(
+         throw new PropertyException(
                "FormTool only works with WebContext: " + ce);
       }
    }

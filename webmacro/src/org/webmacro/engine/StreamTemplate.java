@@ -94,6 +94,13 @@ public class StreamTemplate extends WMTemplate
       }
 
       try {
+         /*
+         HashMap hm = new HashMap();
+         hm.put("one", "the first");
+         hm.put("two", "the second");
+         hm.put("three", "the third");
+         context.setBean(hm);
+         */
          context.put("helloworld", "Hello World");
          context.put("hello", "Hello");
          context.put("file", "include.txt");

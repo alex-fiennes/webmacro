@@ -72,11 +72,11 @@ final class SetDirective implements Directive, Visitable
 
    /**
      * Interpret the directive and write it out
-     * @exception ContextException is required data is missing
+     * @exception PropertyException is required data is missing
      * @exception IOException if could not write to output stream
      */
    public final void write(FastWriter out, Context context) 
-      throws ContextException, IOException
+      throws PropertyException, IOException
    {
        
       Object errorString;
@@ -100,7 +100,7 @@ final class SetDirective implements Directive, Visitable
          } else {
             myVariable.setValue(context, myValue);
          }
-      } catch (ContextException e) {
+      } catch (PropertyException e) {
          context.getLog("engine").warning("Set: Unable to set value: " + myVariable);
          return ("<!--\n Unable to set value: " + myVariable + " \n-->");
       } 

@@ -34,7 +34,7 @@ final class TermCondition extends Condition implements Macro, Visitable {
    }
 
    final public Object evaluate(Context context) 
-      throws ContextException
+      throws PropertyException
    {
       return _term.evaluate(context);
    }

@@ -33,14 +33,14 @@ import javax.servlet.*;
 public class CookieTool implements ContextTool
 {
    public Object init(Context context) 
-      throws InvalidContextException
+      throws PropertyException
    {
       try {
          WebContext wc = (WebContext) context;
          CookieJar fl = new CookieJar(wc.getRequest(), wc.getResponse());
          return fl;
       } catch (ClassCastException ce) {
-         throw new InvalidContextException(
+         throw new PropertyException(
                "This only works with WebContext: " + ce);
       }
 

@@ -10,7 +10,7 @@ public abstract class Expression {
 
     // Macro methods 
     final public void write(FastWriter out, Context context) 
-      throws ContextException, IOException {
+      throws PropertyException, IOException {
       out.write(evaluate(context).toString());
     }
   }
@@ -44,10 +44,10 @@ public abstract class Expression {
     
     BinaryOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public abstract Object operate(Object l, Object r) throws ContextException;
+    public abstract Object operate(Object l, Object r) throws PropertyException;
 
     public Object evaluate(Context context) 
-      throws ContextException  {
+      throws PropertyException  {
       Object l, r;
 
       try { 
@@ -76,7 +76,7 @@ public abstract class Expression {
     public abstract Object operate(Object o);
 
     public Object evaluate(Context context) 
-      throws ContextException {
+      throws PropertyException {
       Object o = (_o instanceof Macro) ? ((Macro) _o).evaluate(context) : _o;
 
       return operate(o);
@@ -121,9 +121,9 @@ public abstract class Expression {
     public AddOperation(Object l, Object r) { super(l, r); }
     public String getName() { return "Add"; };
 
-    public Object operate(Object l, Object r) throws ContextException {
+    public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
-        throw new ContextException("Add requires numeric operands");
+        throw new PropertyException("Add requires numeric operands");
       else
         return new Long(numberValue(l) + numberValue(r));
     }
@@ -133,9 +133,9 @@ public abstract class Expression {
     public SubtractOperation(Object l, Object r) { super(l, r); }
     public String getName() { return "Subtract"; };
 
-    public Object operate(Object l, Object r) throws ContextException {
+    public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
-        throw new ContextException("Subtract requires numeric operands");
+        throw new PropertyException("Subtract requires numeric operands");
       else
         return new Long(numberValue(l) - numberValue(r));
     }
@@ -145,9 +145,9 @@ public abstract class Expression {
     public MultiplyOperation(Object l, Object r) { super(l, r); }
     public String getName() { return "Multiply"; };
 
-    public Object operate(Object l, Object r) throws ContextException {
+    public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
-        throw new ContextException("Multiply requires numeric operands");
+        throw new PropertyException("Multiply requires numeric operands");
       else
         return new Long(numberValue(l) * numberValue(r));
     }
@@ -157,13 +157,13 @@ public abstract class Expression {
     public DivideOperation(Object l, Object r) { super(l, r); }
     public String getName() { return "Divide"; };
 
-    public Object operate(Object l, Object r) throws ContextException {
+    public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
-        throw new ContextException("Divide requires numeric operands");
+        throw new PropertyException("Divide requires numeric operands");
       else {
         long denom = numberValue(r);
         if (denom == 0)
-          throw new ContextException("Divide by zero");
+          throw new PropertyException("Divide by zero");
         else 
           return new Long(numberValue(l) / denom);
       }
@@ -183,7 +183,7 @@ public abstract class Expression {
       return null;
     }
 
-    public Object operate(Object l, Object r) throws ContextException {
+    public Object operate(Object l, Object r) throws PropertyException {
       Boolean b=null;
 
       if ((l instanceof String) && (r instanceof String)) 
@@ -202,7 +202,7 @@ public abstract class Expression {
         b = compare(l, r);
 
       if (b == null)
-        throw new ContextException("Objects not comparable");
+        throw new PropertyException("Objects not comparable");
       else 
         return b;
     }
@@ -468,7 +468,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 
@@ -484,7 +484,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 
@@ -500,7 +500,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 
@@ -516,7 +516,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 
@@ -532,7 +532,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 
@@ -548,7 +548,7 @@ public abstract class Expression {
         try {
           return c.operate(l, r);
         }
-        catch (ContextException e) { throw new BuildException(e.toString()); }
+        catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
 

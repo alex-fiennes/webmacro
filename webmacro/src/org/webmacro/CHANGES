@@ -1,4 +1,7 @@
 
+-- Nov-2000 justin: Cleaned up exceptions, cleaned up the Context.
+   Reversed the precedence of Tool vs. Bean when setBean is active
+
 -- Nov-2000 justin: Added support for WebMacro.defaults, which must 
    now exist on your classpath. WebMacro.properties now overrides 
    whatever is in WebMacro.defaults. The idea is we will ship the 
