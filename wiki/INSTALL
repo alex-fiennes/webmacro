@@ -30,6 +30,7 @@ Once you've decided, simply run ant install:
 > ant install -Ddir.install=<answer to 1> -Dsite.name=<answer to 2>
 
 for example, to install the default wiki and wm servers:
+
 ant install -Ddir.install=/deploy/wikiserver -Dsite.name=www.defaultserver.org
 
 ant install -Ddir.install=/deploy/webmacro -Dsite.name=www.webmacro.org
