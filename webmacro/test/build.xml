@@ -28,6 +28,10 @@
   <target name="unit-clean">
     <delete dir="${unit.classes}"/>
     <delete dir="${unit.reports}"/>
+    <delete file='LoadReport.html' />
+    <delete file='LoadReport.html' />
+    <delete file='PerformanceReport.html' />
+    <delete file='ecomm.html' />
   </target>
 
   <target name="unit-prepare">

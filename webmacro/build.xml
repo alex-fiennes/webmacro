@@ -97,6 +97,7 @@ Administrative targets:
         <delete dir="${tmpdir}"/>
         <delete dir="${examples}/WEB-INF"/>
         <delete dir="${tmpdir}"/>
+        <ant antfile="test/build.xml" target="unit-clean" />
     </target>
 
 
@@ -153,6 +154,8 @@ Administrative targets:
     </target>
 
     <target name="dist-binary" depends="prepare,compile,compile-examples,jar,javadoc">
+        <delete dir='${dist.binary}' />
+        <mkdir dir='${dist.binary}' />
         <copy todir="${dist.binary}" file="${jar}"/>
         <copy todir="${dist.binary}">
             <fileset dir="distroot" />
@@ -178,6 +181,8 @@ Administrative targets:
     </target>
 
     <target name="dist-source" depends="prepare">
+        <delete dir='${dist.source}' />
+        <mkdir dir='${dist.source}' />
         <copy todir="${dist.source}">
             <fileset dir="distroot" />
         </copy>
@@ -191,7 +196,7 @@ Administrative targets:
 
         <mkdir dir="${dist.source}/test" />
         <copy todir="${dist.source}/test">
-            <fileset dir="test" />
+            <fileset dir="test" includes='perf,unit' />
         </copy>
 
         <mkdir dir="${dist.source}/lib" />
@@ -214,19 +219,15 @@ Administrative targets:
         <touch file="${dist.source}/WM-VERSION-${version}"/>
     </target>
 
+    <target name='zip.and.tar' depends='dist-binary,dist-source'>
+        <zip destfile='${dist.binary}.zip' basedir='.' includes='${dist.binary}/**/*' />
+        <zip destfile='${dist.source}.zip' basedir='.' includes='${dist.source}/**/*' />
 
-    <target name='release' depends='clean,test,dist-binary,dist-source'>
-        <zip destfile='${dist.binary}.zip' basedir='${dist.binary}' />
-        <zip destfile='${dist.source}.zip' basedir='${dist.source}' />
-
-        <tar destfile='${dist.binary}.tar' basedir='${dist.binary}' />
-        <gzip zipfile='${dist.binary}.tgz' src='${dist.binary}.tar' />
-        <delete file='${dist.binary}.tar' />
-
-        <tar destfile='${dist.source}.tar' basedir='${dist.source}' />
-        <gzip zipfile='${dist.source}.tgz' src='${dist.source}.tar' />
-        <delete file='${dist.source}.tar' />
+        <tar destfile='${dist.binary}.tgz' longfile='gnu' compression='gzip' basedir='.' includes='${dist.binary}/**/*' />
+        <tar destfile='${dist.source}.tgz' longfile='gnu' compression='gzip' basedir='.' includes='${dist.source}/**/*' />
     </target>
+
+    <target name='release' depends='clean,test,dist-binary,dist-source,zip.and.tar' />
 
     <!--
       <target name="contrib" depends="compile" >
