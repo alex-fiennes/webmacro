@@ -31,8 +31,6 @@ import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-import org.webmacro.directive.*;
-
 /** This directive allows a block within a template to be reused
  * as a "templet" that can be invoked using the #eval directive.
  * @author Keats Kirsch
