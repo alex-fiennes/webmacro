@@ -96,8 +96,8 @@ public class WMParser_impl implements WMParser_implConstants {
   int n=1;
   if (getToken(n).kind == WS)
     ++n;
-  if (getToken(n+1).kind == WORD
-      && getToken(n+1).image.equals(keyword))
+  if (getToken(n).kind == WORD
+      && getToken(n).image.equals(keyword))
     return true;
   else
     return false;
@@ -175,7 +175,6 @@ public class WMParser_impl implements WMParser_implConstants {
   try {
     for (int i=0; i < args.length; ) {
       ArgDescriptor arg = args[i];
-      System.out.println("Argument " + i + ": " + arg.type + " " + arg.id);
 
       if (arg.type == Directive.ArgType_GROUP)
         parse_arg_group(args, i, da);
@@ -191,7 +190,6 @@ public class WMParser_impl implements WMParser_implConstants {
         Object o = parse_arg(arg);
         da.setArg(arg.id, o);
       }
-      System.out.println("Next " + i + " is " + arg.nextArg);
       i = arg.nextArg;
     }
   }
@@ -225,7 +223,6 @@ public class WMParser_impl implements WMParser_implConstants {
     DirectiveArgs da;
 
     while ((subd = lookahead_subdirective(descriptor.subdirectives)) != null) {
-      System.out.println("Processing subdirective " + subd.name);
       SubdirectiveStart();
       try {
         da = db.newSubdirective(subd.id);
@@ -233,7 +230,6 @@ public class WMParser_impl implements WMParser_implConstants {
         throw new ParseException("BuildException", e);
       };
       parse_args(subd.args, da);
-      System.out.println("Done with subdirective " + subd.name);
     }
   }
   OptionalWs();
@@ -1525,6 +1521,47 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
+  final private boolean jj_3R_34() {
+    if (jj_scan_token(OP_GE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_30() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_37()) {
+    jj_scanpos = xsp;
+    if (jj_3R_38()) {
+    jj_scanpos = xsp;
+    if (jj_3R_39()) {
+    jj_scanpos = xsp;
+    if (jj_3R_40()) {
+    jj_scanpos = xsp;
+    if (jj_3R_41()) {
+    jj_scanpos = xsp;
+    if (jj_3R_42()) {
+    jj_scanpos = xsp;
+    if (jj_3R_43()) {
+    jj_scanpos = xsp;
+    if (jj_3R_44()) {
+    jj_scanpos = xsp;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1890,47 +1927,6 @@ public class WMParser_impl implements WMParser_implConstants {
   final private boolean jj_3R_37() {
     if (jj_3R_47()) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_34() {
-    if (jj_scan_token(OP_GE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_30() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) {
-    jj_scanpos = xsp;
-    if (jj_3R_39()) {
-    jj_scanpos = xsp;
-    if (jj_3R_40()) {
-    jj_scanpos = xsp;
-    if (jj_3R_41()) {
-    jj_scanpos = xsp;
-    if (jj_3R_42()) {
-    jj_scanpos = xsp;
-    if (jj_3R_43()) {
-    jj_scanpos = xsp;
-    if (jj_3R_44()) {
-    jj_scanpos = xsp;
-    if (jj_3R_45()) {
-    jj_scanpos = xsp;
-    if (jj_3R_46()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 

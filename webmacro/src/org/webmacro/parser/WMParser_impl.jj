@@ -247,10 +247,10 @@ Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
 JAVACODE
 boolean lookahead_keyword(String keyword) {
   int n=1;
-  if (getToken(n).kind == WS)
+  if (getToken(n).kind == WS) 
     ++n;
-  if (getToken(n+1).kind == WORD
-      && getToken(n+1).image.equals(keyword))
+  if (getToken(n).kind == WORD
+      && getToken(n).image.equals(keyword))
     return true;
   else 
     return false;
