@@ -79,6 +79,14 @@ public abstract class TemplateTestCase extends TestCase {
 	 	return string;
 	}
 
+  /*
+   * Evaluates a template and returns its value. */
+  public String executeTemplate(Template template) throws Exception {
+    return template.evaluate(_context).toString();
+  }
+
+
+
 	/**
 	 * Executes a file template.
 	 */
