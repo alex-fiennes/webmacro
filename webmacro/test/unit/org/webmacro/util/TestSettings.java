@@ -40,6 +40,7 @@ public class TestSettings extends TestCase {
     assert(s.getSetting("quoted").equals("quoted"));
     assert(s.getSetting("quoted2").equals("quoted2"));
     assert(s.getSetting("quoted3").equals(" quoted3 "));
+    assert(s.getSetting("with.spaces").equals("with spaces"));
   }
 
   public void testOcclude() throws Exception {
@@ -50,6 +51,22 @@ public class TestSettings extends TestCase {
 
     assert(s.getSetting("a").equals("aa"));
     assert(s.getSetting("bb").equals("bb"));
+  }
+
+  public void testSubsettings() throws Exception {
+    Settings s = new Settings();
+    s.load("org/webmacro/util/settings1.properties");
+    Settings ss = new SubSettings(s, "sub");
+    Settings sss = new SubSettings(ss, "sub");
+    Settings sssStar = new SubSettings(ss, "*");
+    Settings ssss = new SubSettings(s, "sub.sub");
+
+    assert(s.getSetting("sub.sub.a").equals("a"));
+    assert(ss.getSetting("sub.a").equals("a"));
+    assert(ss.getSetting("a").equals("not a"));
+    assert(sss.getSetting("a").equals("a"));
+    assert(ssss.getSetting("a").equals("a"));
+    assert(sssStar.getSetting("a").equals("default"));
   }
 }
 
