@@ -1,13 +1,20 @@
-<project name="wiki" default="compile" basedir=".">
+<project name="wiki" default="install" basedir=".">
+   <property name="site.name" value="reference.arinso.de" />
+	<property name="dir.install" value="/C:/" />
 	<property name="app.name" value="wiki" />
 	<property name="dir.class" value="./class" />
 	<property name="dir.src"   value="./src" />
 	<property name="dir.lib"   value="./lib" />
+	<property name="dir.lib.build"   value="./lib.build" />
 
 	<property name="file.jar"  value="./wiki.jar" />
 
 	<path id="path.class">
 		<fileset dir="${dir.lib}">
+			<include name="*.jar" />
+			<include name="*.zip" />
+		</fileset>
+		<fileset dir="${dir.lib.build}">
 			<include name="*.jar" />
 			<include name="*.zip" />
 		</fileset>
@@ -24,10 +31,16 @@
 	</target>
 
 	<target name="compile" depends="prepare">
+		<!--
+		<javacc 
+			 target="${dir.src}/org/tcdi/opensource/wiki/parser/wiki.jj" 
+			 javacchome="." 
+		/>
+		-->
 		<javac  destdir="${dir.class}"
 			debug="on"
-			optimize="off"
-			deprecation="off"
+			optimize="on"
+			deprecation="on"
 		>
 			<src path="${dir.src}" />
 			<classpath refid="path.class" />
