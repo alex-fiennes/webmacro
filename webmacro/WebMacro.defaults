@@ -155,7 +155,7 @@ Providers:
 Directives: 
 
 Directives.include:    org.webmacro.directive.IncludeDirective
-Directives.parse:      org.webmacro.directive.ParseDirective
+Directives.parse:      org.webmacro.directive.IncludeDirective
 Directives.set:        org.webmacro.directive.SetDirective
 Directives.if:         org.webmacro.directive.IfDirective
 Directives.text:       org.webmacro.directive.TextDirective
@@ -173,6 +173,14 @@ Directives.type:       org.webmacro.directive.TypeDirective
 #
 
 type.Enabled = true
+
+include.Lazy: true
+include.TemplateExtensions: .wm, .wmt, .tml
+include.StrictCompatibility: false
+
+parse.Lazy: true
+parse.TemplateExtensions: .wm, .wmt, .tml
+parse.StrictCompatibility: true
 
 
 # The following are tools which are added to your WebContext. You can 
