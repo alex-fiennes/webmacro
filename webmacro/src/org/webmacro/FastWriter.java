@@ -489,8 +489,8 @@ class FWPool implements Pool {
             synchronized (_pool) {
                 obj = _pool.remove(0);
             }
-        }
-        _size--;
+            _size--;
+        }        
         return obj;
     }
     
