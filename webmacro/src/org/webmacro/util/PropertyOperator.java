@@ -171,6 +171,133 @@ final public class PropertyOperator
    private Method iteratorMethod = null;
 
    /**
+     * Get the public methods for the named class. The vector meths 
+     * will be populated by a list of all the methods. Note that a method
+     * may appear more than once in the vector if it is declared in more
+     * than one superclass or interface.
+     */
+   private void getAllMethods(Hashtable meths, Class c)
+      throws SecurityException
+   {
+      if (Modifier.isPublic( c.getModifiers() ) ) {
+         Method m[] = c.getDeclaredMethods();
+         for (int i = 0; i < m.length; i++) {
+            if ( Modifier.isPublic( m[i].getModifiers() ) ) {
+               addMethod(meths, m[i]);
+            }
+         }
+      }
+      Class iface[] = c.getInterfaces();
+      for (int i = 0; i < iface.length; i++) {
+         getAllMethods(meths, iface[i]);
+      }
+
+      Class sup = c.getSuperclass();
+      if (sup != null) {
+         getAllMethods(meths, sup);
+      }
+   }
+
+   /**
+     * The lhs precedes the rhs if it has fewer parameters. If the lhs 
+     * has the same number of parameters then the lhs precedes the rhs 
+     * if it can be used anywhere the rhs can be used--meaning that for
+     * each and every term, the lhs is the same or more specific than
+     * the rhs. If they have the same number of parameters but are not
+     * related at all, put the lhs later.
+     */
+   private int precedes(Class[] lhs, Class[] rhs)
+   {
+
+      if (lhs.length == rhs.length) {
+         for (int i = 0; i < lhs.length; i++) {
+
+            if (! rhs[i].equals(lhs[i])) {
+
+               if (lhs[i].isAssignableFrom(rhs[i])) {
+                  // rhs is more specific than lhs
+                  return 1;
+               }
+
+               if (rhs[i].isAssignableFrom(lhs[i])) {
+                  // lhs is more specific than rhs
+                  return -1;
+               }
+
+               // not related by inheritance, put lhs later on
+               return 1;
+
+            }
+         }
+         return 0; // all the same
+      } else {
+         return (lhs.length < rhs.length) ? -1 : 1;
+      }
+   }
+
+   private void addMethod(Hashtable hm, Method m) {
+      String name = m.getName();
+      Object o = hm.get( name );
+      if (o == null) {
+         hm.put(name, m);
+         return;
+      }
+
+      Vector v;
+      if (o instanceof Method) {
+         v = new Vector();
+         v.addElement(o);
+         hm.put(name, v);
+      } else {
+         v = (Vector) o;
+      }
+
+      Class ptypes[] = m.getParameterTypes();
+      for (int i = 0; i < v.size(); i++) {
+         Class curTypes[] = ((Method) v.elementAt(i)).getParameterTypes();
+
+         int order = precedes(ptypes, curTypes);
+
+         if (order < 0) {
+            v.insertElementAt(m,i);
+            return;
+         } else if (order == 0) {
+            // ignore duplicate method
+            return;
+         }
+      }
+      v.addElement(m);
+   }
+
+   /**
+     * Get all the public methods of the supplied class. They will be 
+     * returned in arbitrary alphabetical order, but where there are 
+     * multiple methods with the same name, they will be returned in 
+     * order of precedence: least arguments first, and most specific 
+     * arguments before less specific arguments. See precedes().
+     */
+   private Vector getMethods(Class c) {
+      Vector v = new Vector();
+      Hashtable h = new Hashtable();
+      getAllMethods(h,c);
+      Enumeration enum = h.elements();
+      while (enum.hasMoreElements()) {
+         Object elem = enum.nextElement();
+
+         if (elem instanceof Method) {
+            v.addElement( elem );
+         } else {
+            Vector v1 = (Vector) elem;
+            for (int i = 0; i < v1.size(); i++) {
+               v.addElement( v1.elementAt(i) );
+            }
+         }
+      }
+      return v;
+   }
+
+
+   /**
      * Construct a property operator for the target class
      */
    private PropertyOperator(final Class target)
@@ -200,30 +327,15 @@ final public class PropertyOperator
 
       // introspect methods second
 
-      Method[] methods = target.getMethods();
+      Vector methods = getMethods(target);
 
       Method meth;
       Class[] params;
       String name,propName;
 
-      for (int i = 0; i < methods.length; i++) 
+      for (int i = 0; i < methods.size(); i++) 
       {
-         meth = methods[i];
-
-         // don't look at non-public methods
-         if (! Modifier.isPublic(meth.getModifiers())) {
-
-            if (_debug) {
-               _log.debug("Skipped non-public method: " + meth);
-            }
-
-            continue;
-         }
-
-         /*if (_debug) {
-          *  _log.debug("Checking " + meth);
-          *}
-          */
+         meth = ((Method) methods.elementAt(i));
 
          name = meth.getName();
          params = meth.getParameterTypes();
@@ -791,31 +903,9 @@ final class DirectAccessor extends Accessor
 
    final void addMethod(final Method m, Class[] params)
    {
-      for(int i = 0; i < _methods.size(); i++) {
-         Method cur = (Method) _methods.elementAt(i);
-         if ( precedes(cur.getParameterTypes(), params) ) {
-            _methods.insertElementAt(m,i);
-            return;
-         }
-      }
       _methods.addElement(m);
    }
 
-   final boolean precedes(Class[] lhs, Class[] rhs)
-   {
-      if (lhs.length == rhs.length) {
-         for (int i = 0; i < lhs.length; i++) {
-            // lhs precedes rhs if lhs terms are more specific
-            if (rhs[i].isAssignableFrom(lhs[i])) 
-            {
-               return false; // lhs is more general than rhs     
-            }
-         }
-         return true; // all lhs terms same as or more specific than rhs
-      } else {
-         return (lhs.length < rhs.length);
-      }
-   }
 
    final boolean matches(Class[] sig, Class[] args)
    {
