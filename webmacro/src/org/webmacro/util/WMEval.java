@@ -120,14 +120,6 @@ public class WMEval {
 	}
 
 	/**
-	 * A convenience method to parse a string using the encoding supplied.
-	 */
-	public Template parseStringTemplate(String template, String encoding) {
-	  	rule = new StringTemplate(wm.getBroker(), template, encoding);
-	  	return rule;
-	}
-
-	/**
 	 * Supplies the parsed rule directly.
 	 * @param parsedRule The rule parsed possibly from a previous run.
 	 */

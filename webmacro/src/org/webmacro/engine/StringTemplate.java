@@ -29,41 +29,26 @@ import org.webmacro.*;
 
 /**
   * StringTemplate objects read their template data from a string.
+  * They do not need an encoding since strings are already converted
+  * to utf by java.
   * @author Brian Goetz
   */
 
 public class StringTemplate extends WMTemplate
 {
 
-   /**
-     * What encoding I use to read my templates
-     */
-   private final String myEncoding;
-
    /** The text associated with this template */
    private final String templateText;
 
    /**
-     * Instantiate a template using the default encoding 
-     * from WebMacro.properties (TemplateEncoding), 
-     * or if not specified there then the UTF-8 encoding.
+     * Instantiate a template. Encoding information
+     * is not needed, as strings are already converted
+     * to utf in java.
      */
    public StringTemplate(Broker broker, String templateText)
    {
-      this(broker, templateText, null);
-   }
-
-   /** 
-     * Instantiate a template based on the specified text using
-     * the specified encoding to read the template.
-     */
-   public StringTemplate(Broker broker, String templateText, String encoding) {
-      super(broker);
-      this.templateText = templateText;
-      if (encoding == null) 
-         myEncoding = getDefaultEncoding();
-      else 
-         myEncoding = encoding;
+       super(broker);
+       this.templateText = templateText;
    }
 
    /**
