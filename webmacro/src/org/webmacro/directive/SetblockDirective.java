@@ -31,14 +31,20 @@ import org.webmacro.engine.Variable;
 
 public class SetblockDirective extends Directive {
 
-   private static final int SETBLOCK_TARGET = 1;
-   private static final int SETBLOCK_RESULT = 2;
+   private static final int SETBLOCK_AS = 1;
+   private static final int SETBLOCK_MACRO = 2;
+   private static final int SETBLOCK_TARGET = 3;
+   private static final int SETBLOCK_RESULT = 4;
 
    private Variable target;
    private Object result;
+   private boolean asMacro = false;
 
    private static final ArgDescriptor[]
          myArgs = new ArgDescriptor[]{
+            new OptionalGroup(2),
+            new KeywordArg(SETBLOCK_AS, "as"),
+            new KeywordArg(SETBLOCK_MACRO, "macro"),
             new LValueArg(SETBLOCK_TARGET),
             new BlockArg(SETBLOCK_RESULT)
          };
@@ -62,6 +68,8 @@ public class SetblockDirective extends Directive {
       catch (ClassCastException e) {
          throw new NotVariableBuildException(myDescr.name, e);
       }
+      Object macroKeyword = builder.getArg(SETBLOCK_MACRO, bc);
+      asMacro = (macroKeyword != null);
       result = builder.getArg(SETBLOCK_RESULT, bc);
       return this;
    }
@@ -70,7 +78,7 @@ public class SetblockDirective extends Directive {
          throws PropertyException, IOException {
 
       try {
-         if (result instanceof Macro)
+         if (result instanceof Macro && !asMacro)
             target.setValue(context, ((Macro) result).evaluate(context));
          else
             target.setValue(context, result);
@@ -87,6 +95,10 @@ public class SetblockDirective extends Directive {
 
    public void accept(TemplateVisitor v) {
       v.beginDirective(myDescr.name);
+      if (asMacro){
+         v.visitDirectiveArg("SetblockKeyword", "as");
+         v.visitDirectiveArg("SetblockKeyword", "macro");
+      }
       v.visitDirectiveArg("SetblockTarget", target);
       v.visitDirectiveArg("SetblockValue", result);
       v.endDirective();
