@@ -11,9 +11,8 @@ import org.apache.regexp.RE;
 
 
 /**
- * the abuse test.  Tries to do really mean things to
- * the parser, and even expects the parser to do them 
- * correctly.
+ * the block test.  makes sure WM can parse the supported
+ * block sytles correctly.
  */
 public class TestBlocks extends TemplateTestCase {
 
