@@ -311,13 +311,19 @@ public final class BackupCharStream implements CharStream
 
   public final String GetImage()
   {
-    if (tokenBeginBuf == curBuf) 
-        return new String(curBuf.buffer, tokenBeginPos, 
+     String ret;
+        
+     if (tokenBeginBuf == curBuf) {
+        ret = new String (curBuf.buffer, tokenBeginPos,
                           curBuf.curPos - tokenBeginPos + 1);
-     else
-        return new String(otherBuf.buffer, tokenBeginPos, 
-                          otherBuf.dataLen - tokenBeginPos) 
-          + new String(curBuf.buffer, 0, curBuf.curPos);
+     } else {
+        ret = new String (otherBuf.buffer, tokenBeginPos,
+                          otherBuf.dataLen - tokenBeginPos);
+        if (curBuf.curPos < curBuf.dataLen)
+           ret += new String (curBuf.buffer, 0, curBuf.curPos + 1);
+     }
+        
+     return ret;
   }
 
   public final char[] GetSuffix(int len)
