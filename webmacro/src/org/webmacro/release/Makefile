@@ -28,7 +28,7 @@ DOCS =		org/webmacro/webroot/*.html \
 		org/webmacro/webroot/api \
 		org/webmacro/webroot/mkdoc \
 		org/webmacro/CHANGES \
-		org/webmacro/LIENSE \
+		org/webmacro/webroot/LICENSE \
 		org/webmacro/webroot/COPYING
 
 EXAMPLES =	org/webmacro/examples/*.wm \
@@ -71,7 +71,7 @@ webmacro: org/webmacro
 	mkdir webmacro
 
 webmacro/webmacro.jar:	webmacro
-	CLASSPATH=$(CLASSPATH) javac $(SOURCES)
+	CLASSPATH=$(CLASSPATH) javac -O $(SOURCES)
 	jar cf webmacro/webmacro.jar $(CLASSES)
 
 webmacro/src.zip:	webmacro
