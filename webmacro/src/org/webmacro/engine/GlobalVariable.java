@@ -6,13 +6,13 @@ import org.webmacro.*;
 /**
   * Operate on bean properties in a context
   */
-final class LocalVariable extends Variable
+final class GlobalVariable extends Variable
 {
 
    /**
      * No special initialization
      */
-   LocalVariable(Object names[]) {
+   GlobalVariable(Object names[]) {
       super(names);
    }
 
@@ -25,7 +25,7 @@ final class LocalVariable extends Variable
       throws ContextException
    {
       try {
-         return context.getLocal(_names);
+         return context.getGlobal(_names);
       } catch (Exception e) {
          Engine.log.exception(e);
          String warning = "Variable: unable to access " + this + ";";
@@ -43,7 +43,7 @@ final class LocalVariable extends Variable
    {
 
       try{
-         if (!context.setLocal(_names,newValue)) {
+         if (!context.setGlobal(_names,newValue)) {
             throw new ContextException("No method to set \"" + _vname + 
                "\" to type " +
                ((newValue == null) ? "null" : newValue.getClass().toString()) 
@@ -62,7 +62,7 @@ final class LocalVariable extends Variable
      * debugging purposes.
      */
    public final String toString() {
-      return "local:" + _vname;
+      return "global:" + _vname;
    }
 
 }

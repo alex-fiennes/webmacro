@@ -1,4 +1,8 @@
 
+-- Sebastian added HTMLEscape directive
+-- Brian uploaded new parser
+-- Keats fixed a bug in Context that prevented proper lookup
+-- I am rolling back Local change
 -- added EncodeDirective as a demonstration of Filter architecture
 -- added Filter architecture
 -- removed case for enabling/disabling c-style blocks

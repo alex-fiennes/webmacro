@@ -130,9 +130,7 @@ class ParseDirective implements Directive
 
       try {
          Template tmpl = (Template) context.getBroker().getValue("template", fname);
-         context.push(null);
          tmpl.write(out,context);
-         context.pop();
      } catch (IOException e) {
          Engine.log.exception(e);
          String warning = "Error reading file " + fname;

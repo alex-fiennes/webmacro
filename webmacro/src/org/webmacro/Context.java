@@ -43,11 +43,7 @@ public class Context implements Cloneable {
    private Map _toolbox; // contains tool initializers
    private Map _tools = null;   // contains in-use tools
 
-   private Map _locals = null; // local variables
-
-   private Object[] _beanState = null; // managed by push/pop
-   private Map[] _localState = null; // managed by push/pop
-   private int _state = 0; // managed by push/pop
+   private HashMap _globals = null; // local variables
 
    private Locale _locale = Locale.getDefault();
    private String _encoding = "UTF8";
@@ -104,10 +100,8 @@ public class Context implements Cloneable {
 
    /**
      * Create a new context based on this one, but using the specified 
-     * bean instead of this one. The clone will be in an initial state, 
-     * no pushes performed on the parent will be visible in it. The 
-     * clone will share tools and the broker with its parent. It will
-     * have a null property bean.
+     * bean instead of this one. The clone will share tools and the broker 
+     * with its parent. It will have a null property bean.
      */
    protected Object clone() {
       Context c = null;
@@ -117,11 +111,7 @@ public class Context implements Cloneable {
          // Object supports clone
       }
 
-      c._localState = null;
-      c._beanState = null;
-      c._state = 0;
-
-      c._locals = null;
+      c._globals = null;
       c._bean = null;
       c._locale = _locale;
 
@@ -131,91 +121,11 @@ public class Context implements Cloneable {
    /**
      * This method is ordinarily called by the template processing system.
      * <p>
-     * Push the supplied bean onto the context, creating a sub-context 
-     * which is equivalent to the current one, only with fresh local vars
-     * and using this bean for property evaluation. A subsequent pop will
-     * restore the context to its present state. The broker and tools 
-     * will be unaffected.
-     */
-   public void push(Object bean) 
-      throws ContextException
-   {
-      if (_state > 256) {
-         throw new ContextException("Infinite recursion detected: "
-               + " context recursion cutoff a stack depth of 256.");
-      }
-   
-      if (_localState == null) {
-         _localState = new HashMap[7];
-      }
-
-      if (_beanState == null) {
-         _beanState = new Object[7];
-      }
-
-      if (_state == _localState.length) {
-         HashMap[] tmp = new HashMap[ _localState.length * 2 + 1 ];
-         System.arraycopy(_localState,0,tmp,0,_localState.length);
-         _localState = tmp;
-      }
-
-      if (_state == _beanState.length) {
-         Object[] tmp = new Object[ _beanState.length * 2 + 1 ];
-         System.arraycopy(_beanState,0,tmp,0,_beanState.length);
-         _beanState = tmp;
-      }
-
-      _localState[_state] = _locals;
-      _beanState[_state] = _bean;
-      _state++;
-      _bean = bean;
-      _locals = null;
-   }
-
-   /**
-     * This method is ordinarily called by the template processing system.
-     * <p>
-     * Restore the context to the state prior to the last push(bean), 
-     * recovering the old local variables and the old bean. If you pop
-     * more times than you push, this has no effect.
-     */
-   public void pop() {
-      if (_state == 0) {
-         return;
-      }
-      if (_locals != null) {
-         _locals.clear();
-      }
-      _state--;
-
-      _bean = _beanState[_state];
-      _beanState[_state] = null;
-
-      _locals = _localState[_state];
-      _localState[_state] = null;
-   }
-
-
-   /**
-     * This method is ordinarily called by the template processing system.
-     * <p>
      * Clear the context of its non-shared data, preserving only the toolbox.
      */
    public void clear() {
-      while (_state > 0) {
-         pop();
-      }
-
-      if (_tools != null) {
-         _tools.clear();
-         _tools = null;
-      }
-
-      if (_locals != null) {
-         _locals.clear();
-         _locals = null;
-      }
-
+      _tools = null;
+      _globals = null;
       _bean = null;
    }
 
@@ -304,11 +214,11 @@ public class Context implements Cloneable {
    /**
      * Get the local variables as a HashMap
      */
-   final public Map getLocalVariables() {
-      if (_locals == null) {
-         _locals = new HashMap();
+   final public Map getGlobalVariables() {
+      if (_globals == null) {
+         _globals = new HashMap();
       }
-      return _locals;
+      return _globals;
    }
 
 
@@ -339,10 +249,9 @@ public class Context implements Cloneable {
    public final Object getProperty(final Object[] names) 
       throws PropertyException, ContextException
    {
-      // 2-Sep-2000 -- Fixed by keats - tools weren't being checked if bean set
       Object ret = null;
       if (_bean == null) {
-         ret = getLocal(names);
+         ret = getGlobal(names);
       } else {
          //return PropertyOperator.getProperty(this,_bean,names);
         ret = PropertyOperator.getProperty(this,_bean,names);
@@ -362,10 +271,10 @@ public class Context implements Cloneable {
       if (names.length == 0) {
          return false;
       } else if (_bean == null) {
-         return setLocal(names, value) || setTool(names, value);
+         return setGlobal(names, value) || setTool(names, value);
       } else {
-         // 28-Sep-2000 - keats - added the setTool clause, same fix as previous fix for getProperties
-         return PropertyOperator.setProperty(this,_bean,names,value) || setTool(names, value);      
+         return PropertyOperator.setProperty(this,_bean,names,value) || 
+               setTool(names, value);      
       }
    }
 
@@ -376,54 +285,48 @@ public class Context implements Cloneable {
      * Retrieve a local value from this Context. 
      */
    final public Object get(Object name) {
-      return (_locals != null) ? _locals.get(name) : null;
+      return (_globals != null) ? _globals.get(name) : null;
    }
 
    /**
      * Set a local value in this Context
      */
    final public void put(Object name, Object value) {
-      if (_locals == null) {
-         _locals = new HashMap();
+      if (_globals == null) {
+         getGlobalVariables().put(name,value);
+      } else {
+         _globals.put(name,value);
       }
-      _locals.put(name,value);
    }
 
    /**
      * Get the named local variable via introspection. This is 
      * an advanced-use method.
      */
-   public final Object getLocal(final Object[] names) 
+   public final Object getGlobal(final Object[] names) 
       throws PropertyException, ContextException
    {
       int len = names.length;
-      if ((_locals == null) || (len == 0)) {
+      if ((_globals == null) || (len == 0)) {
          return null;
-      } else {
-         Object res = get(names[0]);
-         if (len == 1) {
-            return res;
-         } else if (res == null) {
-            return null;
-         } else {
-            return PropertyOperator.getProperty(this,res,names,1);
-         }
       } 
+      Object res = get(names[0]); 
+      if ((len == 1) || (res == null)) { 
+         return res; 
+      }
+      return PropertyOperator.getProperty(this,res,names,1);
    }
 
    /**
      * Set the named local variable via introspection. This is 
      * an advanced-use method.
      */
-   final public boolean setLocal(final Object[] names, final Object value) 
+   final public boolean setGlobal(final Object[] names, final Object value) 
       throws PropertyException, ContextException
    {
       if (names.length == 0) {
          return false;
       } 
-      if (_locals == null) {
-         _locals = new HashMap();
-      }
       if (names.length == 1) {
          put(names[0], value);
          return true;

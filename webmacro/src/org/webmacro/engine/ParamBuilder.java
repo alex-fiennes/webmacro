@@ -17,7 +17,7 @@ public class ParamBuilder implements Builder
       throws BuildException
    {
       try {
-         Object ret = bc.getLocal(_names);
+         Object ret = bc.getGlobal(_names);
          // XXX: Filter me
          return ret;
       } catch (Exception e) {

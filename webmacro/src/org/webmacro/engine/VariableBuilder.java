@@ -35,7 +35,7 @@ public class VariableBuilder implements Builder
       if (type == Variable.PROPERTY_TYPE) {
          v = new PropertyVariable(c); 
       } else if (type == Variable.LOCAL_TYPE) {
-         v = new LocalVariable(c);
+         v = new GlobalVariable(c);
       } else if (type == Variable.TOOL_TYPE) {
          v = new ToolVariable(c);
       } else {

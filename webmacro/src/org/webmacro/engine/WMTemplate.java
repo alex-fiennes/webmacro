@@ -153,7 +153,7 @@ abstract public class WMTemplate implements Template
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
-         newParameters = bc.getLocalVariables();
+         newParameters = bc.getGlobalVariables();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;

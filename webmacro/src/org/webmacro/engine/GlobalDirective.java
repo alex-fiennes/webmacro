@@ -28,7 +28,7 @@ import org.webmacro.*;
 /**
   * This directive marks the named variable as being of local type
   */
-abstract class LocalDirective implements Directive
+abstract class GlobalDirective implements Directive
 {
 
    public static Object build(BuildContext rc, Object variable) 
