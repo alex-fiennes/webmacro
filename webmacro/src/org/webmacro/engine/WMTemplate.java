@@ -158,6 +158,9 @@ abstract public class WMTemplate implements Template
          newContent = null; // don't let the old one survive
          _log.error("Template: Could not read template: " + this);
          throw e;
+      } catch (Exception e){
+          _log.error("Error parsing template: " + this, e);
+          throw new BuildException("Error parsing template: " + this, e);
       } finally {
          try { in.close(); } catch (Exception e) { }
          _parameters = newParameters;
