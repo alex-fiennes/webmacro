@@ -1,3 +1,5 @@
+-- Mar-2000 brian: Fix bug in context recycling reported by Zeljko
+
 -- Mar-2000 brian: Merge in Michael Bayne's EncodingCache patches.  
 
 -- Feb-2000 brian: Fixed context-recycling bug in WM; make FastWrite not final

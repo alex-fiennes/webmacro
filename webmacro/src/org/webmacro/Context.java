@@ -130,6 +130,7 @@ public class Context implements Map, Cloneable
      * but they must call super.clear() if they do so.
      */
    public void clear() {
+      _variables.clear();
       Iterator i = _initializedTools.entrySet().iterator();
       while (i.hasNext()) {
          Map.Entry m = (Map.Entry) i.next();
