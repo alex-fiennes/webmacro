@@ -1,24 +1,4 @@
-/*
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Initial Developer of this code is Wangjammers
- * Copyright (C) 2003 Wangjammers.
- *
- * More information about the Ignition Web-Application can be found at:
- * http://www.wangjammers.org/ignition
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of Wangjammers and/or the WebMacro project.
- * For more information on the Wangjammers and WebMacro, please see
- * <http://www.wangjammers.org/> and <http://www.webmacro.org/>
- * respectively.
- *
- */
+
 package org.webmacro.template;
 
 import org.webmacro.Context;
