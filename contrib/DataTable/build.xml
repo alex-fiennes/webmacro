@@ -1,7 +1,8 @@
 <!--
-    In order to build mgmt, set
+    In order to build DataTable, set
     JAVACC_HOME as an environment variable
     to your jdk home.
+    [NOT NEEDED UNTIL TESTS ARE SET UP]
  -->
 
 <project name="DataTable" default="compile" basedir=".">
@@ -59,9 +60,6 @@
     -->
     <delete dir="${javadoc}"/>
     <delete dir="${jars}"/>
-    <delete file="${jar}"/>
-    <delete file="${src.jar}"/>
-    <delete file="${doc.jar}"/>
     <delete>
        <fileset dir="${app.name}" excludes="WEB-INF"/>
     </delete>
@@ -99,16 +97,6 @@
 
   <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
     <mkdir dir="${app.name}/api" />
-<!--
-    <copy todir="${app.name}/api">
-      <fileset dir="${javadoc}"/>
-    </copy>
--->
-<!--
-    <copy todir="${jars}" file="${src.jar}"/>
-    <copy todir="${jars}" file="${jar}"/>
-    <copy todir="${jars}" file="${doc.jar}"/>
--->
     <copy todir="${app.name}">
       <fileset dir="." includes="**.txt,**.html,**.wm"/>
     </copy>
@@ -120,6 +108,8 @@
     <war warfile="datatable.war" webxml="${app.name}/WEB-INF/web.xml">
       <classes dir="${classes}"/>
       <lib dir="${lib}"/>
+      <zipfileset dir="." includes="**.txt,**.html,**.wm"/>
+      <zipfileset dir="${app.name}/api" prefix="api"/>
     </war>
   </target>
 
