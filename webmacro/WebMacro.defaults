@@ -99,15 +99,34 @@ LogUsingServletLog: TRUE
 #LogFile: /path/to/log/file
 
 
+
+#
+# Error Handling
+#
+
 # Set the template (relative to TemplateDirectory) used for errors. You
 # can edit this template to customize the way script failures appear
+#
+# This template is used by WMServlet, but you can use it for your own
+# servlets too.
 
 ErrorTemplate: error.wm
 ErrorVariable: error
 
 # Set the default ExceptionHandler, which gets control when an evaluation
 # exception is encountered.  
-ExceptionHandler=org.webmacro.engine.DefaultEvaluationExceptionHandler
+ExceptionHandler: org.webmacro.engine.DefaultEvaluationExceptionHandler
+
+
+#
+# Profiling
+#
+
+# To enable the #profile directive, uncomment the line below
+# You *must* do this if you plan to use the #profile example
+
+# Directives.profile:    org.webmacro.directive.ProfileDirective
+
 
 # Set Profile.rate to control the impact of the profiler on your CPU. 
 # Set it to 0 to turn profiling off. Setting it to 1 incurs profiling 
@@ -132,6 +151,8 @@ Profile.rate: 0
 # The default is 2 minutes (120000 milliseconds)
 
 Profile.time: 120000
+
+
 
 
 ###########################################################
@@ -189,10 +210,12 @@ Directives.param:      org.webmacro.directive.ParamDirective
 Directives.type:       org.webmacro.directive.TypeDirective
 Directives.default:    org.webmacro.directive.DefaultDirective
 
+
 # these are currently broken
 #    Directives.encode:     org.webmacro.directive.EncodeDirective
 #    Directives.escape:     org.webmacro.directive.EscapeDirective
 #    Directives.silence:    org.webmacro.directive.SilenceDirective
+
 
 #
 # Directive Configuration
