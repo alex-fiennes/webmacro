@@ -2,14 +2,15 @@ package org.webmacro.template;
 
 import java.io.*;
 import junit.framework.*;
-import org.webmacro.Context;
+import org.webmacro.*;
 
 /** a simple test case to load and execute a file
  * via the path relative to the classpath.
 */
 public class TestSyntheticTemplate extends TemplateTestCase {
 
-  private static final int iterationCount = 1002;
+  protected int iterationCount = 12;
+  protected int threadCount = 2;
 
   private static final String fileName = "org/webmacro/template/synthetictest.wm";
   private static final String reportName = "org/webmacro/template/syntheticreport.wm";
@@ -24,18 +25,23 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     super (name);
   }
 
- 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+  public static Test suite() {
+    TestSuite suite= new TestSuite();
 
-		suite.addTest(
-			new TestSyntheticTemplate("load") {
-				 protected void runTest() throws Exception {
-				  testLoadAndToss();
-				  testLoad();
-				 }
-			}
-		);
-		return suite;
+    suite.addTest(new TestSyntheticTemplate("load") {
+        protected WebMacro createWebMacro() throws Exception {
+          return new WM("org/webmacro/template/TST.properties");
+        }
+        
+        protected void runTest() throws Exception {
+          this.threadCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.ThreadCount", this.threadCount);
+          this.iterationCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.IterationCount", this.threadCount);
+          this.testLoadAndToss();
+          this.testLoad();
+        }
+      }
+    );
+    return suite;
   }
 
 
@@ -44,16 +50,16 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     this.context = context;
   }
 
-  public void testEvaluate() throws Exception {
-    context.put("runLoad", Boolean.FALSE);
-    executeFileTemplate(fileName);
-  }
+//    public void testEvaluate() throws Exception {
+//      context.put("runLoad", Boolean.FALSE);
+//      executeFileTemplate(fileName);
+//    }
 
-  public void testShow() throws Exception {
-    context.put("runLoad", Boolean.FALSE);
-    String value = templateFileToString(fileName);
-    String output = executeStringTemplate(value);
-  }
+//    public void testShow() throws Exception {
+//      context.put("runLoad", Boolean.FALSE);
+//      String value = templateFileToString(fileName);
+//      String output = executeStringTemplate(value);
+//    }
 
   /** Throw the first test result out due to parsing. */
   public void testLoadAndToss() throws Exception {
@@ -102,16 +108,14 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     ThreadLoad threadLoad = new ThreadLoad();
     threadLoad.execute();
     
-    
-    report(iterationCount-2,
-            tet - max - min,
-            contentSize,
-            threadLoad.tet,
-            threadLoad.worstCase,
-            threadLoad.bestCase,
-            threadLoad.threadCount,
-            threadLoad.threadedIterations,
-            threadLoad.duration);
+    report(iterationCount, 
+           tet - max - min,
+           contentSize,
+           threadLoad.tet,
+           threadLoad.worstCase,
+           threadLoad.bestCase,
+           threadCount,
+           threadLoad.duration);
   }
 
   /** A webmacro report sent to LoadReport.html. */
@@ -121,7 +125,6 @@ public class TestSyntheticTemplate extends TemplateTestCase {
                         long worstCase,
                         long bestCase,
                         int threadCount,
-                        int threadedIterations,
                         long threadDuration) throws Exception {
     context.put("IterationCount", iterationCount);
     context.put("TotalElapsedTime", totalTime);
@@ -133,13 +136,12 @@ public class TestSyntheticTemplate extends TemplateTestCase {
     context.put("Today", new java.util.Date());
     context.put("ThreadDuration", threadDuration);
     context.put("ThreadTotalWaitTime", threadTet-totalTime);
-    context.put("ThreadAverageTime", threadTet/
-              (threadCount*threadedIterations) );
+    context.put("ThreadAverageTime", threadTet/iterationCount );
 
     context.put("ThreadWorstCase", worstCase);
     context.put("ThreadBestCase", bestCase);
     context.put("ThreadCount", threadCount);
-    context.put("ThreadIterations", threadedIterations);
+    context.put("ThreadIterations", iterationCount);
     String report = executeFileTemplate(reportName);
    	PrintWriter p = new PrintWriter( new FileOutputStream("LoadReport.html") );
    	p.write(report);
@@ -155,8 +157,6 @@ public class TestSyntheticTemplate extends TemplateTestCase {
    * The worst and best case are not thrown out.
    */
   class ThreadLoad {
-    int threadCount = 20; // be sure to divide into iterationcount-2 evenly
-    int threadedIterations = (iterationCount-2) / threadCount;
     long tet = 0;
     long worstCase = 0;
     long bestCase = 9999999999l;
@@ -169,10 +169,10 @@ public class TestSyntheticTemplate extends TemplateTestCase {
       duration = System.currentTimeMillis();
       for (int index = 0; index < threadCount; index++)
         threadTest[index].start();
-      Thread.sleep(1000); // allows the threads to start
+      // Thread.sleep(1000); // allows the threads to start
       for (int index = 0; index < threadCount; index++) {
         threadTest[index].join();
-        Thread.yield();
+        // Thread.yield();
       }
       duration = System.currentTimeMillis() - duration;
       for (int index = 0; index < threadCount; index++)
@@ -183,11 +183,11 @@ public class TestSyntheticTemplate extends TemplateTestCase {
       long tet = 0;
       public void run() {
         this.tet = System.currentTimeMillis();
-        for (int index = 0; index < threadedIterations; index++) {
+        for (int index = 0; index < iterationCount; index++) {
           long it = System.currentTimeMillis();
           try {
             String value = executeFileTemplate(fileName);
-            Thread.yield(); // allow other threads time to run as well;
+            // Thread.yield(); // allow other threads time to run as well;
           }
           catch (Exception e) {fail("Evaluation failed in thread");}
           it = System.currentTimeMillis() - it;

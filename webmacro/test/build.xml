@@ -73,6 +73,16 @@
     </junit>
   </target>
 
+  <target name="TST" depends="unit-compile">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="unit.class.path"/>
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="${unit.reports}">
+        <fileset dir="${unit.root}" includes="**/TestSyntheticTemplate.java" />
+      </batchtest>
+    </junit>
+  </target>
+
   <target name="unit-validate" depends="unit-compile">
     <junit printsummary="yes" haltonfailure="yes" >
       <classpath refid="unit.class.path"/>

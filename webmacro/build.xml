@@ -129,6 +129,12 @@
     </ant>
   </target>
 
+  <target name="test-tst" depends="compile" >
+    <ant antfile="test/build.xml" target="TST" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
   <target name="test-clean" >
     <ant antfile="test/build.xml" target="clean">
       <property name="java.class.path" value="${classpath.resolved}"/>
