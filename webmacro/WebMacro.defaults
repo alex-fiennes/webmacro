@@ -248,6 +248,7 @@ SMapCacheManager.*.ReloadOnChange: true
 # Advanced properties: 
 SMapCacheManager.*.CacheBuckets: 1001
 SMapCacheManager.*.CacheFactor: 5
+SMapCacheManager.*.UseSoftReferences: TRUE
 
 StaticSMapCacheManager.*.CacheBuckets: 1001
 StaticSMapCacheManager.*.CacheFactor: 5

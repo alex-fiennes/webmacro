@@ -43,7 +43,7 @@ public class SMapCacheManager implements CacheManager {
    private Object[] _writeLocks = new Object[101];
    private int _cacheDuration;
    private String _resourceType;
-   private boolean _reloadOnChange=true;
+   private boolean _reloadOnChange=true, _useSoftReferences=true;
 
    private static final TimeLoop _tl;
    private Log _log;
@@ -56,13 +56,30 @@ public class SMapCacheManager implements CacheManager {
       _tl.start();
    }
 
-   private static class ScmCacheElement extends CacheElement {
-      private SoftReference reference; 
+   private static abstract class MyCacheElement extends CacheElement { 
       private CacheReloadContext reloadContext = null;
 
       public void setReloadContext(CacheReloadContext rc) { 
          this.reloadContext = rc;
       }
+
+      public abstract Object getObject();
+      public abstract void setObject(Object o);
+   }
+
+   private static final class SoftScmCacheElement extends MyCacheElement {
+      private SoftReference reference; 
+
+      public Object getObject() { return reference.get(); }
+      public void setObject(Object o) { reference = new SoftReference(o); }
+   }
+
+   private static final class DirectScmCacheElement extends MyCacheElement {
+      private Object object; 
+      private CacheReloadContext reloadContext = null;
+
+      public Object getObject() { return object;; }
+      public void setObject(Object o) { object = o; }
    }
 
    public SMapCacheManager() { 
@@ -94,6 +111,11 @@ public class SMapCacheManager implements CacheManager {
         ourSettings.getIntegerSetting("ExpireTime", 
           defaultSettings.getIntegerSetting("ExpireTime", 
             config.getIntegerSetting("TemplateExpireTime", 0)));
+      _useSoftReferences = 
+        (ourSettings.containsKey("UseSoftReferences"))
+        ? ourSettings.getBooleanSetting("UseSoftReferences")
+        : ((defaultSettings.containsKey("UseSoftReferences"))
+           ? defaultSettings.getBooleanSetting("UseSoftReferences") : true);
       _reloadOnChange = 
         (ourSettings.containsKey("ReloadOnChange"))
         ? ourSettings.getBooleanSetting("ReloadOnChange")
@@ -104,7 +126,8 @@ public class SMapCacheManager implements CacheManager {
                 + "buckets=" + cacheSize 
                 + "; factor=" + cacheFactor
                 + "; expireTime=" + _cacheDuration
-                + "; reload=" + _reloadOnChange);
+                + "; reload=" + _reloadOnChange
+                + "; softReference=" + _useSoftReferences);
    }
 
    /**
@@ -133,16 +156,16 @@ public class SMapCacheManager implements CacheManager {
      */
    public Object get(final Object query, ResourceLoader helper) 
    throws ResourceException {
-      ScmCacheElement r;
+      MyCacheElement r;
       Object o = null;
       boolean reload = false;
 
       // bg; Reordered this logic to only call shouldReload if we have a 
       // candidate for reloading.  
       try {
-         r = (ScmCacheElement) _cache.get(query);
+         r = (MyCacheElement) _cache.get(query);
          if (r != null) 
-            o = r.reference.get();
+            o = r.getObject();
       } catch (NullPointerException e) {
          throw new ResourceException(this + " is not initialized", e);
       }
@@ -162,15 +185,17 @@ public class SMapCacheManager implements CacheManager {
          if (lockIndex < 0) lockIndex = -lockIndex;
          synchronized(_writeLocks[lockIndex])
          {
-            r = (ScmCacheElement) _cache.get(query);
+            r = (MyCacheElement) _cache.get(query);
             if (r != null)
-               o = r.reference.get();
+               o = r.getObject();
             else 
-               r = new ScmCacheElement();
+               r = (_useSoftReferences
+                    ? (MyCacheElement) new SoftScmCacheElement() 
+                       : (MyCacheElement) new DirectScmCacheElement());
             if (o == null || reload) {
                o = helper.load(query, r);
                if (o != null) {
-                  r.reference = new SoftReference(o);
+                  r.setObject(o);
                   _cache.put(query, r);
                }
                try {
@@ -202,6 +227,7 @@ public class SMapCacheManager implements CacheManager {
      * trying to look it up in a cache. If it's not there, return null.
      */
    public Object get(final Object query) {
+      
       return _cache.get(query);
    }
 
@@ -211,8 +237,10 @@ public class SMapCacheManager implements CacheManager {
    public void put(final Object query, Object resource) {
       int lockIndex = query.hashCode() % _writeLocks.length;
       if (lockIndex < 0) lockIndex = -lockIndex;
-      ScmCacheElement r = new ScmCacheElement();
-      r.reference = new SoftReference(resource);
+      MyCacheElement r = (_useSoftReferences
+                          ? (MyCacheElement) new SoftScmCacheElement() 
+                             : (MyCacheElement) new DirectScmCacheElement());
+      r.setObject(resource);
       synchronized(_writeLocks[lockIndex]) {
          _cache.put(query, r);
       }
