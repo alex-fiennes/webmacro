@@ -4,6 +4,114 @@
 
 <body bgcolor="white">
 
+<h2>WebMacro 01-12-2000: RELEASE NOTES</h2>
+
+This release adds several key improvements and a bunch of house 
+cleaning has been done:
+<p>
+<ul>
+  <li><b>WebMacro.defaults</b> <br>
+
+   WebMacro configuration has now been broken into two parts: 
+   WebMacro.defaults and WebMacro.properties. The WebMacro.defaults
+   file is not intended to be manipulated by ordinary WebMacro 
+   users and is included inside webmacro.jar. It provides sensible
+   default values for the settings in WebMacro.properties. Setting
+   a value in WebMacro.properties overrides the setting in 
+   WebMacro.defaults. 
+   <p>
+   The consequence of this change is that if the default value works
+   for you, you don't even have to mention that value in your 
+   WebMacro.properties file. Pretty soon we should be able to 
+   provide sensible defaults for all settigns eliminating the need
+   for WebMacro.properties--in the current release you still 
+   still need a WebMacro.properties file so you can set a 
+   valid TemplatePath. 
+   <p>
+
+  <li><b>Profiling</b>, <b>#profile directive</b>, <b>Profile example</b><br>
+    WebMacro now includes a profiling library which can help you 
+    track down where the time is going in your application. It should
+    also help us improve the performance of WebMacro over time. 
+    <p>
+    There are three key parts to the profiling architecture:
+    <ul>
+      <li>org.webmacro.profile: this package contains the profiling code
+      <li>#profile directive can bracket segments on a template and
+          provide timing statistics 
+      <li>examples/Profile servlet demonstrates profiling and also 
+          if you run it provides a live view of the profiling data
+          collected by the profiling architecture.
+    </ul>
+    There are two new parameters in the configuration file:
+    <pre>
+         Profile.rate: 5
+         Profile.time: 120000
+    </pre>
+
+    The Profile.rate determines what percentage of web requests
+    are sampled for profiling. Set it to 0 to turn profiling off, 
+    or 1 to sample every request. The above example sets it to 5,
+    which samples 1/5th of the page requests. 
+    <p>
+    The Profile.time determines how long a profiled page is used
+    in the statistics. The above example sets it to 2 minutse, which
+    means that two minutes after a page is requested its profile 
+    sample will be forgotten. At any given time the profile system
+    is reporting the performance of the site over the last 
+    Profile.time milliseconds. 
+    <p>
+    You can instrument your code by calling context.startTiming(...) 
+    and you must subsequently call context.stopTiming(). If you don't
+    call stopTiming exactly once for every call to startTiming then
+    the profiling data will be gibberish.
+    <p>
+    You can instrument your templates by using the #profile directive.
+    It looks like this:
+    <pre>
+          #profile "example name" {
+             some template script
+          }
+    </pre>
+    Webmacro will then collect statistics on how long it took to 
+    execute that block of template script, reporting it under the
+    name "example name" in the profiling statistics. 
+    <p>
+    There is a slight cost in having the profiling code installed
+    in WebMacro. You can eliminate this cost, and completely 
+    disable profiling, by setting org.webmacro.flags.PROFILE to
+    "false" and recompiling all of the code.
+    <p>
+  
+ <li><b>Exception hierarchy cleaned up</b> <br>
+
+    Some exceptions have been eliminated, allowing exceptions flowing
+    from PropertyOperator to propagate further up through the code, 
+    among other things. Hopefully the quality of error reporting will
+    be improved by this, but it's possible that in some cases it is
+    now slightly worse than before--we need reports of what those 
+    cases are so we can fix it up!
+    <p>
+
+ <li><b>Context housecleaning</b><br>
+  
+    I reworked the implementation of many of the methods in context
+    to make it simpler. This is a precursor to a next round of 
+    cleaning which will be performance driven. I touched a lot of
+    difficult and critical code while doing this, and while I think
+    it is correct now, we need to test everything out and prove 
+    that it is all working as expected. My servlets work. No observable
+    functionality change should result from this--I'm just mentioning
+    it so you can be on the lookout for any problems.
+    <p>
+</ul>
+
+We had expected to release 0.95 by now instead of another snapshot but
+we have a few issues to work out with the Log API. Once those are 
+worked out this code should become 0.95, sorry for the delay!
+<p>
+
+
 <h2>WebMacro 21-11-2000: RELEASE NOTES</h2>
 
 Here are the key changes in this snapshot:
