@@ -35,10 +35,10 @@ import java.lang.ref.ReferenceQueue;
  * Identity map, that is especially suited to canonical mappings.
  * This map is identical to SimpleMap, except two special featurs.
  * <br>
- * 1. Two keys are compared for equality only be reference. There
+ * 1. Two keys are compared for equality only by reference. There
  * equals() and hashCode() method are not called. Instead a special
- * system has function is used, that is based upon the reference.
- * This leads to a superior performance to hashFunctions used for
+ * system hash function is used, that is based upon the reference.
+ * This leads to a superior performance to hash-functions used for
  * strings for example.
  * <br>
  * 2. Keys are only held via a WeakReference. This means, that if
@@ -177,9 +177,7 @@ public final class SimpleIdentityMap implements SimpleMap {
             Node node = tab[hash];
             while (node != null) {
                 if (node.get() == key) {
-                    // we found our key or we found
-                    // a collected weak-ref. In either case,
-                    // we can remove this entry
+                    // we found our key
                     if (last != null) {
                         last.next = node.next;
                     } else {
