@@ -18,7 +18,7 @@
    <td width=15>&nbsp;</td>
       
    <td align=center width="100%">
-      <a href="SiteMap"><span class="NavigationLinks">Site Map</span></a>
+      <a href="IndexPage"><span class="NavigationLinks">Index</span></a>
        || <a href="http://www.webmacro.org/bugzilla/"><span class="NavigationLinks">Bugzilla</span></a>
        || <a href="http://www.webmacro.org/cvs/"><span class="NavigationLinks">CVS</span></a>
    </td>
@@ -49,5 +49,5 @@
 </tr>
 </table>
 #if (($User) && ($Wiki.isAdministrator($User))) {
-   #parse "adminoptionsbar.wm"
+   #include as template "adminoptionsbar.wm"
 }

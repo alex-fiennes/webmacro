@@ -1,0 +1,27 @@
+#set $PageName = "Wiki index"
+#include as template "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#include as template "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top><a name="top">
+      #foreach $letter in $index { <a href="#$letter">$letter&nbsp</a>}
+      <hr>
+      #set $start = null
+      #foreach $page in $pages {
+         #if (!$page.getTitle().substring(0,1).equals($start)) {
+         #set $start = $page.getTitle().substring(0,1)
+         <p><a name="$start"><b>$start</b></a><br>
+         }
+         <a href="$page.Title">$page.Title</a><br>
+      }
+
+   </td>
+</tr>
+</table>
+#include as template "footer.wm"
