@@ -22,10 +22,41 @@
 
 package org.webmacro.directive;
 
+import java.util.*;
 import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
+/**
+ * <b>#alternate</b><p>
+ *
+ * Use the #alternate directive to create an "alternating" variable, which is useful 
+ * for creating tables that use a different background color for each line, etc. <p>
+ * 
+ * <pre>
+ * Syntax:
+ *   #alternate <i>var-reference</i> through <i>expression</i>
+ * Example:
+ *   #alternate $color through [ "red", "blue", "green" ]
+ *   #foreach $row in $rows { 
+ *     <TR BGCOLOR=$color> ... blah blah ...
+ *   }
+ * </pre><p>
+ * 
+ * <i>expression</i> can be any "list" type understood by WebMacro: Object[],
+ * java.util.List, java.util.Iterator, java.util.Enumeration, or any other
+ * object that has either of the following method signatures:<p>
+ * 
+ * <pre>
+ *    public Iterator iterator ();
+ *           or
+ *    public Enumeration elements ();
+ * </pre><p>
+ * 
+ * The first time $color is evaluated, it will have the value "red". The next time it 
+ * is evaluated, it will have the value "blue", and so on through the list. When it gets 
+ * to the end of the list, it wraps back around to the beginning.
+ */
 public class AlternateDirective extends Directive {
 
   private static final int ALTERNATE_TARGET  = 1;
@@ -54,8 +85,7 @@ public class AlternateDirective extends Directive {
   throws BuildException {
     try {
       target = (Variable) builder.getArg(ALTERNATE_TARGET, bc);
-    } 
-    catch (ClassCastException e) {
+    } catch (ClassCastException e) {
       throw new NotVariableBuildException(myDescr.name, e);
     }
     list = builder.getArg(ALTERNATE_LIST, bc);
@@ -64,26 +94,22 @@ public class AlternateDirective extends Directive {
 
   public void write(FastWriter out, Context context) 
     throws PropertyException, IOException {
-    Object[] arr;
+    Object l = null;
 
     try {
       if (list instanceof Macro) 
-        arr = (Object[]) ((Macro) list).evaluate(context);
+        l = ((Macro) list).evaluate(context);
       else 
-        arr = (Object[]) list;
+        l = list;
+      
+      Iterator itr = context.getBroker()._propertyOperators.getIterator(l);
 
-      target.setValue(context, (Object) new Alternator(arr));
-    }
-    catch (ClassCastException e) {
-      String errorText = "#alternate: target is not a list: " + list;
-      context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, context, out);
-    }
-    catch (PropertyException e) {
-      String errorText = "#alternate: Unable to set value: " + target
-        + "\n" + e.toString();
-      context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, context, out);
+      target.setValue(context, (Object) new IteratorAlternator(itr));
+    } catch (Exception e) {
+      String warning = "#alternate: list argument is not a list: " + l;
+      context.getLog("engine").warning(warning + "; " + e);
+      writeWarning(warning, context, out);
+      return;
     }
   } 
 
@@ -96,27 +122,38 @@ public class AlternateDirective extends Directive {
 
 }
 
+abstract class Alternator implements Macro {
+      
+   public abstract Object evaluate (Context context); 
+       
+   public void write(FastWriter out, Context context) throws PropertyException, IOException {
+      Object o = evaluate(context);
+      if (o != null) 
+         out.write(o.toString());
+   }
+}
 
-class Alternator implements Macro { 
-  private Object[] list;
-  private int index = 0;
+class IteratorAlternator extends Alternator { 
+  private Iterator itr;
+  private List  list;
+  private int index = -1;
 
-  public Alternator(Object[] list) {
-    this.list = list;
-  }
-
-  public void write(FastWriter out, Context context) 
-    throws PropertyException, IOException {
-    Object o = evaluate(context);
-    if (o != null) 
-      out.write(o.toString());
+  public IteratorAlternator(Iterator itr) {
+    this.itr = itr;
+    this.list = new ArrayList ();
   }
 
   public Object evaluate(Context context) {
-    Object o = list[index++];
-    if (index == list.length)
-      index = 0;
+     Object o;
+     if (index==-1 && itr.hasNext()) {
+       o = itr.next ();
+       list.add (o);
+     } else {
+        index++;
+        if (index == list.size())
+           index=0;
+        o = list.get(index);
+     }
     return o;
   }
 }
-
