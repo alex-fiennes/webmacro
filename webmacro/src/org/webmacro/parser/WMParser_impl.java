@@ -28,6 +28,10 @@ public class WMParser_impl implements WMParser_implConstants {
     broker = b;
   }
 
+  public WMParser_impl(java.io.Reader reader) {
+    this(new BackupCharStream(reader));
+  }
+
   // Standalone test harness
   public static void main(String[] args) throws Exception {
     WM wm = new WM();
@@ -35,9 +39,9 @@ public class WMParser_impl implements WMParser_implConstants {
     WMParser_impl parser;
 
     if (args.length >= 1)
-      parser = new WMParser_impl(new FileInputStream(args[0]));
+      parser = new WMParser_impl(new FileReader(args[0]));
     else
-      parser = new WMParser_impl(System.in);
+      parser = new WMParser_impl(new InputStreamReader(System.in));
 
     parser.setBroker(broker);
     Builder bb = parser.WMDocument();
@@ -1570,24 +1574,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
-  final private boolean jj_3R_36() {
-    if (jj_scan_token(OP_LE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_51() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_33() {
-    if (jj_scan_token(OP_NE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_8() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -2005,8 +1991,25 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3R_36() {
+    if (jj_scan_token(OP_LE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_51() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_33() {
+    if (jj_scan_token(OP_NE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   public WMParser_implTokenManager token_source;
-  ASCII_CharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -2021,9 +2024,8 @@ public class WMParser_impl implements WMParser_implConstants {
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
-  public WMParser_impl(java.io.InputStream stream) {
-    jj_input_stream = new ASCII_CharStream(stream, 1, 1);
-    token_source = new WMParser_implTokenManager(jj_input_stream);
+  public WMParser_impl(CharStream stream) {
+    token_source = new WMParser_implTokenManager(stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
@@ -2031,29 +2033,8 @@ public class WMParser_impl implements WMParser_implConstants {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  public void ReInit(java.io.InputStream stream) {
-    jj_input_stream.ReInit(stream, 1, 1);
-    token_source.ReInit(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-  }
-
-  public WMParser_impl(java.io.Reader stream) {
-    jj_input_stream = new ASCII_CharStream(stream, 1, 1);
-    token_source = new WMParser_implTokenManager(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-  }
-
-  public void ReInit(java.io.Reader stream) {
-    jj_input_stream.ReInit(stream, 1, 1);
-    token_source.ReInit(jj_input_stream);
+  public void ReInit(CharStream stream) {
+    token_source.ReInit(stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
