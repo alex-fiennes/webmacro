@@ -47,7 +47,7 @@ import org.webmacro.engine.EvaluationExceptionHandler;
   * can implement your own Context objects and pass it to the 
   * evaluate() and write() method of any Template or other Macro.
   */
-public class Context implements Cloneable
+public class Context implements Map, Cloneable
 {
    final private Broker _broker;
    final private ComponentMap _tools;
@@ -194,29 +194,41 @@ public class Context implements Cloneable
      * Get the named object/property from the Context. If the Object
      * does not exist and there is a tool of the same name then the 
      * Object will be instantiated and managed by the tool.
+     * If there's no such variable, it throws. 
      */
-   final public Object get(Object name) 
+   final public Object internalGet(Object name) 
    throws PropertyException {
       Object ret = _variables.get(name);
-      if (ret == null) {
-         if (!_variables.containsKey(name))
-            throw new 
-               PropertyException.NoSuchVariableException(name.toString());
-         else {
-            Object tool = _tools.get(name);
-            if(tool != null) {
-               try {
-                  ContextTool ct = (ContextTool) tool;
-                  ret = ct.init(this);
-                  put(name,ret);
-                  _initializedTools.put(ct,ret);
-               } catch (PropertyException e) {
-                  _log.error("Unable to initialize ContextTool: " + name, e);
-               }
+      if (ret == null && !_variables.containsKey(name)) {
+         Object tool = _tools.get(name);
+         if(tool != null) {
+            try {
+               ContextTool ct = (ContextTool) tool;
+               ret = ct.init(this);
+               put(name,ret);
+               _initializedTools.put(ct,ret);
+            } catch (PropertyException e) {
+               _log.error("Unable to initialize ContextTool: " + name, e);
             }
          }
+         else 
+            throw new 
+               PropertyException.NoSuchVariableException(name.toString());
       }
       return ret;
+   }
+
+   /** 
+     * Get the named object/property from the Context; returns null if
+     * not found.
+     */
+   final public Object get(Object name) {
+      try { 
+         return internalGet(name);
+      }
+      catch (PropertyException e) {
+         return null;
+      }
    }
 
    /**
@@ -234,12 +246,12 @@ public class Context implements Cloneable
      * in the context. The subsequent names are properties of 
      * that object which will be searched using introspection.
      */
-   final public Object get(Object[] names) 
+   final public Object internalGet(Object[] names) 
       throws PropertyException 
    {
       Object instance;
       try {
-         instance = get(names[0]);
+         instance = internalGet(names[0]);
       } catch (ArrayIndexOutOfBoundsException e) {
          throw new PropertyException(
             "Attempt to access property with a zero length name array");
@@ -268,7 +280,7 @@ public class Context implements Cloneable
       } else {
          Object instance;
          try {
-            instance = get(names[0]);
+            instance = internalGet(names[0]);
          } catch (ArrayIndexOutOfBoundsException e) {
             return false;
          }
@@ -282,7 +294,7 @@ public class Context implements Cloneable
      */
    public Object getProperty(Object name) throws PropertyException
    {
-      return get(name);
+      return internalGet(name);
    }
 
    /**
@@ -302,7 +314,7 @@ public class Context implements Cloneable
      */
    public Object getProperty(Object names[]) throws PropertyException
    {
-      return get(names);
+      return internalGet(names);
    }
 
    /**
