@@ -11,33 +11,30 @@
 */
 
 package org.opendoors.util;
-
-import java.awt.AWTEventMulticaster;
-import java.awt.event.*;
-import java.beans.*;
-import java.util.Date;
+import java.util.*;
 import java.io.Serializable;
 
 /**
- *
- * This class provides timer and supporting events to client objects.
+ * This class provides timer and supporting events to client objects
+ * by extending the Observable base class. Clients get notifications
+ * of changes in the clock.
  * <p>
- * The instance may be a one shot timer as well as a recurring timers.
- * Multiple listeners may listen to an instance of a single timer instance.
+ * The interval for firing changes to observers is resetable in the event
+ * the observer needs more frequent updates of changes.
+ * <p>
+ * The instance may be a one shot timer as well as a recurring timers. This
+ * supports a one shot notification in the future.
+ * <p>
+ * Observable is thread-safe and supports multiple listeners to a single
+ * observable such as an observable which fires every 24 hours.
  */
-public class Timer implements Runnable, Serializable {
-
-  /** The number of timers to date. */
-	private static int	numTimers = 0;
+public class Timer extends Observable implements Runnable, Serializable {
 
   /** The timer thread. */
 	private transient Thread timerThread;
 
   /** Signal to stop the thread. */
 	private transient boolean stopThread = false;
-
-  /** The listeners to this timer. */
-	private ActionListener  actionListener;
 
   /** The name. */
 	private String name;
@@ -48,15 +45,12 @@ public class Timer implements Runnable, Serializable {
   /** Is a one shot timer. */
 	private boolean oneShot;
 
-  /** The action event which so as to reduce object churn. */
-	private ActionEvent timerEvent;
-
 	/**
-	 * Public constructor to create a timer event source using factory defaults.
+	 * Public constructor to create a timer event source using factory defaults
+	 * which are 1 second timer, recurring.
 	 */
 	public Timer() {
-		this(new String("timer" + numTimers++), 1000, false);
-		timerEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null);
+		this("PerSecondTimer", 1000, false);
 	}
 
 	/**
@@ -66,7 +60,6 @@ public class Timer implements Runnable, Serializable {
 	 * @param True if this is a oneShot instance
 	 */
 	public Timer(String name, int period, boolean oneShot) {
-		// Allow the superclass constructor to do its thing
 		super();
 
 		// Set properties
@@ -75,7 +68,7 @@ public class Timer implements Runnable, Serializable {
 		this.oneShot = oneShot;
 
 		// Create the clock thread
-		timerThread = new Thread(this, "Timer");
+		timerThread = new Thread(this, name);
 		timerThread.setDaemon(true);
 		timerThread.start();
 	}
@@ -139,7 +132,6 @@ public class Timer implements Runnable, Serializable {
 		oneShot = os;
 	}
 
-	// Other public methods
 	/**
 	 * Run the timer.
 	 */
@@ -154,43 +146,14 @@ public class Timer implements Runnable, Serializable {
 		  }
 
 		  // Fire an action event
-  		processActionEvent(timerEvent);
+		  setChanged();
+  		notifyObservers();
 
 		  if (oneShot || stopThread)
 		    break;
 		}
 		// clean up:
 		timerThread = null;
-		actionListener = null;
-		timerEvent = null;
-	}
-
-	// Event processing methods
-
-	/**
-	 * Adds a client listener for this timer's events
-	 * @param The listener.
-	 */
-	public synchronized void addActionListener(ActionListener l) {
-		actionListener = AWTEventMulticaster.add(actionListener, l);
-	}
-
-	/**
-	 * Removes the client listener for this timer's events
-	 * @param The listener.
-	 */
-	public synchronized void removeActionListener(ActionListener l) {
-		actionListener = AWTEventMulticaster.remove(actionListener, l);
-	}
-
-	/**
-	 * Process an action event and notify listeners
-	 * @param The action event.
-	 */
-	protected void processActionEvent(ActionEvent e) {
-		// Deliver the event to all registered action event listeners
-		if (actionListener != null)
-		  actionListener.actionPerformed(e);
 	}
 
 }

@@ -52,7 +52,7 @@ class CacheImpl implements UpdateableCache  {
    */
   CacheImpl(Map preload, Class changeControlClass, int refreshRate) {
 
-    int load = 100;
+    int load = 500;
     if (preload != null) load = preload.size() * 2;
     immutable = new HashMap(load, (float)0.5);
     mutable = new HashMap(load, (float)0.5);

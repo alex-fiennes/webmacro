@@ -11,7 +11,6 @@
 */
 
 package org.opendoors.util;
-import java.awt.event.*;
 import java.util.*;
 import java.beans.*;
 
@@ -46,8 +45,7 @@ import java.beans.*;
  * @see java.util.Observable
  * @see java.util.Observer
  */
-public class PostponeObservable extends Observable
-              implements PropertyChangeListener, ActionListener {
+public class PostponeObservable extends Observable implements PropertyChangeListener {
 
 	//-------public members-----
 	/**
@@ -91,7 +89,7 @@ public class PostponeObservable extends Observable
   /** Initializes the instance. */
 	protected void init() {
 		tick = new Timer("PropertyObservable", postponeInterval, false);
-		tick.addActionListener(this);
+		tick.addObserver(new TimerObserver());
 	}
 
 	//-------public initializers/destroyers-----
@@ -122,7 +120,7 @@ public class PostponeObservable extends Observable
    * Call back from the timer when
    * the observation period has expired.
    */
-	public void actionPerformed(ActionEvent evt) {
+	public void timerAction() {
 		if (hasChanged() && (timeToNotify < System.currentTimeMillis())) {
 			notifyObservers();
 		}
@@ -150,6 +148,16 @@ public class PostponeObservable extends Observable
 	  tick.stop();
 	  tick = null;
 	}
+
+  /**
+   * Class which listens to updates in the observable tick and calls
+   * the timer notifiction method.
+   */
+	class TimerObserver implements Observer {
+	  public void update(Observable o, Object arg) { timerAction(); }
+	}
+	    
+	  
 
 }
 

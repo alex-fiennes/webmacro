@@ -125,6 +125,8 @@ public class ChangeControl implements Observer {
       HashMap tmp = new HashMap(cache.mutable.size()*2, (float) 0.5);
       tmp.putAll(cache.mutable);
       cache.immutable = tmp;
+      //System.out.println("Cache Updated. Mutable Size=" + cache.mutable.size());
+      //System.out.println("Cache Updated. Size=" + cache.immutable.size());
     }
   }
 

@@ -40,7 +40,7 @@ public class CacheFactory {
    * If the cache is out of date and idle this
    * amount of time in millis, it will be updated.
    */
-  int refreshRate = 2500;
+  int refreshRate = 1000;
 
   /**
    * Creates an instance of a cache factory with

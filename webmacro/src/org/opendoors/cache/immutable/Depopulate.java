@@ -24,6 +24,7 @@ public class Depopulate implements Runnable {
   private Cache cache;
   int n, m;
 
+  /** Construct the depopulator with test parameters. */
   public Depopulate(Cache cache, int n, int m) {
     this.cache = cache;
     this.n = n;
