@@ -1,15 +1,61 @@
+Changes from 0.61 to 0.61.1
+30-Oct-2001
+---------------------------
+- bugfix: default error.wm template sometimes caused NullPointerException
+- bugfix: actors.wm in DbDemo was not interpreted correctly by Tomcat 4.0
+
+
+Changes from 0.6 to 0.61
+29-Oct-2001
+------------------------
+- ActionServlet component constructor may have second parameter: componentName
+- getProperty() methods throw MissingResourceException, not returning null
+- bugfix: ActionServlet methods assign <output-variables> (also if overriden)
+- bugfix: is-new-session attribute cannot be used if newSession() overriden
+- examples improvements: 
+  - new DbDemo example - uses a simple JDBC-access component
+  - run.bat-s use %BROWSER% env. variable to select browser
+  - WebMacro.properties set LogLevel.ActionServlet: DEBUG
+  - examples_war is build with JAXP parser included (Tomcat 4.0 requirement)
+  - bugfix: template in GuestBook example contained invalid html
+
+
+Changes from 0.54 to 0.6
+14-Oct-2001
+------------------------
+- this version is compiled for WebMacro 1.0rc1 but should work with WM 0.97+
+- ActionConfig has a new elements <properties>, <property> and <on-return>
+- <component> element has new mandatory attribute "name"
+- ActionServlet has new methods getProperty(), onReturn() and onException()
+- action methods may return value of any type (or void) and throw any exception
+- action methods don't require WebContext as the first parameter type
+- some examples modified to demonstrate <on-return> element usage
+- new "Calculators" example - demo of two components on one page
+- ActionServlet Specification and LoginServlet Tutorial improved
+- new Design Guidelines document
+- build.xml - fixed examples build, improved prereq. detection, moved to root
+- ActionServlet_0_5.dtd -> ActionServlet_0_6.dtd
+- internal type handler for numbers trim HTTP parameter value before conversion
+- added internal type handler for org.webmacro.servlet.WebContext type
+- bugfix: newSession() needs not to be overriden as public
+- bugfix: <output-variables> evaluates also non-string variables
+- bugfix: GuestBook example now allows verification of submitted data
+- bugfix: "action" hrefs in examples now contain servlet name (bug in Netscape)
+- bugfix: session components are now properly informed when no longer used
+
+
 Changes from 0.53 to 0.54
 24-Jul-2001
 -------------------------
 - this version requires JDK 1.2+
-- XML config can be loaded also from classpath
+- ActionConfig can be loaded also from classpath
 - src\Makefile.win replaced by src\build.xml (Ant 1.3+ is needed)
 - bugfix: <ouput-variables> works also with stream templates
 - bugfix: "NullPointerException" in session reaper (appearing in Tomcat)
 - bugfix: error messages: 'config' -> 'ActionConfig' and 
   'ActionServlet.dtd' -> 'ActionServlet_0_5.dtd'
 - bugfix: "repository" attribute is now really optional
-- bugfix: "cannot find template" is reported when parsing XML config
+- bugfix: "cannot find template" is reported when parsing ActionConfig
 - bugfix: logging "action" together with "form"
 - examples improvements:
   - examples configuration for JSDK 2.0 and Servlet 2.2+ containers supported
