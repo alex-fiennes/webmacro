@@ -120,7 +120,6 @@ public final class SimpleIdentityMap implements SimpleMap {
       }
 
       int hash = (System.identityHashCode(key) & 0x7FFFFFFF) % tab.length;
-      boolean found = false;
       synchronized (locks[hash]) {
          Node node = tab[hash];
          while (node != null) {
@@ -146,7 +145,6 @@ public final class SimpleIdentityMap implements SimpleMap {
    public Object get(Object key) {
       int hash = (System.identityHashCode(key) & 0x7FFFFFFF) % tab.length;
       Node last = null;
-      Object nodeKey;
       synchronized (locks[hash]) {
          Node node = tab[hash];
          while (node != null) {

@@ -42,7 +42,6 @@ import org.webmacro.util.LogSystem;
  * that access the Broker and/or WebContext to make some commonly
  * accessed services more readily available.
  * <p>
- * @see org.webmacro.Handler
  * @see org.webmacro.Broker
  */
 abstract public class WMServlet extends HttpServlet implements WebMacro {
@@ -51,7 +50,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    private Broker _broker = null;
    private WebContext _wcPrototype;
    private boolean _started = false;
-   private final static ThreadLocal servletConfigStore = new ThreadLocal();
    /**
     * The name of the config entry we look for to find out what to
     * call the variable used in the ERROR_TEMPLATE

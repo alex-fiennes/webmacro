@@ -138,6 +138,7 @@ public class StreamTemplate extends WMTemplate {
       }
       catch (Exception e) {
          e.printStackTrace();
+         return;
       }
 
       try {

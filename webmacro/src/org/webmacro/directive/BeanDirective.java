@@ -35,7 +35,6 @@ import org.webmacro.engine.*;
 
 public class BeanDirective extends Directive {
 
-   private static final boolean DEBUG = true;
    private static final int BEAN_TARGET = 1;
    private static final int BEAN_CLASS_NAME = 2;
    private static final int BEAN_SCOPE = 3;
@@ -278,6 +277,7 @@ public class BeanDirective extends Directive {
 
    private Object instantiate(Class c, Object[] args)
          throws Exception {
+         // @@@ FIXME(BG): either use lastException or don't record it
       Object o = null;
       if (args == null) {
          o = c.newInstance();

@@ -48,7 +48,7 @@ public class CastUtil extends java.lang.Object {
             c = new Character((char) i);
          }
          else { // use the first character of the string
-            char ch = (char) ((String) o).charAt(0);
+            char ch = s.charAt(0);
             c = new Character(ch);
          }
       }
@@ -56,7 +56,7 @@ public class CastUtil extends java.lang.Object {
          throw new org.webmacro.PropertyException(
                "$Type.toChar() is unable to convert the supplied value to a Character.  The argument"
                + " must be a number or a String.  The supplied argument was "
-               + o + ((o == null) ? "." : " of type " + o.getClass().getName()));
+               + o + " of type " + o.getClass().getName());
       }
       return c;
    }

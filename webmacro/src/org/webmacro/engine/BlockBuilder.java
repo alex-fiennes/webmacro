@@ -143,7 +143,7 @@ public class BlockBuilder implements Builder {
       String finalStrings[] = (String[]) strings.toArray(sArray);
       int finalLines[] = resizeIntArray(ln, macros.size());
       int finalCols[] = resizeIntArray(cn, macros.size());
-      return new Block(name, finalStrings, finalMacros, ln, cn);
+      return new Block(name, finalStrings, finalMacros, finalLines, finalCols);
    }
 
    private static int[] resizeIntArray(int[] ia, int size) {

@@ -414,7 +414,6 @@ public class Broker {
     * out what type of requests it wants to serve.
     */
    public void addProvider(Provider p, String pType) throws InitException {
-      String name = pType;
       if (pType == null || pType.equals(""))
          pType = p.getType();
       p.init(this, _config);

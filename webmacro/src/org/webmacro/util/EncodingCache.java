@@ -103,6 +103,9 @@ final public class EncodingCache {
    }
 
    public byte[] encode(String s) {
+      if (s == null)
+         return null;
+
       int hash = s.hashCode() % _size;
       if (hash < 0) hash = -hash;
       Bucket b = _cache[hash];
@@ -117,8 +120,6 @@ final public class EncodingCache {
             return b.bytes4;
          else if (b.string5 == s)
             return b.bytes5;
-         else if (s == null)
-            return null;
 
          try {
             byte[] buf = s.getBytes(_encoding);

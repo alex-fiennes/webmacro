@@ -238,6 +238,8 @@ public class ComponentMap {
             instance = ctor.newInstance(args);
          }
          catch (Exception e) {
+            if (log == null)
+               log = new StringBuffer();
             log.append("Trying 1-argument constructor: ");
             log.append(e.toString());
             log.append("\n");
@@ -249,6 +251,8 @@ public class ComponentMap {
             instance = c.newInstance();
          }
          catch (Exception e) {
+            if (log == null)
+               log = new StringBuffer();
             log.append("Trying 0-argument constructor: ");
             log.append(e.toString());
             log.append("\n");

@@ -141,7 +141,6 @@ final public class Base64 {
       byte ptext;
       byte sixbits;
       int ppos = 0;
-      int epos = 0;
       boolean cutShort = false;
       while (ppos < plain.length) {
          // first char: upper 6 bytes
@@ -198,7 +197,7 @@ final public class Base64 {
    /**
     * Translate a character in the base64 alphabet into a byte with
     * the corresponding bits set (ie: a number from 0 to 64).
-    * @returns the base64 value, or 0 for the special '=' pad character
+    * @return the base64 value, or 0 for the special '=' pad character
     * @param base64 the character to be translated
     * @exception NumberFormatException if base64 is not a base64 character
     */

@@ -335,7 +335,7 @@ public class Context implements Map, Cloneable {
     * the name of an object in the context. The subsequent names
     * are properties of that object which will be searched using
     * introspection.
-    * @returns whether or not the set was successful
+    * @return whether or not the set was successful
     */
    final public boolean set(Object names[], Object value)
          throws PropertyException {
@@ -385,14 +385,14 @@ public class Context implements Map, Cloneable {
    /**
     * Same as set(Object names[], Object value) but can be overridden
     * by subclasses to behave differently
-    * @returns whether or not the set was successful
+    * @return whether or not the set was successful
     */
    public boolean setProperty(Object names[], Object value)
          throws PropertyException {
       return set(names, value);
    }
 
-   static private String makeName(Object[] names) {
+   static protected String makeName(Object[] names) {
       StringBuffer buf = new StringBuffer();
       buf.append("$(");
       for (int i = 0; i < names.length; i++) {
@@ -566,6 +566,8 @@ public class Context implements Map, Cloneable {
             instance = ctor.newInstance(args);
          }
          catch (Exception e) {
+            if (log != null)
+               log = new StringBuffer();
             log.append("Trying 1-argument constructor: ");
             log.append(e.toString());
             log.append("\n");
@@ -577,6 +579,8 @@ public class Context implements Map, Cloneable {
             instance = c.newInstance();
          }
          catch (Exception e) {
+            if (log != null)
+               log = new StringBuffer();
             log.append("Trying 0-argument constructor: ");
             log.append(e.toString());
             log.append("\n");

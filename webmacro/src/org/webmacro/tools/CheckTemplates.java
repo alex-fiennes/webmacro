@@ -25,7 +25,7 @@ public class CheckTemplates {
    public static void parseTemplate(String name, Reader in) {
       try {
          Builder bb = parser.parseBlock(name, in);
-         Block b = (Block) bb.build(new BuildContext(broker));
+         bb.build(new BuildContext(broker));
       }
       catch (Exception e) {
          System.err.println("Exception parsing template " + name + "\n" + e);
