@@ -91,10 +91,11 @@ final public class BrokerTemplateProviderHelper
       tUrl = findTemplate(name);
       try {
          long lastMod = UrlProvider.getUrlLastModified(tUrl);
-
+         String encoding = tUrl.openConnection().getContentEncoding();
+         // encoding may be null. Will be handled by StreamTemplate
          t = new StreamTemplate(_broker, 
-                                new InputStreamReader(
-                                  UrlProvider.getUrlInputStream(tUrl)));
+                                UrlProvider.getUrlInputStream(tUrl),
+                                encoding);
          t.setName(name);
          t.parse ();
          ret = t;
@@ -109,6 +110,12 @@ final public class BrokerTemplateProviderHelper
                        + name, e);
          throw new InvalidResourceException("Error parsing template " + name, 
                                             e);
+      }
+      catch (IOException e) {
+          _log.warning("BrokerTemplateProvider: IOException while parsing "
+                       + name, e);
+          throw new InvalidResourceException("Error parsing template "+name,
+                                             e);
       }
       catch (Exception e) {  
          _log.warning ("BrokerTemplateProvider: Error occured while fetching " 
