@@ -1,0 +1,86 @@
+#if ($User) {
+   ## say thank you
+   #set $PageName = "Thank you for registering"
+   #parse "header.wm"
+
+   <table border=0 align=center>
+   <tr>
+      <td>   
+         Thank you for taking the time to register.  You are now able to edit any non-moderated page on this site
+         (any page with an Edit link in the upper-left corner).<p>
+         
+         You can also create your own home page.  We suggest you use 
+         <a href="ControllerPage?edit=$User.FirstName$User.LastName">$User.FirstName$User.LastName</a> 
+         as the page name.
+         
+      </td>
+   </tr>
+   </table>   
+
+} #else {
+   ## ask for registration info
+   
+   #set $PageName = "Register"
+   #parse "header.wm"
+
+   <form action="$Request.RequestURI" method=POST>
+   <input type=hidden name="register" value="true">
+   <table border=0 align=center>
+   <tr>
+      <td align=right>   
+         First Name:
+      </td>
+      <td>
+         <input type=text name="FIRST_NAME">
+      </td>
+   </tr>
+   <tr>
+      <td align=right>   
+         Last Name:
+      </td>
+      <td>
+         <input type=text name="LAST_NAME">
+      </td>
+   </tr>
+   <tr>   
+      <td align=right>
+         email:
+      </td>
+      <td>
+         <input type=text name="EMAIL">
+      </td>
+   </tr>
+   <tr>
+      <td align=right>
+         Requested Username:
+      </td>
+      <td>
+         <input type=text name="username">
+      </td>
+   </tr>
+   <tr>
+      <td align=right>
+         Password:
+      </td>
+      <td>
+         <input type=password name="password">
+      </td>
+   </tr>
+   <tr>
+      <td align=right>
+         Password (again):
+      </td>
+      <td>
+         <input type=password name="password2">
+      </td>
+   </tr>
+   <tr>
+      <td colspan=2 align=right>
+         <input type=submit name="register" value="Register">
+      </td>
+   </tr>
+   </table>   
+   </form>
+}
+
+#parse "footer.wm"

@@ -1,0 +1,68 @@
+#set $PageName = "Recent Changes"
+#parse "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#parse "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top>
+      <form action="RecentChanges" method=get>
+      <input type=hidden name="view" value="RecentChanges">
+      Below are pages that have changed in the past <input type=text size=3 name="days" value="$Days"> day(s).  
+      </form>
+
+      <table border=0 cellpadding=3 cellspacing=1>
+      <tr bgcolor="#ffffff">
+         <th align=center>
+            WikiPage
+         </th>
+         <th align=center>
+            Last Modified
+         </th>
+         <th align=center>
+            Editor
+         </th>
+         <th align=center>
+            Total Edits
+         </th>
+      </tr>
+
+      #foreach $page in $RecentChanges {
+         <tr bgcolor="#ffffff">
+            <td align=left valign=top>
+               <a href="$page.Title">$page.Title</a>
+            </td>
+            <td align=right valign=top nowrap>
+               $page.DateLastModified
+            </td>
+            <td align=center valign=top nowrap>
+               #if ($page.EditCount == 0) {
+                  #if ($Wiki.getUser($page.Author)) {
+                     $Wiki.getUser($page.Author).Name
+                  }
+               } #else {
+                  #set $editor = $Wiki.getUser($page.getLastEditor())
+                  #if ($editor) {
+                     $editor.Name
+                  }
+              }
+            </td>
+            <td align=right valign=top>
+               #if ($page.EditCount == 0) {
+                  New
+               } #else {
+                  $page.EditCount
+               }
+            </td>
+         </tr>
+      }
+      </table>
+
+   </td>
+</tr>
+</table>
+#parse "footer.wm"
