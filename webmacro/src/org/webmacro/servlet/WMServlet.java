@@ -242,8 +242,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         if (t != null) {
           execute(t,context);
         }
-
         destroyContext(context);
+        context.clear();
       } catch (HandlerException e) {
          if (context == null) {
             context = _wcPrototype.newInstance(req,resp);
@@ -448,14 +448,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * for cleaning up the Context at the end of the request. You may
      * not need to do anything here, but it is sometimes important if
      * you have an open database connection in your context that you 
-     * need to close. The default implementation does nothing. By the
-     * time this method has been called all data will have been 
-     * returned to the user and the connection to the user closed. 
+     * need to close. The default implementation calls wc.clear().
      */
    public void destroyContext(WebContext wc) 
       throws HandlerException
    {
-      // does nothing
    }
 
 
