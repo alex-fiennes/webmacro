@@ -1,0 +1,33 @@
+<!--
+wizard.tml
+-->
+## wizard.tml Standard processing according to the layout provided.
+
+<table $Skin.InputTableStyle>
+<tr bgcolor=$Skin.GridHeaderColor><td COLSPAN="2" align=right><font color=$Skin.TextColorLight>$Term.lookup($View.viewLabel, $User.Locale)</font></td></tr>
+<form action="/wizardform.tml" method=GET target="_top">
+<input type=hidden name="vid" value="$View.ViewIdentifier.Value">
+#alternate $color through [ $Skin.GridOddColor, $Skin.GridEvenColor ]
+#foreach $field in $View.ViewableFields {
+   <tr bgcolor="$color">
+      <td align=right>
+         $field.MetaField.getLabel($User.Locale):
+      </td>
+      <td #if ($field.inputError) { bgcolor="red" }>
+         $field.MetaField.InputControl.render($FastWriter, $field, $User.Locale)
+      </td>
+   </tr>
+}
+<tr>
+  <td colspan=2 align=right valign=center bgcolor="$Skin.FormActionColor">
+	#foreach $action in $View.Actions {
+	      <input 
+		#if ($View.inWindow && ($action.verb.name == "cancel")) { onClick="window.close()" }
+		#if ($View.inWindow && ($action.verb.name == "close")) { onClick="window.close()" }
+		type=submit name=$action.verb.name value=$Term.lookup($action.verb.localeLabel, $User.Locale)>&nbsp;
+	}
+   </td>
+</tr>
+</form>
+</table>
+

@@ -1,0 +1,62 @@
+<!--
+wizardform.tml
+-->
+## 
+## wizardform.tml
+##
+<!--
+wizardform.tml
+Copyright 2001. Acctiva Corporation.
+-->
+## Top Level Script for handling wizard forms
+
+
+#set $vid = $Request.getParameter("vid")
+
+#if ($vid) {
+	<!-- Processing $vid from Request. -->
+	#set $SubmittedView = $Storage.get($vid)
+	#set $View = $SubmittedView.dispatchAction($Request)
+	#set $vid = $View.ViewIdentifier.Value.toString()
+	#if ($Storage.put($vid, $View)) {}
+}
+#else {
+	<!-- Evaluating $SubmittedView as current input -->
+	#set $View = $SubmittedView
+	#set $vid = $View.ViewIdentifier.Value.toString()
+	#if ($Storage.put($vid, $View)) {}
+}
+
+<!--
+View.actionTaken.name=$View.actionTaken.name
+View.inWindow=$View.inWindow
+View.contextLink=$View.contextLink
+locale=$User.Locale
+-->
+
+#if ($View.actionTaken.name == "cancel" || $View.actionTaken.name == "close") {
+	## action has been taken to exit this wizard context
+	##parse "$View.contextLink"
+	$Response.sendRedirect($View.contextLink)
+}
+#elseif ($View.actionTaken.name == "search") {
+	#parse "$View.performAction"
+}
+#elseif ((! $View.inWindow) && $View.actionTaken.name == "commit") {
+	##parse "$View.contextLink"
+	$Response.sendRedirect($View.contextLink)
+}
+#elseif ($View.commitView) {
+	#parse "commitaction.tml"
+}
+#elseif ($View.multiValueView) {
+	#parse "frameform.tml"
+}
+#elseif ($View.searchView) {
+	#parse "framesearch.tml"
+}
+#else {
+	#parse "header.tml"
+	#parse "wizard.tml"
+	#parse "footer.tml"
+}

@@ -58,6 +58,13 @@ it won't adversly affect how you use the Context object, will *require*
 you to recompile all your classes that use org.webmacro.Context.  Sorry
 for the inconvienence.
 
+5) If you are upgrading from a release several back from this release, recompile
+all your sources against the webmacro.jar. Don't assume that your old signatures
+match as the above notes suggest they will not!
+
+6) There are a lot of good resources on the wike site for documenting how
+to do the new things that are available now with WM.
+
 
 If you experience any problems or find any bugs, please send mail to
 webmacro@lists.semiotek.com

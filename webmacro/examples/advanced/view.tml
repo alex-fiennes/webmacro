@@ -1,0 +1,21 @@
+<html>
+
+#include "$ViewServerSupport.resourceDir/templates/Copyright.tml"
+<head>
+<title>The Current View: $View</title>
+#include "$ViewServerSupport.resourceDir/templates/Acctiva.style"
+</head>
+<body>
+#foreach $view in $View.peers.set {
+   View Identifier: $view.ViewIdentifier.Value</a><br>
+   <br>Locale Sensitive Name: $Term.lookup($View.viewLabel, $User.Locale)
+   <p>
+   #foreach $field in $view.ViewableFields {
+      &nbsp;&nbsp;&nbsp;$field.MetaField.LocaleKey: $field.MetaField.OutputControl.render($FastWriter, $field)<br>
+   }
+   <br>
+}
+</body>
+
+</html>
+
