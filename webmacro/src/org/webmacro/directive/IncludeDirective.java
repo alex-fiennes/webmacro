@@ -317,7 +317,12 @@ public class IncludeDirective extends Directive
                 {
                     throw makeBuildException("Unable to include as macro", e);
                 }
-                return t;
+                try {
+                    return t.evaluateAsString(bc);
+                }
+                catch (PropertyException e) {
+                    return "";
+                }
             }
             else if (_type == TYPE_DYNAMIC)
             {
