@@ -70,7 +70,7 @@ class IfDirective extends Directive {
 
     // If condition is static and true -- just return the block (builder)
     if (!cMacro && Expression.isTrue(c)) 
-      return builder.getArg(IF_BLOCK);
+      return builder.getArg(IF_BLOCK, bc);
 
     elseArgs = builder.getSubdirective(IF_ELSE);
     elseifArgs = builder.getRepeatingSubdirective(IF_ELSEIF);
@@ -82,7 +82,7 @@ class IfDirective extends Directive {
       if (!cMacro) {
         // Must be false, since we already tested !cMacro && isTrue(c)
         return (elseArgs != null) 
-          ? elseArgs.getArg(ELSE_BLOCK) : "";
+          ? elseArgs.getArg(ELSE_BLOCK, bc) : "";
       }
       else {
         // Just one condition -- the IF condition, and maybe an ELSE block
@@ -122,7 +122,7 @@ class IfDirective extends Directive {
           // block from this condition, otherwise stash it in the elseBlock
           // and we're done with #elseif directives
           if (i == 0) 
-            return elseifArgs[j].getArg(ELSEIF_BLOCK);
+            return elseifArgs[j].getArg(ELSEIF_BLOCK, bc);
           else {
             elseBlock = (Block) elseifArgs[j].getArg(ELSEIF_BLOCK, bc);
             break;
@@ -136,7 +136,7 @@ class IfDirective extends Directive {
       if (elseBlock == null && elseArgs != null) {
         // If there are no valid conditions, just return the else block
         if (i == 0)
-          return elseArgs.getArg(ELSE_BLOCK);
+          return elseArgs.getArg(ELSE_BLOCK, bc);
         else
           elseBlock = (Block) elseArgs.getArg(ELSE_BLOCK, bc);
       }
