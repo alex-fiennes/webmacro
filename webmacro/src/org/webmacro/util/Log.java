@@ -146,15 +146,7 @@ final public class Log
    static private DateFormat dateFmt 
       = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 
-
-   // marcelh start
-   /**
-     * If there has been a severe loggin action
-     */
-   static private String strSevereError = "";
- 	// marcelh end
-
-   // marcelh start 04092000
+      // marcelh start 04092000
    /**
      * If there is a logfile per day
      */
@@ -441,6 +433,12 @@ final public class Log
      */
    private String logDescr;
 
+   /**
+     * Track severe error messages for later retrieval.
+     */
+   private StringBuffer myErrors = null;
+
+
 
    // INSTANCE METHODS
 
@@ -477,12 +475,15 @@ final public class Log
      * Use to write a log message that indicats suspicious but 
      * non-fatal behavior in the program; or else which represents a 
      * fatal error that is the fault of data passed to the program. 
+     * Warnings will be recorded in getErrors() if error tracking
+     * is enabled.
      */
    final  public void warning(Object logMessage) {
       if (myLevel >= WARNING.getOrder()) { 
-         // marcelh start
-         strSevereError += logMessage + "\r\n";
-         // marcelh end
+         if (myErrors != null) {
+            myErrors.append(logMessage);
+            myErrors.append("\r\n");
+         }
          writeln("WARN", logType, logMessage);
       }
    }
@@ -503,6 +504,8 @@ final public class Log
      * the object to be logged--if the object passed is actually an 
      * exception and stack tracing is enabled, this message will then
      * be able to generate the appropraite stack trace for the Log.
+     * Exceptions will also be tracked in getErrors() if error 
+     * tracking is enabled.
      */
    final public void exception(Object logMessage) {
       if (myLevel < EXCEPTION.getOrder()) {
@@ -510,9 +513,10 @@ final public class Log
       } 
       if (iTraceExceptions && logMessage instanceof Exception) {
          Exception e = (Exception) logMessage;
-         // marcelh start
-         strSevereError += "" + e + "\r\n";
-         // marcelh end
+         if (myErrors != null) {
+            myErrors.append(e);
+            myErrors.append("\r\n");
+         }
          write("EXCPT", logType, "");
          e.printStackTrace(myTarget); 
          myTarget.flush();
@@ -552,23 +556,26 @@ final public class Log
    }
    // marcelh end 04092000 
 
-   // marcelh start
    /**
-     * give severe error back.
+     * Return a list of the warnings, exceptions, and errors that have
+     * occurred since error tracking was last initialized.
      */
-   public static String getSevereError()
-	{
-		return strSevereError;
+   public String getErrors()
+   {
+      return (myErrors != null) ? myErrors.toString() :
+                                       "(error tracking disabled)";
    }
 
    /**
-     * set the severe error to empty.
+     * Enable or disable error tracking. Enabling this means that you 
+     * can later call getErrors() to get a list of the errors that 
+     * have occurred since you began tracking them. Calling this 
+     * also resets the error buffer.
      */
-   public static void setSevereError()
+   public void initErrorTracking(boolean track)
    {
-		strSevereError = "";
+      myErrors = track ? new StringBuffer() : null;
    }
-   // marcelh end
 
    // TEST HARNESS
 
