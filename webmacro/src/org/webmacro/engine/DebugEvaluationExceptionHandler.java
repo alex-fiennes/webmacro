@@ -48,7 +48,7 @@
  * @author Marcel Huijkman (Thanks to Brian Goetz & Keats Kirsch)
  *
  *	@since	03-12-2001
- *	@version	04-02-2002
+ *	@version	15-07-2002
  */
 
 package org.webmacro.engine;
@@ -98,14 +98,22 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
       propEx.setContextLocation(context.getCurrentLocation());
       strError = propEx.getMessage();
 
-      if (context.containsKey("WMERROR")) {
+		if ( ( context.containsKey( "WMERROR" ) ) && ( context.get( "WMERROR" ) instanceof ArrayList ) ) {
          arlErrors = (ArrayList) context.get("WMERROR");
       }
       else {
          arlErrors = new ArrayList();
          context.put("WMERROR", arlErrors);
       }
+
+		if ( strError.lastIndexOf( "\r\n" ) >= 0 ) {
+			strError = strError.substring( strError.lastIndexOf( "\r\n" ) );
+			strError = strError.trim();
+		}
+
+		if ( !arlErrors.contains( strError ) ) {
       arlErrors.add(strError);
+		}
 
       if (_log != null) {
          _log.warning(strError, propEx);
@@ -115,12 +123,13 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
    }
 
 
-   public String warningString(String warningText) throws PropertyException {
-      throw new PropertyException("Evaluation warning: " + warningText);
+   public String warningString(String strText) throws PropertyException {
+      throw new PropertyException("Evaluation warning: " + strText)
    }
 
 
-   public String errorString(String errorText) throws PropertyException {
-      throw new PropertyException("Evaluation error: " + errorText);
+   public String errorString(String strText) throws PropertyException {
+      throw new PropertyException("Evaluation error: " + strText)
    }
 }
+
