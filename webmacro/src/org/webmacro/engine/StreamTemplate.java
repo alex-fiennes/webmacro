@@ -54,6 +54,34 @@ public class StreamTemplate extends WMTemplate
       _in = inStream;
    }
 
+    /**
+     * Instantiate a template based on the specified stream
+     * Will use webmacro's default encoding.
+     * @param broker broker for this template
+     * @param in input stream to read template from
+     * @throws IOException if default encoding is unsupported
+     */
+    public StreamTemplate(Broker broker,InputStream in) 
+        throws IOException {
+        this(broker,in,null);
+    }
+
+    /**
+     * Instantiate a template based on the specified stream
+     * If encoding is null, webmacro's default encoding will
+     * be used.
+     * @param broker broker for this template
+     * @param in input stream to read template from
+     * @param encoding encoding of input stream
+     * @throws IOException if encoding is unsupported
+     */
+    public StreamTemplate(Broker broker,InputStream in,String encoding) 
+        throws IOException{
+        super(broker);
+        if (encoding == null)
+            encoding = getDefaultEncoding();
+        _in = new InputStreamReader(in,encoding);
+    }
 
    /**
      * Get the stream the template should be read from. Parse will 
