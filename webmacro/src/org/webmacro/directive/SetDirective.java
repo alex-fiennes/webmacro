@@ -77,6 +77,9 @@ public class SetDirective extends Directive {
       else
         target.setValue(context, result);
     } catch (PropertyException e) {
+      throw e;
+    }
+    catch (Exception e) {
       String errorText = "#set: Unable to set value: " + target;
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, context, out);

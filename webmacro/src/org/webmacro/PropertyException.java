@@ -77,17 +77,6 @@ public class PropertyException extends ContextException
 
 
    /**
-    * VoidMethodException indicates that a property had a value of
-    * type void.  
-    */
-   public static class VoidMethodException extends PropertyException {
-     public VoidMethodException() {
-        super("VoidMethod");
-     }
-   }
-
-
-   /**
     * NoSuchMethodException indicates that the variable did not have
     * the requested method.  
     */

@@ -37,14 +37,15 @@ public class TestArithmetic extends TemplateTestCase {
     super.setUp();
   }
   
-  public void assertExpr(String expr, boolean yesno) {
-    assertStringTemplateEquals("#if (" + expr +") {Yes} #else {No}", 
-                               yesno? "Yes" : "No");
+  public void assertBinaryComparison(String a, String b, String op, 
+                                     boolean yesno) {
+    assertExpr("$" + a + " " + op + " " + "$" + b, yesno);
   }
 
-  public void assertBinaryComparison(String a, String b, String op, 
-                               boolean yesno) {
-    assertExpr("$" + a + " " + op + " " + "$" + b, yesno);
+  /** Asserts that two variables are equal according to the WM ==
+   * operator */
+  public void assertVarsEqual(String a, String b, boolean yesno) {
+    assertBinaryComparison(a, b, "==", yesno);
   }
 
   public void assertArithmeticExpr(String expr, int result) {
@@ -52,18 +53,9 @@ public class TestArithmetic extends TemplateTestCase {
                                Integer.toString(result));
   }
   
-  public void assertBooleanExpr(String expr, boolean result) {
-    assertStringTemplateEquals("#set $result=(" + expr + ") $result", 
-                               result? "true" : "false");
-  }
-  
   public void assertBinaryExpr(String a, String b, String op, 
                                int result) {
     assertArithmeticExpr("$" + a + " " + op + " " + "$" + b, result);
-  }
-
-  public void assertVarsEqual(String a, String b, boolean yesno) {
-    assertBinaryComparison(a, b, "==", yesno);
   }
 
   public void testAssociativity() {

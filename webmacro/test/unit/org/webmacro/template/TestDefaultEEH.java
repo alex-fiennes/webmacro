@@ -89,7 +89,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void testEvalVoidMethod () throws Exception {
       assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()", 
-                                  PropertyException.VoidMethodException.class);
+                                  PropertyException.VoidValueException.class);
    }
 
    public void testNullMethod () throws Exception {

@@ -85,6 +85,8 @@ public abstract class TemplateTestCase extends TestCase {
 	  return executeStringTemplate(templateFileToString(fileReference));
 	}
 
+  /** Execute a string as a template against the current context,
+   *  and return the result. */
   public String executeStringTemplate(String templateText) throws Exception {
     Template template = new StringTemplate(_wm.getBroker(), templateText);
     FastWriter fw = FastWriter.getInstance(_wm.getBroker(), null, "UTF8");
@@ -93,6 +95,9 @@ public abstract class TemplateTestCase extends TestCase {
     fw.close();
     return output;
   }
+
+  /** Asserts that the given template text evalutes to the given result text
+   * when evaluated against the current context */
 
   public void assertStringTemplateEquals(String templateText, 
                                          String resultText) {
@@ -117,6 +122,9 @@ public abstract class TemplateTestCase extends TestCase {
       assert(false);
     }
   }
+
+  /** Asserts that the given template text throws the given exception
+   * when evaluated against the current context */
 
   public void assertStringTemplateThrows(String templateText, 
                                          Class exceptionClass) {
@@ -143,6 +151,9 @@ public abstract class TemplateTestCase extends TestCase {
     }
   }
 
+  /** Asserts that the given template text matches the given regular
+   * expression when evaluated against the current context */
+
   public void assertStringTemplateMatches(String templateText, 
                                           String resultPattern) 
   throws Exception {
@@ -168,8 +179,19 @@ public abstract class TemplateTestCase extends TestCase {
       assert(false);
     }
   }
+
+  /** Asserts that the specified expression is considered true or false
+   * depending on the value of 'yesno' */
+  public void assertExpr(String expr, boolean yesno) {
+    assertStringTemplateEquals("#if (" + expr +") {Yes} #else {No}", 
+                               yesno? "Yes" : "No");
+  }
+
+  /** Asserts that the specified expression evaluates to the desired
+   * boolean result */
+  public void assertBooleanExpr(String expr, boolean result) {
+    assertStringTemplateEquals("#set $result=(" + expr + ") $result", 
+                               result? "true" : "false");
+  }
+  
 }
-
-
-
-
