@@ -68,10 +68,9 @@ class IfDirective extends Directive {
     DirectiveArgs elseArgs;
     DirectiveArgs[] elseifArgs = null;
 
-    // If condition is static and true -- just return the block
-    if (!cMacro && Expression.isTrue(c)) {
-      return (Block) builder.getArg(IF_BLOCK, bc);
-    }
+    // If condition is static and true -- just return the block (builder)
+    if (!cMacro && Expression.isTrue(c)) 
+      return builder.getArg(IF_BLOCK);
 
     elseArgs = builder.getSubdirective(IF_ELSE);
     elseifArgs = builder.getRepeatingSubdirective(IF_ELSEIF);
@@ -81,8 +80,9 @@ class IfDirective extends Directive {
     if (elseifCount == 0) {
       // If condition is static and false -- just return the else block 
       if (!cMacro) {
+        // Must be false, since we already tested !cMacro && isTrue(c)
         return (elseArgs != null) 
-          ? elseArgs.getArg(ELSE_BLOCK, bc) : "";
+          ? elseArgs.getArg(ELSE_BLOCK) : "";
       }
       else {
         // Just one condition -- the IF condition, and maybe an ELSE block
@@ -104,6 +104,7 @@ class IfDirective extends Directive {
       nConditions=elseifCount + (cMacro? 1 : 0);
       conditions = new Macro[nConditions];
       blocks     = new Block[nConditions];
+      // If we're here, !cMacro -> the condition is false 
       if (cMacro) {
         conditions[0] = (Macro) c;
         blocks[0]     = (Block) builder.getArg(IF_BLOCK, bc);
@@ -117,14 +118,15 @@ class IfDirective extends Directive {
           ++i;
         }
         else if (Expression.isTrue(c)) {
-          elseBlock = (Block) elseifArgs[j].getArg(ELSEIF_BLOCK, bc);
           // If all the previous got folded out as false, then just return the 
           // block from this condition, otherwise stash it in the elseBlock
           // and we're done with #elseif directives
-          if (i == 0)
-            return elseBlock;
-          else 
+          if (i == 0) 
+            return elseifArgs[j].getArg(ELSEIF_BLOCK);
+          else {
+            elseBlock = (Block) elseifArgs[j].getArg(ELSEIF_BLOCK, bc);
             break;
+          }
         }
         else {
           // Just skip this #elseif directive
@@ -132,10 +134,11 @@ class IfDirective extends Directive {
       }
       // If we didn't promote one of the elseif blocks to else, get the else
       if (elseBlock == null && elseArgs != null) {
-          elseBlock = (Block) elseArgs.getArg(ELSE_BLOCK, bc);
         // If there are no valid conditions, just return the else block
         if (i == 0)
-          return elseBlock;
+          return elseArgs.getArg(ELSE_BLOCK);
+        else
+          elseBlock = (Block) elseArgs.getArg(ELSE_BLOCK, bc);
       }
 
       if (i < nConditions) {
@@ -148,6 +151,7 @@ class IfDirective extends Directive {
 
     return this;
   }
+
 
   public void write(FastWriter out, Context context) 
     throws ContextException, IOException {
