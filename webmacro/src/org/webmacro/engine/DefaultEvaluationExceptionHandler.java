@@ -58,21 +58,28 @@ public class DefaultEvaluationExceptionHandler
                         Context context, 
                         Exception problem) 
    throws PropertyException {
-     if (_log != null)
-       _log.warning("Error evaluating variable " + variable.getVariableName()
-                    + ": " + problem, problem);
       if (problem instanceof PropertyException.NoSuchVariableException
           || problem instanceof PropertyException.NullValueException
           || problem instanceof PropertyException.NullToStringException) {
+         if (_log != null)
+           _log.warning ("Error evaluating variable " + variable.getVariableName()
+                       + ": " + problem);
          return;
       }
       else if (problem instanceof PropertyException) {
+         if (_log != null)
+            _log.warning("Error evaluating variable " + variable.getVariableName()
+                       + ": " + problem, problem);
          throw (PropertyException) problem;
       }
-      else 
+      else {
+         if (_log != null)
+            _log.warning("Error evaluating variable " + variable.getVariableName()
+                       + ": " + problem, problem);
          throw new PropertyException("Error evaluating variable " 
                                      + variable.getVariableName() + ": " 
                                      + problem, problem);
+      }
    }
 
    public String expand(Variable variable, 
