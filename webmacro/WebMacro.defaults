@@ -30,6 +30,22 @@
 TemplateEncoding: UTF-8
 
 
+
+#
+# Logging
+#
+
+# A whitespace separated list of org.webmacro.util.LogTarget 
+# implementations that should should receive your log output.
+# 
+# WebMacro comes with a default target, LogFile, which logs 
+# to stderr (or a file if the LogFile setting is set, see below).
+# You can easily create your own implementations that log to your
+# custom logging system or to Log4J or whatever.
+
+LogTargets: org.webmacro.util.LogFile
+
+
 # LogLevel can be: ALL, DEBUG, INFO, NOTICE, WARNING, ERROR, or NONE
 # in order of most information to least information displayed.
 # The top level "LogLevel" setting controls the default log level
@@ -65,6 +81,9 @@ LogLevel: NOTICE
 LogTraceExceptions: TRUE
 LogUsingServletLog: TRUE
 
+# the following 2 options are used by the org.webmacro.util.LogFile
+# log target.  They do NOT specify system-wide logging options!
+#
 # Log format strings.  This is a format string to be passed to MessageFormat.
 # If no format string is specified (the default, since the line below is
 # commented out), the string "{0,time}\t{1}\t{2}\t{3}" will be used if logging
