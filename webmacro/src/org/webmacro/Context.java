@@ -386,6 +386,10 @@ public class Context implements Map, Cloneable
       _contextPool = contextPool;
    }
 
+   final public Pool getPool(){
+       return _contextPool;
+   }
+   
    /**
      * Return the context to the object pool assigned via setPool(),
      * if any. This method implicitly calls clear().
