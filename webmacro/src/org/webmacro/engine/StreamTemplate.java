@@ -105,6 +105,7 @@ public class StreamTemplate extends WMTemplate
          context.put("helloworld", "Hello World");
          context.put("hello", "Hello");
          context.put("file", "include.txt");
+         context.put("today", new Date());
          TestObject[] fruits = { new TestObject("apple",false),
                           new TestObject("lemon",true),
                           new TestObject("pear",false),

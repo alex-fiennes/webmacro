@@ -18,7 +18,7 @@ import org.webmacro.util.*;
 public final class BuildContext extends Context
 {
 
-   private final Map _filters = new HashMap();
+   private final HashMap _filters = new HashMap();
 
    private final Map _types = new HashMap();
 
@@ -39,42 +39,17 @@ public final class BuildContext extends Context
    }
 
    /**
-     * Add a filter for this name
+     * Find out whether the named variable is a tool, local variable,
+     * or property variable.
      */
-   void addFilter(String name, Filter f) 
-   {
-      _filters.put(name,f);
-   }
-
-   /**
-     * Get a filter for this name array
-     */
-   Filter getFilter(String[] name) 
-   {
-      if (name.length == 0) {
-         return null;
-      }
-
-      Filter f = (Filter) _filters.get(name[0]);
-
-      for (int i = 0; i < name.length; i++) {
-         f = f.getFilter(name[i]);
-         if (f == null) {
-            return null;
-         }
-      }
-      return f;
-   }
-
-
-   public Map getFilters() {
-      return _filters;
-   }
-
    protected Object getVariableType(String name) {
       return _types.get(name);
    }
 
+   /**
+     * Declare whether the named variable is to be treated as a tool,
+     * local variable, or property variable type.
+     */
    protected void setVariableType(String name, Object type)  {
       if (name == null) {
          return;

@@ -39,22 +39,12 @@ public class WMParser implements Parser
    static private final Log _log = new Log("parse", "WebMacro parser");
 
    private final Broker _broker;
-   private final boolean _cstyle;
    private Hashtable _tools;
 
    final private static Builder END_BLOCK = new NullBuilder();
 
    public WMParser(Broker b) {
       _broker = b;
-      boolean tmp = false;
-      try {
-         tmp = Config.isTrue( (String)
-               _broker.getValue("config","C-Blocks"));
-      } catch (Exception e) {
-         tmp = true;
-      } 
-      _cstyle = tmp;
-
    }
 
 
@@ -89,7 +79,7 @@ public class WMParser implements Parser
       {
          switch(c) {
 
-            case '#': case '{': case '}': EOF:
+            case '#': case '}': EOF:
                if ((start != -1) && !in.isEscaped()) {
                   String b = buf.toString();
                   ws.append(b.substring(start));
@@ -153,7 +143,7 @@ public class WMParser implements Parser
       BlockBuilder bb = new BlockBuilder();
       do {
          try {
-            bb.addElement(parseBlock(pin)); 
+            bb.addElement(parseBlockImpl(pin)); 
          } catch (ParseException e) {
             _log.exception(e);
             if (! pin.isAtEOF()) {
@@ -173,13 +163,14 @@ public class WMParser implements Parser
      * @exception ParseException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */
-   public BlockBuilder parseBlock(ParseTool in) 
+   protected BlockBuilder parseBlockImpl(ParseTool in) 
       throws ParseException, IOException
    {
-      return parseBlock(in, false);
+      return parseBlockImpl(in, false, false);
    }
 
-   private BlockBuilder parseBlock(ParseTool in, boolean expectEnd)
+   private BlockBuilder parseBlockImpl(ParseTool in, boolean expectEnd, 
+               boolean delim)
       throws ParseException, IOException
    {
       boolean parens;
@@ -187,7 +178,7 @@ public class WMParser implements Parser
       BlockBuilder b = new BlockBuilder();
 
       // eat open parens if in c-style
-      parens = _cstyle && in.parseChar('{');
+      parens = delim && in.parseChar('{');
 
       // eat any opening spaces
       in.skipSpaces();
@@ -218,7 +209,7 @@ public class WMParser implements Parser
                if (child == END_BLOCK) {
                   inBlock = false;
                   child = null;
-                  if (! expectEnd) {
+                  if (parens || !expectEnd) {
                      throw new ParseException(in, END_BLOCK + " unexpected");
                   }
                }
@@ -231,7 +222,7 @@ public class WMParser implements Parser
                break; 
 
             case '}': // end of this block
-               if (_cstyle) {
+               if (parens) {
                   if (parens) {
                      inBlock = false; // breaks the loop
                   } else {
@@ -244,20 +235,6 @@ public class WMParser implements Parser
                }
                break;
 
-            case '{': // start new block
-               if (_cstyle) {
-                  in.skipSpaces();
-                  // drop preceeding spaces
-                  // drop preceeding \n if { is on its own line
-                  if (lineStart && (in.getChar() != '\n')) {
-                     str.append('\n');
-                  }
-                  child = parseBlock(in); // skips trailing spaces
-               } else {
-                  str.append(ws.toString());
-               }
-               break; 
-               
 	    case ParseTool.EOF: // end this block
                str.append(ws.toString()); // preserve whitespace at EOF
 	       inBlock = false; // breaks the loop
@@ -371,7 +348,7 @@ public class WMParser implements Parser
                return END_BLOCK;
             } else if (dirName.equals("begin")) {
                in.skipSpaces();
-               return parseBlock(in,true);
+               return parseBlockImpl(in,true,true);
             }
 
             // identify and validate the name
@@ -437,13 +414,13 @@ public class WMParser implements Parser
             dirB.setText(buf.toString());
          } else if (dirB.isContainer()) {
             in.skipWhitespace();
-            if (_cstyle && in.getChar() == '{') {
-               BlockBuilder b = parseBlock(in,false); 
+            if (in.getChar() == '{') {
+               BlockBuilder b = parseBlockImpl(in,false,true); 
                dirB.setContents(b);
             } else {
                if (in.parseString("#begin")) {
                   in.skipSpaces();
-                  BlockBuilder b = parseBlock(in,true);
+                  BlockBuilder b = parseBlockImpl(in,true,true);
                   dirB.setContents(b);
                } else {
                   throw new ParseException(in, "Expected block after " 
@@ -501,14 +478,14 @@ e.printStackTrace();
 
       // check what kind of variable this is
 
-      boolean isFiltered = false;
       char closeChar = 0;
+      boolean filtered = false;
 
-      if ( in.parseChar('{') ) {
-         isFiltered = true;
-         closeChar = '}';
-      } else if (in.parseChar('(') ) {
+      if (in.parseChar('(') ) {
          closeChar = ')';
+      }  else if (in.parseChar('{')) {
+         closeChar = '}';
+         filtered = true;          
       } else if (! in.isNameStartChar()) {
          return (isParam) ? "$$" : "$";
       }
@@ -533,8 +510,8 @@ e.printStackTrace();
       Object[] oname = new Object[names.size()];
       names.copyInto(oname);
 
-      if ((closeChar != 0) && ! in.parseChar(closeChar)) {
-         throw new ParseException(in, "Expected closing " + closeChar + 
+      if ((closeChar != 0) && !in.parseChar(closeChar)) {
+         throw new ParseException(in, "Expected closing bracket" + 
                " after variable name " + Variable.makeName(oname));
       } else {
          in.parseChar(';'); // eat optional ;
@@ -543,11 +520,11 @@ e.printStackTrace();
       if (isParam) {
          if (Log.debug) 
             _log.debug("Parsed param:" + Variable.makeName(oname));
-         return new ParamBuilder(oname, isFiltered); 
+         return new ParamBuilder(oname); 
       } else {
          if (Log.debug) 
             _log.debug("Parsed var:" + Variable.makeName(oname));
-         return new VariableBuilder(oname, isFiltered);
+         return new VariableBuilder(oname, filtered);
       }
    }
 

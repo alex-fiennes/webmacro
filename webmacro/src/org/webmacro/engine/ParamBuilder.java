@@ -8,11 +8,9 @@ public class ParamBuilder implements Builder
    
 
    private Object[] _names;
-   private final boolean _filtered;
 
-   public ParamBuilder(Object[] names, boolean filtered) {
+   public ParamBuilder(Object[] names) {
       _names = names;
-      _filtered = filtered;
    }
 
    public final Object build(BuildContext bc) 
@@ -20,12 +18,7 @@ public class ParamBuilder implements Builder
    {
       try {
          Object ret = bc.getLocal(_names);
-         if (_filtered) {
-            Filter f = bc.getFilter(Variable.makePropertyNames(_names));
-            bc.push(ret);
-            ret = f.evaluate(bc);
-            bc.pop();
-         }
+         // XXX: Filter me
          return ret;
       } catch (Exception e) {
          throw new BuildException("Property error occured during parameter "

@@ -1,4 +1,11 @@
 
+-- removed case for enabling/disabling c-style blocks
+-- { and } are not recognized except after a directive, meaning inside
+   a #begin or #end block you can write {} without fear
+-- Rolled back Log changes for get/set severe error in WMServlet since
+   it didn't support concurrent servlets. Rewrote changes in Log 
+   class so that in theory it could work some day, with one log 
+   per connection or something.
 -- Log file format has changed
 -- LogFilePerDay functionality added by Marcel
 -- GuestBook, Standalone, HelloWorld made part of org.webmacro.example

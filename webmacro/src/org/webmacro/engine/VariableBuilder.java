@@ -42,7 +42,8 @@ public class VariableBuilder implements Builder
       }
 
       if (filtered) {
-        return new FilterMacro(v,bc.getFilter(v.getPropertyNames()));
+         // XXX: Filter me
+         return null;
       } else {
          return v;
       }

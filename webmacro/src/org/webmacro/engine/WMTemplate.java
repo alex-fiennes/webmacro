@@ -147,7 +147,6 @@ abstract public class WMTemplate implements Template
       Block newContent = null;
       Map newParameters = null;
       Reader in = null;
-      Map newFilters = null;
       try {
          Parser parser = getParser();
          in = getReader();
@@ -155,7 +154,6 @@ abstract public class WMTemplate implements Template
          in.close();
          BuildContext bc = new BuildContext(_broker);
          newParameters = bc.getLocalVariables();
-         newFilters = bc.getFilters();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;
@@ -169,7 +167,6 @@ abstract public class WMTemplate implements Template
          try { in.close(); } catch (Exception e) { }
          synchronized(this) {
             _parameters = newParameters;
-            _filters = newFilters;
             _content = newContent; 
          }
       }
@@ -286,14 +283,5 @@ abstract public class WMTemplate implements Template
    {
       return _parameters;
    }
-
-   /**
-     * Return the subfilter associated with the supplied top level 
-     * property name
-     */
-   public Filter getFilter(String name) {
-      return (Filter) _filters.get(name);
-   }
-
 }
 
