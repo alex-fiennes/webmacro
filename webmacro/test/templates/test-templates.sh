@@ -15,13 +15,22 @@
 # one used to configure this testing system.
 #
 # USAGE
-#	test-templates.sh <path-to-webmacro.jar>
+#	test-templates.sh <path-to-webmacro.jar> [clean]
+#	if "clean" is the second argument, all source files
+#	will be recompiled
 #
+
 
 if [ x$1 = "x" ]; then
 	echo "Usage:"
-	echo "     test-templates.sh <path-to-webmacro.jar>"
+	echo "     test-templates.sh <path-to-webmacro.jar> [clean]"
+	echo "     if 'clean' is the second argument, all source files will be recompiled"
 	exit 1;
+fi
+
+# if arg 2 == "clean", then nuke all existing .class files
+if [ x$2 = "xclean" ]; then
+	find ./ -name "*.class" -exec rm -f {} \;
 fi
 
 WEBMACRO_JAR=$1
@@ -37,9 +46,11 @@ fi
 for dir in `find ./ -type d -maxdepth 1 -mindepth 1 | grep -v CVS`; do
 	# compile the TestTemplate.java file
 	# if it exists in this directory
-	if [ $dir/TestTemplate.java -nt $dir/TestTemplate.class ]; then
-		echo "Compiling $dir/TestTemplate.java"
-		javac -classpath $dir:$ROOT_DIR:$WEBMACRO_JAR -d $dir $dir/TestTemplate.java || exit;
+	if [ -f $dir/TestTemplate.java ]; then
+		if [ ! -f $dir/TestTemplate.class ]; then
+			echo "Compiling $dir/TestTemplate.java"
+			javac -classpath $dir:$ROOT_DIR:$WEBMACRO_JAR -d $dir $dir/TestTemplate.java || exit;
+		fi
 	fi
 
 	if [ -f $dir/TestTemplate.class ]; then
