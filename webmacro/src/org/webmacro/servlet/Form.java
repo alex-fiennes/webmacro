@@ -18,6 +18,11 @@
  * assume all risks and liabilities associated with its use.
  *
  * See www.webmacro.org for more information on the WebMacro project.
+ *
+ *	@author	Marcel Huijkman
+ *
+ *	@version	15-07-2002
+ *
  */
 
 
@@ -28,6 +33,8 @@ import javax.servlet.http.*;
 
 import org.webmacro.UnsettableException;
 import org.webmacro.util.Bag;
+
+import java.util.Enumeration;
 
 
 /**
@@ -58,6 +65,37 @@ final public class Form implements Bag {
          return null;
       }
    }
+
+	/**
+	 * Try to get a form value
+	 *
+	 * @param strKey  = The form key that we're looking for.
+	 *
+	 * @return	The value of that form key if found, else null
+	 *
+	 **/
+	final public Object getPossibleForm( String strKey ) {
+		String strElement;
+		Object obValue;
+
+		Enumeration obEnumeration;
+
+		//--- end of var's declaration ---//
+
+		obValue = get( strKey );
+		if ( obValue == null ) {
+			obEnumeration = _request.getParameterNames();
+			while ( obEnumeration.hasMoreElements() ) {
+				strElement = obEnumeration.nextElement().toString();
+				if ( strElement.equalsIgnoreCase( strKey ) ) {
+					obValue = get( strElement );
+					break;
+				}
+			}
+		}
+
+		return obValue;
+	}
 
 
    /**

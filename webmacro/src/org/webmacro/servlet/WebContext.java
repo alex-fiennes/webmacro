@@ -18,6 +18,11 @@
  * assume all risks and liabilities associated with its use.
  *
  * See www.webmacro.org for more information on the WebMacro project.
+ *
+ *	@author	Marcel Huijkman
+ *
+ *	@version	15-07-2002
+ *
  */
 
 
@@ -152,6 +157,20 @@ public class WebContext extends Context {
    // CONVENIENCE METHODS
 
    /**
+	 * Try to get the value of a form variable from the request
+	 */
+	final public Object getPossibleForm( String strKey ) {
+		try {
+			Form obForm = ( Form ) getProperty( "Form" );
+			return obForm.getPossibleForm( strKey );
+		}
+		catch ( Exception e ) {
+			_log.error( "Could not load Form tool", e );
+			return null;
+		}
+	}
+
+	/**
     * Get the value of a form variable from the request
     */
    final public String getForm(String field) {
