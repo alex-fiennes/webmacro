@@ -236,9 +236,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             return;
          }
       }
+      
+      boolean timing = false;
       try {
         context = newContext(req,resp);
-        boolean timing = context.isTiming();
+        timing = Flags.PROFILE && context.isTiming();
         if (timing) context.startTiming("WMServlet",req.getRequestURI());
 
         Template t;
@@ -246,13 +248,13 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
            if (timing) context.startTiming("handle");
            t = handle(context);
         } finally {
-           context.stopTiming();
+           if (timing) context.stopTiming();
         }
 
         if (t != null) {
           execute(t,context); 
         }
-        context.startTiming("WMServlet.destroyContext()");
+        if (timing) context.startTiming("WMServlet.destroyContext()");
         try { destroyContext(context); }
         finally { if (timing) context.stopTiming(); }
       } catch (HandlerException e) {
@@ -275,7 +277,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             "for this application. Here are the details:<p>" + e);
          execute(tmpl,_wcPrototype.newInstance(req,resp));  
       } finally {
-         context.stopTiming();
+         if (timing) context.stopTiming();
          context.clear();
       }
    }
@@ -396,8 +398,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final protected void execute(Template tmpl, WebContext c)
    {
       Writer out = null;
+      boolean timing = Flags.PROFILE && c.isTiming();
       try {
-         c.startTiming("Template.write", tmpl);
+         if (timing) c.startTiming("Template.write", tmpl);
          FastWriter fw;
          try {
             HttpServletResponse resp= c.getResponse();
@@ -405,11 +408,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                   resp.getOutputStream(), resp.getCharacterEncoding());
             tmpl.write(fw, c);
          } finally {
-            c.stopTiming();
+            if (timing) c.stopTiming();
          }
-         c.startTiming("FastWriter.close()");
+         if (timing) c.startTiming("FastWriter.close()");
          try { fw.close(); }
-         finally { c.stopTiming(); }
+         finally { if (timing) c.stopTiming(); }
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {

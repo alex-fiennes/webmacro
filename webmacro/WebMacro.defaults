@@ -126,20 +126,21 @@ Providers:  org.webmacro.resource.TemplateProvider \
 # by changing this list--you could even add your own. They are 
 # all implementations of org.webmacro.engine.Directive
 
-Directives:  org.webmacro.engine.IncludeDirective \
-             org.webmacro.engine.ParseDirective \
-             org.webmacro.engine.SetDirective \
-             org.webmacro.engine.IfDirective \
-             org.webmacro.engine.ElseDirective \
-             org.webmacro.engine.UseDirective \
-             org.webmacro.engine.EncodeDirective \
-             org.webmacro.engine.SilenceDirective \
+Directives:  org.webmacro.engine.ElseDirective \
              org.webmacro.engine.EscapeDirective \
-             org.webmacro.engine.ParamDirective \
+             org.webmacro.engine.EncodeDirective \
              org.webmacro.engine.ForeachDirective \
+             org.webmacro.engine.IfDirective \
+             org.webmacro.engine.IncludeDirective \
              org.webmacro.engine.LocalDirective \
+             org.webmacro.engine.ParamDirective \
+             org.webmacro.engine.ParseDirective \
+             org.webmacro.engine.ProfileDirective \
              org.webmacro.engine.PropertyDirective \
+             org.webmacro.engine.SetDirective \
+             org.webmacro.engine.SilenceDirective \
              org.webmacro.engine.ToolDirective \
+             org.webmacro.engine.UseDirective \
              org.webmacro.directive.IncludeDirective \
              org.webmacro.directive.ParseDirective \
              org.webmacro.directive.SetDirective \

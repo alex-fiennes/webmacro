@@ -12,14 +12,17 @@
    <TD font color="red" align="center">COMMENT</TD>
 </TR>
 
-#foreach $guest in $registry {
-   <TR>
-      <TD align="center">$guest.Name</TD>
-      <TD align="center">$guest.Email</TD>
-      <TD align="center">$guest.Comment</TD>
-   </TR>
-} 
-</TABLE>
+#profile "registryLoop" 
+#begin
+   #foreach $guest in $registry {
+      <TR>
+         <TD align="center">$guest.Name</TD>
+         <TD align="center">$guest.Email</TD>
+         <TD align="center">$guest.Comment</TD>
+      </TR>
+   } 
+   </TABLE>
+#end
 
 <a href="GuestBook?loadFile=allguest">
 See Guests</a>

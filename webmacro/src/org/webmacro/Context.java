@@ -124,6 +124,7 @@ public class Context implements Cloneable {
      * Clear the context of its non-shared data, preserving only the toolbox.
      */
    public void clear() {
+      if (_prof != null) startTiming("Context.clear");
       Iterator i = _tools.entrySet().iterator();
       while (i.hasNext()) {
          Map.Entry m = (Map.Entry) i.next();
@@ -133,7 +134,10 @@ public class Context implements Cloneable {
       _tools.clear();
       _globals.clear();
       _bean = null;
-      if (_prof != null) _prof.destroy();
+      if (_prof != null) {
+         stopTiming();
+        _prof.destroy();
+      }
    }
 
 

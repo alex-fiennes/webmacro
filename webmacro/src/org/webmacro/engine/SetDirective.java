@@ -93,7 +93,6 @@ final class SetDirective implements Directive, Visitable
      */ 
    public final Object evaluate(Context context)
    {
-      // do nothing
       try {
          if (myValue instanceof Macro) {
             myVariable.setValue(context, ((Macro) myValue).evaluate(context));

@@ -1,4 +1,7 @@
 
+-- Nov-2000 justin: Added ProfileDirective so you can invoke the 
+   profiling code from within your template
+
 -- Nov-2000 justin: Cleaned up exceptions, cleaned up the Context.
    Reversed the precedence of Tool vs. Bean when setBean is active
 
