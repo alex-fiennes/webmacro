@@ -30,25 +30,6 @@ public class HTMLEscaper
 {
 
     /**
-     * A little bit of unit testing
-     */
-    public static void main (String[] args)
-    {
-
-        String text =
-                "This is a test of the html escaper & let's hope it really, " +
-                "really <B><I>works</I></B>! Is there an \u00f7 with an umlaut in the house?" +
-                "This code is \u00a9copyleft. I like to be paid in \u00fa\u00fa\u00fas";
-
-        System.out.println("NOTE: Due to differences in ASCII fonts, the text " +
-                "sent to the escaper may not display properly. Hopefully you will be " +
-                "able to tell what it should have looked like from the escaped output.");
-        System.out.println("in: " + text);
-
-        System.out.println("out: " + escape(text));
-    }
-
-    /**
      * This method will take the input and escape characters that have
      * an HTML entity representation.
      * It uses a quick string -> array mapping to avoid creating thousands of
@@ -58,6 +39,9 @@ public class HTMLEscaper
      */
     public static final String escape (String nonHTMLsrc)
     {
+        if (nonHTMLsrc == null)
+            return null;
+
         StringBuffer res = new StringBuffer();
         int l = nonHTMLsrc.length();
         int idx;
