@@ -48,8 +48,8 @@ Administrative targets:
     <property name="tmpdir"         value="tmp" />
     <property name="classes"        value="classes"/>
     <property name="macros"         value="macros"/>
-    <property name="dist.binary"    value="webmacro-bin-${version}"/>
-    <property name="dist.source"    value="webmacro-src-${version}"/>
+    <property name="dist.binary"    value="webmacro-${wm-style}-bin-${version}"/>
+    <property name="dist.source"    value="webmacro-${wm-style}-src-${version}"/>
     <property name="javadoc"        value="javadoc"/>
     <property name="examples"       value="examples"/>
     <property name="jar"            value="${app.name}.jar"/>
@@ -175,6 +175,7 @@ Administrative targets:
         <delete dir='${dist.binary}' />
         <mkdir dir='${dist.binary}' />
         <copy todir="${dist.binary}" file="${jar}"/>
+        <copy todir="${dist.binary}" file="lib/concurrent.jar" /> 
         <copy todir="${dist.binary}">
             <fileset dir="distroot" />
         </copy>

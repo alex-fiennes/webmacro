@@ -1,10 +1,13 @@
 WebMacro 2.0
 ---------------
                     
-This is WebMacro 2.0.
+This is WebMacro 2.0b1, the first beta release of WebMacro 2.0.  Although
+we beleive this release to be very stable (and many of us are using it in production
+environments), there are likely bugs.  Please report bugs to our subscriber-only
+mailing list.  Please visit http://www.webmacro.org/MailingList for details.
 
-WM 2.0 includes new features such as #templet, #eval, and numerous bugfixes and
-better web docs.
+WM 2.0 includes new features such as #templet, #eval, syntax-level map support
+and numerous bugfixes and improved web docs.
 
 
 The best place for information about WebMacro is our website:
@@ -15,11 +18,30 @@ SourceForge (http://www.sourceforge.net/projects/webmacro/).  We hope this
 will prove to give the WebMacro community continued support.  We also hope
 it will make our lives a bit easier!
 
-Note that because of the move to SourceForge our mailing list address has changed.  
-Please visit http://www.webmacro.org/MailingList for details.
+Please note that our mailing list, thanks to the increase in SPAM, is now
+subscriber-only.  We apologize for any inconvienence, but beleive that it provides
+a safer community.  Please visit http://www.webmacro.org/MailingList for details.
 
 Changes in this Release
 -----------------------
+
+- Some small signature changes to methods require you to recompile
+source code which imports files from webmacro.jar
+
+- WebMacro now has a dependency on Doug Lea's "concurrent.jar".  This library
+is used internally by WebMacro to manage many of the concurrency issues inherent to
+web development.  Although "concurrent.jar" is included with WebMacro, you
+can read about the library here:
+    http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
+
+- WebMacro 2.0 now has first-class support for creating Maps:
+    #set $foo = {"key" : "value", "key2" : "value", "keyN" : value }
+Creating an empty map:
+    #set $foo = { }
+Map definitions can also span multiple lines:
+    #set $foo = {"key" : "value",
+                 "key2" : "value",
+                 "keyN" : value }
 
 - You can build WM in a minimalist fashion for embedded systems. See
 the ant file for this.
@@ -27,9 +49,6 @@ the ant file for this.
 - A powerul new feature has been added allowing for blocks
 to be created as templets and evaluated. This is addition to the
 macro calling facility.
-
-- Some small signature changes to methods require you to recompile
-source code which imports files from webmacro.jar
 
 - In addition to WMServlet.java, a servlet TemplateServlet.java is
 in the distro. It shows how to improve performance by creating an
