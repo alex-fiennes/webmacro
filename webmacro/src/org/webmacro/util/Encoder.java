@@ -104,7 +104,7 @@ public class Encoder implements ResourceLoader
       }
       else {
          try {
-            Class c = Class.forName(cacheManager);
+            Class c = b.classForName(cacheManager);
             _cache = (CacheManager) c.newInstance();
          }
          catch (Exception e) {

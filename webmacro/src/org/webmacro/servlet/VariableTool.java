@@ -73,7 +73,8 @@ public class VariableTool implements ContextTool {
    public boolean isInstanceOf(Object obj, String className) {
       try {
          return (obj != null && className != null) 
-             && (obj.getClass().isAssignableFrom (Class.forName(className)));     
+             && (obj.getClass().isAssignableFrom(
+                   context.getBroker().classForName(className)));
       } catch (ClassNotFoundException cnfe) {
          context.getBroker().getLog("VariableTool")
                             .error ("VariableTool could not locate the class: /" 

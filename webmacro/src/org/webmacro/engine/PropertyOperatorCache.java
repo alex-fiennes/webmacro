@@ -51,7 +51,7 @@ final public class PropertyOperatorCache {
       }
       else {
          try {
-            _cache = (CacheManager) Class.forName(cacheManager).newInstance();
+            _cache = (CacheManager) b.classForName(cacheManager).newInstance();
          }
          catch (Exception e) {
             _log.warning("Unable to load cache manager " + cacheManager 

@@ -134,5 +134,23 @@ public class Servlet22Broker extends ServletBroker {
          is = super.getResourceAsStream(name);
       return is;
    }
+
+   /**
+    * Loads a class by name. Uses the servlet classloader to load the
+    * class. If the class is not found uses the Broker classForName
+    * implementation.  */
+   
+   public Class classForName(String name) throws ClassNotFoundException {
+      Class cls = null;
+      try { 
+         cls = _servletClassLoader.loadClass(name);
+      }
+      catch (ClassNotFoundException e) { }
+
+      if (cls==null) 
+         cls = super.classForName(name);
+
+      return cls;
+   }
    
 }

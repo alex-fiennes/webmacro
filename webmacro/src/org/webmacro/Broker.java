@@ -156,7 +156,7 @@ public class Broker
    private class SettingHandler extends Settings.ListSettingHandler {
       public void processSetting(String settingKey, String settingValue) {
          try {
-            Class pClass = Class.forName(settingValue);
+            Class pClass = classForName(settingValue);
             Provider instance = (Provider) pClass.newInstance();
             addProvider(instance, settingKey);
          } catch (Exception e) {
@@ -214,7 +214,7 @@ public class Broker
       if (eehClass != null && !eehClass.equals("")) {
         try {
           _eeHandler = (EvaluationExceptionHandler) 
-            Class.forName(eehClass).newInstance();
+            classForName(eehClass).newInstance();
         }
         catch (Exception e) {
           _log.warning("Unable to instantiate exception handler of class " 
@@ -467,6 +467,14 @@ public class Broker
       return is;
    }
 
+
+   /**
+    * Load a class through the broker's class loader.  Subclasses can 
+    * redefine or chain if they know of other ways to load a class.  
+    */
+   public Class classForName(String name) throws ClassNotFoundException {
+      return Class.forName(name);
+   }
 
    /**
      * Get a profile instance that can be used to instrument code. 

@@ -464,7 +464,7 @@ public class Context implements Map, Cloneable
 
       Class c;
       try {
-         c = Class.forName(className);
+         c = _broker.classForName(className);
       } catch (ClassNotFoundException e) {
          _log.warning("Context: Could not locate class for context tool " 
                       + className);

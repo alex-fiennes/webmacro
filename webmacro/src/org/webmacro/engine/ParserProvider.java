@@ -35,11 +35,11 @@ import org.webmacro.util.*;
 public final class ParserProvider implements Provider
 {
 
-
    // BULDER CLASS MANAGEMENT
 
    private static final Hashtable _parsers  = new Hashtable();
 
+   private Broker _broker = null;
    private Log _log;
    private final Class[] _brokerParam = { Broker.class };
    private final Object[] _brokerArg = new Object[1];
@@ -57,7 +57,7 @@ public final class ParserProvider implements Provider
       String name = (pType != null && !pType.equals("")) 
                   ? pType : pname;
       try {
-         pclass = Class.forName(pClassName);
+         pclass = _broker.classForName(pClassName);
       } catch (Exception e) {
          throw new IntrospectionException("No class " + pClassName);
       }
@@ -132,6 +132,7 @@ public final class ParserProvider implements Provider
    public void init(Broker broker, Settings p) throws InitException
    {
       _brokerArg[0] = broker;
+      _broker = broker;
       _log = broker.getLog("engine");
 
       try {
