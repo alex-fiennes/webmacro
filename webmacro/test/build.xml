@@ -73,6 +73,7 @@
       <formatter type="plain" />
       <batchtest fork="yes" todir="${unit.reports}">
         <fileset dir="${unit.root}" includes="**/TestParseInclude.java" />
+        <fileset dir="${unit.root}" includes="**/TestSiteBuilder.java" />
       </batchtest>
     </junit>
   </target>

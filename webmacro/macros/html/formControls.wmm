@@ -60,6 +60,22 @@
 }
 }
 
+## textInput(textData, formatProps) where:
+## arg1 corresponds to the data 
+## arg2 provides format values for the text
+## Formats a choice using radio button controls
+#macro textInput($textData, $formatProps) {
+<INPUT TYPE="TEXT"
+  MAXLENGTH="textData.maxChars"
+  NAME="textData.name"
+  SIZE="$formatProps.charLength"
+  VALUE="textData.value"
+>
+}
+
+
+
+
 ## dateControl(dateValues, formatProps) where:
 ## arg1 corresponds to the values for the date control 
 ## arg2 provides formatting options for the date control.

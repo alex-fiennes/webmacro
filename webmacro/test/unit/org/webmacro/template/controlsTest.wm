@@ -92,6 +92,7 @@
   #set $formatProps.euro=true
   #set $formatProps.closeWindow=false
   #set $formatProps.imageAlign="bottom"
+  #set $formatProps.charLength="40"
 }
 
 

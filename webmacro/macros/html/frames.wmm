@@ -16,10 +16,10 @@ popup.open();
 popup.focus();"
 onClick=
 "window.open(
-'$urlProps.url',
+'$urlProps.hrefOnly',
 'popup',
 'resizable=$scriptProps.resizeable,toolbar=no,status=no,location=no,scrollbars=yes,width=$scriptProps.width,height=$scriptProps.height,screenX=0,screenY=0,alwaysRaised=yes')"> 
-$urlProps.visibleContent</a>
+$urlProps.hrefLabel</a>
 }
 
 ## splitWindow()(contentProps, frameProps) where:

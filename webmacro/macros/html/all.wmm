@@ -4,3 +4,4 @@
 }
 #include as macro "html/frames.wmm"
 #include as macro "html/formControls.wmm"
+#include as macro "html/menuStyles.wmm"
