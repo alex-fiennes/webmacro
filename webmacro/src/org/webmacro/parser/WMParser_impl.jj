@@ -715,7 +715,7 @@ Object Conditional() : {
   Object e;
 }
 {
-  <LPAREN> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] <RPAREN> { return e; }
+  <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN> { return e; }
 }
 
 
@@ -853,9 +853,9 @@ ListBuilder ArgList() : {
   Object e;
 }
 {
-  [ [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] { list.addElement(e); }
+  [ [<WS>] e=Expression() [<WS>] { list.addElement(e); }
     (
-      <COMMA> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] { list.addElement(e); }
+      <COMMA> [<WS>] e=Expression() [<WS>] { list.addElement(e); }
     ) *
   ]
   { return list; }
@@ -875,9 +875,9 @@ Object[] FormalArgList() : {
 }
 {
   [ <LPAREN>
-    [ [(<WS>|<NEWLINE>)+] <DOLLAR> name=<WORD> [(<WS>|<NEWLINE>)+] { list.add(name.image); }
+    [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
     (
-      <COMMA> [(<WS>|<NEWLINE>)+] <DOLLAR> name=<WORD> [(<WS>|<NEWLINE>)+] { list.add(name.image); }
+      <COMMA> [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
     ) *
   ]
     <RPAREN>
@@ -901,7 +901,7 @@ Object Term() : {
 {
   (
     e=VariableReference()
-    | <LPAREN> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] <RPAREN>
+    | <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN>
     | e=QuotedString()
     | e=BracketList()
     | e=CurlyMap()
@@ -981,7 +981,7 @@ Object CExpression() : {
 }
 {
   e1=AExpression()
-  [ LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] op=RelOp() [(<WS>|<NEWLINE>)+] e2=AExpression() ]
+  [ LOOKAHEAD(2) [<WS>] op=RelOp() [<WS>] e2=AExpression() ]
   {
     if (op == null)
       return e1;
@@ -1005,7 +1005,7 @@ Object AndExpression() : {
 {
   e=CExpression()
   (
-    LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] <OP_AND> [(<WS>|<NEWLINE>)+] e2=CExpression()
+    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression()
     {
       e = new Expression.AndBuilder(e, e2);
     }
@@ -1019,7 +1019,7 @@ Object OrExpression() : {
 {
   e=AndExpression()
   (
-    LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] <OP_OR> [(<WS>|<NEWLINE>)+] e2=AndExpression()
+    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression()
     {
       e = new Expression.OrBuilder(e, e2);
     }
