@@ -24,6 +24,8 @@
 package org.webmacro;
 import java.io.*;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.ArrayList;
 import org.webmacro.util.*;
 
 
@@ -60,7 +62,8 @@ public class FastWriter extends Writer
      */
    final public static String SAFE_UNICODE_ENCODING;
    final public static int DEFAULT_BUFFER_SIZE = 4096;
-
+   final public static int MAX_POOL_SIZE = 10;
+   
    // find the safe encoding
    static {
       String encoding = "UTF16-BE";
@@ -354,8 +357,7 @@ public class FastWriter extends Writer
 
       return _bstream.size();
    }
-
-
+   
    /**
      * Copy the contents written so far into a byte array.
      */
@@ -459,11 +461,45 @@ public class FastWriter extends Writer
           // get/create the pool this FW should be using
           _myPool = (Pool) _writerCache.get (_encoding);
           if (_myPool == null) {
-            _myPool = new UPool (7);
+            _myPool = new FWPool (MAX_POOL_SIZE);
             _writerCache.put(_encoding, _myPool);
           }
         }
         _myPool.put (this);
       }
    }
+}
+
+/**
+ * A simple <b>synchronized</b> pool used only by FastWriter
+ */
+class FWPool implements Pool {
+    private final List _pool;
+    private final int _maxSize;
+    private volatile int _size = 0;
+    
+    FWPool (int maxSize) {
+        _maxSize = maxSize;
+        _pool = new ArrayList (maxSize);
+    }
+    
+    public Object get () {
+        Object obj = null;
+        if (_size > 0) {
+            synchronized (_pool) {
+                obj = _pool.remove(0);
+            }
+        }
+        _size--;
+        return obj;
+    }
+    
+    public void put (Object fw) {
+        if (_size < _maxSize) {
+            synchronized (_pool) {
+                _pool.add (fw);
+            }
+            _size++;
+        }
+    }    
 }
