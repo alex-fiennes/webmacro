@@ -43,7 +43,7 @@
   </target>
 
   <target name="unit" depends="unit-compile">
-    <!- <echo message="${java.class.path}"/> -->
+    <!-- <echo message="${java.class.path}"/> -->
     <junit printsummary="yes" haltonfailure="no" >
       <classpath refid="unit.class.path"/>
       <formatter type="plain" />
