@@ -25,7 +25,6 @@ use a method that doesn't exist in as a sub-property:
 we should see a 1 line warning that TestObject.FirstName.NotThere is a method that doesn't exist
 $TestObject.FirstName.NotThere
 
-
 use method of TestObject that returns null:
 we should see a 1 line warning that the method call returned null
 $TestObject.returnNull()
