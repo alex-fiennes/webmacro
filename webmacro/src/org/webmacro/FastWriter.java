@@ -241,6 +241,17 @@ final public class FastWriter extends Writer
    }
 
    /**
+     * Return the number of bytes that would be written out if flush()
+     * is called.
+     */
+   public int size() throws IOException
+   {
+      bflush();
+      return _bstream.size();
+   }
+
+
+   /**
      * Copy the contents written so far into a byte array.
      */
    public byte[] toByteArray() 
