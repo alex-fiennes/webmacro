@@ -4,10 +4,15 @@ $NullObject
 use an object that is not null:
 $TestObject
 
-use methods of TestObject:
-$TestObject.FirstName  == $TestObject.getFirstName()
-$TestObject.LastName   == $TestObject.getLastName()
+use known-good methods of TestObject:
+we should see:
+   Eric == Eric
+   Ridge == Ridge
+$TestObject.FirstName == $TestObject.getFirstName()
+$TestObject.LastName == $TestObject.getLastName()
 
-use methods of FirstNameNull object:
-$FirstNameNull.FirstName  == $FirstNameNull.getFirstName()
-$FirstNameNull.LastName   == $FirstNameNull.getLastName()
+use method of TestObject that returns null:
+$TestObject.returnNull()
+
+use void method of TestObject:
+$TestObject.voidMethod()
