@@ -25,11 +25,11 @@ final public class LogManager {
      */
    private final static LogSource _sysLog = new LogSource("sys") {
       final private LogFile _err = 
-            new LogFile("System.err", System.err, "{1,time} {2}:{3} {4}", 
+            new LogFile("System.err", System.err, "{0,time,medium} {1}:{2} {3}", 
                "WARNING", null, true);
       protected void log(int level, String msg, Exception e) {
          super.log(level,msg,e); 
-         if ((level >= LogSource.WARNING) && hasTargets()) {
+         if ((level >= LogSource.NOTICE) && !hasTargets()) {
                _err.log("sys", LEVELS[level],msg,e);
          }
       }
@@ -109,7 +109,6 @@ final public class LogManager {
 
    }
 
-
    /**
      * Instantiate a new Log object
      */
@@ -126,7 +125,6 @@ final public class LogManager {
       return l;
    }
 
-   
    /**
      * Used internally by LogManager to register new sources. 
      * Ordinarily you would get a new source by calling getLog().
@@ -140,7 +138,6 @@ final public class LogManager {
       }
    }
 
-  
    /**
      * Flush all log targets
      */
@@ -151,7 +148,6 @@ final public class LogManager {
          lt.flush();
       }
    }
-
 
    /**
      * This is the "sys" log source. This log source is shared between
