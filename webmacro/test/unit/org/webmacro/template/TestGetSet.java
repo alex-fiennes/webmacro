@@ -118,7 +118,7 @@ public class TestGetSet extends TemplateTestCase
         context.put("two", (int) 2);
         context.put("twoLong", (long) 2);
 
-        to2.intField = 1;
+        TestObject.intField = 1;
         to2.put("Value", new TestObject());
         context.put("TestObject2", to2);
     }
@@ -126,34 +126,34 @@ public class TestGetSet extends TemplateTestCase
 
     public void test1 () throws Exception
     {
-        to.intField = 1;
+        TestObject.intField = 1;
         assertStringTemplateEquals("$TestObject.intField", "1");
         assertStringTemplateEquals("#set $TestObject.intField=2", "");
-        assertTrue(to.intField == 2);
+        assertTrue(TestObject.intField == 2);
 
-        to.intField = 1;
+        TestObject.intField = 1;
         assertStringTemplateEquals("#set $TestObject.intField=$two", "");
-        assertTrue(to.intField == 2);
+        assertTrue(TestObject.intField == 2);
 
-        to.longField = 1;
+        TestObject.longField = 1;
         assertStringTemplateEquals("$TestObject.longField", "1");
         assertStringTemplateEquals("#set $TestObject.longField=2", "");
-        assertTrue(to.longField == 2);
+        assertTrue(TestObject.longField == 2);
 
-        to.longField = 1;
+        TestObject.longField = 1;
         assertStringTemplateEquals("$TestObject.longField", "1");
         assertStringTemplateEquals("#set $TestObject.longField=$twoLong", "");
-        assertTrue(to.longField == 2);
+        assertTrue(TestObject.longField == 2);
 
-        to.setInt(1);
+        TestObject.setInt(1);
         assertStringTemplateEquals("$TestObject.Int", "1");
         assertStringTemplateEquals("#set $TestObject.Int=2", "");
-        assertTrue(to.getInt() == 2);
+        assertTrue(TestObject.getInt() == 2);
 
-        to.setInt(1);
+        TestObject.setInt(1);
         assertStringTemplateEquals("$TestObject.Int", "1");
         assertStringTemplateEquals("#set $TestObject.Int=$two", "");
-        assertTrue(to.getInt() == 2);
+        assertTrue(TestObject.getInt() == 2);
     }
 
 

@@ -337,7 +337,7 @@ public abstract class TemplateTestCase extends TestCase
             }
             else
             {
-                caught = ((PropertyException) e).getCaught();
+                caught = ((PropertyException) e).getCause();
             }
         }
         if (caught == null)

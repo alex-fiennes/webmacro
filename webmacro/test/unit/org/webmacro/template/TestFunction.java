@@ -39,8 +39,8 @@ public class TestFunction extends TemplateTestCase
         context.setEvaluationExceptionHandler(
                 new org.webmacro.engine.CrankyEvaluationExceptionHandler());
         context.putFunction("toList", java.util.Arrays.class, "asList");
-        context.putGlobalFunction("escape", org.webmacro.util.HTMLEscaper.class, "escape");
-        context.putGlobalFunction("mod", this, "modFunc");
+        context.getBroker().putFunction("escape", org.webmacro.util.HTMLEscaper.class, "escape");
+        context.getBroker().putFunction("mod", this, "modFunc");
         String abcs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         context.putFunction("mySubstr", abcs, "substring");
         context.putFunction("voidFunc1", this, "voidFunc1");
