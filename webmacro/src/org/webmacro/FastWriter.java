@@ -75,7 +75,7 @@ final public class FastWriter extends Writer
    final private String _encoding;      // what encoding we use
    final private Writer _bwriter;
    final private ByteBufferOutputStream _bstream;
-   final private EncodingCache _cache;
+   final private Encoder _encoder;
    
    private OutputStream _out;
 
@@ -93,13 +93,21 @@ final public class FastWriter extends Writer
     * a character encoding. You can also call writeTo(), toString(), 
     * and toByteArray() to access any un-flush()ed contents.
     */
-   public FastWriter(OutputStream out, String encoding)
-      throws java.io.UnsupportedEncodingException
+   public FastWriter(Broker broker, OutputStream out, String encoding)
+      throws UnsupportedEncodingException
    {
       _encoding = encoding;
       _bstream = new ByteBufferOutputStream(4096);
       _bwriter = new OutputStreamWriter(_bstream, encoding);
-      _cache = EncodingCache.getInstance(encoding);
+
+      // fetch our encoder via the EncoderProvider
+      try {
+          EncoderProvider provider = (EncoderProvider)
+              broker.getProvider(EncoderProvider.TYPE);
+          _encoder = (Encoder)provider.get(encoding);
+      } catch (ResourceException re) {
+          throw new UnsupportedEncodingException(re.getMessage());
+      }
 
       _encodeProperly = true;
       _buffered = false;
@@ -111,10 +119,10 @@ final public class FastWriter extends Writer
      * Create a new FastWriter with no output stream target. You can
      * still call writeTo(), toString(), and toByteArray().
      */
-   public FastWriter(String encoding) 
+   public FastWriter(Broker broker, String encoding) 
       throws java.io.UnsupportedEncodingException
    {
-      this(null,encoding);
+      this(broker, null, encoding);
    }
 
 
@@ -127,11 +135,11 @@ final public class FastWriter extends Writer
    }
 
    /**
-     * Get the encoding cache used by this FastWriter to transform 
+     * Get the encoder used by this FastWriter to transform 
      * char[] data into byte[] data.
      */
-   public EncodingCache getEncodingCache() {
-      return _cache;
+   public Encoder getEncoder() {
+      return _encoder;
    }
 
    /**
@@ -297,8 +305,13 @@ final public class FastWriter extends Writer
    public void writeStatic(final String s) 
    {
       if (_buffered) bflush();
-      byte[] b = _cache.encode(s);
-      _bstream.write(b,0,b.length);
+      try {
+         byte[] b = _encoder.encode(s);
+         _bstream.write(b,0,b.length);
+      } catch (UnsupportedEncodingException uee) {
+         // this should never happen
+         uee.printStackTrace();
+      }
    }
 
    /**
@@ -403,7 +416,8 @@ final public class FastWriter extends Writer
      * Get a new FastWriter. You must then call writeTo(..) before
      * attempting to write to the FastWriter.
      */
-   public static FastWriter getInstance(OutputStream out, String encoding) 
+   public static FastWriter getInstance(Broker broker, OutputStream out,
+                                        String encoding) 
       throws UnsupportedEncodingException
    {
       FastWriter fw = null;
@@ -415,25 +429,25 @@ final public class FastWriter extends Writer
             return fw;
          }
       }
-      return new FastWriter(out,encoding);
+      return new FastWriter(broker, out, encoding);
    }
 
    /**
      * Return a FastWriter with the specified encoding and no output stream.
      */
-   public static FastWriter getInstance(String encoding) 
+   public static FastWriter getInstance(Broker broker, String encoding) 
       throws UnsupportedEncodingException
    {
-      return getInstance(null,encoding);
+      return getInstance(broker, null, encoding);
    }
 
    /**
      * Return a FastWriter with default encoding and no output stream.
      */
-   public static FastWriter getInstance() 
+   public static FastWriter getInstance(Broker broker) 
    {
       try {
-         return getInstance(null, SAFE_UNICODE_ENCODING);
+         return getInstance(broker, null, SAFE_UNICODE_ENCODING);
       } catch (UnsupportedEncodingException e) {
          e.printStackTrace(); // never gonna happen
          return null;
@@ -460,31 +474,4 @@ final public class FastWriter extends Writer
       }
       p.put(this);
    }
-
-   public static void main(String arg[]) {
-
-      System.out.println("----START----");
-      try {
-         FastWriter fw = FastWriter.getInstance();
-         fw.setAsciiHack(false);
-         for (int i = 0; i < arg.length; i++) {
-            System.out.println("Writing: " + arg[i]);
-            fw.writeStatic("write: ");
-            fw.write(arg[i]);
-            fw.writeStatic("\n");
-
-            fw.writeStatic("cache: ");
-            fw.writeStatic(arg[i]);
-            fw.writeStatic("\n");
-         }
-         fw.writeTo(System.out);
-         fw.close();
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-      System.out.println("----DONE----");
-
-   }
-
 }
-

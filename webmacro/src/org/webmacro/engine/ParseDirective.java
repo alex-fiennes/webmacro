@@ -97,7 +97,7 @@ class ParseDirective implements Directive
       throws PropertyException
    {
       try {
-         FastWriter fw = FastWriter.getInstance();
+         FastWriter fw = FastWriter.getInstance(context.getBroker());
          write(fw,context);
          String ret = fw.toString();
          fw.close();

@@ -219,15 +219,15 @@ CachingProvider.url.CacheManager:      org.webmacro.resource.SimpleCacheManager
 # Encoding caching
 #
 
-Encoder.*.CacheManager: org.webmacro.resource.SimpleCacheManager
+Encoder.*.CacheManager: org.webmacro.resource.StaticCacheManager
 
 
-# SimpleCacheManager caches templates for efficiency; it uses ExpireTime
-#    to determine how long to cache.  
-#    - A value of 0 (zero) means WebMacro will never cache the template
-#    - A positive value means WebMacro will recompile templates every 
+# SimpleCacheManager caches templates for efficiency and expires them 
+# after a certain period of time to save memory.
+#    - An ExpireTime of 0 (zero) means WebMacro will never cache the template
+#    - A positive ExpireTime means WebMacro will recompile templates every 
 #        X milliseconds  (ie, 10000 is 10 seconds)
-#    - A negative value means WebMacro will only recompile templates 
+#    - A negative ExpireTime means WebMacro will only recompile templates 
 #        when they change.
 
 SimpleCacheManager.*.ExpireTime: 30000
@@ -236,3 +236,4 @@ SimpleCacheManager.*.ReloadOnChange: true
 # Advanced properties: 
 # SimpleCacheManager.*.CacheBuckets: 1001
 # SimpleCacheManager.*.CacheFactor: 5
+

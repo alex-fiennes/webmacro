@@ -80,7 +80,7 @@ public abstract class Directive implements Macro, Visitable {
     throws PropertyException {
       try {
         ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-        FastWriter fw = FastWriter.getInstance();
+        FastWriter fw = FastWriter.getInstance(context.getBroker());
         write(fw,context);
         return fw.toString();
       } catch (IOException e) {

@@ -120,7 +120,7 @@ final class IfDirective implements Directive, Visitable
    public Object evaluate(Context context)
       throws PropertyException
    {
-      FastWriter fw = FastWriter.getInstance();
+      FastWriter fw = FastWriter.getInstance(context.getBroker());
       try {
          write(fw,context);
          String ret = fw.toString();

@@ -222,7 +222,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (_problem != null) {
             try { 
                resp.setContentType("text/html");
-               FastWriter out = new FastWriter(resp.getOutputStream(),
+               FastWriter out = new FastWriter(_broker,
+                                               resp.getOutputStream(),
                                                resp.getCharacterEncoding());
                out.write("<html><head><title>WebMacro Error</title></head>");
                out.write("<body><h1><font color=\"red\">WebMacro Error: ");
@@ -450,7 +451,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             if (_log.loggingDebug())
                _log.debug("Using output encoding "+encoding);
             fw = FastWriter.getInstance(
-                  resp.getOutputStream(), encoding);
+                  _broker, resp.getOutputStream(), encoding);
             tmpl.write(fw, c);
          } finally {
             if (timing) c.stopTiming();

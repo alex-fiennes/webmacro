@@ -25,7 +25,7 @@ package org.webmacro.engine;
 import java.util.*;
 import java.io.*;
 import org.webmacro.*;
-
+import org.webmacro.util.Encoder;
 
 /**
   * A Block is essentially a Macro[] that knows how to write itself
@@ -35,6 +35,7 @@ final public class Block implements Macro, Visitable
 {
 
    private final String[] _strings;
+   private final Encoder.Block _block;
    private final Macro[] _macros;
    private final int _length;
    private final int _remainder;
@@ -54,6 +55,9 @@ final public class Block implements Macro, Visitable
 
       _length = _macros.length;
       _remainder = 10 - _length % 10;
+
+      // we'll use this to encode our strings for output to the user
+      _block = new Encoder.Block(_strings);
    }
 
    /**
@@ -67,7 +71,7 @@ final public class Block implements Macro, Visitable
       throws PropertyException, IOException
    {
       int i = 0;  
-      final byte[][] bcontent = out.getEncodingCache().encode(_strings);
+      final byte[][] bcontent = out.getEncoder().encode(_block);
       byte[] b;
 
       switch(_remainder) {
@@ -127,7 +131,7 @@ final public class Block implements Macro, Visitable
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(_strings.length * 128);
-         FastWriter fw = FastWriter.getInstance();
+         FastWriter fw = FastWriter.getInstance(context.getBroker());
          write(fw,context);
          String ret = fw.toString();
          fw.close();

@@ -164,7 +164,7 @@ abstract public class WMTemplate implements Template
    public final Object evaluate(Context data) throws PropertyException
    {
       try {
-         FastWriter fw = FastWriter.getInstance();
+         FastWriter fw = FastWriter.getInstance(_broker);
          write(fw,data);
          String ret = fw.toString();
          fw.close();

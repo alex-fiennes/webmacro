@@ -25,7 +25,7 @@ public class SpinTest
 
       Template t = wm.getTemplate(template);
 
-      FastWriter fw = new FastWriter(new FileOutputStream("/dev/null"), "US-ASCII");
+      FastWriter fw = new FastWriter(wm.getBroker(), new FileOutputStream("/dev/null"), "US-ASCII");
 
       t.write(fw, c);
       fw.close();
