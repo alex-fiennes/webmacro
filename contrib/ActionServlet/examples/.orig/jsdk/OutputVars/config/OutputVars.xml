@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application repository="@as.home@/examples/OutputVars/classes">
+   <templates>
+      <template name="template1.wm" is-new-session="true">
+         <output-variable name="first" component="MyComponent" value="getFirst()"/>
+         <output-variable name="lengthOfFirst" value="$first.length()"/>
+      </template>
+
+      <template name="template2.wm">
+         <output-variable name="third" value="$second"/>
+      </template>
+   </templates>
+
+   <components>
+      <component class="MyComponent" persistence="application">
+         <action name="Continue..." method="myAction()">
+            <output-variable name="second" component="MyComponent" value="getSecond()"/>
+            <output-variable name="lengthOfSecond" value="$second.length()"/>
+         </action>
+      </component>
+   </components>
+</application>

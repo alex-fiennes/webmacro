@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application>
+   <templates>
+      <template name="Forms.wm" is-new-session="true"/>
+   </templates>
+
+   <components>
+      <component class="TwoForms" persistence="application">
+         <action form="Form1" name="OK" method="submit(double number)"/>
+         <action form="Form2" name="OK" method="submit(char ch)"/>
+      </component>
+   </components>
+</application>

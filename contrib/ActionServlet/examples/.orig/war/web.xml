@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<web-app>
+   <!-- ************************************************** -->
+   <!-- ****************** LoginServlet ****************** -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>LoginServlet</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>LoginServlet.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- ******************* Calculator ******************* -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>Calculator</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>Calculator.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- ******************* DateHandler ****************** -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>DateHandler</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>DateHandler.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- ******************** GuestBook ******************* -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>GuestBook</servlet-name>
+      <servlet-class>GuestBookServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>GuestBook.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- ******************** OutputVars ****************** -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>OutputVars</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>OutputVars.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- ********************* TwoForms ******************* -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>TwoForms</servlet-name>
+      <servlet-class>org.webmacro.as.ActionServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>TwoForms.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- **************** Servlet mappings **************** -->
+   <!-- ************************************************** -->
+
+   <servlet-mapping>
+      <servlet-name>LoginServlet</servlet-name>
+      <url-pattern>/LoginServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>Calculator</servlet-name>
+      <url-pattern>/Calculator</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>DateHandler</servlet-name>
+      <url-pattern>/DateHandler</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>GuestBook</servlet-name>
+      <url-pattern>/GuestBook</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>OutputVars</servlet-name>
+      <url-pattern>/OutputVars</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>TwoForms</servlet-name>
+      <url-pattern>/TwoForms</url-pattern>
+   </servlet-mapping>
+</web-app>
