@@ -54,7 +54,7 @@ final public class TemplateProvider implements ResourceProvider
    static {
       try {
          pathSeparator_ = System.getProperty("path.separator");
-      } catch (Exception e) {
+      } catch (Throwable t) {
          // do nothing
       }
    }
