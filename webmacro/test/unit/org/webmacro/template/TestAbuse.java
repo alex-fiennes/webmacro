@@ -24,6 +24,7 @@ public class TestAbuse extends TemplateTestCase {
    public void stuffContext (Context context) throws Exception {
       context.setEvaluationExceptionHandler (
                 new DefaultEvaluationExceptionHandler ());
+      context.put ("User", "Eric");
    }
 
    /** We'll start easy */
@@ -34,6 +35,12 @@ public class TestAbuse extends TemplateTestCase {
    /** this is easy too */
    public void testBlockComment () throws Exception {
       assertStringTemplateEquals ("#comment { this is a comment }", "");
+   }
+
+   /** test a variable reference like: Welcome to the site, $User. */
+   public void testTrailingDot () throws Exception {
+      assertStringTemplateEquals ("Hello, $User.",
+                                  "Hello, Eric.");
    }
 
    /** EOL comments at end of directive blocks.  */
