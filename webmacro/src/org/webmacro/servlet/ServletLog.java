@@ -58,8 +58,7 @@ public class ServletLog extends AbstractLogFile {
 
    private Object[] _args = new Object[4];
 
-   public void log(Date date, String name, String level, String message,
-                   Exception e) {
+   public void log(Date date, String name, String level, String message, Throwable e) {
       synchronized (_args) {
          _args[0] = date;
          _args[1] = name;

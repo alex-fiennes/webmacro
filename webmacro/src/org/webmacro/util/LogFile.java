@@ -123,7 +123,7 @@ public class LogFile extends AbstractLogFile {
 		_name = out.toString();
 	}
 
-	public void log( Date date, String name, String level, String message, Exception e ) {
+	public void log( Date date, String name, String level, String message, Throwable e ) {
 		Object[] _args = new Object[ 4 ];
 
 		if ( _logFilePerDay ) {
@@ -159,6 +159,3 @@ public class LogFile extends AbstractLogFile {
 	}
 
 }
-
-
-

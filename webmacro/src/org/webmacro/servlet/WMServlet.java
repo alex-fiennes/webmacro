@@ -190,7 +190,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @exception ServletException if we can't get our configuration
     * @exception IOException if we can't write to the output stream
     */
-   final protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
    throws ServletException, IOException {
       doRequest(req, resp);
    }

@@ -35,7 +35,7 @@ public interface LogTarget {
     * Log out an event that just happened and which you have previously
     * accepted.
     */
-   public void log(java.util.Date date, String type, String level, String message, Exception e);
+   public void log(java.util.Date date, String type, String level, String message, Throwable e);
 
    /**
     * Flush the log. This will be called after writing methods that
@@ -74,5 +74,3 @@ public interface LogTarget {
    public void removeObserver(LogSystem ls);
 
 }
-
-

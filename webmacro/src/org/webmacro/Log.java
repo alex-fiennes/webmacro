@@ -37,7 +37,7 @@ public interface Log {
     * not be enabled in a production system. They are useful only
     * during development.
     */
-   public void debug(String msg, Exception e);
+   public void debug(String msg, Throwable e);
 
    /**
     * A shortform for debug(msg,null)
@@ -66,7 +66,7 @@ public interface Log {
     * handling on its own. On a correctly functioning production
     * system you would expect to see only a few warnings.
     */
-   public void warning(String msg, Exception e);
+   public void warning(String msg, Throwable e);
 
    /**
     * A shortform for debug(msg,null)
@@ -84,7 +84,7 @@ public interface Log {
     * correctly functioning production system you would not expect
     * to see any error messages.
     */
-   public void error(String msg, Exception e);
+   public void error(String msg, Throwable e);
 
    /**
     * Ask the log system if it wants these kinds of log messages.

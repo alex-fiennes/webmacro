@@ -164,7 +164,7 @@ public class LogSource implements Log {
     * not be enabled in a production system. They are useful only
     * during development.
     */
-   public void debug(String msg, Exception e) {
+   public void debug(String msg, Throwable e) {
       log(LogSystem.DEBUG, msg, e);
    }
 
@@ -201,7 +201,7 @@ public class LogSource implements Log {
     * handling on its own. On a correctly functioning production
     * system you would expect to see only a few warnings.
     */
-   public void warning(String msg, Exception e) {
+   public void warning(String msg, Throwable e) {
       log(LogSystem.WARNING, msg, e);
    }
 
@@ -225,7 +225,7 @@ public class LogSource implements Log {
     * correctly functioning production system you would not expect
     * to see any error messages.
     */
-   public void error(String msg, Exception e) {
+   public void error(String msg, Throwable e) {
       log(LogSystem.ERROR, msg, e);
    }
 
@@ -246,7 +246,7 @@ public class LogSource implements Log {
       return (_targets[LogSystem.WARNING] != null);
    }
 
-   protected void log(int level, String msg, Exception e) {
+   protected void log(int level, String msg, Throwable e) {
       LogTarget[] targets = _targets[level];
       if (targets == null) {
          return;
