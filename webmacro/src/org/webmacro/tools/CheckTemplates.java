@@ -30,7 +30,9 @@ public class CheckTemplates {
   }
 
   public static void main(String[] args) throws Exception {
-    WM wm = new WM("org/webmacro/tools/CheckTemplates.properties");
+    if (! System.getProperties().containsKey("org.webmacro.LogLevel"))
+      System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");    
+    WM wm = new WM();
     broker = wm.getBroker();
     parser = (Parser) broker.get("parser", "wm");
 
