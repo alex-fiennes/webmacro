@@ -50,7 +50,7 @@ abstract public class Condition
      * Evaluate the condition and write it out
      */
    final public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       out.write(evaluate(context).toString());
    }
@@ -59,7 +59,7 @@ abstract public class Condition
      * Return an object representing this condition
      */
    public Object evaluate(Context context) 
-      throws InvalidContextException
+      throws ContextException
    {
       if (test(context)) {
          return Boolean.TRUE;

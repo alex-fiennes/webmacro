@@ -35,9 +35,9 @@ public interface PropertyReference
      * the appropriate reference.
      * @param context An object which may be introspected for information
      * @return The appropriate value given this context
-     * @exception InvalidContextException required data not found in context
+     * @exception ContextException required data not found in context
      */
    public Object evaluate(Context context) throws 
-      InvalidContextException;
+      ContextException;
 
 }

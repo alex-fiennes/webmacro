@@ -101,10 +101,10 @@ final public class PropertyMethod implements Named
      * against the supplied context. Any arguments which are of 
      * type PropertyReference will be resolved into a regular 
      * object via the PropertyReference.evaluate method.
-     * @exception InvalidContextException a PropertyReference in the arguments failed to resolve against the supplied context
+     * @exception ContextException a PropertyReference in the arguments failed to resolve against the supplied context
      */
    final public Object[] getArguments(Context context)
-      throws InvalidContextException
+      throws ContextException
    {
       Object[] argList;
       if (_reference) {

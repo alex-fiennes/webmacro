@@ -73,11 +73,11 @@ final class SetDirective implements Directive
 
    /**
      * Interpret the directive and write it out
-     * @exception InvalidContextException is required data is missing
+     * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
    public final void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
        
       Object errorString;
@@ -101,7 +101,7 @@ final class SetDirective implements Directive
          } else {
             myVariable.setValue(context, myValue);
          }
-      } catch (InvalidContextException e) {
+      } catch (ContextException e) {
          Engine.log.exception(e);
          Engine.log.error("Set: Unable to set value: " + myVariable);
          return ("<!--\n Unable to set value: " + myVariable + " \n-->");

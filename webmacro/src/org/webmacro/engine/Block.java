@@ -45,11 +45,11 @@ final public class Block implements Macro
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(final Writer out, final Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       for(int i = 0; i < _content.length; i++) {
          _content[i].write(out,context);
@@ -59,9 +59,9 @@ final public class Block implements Macro
    /**
      * same as out but returns a String
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      */
-   public Object evaluate(Context context) throws InvalidContextException
+   public Object evaluate(Context context) throws ContextException
    {
       try {
          SizedStringWriter sw = 

@@ -15,7 +15,7 @@ final class FilterMacro implements Macro
    }
 
    public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       context.push(_m.evaluate(context));      
       _f.write(out,context);
@@ -23,7 +23,7 @@ final class FilterMacro implements Macro
    }
 
    public Object evaluate(Context context)
-      throws InvalidContextException
+      throws ContextException
    {
       Object ret;
       context.push(_m.evaluate(context));

@@ -147,11 +147,11 @@ abstract class Variable implements Macro
    /**
      * Look in the hashtable (context) for a value keyed to this variables 
      * name and write its value to the stream.
-     * @exception InvalidContextException is required data is missing
+     * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
    final public void write(Writer out, Context context) 
-       throws InvalidContextException, IOException
+       throws ContextException, IOException
    {
       try {
          out.write(evaluate(context).toString());
@@ -181,13 +181,13 @@ abstract class Variable implements Macro
      * The code to get the value represented by the variable from the 
      * supplied context.
      */
-   abstract Object getValue(Context context) throws InvalidContextException;
+   abstract Object getValue(Context context) throws ContextException;
 
    /**
      * The code to set the value represented by the variable in the 
      * supplied context.
      */
-   abstract void setValue(Context c, Object v) throws InvalidContextException;
+   abstract void setValue(Context c, Object v) throws ContextException;
 
 }
 

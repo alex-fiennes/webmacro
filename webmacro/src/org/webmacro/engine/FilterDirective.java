@@ -70,7 +70,7 @@ final class FilterDirective implements Directive
          if (rhs instanceof Macro) {
             rhs = ((Macro) rhs).evaluate(rc);
          }
-      } catch (InvalidContextException e) {
+      } catch (ContextException e) {
          throw new BuildException("Your filter resolved to a Macro, but You can only specify statically resolvable terms in a filter directive, since it is resolved at compile time (ie: context not available): " + e);
       }
 
@@ -102,11 +102,11 @@ final class FilterDirective implements Directive
 
    /**
      * Interpret the directive and write it out
-     * @exception InvalidContextException is required data is missing
+     * @exception ContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
    public final void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       // do nothing
    }

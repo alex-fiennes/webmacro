@@ -34,7 +34,7 @@ final class TermCondition extends Condition implements Macro {
    }
 
    final public Object evaluate(Context context) 
-      throws InvalidContextException
+      throws ContextException
    {
       return _term.evaluate(context);
    }

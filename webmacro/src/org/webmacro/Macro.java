@@ -35,19 +35,19 @@ public interface Macro extends org.webmacro.util.PropertyReference
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException;
+      throws ContextException, IOException;
 
    /**
      * same as out but returns a String
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      */
    public Object evaluate(Context context)
-      throws InvalidContextException;
+      throws ContextException;
 
 }
 

@@ -71,7 +71,7 @@ class List implements Macro
    }
 
    public void write(Writer out, Context context)
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       out.write(evaluate(context).toString());
    }
@@ -91,7 +91,7 @@ class List implements Macro
    }
 
    public Object evaluate(Context context) 
-      throws InvalidContextException
+      throws ContextException
    {
       Object[] ret = new Object[ _content.length ];
       for (int i = 0; i < _content.length; i++) {

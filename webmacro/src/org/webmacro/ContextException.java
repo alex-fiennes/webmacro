@@ -1,5 +1,4 @@
 
-
 /*
  * Copyright (c) 1998, 1999 Semiotek Inc. All Rights Reserved.
  *
@@ -21,24 +20,16 @@
 
 package org.webmacro;
 
-
 /**
-  * This exception is thrown on attempt to set something that is
-  * not settable. 
-  * @see ContextTool
+  * The context supplied to a macro did not contain information that
+  * the macro required in order to write or evaluate itself, or there
+  * was some problem with the way the Context was used.
   */
-public class UnsettableException extends ContextException 
+public class ContextException extends WebMacroException
 {
-
-   /**
-     * Constructor only requires a reason 
-     * <p>
-     * @param reason explains what went wrong
-     */
-   public UnsettableException(String reason) {
+   public ContextException(String reason) 
+   {
       super(reason);
    }
- 
+
 }
-
-

@@ -99,11 +99,11 @@ final class ForeachDirective implements Directive
    /**
      * Interpret the directive and write it out
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
       // now clobber values outside the loop:
       // Map listMap = new HashMap();
@@ -120,7 +120,7 @@ final class ForeachDirective implements Directive
       try {
          iter = PropertyOperator.getIterator(list);
       } catch (Exception e) {
-         throw new InvalidContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
+         throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list + ": " + e);
       }
       Object listItem;
 
@@ -130,7 +130,7 @@ final class ForeachDirective implements Directive
 	 listItem = "<!--\n " +  _list + ": is empty \n-->";   
          try {
             _iterVar.setValue(context, listItem);
-         } catch (InvalidContextException e) {
+         } catch (ContextException e) {
             Engine.log.exception(e);
             Engine.log.error("Unable to resolve list" + _list);
             out.write("<!--\n Unable to resolve list " + _list + " \n-->");
@@ -147,7 +147,7 @@ final class ForeachDirective implements Directive
             try {
                _iterVar.setValue(context, listItem);
                _body.write(out, context);
-            } catch (InvalidContextException e) {
+            } catch (ContextException e) {
                Engine.log.exception(e);
                Engine.log.error("unable to set a list item of list: " + _list); 
                out.write("<!--\n Unable to resolve list " + _list + " \n-->");
@@ -160,10 +160,10 @@ final class ForeachDirective implements Directive
      * Interpret the foreach directive by looking up the list reference
      * in the supplied context and iterating through it. Return the 
      * result as a string.
-     * @exception InvalidContextException is required data is missing
+     * @exception ContextException is required data is missing
      */ 
    public Object evaluate(Context context)
-      throws InvalidContextException
+      throws ContextException
    {
       try {
          StringWriter sw = new SizedStringWriter(512);

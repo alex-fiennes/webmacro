@@ -108,10 +108,10 @@ public class Context implements Cloneable {
      * will be unaffected.
      */
    public void push(Object bean) 
-      throws InvalidContextException
+      throws ContextException
    {
       if (_state > 256) {
-         throw new InvalidContextException("Infinite recursion detected: "
+         throw new ContextException("Infinite recursion detected: "
                + " context recursion cutoff a stack depth of 256.");
       }
    
@@ -193,7 +193,7 @@ public class Context implements Cloneable {
      * during construction or initialization of the Context. 
      */
    final public void registerTool(String name, ContextTool tool) 
-      throws InvalidContextException
+      throws ContextException
    {
       if (_toolbox == null) {
          _toolbox = new HashMap();
@@ -239,9 +239,9 @@ public class Context implements Cloneable {
             _log.exception(ia);
             _log.error("Tool class and methods must be public for "
                   + toolName + ": " + ia);
-         } catch (InvalidContextException e) {
+         } catch (ContextException e) {
             _log.exception(e);
-            _log.error("InvalidContextException thrown while registering "
+            _log.error("ContextException thrown while registering "
                   + "Tool: " + toolName);
          } catch (InstantiationException ie) {
             _log.exception(ie);
@@ -300,7 +300,7 @@ public class Context implements Cloneable {
      * top level template, where there is no bean.
      */
    public final Object getProperty(final Object[] names) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if (names.length == 0) {
          return null;
@@ -319,7 +319,7 @@ public class Context implements Cloneable {
      * Set the named property via introspection 
      */
    final public boolean setProperty(final Object[] names, final Object value) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if (names.length == 0) {
          return false;
@@ -354,7 +354,7 @@ public class Context implements Cloneable {
      * Get the named local variable via introspection 
      */
    public final Object getLocal(final Object[] names) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if ((names.length == 0) || (_locals == null)) {
          return null;
@@ -362,8 +362,11 @@ public class Context implements Cloneable {
          Object res = get(names[0]);
          if (names.length == 1) {
             return res;
-         } 
-         return PropertyOperator.getProperty(this,get(names[0]),names,1);
+         } else if (res == null) {
+            return null;
+         } else {
+            return PropertyOperator.getProperty(this,get(names[0]),names,1);
+         }
       } 
    }
 
@@ -371,7 +374,7 @@ public class Context implements Cloneable {
      * Set the named local variable via introspection 
      */
    final public boolean setLocal(final Object[] names, final Object value) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if (names.length == 0) {
          return false;
@@ -383,7 +386,12 @@ public class Context implements Cloneable {
          put(names[0], value);
          return true;
       } else {
-         return PropertyOperator.setProperty(this,get(names[0]),names,1,value);
+         Object parent = get(names[0]);
+         if (parent == null) {
+            return false;
+         } else {
+            return PropertyOperator.setProperty(this,parent,names,1,value);
+         }
       } 
    }
 
@@ -395,7 +403,7 @@ public class Context implements Cloneable {
      * null if there isn't one
      */
    final public Object getTool(Object name) 
-      throws InvalidContextException
+      throws ContextException
    {
       try {
          if (_toolbox == null) {
@@ -414,7 +422,7 @@ public class Context implements Cloneable {
          }
          return ret;
       } catch (ClassCastException ce) {
-         throw new InvalidContextException("Tool" + name  
+         throw new ContextException("Tool" + name  
                + " does not implement the ContextTool interface!");
       }
    }
@@ -422,7 +430,7 @@ public class Context implements Cloneable {
      * Get the named tool variable via introspection 
      */
    public final Object getTool(final Object[] names) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if ((names.length == 0) || (_toolbox == null)) {
          return null;
@@ -439,13 +447,13 @@ public class Context implements Cloneable {
      * Set the named tool variable via introspection 
      */
    final public boolean setTool(final Object[] names, final Object value) 
-      throws PropertyException, InvalidContextException
+      throws PropertyException, ContextException
    {
       if (names.length == 0) {
          return false;
       } 
       if (names.length == 1) {
-         throw new InvalidContextException("Cannot reset tool in a running context. Tools can only be registered via the registerTool method.");
+         throw new ContextException("Cannot reset tool in a running context. Tools can only be registered via the registerTool method.");
       } else {
          return PropertyOperator.setProperty(this,getTool(names[0]),names,1,value);
       } 

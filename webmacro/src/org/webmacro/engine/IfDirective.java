@@ -113,10 +113,10 @@ final class IfDirective implements Directive
    /**
      * Evaluate the current macro and return it as a string. Same
      * basic operation as calling write.
-     * @exception InvalidContextException is required data is missing
+     * @exception ContextException is required data is missing
      */ 
    public Object evaluate(Context context)
-      throws InvalidContextException
+      throws ContextException
    {
       try {
          StringWriter sw = new SizedStringWriter(512);
@@ -133,11 +133,11 @@ final class IfDirective implements Directive
    /**
      * Interpret the directive and write it out to the supplied stream.
      * <p>
-     * @exception InvalidContextException if required data was missing from context
+     * @exception ContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
    public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException
+      throws ContextException, IOException
    {
 
       if (Log.debug) {

@@ -248,7 +248,7 @@ abstract public class WMTemplate implements Template
 
       try {
          content.write(out,data);
-      } catch (InvalidContextException e) {
+      } catch (ContextException e) {
          _log.exception(e);
          String warning = 
             "Template: Missing data in Map passed to template " + this;

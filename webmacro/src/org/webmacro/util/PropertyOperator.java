@@ -76,12 +76,12 @@ final public class PropertyOperator
      * @return the property described by the names, inside the instance
      * @exception PropertyException the property we'd like to look at
      * @exception SecurityExeption you are not permitted to try
-     * @exception InvalidContextException one of the names is a PropertyReference which could not be evaluated against the supplied context
+     * @exception ContextException one of the names is a PropertyReference which could not be evaluated against the supplied context
      */
    static final public Object getProperty(
          final Context context, final Object instance, 
          final Object[] names, int start) 
-      throws PropertyException, SecurityException, InvalidContextException
+      throws PropertyException, SecurityException, ContextException
    {
       try {
          if (instance == null) {
@@ -101,7 +101,7 @@ final public class PropertyOperator
      */
    static final public Object getProperty(
          final Context context, final Object instance, final Object[] names) 
-      throws PropertyException, SecurityException, InvalidContextException
+      throws PropertyException, SecurityException, ContextException
    {
       return getProperty(context, instance, names, 0);
    }
@@ -115,12 +115,12 @@ final public class PropertyOperator
      * @param value the new value the property is to be set to
      * @exception PropertyException not possible to set the property
      * @exception SecurityException you are not permitted to try
-     * @exception InvalidContextException a PropertyReference in the argument names could not be resolved against the supplied context
+     * @exception ContextException a PropertyReference in the argument names could not be resolved against the supplied context
      */
    static final public boolean setProperty(
          final Context context, Object instance, 
          final Object[] names, int start, final Object value) 
-      throws PropertyException, SecurityException, InvalidContextException
+      throws PropertyException, SecurityException, ContextException
    {
       try {
          if (instance == null) {
@@ -138,7 +138,7 @@ final public class PropertyOperator
    static final public boolean setProperty(
          final Context context, final Object instance, 
          final Object[] names, final Object value) 
-      throws PropertyException, SecurityException, InvalidContextException
+      throws PropertyException, SecurityException, ContextException
    { 
       return setProperty(context,instance,names,0,value);
    }
@@ -494,7 +494,7 @@ final public class PropertyOperator
    private Object getProperty(
          final Context context, final Object instance, final Object[] names, 
             int start, int end) 
-      throws PropertyException, NoSuchMethodException, InvalidContextException
+      throws PropertyException, NoSuchMethodException, ContextException
    {
 
       if (_debug) {
@@ -632,7 +632,7 @@ final public class PropertyOperator
      */
    private boolean setProperty(
          Context context, Object instance, Object[] names, Object value, int pos) 
-      throws PropertyException, NoSuchMethodException, InvalidContextException
+      throws PropertyException, NoSuchMethodException, ContextException
    {
       if (_debug) {
          _log.debug("setProperty(" + instance + "," + names[pos] + "..."
