@@ -97,18 +97,22 @@ class CacheImpl implements UpdateableCache  {
     return o;
 	}
 
-  /** Returns the elements in the cache as an array. */
+  /** Returns the elements in the cache as an array using the current image. */
   public Object[] values() {
-    HashMap h;
-    synchronized (immutable) { h = immutable; }
-    return h.values().toArray();
+    Object[] values = null;
+    synchronized (changeControlMutex) {
+      values = mutable.values().toArray();
+    }
+    return values;
   }
 
   /** Returns the keys of the cache as an array. */
   public Object[] keys() {
-    HashMap h;
-    synchronized (immutable) { h = immutable; }
-    return h.keySet().toArray();
+    Object[] keys = null;
+    synchronized (changeControlMutex) {
+      keys = mutable.keySet().toArray();
+    }
+    return keys;
   }
     
 
@@ -148,8 +152,6 @@ class CacheImpl implements UpdateableCache  {
 	  changeControl.update(null, null);
 	}
 
-
-  
   /** Destroys this instance allowing for speedy GC action. */
   void destroy() {
     changeControl.destroy();
