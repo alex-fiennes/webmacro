@@ -365,4 +365,11 @@ public class WM implements WebMacro {
       tmpl.write(fw, context);
       fw.close();
    }
+
+    /**
+     * Print the version, and quit
+     */
+    public static void main (String[] args) {
+        System.out.println ("WebMacro v" + WebMacro.VERSION + ".  Built " + WebMacro.BUILD_DATE);
+    }
 }

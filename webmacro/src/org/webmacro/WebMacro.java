@@ -44,6 +44,7 @@ public interface WebMacro {
     * inserted by ANT during the "compile" process
     */
    public static final String VERSION = "@VERSION@";
+   public static final String BUILD_DATE = "@BUILD_DATE@";
 
    /**
     * Call this method when you are finished with WebMacro. If you don't

@@ -26,4 +26,8 @@ public class TestVersion extends TestCase {
   public void testVersion () throws Exception {
      assert (!WebMacro.VERSION.equals("@VERSION@"));
   }
+
+  public void testBuildDate() throws Exception {
+      assert (!WebMacro.VERSION.equals("@BUILD_DATE"));
+  }
 }

@@ -36,8 +36,11 @@ Changes in this Release
      For example, #if($foo.noSuchMethod()) now throws exceptions when using Default and CrankyEEH
     whereas previously it did not.
 
-- fixed parser bug where a missing #end or } would not throw an exception, but would instead consider the
-end of the file as the end of the block. (eric)
+- fixed parser bug where a missing #end or } would not throw an exception, but would instead 
+consider the end of the file as the end of the block. (eric)
+
+- releases can now be downloaded in binary and/or source form. (eric)
+
 
 Changes Prior to this Release
 -----------------------------

@@ -1,231 +1,323 @@
 <!--
-  In order to compile WebMacro, you may need to set these environment variables
-    JAVACC_HOME: your JavaCC installation
+    In order to compile WebMacro, you may need to set these environment variables
+        JAVACC_HOME: your JavaCC installation
  -->
-
-<project name="WebMacro" default="compile" basedir=".">
-
-  <property name="version"        value="1.1b2" />
-  <property name="app.name"       value="webmacro" />
-  <property name="tmpdir"         value="tmp" />
-  <property name="classes"        value="classes"/>
-  <property name="macros"         value="macros"/>
-  <property name="dist"           value="webmacro-${version}"/>
-  <property name="javadoc"        value="javadoc"/>
-  <property name="examples"       value="examples"/>
-  <property name="jar"            value="${app.name}.jar"/>
-  <property name="src.jar"        value="${app.name}-src.jar"/>
-  <property environment="ENV" />
-  <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-
-  <taskdef name="javacc" 
-           classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
-
-  <path id="class.path">
-    <fileset dir="lib">
-      <include name="*.jar" /> <include name="*.zip" />
-    </fileset>
-    <pathelement location="${classes}" />
-    <pathelement location="${macros}" />
-    <pathelement path="${java.class.path}" />
-  </path>
-  <property name="classpath.resolved" refid="class.path"/>
-
-  <target name="prepare">
-    <mkdir  dir="${classes}"/>
-    <mkdir  dir="${javadoc}"/>
-    <mkdir  dir="${dist}"/>
-    <mkdir  dir="${examples}/WEB-INF"/>
-    <mkdir  dir="${examples}/WEB-INF/classes"/>
-    <mkdir  dir="${examples}/WEB-INF/lib"/>
-    <mkdir  dir="${dist}"/>
-    <mkdir  dir="${dist}"/>
-    <available property="javacc.present" classname="COM.sun.labs.javacc.Main"
-               classpath="${javacc.home}/JavaCC.zip" />
-  </target>
-
-
-  <target name="clean" depends="test-clean">
-    <delete dir="${classes}"/>
-    <delete dir="${javadoc}"/>
-    <delete dir="${dist}"/>
-    <delete file="${jar}"/>
-    <delete file="${src.jar}"/>
-    <delete dir="${tmpdir}"/>
-    <delete dir="${examples}/WEB-INF"/>
-    <delete dir="${tmpdir}"/>
-  </target>
-
-
-  <target name="precompile" depends="prepare" if="javacc.present">
-    <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
-            javacchome="${javacc.home}" />
-  </target>
-
-  <target name="compile" depends="prepare, precompile">
-    <filter token="VERSION" value="${version}" />
-    <copy todir="${tmpdir}" filtering="true">
-       <fileset dir="src" />
-    </copy>
-    <javac srcdir="${tmpdir}" destdir="${classes}"
-           debug="on" optimize="off" deprecation="off">
-      <classpath refid="class.path" />
-    </javac>
-    
-    <copy todir="${classes}">
-      <fileset dir="${tmpdir}" includes="**/*.properties" />
-      <fileset dir="." includes="WebMacro.defaults"/>
-    </copy>
-    <touch file="${classes}/WM-VERSION-${version}" />
- </target>
-
-  <target name="compile-examples" depends="compile">
-    <filter token="VERSION" value="${version}" />
-    <javac srcdir="${examples}" destdir="${examples}/WEB-INF/classes"
-            excludes="**/advanced/*.java"
-           debug="on" optimize="off" deprecation="off">
-      <classpath refid="class.path" />
-    </javac>
- </target>
-
-
-
-  <target name="javadoc" depends="prepare">
-    <javadoc sourcepath="src" destdir="${javadoc}"  
-             packagenames="org.*" author="true" version="true" 
-             use="true">
-      <classpath refid="class.path" />
-    </javadoc>
-  </target>
-
-
-  <target name="jar" depends="prepare,compile">
-    <jar jarfile="${jar}" basedir="${classes}"/>
-    <jar jarfile="${src.jar}" basedir="." 
-         includes="src/**,build.xml,test/**"/>
-  </target>
-
-  <target name="dist" depends="prepare,compile,compile-examples,jar,javadoc">
-    <mkdir dir="${dist}/tutorial" />
-    <copy todir="${dist}/tutorial">
-      <fileset dir="tutorial"/>
-    </copy>
-    <mkdir dir="${dist}/api" />
-    <copy todir="${dist}/api">
-      <fileset dir="${javadoc}"/>
-    </copy>
-    <copy todir="${dist}" file="${src.jar}"/>
-    <copy todir="${dist}" file="${jar}"/>
-    <copy todir="${dist}">
-      <fileset dir="distroot" />
-    </copy>
-    <mkdir dir="${dist}/examples" />
-    <copy todir="${dist}/examples">
-      <fileset dir="examples" />
-    </copy>
-    <mkdir dir="${dist}/macros" />
-    <copy todir="${dist}/macros">
-      <fileset dir="${macros}" />
-    </copy>
-    <!--   don't put contrib in the distro anymore.
-        <mkdir dir="${dist}/contrib" />
-        <copy todir="${dist}/contrib">
-           <fileset dir="contrib" />
-        </copy>
-    -->
-    <touch file="${dist}/WM-VERSION-${version}"/>
-  </target>
-
 <!--
-  <target name="contrib" depends="compile" >
-    <ant antfile="contrib/build.xml" target="all" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    Note, you will need ANT 1.5.x, available from:
+          http://jakarta.apache.org/ant
 -->
+<project name="WebMacro" default="usage" basedir=".">
 
-  <target name="test" depends="compile" >
-    <ant antfile="test/build.xml" target="all" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    <target name="usage">
+        <echo><![CDATA[
+Usage:
+    ant TARGET [-Dproperty1=value -DpropertyN=value]
 
-  <target name="test-unit" depends="compile" >
-    <ant antfile="test/build.xml" target="unit" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+Common targets:
+    clean
+        Remove all temporary files created during build process
+    compile
+        Compile all source files
+    jar
+        Create "webmacro.jar"
+    javadoc
+        Generate javadocs
+    test
+        Execute entire test suite against current sources
+    test -Dtest=TestSomething
+        Execute a specific test.  No need to specify full classname.
+        Useful to quickly test a specific aspect of WebMacro
+    all
+        do it all, baby!
 
-  <target name="test-validate" depends="compile" >
-    <ant antfile="test/build.xml" target="validate" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+Administrative targets:
+    dist-binary
+        Build a binary distro of WebMacro
+    dist-source
+        Build a source distro of WebMacro
+    release
+        Build both binary and source distros and .zip and .tgz 'em both
+    ]]></echo>
+    </target>
 
-  <target name="test-templates" depends="compile" >
-    <ant antfile="test/build.xml" target="templates" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    <property name="version"        value="1.1b2" />
+    <property name="app.name"       value="webmacro" />
+    <property name="tmpdir"         value="tmp" />
+    <property name="classes"        value="classes"/>
+    <property name="macros"         value="macros"/>
+    <property name="dist.binary"    value="webmacro-bin-${version}"/>
+    <property name="dist.source"    value="webmacro-src-${version}"/>
+    <property name="javadoc"        value="javadoc"/>
+    <property name="examples"       value="examples"/>
+    <property name="jar"            value="${app.name}.jar"/>
+    <property name="src.jar"        value="${app.name}-src.jar"/>
+    <property environment="ENV" />
+    <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
 
-  <target name="test-tst" depends="compile" >
-    <ant antfile="test/build.xml" target="TST" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    <taskdef name="javacc"
+        classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
 
-  <target name="test-macro" depends="compile" >
-    <ant antfile="test/build.xml" target="macros" >
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    <path id="class.path">
+        <fileset dir="lib">
+            <include name="*.jar" />
+            <include name="*.zip" />
+        </fileset>
+        <pathelement location="${classes}" />
+        <pathelement location="${macros}" />
+        <pathelement path="${java.class.path}" />
+    </path>
+    <property name="classpath.resolved" refid="class.path"/>
 
-  <target name="test-clean" >
-    <ant antfile="test/build.xml" target="clean">
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
+    <target name="prepare">
+        <tstamp />
+        <mkdir  dir="${classes}"/>
+        <mkdir  dir="${javadoc}"/>
+        <mkdir  dir="${dist.binary}"/>
+        <mkdir  dir="${examples}/WEB-INF"/>
+        <mkdir  dir="${examples}/WEB-INF/classes"/>
+        <mkdir  dir="${examples}/WEB-INF/lib"/>
+        <mkdir  dir="${dist.binary}"/>
+        <mkdir  dir="${dist.source}"/>
+        <available property="javacc.present" classname="COM.sun.labs.javacc.Main"
+            classpath="${javacc.home}/JavaCC.zip" />
+    </target>
 
-  <target name="test-compile" >
-    <ant antfile="test/build.xml" target="unit-compile">
-      <property name="java.class.path" value="${classpath.resolved}"/>
-    </ant>
-  </target>
 
-  <target name="all" depends="clean,prepare,compile,javadoc,dist,test-unit"/>
+    <target name="clean" depends="test-clean">
+        <delete dir="${classes}"/>
+        <delete dir="${javadoc}"/>
+        <delete dir="${dist.binary}"/>
+        <delete file="${dist.binary}.tgz"/>
+        <delete file="${dist.binary}.zip"/>
+        <delete dir="${dist.source}"/>
+        <delete file="${dist.source}.tgz"/>
+        <delete file="${dist.source}.zip"/>
+        <delete file="${jar}"/>
+        <delete file="${src.jar}"/>
+        <delete dir="${tmpdir}"/>
+        <delete dir="${examples}/WEB-INF"/>
+        <delete dir="${tmpdir}"/>
+    </target>
 
-  <!--
-  Note: there are two tasks: 
-  (1) Parsing a template which checks the grammar syntax
-  (2) Evaluating a template which evaluates a template using a context
-  provided by the template or some bean
-  
-  MOTE: the tasks are independent. (1) and/or (2) can be run completely
-  independent of the other!
 
-  <taskdef name="wmtemplates" 
-   classname="org.webmacro.tools.WMTemplateAntTask" >
-    <classpath refid="class.path" />
-  </taskdef>
+    <target name="precompile" depends="prepare" if="javacc.present">
+        <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
+            javacchome="${javacc.home}" />
+    </target>
 
-  <taskdef name="wmevaltemplates" 
-   classname="org.webmacro.tools.TemplateEvalAntTask" >
-   <classpath refid="class.path" />
-  </taskdef>
+    <target name="compile" depends="prepare, precompile">
+        <filter token="VERSION" value="${version}" />
+        <filter token="BUILD_DATE" value="${TODAY}" />
+        <copy todir="${tmpdir}" filtering="true">
+            <fileset dir="src" />
+        </copy>
+        <javac srcdir="${tmpdir}" destdir="${classes}"
+            debug="on" optimize="off" deprecation="off">
+            <classpath refid="class.path" />
+        </javac>
 
-  <target name="templates">
-    <wmtemplates>
-      <fileset dir="." includes="**/*.wm"/>
+        <copy todir="${classes}">
+            <fileset dir="${tmpdir}" includes="**/*.properties" />
+            <fileset dir="." includes="WebMacro.defaults"/>
+        </copy>
+        <touch file="${classes}/WM-VERSION-${version}" />
+    </target>
+
+    <target name="compile-examples" depends="compile">
+        <filter token="VERSION" value="${version}" />
+        <filter token="BUILD_DATE" value="${TODAY}" />
+        <javac srcdir="${examples}" destdir="${examples}/WEB-INF/classes"
+            excludes="**/advanced/*.java"
+            debug="on" optimize="off" deprecation="off">
+            <classpath refid="class.path" />
+        </javac>
+    </target>
+
+
+    <target name="javadoc" depends="prepare">
+        <javadoc sourcepath="src" destdir="${javadoc}"
+            packagenames="org.*" author="true" version="true"
+            use="true">
+            <classpath refid="class.path" />
+        </javadoc>
+    </target>
+
+
+    <target name="jar" depends="prepare,compile">
+        <jar jarfile="${jar}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="org.webmacro.WM" />
+                <attribute name="Build-Date" value="${TODAY}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-binary" depends="prepare,compile,compile-examples,jar,javadoc">
+        <copy todir="${dist.binary}" file="${jar}"/>
+        <copy todir="${dist.binary}">
+            <fileset dir="distroot" />
+        </copy>
+
+        <mkdir dir="${dist.binary}/tutorial" />
+        <copy todir="${dist.binary}/tutorial">
+            <fileset dir="tutorial"/>
+        </copy>
+        <mkdir dir="${dist.binary}/api" />
+        <copy todir="${dist.binary}/api">
+            <fileset dir="${javadoc}"/>
+        </copy>
+        <mkdir dir="${dist.binary}/examples" />
+        <copy todir="${dist.binary}/examples">
+            <fileset dir="examples" />
+        </copy>
+        <mkdir dir="${dist.binary}/macros" />
+        <copy todir="${dist.binary}/macros">
+            <fileset dir="${macros}" />
+        </copy>
+        <touch file="${dist.binary}/WM-VERSION-${version}"/>
+    </target>
+
+    <target name="dist-source" depends="prepare">
+        <copy todir="${dist.source}">
+            <fileset dir="distroot" />
+        </copy>
+        <copy file='WebMacro.defaults' todir='${dist.source}' />
+        <copy file='build.xml' todir='${dist.source}' />
+
+        <mkdir dir="${dist.source}/src" />
+        <copy todir="${dist.source}/src">
+            <fileset dir="src" />
+        </copy>
+
+        <mkdir dir="${dist.source}/test" />
+        <copy todir="${dist.source}/test">
+            <fileset dir="test" />
+        </copy>
+
+        <mkdir dir="${dist.source}/lib" />
+        <copy todir="${dist.source}/lib">
+            <fileset dir="lib" includes="**/*.txt" />
+        </copy>
+
+        <mkdir dir="${dist.source}/tutorial" />
+        <copy todir="${dist.source}/tutorial">
+            <fileset dir="tutorial"/>
+        </copy>
+        <mkdir dir="${dist.source}/examples" />
+        <copy todir="${dist.source}/examples">
+            <fileset dir="examples" />
+        </copy>
+        <mkdir dir="${dist.source}/macros" />
+        <copy todir="${dist.source}/macros">
+            <fileset dir="${macros}" />
+        </copy>
+        <touch file="${dist.source}/WM-VERSION-${version}"/>
+    </target>
+
+
+    <target name='release' depends='clean,test,dist-binary,dist-source'>
+        <zip destfile='${dist.binary}.zip' basedir='${dist.binary}' />
+        <zip destfile='${dist.source}.zip' basedir='${dist.source}' />
+
+        <tar destfile='${dist.binary}.tar' basedir='${dist.binary}' />
+        <gzip zipfile='${dist.binary}.tgz' src='${dist.binary}.tar' />
+        <delete file='${dist.binary}.tar' />
+
+        <tar destfile='${dist.source}.tar' basedir='${dist.source}' />
+        <gzip zipfile='${dist.source}.tgz' src='${dist.source}.tar' />
+        <delete file='${dist.source}.tar' />
+    </target>
+
+    <!--
+      <target name="contrib" depends="compile" >
+        <ant antfile="contrib/build.xml" target="all" >
+          <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+      </target>
+    -->
+
+    <target name="test" depends="compile" >
+        <ant antfile="test/build.xml" target="all" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-unit" depends="compile" >
+        <ant antfile="test/build.xml" target="unit" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-validate" depends="compile" >
+        <ant antfile="test/build.xml" target="validate" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-templates" depends="compile" >
+        <ant antfile="test/build.xml" target="templates" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-tst" depends="compile" >
+        <ant antfile="test/build.xml" target="TST" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-macro" depends="compile" >
+        <ant antfile="test/build.xml" target="macros" >
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-clean" >
+        <ant antfile="test/build.xml" target="clean">
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="test-compile" >
+        <ant antfile="test/build.xml" target="unit-compile">
+            <property name="java.class.path" value="${classpath.resolved}"/>
+        </ant>
+    </target>
+
+    <target name="all" depends="clean,prepare,compile,javadoc,dist-source,dist-binary,test-unit"/>
+
+    <!--
+    Note: there are two tasks:
+    (1) Parsing a template which checks the grammar syntax
+    (2) Evaluating a template which evaluates a template using a context
+    provided by the template or some bean
+
+    MOTE: the tasks are independent. (1) and/or (2) can be run completely
+    independent of the other!
+
+    <taskdef name="wmtemplates"
+     classname="org.webmacro.tools.WMTemplateAntTask" >
       <classpath refid="class.path" />
-    </wmtemplates>
+    </taskdef>
 
-    <wmevaltemplates>
-      <fileset dir="templates" includes="**/*.wm"/>
-      <classpath refid="class.path" />
-    </wmevaltemplates>
-    
-  </target>
-  -->
+    <taskdef name="wmevaltemplates"
+     classname="org.webmacro.tools.TemplateEvalAntTask" >
+     <classpath refid="class.path" />
+    </taskdef>
+
+    <target name="templates">
+      <wmtemplates>
+        <fileset dir="." includes="**/*.wm"/>
+        <classpath refid="class.path" />
+      </wmtemplates>
+
+      <wmevaltemplates>
+        <fileset dir="templates" includes="**/*.wm"/>
+        <classpath refid="class.path" />
+      </wmevaltemplates>
+
+    </target>
+    -->
 
 </project>
 
