@@ -641,7 +641,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 {
-  [ LOOKAHEAD( ([<WS>]<NEWLINE>[<WS>])+ ) ([<WS>]<NEWLINE>[<WS>])+ ] <POUND> <WORD> [ <WS> ]
+  (<WS>|<NEWLINE>)* <POUND> <WORD> [ <WS> ]
 }
 
 
