@@ -20,20 +20,20 @@
     <option name="ADD_LABEL_ON_UNIT_TEST_FAILED" value="true" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="63" y="22" width="1317" height="1021" extended-state="0" />
+    <frame x="14" y="48" width="1317" height="1021" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.2501967" order="1" />
       <window_info id="CVS" active="false" anchor="bottom" auto_hide="true" internal_type="docked" type="docked" visible="false" weight="0.33002207" order="8" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="2" />
-      <window_info id="Hierarchy" active="true" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.13217938" order="2" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.13217938" order="2" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="7" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="sliding" type="sliding" visible="false" weight="0.4" order="0" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.26357198" order="0" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.26357198" order="0" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.4" order="3" />
       <window_info id="App Server" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33" order="8" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="1" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33002207" order="1" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="true" weight="0.33002207" order="1" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.4" order="6" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.33002207" order="8" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="docked" type="docked" visible="false" weight="0.25" order="2" />
@@ -59,22 +59,23 @@
   <component name="ProjectViewSettings">
     <navigator currentView="ProjectPane" flattenPackages="false" showMembers="true" showStructure="false" autoscrollToSource="false" splitterProportion="0.5" />
     <view id="ProjectPane">
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org/etc" />
-      <expanded_node type="class" url="org.tcdi.opensource.wiki.WikiPage" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds" />
-      <expanded_node type="directory" url="file:///tcdi/wiki/deploy/WEB-INF" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/util" />
       <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org/htdocs" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org/etc" />
       <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org" />
       <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org/templates" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/admin" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/src" />
-      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi" />
       <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/renderer" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource" />
+      <expanded_node type="class" url="org.tcdi.opensource.wiki.renderer.WikiPageRenderer" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/builds" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/src" />
       <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$" />
+      <expanded_node type="directory" url="file://$PROJECT_DIR$/src/org/tcdi" />
+      <expanded_node type="directory" url="file:///tcdi/wiki/deploy/WEB-INF" />
+      <expanded_node type="class" url="org.tcdi.opensource.wiki.renderer.TextPageRenderer" />
     </view>
     <view id="SourcepathPane" />
     <view id="ClasspathPane" />
@@ -102,180 +103,180 @@
       <is-autoscroll-to-source value="true" />
     </todo-panel>
   </component>
-  <component name="editorManager" selected-file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/UpdateUserAction.java">
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/WikiServlet.java">
+  <component name="editorManager" selected-file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/Wiki.properties">
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/DiffPageAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="0" selection-start="2434" selection-end="2434" vertical-scroll-proportion="0.5255042" horizontal-scroll-proportion="0.0">
+        <state line="161" column="64" selection-start="6233" selection-end="6233" vertical-scroll-proportion="0.3172542" horizontal-scroll-proportion="0.66766024">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/header.wm">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/diff.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="6" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.41162515" horizontal-scroll-proportion="0.06158358">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/optionsbar.wm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="14" selection-start="532" selection-end="532" vertical-scroll-proportion="0.107947804" horizontal-scroll-proportion="0.14369501">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/Wiki.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///tcdi/wiki/deploy/WEB-INF/Wiki.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="0" selection-start="1358" selection-end="1397" vertical-scroll-proportion="0.569395" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/FindPagesAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/IndexPageAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="1763" selection-end="1763" vertical-scroll-proportion="0.75919336" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/PageTreeAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="1763" selection-end="1763" vertical-scroll-proportion="0.75919336" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/AdminAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/UpdateUserAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="33" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.569395" horizontal-scroll-proportion="0.34070796">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/UserListAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="0" selection-start="864" selection-end="999" vertical-scroll-proportion="0.4365362" horizontal-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/indexpage.wm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="48" selection-start="114" selection-end="114" vertical-scroll-proportion="0.07591934" horizontal-scroll-proportion="0.49266863">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/admin/update_user.wm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="12" selection-start="1007" selection-end="1007" vertical-scroll-proportion="0.4365362" horizontal-scroll-proportion="0.12316716">
+        <state line="11" column="56" selection-start="363" selection-end="363" vertical-scroll-proportion="0.3265306" horizontal-scroll-proportion="0.57478005">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/htdocs/site-style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="0" selection-start="961" selection-end="961" vertical-scroll-proportion="0.7402135" horizontal-scroll-proportion="0.0">
+        <state line="106" column="9" selection-start="1348" selection-end="1348" vertical-scroll-proportion="0.8812616" horizontal-scroll-proportion="0.093333334">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/adminoptionsbar.wm">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/footer.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="25" selection-start="25" selection-end="25" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.2539913">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/WikiSystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="28" selection-start="2871" selection-end="2871" vertical-scroll-proportion="0.8351127" horizontal-scroll-proportion="0.29923666">
+        <state line="31" column="0" selection-start="1086" selection-end="1086" vertical-scroll-proportion="0.46567717" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/header.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="6" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.41162515" horizontal-scroll-proportion="0.06158358">
+        <state line="50" column="18" selection-start="1914" selection-end="1914" vertical-scroll-proportion="1.4155844" horizontal-scroll-proportion="0.18475074">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/optionsbar.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="14" selection-start="532" selection-end="532" vertical-scroll-proportion="0.107947804" horizontal-scroll-proportion="0.14369501">
+        <state line="32" column="3" selection-start="1333" selection-end="1333" vertical-scroll-proportion="0.13914657" horizontal-scroll-proportion="0.03079179">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/view.wm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/WebMacro.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/Wiki.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
+        <state line="32" column="32" selection-start="1489" selection-end="1489" vertical-scroll-proportion="0.9406308" horizontal-scroll-proportion="0.33185184">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file:///tcdi/wiki/deploy/WEB-INF/Wiki.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="0" selection-start="1358" selection-end="1397" vertical-scroll-proportion="0.569395" horizontal-scroll-proportion="0.0">
+        <state line="16" column="0" selection-start="797" selection-end="857" vertical-scroll-proportion="0.3172542" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/FindPagesAction.java">
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/WikiPage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="205" column="27" selection-start="6515" selection-end="6515" vertical-scroll-proportion="0.48051947" horizontal-scroll-proportion="0.28166914">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/Wiki.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="125" column="18" selection-start="4376" selection-end="4376" vertical-scroll-proportion="0.25788498" horizontal-scroll-proportion="0.18777943">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/WikiServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="33" selection-start="2135" selection-end="2135" vertical-scroll-proportion="0.23747681" horizontal-scroll-proportion="0.3442623">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/util/Diff.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="512" column="29" selection-start="20021" selection-end="20021" vertical-scroll-proportion="0.064935066" horizontal-scroll-proportion="0.30253354">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/util/DiffPrint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="111" column="21" selection-start="3825" selection-end="3825" vertical-scroll-proportion="0.035250463" horizontal-scroll-proportion="0.22442748">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/htdocs/site-style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="106" column="9" selection-start="1348" selection-end="1348" vertical-scroll-proportion="0.8812616" horizontal-scroll-proportion="0.093333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/DiffPageAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="161" column="64" selection-start="6233" selection-end="6233" vertical-scroll-proportion="0.3172542" horizontal-scroll-proportion="0.66766024">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/diff.wm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="56" selection-start="363" selection-end="363" vertical-scroll-proportion="0.3265306" horizontal-scroll-proportion="0.57478005">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/footer.wm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="0" selection-start="1086" selection-end="1086" vertical-scroll-proportion="0.46567717" horizontal-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/view.wm">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/IndexPageAction.java">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/header.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="1763" selection-end="1763" vertical-scroll-proportion="0.75919336" horizontal-scroll-proportion="0.0">
+        <state line="50" column="18" selection-start="1914" selection-end="1914" vertical-scroll-proportion="1.4155844" horizontal-scroll-proportion="0.18475074">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/PageTreeAction.java">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/templates/optionsbar.wm">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="1763" selection-end="1763" vertical-scroll-proportion="0.75919336" horizontal-scroll-proportion="0.0">
+        <state line="32" column="3" selection-start="1333" selection-end="1333" vertical-scroll-proportion="0.13914657" horizontal-scroll-proportion="0.03079179">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/AdminAction.java">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/WebMacro.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/tcdi/opensource/wiki/servlet/admin/UpdateUserAction.java">
+    <entry file="file://$PROJECT_DIR$/builds/www.webmacro.org/etc/Wiki.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="33" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.569395" horizontal-scroll-proportion="0.34070796">
+        <state line="32" column="32" selection-start="1489" selection-end="1489" vertical-scroll-proportion="0.9406308" horizontal-scroll-proportion="0.33185184">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///tcdi/wiki/deploy/WEB-INF/Wiki.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="797" selection-end="857" vertical-scroll-proportion="0.3172542" horizontal-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>

@@ -70,7 +70,11 @@ public class WikiServlet extends WMServlet {
     
     /** the PageActionManager we should use for each page request */
     private PageActionManager _actionManager;
-    
+
+    public WebMacro initWebMacro() throws InitException {
+        return super.initWebMacro();    //To change body of overriden methods use Options | File Templates.
+    }
+
     /**
      * do necessary statup work like creating a Log and configuring
      * the various options of WikiServet

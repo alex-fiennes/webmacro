@@ -195,6 +195,17 @@ public class WikiPage implements Serializable {
      */
     public long getVersion()           { return _version; }
     
+    /** increment the version number of this page.  You'll probably want to re-save it
+     * to the page store after this
+     */ 
+    public void incrementVersion () {
+        _version++;
+    }
+    
+    public void setVersion (long version) {
+        _version = version;
+    }
+    
     /**
      * @return Author of this page.
      */

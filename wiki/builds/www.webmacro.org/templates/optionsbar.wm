@@ -14,6 +14,8 @@
                  || <a href="?register=true" class="Options">Register</a>
             }
             
+            || <a href="DiffPage?PAGE=$Page.Title">Diff to previous version</a>
+            
             #if ($User && $Wiki.isAdministrator($User)) {
                 #parse "adminoptionsbar.wm"
             }

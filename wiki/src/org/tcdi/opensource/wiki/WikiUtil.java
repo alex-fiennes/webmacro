@@ -207,4 +207,26 @@ public class WikiUtil {
             l.add (enum.nextElement());
         return l;
     }
+    
+    /**
+     * take a delimited string and convert to a String[]
+     * @param in the delimited string
+     * @param delim the delimiter
+     * @return a String[]
+     */
+    public static final String[] delimitedToArray(String in, String delim) {
+        if (in == null || delim == null)
+            return new String[0];
+        StringTokenizer st = new StringTokenizer(in, delim);
+        String[] rc = new String[st.countTokens()];
+        if (rc.length == 0)
+            return new String[]{in};
+
+        int x = 0;
+        while (st.hasMoreTokens()) {
+            rc[x++] = st.nextToken();
+        }
+
+        return rc;
+    }    
 }

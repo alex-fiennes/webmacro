@@ -1,0 +1,52 @@
+#include as template "header.wm"
+
+#if (!$DiffHelper) {
+    <form method="GET">
+    Page Name: <input type='text' name='PAGE'><br>
+    <input type='submit' value='View differences'>
+    </form>
+} #else {
+
+#if ($DiffHelper.Changes.size() == 1) { 1 difference }
+#else {$DiffHelper.Changes.size() differences }
+<table border=1 width="100%" cellspacing=1 cellpadding=2>
+<tr>
+    <th>$OldPage.Title -- v$OldPage.Version</th>
+    <th>$CurrentPage.Title -- v$CurrentPage.Version #if ($IsCurrent) { (Latest Version) }</th>
+</tr>
+<tr>
+    <td>Editor: <b>$OldPage.LastEditor</b>; Date: <b>$OldPage.DateLastModified</b></td>
+    <td>Editor: <b>$CurrentPage.LastEditor</b>; Date: <b>$CurrentPage.DateLastModified</b></td>
+</tr>
+<tr>
+    <td colspan=2 align=center>
+        <table border=0 width="50%">
+        <tr><th colspan=3>Legend</th></tr>
+        <tr><td class='deleted_line'>Deleted</td><td class='inserted_line'>Inserted</td></tr>
+        <tr><td class='modified_line'>Modified</td><td></td></tr>
+        </table>
+    </td>    
+<tr>
+    <td valign=top width="50%">
+        #foreach $line in $OldPageLines indexing $idx from 0 {
+            #count $i from 1 to $DiffHelper.getInsertCount($idx) {<br>}
+            #if($DiffHelper.isModified($idx)){<span class='modified_line'> #wiki{$line}</span><br>}
+            #elseif($DiffHelper.isDeleted($idx)){<span class='deleted_line'> #wiki{$line}</span><br>}
+            #else{<span class='unchanged_line'>#wiki{$line}</span><br>}
+        }
+    </td>
+    
+    <td valign=top width="50%">
+        #foreach $line in $CurrentPageLines indexing $idx from 0 {
+            #count $i from 1 to $DiffHelper.getDeleteCount($idx) {<br>}
+            #if($DiffHelper.isModified($idx)){<span class='modified_line'> #wiki{$line}</span><br>}
+            #elseif($DiffHelper.isInserted($idx)){<span class='inserted_line'> #wiki{$line}</span><br>}
+            #else{<span class='unchanged_line'>#wiki{$line}</span><br>}
+        }
+    </td>
+</tr>
+</table>
+
+}
+
+#include as template "footer.wm"

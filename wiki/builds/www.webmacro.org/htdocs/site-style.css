@@ -107,3 +107,18 @@ TH
     FONT-SIZE: 11.2pt;
     BACKGROUND-COLOR: #e5d5e5
 }
+
+.deleted_line {
+    color: red;
+    background-color: #ffdede;
+}
+
+.inserted_line {
+    color: green;     
+    background-color: #deffde;
+}
+
+.modified_line {
+    color: blue;
+    background-color: #dedeff;
+} 
