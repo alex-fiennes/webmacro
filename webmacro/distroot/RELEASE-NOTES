@@ -1,7 +1,7 @@
-WebMacro 1.0rc2
+WebMacro 1.0rc3
 ---------------
                     
-This is the second 1.0 release candidate.  We've worked hard to get here, and
+This is the third 1.0 release candidate.  We've worked hard to get here, and
 we hope WebMacro will (continue to) work hard for you.
 
 Should you encounter problems with this release, please submit a bug report
@@ -14,6 +14,11 @@ candidate prior to release 1.
 
 Changes in this Release
 -----------------------
+
+
+
+Changes Prior to this Release
+-----------------------------
 
 - More encoding tests.  TestWindows1251Encoding and TestISO88591Encoding
 
@@ -29,10 +34,6 @@ location is searched for 2.2+ servlet containers.
 - More test cases
 
 - Workarounds for encoding issues with Resin
-
-
-Recent Changes in rc1 and rc2
------------------------------
 
 - Numerous fixes to how WebMacro handles input/output encoding.  Your DBCS
 templates should work now! (sebastian)
