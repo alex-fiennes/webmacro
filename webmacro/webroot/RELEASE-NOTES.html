@@ -20,6 +20,21 @@ all properly yet--this will be done before it's labelled a release. Here
 is a brief overview of what you can expect:
 <ul>
 
+<li>WebMacro now requiers you to pass a FastWriter object to its 
+    Macro interface. You can easily create one from an OutputStream
+    and it substantially improves WebMacro's performance.  <p>
+
+<li>There are numerous performance enhancements in the current release.  <p>
+
+<li>A bunch of bugs were fixed: the newline at the top of the file should
+    be gone, and the problem with \$ at the end of a quoted string have
+    been fixed. <p>
+
+<li>WebMacro is provisionally available under the terms of the Mozilla
+    Public License, version 1.1, in addition to the GNU General Public
+    License, version 2. You may use it under whichever is preferable
+    for your project. <p>
+
 <li>Many components of WebMacro are added via the WebMacro.properties 
     file now. YOU SHOULD CHECK THIS FILE since any new features added
     to WebMacro now likely require a corresponding addition in your 
