@@ -9,6 +9,7 @@ TARGETS = 	webmacro/webmacro.jar \
 		webmacro/docs \
 		webmacro/IMPORTANT \
 		webmacro/RELEASE.html \
+		webmacro/collections.jar \
 		webmacro/README.html 
 
 SOURCES =	org/webmacro/servlet/*.java \
@@ -56,6 +57,8 @@ dist: version $(TARGETS)
 	flip -u webmacro/IMPORTANT
 	tar -czf webmacro.`cat version`.tgz webmacro
 
+snapshot: date-version dist
+
 webmacro: 
 	cvs co org/webmacro
 	mkdir webmacro
@@ -88,6 +91,12 @@ webmacro/docs: 	webmacro
 webmacro/IMPORTANT: webmacro
 	cp org/webmacro/webroot/IMPORTANT webmacro
 
+webmacro/collections.jar:
+	cp org/webmacro/webroot/
+
+date-version:
+	@date +%d-%m-%Y > version
+	@echo snapshot version is: `cat version`
 version: 
 	@echo
 	@echo -n "enter version id: " 
