@@ -170,7 +170,7 @@ public interface WikiSystem extends WikiTermMatcher {
     public void updateUser(WikiUser user);
     
     /**
-     * @param the WikiUser to check for administrator access
+     * @param user WikiUser to check for administrator access
      * @return true is user is an administrator of this WikiSystem
      */
     public boolean isAdministrator(WikiUser user);
