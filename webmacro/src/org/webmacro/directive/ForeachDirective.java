@@ -106,7 +106,7 @@ public class ForeachDirective extends Directive {
 
     if (limitExpr != null) {
       limit = limitExpr;
-      while (limit instanceof Macro)
+      while (limit instanceof Macro && limit != UNDEF)
         limit = ((Macro) limit).evaluate(context);
       if (Expression.isNumber(limit)) 
         loopLimit = (int) Expression.numberValue(limit);
@@ -119,7 +119,7 @@ public class ForeachDirective extends Directive {
 
     if (index != null && indexFromExpr != null) {
       from = indexFromExpr;
-      while (from instanceof Macro)
+      while (from instanceof Macro && from != UNDEF)
         from = ((Macro) from).evaluate(context);
       if (Expression.isNumber(from)) 
         loopStart = (int) Expression.numberValue(from);
