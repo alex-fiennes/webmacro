@@ -40,19 +40,19 @@ public class TestWhitespace extends TemplateTestCase {
    public void testBeforeComment () throws Exception {
       // do it with the implicit "begin"
       String tmpl = "#if (true)\n   ## Don't say anything\n#end";
-      assertStringTemplateEquals (tmpl, "");
+      assertStringTemplateEquals (tmpl, "\n");
 
       tmpl = "#if (true)\n## Don't say anything\n#end";
-      assertStringTemplateEquals (tmpl, "");
+      assertStringTemplateEquals (tmpl, "\n");
 
 
 
       // do it with the explicit #begin
       tmpl = "#if (true)\n#begin\n   ## Don't say anything\n#end";
-      assertStringTemplateEquals (tmpl, "");
+      assertStringTemplateEquals (tmpl, "\n");
 
       tmpl = "#if (true)\n#begin\n## Don't say anything\n#end";
-      assertStringTemplateEquals (tmpl, "");
+      assertStringTemplateEquals (tmpl, "\n");
 
 
 
@@ -67,7 +67,7 @@ public class TestWhitespace extends TemplateTestCase {
 
       // don't do it in a block
       tmpl = "   ## Don't say anything";
-      assertStringTemplateEquals (tmpl, "   ");
+      assertStringTemplateEquals (tmpl, "");
    }
 
    //

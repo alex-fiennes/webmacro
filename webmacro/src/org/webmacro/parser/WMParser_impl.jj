@@ -79,15 +79,40 @@ public class WMParser_impl {
 
   private void SetState(int state) {
     if (state != token_source.curLexState) {
+      Token root = new Token(), last=root;
+      root.next = null;
+
+      // First, we build a list of tokens to push back, in backwards order
       while (token.next != null) {
         Token t = token;
-        while (t.next != null && t.next.next != null) {
+        // Find the token whose token.next is the last in the chain
+        while (t.next != null && t.next.next != null) 
           t = t.next;
-        }
 
-        token_source.backup(t.next.image.length());
-        t.next = null; 
+        // put it at the end of the new chain
+        last.next = t.next;
+        last = t.next;
+
+        // If there are special tokens, these go before the regular tokens,
+        // so we want to push them back onto the input stream in the order
+        // we find them along the specialToken chain. 
+
+        if (t.next.specialToken != null) {
+          Token tt=t.next.specialToken;
+          while (tt != null) {
+            last.next = tt;
+            last = tt;
+            tt.next = null;
+            tt = tt.specialToken;
+          }
+        }
+        t.next = null;
       };
+
+      while (root.next != null) {
+        token_source.backup(root.next.image.length());
+        root.next = root.next.next;
+      }
       jj_ntk = -1;
       token_source.SwitchTo(state); 
     }
@@ -208,7 +233,7 @@ TOKEN_MGR_DECLS : {
 | <LBRACE:    "{">
 }
 
-<WM> SKIP : {
+<WM> SPECIAL_TOKEN : {
   <<_COMMENT>>
 }
 
@@ -901,7 +926,7 @@ void Comment(ParserBlockBuilder b) : {
   <POUNDPOUND>
   { SetState(COMMENT); } 
   ( LOOKAHEAD( { b.directiveOk() } ) 
-      [ <RESTOFLINE> ] { b.eatTrailingWs(); }
+      [ <RESTOFLINE> ] { b.eatTrailingWsNl(); }
     | { b.addElement("##"); }
   ) 
   { SetState(DEFAULT); }
