@@ -3,22 +3,22 @@ $Response.setHeader("Pragma","no-cache")
 $Response.setHeader("Cache-Control","no-cache;no-store")
 #set $tableWidth=600
 <html>
-<head>
-	<title>ResultSetDataTable Demo</title>
-	<script>
-	  var curr = $tbl.SkipRows;
-	</script>
-	#text #begin
-	<script>
-	  function page(prevnext){
-	    document.location = "TableDemo?cmd=" + prevnext
-	      + "&curr=" + curr + "&pageSize=" + document.forms[0].pageSize.value;
-	  }
-	  function next(){ page("next"); }
-	  function prev(){ page("prev"); }
-	  function top(){ page("top"); }
-	</script>
-	#end
+  <head>
+    <title>ResultSetDataTable Demo</title>
+    <script>
+      var curr = $tbl.SkipRows;
+    </script>
+  #text
+    <script>
+      function page(prevnext){
+        document.location = "TableDemo?cmd=" + prevnext
+          + "&curr=" + curr + "&pageSize=" + document.forms[0].pageSize.value;
+      }
+      function next(){ page("next"); }
+      function prev(){ page("prev"); }
+      function top(){ page("top"); }
+    </script>
+  #end
 </head>
 <body>
 <h3>ResultSetDataTable Demo</h3>
@@ -29,12 +29,37 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       #foreach $col in $tbl.ColumnNames
         #begin <th>$col</th> #end
     </tr>
-    #foreach $row in $tbl #begin
+    #foreach $row in $tbl
       <tr>
         <td>$row.RowNumber</td>
         #foreach $col in $row
           #begin <td>$col</td> #end
       </tr>
+      #if ($row.Data)
+        #set $tbl2 = $row.Data.Table
+        #if ($tbl2.size()>0)
+        <tr>
+           <td>Child records</td>
+           <td colspan='$tbl.ColumnCount'>
+             <table border='1'>
+               <tr><th>Row \#</th>
+                 #foreach $col2 in $tbl2.ColumnNames
+                   <th>$col2</th>
+                 #end
+               </tr>
+               #foreach $row2 in $tbl2
+                 <tr>
+                   <td>$row2.RowNumber</td>
+                   #foreach $col2 in $row2
+                     <td>$col2</td>
+                   #end
+                 </tr>
+               #end
+             </table>
+           </td>
+        <tr>
+        #end
+      #end
     #end
   </table>
   #include "TableNav.wm"
@@ -54,7 +79,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       <th>Field 3</th><th>Field 1</th><th>Field 2</th>
       <th>Field 99</th>
     </tr>
-    #foreach $row in $tbl #begin
+    #foreach $row in $tbl
       <tr bgcolor="$row.Attributes.bgcolor">
         <td>
           <font color="$row.Attributes.fgcolor">
@@ -76,7 +101,7 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       <th>First Name</th><th>Last Name</th><th>ID</th>
       <th>BadCol</th>
     </tr>
-    #foreach $row in $tbl #begin
+    #foreach $row in $tbl
       <tr bgcolor="$row.Color">
         <td>$row.FIRSTNAME</td><td>$row.LASTNAME</td><td>$row.ID</td>
         <td>$row.BADCOL</td>
