@@ -82,7 +82,7 @@ public class DelegatingTemplateProvider extends CachingProvider {
 
         // for compatability reasons, check old TemplatePath setting
         if (config.getBooleanSetting("DelegatingTemplateProvider.EmulateTemplatePath",false)) {
-            if (config.getSetting("TemplatePath").length() > 0) {
+            if (config.getSetting("TemplatePath","").length() > 0) {
                 TemplateLoader loader = new TemplatePathTemplateLoader();
                 loader.init(broker,config);
                 loader.setConfig("");

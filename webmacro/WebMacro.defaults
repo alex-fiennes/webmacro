@@ -368,7 +368,7 @@ TemplateLoader.default=org.webmacro.resource.FileTemplateLoader
 TemplateLoader.file=org.webmacro.resource.FileTemplateLoader
 TemplateLoader.classpath=org.webmacro.resource.ClassPathTemplateLoader
 TemplateLoader.broker=org.webmacro.resource.BrokerTemplateLoader
-TemplateLoader.webapp=org.webmacro.resource.Servlet22TemplateLoader
+TemplateLoader.webapp=org.webmacro.resource.ServletContextTemplateLoader
 
 # This makes WM backwards compatible to old TemplatePath setting
 DelegatingTemplateProvider.EmulateTemplatePath: true
