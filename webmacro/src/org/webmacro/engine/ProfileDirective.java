@@ -37,7 +37,7 @@ final class ProfileDirective implements Directive, Visitable
 {
 
    /**
-     * This is the block we include if myCondition is not null
+     * This is the block for which we are generating timing statistics
      */
    final private Macro myBlock;
 
@@ -101,6 +101,7 @@ final class ProfileDirective implements Directive, Visitable
 
    public void accept(TemplateVisitor v) {
       v.beginDirective("profile");
+      v.visitDirectiveArg("ProfileName", myName);
       v.visitDirectiveArg("ProfileBlock", myBlock);
       v.endDirective();
    }
