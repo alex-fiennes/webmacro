@@ -849,7 +849,7 @@ final class PropertyOperator {
             return new ArrayIterator((Object[]) ret);
          }
       }
-      throw new PropertyException(instance + " is not a list", null);
+      throw new PropertyException((instance==null ? "null" : instance.getClass().getName()) + " is not a list");
    }
 
    /**
