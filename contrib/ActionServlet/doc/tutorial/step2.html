@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Action Servlet</title>
+	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
+	<!--#include virtual="vars.inc" -->
+<style>
+<!--
+.shadow {
+	filter: DropShadow(Color=#776699,OffX=3,OffY=3,Positive=1);
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+UL.main	{
+	list-style: none;
+}
+
+UL.sub  {
+	list-style: disc;
+}
+
+H3.main {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+-->
+</style>
+</head>
+<body>
+<TABLE WIDTH="560" ALIGN="CENTER" BORDER="0"><TR><TD ALIGN=CENTER>
+
+<TABLE WIDTH="90%" CELLPADDING="15" BGCOLOR="Silver"><TR><TD>
+<TABLE ALIGN=CENTER><TR><TD ALIGN=CENTER>
+<STRONG>&quot;Easy mapping of HTTP requests to methods of Java components&quot;</STRONG>
+</TD></TR><TR><TD CLASS="shadow" ALIGN=CENTER>
+<FONT COLOR="Red" SIZE="+3"><FONT SIZE="+4">A</FONT>CTION&nbsp;<FONT SIZE="+4">S</FONT>ERVLET</FONT>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+version 0.53<P>
+
+Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+</TD></TR><TR><TD>
+
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+<UL CLASS="main">
+<LI><H3 CLASS="main">LoginServlet Tutorial</H3>
+</UL>
+
+<TABLE BORDER="1" CELLPADDING="20" CELLSPACING="1"><TR><TD>
+<B>Step 2/4:</B> Write the Java code of &nbsp;<TT><B>Authenticator</B></TT>:
+
+<P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
+<PRE>
+import org.webmacro.as.ActionServlet;
+import org.webmacro.Template;
+import org.webmacro.servlet.WebContext;
+
+<B>public class Authenticator</B> {
+   private ActionServlet servlet;
+
+   public Authenticator(ActionServlet as) { servlet = as; }
+
+   <B>public Template <FONT COLOR="green">login</FONT>(WebContext context, String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)</B> {
+      // verify user name and password - here: only John may log in
+      if ("John".equals(userName) && "18x79Z".equals(password))
+         return servlet.getWMTemplate("SuccessfulLogin.html");
+      else 
+         return servlet.getWMTemplate("BadUserNameOrPassword.html");
+   <B>}</B>
+}
+</PRE>
+</TD></TR></TABLE><P>
+
+The <TT>login()</TT> is called <EM>action method</EM> - will handle action invoked on HTML page - and
+is nested inside <TT><B>Authenticator</B></TT> class, that defines the <EM>ActionServlet component</EM>.<P>
+
+<HR WIDTH="100%">
+
+Note 1: Components are objects instantiated by <EM>ActionServlet</EM> and their classes must have a public 
+        constructor with a single parameter of type <TT>org.webmacro.as.ActionServlet</TT>.<P>
+Note 2: Action methods must: a) be defined as public, b) return a template, c) have their first parameter
+        of type <TT>org.webmacro.servlet.WebContext</TT> and, optionally, d) may throw 
+        <TT>org.webmacro.as.ActionException</TT> (not used here).
+</TD></TR></TABLE>
+
+<P><CENTER>
+<A HREF="step1.html"><IMG SRC="../images/arrow_prev.gif" WIDTH=25 HEIGHT=21 BORDER=0 ALT="[Prev]"></A>
+<A HREF="step3.html"><IMG SRC="../images/arrow_next.gif" WIDTH=25 HEIGHT=21 BORDER=0 ALT="[Next]"></A>
+</CENTER>
+</TD></TR></TABLE>
+
+<P><!--#include virtual="/java/footer.inc" -->
+</TD></TR></TABLE>
+
+</body>
+</html>

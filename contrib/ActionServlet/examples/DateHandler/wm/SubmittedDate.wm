@@ -1,0 +1,8 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+	<P><CENTER><H2>
+	The submitted <EM>java.util.Date</EM> value was '$date'.
+	</H2></CENTER><P>
+</BODY>
+</HTML>

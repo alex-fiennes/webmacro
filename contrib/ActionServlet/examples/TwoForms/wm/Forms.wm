@@ -1,0 +1,21 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+<EM>This example demonstrates usage of the '</EM><TT>form</TT><EM>' parameter, 
+which can be used when two forms have same value (</EM><TT>"OK"</TT><EM>) of 
+'</EM><TT>action</TT><EM>' parameter. See </EM><B>Form.wm</B><EM> template 
+source.</EM><P>
+
+	<FORM METHOD="POST">
+		Enter a number:<BR><INPUT TYPE="Text" NAME="number">
+		<INPUT TYPE="Hidden" NAME="form" VALUE="Form1"><BR>
+		<INPUT TYPE="Submit" NAME="action" VALUE=" OK "><P>
+	</FORM>
+
+	<FORM METHOD="POST">
+		Enter a character:<BR><INPUT TYPE="Text" NAME="ch">
+		<INPUT TYPE="Hidden" NAME="form" VALUE="Form2"><BR>
+		<INPUT TYPE="Submit" NAME="action" VALUE=" OK ">
+	</FORM>
+</BODY>
+</HTML>

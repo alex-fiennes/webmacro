@@ -1,0 +1,25 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+
+<H2>Demo of &lt;output-variable&gt; usage</H2>
+(see <B>config/OutputVars.xml</B>)
+
+<PRE>
+   &lt;template name="template1.wm"&gt;
+      &lt;output-variable name="first" component="MyComponent" value="getFirst()"/&gt;
+      &lt;output-variable name="lengthOfFirst" value="$ first.length()"/&gt;
+   &lt;/template&gt;
+</PRE>
+
+<UL>
+<LI>$ first = $first
+<LI>$ lengthOfFirst = $lengthOfFirst
+</UL>
+
+<FORM METHOD="POST">
+<INPUT TYPE="Submit" NAME="action" VALUE=" Continue... "><P>
+</FORM>
+
+</BODY>
+</HTML>

@@ -1,0 +1,28 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+<EM>This example demonstrates usage of </EM><TT>CompositeTypeHandler</TT><EM>:
+values from multiple input fields can be composed to a value of a single
+Java type:
+<P>
+
+   <FORM METHOD="POST">
+   <INPUT TYPE="HIDDEN" NAME="date" VALUE="day,month,year">
+
+   <TABLE>
+      <TR><TD>
+         Day (1-31):</TD><TD><INPUT TYPE="Text" NAME="day">
+      </TD></TR>
+      <TR><TD>
+      Month (1-12):</TD><TD><INPUT TYPE="Text" NAME="month">
+      </TD></TR>
+      <TR><TD>
+      Year (ex.: 2001):</TD><TD><INPUT TYPE="Text" NAME="year">
+      </TD></TR>
+   </TABLE>
+
+   <INPUT TYPE="Submit" NAME="action" VALUE=" Submit ">
+
+   </FORM>
+</BODY>
+</HTML>

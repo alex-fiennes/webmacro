@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application repository="c:/progra~1/ActionServlet/examples/DateHandler/classes">
+   <templates>
+      <template name="Form.wm" is-new-session="true"/>
+   </templates>
+
+   <type-handlers>
+      <type-handler type="java.util.Date" class="DateHandler"/>
+   </type-handlers>
+
+   <components>
+      <component class="DateComponent" persistence="application">
+         <action name="Submit" method="submit(java.util.Date date)"/>
+      </component>
+   </components>
+</application>

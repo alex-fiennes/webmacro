@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application repository="c:/progra~1/ActionServlet/examples/Calculator/classes">
+   <templates>
+      <template name="Calculator.wm" is-new-session="true"/>
+   </templates>
+
+   <components>
+      <component class="Calculator" persistence="session">
+         <action name="0" method="digit(String action)"/>
+         <action name="1" method="digit(String action)"/>
+         <action name="2" method="digit(String action)"/>
+         <action name="3" method="digit(String action)"/>
+         <action name="4" method="digit(String action)"/>
+         <action name="5" method="digit(String action)"/>
+         <action name="6" method="digit(String action)"/>
+         <action name="7" method="digit(String action)"/>
+         <action name="8" method="digit(String action)"/>
+         <action name="9" method="digit(String action)"/>
+
+         <action name="." method="point()"/>
+         <action name="+/-" method="plusminus()"/>
+
+         <action name="+" method="operation(String action)"/>
+         <action name="-" method="operation(String action)"/>
+         <action name="*" method="operation(String action)"/>
+         <action name="/" method="operation(String action)"/>
+         <action name="=" method="operation(String action)"/>
+
+         <action name="CE" method="ce()"/>
+         <action name="C" method="c()"/>
+      </component>
+   </components>
+</application>

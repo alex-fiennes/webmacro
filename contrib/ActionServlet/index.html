@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Action Servlet</title>
+	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
+	<!--#include virtual="vars.inc" -->
+<style>
+<!--
+.shadow {
+	filter: DropShadow(Color=#776699,OffX=3,OffY=3,Positive=1);
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+UL.main	{
+	list-style: none;
+}
+
+UL.sub  {
+	list-style: disc;
+}
+
+H3.main {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+-->
+</style>
+</head>
+<body>
+<TABLE WIDTH="560" ALIGN="CENTER" BORDER="0"><TR><TD ALIGN=CENTER>
+
+<TABLE WIDTH="90%" CELLPADDING="15" BGCOLOR="Silver"><TR><TD>
+<TABLE ALIGN=CENTER><TR><TD ALIGN=CENTER>
+<STRONG>&quot;Easy mapping of HTTP requests to methods of Java components&quot;</STRONG>
+</TD></TR><TR><TD CLASS="shadow" ALIGN=CENTER>
+<FONT COLOR="Red" SIZE="+3"><FONT SIZE="+4">A</FONT>CTION&nbsp;<FONT SIZE="+4">S</FONT>ERVLET</FONT>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+version 0.53<P>
+
+Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+</TD></TR>
+<TR><TD>
+
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+<UL CLASS="main">
+<LI><H3 CLASS="main">Basic information</H3>
+<EM>ActionServlet</EM> provides an easy mapping of user actions (HTTP requests) to 
+methods of Java components together with automatic conversion of HTTP parameters to the 
+values of Java types.
+
+<P><CENTER>
+<IMG SRC="doc/images/auth.gif" WIDTH="564" HEIGHT="260" BORDER="0">
+</CENTER><P>
+
+<LI><H3 CLASS="main">Requirements</H3>
+<UL CLASS="sub">
+<LI><A HREF="http://www.javasoft.com/products/jdk/1.1">JDK 1.1</A> or <A HREF="http://java.sun.com/j2se">Java 2 SDK Standard Edition</A> (or compatible),
+<LI><A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A> (you should be able to run <EM>ActionServlet</EM>
+with any servlet runtime compatible with <EM>Servlet specification 2.x</EM> like <A HREF="http://java.apache.org/jserv">JServ</A> or <A HREF="http://jakarta.apache.org/tomcat">Tomcat</A>, but examples are only pre-configured for use with JSDK 2.0).
+</UL>
+
+<P><LI><H3 CLASS="main">Download</H3>
+
+<P><TABLE ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="0" CELLPADDING="7">
+<TR><TD ALIGN=CENTER>
+<TABLE BORDER="1" CELLPADDING=2 CELLSPACING=1>
+<TR ALIGN="center" BGCOLOR="#D0D0D0"><TD>ActionServlet</TD><TD>requires also</TD></TR><TR><TD>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_52.zip">ActionServlet_0_52.zip</A>
+</TD><TD>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/webmacro.0.89.1.zip">WebMacro 0.89.1</A>
+</TD></TR><TR><TD>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_53.zip">ActionServlet_0_53.zip</A>
+</TD><TD>
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.95p1</A> or<BR>
+WebMacro 0.97a1 or <BR>
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.97</A> or<BR>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/webmacro-0.98.zip">WebMacro 0.98</A>
+</TD></TR></TABLE>
+</TD></TR><TR><TD>
+<BLOCKQUOTE>
+<UL>
+<LI>Full source code distributed under GNU <A HREF="doc/licenses/ActionServlet_license.txt">LGPL</A>,
+<LI>precompiled ready-to-use examples,
+<LI>quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A> and 
+<LI>detailed <A HREF="doc/api/index.html">API documentation</A> is included.
+</UL>
+</BLOCKQUOTE>
+</TD></TR></TABLE>
+
+<P><LI><H3 CLASS="main">Latest news</H3>
+<UL CLASS="main">
+<LI><A HREF="http://dione.zcu.cz/~toman40/ActionServlet"><TT>http://dione.zcu.cz/~toman40/ActionServlet</TT></A>
+</UL>
+
+<P><LI><H3 CLASS="main">History</H3>
+	<TABLE BORDER=0 CELLPADDING=2><TR><TD>
+	24.2. 2000: <B>version 0.42</B>: first public release</TD></TR><TR><TD>
+	14.3. 2000: <B>version 0.43</B>: small doc fixes</TD></TR><TR><TD>
+	26.4. 2000: <B>version 0.44</B>: added <TT>newSession()</TT> method</TD></TR><TR><TD>
+	14.8. 2000: <B>version 0.45</B>: tiny changes</TD></TR><TR><TD>
+        31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
+                    easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
+        14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
+        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A>
+	</TD></TR></TABLE>
+
+<P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>
+<B>ActionServlet 0.44</B>
+</TD></TR>
+<TR><TD ALIGN=CENTER>
+<A HREF="http://www.jars.com/classes/jresout.cgi?resource=6863">
+<IMG SRC="doc\images\r750.gif" BORDER="0">
+</A>
+</TD></TR></TABLE>
+<LI><H3 CLASS="main">References</H3>
+	<DL>
+	<DT>[1] Bloch, C.: <B>Java Tutorial: <A HREF="http://dione.zcu.cz/java/docs/tutorial/servlets">Servlets</A></B>
+	<DT>[2] Wells, J.: <B><A HREF="http://www.webmacro.org">WebMacro</A> documentation</B>
+	<DT>[3] Nic, M.: <A HREF="http://www.zvon.org/xxl/XMLTutorial/General/book_en.html"><B>XML Tutorial</B></A>
+	</DL>
+</UL>
+<!--#include virtual="/java/footer.inc" -->
+
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+
+</body>
+</html>

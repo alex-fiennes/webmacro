@@ -1,0 +1,48 @@
+<HTML>
+<!-- 
+	THIS TEMPLATE HAS THE SAME FUNCTIONALITY AS
+	"Login.wm" BUT PROVIDES A NICEer LOOK - ENJOY! :)
+-->
+   
+#set $Response.ContentType = "text/html"
+<BODY>
+
+	<TABLE BORDER="1" CELLPADDING="5">
+
+	<TR><TH BGCOLOR="gray">
+		<FONT FACE="Arial" COLOR="white">Login</FONT>
+	</TH></TR>
+
+	<TR><TD BGCOLOR="#CFCFCF">
+	#if ($badLogin){
+		<P><FONT COLOR="red">Bad user name or password. 
+		Try again.</FONT><P>
+	}
+
+	<FORM METHOD="POST">
+		<TABLE BORDER="0" CELLPADDING="3">
+		<TR><TD>
+			User name: 
+		</TD><TD>
+			<INPUT TYPE="text" NAME="userName">
+		</TD></TR>
+		<TR><TD>
+			Password:
+		</TD><TD>
+			<INPUT TYPE="password" NAME="password"><BR>
+		</TD></TR>
+		<TR><TD>
+			<INPUT TYPE="submit" NAME="action" VALUE="Login">
+		</TD></TR></TABLE>
+	</FORM>
+	</TD></TR></TABLE>
+
+	<P>[Hint: <EM>correct user name is 'John' with password '18x79Z' </EM>]
+
+	<SCRIPT LANGUAGE="JavaScript">
+	<!--
+	document.forms[0].elements['userName'].focus();
+	// -->
+	</SCRIPT>
+</BODY>
+</HTML>
