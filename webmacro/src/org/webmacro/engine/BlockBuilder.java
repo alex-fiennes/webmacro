@@ -31,7 +31,7 @@ import java.lang.reflect.*;
   * end ({}'s around the whole document are not required). It contains 
   * all of the other directives, strings, etc. that can be in a template. 
   */
-final public class BlockBuilder extends Vector implements Builder
+public class BlockBuilder extends Vector implements Builder
 {
 
    /**
