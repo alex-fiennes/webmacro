@@ -416,7 +416,7 @@ public class WMParser implements Parser
                {
                   in.skipSpaces();
                   obj = parseTerm(in); 
-                  dirB.addArgument(new Argument(arg,obj));
+                  dirB.addArgument(arg,obj);
                }
             }
          } 

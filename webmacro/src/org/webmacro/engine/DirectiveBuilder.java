@@ -179,7 +179,9 @@ final class DirectiveBuilder implements Cloneable, Builder
    private Vector _arguments = null;
 
 
-   private final Argument[] getArguments() {
+   private final Argument[] getArguments(BuildContext bc) 
+      throws BuildException
+   {
       if (!hasArguments()) {
          return null;
       }
@@ -188,6 +190,9 @@ final class DirectiveBuilder implements Cloneable, Builder
       }
       Argument[] args = new Argument[_arguments.size()];
       _arguments.copyInto(args);
+      for (int i = 0; i < args.length; i++) {
+         args[i].build(bc);
+      }
       return args;
    }
 
@@ -219,7 +224,7 @@ final class DirectiveBuilder implements Cloneable, Builder
       _dependent = dep;
    }
 
-   public final void addArgument(Argument p) 
+   public final void addArgument(String name, Object value) 
       throws IllegalStateException
    {
 
@@ -228,20 +233,20 @@ final class DirectiveBuilder implements Cloneable, Builder
       }
 
       boolean match = false;
-      String argument = p.getName();
       for (int i = 0; i < _argNames.length; i++) {
-         if (_argNames[i].equals(argument)) {
+         if (_argNames[i].equals(name)) {
             match = true;
          }
       }
       if (!match) {
-         throw new IllegalStateException(argument 
+         throw new IllegalStateException(name 
                + " is not recognized as an argument for " + toString());
       }
       if (_arguments == null) {
          _arguments = new Vector();
       }
-      _arguments.addElement(p);
+      Argument ag = new Argument(name,value);
+      _arguments.addElement(ag);
    }
 
    public final void setContents(Builder contents)
@@ -307,7 +312,7 @@ final class DirectiveBuilder implements Cloneable, Builder
          }
 
          if ( hasArguments() ) {
-            args[i++] = getArguments();
+            args[i++] = getArguments(rc);
          }
 
          if ( isContainer() ) {

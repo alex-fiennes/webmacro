@@ -13,7 +13,7 @@ final class Argument
 {
 
    final private String _name;
-   final private Object _value;
+   private Object _value;
 
    /**
      * Create a new predicate
@@ -26,11 +26,23 @@ final class Argument
    /**
      * Return the action code for this predicate
      */
-   public String getName() { return _name; }
+   final public String getName() { return _name; }
 
    /**
      * Return the object on which this predicate operates
      */
-   public Object getValue() { return _value; }
+   final public Object getValue() { return _value; }
+
+   /**
+     * Make sure that _value is not a builder! Not a public method,
+     * used by Directivebuilder and other things that build Argument
+     * lists.
+     */
+   final void build(BuildContext bc) throws BuildException
+   {
+      if (_value instanceof Builder) {
+         _value = ((Builder) _value).build(bc);
+      }
+   }
 
 }
