@@ -36,7 +36,7 @@ import org.webmacro.*;
   * against a context. The introspection process will supply the 
   * context and resolve these references at execution time.
   */
-final public class PropertyMethod
+final public class PropertyMethod implements Named
 {
 
    final private Object _args;

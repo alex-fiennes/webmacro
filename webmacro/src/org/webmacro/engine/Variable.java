@@ -76,27 +76,42 @@ final class Variable implements Macro
    /**
      * The name of this variable.
      */
-   final protected String vname;
+   final protected String _vname;
+
+   /**
+     * The filter for this variable, if any
+     */
+   final private Macro _filter;
 
    /**
      * The name as an array
      */
-   final private Object[] myNames;
+   final private Object[] _names;
 
    /**
      * Create a variable with the supplied name. The elements of the name 
      * are either strings, or a method reference. 
      */
-   Variable(Object names[]) {
-      vname = makeName(names).intern();
-      myNames = names;
+   Variable(Object names[], Macro filter) {
+      _vname = makeName(names).intern();
+      _names = names;
+      _filter = filter;
+   
    }
 
    /**
      * Return a string name of this variable
      */
    public final String toString() {
-      return "variable:" + vname;
+      return "variable:" + _vname;
+   }
+
+
+   /**
+     * Return the name array for this variable
+     */
+   public final Object[] getNameArray() {
+      return _names;
    }
 
    /**
@@ -110,20 +125,22 @@ final class Variable implements Macro
       try {
          Object val = getValue(context);
          if (val instanceof Macro) {
-            return ((Macro) val).evaluate(context); // recurse
-         } else {
-            return val;
+            val = ((Macro) val).evaluate(context); // recurse
+         } 
+         if (_filter != null) {
+            val = _filter.evaluate(val);
          }
+         return val;
       } catch (NullPointerException e) {
          Engine.log.exception(e);
-         Engine.log.warning("Variable: " + vname + " does not exist");
+         Engine.log.warning("Variable: " + _vname + " does not exist");
          return "<!--\n unable to access variable " 
-            + vname + ": not found in " + context + "\n -->";
+            + _vname + ": not found in " + context + "\n -->";
       } catch (Exception e) {
          Engine.log.exception(e);
-         Engine.log.warning("Variable: " + vname + " does not exist");
+         Engine.log.warning("Variable: " + _vname + " does not exist");
          return "<!--\n unable to access variable " 
-            + vname + ": " + e + " \n-->";
+            + _vname + ": " + e + " \n-->";
       }
    }
 
@@ -136,24 +153,13 @@ final class Variable implements Macro
    final public void write(Writer out, Object context) 
        throws InvalidContextException, IOException
    {
-      // force it to throw a class cast exception if things are amiss
-
       try {
-         Object val = getValue(context); 
-         if (val instanceof Macro) {
-            ((Macro) val).write(out,context);
-         } else {
-             out.write(val.toString());
-         }
-      } catch (NullPointerException e) {
-         Engine.log.warning("Variable: " + vname + " is undefined");
-         out.write("<!--\n unable to access variable " 
-            + vname + ": does not exist-->");
+         out.write(evaluate(context).toString());
       } catch (Exception e) {
          Engine.log.exception(e);
-         Engine.log.warning("Variable: " + vname + " is undefined");
+         Engine.log.warning("Variable: " + _vname + " is undefined");
          out.write("<!--\n warning: attempt to write out undefined variable " 
-            + vname + ": " + e + " \n-->");
+            + _vname + ": " + e + " \n-->");
       } 
    }
 
@@ -180,7 +186,7 @@ final class Variable implements Macro
       throws InvalidContextException
    {
       try {
-         return PropertyOperator.getProperty(context, myNames);
+         return PropertyOperator.getProperty(context, _names);
       } catch (Exception e) {
          Engine.log.exception(e);
          String warning = "Variable: unable to access " + this + ";";
@@ -198,8 +204,8 @@ final class Variable implements Macro
    {
 
       try{
-         if (!PropertyOperator.setProperty(context,myNames,newValue)) {
-            throw new PropertyException("No method to set \"" + vname + 
+         if (!PropertyOperator.setProperty(context,_names,newValue)) {
+            throw new PropertyException("No method to set \"" + _vname + 
                "\" to type " +
                ((newValue == null) ? "null" : newValue.getClass().toString()) 
                + " in supplied context (" + context.getClass() + ")",null);

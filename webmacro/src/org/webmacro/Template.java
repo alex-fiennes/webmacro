@@ -24,7 +24,7 @@ import java.util.*;
 import java.io.*;
 import org.webmacro.util.java2.*;
 
-public interface Template extends Macro
+public interface Template extends Filter
 {
 
    /**

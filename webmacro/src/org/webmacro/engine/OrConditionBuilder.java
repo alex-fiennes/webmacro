@@ -40,8 +40,6 @@ final class OrCondition extends Condition implements Macro {
    }
 
    public final boolean test(Object context) {
-      System.out.println("_l.test: " + _l.test(context));
-      System.out.println("_r.test: " + _r.test(context));
       return (_l.test(context) || _r.test(context));
    }
 }

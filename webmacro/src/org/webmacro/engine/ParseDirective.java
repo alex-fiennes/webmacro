@@ -56,8 +56,6 @@ class ParseDirective implements Directive
      * actual filename (it will be evaluated at run time, once 
      * given a context).
      * <p>
-     * @param fileName an object representing the file to read in
-     * @param parseFile true if we are to parse the included text
      */
    ParseDirective(Broker broker, Macro fileName) {
       _fileName = fileName;

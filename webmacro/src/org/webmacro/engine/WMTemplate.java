@@ -65,6 +65,12 @@ abstract public class WMTemplate implements Template
    private Hashtable myParameters;
 
    /**
+     * Template filters
+     */
+   private FilterTable myFilters;
+
+
+   /**
      * Create a new Template. Constructors must supply a broker.
      */
    protected WMTemplate(Broker broker) {
@@ -109,6 +115,7 @@ abstract public class WMTemplate implements Template
       Block newContent = null;
       Hashtable newParameters = null;
       Reader source = null;
+      FilterTable newFilters = null;
       try {
          Parser parser;
          try {
@@ -123,6 +130,7 @@ abstract public class WMTemplate implements Template
          in.close();
          BuildContext bc = new BuildContext(_broker);
          newParameters = bc.getParameters();
+         newFilters = bc.getFilters();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;
@@ -136,6 +144,7 @@ abstract public class WMTemplate implements Template
          try { source.close(); } catch (Exception e) { }
          synchronized(this) {
             myParameters = newParameters;
+            myFilters = newFilters;
             myContent = newContent; 
          }
       }
@@ -261,6 +270,10 @@ abstract public class WMTemplate implements Template
          throw new TemplateException("Parse failed: parameters unavailable.");
       }
       return new EnumIterator(params.keys());
+   }
+
+   public Filter getFilter(String name) {
+      return myFilters.getFilter(name);
    }
 
 }

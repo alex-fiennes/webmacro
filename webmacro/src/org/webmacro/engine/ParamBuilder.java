@@ -2,22 +2,29 @@
 package org.webmacro.engine;
 
 import org.webmacro.*;
+
 public class ParamBuilder implements Builder
 {
    
-   private final Variable _var;
 
-   public ParamBuilder(Object[] names) {
-      _var = new Variable(names);
+   private Object[] _names;
+   private final boolean _filtered;
+
+   public ParamBuilder(Object[] names, boolean filtered) {
+      _names = names;
+      _filtered = filtered;
    }
 
-   public final Object build(BuildContext bc) {
+   public final Object build(BuildContext bc) 
+      throws BuildException
+   {
+      Variable var = VariableBuilder.newVariable(_names,bc,_filtered);
       Object context = bc.getParameters();
-      return _var.evaluate(context);
+      return var.evaluate(context);
    }
 
    public String toString() {
-      return "param:" + _var.toString();
+      return "param:" + Variable.makeName(_names);
    }
 
 }

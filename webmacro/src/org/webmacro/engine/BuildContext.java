@@ -2,6 +2,7 @@
 package org.webmacro.engine;
 import java.util.*;
 import org.webmacro.*;
+import org.webmacro.util.*;
 
 /**
   * Contains data structures which are manipulated during the 
@@ -17,6 +18,8 @@ public final class BuildContext extends Hashtable
 {
 
    private final Hashtable _params = new Hashtable();
+
+   private final FilterTable _filters = new FilterTable();
 
    private final Broker _broker;
 
@@ -42,6 +45,46 @@ public final class BuildContext extends Hashtable
 
    public Broker getBroker() {
       return _broker;
+   }
+
+   public Filter getFilter(Object names[]) {
+      return _filters.getFilter(names);
+   }
+
+   public Filter getFilter(String name) {
+      return _filters.getFilter(name);
+   }
+
+
+   /**
+     * Add a filter for this variable. The variable must be a simple top 
+     * level variable (no sub-properties specified).
+     */
+   public void addFilter(Variable v, Filter f) 
+      throws BuildException
+   {
+      Object[] names = v.getNameArray();
+      if (names.length != 1) {
+         throw new BuildException("Only top level, single-property variable names can be specified as filter targets. Maybe in a later version you will be able to directly filter a sub-property of a variable, but not in this version.");
+      }
+      String name = (names[0] instanceof Named) ?
+         ((Named) names[0]).getName() : (String) names[0];
+      addFilter(name, f);
+   }
+
+   /**
+     * Add a filter for the supplied property. NOTE: do not use the WM template
+     * notation for the variable. It must be a simple top-level variable name,
+     * and must not include the $ or $$ notation.
+     */
+   public void addFilter(String name, Filter f)
+      throws BuildException
+   {
+      _filters.addFilter(name,f);
+   }
+
+   public FilterTable getFilters() {
+      return _filters;
    }
 
 }

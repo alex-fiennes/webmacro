@@ -488,8 +488,17 @@ e.printStackTrace();
       }
       boolean isParam = in.parseChar('$'); // param is $$
 
-      // check whether we found a variable name or not
-      if (! in.isNameStartChar()) {
+      // check what kind of variable this is
+
+      boolean isFiltered = false;
+      char closeChar = 0;
+
+      if ( in.parseChar('{') ) {
+         isFiltered = true;
+         closeChar = '}';
+      } else if (in.parseChar('(') ) {
+         closeChar = ')';
+      } else if (! in.isNameStartChar()) {
          return (isParam) ? "$$" : "$";
       }
 
@@ -510,18 +519,24 @@ e.printStackTrace();
          }
       }
 
-      in.parseChar(';'); // eat optional ;
-
       Object[] oname = new Object[names.size()];
       names.copyInto(oname);
+
+      if ((closeChar != 0) && ! in.parseChar(closeChar)) {
+         throw new ParseException(in, "Expected closing " + closeChar + 
+               " after variable name " + Variable.makeName(oname));
+      } else {
+         in.parseChar(';'); // eat optional ;
+      }
+
       if (isParam) {
          if (Log.debug) 
             _log.debug("Parsed param:" + Variable.makeName(oname));
-         return new ParamBuilder(oname);
+         return new ParamBuilder(oname, isFiltered); 
       } else {
          if (Log.debug) 
             _log.debug("Parsed var:" + Variable.makeName(oname));
-         return new VariableBuilder(oname);
+         return new VariableBuilder(oname, isFiltered);
       }
    }
 
