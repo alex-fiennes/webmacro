@@ -45,10 +45,19 @@ final public class UrlProvider extends CachingProvider
    static final public long MAX_TIMEOUT = 60000;
    static final public long MIN_TIMEOUT = 5000;
 
+   Broker _broker;
+
    /**
      * We serve up "url" type resources
      */
    final public String getType() { return "url"; }
+
+
+   public void init(Broker b, Settings config) throws InitException
+   {
+      super.init(b,config);
+      _broker = b;
+   }
 
    /**
      * Load a URL from the specified name and return it. The expire
@@ -71,14 +80,27 @@ final public class UrlProvider extends CachingProvider
             u = new URL(name);
          }
 
-         URLConnection uc = u.openConnection();
+         URLConnection uc;
+         InputStream is;
+         try {
+           uc = u.openConnection();
+           is = uc.getInputStream();
+         }
+         catch (IOException e) {
+           if (name.indexOf(":") < 3) {
+             uc = _broker.getResource(name).openConnection();
+             is = uc.getInputStream();
+           }
+           else 
+             throw e;
+         }
 
          String encoding = uc.getContentEncoding();
          if (encoding == null) {
             encoding = "UTF-8";
          }
          Reader in = new InputStreamReader(
-                       new BufferedInputStream(uc.getInputStream()),encoding);
+                           new BufferedInputStream(is), encoding);
 
          int length = uc.getContentLength();
          if (length == -1) {
