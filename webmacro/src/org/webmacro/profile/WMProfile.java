@@ -67,7 +67,8 @@ final public class WMProfile implements Profile
    }
 
    /**
-     * Start timing an event called 'name'
+     * Start timing an event called 'name'. You *MUST* call stop() 
+     * later in order to get valid results. 
      */
    public void startEvent(String name) {
       WMProfileEvent evt;
@@ -80,7 +81,7 @@ final public class WMProfile implements Profile
          evt = null;
       } 
       if (evt == null) {
-         evt = new WMProfileEvent();
+         evt = new WMProfileEvent(name);
          _q[_qPtr] = evt;
       }
 
@@ -99,7 +100,8 @@ final public class WMProfile implements Profile
    }
 
    /**
-     * Stop timing the last event started
+     * Stop timing the last event started. You *MUST* have called 
+     * start() prior to this in order to get valid results.
      * @exception IllegalStateException if stopEvent called too many times
      */
    public void stopEvent() 

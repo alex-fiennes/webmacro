@@ -119,7 +119,7 @@ final public class LogManager {
          return l;
       }
       if (_log != null) {
-         _log.info("source: " + name);
+         _log.info("new log category: " + name);
       }
       l = new LogSource(name);
       addSource(l);

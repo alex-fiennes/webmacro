@@ -238,12 +238,23 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       }
       try {
         context = newContext(req,resp);
-        Template t = handle(context);
-        if (t != null) {
-          execute(t,context);
+        boolean timing = context.isTiming();
+        if (timing) context.startTiming("WMServlet",req.getRequestURI());
+
+        Template t;
+        try {
+           if (timing) context.startTiming("handle");
+           t = handle(context);
+        } finally {
+           context.stopTiming();
         }
-        destroyContext(context);
-        context.clear();
+
+        if (t != null) {
+          execute(t,context); 
+        }
+        context.startTiming("WMServlet.destroyContext()");
+        try { destroyContext(context); }
+        finally { if (timing) context.stopTiming(); }
       } catch (HandlerException e) {
          if (context == null) {
             context = _wcPrototype.newInstance(req,resp);
@@ -263,6 +274,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             "some reason. This is likely a bug in the handler written " +
             "for this application. Here are the details:<p>" + e);
          execute(tmpl,_wcPrototype.newInstance(req,resp));  
+      } finally {
+         context.stopTiming();
+         context.clear();
       }
    }
 
@@ -383,11 +397,19 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    {
       Writer out = null;
       try {
-         HttpServletResponse resp= c.getResponse();
-         FastWriter fw = FastWriter.getInstance(
-               resp.getOutputStream(), resp.getCharacterEncoding());
-         tmpl.write(fw, c);
-         fw.close();
+         c.startTiming("Template.write", tmpl);
+         FastWriter fw;
+         try {
+            HttpServletResponse resp= c.getResponse();
+            fw = FastWriter.getInstance(
+                  resp.getOutputStream(), resp.getCharacterEncoding());
+            tmpl.write(fw, c);
+         } finally {
+            c.stopTiming();
+         }
+         c.startTiming("FastWriter.close()");
+         try { fw.close(); }
+         finally { c.stopTiming(); }
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {
@@ -409,7 +431,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          }
       }
    }
-
 
    // FRAMEWORK TEMPLATE METHODS--PLUG YOUR CODE IN HERE
 

@@ -27,7 +27,7 @@ final public class WMProfileCategory implements ProfileCategory {
      * Record time is how long we are to record profiles. After the
      * specified amount of record time we will discard old profiles.
      */
-   protected WMProfileCategory(String name, int recordTime, int samplingRate) 
+   protected WMProfileCategory(String name, int samplingRate, int recordTime) 
    {
       _name = name;
       _recordTime = recordTime;
@@ -35,6 +35,11 @@ final public class WMProfileCategory implements ProfileCategory {
    }
 
    public String getName() { return _name; } 
+
+   public String toString() { 
+      return "WMProfileCategory(" 
+         + _name + "," + _recordTime + "," + _samplingRate + ")";
+   }
 
 
    /**
@@ -47,7 +52,6 @@ final public class WMProfileCategory implements ProfileCategory {
      * multiple threads. 
      */
    synchronized public Profile newProfile() {
-
       if ((_samplingRate == 0) || (++_sampleCount < _samplingRate)) {
          return null;
       }
@@ -90,10 +94,12 @@ final public class WMProfileCategory implements ProfileCategory {
       long cutoff = System.currentTimeMillis() - _recordTime;
       try {
          while (_timestamp < cutoff) {
-            Object o = _profiles.removeFirst();
-            if (_timestamp > _sharedTimestamp) _pool.push(o);
             WMProfile wmp = (WMProfile) _profiles.getFirst();
             _timestamp = wmp.timestamp;
+            if (_timestamp < cutoff) {
+               _profiles.removeFirst();
+               if (_timestamp > _sharedTimestamp) _pool.push(wmp);
+            }
          }
       } catch (NoSuchElementException e) {
          // we emptied the list, ignore it

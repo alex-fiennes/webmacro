@@ -22,9 +22,11 @@ package org.webmacro;
 import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
+import org.webmacro.profile.*;
 import java.util.*;
 
 import org.webmacro.servlet.WebContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,14 +50,14 @@ public class WM implements WebMacro
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
-   /*final*/ private Broker _broker;      // cache for rapid access
-   /*final*/ private BrokerOwner _owner; // mgr that loads/unloads broker
+   final private Broker _broker;      // cache for rapid access
+   final private BrokerOwner _owner; // mgr that loads/unloads broker
 
    private boolean _alive = false;   // so we don't unload twice
 
-   private Provider _tmplProvider;
-   private Provider _urlProvider;
-   private Log _log;
+   final private Provider _tmplProvider;
+   final private Provider _urlProvider;
+   final private Log _log;
 
    public WM() throws InitException
    {
@@ -93,7 +95,7 @@ public class WM implements WebMacro
          _log = _broker.getLog("wm");
          _log.info("new " + this);
       }
-   
+  
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
@@ -177,6 +179,7 @@ public class WM implements WebMacro
    }
 
    final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse resp) {
+
       if (_webContext == null) {
          _webContext = new WebContext(getBroker());
       }
@@ -224,6 +227,7 @@ public class WM implements WebMacro
    final public Log getLog(String name) {
       return _broker.getLog(name);
    }
+
 }
 
 

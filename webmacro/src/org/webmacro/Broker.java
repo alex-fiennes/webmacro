@@ -2,6 +2,7 @@
 package org.webmacro;
 
 import org.webmacro.util.LogManager;
+import org.webmacro.profile.*;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -48,11 +49,12 @@ final public class Broker
    }
 
 
-   private Hashtable _providers = new Hashtable();
-   private Properties _config;
-   private String _name;
-   private LogManager _lm;
-   private Log _log;
+   final private Hashtable _providers = new Hashtable();
+   final private Properties _config;
+   final private String _name;
+   final private LogManager _lm;
+   final private Log _log;
+   final private ProfileCategory _prof;
 
    /**
      * Equivalent to Broker("WebMacro.properties")
@@ -167,6 +169,31 @@ final public class Broker
       }
       _config = config;
 
+
+      // set up profiling
+
+      ProfileSystem ps = WMProfileSystem.getInstance();
+      int pRate = Integer.valueOf(
+         config.getProperty("Profile.rate","0")).intValue();
+      int pTime = Integer.valueOf(
+         config.getProperty("Profile.time","60000")).intValue();
+
+      _log.debug("Profiling rate=" + pRate + " time=" + pTime);
+
+      if ((pRate != 0) && (pTime != 0)) {
+         _prof = ps.newProfileCategory(name, pRate, pTime);   
+         _log.debug("ProfileSystem.newProfileCategory: " + _prof);
+      } else {
+         _prof = null;
+      }
+      if (_prof != null) {
+         _log.notice("Profiling started: " + _prof);
+      } else {
+         _log.info("Profiling not started.");
+      }
+
+      // set up providers
+
       String providers = config.getProperty("Providers");
       if (providers == null) {
          _log.error("configuration exists but has no Providers listed");
@@ -183,7 +210,6 @@ final public class Broker
             pClass = Class.forName(className);
             instance = (Provider) pClass.newInstance();
             addProvider(instance);
-            _log.info("Loaded provider: " + className);
          } catch (Exception e) {
             _log.error("Provider (" + className + ") failed to load", e);
          }
@@ -232,6 +258,16 @@ final public class Broker
    }
 
    /**
+     * Get a profile instance that can be used to instrument code. 
+     * This instance must not be shared between threads. If profiling
+     * is currently disabled this method will return null.
+     */
+   public Profile newProfile() {
+      return (_prof == null) ? null : _prof.newProfile();
+   }
+
+
+   /**
      * Look up query against a provider using its integer type handle.
      */
    public Object get(String type, final String query) 
@@ -256,7 +292,7 @@ final public class Broker
    synchronized public void shutdown() {
       _log.notice("shutting down");
       Enumeration e = _providers.elements();
-      _providers = null;
+      _providers.clear();
       while (e.hasMoreElements()) {
          Provider pr = (Provider) e.nextElement();
          _log.info("stopping: " + pr);

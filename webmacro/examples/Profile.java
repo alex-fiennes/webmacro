@@ -6,6 +6,7 @@ import org.webmacro.*;
 import org.webmacro.servlet.*;
 
 import org.webmacro.util.*;
+import org.webmacro.profile.*;
 
 /**
   * Profile servlet checks to see if profiling has been enabled 
@@ -27,14 +28,35 @@ public class Profile extends WMServlet
      */
    public Template handle(WebContext context) throws HandlerException
    {
-      Object stats = context.getBroker().getProfilerStatistics();
-      context.put("compiled", Flags.PROFILE ? Boolean.TRUE : Boolean.FALSE);
-      context.put("enabled", (stats != null) ? Boolean.TRUE : Boolean.FALSE);
+      try {
+         ProfileSystem ps = WMProfileSystem.getInstance();
 
-      if (stats != null) {
-         context.put("statistics", stats);
+         context.startTiming("getProfileCategories");
+         ProfileCategory[] pc = ps.getProfileCategories();
+         context.stopTiming();
+
+         context.put("cats", pc);
+
+         context.put("compiled", Flags.PROFILE ? Boolean.TRUE : Boolean.FALSE);
+
+         context.startTiming("CallGraph.init");
+         if (pc != null) {
+             CallGraph[] cg = new CallGraph[ pc.length ];
+             for (int i = 0; i < pc.length; i++) {
+               cg[i] = new CallGraph(pc[i]);
+             }
+             context.put("stats", cg);
+            context.put("status", "All OK");
+         } else {
+            context.put("status", "No profiling information");
+         }
+         context.stopTiming();
+      } catch (Exception e) {
+         context.put("status", e);
+         e.printStackTrace();
       }
       Template view;
+      context.startTiming("getTemplate");
       try {
          view = getTemplate("profile.wm");
       } catch (NotFoundException e) {
@@ -45,6 +67,7 @@ public class Profile extends WMServlet
             + "Here is the actual exception that was raised:\n" + e);
 
       }
+      context.stopTiming();
       return view;
    }
 }

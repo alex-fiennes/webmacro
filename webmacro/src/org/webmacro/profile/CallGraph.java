@@ -11,18 +11,29 @@ import java.util.*;
   */
 public class CallGraph {
 
-   String name;
-   long duration;
-   int calls;
+   private String name;
+   private long duration;
+   private int calls;
 
-   HashMap children;
+   private HashMap children;
 
    private CallGraph(String name) {
-      name = name;
+      this.name = name;
       duration = 0;
       calls = 0;
       children = new HashMap();
    }
+
+   final private static Comparator comparator = new Comparator() {
+      final public int compare(Object a, Object b) {
+         CallGraph ca = (CallGraph) a;
+         CallGraph cb = (CallGraph) b;
+         if (ca.duration < cb.duration) return 1;
+         if (ca.duration > cb.duration) return -1;
+         return 0;
+      }
+   };
+
 
    /**
      * Construct a CallGraph representing the nodes in the supplied root
@@ -70,5 +81,21 @@ public class CallGraph {
          cg.duration += evtDuration;
       }
    }
+
+   public String toString() { return "CallGraph(" + name + ")"; }
+
+   public String getName() { return name; }
+
+   public CallGraph[] getChildren() { 
+      CallGraph[] ret = 
+         (CallGraph[]) children.values().toArray(new CallGraph[0]);
+      Arrays.sort(ret, comparator);
+      return ret;
+   }
+
+   public long getTime() { return duration; }
+
+   public int getCalls() { return calls; }
+
 }
 

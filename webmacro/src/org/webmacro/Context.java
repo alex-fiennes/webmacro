@@ -5,6 +5,7 @@ import java.util.*;
 import java.lang.reflect.Method;
 import org.webmacro.*;
 import org.webmacro.util.*;
+import org.webmacro.profile.*;
 
 /**
   * A Context contains all of the data you wish to display in a WebMacro 
@@ -36,7 +37,7 @@ import org.webmacro.util.*;
   */
 public class Context implements Cloneable {
 
-   private Broker _broker;
+   final private Broker _broker;
 
    private Object _bean; // root of property introspection
    private Method _beanGet = null; // get method, if any, of _bean
@@ -53,7 +54,8 @@ public class Context implements Cloneable {
      * Log configuration errors, context errors, etc.
      */
    private final Log _log;
-
+   
+   private org.webmacro.profile.Profile _prof = null;
 
 
    // CONSTRUCTION, INITIALIZATION, AND LIFECYCLE
@@ -70,6 +72,7 @@ public class Context implements Cloneable {
    protected Context(final Broker broker) {
       _broker = broker; 
       _log = _broker.getLog("context");
+      _prof = _broker.newProfile();
       _bean = null;
       _toolbox = null;
       try {
@@ -90,10 +93,12 @@ public class Context implements Cloneable {
    protected Context(final Broker broker, final Map toolbox, final Object bean)
    {
       _broker = broker;
-      _log = broker.getLog("context");
+      _log = _broker.getLog("context");
+      _prof = _broker.newProfile();
       _bean = bean;
       _toolbox = toolbox;
    }
+
 
 
    /**
@@ -112,7 +117,7 @@ public class Context implements Cloneable {
       c._globals = null;
       c._bean = null;
       c._locale = _locale;
-
+      c._prof = _broker.newProfile();
       return c;
    }
 
@@ -133,6 +138,7 @@ public class Context implements Cloneable {
       _tools = null;
       _globals = null;
       _bean = null;
+      if (_prof != null) _prof.destroy();
    }
 
 
@@ -214,6 +220,73 @@ public class Context implements Cloneable {
      */
    final public Log getLog(String name) {
       return _broker.getLog(name);
+   }
+
+   /**
+     * Return true if the Context contains an active profiler, and
+     * calls to startTiming/stopTiming will be counted.
+     */
+   public final boolean isTiming() {
+      return (_prof != null);
+   }
+
+   /**
+     * Mark the start of an event for profiling. Note that you MUST
+     * call stop() or the results of profiling will be invalid.
+     */
+   final public void startTiming(String name) {
+      if (_prof == null) return;
+      _prof.startEvent(name);
+   }
+
+   /**
+     * Same as startTiming(name1 + "(" + arg + ")") but the concatenation 
+     * of strings and the call to arg.toString() occurs only if profiling 
+     * is enabled.
+     */
+   final public void startTiming(String name1, Object arg) {
+      if (_prof == null) return;
+      _prof.startEvent(name1 + "(" + arg + ")");
+   }
+
+   /**
+     * Same as startTiming(name1 + "(" + arg1 + "," + arg2 + ")") but the 
+     * concatenation of strings and the call to arg.toString() occurs only 
+     * if profiling * is enabled.
+     */
+   final public void startTiming(String name1, Object arg1, Object arg2) {
+      if (_prof == null) return;
+      _prof.startEvent(name1 + "(" + arg1 + ", " + arg2 + ")");
+   }
+
+    /**
+     * Same as startTiming(name1 + "(" + arg + ")") but the 
+     * concatenation of strings and the call to toString() occurs only 
+     * if profiling is enabled.
+     */
+   final public void startTiming(String name, int arg) {
+      if (_prof == null) return;
+      _prof.startEvent(name + "(" + arg + ")");
+   }
+
+    /**
+     * Same as startTiming(name1 + "(" + arg + ")") but the 
+     * concatenation of strings and the call to toString() occurs only 
+     * if profiling is enabled.
+     */
+   final public void startTiming(String name, boolean arg) {
+      if (_prof == null) return;
+      _prof.startEvent(name + "(" + arg + ")");
+   }
+
+   /**
+     * Mark the end of an event for profiling. Note that you MUST
+     * HAVE CALLED start() first or the results of profiling will
+     * be invalid.
+     */
+   final public void stopTiming() {
+      if (_prof == null) return;
+      _prof.stopEvent();
    }
 
 

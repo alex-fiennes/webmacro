@@ -1,4 +1,8 @@
 
+-- Nov-200 justin: Reworked the profiling code and added an example
+   servlet demonstrating how it works. Actually, you can use the 
+   example servlet to monitor the performance of your website!
+
 -- Nov-2000 justin: Added some profiling code, a first cut of it 
    anyway. I hope to add profiling code throughout WM so we can 
    get a clear idea where the time goes.

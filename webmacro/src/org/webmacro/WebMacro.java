@@ -102,6 +102,7 @@ public interface WebMacro
      */
    public Log getLog(String name);
 
+
    /**
      * Create a new WebContext object. This returns a Context object 
      * with special knowledge of servlets (request and response) 

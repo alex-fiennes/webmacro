@@ -1,0 +1,16 @@
+
+#set $tmpl = "callgraph.wm"
+
+<li>$callgraph.Time: $callgraph.Name ($callgraph.Calls)
+#set $children = $callgraph.Children
+
+#if ($children) {
+   <ul>
+   #foreach $node in $children {
+       #set $callgraph = $node
+       #parse "$tmpl"
+   }
+   </ul>
+} #else {
+   No kids.
+}

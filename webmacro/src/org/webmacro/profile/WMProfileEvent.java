@@ -6,13 +6,17 @@ package org.webmacro.profile;
   * in the system. All that is recorded about the event is its name,
   * when it started, and when it stopped. 
   */
-final public class WMProfileEvent 
+final public class WMProfileEvent implements ProfileEvent
 {
 
+   final String name;
    long start;
    long stop;
-   String name;
    int depth;
+
+   public WMProfileEvent(String name) {
+      this.name = name;
+   }
 
    /**
      * Milliseconds since Jan 1, 1970 that the event began

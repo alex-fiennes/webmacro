@@ -4,27 +4,29 @@
 
 <h1>WebMacro Profile Statistics</h1>
 
+<b>Profiling Status: $status</b>
+<p>
 #if (!$compiled) {
    <b>PROFILING WAS NOT ENABLED IN org.webmacro.Flags</b>
 }
+<p>
 
-#if (!$enabled) {
-   <b>PROFILING WAS NOT ENABLED (check WebMacro.properties)</b>
+Profile categories:
+<ul>
+#foreach $cat in $cats {
+   <li>$cat
+</ul>
+
+<p>
 }
 
-#if ($compiled && $enabled) {
-   <table border="1">
-   <tr><td><b>Name</b></td><td><b>Calls</b></td><td><b>Time</b></td></tr>
-   #foreach $stat in $statistics {
-      <tr>
-      <td>$stat.Name</td>
-      <td>$stat.Calls</td>
-      <td>$stat.Time</td>
-      </tr>
-   }
-   </table>
-} #else {
-   Unable to display profiling information.
+Profile Stats:
+<ul>
+#foreach $node in $stats {
+   #set $callgraph = $node
+   #parse "callgraph.wm"
 }
+</ul>
+
 
 </body></html>
