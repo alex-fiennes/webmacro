@@ -31,8 +31,8 @@ public class HTMLEscaper {
 
 	String text =
 	  "This is a test of the html escaper & let's hope it really, "+
-	  "really <B><I>works</I></B>! Is there an ÷ with an umlaut in the house?"+
-	  "This code is ©copyleft. I like to be paid in úúús";
+	  "really <B><I>works</I></B>! Is there an \u00f7 with an umlaut in the house?"+
+	  "This code is \u00a9copyleft. I like to be paid in \u00fa\u00fa\u00fas";
 
 	System.out.println( "NOTE: Due to differences in ASCII fonts, the text "+
 	  "sent to the escaper may not display properly. Hopefully you will be "+
