@@ -53,7 +53,7 @@ public class WMEval {
 	//-------private and protected members-----
 	private WebMacro wm;
 	private Template rule;
-	private OutputStream out;
+	private OutputStream out = System.out;
 	private Context context;
 
 	//-------constructor(s)-----
@@ -115,16 +115,16 @@ public class WMEval {
 	 * A convenience method to find and parse a template in the local template path.
 	 */
 	public Template parseLocalTemplate(String templateName) throws Exception {
-    rule = wm.getTemplate(templateName);
-    return rule;
+    		rule = wm.getTemplate(templateName);
+    		return rule;
 	}
 
 	/**
 	 * A convenience method to parse a string using the encoding supplied.
 	 */
 	public Template parseStringTemplate(String template, String encoding) {
-	  rule = new StringTemplate(wm.getBroker(), template, encoding);
-	  return rule;
+	  	rule = new StringTemplate(wm.getBroker(), template, encoding);
+	  	return rule;
 	}
 
 	/**
@@ -171,13 +171,18 @@ public class WMEval {
 	 */
 	public void assert(Context context, Template rule, OutputStream out, String encoding) throws Exception {
 		FastWriter w;
-		if (out == null)
-			w = context.getBroker().getFastWriter (System.out, "UTF8");
-		else
-                	w = context.getBroker().getFastWriter (System.out, encoding);
+               	w = context.getBroker().getFastWriter (out, encoding);
 		context.put("FastWriter", w); // allow template writers to access the output stream!
 		rule.write(w, context);
 		w.flush();
+	}
+	
+	/**
+	 * Evaluate the supplied context and template and return the result as a
+	 * as a string.
+	 */
+	 public String assert(Context context, Template rule) throws Exception {
+		return rule.evaluate(context).toString();		
 	}
 	
 	/**
