@@ -7,7 +7,7 @@
 <project name="DataTable" default="compile" basedir=".">
 
   <property name="app.name"       value="datatable"/>
-  <property name="dist"           value="dist"/>
+  <property name="jars"           value="jars"/>
   <property name="classes"        value="${app.name}/WEB-INF/classes"/>
   <property name="lib"            value="${app.name}/WEB-INF/lib"/>
   <property name="javadoc"        value="${app.name}/api"/>
@@ -48,7 +48,7 @@
        <mkdir  dir="${lib}"/>
     -->
     <mkdir  dir="${javadoc}"/>
-    <mkdir  dir="${dist}"/>
+    <mkdir  dir="${jars}"/>
   </target>
 
 
@@ -58,10 +58,13 @@
        <delete dir="${lib}"/>
     -->
     <delete dir="${javadoc}"/>
-    <delete dir="${dist}"/>
+    <delete dir="${jars}"/>
     <delete file="${jar}"/>
     <delete file="${src.jar}"/>
     <delete file="${doc.jar}"/>
+    <delete>
+       <fileset dir="${app.name}" excludes="WEB-INF"/>
+    </delete>
   </target>
 
 
@@ -83,21 +86,29 @@
 
 
   <target name="jar" depends="prepare,compile">
-    <jar jarfile="${jar}" basedir="${classes}"/>
-    <jar jarfile="${src.jar}" basedir="." 
+    <jar jarfile="${jars}/${jar}" basedir="${classes}"/>
+    <jar jarfile="${jars}/${src.jar}" basedir="." 
          includes="src/**,build.xml,**.wm,**.html,**.txt"/>
   </target>
 
 
   <target name="docjar" depends="prepare,compile,javadoc">
-    <jar jarfile="${doc.jar}" basedir="."
+    <jar jarfile="${jars}/${doc.jar}" basedir="."
         includes="${javadoc}/**,**.html,**.txt"/>
   </target>
 
   <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
-    <copy todir="${dist}" file="${src.jar}"/>
-    <copy todir="${dist}" file="${jar}"/>
-    <copy todir="${dist}" file="${doc.jar}"/>
+    <mkdir dir="${app.name}/api" />
+<!--
+    <copy todir="${app.name}/api">
+      <fileset dir="${javadoc}"/>
+    </copy>
+-->
+<!--
+    <copy todir="${jars}" file="${src.jar}"/>
+    <copy todir="${jars}" file="${jar}"/>
+    <copy todir="${jars}" file="${doc.jar}"/>
+-->
     <copy todir="${app.name}">
       <fileset dir="." includes="**.txt,**.html,**.wm"/>
     </copy>
