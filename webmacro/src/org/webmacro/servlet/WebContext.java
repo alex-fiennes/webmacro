@@ -154,11 +154,10 @@ public class WebContext extends Context
       return _response; 
    }
 
-   // LEGACY METHODS
+   // CONVENIENCE METHODS
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * Get the value of a form variable from the request
      */
    final public String getForm(String field) {
       try {
@@ -171,8 +170,7 @@ public class WebContext extends Context
    }
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * Get the value of a form variable from the request as an array
      */
    final public String[] getFormList(String field) {
       try {
@@ -185,8 +183,7 @@ public class WebContext extends Context
    }
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * Get the CGI Tool
      */
    final public CGI_Impersonator getCGI() {
       try {
@@ -198,8 +195,7 @@ public class WebContext extends Context
    }
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * get a cookie from the request
      */
    final public Cookie getCookie(String name) {
       try {
@@ -212,8 +208,7 @@ public class WebContext extends Context
    }
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * send a cookie in the response
      */
    final public void setCookie(String name, String value) {
       try {
@@ -225,8 +220,7 @@ public class WebContext extends Context
    }
 
    /**
-     * @deprecated: use getProperty() and access the tool in a 
-     * the conventional way, as a property of the context.
+     * get the session object
      */
    final public HttpSession getSession() {
       try {
