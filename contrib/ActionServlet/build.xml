@@ -64,17 +64,18 @@
       <delete dir="examples/Shop/api"/>
       <delete file="examples/as_examples.war" quiet="true"/>
       <delete file="lib/ActionServlet.jar" quiet="true"/>
+      <delete file="examples/.orig/war/Chat.xml" quiet="true"/>
       <delete file="examples/.orig/war/DbDemo.xml" quiet="true"/>
       <delete file="examples/.orig/war/Shop.xml" quiet="true"/>
 
       <delete>
-         <fileset dir="doc/api" excludes="**/cvs/*"/>
+         <fileset dir="doc/api" excludes="**/CVS/*"/>
          <fileset dir="examples">
             <include name="**/classes/**/*"/>
             <include name="**/config/*"/>
             <include name="**/*.log"/>
             <exclude name=".orig/**/*"/>
-            <exclude name="**/cvs/*"/>
+            <exclude name="**/CVS/*"/>
          </fileset>
          <fileset dir="examples/Shop/db">
             <exclude name="shop.script"/>
@@ -401,7 +402,7 @@
             <exclude name="examples/.orig/war/Shop.xml"/>
             <exclude name="examples/as_examples.war"/>
             <exclude name="project"/>
-            <exclude name="**/cvs/**"/>
+            <exclude name="**/CVS/**"/>
             <exclude name="dist/**"/>
             <exclude name="lib/classes"/>
             <exclude name="!!!*"/>
