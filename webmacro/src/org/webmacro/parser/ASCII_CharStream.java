@@ -52,6 +52,8 @@ public final class ASCII_CharStream
   private int tokenBeginPos;
   private int backupChars;
 
+  public static final boolean staticFlag = false;
+
   private int column = 0;
   private int line = 1;
   private boolean prevCharIsCR = false;
