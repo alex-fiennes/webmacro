@@ -541,7 +541,7 @@ void VariableReferenceGuts(Vector v) : {
 }
 {
   t=<WORD> { v.addElement(t.image); }
-  ( <DOT> t=<WORD> { element = t.image; } 
+  ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; } 
     [ <LPAREN> argList=ArgList() <RPAREN> 
       { element = new PropertyMethodBuilder((String) element, argList); }
     ]  

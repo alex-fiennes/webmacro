@@ -29,13 +29,16 @@ public class TestParseInclude extends TemplateTestCase {
       context.setEvaluationExceptionHandler (
                 new DefaultEvaluationExceptionHandler ());
 
-      context.put ("TemplateName", "test_parse.wm");
+      context.put ("TemplateName", "org/webmacro/template/test_parse.wm");
    }
 
    public void testParse () throws Exception {
       // parse in "test_parse.wm"
       //   contains only the word "pass"
-      assertStringTemplateMatches ("#parse \"test_parse.wm\"", 
+      assertStringTemplateMatches ("#parse \"org/webmacro/template/test_parse.wm\"", 
+                                  "pass"); 
+
+      assertStringTemplateMatches ("#parse \"$TemplateName\"", 
                                   "pass"); 
 
       // parse the same template using a variable

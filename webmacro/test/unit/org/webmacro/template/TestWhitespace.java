@@ -37,7 +37,7 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
    public void testWithElse () throws Exception {
-      String tmpl = "#if (false) { fail } #else { true }";
+      String tmpl = "#if (false) { fail } #else { pass }";
       assertStringTemplateEquals (tmpl, "pass ");
    } 
 

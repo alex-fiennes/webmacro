@@ -118,21 +118,59 @@ public abstract class Expression {
     }
   }
 
-  public static class AndOperation extends BinaryOperation {
-    public AndOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "And"; }
+  public static class AndOperation extends ExpressionBase {
+    private Object _l, _r;
     
-    public Object operate(Object l, Object r) {
-      return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
+    public AndOperation(Object l, Object r) { _l = l; _r = r; }
+
+    public Object evaluate(Context context) 
+      throws PropertyException  {
+      Object l, r;
+
+      try { 
+        l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      } catch (Exception e) { l = null; }
+      if (!isTrue(l)) 
+        return FALSE;
+      try { 
+        r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      } catch (Exception e) { r = null; }
+      if (!isTrue(r))
+        return FALSE;
+
+      return TRUE;
+    }
+
+    public void accept(TemplateVisitor v) { 
+      v.visitBinaryOperation("And", _l, _r);
     }
   }
 
-  public static class OrOperation extends BinaryOperation {
-    public OrOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Or"; }
+  public static class OrOperation extends ExpressionBase {
+    private Object _l, _r;
+    
+    public OrOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public Object operate(Object l, Object r) {
-      return (Expression.isTrue(l) || Expression.isTrue(r)) ? TRUE : FALSE;
+    public Object evaluate(Context context) 
+      throws PropertyException  {
+      Object l, r;
+
+      try { 
+        l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      } catch (Exception e) { l = null; }
+      if (isTrue(l)) 
+        return TRUE;
+      try { 
+        r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      } catch (Exception e) { r = null; }
+      if (isTrue(r))
+        return TRUE;
+
+      return FALSE;
+    }
+
+    public void accept(TemplateVisitor v) { 
+      v.visitBinaryOperation("Or", _l, _r);
     }
   }
 

@@ -79,16 +79,5 @@ public class TestAbuse extends TemplateTestCase {
                   + jscript  
                   + "#end";
       assertStringTemplateEquals (tmpl, jscript);
-        
-      System.out.println ("\t-->Brian, look @ TestAbuse.java:76<--"); 
-/*      
-      // check it with { and }
-      // NOTE:  THIS FAILS!
-      tmpl = "#if (true) {"
-           + jscript
-           + "}";
-
-      assertStringTemplateEquals (tmpl, jscript);
-*/
    }
 }
