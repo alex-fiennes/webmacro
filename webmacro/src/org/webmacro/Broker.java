@@ -435,6 +435,9 @@ public class Broker
       if (u == null) {
          try {
             u = new URL("file", null, -1, name); 
+            File f = new File(u.getFile());
+            if (!f.exists())
+               u = null;
          }
          catch (MalformedURLException ignored) {}
       }

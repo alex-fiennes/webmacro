@@ -18,21 +18,88 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
       super (name);
    }
 
-   public abstract void testGoodVariable () throws Exception;
-   public abstract void testGoodMethod () throws Exception;
-   public abstract void testGoodProperty () throws Exception;
+  public void testGoodVariable () throws Exception {
+    assert(false);
+  }
 
-   public abstract void testNoSuchVariable () throws Exception;
-   public abstract void testNoSuchMethod () throws Exception;
-   public abstract void testNoSuchProperty () throws Exception;
+  public void testGoodMethod () throws Exception {
+    assert(false);
+  }
 
-   public abstract void testVoidMethod () throws Exception;
-   public abstract void testNullMethod () throws Exception;
-   public abstract void testThrowsMethod() throws Exception;
+  public void testGoodProperty () throws Exception {
+    assert(false);
+  }
 
+  public void testNoSuchVariable () throws Exception {
+    assert(false);
+  }
+
+  public void testNoSuchMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testNoSuchProperty () throws Exception {
+    assert(false);
+  }
+
+  public void testVoidMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testNullMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testThrowsMethod() throws Exception {
+    assert(false);
+  }
 
    /** A variable in the context who's .toString() method returns null */
-   public abstract void testNullVariable () throws Exception;
+  public void testNullVariable () throws Exception {
+    assert(false);
+  }
+
+
+  public void testEvalGoodVariable () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalGoodMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalGoodProperty () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalNoSuchVariable () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalNoSuchMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalNoSuchProperty () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalVoidMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalNullMethod () throws Exception {
+    assert(false);
+  }
+
+  public void testEvalThrowsMethod() throws Exception {
+    assert(false);
+  }
+
+  public void testEvalNullVariable () throws Exception {
+    assert(false);
+  }
+
 
 
    /** Below are a few objects that should be used to
