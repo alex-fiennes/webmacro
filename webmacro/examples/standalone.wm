@@ -33,7 +33,7 @@ Here is a list of your colors (in the "color" form variable)
 }
 </ul>
 <hr>
-<form action="Standalone" method="GET">
+<form action="org.webmacro.examples.Standalone" method="GET">
 other: <input type=text name=other value=""> <br>
 var: <input type=text name=var value=""> <br>
 apple: <input type=checkbox name=stuff value="apple"> <br>
