@@ -223,7 +223,7 @@ public class Context implements Cloneable {
    /**
     * Set the local variables as a HashMap.<p>
     *
-    * One should use probably this method like this:<br>
+    * One should probably use this method like this:<br>
     * <code>context.setGlobalVariables ( (HashMap) _myDefaultMap.clone());</code>
     * @author Eric B. Ridge 
     * @date Oct 16, 2000
