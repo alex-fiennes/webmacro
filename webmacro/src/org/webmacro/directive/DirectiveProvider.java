@@ -90,6 +90,7 @@ public final class DirectiveProvider implements ResourceProvider
             try {
                register(dir);
             } catch (Exception ce) {
+              System.out.println(ce.toString());
               //@@@Engine.log.exception(ce);
               //@@@Engine.log.error("Could not load directive: " + dir);    
             }
