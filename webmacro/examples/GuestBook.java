@@ -99,8 +99,9 @@ public class GuestBook extends WMServlet
          Template t = getTemplate(templateName);
          return t;
       } catch (Exception e) {
-         throw new HandlerException("Could not locate template: " 
-                 + templateName);
+         throw new HandlerException("Could not load template: " 
+                 + templateName 
+                 + ".<br><br>The system reported the following error:<br>" + e.getMessage());
       }
    }
 
