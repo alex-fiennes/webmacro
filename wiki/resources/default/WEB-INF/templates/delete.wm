@@ -1,4 +1,4 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 <form action="$Request.RequestURI" method="POST">
 <input type=hidden name="delete" value="$PageName">
@@ -16,4 +16,4 @@
 </table>
 </form>
 
-#parse "footer.wm"
+#include as template "footer.wm"

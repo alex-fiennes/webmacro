@@ -1,7 +1,7 @@
 #if ($User) {
    ## say thank you
    #set $PageName = "Thank you for registering"
-   #parse "header.wm"
+   #include as template "header.wm"
 
    <table border=0 align=center>
    <tr>
@@ -21,7 +21,7 @@
    ## ask for registration info
    
    #set $PageName = "Register"
-   #parse "header.wm"
+   #include as template "header.wm"
 
    <form action="$Request.RequestURI" method=POST>
    <input type=hidden name="register" value="true">
@@ -83,4 +83,4 @@
    </form>
 }
 
-#parse "footer.wm"
+#include as template "footer.wm"

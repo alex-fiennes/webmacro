@@ -1,5 +1,5 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 This will be Lucene Index administration.
 
-#parse "footer.wm"
+#include as template "footer.wm"

@@ -12,7 +12,7 @@ $WikiUtil.unformatWikiTitle($PageName)</title>
    #if ($Page.RelatedTitles) {
       <META name="keywords" content="  #if ($Page) #begin#foreach $pageTitle in $Page.RelatedTitles #begin $pageTitle $space #end #end">
    }
-   #if ($Page.Author) {
+   #if ($Page.Author!=null) {
       <META name="author" content="$Wiki.getUser($Page.Author).Name">
    }
    #if ($Page.UnparsedData) {
@@ -61,4 +61,4 @@ $WikiUtil.unformatWikiTitle($PageName)</title>
 </tr>   
 </table>
 
-#parse "optionsbar.wm"
+#include as template "optionsbar.wm"

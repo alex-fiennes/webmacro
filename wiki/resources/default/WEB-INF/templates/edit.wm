@@ -1,4 +1,4 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 <form action="$Request.RequestURI" method=POST>
 <input type=hidden name="save" value="$PageName">
@@ -43,4 +43,4 @@ value="$keywords.trim()"
        >&nbsp;<input type=submit value="Save">
 </form>
 
-#parse "footer.wm"
+#include as template "footer.wm"

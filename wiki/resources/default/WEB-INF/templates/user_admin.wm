@@ -1,4 +1,4 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 #if ($User) #begin
  <form action="?user_admin=true" method=POST>
@@ -37,4 +37,4 @@
       </font></a>
    #end
 #end
-#parse "footer.wm"
+#include as template "footer.wm"

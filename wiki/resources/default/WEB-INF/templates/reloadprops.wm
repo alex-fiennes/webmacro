@@ -1,5 +1,5 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 .props wurden neu geladen.
 
-#parse "footer.wm"
+#include as template "footer.wm"

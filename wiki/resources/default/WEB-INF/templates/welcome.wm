@@ -1,8 +1,21 @@
 #set $PageName = "Welcome to Wiki"
 
-#parse "header.wm"
+#include as template "header.wm"
 
-Welcome to Wiki. This will be the nice welcome page to get you started with
-your Wiki.
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#include as template "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top>
+      Welcome to Wiki. This will be the nice welcome page to get you started with
+      your Wiki.
+   </td>
+</tr>
+</table>
 
-#parse "footer.wm"
+
+#include as template "footer.wm"

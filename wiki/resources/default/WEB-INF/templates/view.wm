@@ -1,9 +1,9 @@
-#parse "header.wm"
+#include as template "header.wm"
 
 <table border=0 width="100%">
 <tr>
 	<td class="LeftMenu" valign=top width="120"> 
-		#parse "leftmenu.wm"
+		#include as template "leftmenu.wm"
 	</td>
 	
 	<td width="8">&nbsp;</td>
@@ -18,7 +18,8 @@
             You can create the page $PageName by <a href="ControllerPage?edit=$WikiUtil.formatAsWikiTitle($PageName)">clicking here</a>.
          }            
       }
+    </td>
 </tr>
 </table>
 
-#parse "footer.wm"
+#include as template "footer.wm"

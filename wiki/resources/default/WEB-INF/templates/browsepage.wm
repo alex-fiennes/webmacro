@@ -50,12 +50,12 @@
    <td bgcolor="#000000" colspan=6 height=1></td>
 </table>
 
-#parse "optionsbar.wm"
+#include as template "optionsbar.wm"
 
 <table border=0>
 <tr>
    <td class="LeftMenu" rowspan=2 valign=top>
-		#parse "leftmenu.wm"
+		#include as template "leftmenu.wm"
    </td>
    <td width=15></td>
    <td valign=middle nowrap>
@@ -74,4 +74,4 @@
 </tr>   
 </table>
 
-#parse "footer.wm"
+#include as template "footer.wm"

@@ -1,9 +1,9 @@
 #set $PageName = "Error "
-#parse "header.wm"
+#include as template "header.wm"
 
 #if ($error.Message){
    $error.Message
 } #else {
    $error
 }
-#parse "footer.wm"
+#include as template "footer.wm"
