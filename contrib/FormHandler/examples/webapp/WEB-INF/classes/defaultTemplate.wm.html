@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.2 (Linux)">
+	<META NAME="AUTHOR" CONTENT="Jason B.">
+	<META NAME="CREATED" CONTENT="20010601;1395300">
+	<META NAME="CHANGEDBY" CONTENT="Jason B.">
+	<META NAME="CHANGED" CONTENT="20010601;14075800">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1 ALIGN=LEFT><FONT COLOR="#280099"><U>Form Handler Example -
+defaultTemplate.wm</U></FONT></H1>
+<P>Useful to see how the information is accessed, and how doActions
+are called.</P>
+<FORM NAME="Standard" ACTION="$HandlerPath.URL">
+	<INPUT TYPE=HIDDEN NAME="handlerPath" VALUE="$HandlerPath.FormHandlerPath">
+	<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 RULES=NONE>
+		<COL WIDTH=128*>
+		<COL WIDTH=128*>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TD WIDTH=50%>
+					<P><B>FormHandler Information Display:</B></P>
+				</TD>
+				<TD WIDTH=50%>
+					<P><FONT FACE="Times, serif"><FONT SIZE=3><B>Source WM Script:</B></FONT></FONT></P>
+				</TD>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR>
+				<TD WIDTH=50% VALIGN=TOP>
+					<P>First Name: $FormHandler.myFirstName <BR>Last Name:
+					$FormHandler.myLastName <BR>Whole Name: $FormHandler.myWholeName
+										</P>
+				</TD>
+				<TD WIDTH=50%>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>First Name:
+					\$FormHandler.myFirstName <BR>Last Name:
+					\$FormHandler.myLastName <BR>Whole Name:
+					\$FormHandler.myWholeName </FONT></FONT>
+					</P>
+				</TD>
+			</TR>
+			<TR>
+				<TD WIDTH=50% VALIGN=TOP>
+					<P>First Name: <INPUT TYPE=TEXT NAME="myFirstName" VALUE="$FormHandler.myFirstName" SIZE=18></P>
+					<P>Last Name: <INPUT TYPE=TEXT NAME="myLastName" VALUE="$FormHandler.myLastName" SIZE=18></P>
+					<P>Type middle I here for calculating the whole name: <INPUT TYPE=TEXT NAME="middleInitial" SIZE=18></P>
+				</TD>
+				<TD WIDTH=50%>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;INPUT
+					TYPE=TEXT NAME=&quot;myFirstName&quot;
+					VALUE=&quot;\$FormHandler.myFirstName&quot; &gt;</FONT></FONT></P>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;INPUT
+					TYPE=TEXT NAME=&quot;myLastName&quot;
+					VALUE=&quot;\$FormHandler.myLastName&quot; &gt;</FONT></FONT></P>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;INPUT
+					TYPE=TEXT NAME=&quot;middleInitial&quot; &gt;</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR>
+				<TD WIDTH=50% VALIGN=TOP>
+					<P><BR>
+					</P>
+				</TD>
+				<TD WIDTH=50%>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;FORM
+					NAME=&quot;Standard&quot; ACTION=&quot;\$HandlerPath.URL&quot;&gt;</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR>
+				<TD WIDTH=50% VALIGN=TOP>
+					<P><INPUT TYPE=SUBMIT NAME="CommandButton1" VALUE="Submit Values">
+					- <INPUT TYPE=SUBMIT NAME="_doDisplayCat(middleInitial)" VALUE="Submit Values and Recalculate Whole Name"></P>
+				</TD>
+				<TD WIDTH=50%>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;INPUT
+					TYPE=SUBMIT NAME=&quot;Button1&quot; VALUE=&quot;Submit Values&quot;&gt;</FONT></FONT></P>
+					<P><FONT FACE="Fixed, monospace"><FONT SIZE=2>&lt;INPUT
+					TYPE=SUBMIT NAME=&quot;_doDisplayCat(middleInitial)&quot;
+					VALUE=&quot;Submit Values and Recalculate Whole Name&quot;&gt;</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=50%>
+					<P><BR>
+					</P>
+				</TD>
+				<TD WIDTH=50%>
+					<P ALIGN=CENTER><FONT FACE="Fixed, monospace"><FONT SIZE=2><I><B>Note:
+					how above the doAction DisplayCat is called with a form
+					variable.</B></I></FONT></FONT></P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</FORM>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

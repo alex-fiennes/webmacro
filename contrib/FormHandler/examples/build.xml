@@ -1,0 +1,45 @@
+<project name="examples" default="help" basedir=".">
+
+<target name="help">
+  <echo>
+  Usage: ant (target)
+  
+  Current Ant Targets:
+    help - this display
+    compile - compiles source
+    rebuild - cleans build directory and recopiles everything
+  </echo>
+</target>
+
+<target name="clean">
+  <delete>
+    <fileset dir="webapp/WEB-INF/classes/" includes="**/*.class"/>
+    <fileset dir="webapp/WEB-INF/lib/" includes="*"/>
+  </delete>
+</target>
+
+<target name="precompile">
+  <copy todir="webapp/WEB-INF/lib/" file="../../lib/webmacro-0.97a.jar"/>
+  <copy todir="webapp/WEB-INF/lib/" file="../lib/log4j.jar"/>
+  <copy todir="webapp/WEB-INF/lib/" file="../../lib/servlet-2.2.jar"/>
+  <copy todir="webapp/WEB-INF/lib/" file="../formhandler.jar"/>
+</target>
+  
+<target name="compile" depends="precompile">
+  <mkdir dir="webapp/WEB-INF/classes/"/>
+  <javac srcdir="webapp/WEB-INF/classes/" destdir="webapp/WEB-INF/classes/">
+    <include name="**/*.java"/>
+    <classpath>
+      <pathelement location="webapp/WEB-INF/lib/webmacro-0.97a.jar" />
+      <pathelement location="webapp/WEB-INF/lib/log4j.jar" />
+      <pathelement location="webapp/WEB-INF/lib/servlet-2.2.jar" />
+      <pathelement location="webapp/WEB-INF/lib/formhandler.jar" />
+    </classpath>
+  </javac>
+</target>
+
+<target name="rebuild" depends="clean, compile">
+</target>
+
+</project>
+
