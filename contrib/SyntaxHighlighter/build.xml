@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project name="SyntaxHighlighter" default="main" basedir=".">
+	<property name="build.compiler" value="jikes"/>
+	<property name="dest" value="build"/>
+	<property name="dest.classes" value="${dest}/WEB-INF/classes"/>
+	<property name="dest.lib" value="${dest}/WEB-INF/lib"/>
+
+	<target name="prepare">
+		<mkdir dir="${dest}"/>
+		<mkdir dir="${dest.classes}"/>
+	</target>
+
+	<target name="main" depends="prepare">
+        <mkdir dir="autogen/org/webmacro/util/"/>
+        <javacc
+            target="jj-src/BaseJava12SyntaxHighlighter.jj"
+            outputdirectory="autogen/org/webmacro/util"
+            javacchome="lib"
+            static="false"
+        />
+		<javac
+			srcdir="autogen:src"
+			destdir="${dest.classes}"
+			extdirs="lib"
+			debug="on"
+		/> 
+
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${dest}"/>
+		<delete dir="autogen"/>
+	</target>
+
+	<target name="all" depends="clean,main"/>
+  
+</project>

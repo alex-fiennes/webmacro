@@ -1,0 +1,17 @@
+.javakeyword {
+	color : Aqua;
+	font :  bold;
+	clear : none;
+}
+
+.javacomment {
+ font-style :  italic;
+ color :  #A9A9A9;
+}
+
+.javastring { 
+color: Green;
+ }
+ .javatype { 
+ color: red
+  }
