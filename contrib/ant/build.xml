@@ -4,7 +4,7 @@
     
     $Id$
 -->
-<project name="WebMacro" default="main" basedir="../../">
+<project name="WebMacro" default="main" basedir=".">
 
 	<property name="build.compiler" value="modern"/>
 	<property name="dest" value="ant-build"/>
