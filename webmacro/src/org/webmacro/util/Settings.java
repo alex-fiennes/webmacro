@@ -10,23 +10,62 @@ public class Settings {
    Properties _props;
    String _prefix;
 
+   /**
+     * Create an empty Settings object
+     */
    public Settings() {
       _props = new Properties();
       _prefix = null;
    }
 
+   /**
+     * Search for the named settingsFile on the classpath 
+     * and instantiate a Settings object based on its values
+     */
+   public Settings(String settingsFile) 
+      throws InitException, IOException
+   {
+      this();
+      load(settingsFile);
+   }
 
+   /**
+     * Search for the named settingsFile from the supplied URL
+     * and instantiate a Settings object based on its values
+     */
+   public Settings(URL settingsFile)
+      throws InitException, IOException
+   {
+      this();
+      load(settingsFile);
+   }
+
+
+   /**
+     * Instantiate a new Settings object using the properties 
+     * supplied as the settings values.
+     */
    public Settings(Properties values) {
       _props = values;
       _prefix = null;
    }
 
+   /**
+     * Instantiate a new Settings object using the properties 
+     * supplied as the settings values. Only properties begining
+     * with the supplied prefix are considered, and they are 
+     * treated as though the prefix were not there.
+     */
    private Settings(Properties p, String prefix) {
       _props = p;
       _prefix = prefix;
    }
 
 
+   /**
+     * Load settings from the supplied fileName, searching for 
+     * the file along the classpath.
+     */
    public void load(String fileName) throws InitException, IOException 
    {  
       ClassLoader cl = this.getClass().getClassLoader();
@@ -60,6 +99,15 @@ public class Settings {
       load(u);       
    }
 
+   /**
+     * Load settings from the supplied URL
+     */
+   public void load(URL u) throws IOException {
+      InputStream in = u.openStream();
+      _props.load(in);
+      in.close();
+   }
+
    private static
    void buildPath(StringBuffer b, String fileName, Enumeration e)
    {  
@@ -71,12 +119,9 @@ public class Settings {
       }
    }
 
-   public void load(URL u) throws IOException {
-      InputStream in = u.openStream();
-      _props.load(in);
-      in.close();
-   }
-
+   /**
+     * Get a setting
+     */
    public String get(String key) {
       String lookup;
       if (_prefix == null) {
@@ -87,7 +132,24 @@ public class Settings {
       return _props.getProperty(lookup);
    }
 
-   public boolean isEnabled(String key) {
+   /**
+     * Get a setting and convert it to an int 
+     */
+   public int getInt(String key) {
+      String snum = get(key);
+      try {
+         return Integer.parseInt(key);
+      } catch (Exception e) {
+         return 0;
+      }
+   }
+
+   /**
+     * Get a setting and convert it to a boolean. The 
+     * values "on", "true", and "yes" are considered to 
+     * be TRUE values, everything else is FALSE.
+     */
+   public boolean getBoolean(String key) {
       String setting = get(key);
       return ((setting != null) &&
               ((setting.equalsIgnoreCase("on"))
@@ -95,6 +157,15 @@ public class Settings {
               || (setting.equalsIgnoreCase("yes")) ));
    }
 
+   /**
+     * Get a subset of the settings in this file. The 
+     * returned Settings object will be just those settings 
+     * beginning with the supplied prefix, with the 
+     * prefix chopped off. So if this settings file had 
+     * a setting "LogLevel.foo" then the settings file
+     * returned by getSettings("LogLevel") would contain
+     * the key "foo".
+     */
    public Settings getSettings(String prefix) {
       if (_prefix == null) {
          return new Settings(_props, prefix);
@@ -104,6 +175,9 @@ public class Settings {
       }
    }
 
+   /**
+     * Get the keys for this settings object as an array
+     */
    public String[] keys() {
       ArrayList al = new ArrayList();
       Enumeration i = _props.keys();
@@ -122,6 +196,9 @@ public class Settings {
    }
 
 
+   /**
+     * Brief test
+     */
    public static void main(String arg[]) throws Exception
    {
 
@@ -134,7 +211,7 @@ public class Settings {
          System.out.println("prop " + keys[i] + " = " + sb.get(keys[i]));
       }
 
-      System.out.println("LogTraceExceptions is: " + s.isEnabled("LogTraceExceptions"));
+      System.out.println("LogTraceExceptions is: " + s.getBoolean("LogTraceExceptions"));
 
    }
 }
