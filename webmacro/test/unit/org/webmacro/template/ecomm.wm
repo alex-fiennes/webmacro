@@ -1,0 +1,52 @@
+#comment {
+  ecomm.wm
+  A template to excercise the standard eCommerce macros supplied with WM.
+}
+#include as macro "allmacros.wmm"
+
+## set up some useful data for the transaction.
+## see the paypalSetup macro for the property name specs.
+#bean $System = "java.lang.System" scope=static
+#bean $cust = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $cust.firstName = $System.getProperty("user.name")
+}
+## set all the tran properties
+#bean $tran = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $tran.sellersEmailAccount = "support@opendoors.com"
+  #set $tran.itemName = "WebMacro Dues"
+  #set $tran.itemNumber = "9092"
+  #set $tran.amount = "25.00"
+  #set $tran.specialInstructions = "Your Dues Help Support WebMacro Publicity!"
+}
+#bean $app = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $app.returnURL = "http://www.webmacro.org"
+  #set $app.cancelURL = "http://www.webmacro.org/CancelDues"
+}
+
+## now invoke the paypal macro with some supporting html so it can be viewed
+<html>
+<center>
+$cust.firstName:
+<p>
+Please Pay Your WebMacro Dues Today at PayPal.
+<br>
+$tran.amount is due and will keep your WebMacro subscritpion rolling.
+<p>
+#paypalSetup($cust, $tran, $app)
+<hr>
+#bean $bongoTran = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $bongoTran.sellersEmailAccount = "sales@opendoors.com"
+  #set $bongoTran.itemName = "Bongo Annual Subscription"
+  #set $bongoTran.itemNumber = "9102"
+  #set $bongoTran.amount = "72.00"
+  #set $bongoTran.specialInstructions = "Your Dues Help Support WebMacro Publicity!"
+}
+#set $app.returnURL = "http://opendoors.com/bongo/paid"
+#set $app.cancelURL = "http://opendoors.com/bongo/cancel"
+<p>
+Also, please consider a one year subscription to bongo.
+<br>
+The most amazing graphical interface builder for java! Just $bongoTran.amount USD. 
+#paypalSubscribe($cust, $bongoTran, $app);
+</center>
+</html>
