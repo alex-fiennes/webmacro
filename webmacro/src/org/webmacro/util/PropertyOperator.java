@@ -571,9 +571,9 @@ final public class PropertyOperator
      * that failed and try the binary approach. It relies on getProperty
      * for navigation, which is why getProperty takes start/end args.
      * @param instance the object to start from
-     * @names path to a property we would like to set 
-     * @value the value we'd like to set it to 
-     * @pos   we could set names[pos] from here
+     * @param names path to a property we would like to set 
+     * @param value the value we'd like to set it to 
+     * @param pos   we could set names[pos] from here
      * @return true if we succeeded in setting, false otherwise
      */
    private boolean setProperty(

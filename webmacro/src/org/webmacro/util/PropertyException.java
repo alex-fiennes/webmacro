@@ -42,7 +42,7 @@ final public class PropertyException extends Exception
      * You can query a PropertyException to find out what the 
      * underlying exception was, if there was one.
      * <p>
-     * @returns null if the property was simply not found
+     * @return null if the property was simply not found
      */ 
    public Throwable getThrowable() {
       return t;
