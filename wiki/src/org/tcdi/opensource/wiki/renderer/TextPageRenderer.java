@@ -156,10 +156,10 @@ public class TextPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderLineBreak() {
-        return "";        
+        return System.getProperty ("line.separator");        
     }
     
     protected String renderParagraphBreak() {
-        return "";        
+        return System.getProperty ("line.separator") + System.getProperty ("line.separator");        
     }    
 }
