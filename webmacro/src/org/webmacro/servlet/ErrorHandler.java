@@ -39,7 +39,8 @@ import org.webmacro.engine.StringTemplate;
 final class ErrorHandler implements Handler
 {
   private static final String DEFAULT_ERROR_TEXT = 
-    "<HTML><HEAD><TITLE>Error</TITLE></HEAD>" 
+    "<HTML><HEAD><TITLE>Error</TITLE></HEAD>\n" 
+    + "#set $Response.ContentType = \"text/html\"\n"
     + "<BODY><H1>Error</H1>"
     + "<HR>$error</BODY></HTML>";
   
