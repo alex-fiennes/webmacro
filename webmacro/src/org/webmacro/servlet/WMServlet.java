@@ -549,7 +549,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     protected void execute (Template tmpl, WebContext c)
             throws IOException
     {
-        FastWriter fw = null;
         boolean timing = Flags.PROFILE && c.isTiming();
         try
         {
@@ -585,16 +584,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             
                 // now write the FW buffer to the response output stream
                 writeResponseBytes(resp, bytes, encoding);
-            }
-            finally
-            {
-                if (timing) c.stopTiming();
-            }
-            if (timing) c.startTiming("FastWriter.close()");
-            try
-            {
-                fw.close();
-                fw = null;
             }
             finally
             {
@@ -636,22 +625,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             catch (Exception errExcept)
             {
                 _log.error("Error writing error template!", errExcept);
-            }
-        }
-        finally
-        {
-            try
-            {
-                if (fw != null)
-                {
-                    fw.flush();
-                    fw.close();
-                    fw = null;
-                }
-            }
-            catch (Exception e3)
-            {
-                // ignore disconnect
             }
         }
     }
@@ -721,7 +694,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * This method is called to handle the processing of a request. It
      * should analyze the data in the request, put whatever values are
      * required into the context, and return the appropriate view.
-     * @see getTemplate
      * @return the template to be rendered by the WebMacro engine
      * @exception HandlerException throw this to produce vanilla error messages
      * @param context contains all relevant data structures, incl builtins.
