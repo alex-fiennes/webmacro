@@ -4,6 +4,9 @@ $NullObject
 use an object that is not null:
 $TestObject
 
+use an object not in the Context:
+$NotInContext
+
 use known-good methods of TestObject:
 we should see:
    Eric == Eric
