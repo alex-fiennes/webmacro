@@ -5,6 +5,23 @@ import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
+/**
+ * Directive is an abstract class which directives can extend.  
+ * Nested within Directive (as static classes) are a host of classes used
+ * for building directive argument lists.  
+ * 
+ * Directives are Macros, so they must implement the Macro interface.  
+ * For convenience, an implementation of evaluate() (written in terms of
+ * write()) is provided in the base class.)  
+ * 
+ * Directives must implement the following static method:
+ *   public DirectiveDescriptor getDescriptor();
+ * 
+ * It is expected that all directives will build a copy of their descriptor
+ * statically, using the various XxxArg() constructors, and return a reference
+ * to that from getDescriptor().  
+ */ 
+
 public abstract class Directive implements Macro { 
 
   public static final int ArgType_CONDITION    = 1;
@@ -22,6 +39,18 @@ public abstract class Directive implements Macro {
   public static final int Punct_LPAREN         = 2;
   public static final int Punct_RPAREN         = 3;
   public static final int Punct_EQUALS         = 4;
+
+  /**
+   * Directives must implement a build() method.  The build method
+   * should examine the directive arguments (available through the
+   * DirectiveBuilder) and return a macro describing the built
+   * directive.  In most cases, build() will just set up the
+   * directive's private fields and return 'this', but in some
+   * cases, no macro needs be returned (such as directives with only
+   * side effects on the build context) or some other macro may be
+   * returned (such as in the case of "#if (true) { }" -- no IfDirective
+   * object need be returned, just return the block.)  
+   */
 
   public abstract Object build(DirectiveBuilder b, 
                                BuildContext bc)
