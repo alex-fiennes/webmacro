@@ -131,18 +131,29 @@ public class Servlet22Broker extends ServletBroker {
     */
    public URL getResource(String name) {
       try {
-         // NOTE: Tomcat4 needs a leading '/'.
-         // If this doesn't work with your 2.2+ container, try commenting out the following line
-         if (!name.startsWith("/")) name = "/" + name;
-         URL u = _servletContext.getResource(name);
+          // NOTE: Tomcat4 needs a leading '/'.
+          // However, when loading resources from the class-loader, they
+          // may _not_ start with a leading '/'. So we have to build
+          // up two different names. Ugly!
+          String contextName = name;
+          if (name.startsWith("/")) {
+              name = name.substring(1);
+          } else {
+              StringBuffer b = new StringBuffer(name.length()+1);
+              b.append("/");
+              b.append(name);
+              contextName = b.toString();
+          }
+          URL u = _servletContext.getResource(contextName);
          if (u != null && u.getProtocol().equals("file")) {
-            File f = new File(u.getFile());
-            if (!f.exists())
-               u = null;
+           File f = new File(u.getFile());
+           if (!f.exists())
+              u = null;
          }
-         if (u == null)
+         if (u == null) {
             u = _servletClassLoader.getResource(name);
-         if (u == null)
+         }
+         if (u == null) 
             u = super.getResource(name);
          return u;
       }

@@ -58,11 +58,19 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader {
       }
 
       // It isn't clear from the javadocs, whether ClassLoader.getResource()
-      // needs a starting slash, so won't add one at the moment.
+      // needs a starting slash, so won't add one at the moment. Even worse,
+      // most class-loaders require you to _not have_ a slash, so we'll
+      // remove it, if it exists
+      if (config.startsWith("/")) {
+	  config = config.substring(1);
+      }
       this.path = config;
    }
 
    public Template load(String query, CacheElement ce) throws ResourceException {
+      if (query.startsWith("/")) {
+	  query = query.substring(1);
+      }
       URL url = loader.getResource(path.concat(query));
       if (url != null && log.loggingDebug()) {
          log.debug("ClassPathTemplateProvider: Found Template " + url.toString());
