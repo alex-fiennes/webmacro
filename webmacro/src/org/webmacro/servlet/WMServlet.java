@@ -572,19 +572,24 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             + ((tmpl != null) ?  (tmpl  + ": " + e + "\n") :
                 ("The template failed to load; double check the "
                 + "TemplatePath in your webmacro.properties file."));
-                _log.warning (error,e);
-                try {
-                    Template errorTemplate = error (c,
-                    "WebMacro encountered an error while executing a template:\n"
-                    + ((tmpl != null) ?  (tmpl  + ": ")
-                    : ("The template failed to load; double check the "
-                    + "TemplatePath in your webmacro.properties file."))
-                    + "\n<pre>" + e + "</pre>\n");
-                    fw.reset (fw.getOutputStream ());
-                    errorTemplate.write (fw, c);
-                } catch (Exception ignore) { 
-                    // ignored
-                }
+            _log.error (error,e);
+            try {
+                Template errorTemplate = error (c,
+                "WebMacro encountered an error while executing a template:\n"
+                + ((tmpl != null) ?  (tmpl  + ": ")
+                : ("The template failed to load; double check the "
+                + "TemplatePath in your webmacro.properties file."))
+                + "\n<pre>" + e + "</pre>\n");
+                
+                if (fw == null)
+                    fw = FastWriter.getInstance(_broker);
+                fw.reset (fw.getOutputStream ());
+                errorTemplate.write (fw, c);
+                // now write the FW buffer to the response output stream
+                fw.writeTo (c.getResponse().getOutputStream ());
+            } catch (Exception errExcept) { 
+                _log.error("Error writing error template!", errExcept);
+            }
         } finally {
            try {
               if (fw != null) {
