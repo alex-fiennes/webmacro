@@ -565,12 +565,42 @@ public class ListUtil {
 	return rows;
   }
 
+  public static List createRange(int rangeBegin, int rangeEnd){
+    return createRange(rangeBegin, rangeEnd, 1);
+  }
+
+  public static List createRange(int rangeBegin, int rangeEnd, int incr){
+    if (incr > 0){ 
+      if (rangeBegin > rangeEnd)
+        throw new IllegalArgumentException("Starting number must be less than ending number");
+    } else if (incr < 0){ 
+      if (rangeBegin < rangeEnd)
+        throw new IllegalArgumentException("Starting number must be greater than ending number");
+    } else { // incr == 0
+      throw new IllegalArgumentException("Increment cannot be zero");
+    }
+      
+    int size = ((rangeEnd - rangeBegin) / incr) + 1;
+    Integer[] ia = new Integer[size];
+    int i = 0;
+    for (int num=rangeBegin; (incr>0) ? num<=rangeEnd : num>=rangeEnd; num+=incr){
+      ia[i++]=new Integer(num);
+    }
+    return Arrays.asList(ia);
+  }
+
   /** test harness */
   public static void main(String[] args){
     ListUtil lu = ListUtil.getInstance();
     Object[] arr = {
       "ant", "bird", "cat", "dog", "elephant", "ferret", "gopher"
     };
+    
+    System.out.println("createRange(2, 10, 2): " + createRange(2, 10, 2));
+    System.out.println("createRange(-10, 0): " + createRange(-10, 0));
+    System.out.println("createRange(21, 10, -5): " + createRange(21, 10, -5));
+    System.out.println("createRange(21, 21, -5): " + createRange(21, 21, -5));
+    
     ArrayList l = new ArrayList(Arrays.asList(arr));
     java.io.PrintWriter out =
       new java.io.PrintWriter(System.out, true);
