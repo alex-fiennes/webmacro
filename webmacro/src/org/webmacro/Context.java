@@ -23,15 +23,11 @@
 
 package org.webmacro;
 
+import java.util.*;
+
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.FunctionCall;
 import org.webmacro.engine.MethodWrapper;
-import org.webmacro.util.Pool;
-import org.webmacro.util.Settings;
-import org.webmacro.util.SubSettings;
-
-import java.lang.reflect.Constructor;
-import java.util.*;
 
 /**
  * A Context contains state. The idea is to put all of the data you
@@ -58,16 +54,13 @@ import java.util.*;
  */
 public class Context implements Map, Cloneable
 {
-    private Broker _broker;
-    private HashMap _tools = new HashMap();
-    private HashMap _funcs = new HashMap();
-    private Log _log;
+    private final Broker _broker;
+    private final Log _log;
+    private HashMap _funcs = null; // lazy initialization
 
-    private HashMap _initializedTools = new HashMap();
     private EvaluationExceptionHandler _eeHandler;
 
     private Map _variables = new HashMap();
-    private Pool _contextPool = null;
 
     private TemplateEvaluationContext _teContext
             = new TemplateEvaluationContext();
@@ -75,24 +68,19 @@ public class Context implements Map, Cloneable
     private static final org.webmacro.engine.UndefinedMacro UNDEF
             = org.webmacro.engine.UndefinedMacro.getInstance();
 
-    // Adding new tools to the context
-    private static final Class[] _ctorArgs1 = {
-        java.lang.String.class,
-        org.webmacro.util.Settings.class
-    };
-    private static final Class[] _ctorArgs2 = {java.lang.String.class};
-
     private org.webmacro.profile.Profile _prof = null;
+
+    /**
+     * Create a new Context relative to the default WM instance
+     */
+    public Context() throws InitException {
+        this(Broker.getBroker());
+    }
 
     /**
      * Create a new Context relative to the supplied broker
      */
     public Context (Broker broker)
-    {
-        this(broker, true);
-    }
-
-    protected Context (Broker broker, boolean loadTools)
     {
         _prof = broker.newProfile();
         if (_prof != null)
@@ -105,8 +93,6 @@ public class Context implements Map, Cloneable
         }
         _broker = broker;
         _log = broker.getLog("context", "property and evaluation errors");
-        if (loadTools)
-            loadTools("ContextTools");
         if (_prof != null)
         {
             stopTiming();
@@ -120,31 +106,6 @@ public class Context implements Map, Cloneable
         public String _templateName;
         public int _lineNo;
         public int _columnNo;
-    }
-
-    private class SettingHandler extends Settings.ListSettingHandler
-    {
-        public void processSetting (String settingKey, String settingValue)
-        {
-            try
-            {
-                addTool(settingKey, settingValue, "Tool");
-            }
-            catch (Exception e)
-            {
-                _log.error("Provider (" + settingValue + ") failed to load", e);
-            }
-        }
-    }
-
-    /**
-     * Load the context tools listed in the supplied string. See
-     * the ComponentMap class for a description of the format of
-     * this string.
-     */
-    protected final void loadTools (String keyName)
-    {
-        _broker.getSettings().processListSetting(keyName, new SettingHandler());
     }
 
     /**
@@ -178,7 +139,6 @@ public class Context implements Map, Cloneable
         }
         c._prof = _broker.newProfile();
         c.startTiming("Context life"); // stops in clear()
-        c._initializedTools = (HashMap) _initializedTools.clone();
         c._teContext = new TemplateEvaluationContext();
         if (_variables instanceof HashMap)
         {
@@ -197,10 +157,6 @@ public class Context implements Map, Cloneable
 
     /**
      * Clear the context so that it can be used for another request.
-     * This does not meant hat the context is completely empty: it
-     * may have been configured with some initial state, such as
-     * a collection of tools, that are to be re-used. But all local
-     * variables and other local structures will be cleared.
      * <p>
      * Subclasses may override the clear method and add functionality
      * but they must call super.clear() if they do so.
@@ -208,14 +164,6 @@ public class Context implements Map, Cloneable
     public void clear ()
     {
         _variables.clear();
-        Iterator i = _initializedTools.entrySet().iterator();
-        while (i.hasNext())
-        {
-            Map.Entry m = (Map.Entry) i.next();
-            ContextTool ct = (ContextTool) m.getKey();
-            ct.destroy(m.getValue());
-        }
-        _initializedTools.clear();
         _eeHandler = null;
         if (_prof != null)
         {
@@ -302,7 +250,7 @@ public class Context implements Map, Cloneable
         Object ret = _variables.get(name);
         if (ret == null && !_variables.containsKey(name))
         {
-            Object tool = _tools.get(name);
+            Object tool = _broker.getTool(name);
             if (tool != null)
             {
                 try
@@ -310,7 +258,6 @@ public class Context implements Map, Cloneable
                     ContextTool ct = (ContextTool) tool;
                     ret = ct.init(this);
                     put(name, ret);
-                    _initializedTools.put(ct, ret);
                 }
                 catch (PropertyException e)
                 {
@@ -321,7 +268,10 @@ public class Context implements Map, Cloneable
             {
                 FunctionCall fc = (FunctionCall) name;
                 String fname = fc.getName();
-                MethodWrapper func = (MethodWrapper) _funcs.get(fname);
+                MethodWrapper func = null;
+                if (_funcs != null) {
+                    func = (MethodWrapper) _funcs.get(fname);
+                }
                 if (func == null)
                 {
                     func = _broker.getFunction(fname);
@@ -355,7 +305,6 @@ public class Context implements Map, Cloneable
     {
         try
         {
-            //return internalGet(name);
             Object o = internalGet(name);
             if (o == UNDEF)
             {
@@ -394,6 +343,8 @@ public class Context implements Map, Cloneable
     public final void putFunction (String name, Object instance, String methodName)
     {
         MethodWrapper func = wrapMethod(instance, methodName);
+        if (_funcs == null)
+            _funcs = new HashMap();
         _funcs.put(name, func);
     }
 
@@ -540,50 +491,6 @@ public class Context implements Map, Cloneable
         return set(names, value);
     }
 
-    private static String makeName (Object[] names)
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.append("$(");
-        for (int i = 0; i < names.length; i++)
-        {
-            if (i != 0)
-            {
-                buf.append(".");
-            }
-            buf.append((names[i] != null) ? names[i] : "NULL");
-        }
-        buf.append(")");
-        return buf.toString();
-    }
-
-    /**
-     * Assign the object pool that this context should return to
-     * when its recycle() method is called.
-     */
-    public final void setPool (Pool contextPool)
-    {
-        _contextPool = contextPool;
-    }
-
-    public final Pool getPool ()
-    {
-        return _contextPool;
-    }
-
-    /**
-     * Return the context to the object pool assigned via setPool(),
-     * if any. This method implicitly calls clear().
-     */
-    public final void recycle ()
-    {
-        clear();
-        if (_contextPool != null)
-        {
-            _contextPool.put(this);
-        }
-    }
-
-
     /**
      * Set the underlying Map object. The supplied Map will subsequently
      * be used to resolve local variables.
@@ -673,120 +580,7 @@ public class Context implements Map, Cloneable
         return _variables.values();
     }
 
-    /**
-     * Attempts to instantiate the tool using three different constructors
-     * until one succeeds, in the following order:
-     * <ul>
-     * <li>new MyContextTool(String key, Settings settings)</li>
-     * <li>new MyTool(String key)</li>
-     * <li>new MyTool()</li>
-     * </ul>
-     * The key is generally the unqualified class name of the tool minus the
-     * "Tool" suffix, e.g., "My" in the example above
-     * The settings are any configured settings for this tool, i.e, settings
-     * prefixed with the tool's key.
-     * <br>
-     * NOTE: keats - 25 May 2002, no tools are known to use the settings mechanism.
-     * We should create an example of this and test it, or abolish this capability!
-     */
-    private void addTool (String key, String className, String suffix)
-    {
 
-        Class c;
-        try
-        {
-            c = _broker.classForName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            _log.warning("Context: Could not locate class for context tool "
-                    + className);
-            return;
-        }
-        if (key == null || key.equals(""))
-        {
-            key = className;
-            int start = 0;
-            int end = key.length();
-            int lastDot = key.lastIndexOf('.');
-            if (lastDot != -1)
-            {
-                start = lastDot + 1;
-            }
-            if (key.endsWith(suffix))
-            {
-                end -= suffix.length();
-            }
-            key = key.substring(start, end);
-        }
-
-        Constructor ctor = null;
-        Constructor[] ctors = c.getConstructors();
-        Class[] parmTypes = null;
-        Object instance = null;
-      
-        // check for 2 arg constructor
-        for (int i = 0; i < ctors.length; i++)
-        {
-            parmTypes = ctors[i].getParameterTypes();
-            if (parmTypes.length == 2
-                    && parmTypes[0].equals(_ctorArgs1[0])
-                    && parmTypes[1].equals(_ctorArgs1[1]))
-            {
-                ctor = ctors[i];
-                Object[] args = {key, new SubSettings(_broker.getSettings(), key)};
-                try
-                {
-                    instance = ctor.newInstance(args);
-                }
-                catch (Exception e)
-                {
-                    _log.error("Failed to instantiate tool "
-                            + key + " of class " + className + " using constructor "
-                            + ctor.toString(), e);
-                }
-            }
-        }
-        if (instance == null)
-        {
-            // check for 1 arg constructor
-            for (int i = 0; i < ctors.length; i++)
-            {
-                parmTypes = ctors[i].getParameterTypes();
-                if (parmTypes.length == 1 && parmTypes[0].equals(_ctorArgs1[0]))
-                {
-                    ctor = ctors[i];
-                    Object[] args = {key};
-                    try
-                    {
-                        instance = ctor.newInstance(args);
-                    }
-                    catch (Exception e)
-                    {
-                        _log.error("Failed to instantiate tool "
-                                + key + " of class " + className + " using constructor "
-                                + ctor.toString(), e);
-                    }
-                }
-            }
-        }
-        if (instance == null)
-        {
-            // try no-arg constructor
-            try
-            {
-                instance = c.newInstance();
-            }
-            catch (Exception e)
-            {
-                _log.error("Unable to construct tool " + key + " of class " + className, e);
-                return;
-            }
-        }
-        _tools.put(key, instance);
-        _log.info("Registered ContextTool " + key);
-    }
-    
     //////////////////////////////////////////////////////////////
    
     /**

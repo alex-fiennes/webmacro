@@ -23,15 +23,11 @@
 
 package org.webmacro;
 
+import java.io.*;
+
 import org.webmacro.util.ByteBufferOutputStream;
 import org.webmacro.util.Encoder;
 import org.webmacro.util.EncoderProvider;
-import org.webmacro.util.Pool;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 
 /**
@@ -41,20 +37,13 @@ import java.util.List;
  *   <li> FastWriter caches the output in a byte array until you
  *        call reset(). You can access the output by one of several
  *        methods: toString(), toByteArray(), or writeTo(OutputStream)
- *   <li> you can turn off unicode conversion by calling setAsciiHack()
  *   <li> you can use a unicode conversion cache by calling writeStatic()
  *   <li> you can get the contents written to the FastWriter back
  *        as an array of bytes INSTEAD of writing to the output stream
  * </ul>
- * Note that if you turn on the asciiHack and then write non-ASCII
- * data the output will be mangled.
  * <p>
  * <b>Note that the FastWriter requires an explicit flush</b>
  * <p>
- * If you re-use a FastWriter you must re-use it in a context which
- * uses the SAME unicode conversion. The caches and internal data
- * structures which the FastWriter allocates are tied to the
- * encoding it was created with.
  *
  * @author Marcel Huijkman
  *
@@ -88,7 +77,6 @@ public class FastWriter extends Writer
 
 
     private final int DEFAULT_BUFFER_SIZE;
-    private final int MAX_POOL_SIZE;
     private final String _encoding;      // what encoding we use
     private final Writer _bwriter;
     private final ByteBufferOutputStream _bstream;
@@ -96,19 +84,8 @@ public class FastWriter extends Writer
 
     private OutputStream _out;
 
-    /** _open is true iff the FW has been dispensed to a user and not
-     * returned to the pool.  */
-    private boolean _open = true;
-
-    private byte[] _buf = new byte[512];
-
     private char[] _cbuf = new char[512];
-
-    private boolean _encodeProperly;  // are we in fast mode?
     private boolean _buffered;
-
-    private static final Hashtable WRITERCACHE = new Hashtable();
-    private Pool _myPool = null;
 
     /**
      * Create a FastWriter to the target outputstream. You must specify
@@ -118,7 +95,6 @@ public class FastWriter extends Writer
     public FastWriter (Broker broker, OutputStream out, String encoding)
             throws UnsupportedEncodingException
     {
-        MAX_POOL_SIZE = broker.getSettings().getIntegerSetting("FastWriter.MaxPoolSize", 10);
         DEFAULT_BUFFER_SIZE = broker.getSettings().getIntegerSetting("FastWriter.DefaultBufferSize", 4096);
         _encoding = hackEncoding(encoding);
         _bstream = new ByteBufferOutputStream(DEFAULT_BUFFER_SIZE);
@@ -134,7 +110,6 @@ public class FastWriter extends Writer
             throw new UnsupportedEncodingException(re.getMessage());
         }
 
-        _encodeProperly = true;
         _buffered = false;
 
         _out = out;
@@ -198,98 +173,32 @@ public class FastWriter extends Writer
     }
 
     /**
-     * Ordinarily an expensive char-to-byte routine is used to convert
-     * strings and char[]'s to byte format. If you know that your data
-     * is going to be ASCII only for some number of writes, turn on
-     * this AsciiHack and then write the ASCII data. It's much faster.
-     * Remember to turn the AsciiHack off before writing true Unicode
-     * characters, otherwise they'll be mangled.
-     */
-    public void setAsciiHack (boolean on)
-    {
-        if (_buffered)
-        {
-            bflush();
-        }
-        _encodeProperly = !on;
-    }
-
-    /**
-     * Returns true if we are mangling the unicode conversion in an
-     * attempt to eek out a bit of extra efficiency.
-     */
-    public boolean getAsciiHack ()
-    {
-        return !_encodeProperly;
-    }
-
-    /**
      * Write characters to the output stream performing slow unicode
      * conversion unless AsciiHack is on.
      */
     public void write (char[] cbuf) throws java.io.IOException
     {
-        if (_encodeProperly)
-        {
-            _bwriter.write(cbuf, 0, cbuf.length);
-            _buffered = true;
-        }
-        else
-        {
-            int len = cbuf.length;
-            if (_buf.length < len)
-            {
-                _buf = new byte[len];
-            }
-            for (int i = 0; i < len; i++)
-            {
-                _buf[i] = (byte) cbuf[i];
-            }
-            _bstream.write(_buf, 0, len);
-        }
+        _bwriter.write(cbuf, 0, cbuf.length);
+        _buffered = true;
     }
 
     /**
      * Write characters to to the output stream performing slow unicode
-     * conversion unless the AsciiHack is on.
+     * conversion.
      */
     public void write (char[] cbuf, int offset, int len) throws java.io.IOException
     {
-        if (_encodeProperly)
-        {
-            _bwriter.write(cbuf, offset, len);
-            _buffered = true;
-        }
-        else
-        {
-            if (_buf.length < len)
-            {
-                _buf = new byte[len];
-            }
-            int end = offset + len;
-            for (int i = offset; i < end; i++)
-            {
-                _buf[i] = (byte) cbuf[i];
-            }
-            _bstream.write(_buf, 0, len);
-        }
+        _bwriter.write(cbuf, offset, len);
+        _buffered = true;
     }
 
     /**
      * Write a single character, performing slow unicode conversion
-     * unless AsciiHack is on.
      */
     public void write (int c) throws java.io.IOException
     {
-        if (_encodeProperly)
-        {
-            _bwriter.write(c);
-            _buffered = true;
-        }
-        else
-        {
-            _bstream.write((byte) c);
-        }
+        _bwriter.write(c);
+        _buffered = true;
     }
 
     /**
@@ -309,23 +218,8 @@ public class FastWriter extends Writer
             s.getChars(0, len, _cbuf, 0);
         }
 
-        if (_encodeProperly)
-        {
-            _bwriter.write(_cbuf, 0, len);
-            _buffered = true;
-        }
-        else
-        {
-            if (_buf.length < len)
-            {
-                _buf = new byte[len];
-            }
-            for (int i = 0; i < len; i++)
-            {
-                _buf[i] = (byte) _cbuf[i];
-            }
-            _bstream.write(_buf, 0, len);
-        }
+        _bwriter.write(_cbuf, 0, len);
+        _buffered = true;
     }
 
     /*
@@ -344,23 +238,8 @@ public class FastWriter extends Writer
             s.getChars(off, off + len, _cbuf, 0);
         }
 
-        if (_encodeProperly)
-        {
-            _bwriter.write(_cbuf, 0, len);
-            _buffered = true;
-        }
-        else
-        {
-            if (_buf.length < len)
-            {
-                _buf = new byte[len];
-            }
-            for (int i = 0; i < len; i++)
-            {
-                _buf[i] = (byte) _cbuf[i];
-            }
-            _bstream.write(_buf, 0, len);
-        }
+        _bwriter.write(_cbuf, 0, len);
+        _buffered = true;
     }
 
     /**
@@ -519,7 +398,6 @@ public class FastWriter extends Writer
         }
         _bstream.reset();
         _out = out;
-        _open = true;
     }
 
     /**
@@ -530,17 +408,6 @@ public class FastWriter extends Writer
                                           String encoding)
             throws UnsupportedEncodingException
     {
-        FastWriter fw;
-        Pool p = (Pool) WRITERCACHE.get(encoding);
-        if (p != null)
-        {
-            fw = (FastWriter) p.get();
-            if (fw != null)
-            {
-                fw.reset(out);
-                return fw;
-            }
-        }
         return new FastWriter(broker, out, encoding);
     }
 
@@ -579,12 +446,6 @@ public class FastWriter extends Writer
         }
     }
 
-    /**
-     * Return the FastWriter to the queue for later re-use. You must
-     * not use the FastWriter after this call. Calling close()
-     * returns the FastWriter to the pool. If you don't want to
-     * return it to the pool just discard it without a close().
-     */
     public void close () throws IOException
     {
         flush();
@@ -593,63 +454,6 @@ public class FastWriter extends Writer
             _out.close();
             _out = null;
         }
-        if (_open)
-        {
-            _open = false;
-            if (_myPool == null)
-            {
-                // get/create the pool this FW should be using
-                _myPool = (Pool) WRITERCACHE.get(_encoding);
-                if (_myPool == null)
-                {
-                    _myPool = new FWPool(MAX_POOL_SIZE);
-                    WRITERCACHE.put(_encoding, _myPool);
-                }
-            }
-            _myPool.put(this);
-        }
     }
 }
 
-/**
- * A simple <b>synchronized</b> pool used only by FastWriter
- */
-class FWPool implements Pool
-{
-
-    private final List _pool;
-    private final int _maxSize;
-    private volatile int _size = 0;
-
-    FWPool (int maxSize)
-    {
-        _maxSize = maxSize;
-        _pool = new ArrayList(maxSize);
-    }
-
-    public Object get ()
-    {
-        Object obj = null;
-        synchronized (_pool)
-        {
-            if (_size > 0)
-            {
-                obj = _pool.remove(0);
-                _size--;
-            }
-        }
-        return obj;
-    }
-
-    public void put (Object fw)
-    {
-        if (_size < _maxSize)
-        { // not rqrd to be t.s. perfect
-            synchronized (_pool)
-            {
-                _pool.add(fw);
-                _size++;
-            }
-        }
-    }
-}

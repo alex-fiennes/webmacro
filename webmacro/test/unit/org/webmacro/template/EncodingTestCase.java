@@ -145,7 +145,7 @@ public abstract class EncodingTestCase extends TestCase
         assertEquals("Input Encoding is not " + encoding,
                 wm.getConfig("TemplateEncoding"), encoding);
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
-        String evaluated = t.getString(getContext(wm));
+        String evaluated = t.evaluateAsString(getContext(wm));
         assertEquals("Template evaluated to \"" + evaluated + "\" instead of \"" + expected + "\"",
                 evaluated, expected);
     }
@@ -178,7 +178,7 @@ public abstract class EncodingTestCase extends TestCase
         assertEquals("InputEncoding is not UFT8",
                 wmUTF8.getConfig("TemplateEncoding"), "UTF8");
         Template t = wmUTF8.getTemplate(TEMPLATE_FILENAME_UTF8);
-        String evaluated = t.getString(getContext(wmUTF8));
+        String evaluated = t.evaluateAsString(getContext(wmUTF8));
         assertEquals("Template evaluated to \"" + evaluated + "\" instead of \"" + expected + "\"",
                 expected, evaluated);
     }

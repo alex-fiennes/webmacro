@@ -239,7 +239,7 @@ abstract public class WMTemplate implements Template
      * such as unable to read template or unable to introspect the context
      * then this method will return a null string.
      */
-    public final String getString (Context context) throws PropertyException
+    public final String evaluateAsString (Context context) throws PropertyException
     {
         try
         {
@@ -262,7 +262,7 @@ abstract public class WMTemplate implements Template
      * such as unable to read template or unable to introspect the context
      * then this method will return a null string.
      */
-    public final byte[] getBytes (String encoding, Context context) throws PropertyException
+    public final byte[] evaluateAsBytes (String encoding, Context context) throws PropertyException
     {
         try
         {

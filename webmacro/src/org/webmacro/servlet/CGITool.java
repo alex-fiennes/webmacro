@@ -50,7 +50,4 @@ public class CGITool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

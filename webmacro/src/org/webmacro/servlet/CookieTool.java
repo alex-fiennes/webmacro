@@ -50,7 +50,4 @@ public class CookieTool implements ContextTool
 
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

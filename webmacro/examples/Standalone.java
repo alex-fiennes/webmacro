@@ -82,10 +82,7 @@ public class Standalone extends HttpServlet
      * since it might be a lot of resources. 
      */
    public void destroy() {
-      if (_wm != null) {
-         _wm.destroy();
-         _wm = null;
-      }
+       _wm = null;
    }
 
 

@@ -78,7 +78,6 @@ final public class LogSystem
             return LogSystem.INFO;
     }
 
-    private final static Map _instances = new HashMap();
     private final static LogSystem _singleton;
     private final static Log _log;
 
@@ -97,7 +96,7 @@ final public class LogSystem
      */
     public static LogSystem getInstance ()
     {
-        return getInstance(null);
+        return _singleton;
     }
 
     /**
@@ -116,46 +115,6 @@ final public class LogSystem
         return _singleton.getLog(type, description);
     }
 
-    /**
-     * Return the log-system with the specified category
-     */
-    public static LogSystem getInstance (String category)
-    {
-        synchronized (_instances)
-        {
-            if (category == null) return _singleton;
-            LogSystem ls = (LogSystem) _instances.get(category);
-            if (ls == null)
-            {
-                ls = new LogSystem(category);
-                _instances.put(category, ls);
-            }
-            return ls;
-        }
-    }
-
-    /**
-     * Remove the specified LogSystem instance from the internal
-     * cache of LogSystems.
-     */
-    public static void removeInstance (LogSystem instance)
-    {
-        synchronized (_instances)
-        {
-            if (_instances.containsValue(instance))
-            {
-                for (Iterator itr = _instances.entrySet().iterator(); itr.hasNext();)
-                {
-                    Map.Entry e = (Map.Entry) itr.next();
-                    if (e.getValue() == instance)
-                    {
-                        itr.remove();
-                    }
-                }
-            }
-        }
-    }
-
 
     /////////////////////////////////////////////
 
@@ -164,7 +123,7 @@ final public class LogSystem
     final private Map _logs = new HashMap();
     final private Set _targets = new HashSet();
 
-    private LogSystem (String category)
+    public LogSystem (String category)
     {
         _category = category;
         _targets.add(_defaultTarget);
@@ -323,20 +282,6 @@ final public class LogSystem
         }
     }
 
-    /**
-     * Flush all log systems
-     */
-    static public void flushAll ()
-    {
-        _singleton.flush();
-        Iterator i = _instances.values().iterator();
-        while (i.hasNext())
-        {
-            LogSystem ls = (LogSystem) i.next();
-            ls.flush();
-        }
-    }
-
 
     /**
      * Test out the logging system
@@ -362,7 +307,7 @@ final public class LogSystem
         l.warning("2:testing warning");
         l.error("2:testing error");
 
-        LogSystem.flushAll();
+        LogSystem.getInstance().flush();
 
 
     }

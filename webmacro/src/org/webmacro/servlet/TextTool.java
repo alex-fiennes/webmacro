@@ -399,13 +399,6 @@ public class TextTool implements ContextTool
         return TextTool.getInstance();
     }
 
-    /**
-     * Perform necessary cleanup work
-     */
-    public void destroy (Object o)
-    {
-    }
-
 
     //
     //

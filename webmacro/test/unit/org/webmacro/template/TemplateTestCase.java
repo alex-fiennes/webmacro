@@ -93,7 +93,7 @@ public abstract class TemplateTestCase extends TestCase
      * Evaluates a template and returns its value. */
     public String executeTemplate (Template template) throws Exception
     {
-        return template.getString(_context);
+        return template.evaluateAsString(_context);
     }
 
 
@@ -112,7 +112,7 @@ public abstract class TemplateTestCase extends TestCase
     {
         Template template = new StringTemplate(_wm.getBroker(), templateText);
         template.parse();
-        String output = template.getString(_context);
+        String output = template.evaluateAsString(_context);
         return output;
     }
 

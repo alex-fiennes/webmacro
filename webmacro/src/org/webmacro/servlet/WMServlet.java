@@ -52,7 +52,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
     private WebMacro _wm = null;
     private Broker _broker = null;
-    private WebContext _wcPrototype;
     private boolean _started = false;
     /**
      * The name of the config entry we look for to find out what to
@@ -131,19 +130,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
         _log = _broker.getLog("servlet", "WMServlet lifecycle information");
       
-        // set up WebContext
-        try
-        {
-            _wcPrototype = initWebContext();
-        }
-        catch (InitException e)
-        {
-            _log.error("Failed to initialize a WebContext, the initWebContext\n"
-                    + "method returned an exception", e);
-            _problem = e.getMessage();
-            return;
-        }
-
         try
         {
             if (_log.loggingDebug())
@@ -179,21 +165,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     {
         stop();
         _log.notice("stopped: " + this);
-        _wm.destroy();
         _wm = null;
         _started = false;
         super.destroy();
     }
 
-    /**
-     * Check whether or not the broker we are using has been shut down
-     */
-    public boolean isDestroyed ()
-    {
-        return _wm.isDestroyed();
-    }
-   
-   
+
     // SERVLET API METHODS
    
     /**
@@ -267,9 +244,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
 
         boolean timing = false;
+        context = newWebContext(req, resp);
         try
         {
-            context = newContext(req, resp);
             timing = Flags.PROFILE && context.isTiming();
             if (timing) context.startTiming("WMServlet", req.getRequestURI());
 
@@ -300,10 +277,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
         catch (HandlerException e)
         {
-            if (context == null)
-            {
-                context = _wcPrototype.newInstance(req, resp);
-            }
             _log.error("Your handler failed to handle the request:" + this, e);
             Template tmpl = error(context,
                     "Your handler was unable to process the request successfully " +
@@ -313,10 +286,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
         catch (Exception e)
         {
-            if (context == null)
-            {
-                context = _wcPrototype.newInstance(req, resp);
-            }
             _log.error("Your handler failed to handle the request:" + this, e);
             Template tmpl = error(context,
                     "The handler WebMacro used to handle this request failed for " +
@@ -328,7 +297,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         finally
         {
             if (timing) context.stopTiming();
-            context.recycle();
         }
     }
    
@@ -471,7 +439,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * Create a new WebContext object
+     * Create a new WebContext object; can be overridden
      */
     public WebContext getWebContext (HttpServletRequest req, HttpServletResponse res)
     {
@@ -580,7 +548,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 // this is necessary to be compatible with JSDK 2.3
                 // where you can't call setContentType() after getOutputStream(),
                 // which could be happening during the template evaluation
-                byte[] bytes = tmpl.getBytes(encoding, c);
+                byte[] bytes = tmpl.evaluateAsBytes(encoding, c);
             
                 // now write the FW buffer to the response output stream
                 writeResponseBytes(resp, bytes, encoding);
@@ -619,7 +587,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                         + "TemplatePath in your webmacro.properties file."))
                         + "\n<pre>" + e + "</pre>\n");
 
-                String err = errorTemplate.getString(c);
+                String err = errorTemplate.evaluateAsString(c);
                 c.getResponse().getWriter().write(err);
             }
             catch (Exception errExcept)
@@ -751,15 +719,18 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * This method must return a cloneable WebContext which can be
-     * cloned for use in responding to individual requests. Each
-     * incoming request will receive a clone of the returned object
-     * as its context. The default implementation is to return
-     * a new WebContext(getBroker());
+     * NO LONGER USED
+     * Exists only to catch implementations that use it.
+     * Use newWebContext instead.
+     * @deprecated
      */
-    public WebContext initWebContext () throws InitException
+    public final WebContext initWebContext () throws InitException
     {
-        return new WebContext(_broker);
+        return null;
+    }
+
+    public WebContext newWebContext(HttpServletRequest req, HttpServletResponse resp) {
+        return new WebContext(_broker, req, resp);
     }
 
     /**

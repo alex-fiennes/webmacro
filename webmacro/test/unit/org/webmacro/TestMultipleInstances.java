@@ -115,7 +115,7 @@ public class TestMultipleInstances extends TestCase
     {
         Broker b = wm.getBroker();
         Template template = new StringTemplate(b, templateText);
-        String output = template.getString(context);
+        String output = template.evaluateAsString(context);
         return output;
     }
 }

@@ -98,7 +98,4 @@ public class URLTool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

@@ -48,7 +48,4 @@ public class ResponseTool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

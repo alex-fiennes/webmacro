@@ -48,7 +48,4 @@ public class RequestTool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

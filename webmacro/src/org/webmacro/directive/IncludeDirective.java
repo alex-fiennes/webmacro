@@ -386,7 +386,7 @@ public class IncludeDirective extends Directive
                 // we still need to write it out as a template
                 // so just fall through
             case TYPE_TEMPLATE:
-                out.write(((Template) toInclude).getBytes(out.getEncoding(), context));
+                out.write(((Template) toInclude).evaluateAsBytes(out.getEncoding(), context));
                 break;
 
             case TYPE_TEXT:

@@ -52,7 +52,4 @@ public class SessionTool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

@@ -48,7 +48,7 @@ public class BuildContext extends Context
 
     public BuildContext (Broker b)
     {
-        super(b, false);
+        super(b);
     }
 
     public final Parser getParser (String pname)

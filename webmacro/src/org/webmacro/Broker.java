@@ -27,6 +27,7 @@ import org.webmacro.util.*;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -81,10 +82,9 @@ public class Broker
     /** a local map for "global functions" */
     private Map _functionMap = Collections.synchronizedMap(new HashMap());
 
-    /** Reference _count to detect unused brokers */
-    private int _count;
-    /** our _key in the cache of brokers */
-    private Object _key;
+    /** a local map for context tools */
+    private Map _tools = Collections.synchronizedMap(new HashMap());
+
 
     /*
 * Constructors.  Callers shouldn't use them; they should use the
@@ -172,7 +172,7 @@ public class Broker
             throws InitException
     {
         _name = name;
-        _ls = LogSystem.getInstance(_name);
+        _ls = new LogSystem(_name);
         _log = _ls.getLog("broker", "general object loader and configuration");
     }
 
@@ -228,7 +228,7 @@ public class Broker
         _log.notice("starting " + this.getClass().getName() + ": " + _name);
     }
 
-    private class SettingHandler extends Settings.ListSettingHandler
+    private class ProviderSettingHandler extends Settings.ListSettingHandler
     {
 
         public void processSetting (String settingKey, String settingValue)
@@ -245,6 +245,22 @@ public class Broker
             }
         }
     }
+
+    private class ToolsSettingHandler extends Settings.ListSettingHandler
+    {
+        public void processSetting (String settingKey, String settingValue)
+        {
+            try
+            {
+                addTool(settingKey, settingValue, "Tool");
+            }
+            catch (Exception e)
+            {
+                _log.error("Tool (" + settingValue + ") failed to load", e);
+            }
+        }
+    }
+
 
     /**
      * Constructors should call this after they've set up the properties
@@ -295,12 +311,16 @@ public class Broker
         }
 
         // set up providers
-        _config.processListSetting("Providers", new SettingHandler());
+        _config.processListSetting("Providers", new ProviderSettingHandler());
         if (_providers.size() == 0)
         {
             _log.error("No Providers specified");
             throw new InitException("No Providers specified in configuration");
         }
+
+        // load tools
+        loadTools("Tools");
+        loadTools("WebContextTools");
 
         eehClass = _config.getSetting("ExceptionHandler");
         if (eehClass != null && !eehClass.equals(""))
@@ -365,7 +385,7 @@ public class Broker
                     Context argContext = new Context(this);
                     try
                     {
-                        tmpl.getString(argContext);
+                        tmpl.evaluateAsString(argContext);
                     }
                     catch (Exception e)
                     {
@@ -421,7 +441,6 @@ public class Broker
                 b = new Broker();
                 register(WEBMACRO_PROPERTIES, b);
             }
-            b.startClient();
             return b;
         }
         catch (InitException e)
@@ -442,7 +461,6 @@ public class Broker
                 b = new Broker(p);
                 register(p, b);
             }
-            b.startClient();
             return b;
         }
         catch (InitException e)
@@ -464,7 +482,6 @@ public class Broker
                 register(settingsFile, b);
             }
 
-            b.startClient();
             return b;
         }
         catch (InitException e)
@@ -548,7 +565,6 @@ public class Broker
     protected static void register (Object key, Broker broker)
     {
         BROKERS.put(key, new WeakReference(broker));
-        broker._key = key;
     }
 
     /**
@@ -561,7 +577,10 @@ public class Broker
         WeakReference ref = (WeakReference) BROKERS.get(key);
         if (ref != null)
         {
-            return (Broker) ref.get();
+            Broker broker = (Broker) ref.get();
+            if (broker == null)
+                BROKERS.remove(key);
+            return broker;
         }
         else
         {
@@ -659,7 +678,7 @@ public class Broker
      */
     public Log getLog (String type, String description)
     {
-        return _ls.getLog(type);
+        return _ls.getLog(type, description);
     }
 
     /**
@@ -836,6 +855,108 @@ public class Broker
     }
 
     /**
+     * Attempts to instantiate the tool using two different constructors
+     * until one succeeds, in the following order:
+     * <ul>
+     * <li>new MyTool(String key)</li>
+     * <li>new MyTool()</li>
+     * </ul>
+     * The key is generally the unqualified class name of the tool minus the
+     * "Tool" suffix, e.g., "My" in the example above
+     * The settings are any configured settings for this tool, i.e, settings
+     * prefixed with the tool's key.
+     * <br>
+     * NOTE: keats - 25 May 2002, no tools are known to use the settings mechanism.
+     * We should create an example of this and test it, or abolish this capability!
+     * Abolished -- BG
+     */
+    private void addTool(String toolName, String className, String suffix) {
+        Class c;
+        try
+        {
+            c = classForName(className);
+        }
+        catch (ClassNotFoundException e)
+        {
+            _log.warning("Context: Could not locate class for context tool "
+                         + className);
+            return;
+        }
+        if (toolName == null || toolName.equals(""))
+        {
+            toolName = className;
+            int start = 0;
+            int end = toolName.length();
+            int lastDot = toolName.lastIndexOf('.');
+            if (lastDot != -1)
+            {
+                start = lastDot + 1;
+            }
+            if (toolName.endsWith(suffix))
+            {
+                end -= suffix.length();
+            }
+            toolName = toolName.substring(start, end);
+        }
+
+        Constructor ctor = null;
+        Constructor[] ctors = c.getConstructors();
+        Class[] parmTypes = null;
+        Object instance = null;
+
+        // check for 1 arg (String) constructor
+        for (int i = 0; i < ctors.length; i++)
+        {
+            parmTypes = ctors[i].getParameterTypes();
+            if (parmTypes.length == 1 && parmTypes[0].equals(String.class))
+            {
+                ctor = ctors[i];
+                Object[] args = {toolName};
+                try
+                {
+                    instance = ctor.newInstance(args);
+                }
+                catch (Exception e)
+                {
+                    _log.error("Failed to instantiate tool "
+                               + toolName + " of class " + className + " using constructor "
+                               + ctor.toString(), e);
+                }
+            }
+        }
+        if (instance == null)
+        {
+            // try no-arg constructor
+            try
+            {
+                instance = c.newInstance();
+            }
+            catch (Exception e)
+            {
+                _log.error("Unable to construct tool " + toolName + " of class " + className, e);
+                return;
+            }
+        }
+        _tools.put(toolName, instance);
+        _log.info("Registered ContextTool " + toolName);
+    }
+
+    /** Fetch a tool */
+    public ContextTool getTool(Object toolName) {
+        return (ContextTool) _tools.get(toolName);
+    }
+
+    /**
+     * Load the context tools listed in the supplied string. See
+     * the ComponentMap class for a description of the format of
+     * this string.
+     */
+    protected final void loadTools (String keyName)
+    {
+        getSettings().processListSetting(keyName, new ToolsSettingHandler());
+    }
+
+    /**
      * Backwards compatible, calls get(String,String)
      * @deprecated call get(String,String) instead
      */
@@ -843,49 +964,6 @@ public class Broker
             throws ResourceException
     {
         return get(type, query);
-    }
-
-    public synchronized void startClient ()
-    {
-        if (_count++ == 0)
-        {
-            _log.info("starting clock");
-            Clock.startClient(); // start clock
-        }
-    }
-
-    public synchronized void stopClient ()
-    {
-        if (--_count == 0)
-        {
-            shutdown();
-
-// make sure to cleanup the logging system
-// if no more references to this Broker are around
-            LogSystem.removeInstance(_ls);
-        }
-    }
-
-    /**
-     * Shut down the broker
-     */
-    public synchronized void shutdown ()
-    {
-        _log.notice("shutting down");
-
-        Enumeration e = _providers.elements();
-        while (e.hasMoreElements())
-        {
-            Provider pr = (Provider) e.nextElement();
-            _log.info("stopping: " + pr);
-            pr.destroy();
-        }
-        _providers.clear();
-        _log.info("stopping clock");
-        Clock.stopClient();
-        _ls.flush();
-
-        BROKERS.remove(this._key);
     }
 
     /**

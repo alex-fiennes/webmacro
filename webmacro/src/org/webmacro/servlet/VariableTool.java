@@ -53,10 +53,6 @@ public class VariableTool implements ContextTool
         return new VariableTool(c);
     }
 
-    public void destroy (Object o)
-    {
-    }
-
     /**
      * Is the specified object <code>name</code> defined in the active
      * Context?

@@ -204,13 +204,6 @@ public class MathTool implements ContextTool
         return MathTool.getInstance();
     }
 
-    /**
-     * Perform necessary cleanup work
-     */
-    public void destroy (Object o)
-    {
-    }
-
     public static void main (String[] args)
     {
         System.out.println("Generating 200 random ints between 10 and 99 inclusive:");

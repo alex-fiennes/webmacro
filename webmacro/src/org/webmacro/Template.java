@@ -98,10 +98,10 @@ public interface Template extends Visitable
     public void write (OutputStream out, String encoding, Context context)
             throws PropertyException, IOException;
 
-    public String getString(Context context)
+    public String evaluateAsString(Context context)
             throws PropertyException;
 
-    public byte[] getBytes(String encoding, Context context)
+    public byte[] evaluateAsBytes(String encoding, Context context)
             throws PropertyException;
 }
 

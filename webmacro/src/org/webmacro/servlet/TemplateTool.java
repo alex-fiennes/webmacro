@@ -40,22 +40,6 @@ public class TemplateTool implements org.webmacro.ContextTool
     {
     }
 
-    /** Invoked when the context is freed after its request/response
-     * has been completed.  Used here to free the contexts created
-     * for MacroTemplates in this request.
-     * @param o the MacroTemplateFactory that is ready to be destroyed.
-     */
-    synchronized public void destroy (Object o)
-    {
-        if (_destroyed) return;
-        _destroyed = true;
-        if (o != null)
-        {
-            ((MacroTemplateFactory) o).destroy();
-            _context = null;
-        }
-    }
-
     /** Create a factory object that can be accessed from WMScript as
      * $Template for creating MacroTemplate objects.
      * @param c The context of the current request.
@@ -111,16 +95,6 @@ public class TemplateTool implements org.webmacro.ContextTool
             return mt;
         }
 
-        void destroy ()
-        {
-            java.util.Iterator iter = _macros.iterator();
-            while (iter.hasNext())
-            {
-                MacroTemplate mt = (MacroTemplate) iter.next();
-                mt.destroy();
-            }
-            _macros = null; // to encourage gc
-        }
     }
 
     /** Encapsulates a template and a context, allowing a template
@@ -140,10 +114,8 @@ public class TemplateTool implements org.webmacro.ContextTool
         {
             _template = t;
             _origContext = c;
-            org.webmacro.util.Pool pool = c.getPool();
-            _context = (pool == null) ? c.cloneContext()
-                    : (Context) c.getPool().get();
-            if (_context == null) _context = c.cloneContext();
+            // @@@ Just get a new one?
+            _context = c.cloneContext();
         }
 
         /** Construct a MacroTemplate with a StringTemplate
@@ -174,7 +146,7 @@ public class TemplateTool implements org.webmacro.ContextTool
         {
             synchronized (_context)
             {
-                return _template.getString(_context);
+                return _template.evaluateAsString(_context);
             }
         }
 
@@ -221,12 +193,6 @@ public class TemplateTool implements org.webmacro.ContextTool
             }
         }
 
-        void destroy ()
-        {
-            _context.recycle();
-            _context = null;
-            _origContext = null;
-        }
     }
 }
 

@@ -104,7 +104,6 @@ abstract public class ServletBroker extends Broker
             b = Servlet22Broker.getBroker(s, additionalProperties);
         else
             b = Servlet20Broker.getBroker(s, additionalProperties);
-        b.startClient();
         return b;
     }
 

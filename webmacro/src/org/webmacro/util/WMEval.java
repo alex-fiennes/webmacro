@@ -232,7 +232,7 @@ public class WMEval
     public String eval (String templateName, OutputStream out) throws Exception
     {
         Template t = wm.getTemplate(templateName);
-        String val = t.getString(context);
+        String val = t.evaluateAsString(context);
         if (out != null)
         {
             out.write(val.getBytes());
@@ -291,7 +291,7 @@ public class WMEval
      */
     public String eval (Context context, Template rule) throws Exception
     {
-        return rule.getString(context);
+        return rule.evaluateAsString(context);
     }
 
     /**
@@ -308,7 +308,7 @@ public class WMEval
                         String outputFileName, boolean append, String encoding) throws Exception
     {
         Template rule = wm.getTemplate(templateResourceFile);
-        String value = rule.getString(context);
+        String value = rule.evaluateAsString(context);
         // output the file
         if (outputFileName == null)
             outputFileName = (String) context.get(outputContextKey);
@@ -327,7 +327,6 @@ public class WMEval
      */
     public void destroy ()
     {
-        wm.destroy();
         wm = null;
         rule = null;
     }

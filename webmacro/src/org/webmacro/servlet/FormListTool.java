@@ -49,7 +49,4 @@ public class FormListTool implements ContextTool
         }
     }
 
-    public void destroy (Object o)
-    {
-    }
 }

@@ -26,26 +26,22 @@
 
 package org.webmacro.parser;
 
+import java.io.*;
+
 import org.webmacro.Broker;
 import org.webmacro.engine.BlockBuilder;
 import org.webmacro.engine.Parser;
-import org.webmacro.util.ScalablePool;
-
-import java.io.IOException;
-import java.io.Reader;
 
 public class WMParser implements Parser
 {
 
     private final Broker _broker;
-    private final ScalablePool _parserCache = new ScalablePool();
 
     public WMParser (Broker b)
     {
         _broker = b;
         _broker.getLog("parser").info("parser created");
     }
-
 
     // Parser Interface
 
@@ -71,11 +67,7 @@ public class WMParser implements Parser
         WMParser_impl parser = null;
         try
         {
-            parser = (WMParser_impl) _parserCache.get();
-            if (parser != null)
-                parser.ReInit(name, in);
-            else
-                parser = new WMParser_impl(_broker, name, in);
+            parser = new WMParser_impl(_broker, name, in);
 
             try
             {
@@ -93,11 +85,6 @@ public class WMParser implements Parser
         catch (ParserRuntimeException e)
         {
             throw new org.webmacro.engine.ParseException("Parse Exception", e);
-        }
-        finally
-        {
-            if (parser != null)
-                _parserCache.put(parser);
         }
 
         return bb;

@@ -64,17 +64,17 @@ public class WebContext extends Context
     /**
      * Log configuration errors, context errors, etc.
      */
-    private Log _log;
+    private final Log _log;
 
     /**
      * The request for this http connect
      */
-    HttpServletRequest _request = null;
+    private HttpServletRequest _request = null;
 
     /**
      * The response for this http connect
      */
-    HttpServletResponse _response = null;
+    private HttpServletResponse _response = null;
 
     // property interface fields that are lazily set, non-final, and private
 
@@ -82,39 +82,14 @@ public class WebContext extends Context
      * Construct a new WebContext. The WebContext will have WebContextTools
      * in addition to the ordinary ContextTools loaded from config.
      */
-    public WebContext (final Broker broker)
+    public WebContext (Broker broker, HttpServletRequest req, HttpServletResponse resp)
     {
         super(broker);
+        _request = req;
+        _response = resp;
         _log = broker.getLog("WebContext");
-        loadTools("WebContextTools");
     }
 
-
-    /**
-     * Create a new WebContext like this one, only with new values
-     * for request and response
-     */
-    final public WebContext newInstance (
-            final HttpServletRequest req,
-            final HttpServletResponse resp)
-    {
-        try
-        {
-
-            // want: new local vars, both existing tools tables, no bean,
-            // plus store req and resp somewhere, plus existing broker
-
-            WebContext wc = (WebContext) clone();
-            wc._request = req;
-            wc._response = resp;
-            return wc;
-        }
-        catch (Exception e)
-        {
-            _log.error("Clone not supported on WebContext!");
-            return null;
-        }
-    }
 
     /**
      * Clear a WebContext of it's non-shared data
@@ -124,16 +99,6 @@ public class WebContext extends Context
         _request = null;
         _response = null;
         super.clear();
-    }
-
-    /**
-     * Reinitalized a WebContext for a new request
-     */
-    public void reinitialize (HttpServletRequest req, HttpServletResponse resp)
-    {
-        clear();
-        _request = req;
-        _response = resp;
     }
 
     /**

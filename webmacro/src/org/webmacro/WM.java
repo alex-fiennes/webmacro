@@ -23,17 +23,14 @@
 
 package org.webmacro;
 
-import org.webmacro.servlet.ServletBroker;
-import org.webmacro.servlet.WebContext;
-import org.webmacro.util.Pool;
-import org.webmacro.util.ScalablePool;
-
+import java.io.*;
+import java.util.*;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
+
+import org.webmacro.servlet.ServletBroker;
+import org.webmacro.servlet.WebContext;
 
 
 /**
@@ -48,21 +45,13 @@ import java.util.Properties;
 public class WM implements WebMacro
 {
 
-    final private Context _context;
-    private WebContext _webContext = null;
-
     // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
     final private Broker _broker;      // cache for rapid access
 
-    private boolean _alive = false;   // so we don't unload twice
-
     final private Provider _tmplProvider;
     final private Provider _urlProvider;
     final private Log _log;
-
-    final private ThreadLocal _contextCache;
-    final private ThreadLocal _webContextCache;
 
 
     /**
@@ -129,26 +118,8 @@ public class WM implements WebMacro
             throw new InitException("No Broker passed to WM()");
 
         _broker = broker;
-        _alive = true;
         _log = _broker.getLog("wm", "WebMacro instance lifecycle");
-        _log.notice("new " + this
-                + " v" + WebMacro.VERSION);
-        _context = new Context(_broker);
-        _contextCache = new ThreadLocal()
-        {
-            public Object initialValue ()
-            {
-                return new ScalablePool();
-            }
-        };
-        _webContext = new WebContext(_broker);
-        _webContextCache = new ThreadLocal()
-        {
-            public Object initialValue ()
-            {
-                return new ScalablePool();
-            }
-        };
+        _log.notice("new " + this + " v" + WebMacro.VERSION);
 
         try
         {
@@ -167,59 +138,9 @@ public class WM implements WebMacro
         }
     }
 
-    /**
-     * Call this method when you are finished with WebMacro. If you
-     * don't call this method, the Broker and all of WebMacro's caches
-     * may not be properly shut down, potentially resulting in loss of
-     * data, and wasted memory. This method is called in the
-     * finalizer, but it is best to call it as soon as you know you
-     * are done with WebMacro.
-     * <p>
-     * After a call to destroy() attempts to use this object may yield
-     * unpredicatble results.
-     */
-    final public void destroy ()
-    {
-        if (_alive)
-        {
-            _alive = false;
-            _webContext = null;
-            _log.info("shutdown " + this);
-            _broker.stopClient();
-        }
-    }
-
     public String toString ()
     {
         return "WebMacro(" + _broker.getName() + ")";
-    }
-
-    /**
-     * This message returns false until you destroy() this object,
-     * subsequently it returns true. Do not attempt to use this object
-     * after it has been destroyed.  */
-    final public boolean isDestroyed ()
-    {
-        return !_alive;
-    }
-
-
-    /**
-     * You should never call this method, on any object. Leave it up
-     * to the garbage collector. If you want to shut this object down,
-     * call destroy() instead. If you subclass this message, be sure
-     * to call super.finalize() since this is one of the cases where
-     * it matters.  */
-    protected void finalize () throws Throwable
-    {
-        try
-        {
-            destroy();
-        }
-        finally
-        {
-            super.finalize();
-        }
     }
 
 
@@ -259,44 +180,20 @@ public class WM implements WebMacro
 
 
     /**
-     * Instantiate a new context from a pool. This method is more
-     * efficient, in terms of object creation, than creating a
-     * Context directly. The Context will return to the pool
-     * when Context.recycle() is called.
+     * Instantiate a new context.
      */
     final public Context getContext ()
     {
-        Pool cpool = (Pool) _contextCache.get();
-        Context c = (Context) cpool.get();
-        if (c == null)
-        {
-            c = (Context) _context.clone();
-            c.setPool(cpool);
-        }
-        else
-            c.clear();
-        return c;
+        return new Context(_broker);
     }
 
     /**
-     * Instantiate a new webcontext from a pool. This method is more
-     * efficient, in terms of object creation, than creating a
-     * WebContext object directly. The WebContext will return to
-     * the pool when WebContext.recycle() is called.
+     * Instantiate a new webcontext.
      */
     final public WebContext getWebContext (HttpServletRequest req,
                                            HttpServletResponse resp)
     {
-        Pool cpool = (Pool) _webContextCache.get();
-        WebContext c = (WebContext) cpool.get();
-        if (c == null)
-        {
-            c = _webContext.newInstance(req, resp);
-            c.setPool(cpool);
-        }
-        else
-            c.reinitialize(req, resp);
-        return c;
+        return new WebContext(_broker, req, resp);
     }
 
 

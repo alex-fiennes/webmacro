@@ -49,24 +49,6 @@ public interface WebMacro
     public static final String BUILD_DATE = "@BUILD_DATE@";
 
     /**
-     * Call this method when you are finished with WebMacro. If you don't
-     * call this method, the Broker and all of WebMacro's caches may not
-     * be properly shut down, potentially resulting in loss of data, and
-     * wasted memory. This method is called in the finalizer, but it is
-     * best to call it as soon as you know you are done with WebMacro.
-     * <p> After a call to destroy() attempts to use this object may yield
-     * unpredicatble results.
-     */
-    public void destroy ();
-
-    /**
-     * This message returns false until you destroy() this object,
-     * subsequently it returns true. Do not attempt to use this object
-     * after it has been destroyed.
-     */
-    public boolean isDestroyed ();
-
-    /**
      * This object is used to access components that have been plugged
      * into WebMacro; it is shared between all instances of this class and
      * its subclasses. It is created when the first instance is initialized,
@@ -91,6 +73,7 @@ public interface WebMacro
      *
      * @throws java.io.UnsupportedEncodingException if the encoding type
      *         specified is not supported by your JVM.
+     * @deprecated
      */
     public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException;

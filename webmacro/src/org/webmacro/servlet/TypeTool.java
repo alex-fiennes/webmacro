@@ -41,9 +41,6 @@ public class TypeTool implements ContextTool
         return org.webmacro.util.CastUtil.getInstance();
     }
 
-    public void destroy (Object o)
-    {
-    }
 }
 
 

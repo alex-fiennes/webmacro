@@ -165,7 +165,4 @@ public class LocaleTool implements ContextTool, Bag
         throw new UnsettableException("Cannot unset a form property");
     }
 
-    public void destroy (Object o)
-    {
-    }
 }
