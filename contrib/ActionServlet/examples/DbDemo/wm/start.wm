@@ -1,0 +1,25 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+
+<H2>DbDemo</H2>
+
+In this demo you will see two instances of <TT>SimpleDbComponent</TT>
+(providing simple JDBC access) on one page. The first one displays list 
+of actors and the second one his/her movies (when you click on 
+<U>show movies</U> link).
+
+<P>Note: this demo uses <TT>org.webmacro.datatable</TT> package
+(see contrib directory in <A HREF="http://www.webmacro.org">WebMacro</A> 
+distribution) and <A HREF="http://www.thoughtinc.com/simpletext.html">SimpleText</A> 
+JDBC driver, that works with CSV (comma separated values) files.
+
+<P><FORM METHOD="POST">
+<INPUT TYPE="Hidden" NAME="form" VALUE="actors">
+<INPUT TYPE="Hidden" NAME="action" VALUE="select">
+<INPUT TYPE="Hidden" NAME="sql" VALUE="select * from actors">
+<INPUT TYPE="Submit" VALUE=" Start ">
+</FORM>
+
+</BODY>
+</HTML>

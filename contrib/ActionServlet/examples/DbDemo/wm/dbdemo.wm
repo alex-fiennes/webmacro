@@ -1,0 +1,14 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+<BODY>
+
+#parse "actors.inc"<P>
+
+#if ($movies != null) {
+    #parse "movies.inc"
+}
+
+</BODY>
+</HTML>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
+
+<application repository="@as.home@/examples/DbDemo/classes">
+   <properties>
+      <property component="actors"
+                name="db.directory"
+                value="@as.home@/examples/DbDemo/db"/>
+      <property component="actors" name="page.size" value="5"/>
+
+      <property component="movies"
+                name="db.directory"
+                value="@as.home@/examples/DbDemo/db"/>
+      <property component="movies" name="page.size" value="2"/>
+   </properties>
+
+   <templates>
+      <template name="start.wm" is-new-session="true"/>
+
+      <template name="dbdemo.wm">
+         <output-variable name="actors" component="actors" value="getTable()"/>
+         <output-variable name="movies" component="movies" value="getTable()"/>
+      </template>
+   </templates>
+
+   <components>
+      <component name="actors" class="SimpleDbComponent" persistence="session">
+         <action form="actors" name="select" method="select(String sql)"/>
+         <action form="actors" name="first" method="first()"/>
+         <action form="actors" name="prev" method="prev()"/>
+         <action form="actors" name="next" method="next()"/>
+         <action form="actors" name="last" method="last()"/>
+         <action form="actors" name="orderBy" method="setOrderBy(String attr)"/>
+         <on-return value="void" show-template="dbdemo.wm"/>
+      </component>
+
+      <component name="movies" class="SimpleDbComponent" persistence="session">
+         <action form="movies" name="select" method="select(String sql)"/>
+         <action form="movies" name="first" method="first()"/>
+         <action form="movies" name="prev" method="prev()"/>
+         <action form="movies" name="next" method="next()"/>
+         <action form="movies" name="last" method="last()"/>
+         <on-return value="void" show-template="dbdemo.wm"/>
+      </component>
+   </components>
+</application>

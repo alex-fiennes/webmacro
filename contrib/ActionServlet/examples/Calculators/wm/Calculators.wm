@@ -1,0 +1,16 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+<TABLE BORDER=0 CELLPADDING=20><TR><TD>
+   <FORM METHOD="POST">
+   <INPUT TYPE="Hidden" NAME="form" VALUE="1ST">
+        #parse "calc1.inc"
+   </FORM>
+</TD><TD>
+   <FORM METHOD="POST">
+   <INPUT TYPE="Hidden" NAME="form" VALUE="2ND">
+        #parse "calc2.inc"
+   </FORM>
+</TD></TR></TABLE>
+</BODY>
+</HTML>
