@@ -157,8 +157,8 @@ public class WMParser_impl {
     "Use of $$ to reference template property -- use single $ instead";
 
   // Warning routines
-  private void warnDeprecated(String feature) {
-    broker.getLog("parser").warning("Deprecated feature: " + feature);
+  private void warnDeprecated(String feature, int line, int col) {
+    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + line + "." + col);
   }
 }
 
@@ -750,7 +750,7 @@ void VariableReferenceGuts(ArrayList v) : {
   element=ObjectRoot() { v.add(element); }
   ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; }
     [ <LPAREN> argList=ArgList() <RPAREN>
-      { element = new PropertyMethodBuilder((String) element, argList); }
+       { element = new PropertyMethodBuilder((String) element, argList); }
     ]
     { v.add(element); }
   )*
@@ -762,10 +762,10 @@ Builder VariableReference() : {
 }
 {
   <DOLLAR>
-  [ <DOLLAR> { warnDeprecated(DDOLLAR_FEATURE); } ]
+  [ t=<DOLLAR> { warnDeprecated(DDOLLAR_FEATURE, t.beginLine, t.beginColumn); } ]
   (
     LOOKAHEAD(2)
-    t=<WORD><SEMI> { v.add(t.image); warnDeprecated(SEMI_FEATURE); }
+    t=<WORD><SEMI> { v.add(t.image); warnDeprecated(SEMI_FEATURE, t.beginLine, t.beginColumn); }
     | VariableReferenceGuts(v)
     | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )

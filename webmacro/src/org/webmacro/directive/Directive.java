@@ -115,8 +115,7 @@ public abstract class Directive implements Macro, Visitable {
     * This method also outputs the same warning message to a log named "directive"
     */
    protected static void writeWarning(String warning, Context context, FastWriter writer) throws IOException, PropertyException {
-       warning = getWarningText(warning, context);
-       context.getLog("directive").warning(warning);
+       context.getLog("directive").warning(warning + " at " + context.getCurrentLocation());
        writer.write(getWarningText(warning, context));
    }
 

@@ -76,5 +76,4 @@ public class TestCountDirective extends TemplateTestCase {
         assert (c.toString(), c.getCount() == 0);
         assert (i == null);
     }
-
 }
