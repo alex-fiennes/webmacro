@@ -16,7 +16,7 @@ Contents:
 
 <ul>
 
-   <li><a href="#New">New in this Release</a>
+   <li><a href="#New">About WebMacro</a>
    <li><a href="#About">About WebMacro</a>
    <li><a href="#Contact">Where to learn more</a>
    <li><a href="#License">Licensing</a>
@@ -31,36 +31,50 @@ Contents:
 
 <a name="About"><h2>New in this Release</h2></a>
 
-Encoding problems should be fixed. You can pass an encoding to a 
-template when you load it like this: getTemplate(":UTF8:/template.wm") 
-If you leave off the :encoding: from the beginning of the name then
-the encoding is assumed to be UTF8. In order to support this you 
-must also set the same encoding on FastWriter when you create 
-it in standalone mode. 
-<p>
-There are three not-yet-standard directives added: #escape (HTML escaping),
-#encode (URL encoding), and #silence (shut off warnings of nulls). They
-They all take a single variable name as their argument and apply their
-operation to all of its subsequent users. For example "#escape $foo" 
-would cause $foo and $foo.bar both to be HTML escaped. These are 
-here partly because they are probaly going to become standard 
-directives, and to demonstrate how to access and use the filtering
-API in webmacro.
-<p>
-A couple of bugs fixed: especially problems surrounding setBean
-<p>
-There is an experimental parser in org/webmacro/parser and in 
+See the <a href="RELEASE-NOTES.html">release notes</a> for 
+detailed documentation about what has changed. The short 
+list is:
+<ul>
+   <li>Page driven design: ContextTools automatically load variables into a context 
+   <li>Support for standalone mode: the WebMacro interface
+   <li>Filtering: #encode, #escape, and #silence directives
+   <li>/contrib area for contributions
+   <li>#use directive no longer takes 'until' as an argument
+   <li>Macro interface now expects a FastWriter
+   <li>Templates can be named :encoding:/path/template.wm to support arbitrary character encodings
+   <li>You can use #begin and #end as alterantes to { and }
+   <li>You can return "null" from WMServlet.handle() instead of a template
+   <li>#include directive can take an arbitrary URL
+   <li>Many minor API changes
+   <li>This will be the last JDK 1.1 release
+   <li>Context is now a class, Context.setBean() exists
+   <li>Support for co-branding
+   <li>Clear whitespace rules in the template
+   <li>Many bug fixes and performance improvements
+   <li>New licensing: GNU GPL or Semiotek Public License (apache-style)
+</ul>
+
+There is also an experimental parser in org/webmacro/parser and in 
 org/webmacro/directive, please try it out and let us know! It is
 not ready for production use yet.
 <p>
-The C-Blocks configuration setting has been removed. C-Blocks are 
-now never recognized except following a directive. 
-<p>
-Some performance improvements. Notably, if you use the WM internal
-APIs you have to switch to using a FastWriter. PLEASE NOT: you 
-must flush the FastWriter when youa re done writing to it.
-<p>
+<a name="Upgrading"><h2>Upgrading</h2></a>
 
+You must read the <a href="RELEASE-NOTES.html">RELEASE-NOTES</a> to 
+learn what you need to do to upgrade. For most people, you will 
+have to make only minor changes to your templates (especially 
+concerning #use directive) and to your classes. WebMacro throws
+some slightly different exceptions now, but they mean the 
+same thing. Some classes have moved from lower level packages
+to the org.webmacro package to reduce the number of import
+statements needed to use WebMacro. If you were using WebMacro
+in a more advanced way you will have to adapt to changes to
+the Macro interface (WM now expects a FastWriter and a Context).
+<p>
+Please be sure to check your WebMacro.properties file carefully
+and comparae it to the version in the release. Several new 
+directives have been added.
+<p>
 
 <a name="About"><h2>About WebMacro</h2></a>
 
@@ -68,27 +82,6 @@ WebMacro is a free Java development package that allows you to keep
 HTML and presentational issues out of your Java servlet code--while
 providing web designers with a simple template language capable of
 displaying any Java object.  <p>
-
-WebMacro believes you ought to own your own work. As a page 
-designer you shouldn't have to get in touch with a programmer in
-order to change the look and feel of your pages. And as a programmer
-you shouldn't have to work your program code into the clutter of 
-an HTML page. These tasks are separate, and each person should 
-be able to work on their own work, in parallel with everyone else.
-<p>
-WebMacro accomplishes this through a Model/View/Controller design. 
-Your application is divided into three parts:
-<ul>
-   <li>Model: Java beans/database, implement your business logic
-   <li>View: WebMacro templates, pretty much straight forward HTML
-   <li>Controller: servlet code, manage sessions and users
-</ul>
-
-You can read more about WebMacro on the site. There is a tutorial
-and an introduction to help you.
-<p>
-
-<a name="License"><h2>Licensing</h2></a>
 
 WebMacro is available for use under the GNU GPL (v2), and the Semiotek
 Public License Version 1.0 (SPL). You may use it under whichever of
@@ -153,9 +146,6 @@ See the file "CREDITS" to learn who helped develop WebMacro.<p>
 
 </pre>
 
-If neither of these licenses suits you please contact us and we can work
-something out.
-
 
 <a name="Contact"><h2>Documentation & Contact Information</h2></a>
 
@@ -192,7 +182,7 @@ answers to your problems as well.
      only change you should need to make).
      <p>
 <li>collections.jar contains the Sun JDK 1.1 collection classes, which
-     WebMacro uses. You will need these under Java 1.1
+     WebMacro uses. You will only need these under Java 1.1
     <p>
 <li> src.zip contains all the .java source code for WebMacro, you only
      need it if you intend to modify the source
@@ -285,28 +275,24 @@ CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/
 
 <a name="Compiling"><h2>How to Compile WebMacro</h2></a>
 
-WebMacro ships with a webmacro.jar file compiled for JDK 1.1.7
-and 1.1.8; to use WebMacro with java2 you will need to recompile.
+WebMacro ships with a webmacro.jar file compiled for JDK 1.2/1.3;
+to use WebMacro with java1 you will need to recompile.
 
 <ul>
-  <li> You need the JSDK sources installed and in your classpath. 
-  <li> You need a FULLY compliant Java compiler for JDK 1.1.7 or better.
-       Please note that Sun's "javac" and compiler derived form it do 
-       not fulfil this requirement, as JDK 1.1 javac has a known bug 
-       with respect to blank final variables. Hopefully this will be 
-       fixed in Java2/JD1.2--in the meantime you can use IBM's jikes 
-       compiler, which IS fully compliant with the Java specification.
-    
+  <li> You need the JSDK classes installed and in your classpath. 
+  <li> You need a FULLY compliant Java compiler. Versions of 
+       javac prior to JDK 1.1.8 may not work.
   <li> Unpack the src.zip file in a directory that is part of your classpath
 </ul>
 
 <p>
+To compile under JDK 1.2/1.3:
+<ul>
+<li>"javac *.java */*.java" should work
+</ul>
+<p>
 To compile under JDK 1.1.8:
 <ul>
-  <li> you may have to use "jikes" (compiler from IBM, free)
-     rather than javac, due to a compiler bug in
-     javac relating to final variables.
-
   <li>WebMacro uses the Java2 collections classes. Under JDK 1.1.8 
       you need to install and import the com.sun.java.util.collections
       classes in collections.jar. If you are compiling under Java2 you
@@ -315,24 +301,6 @@ To compile under JDK 1.1.8:
       under Java2 if you do not compile against the java.util.* versions
       of the collection classes, then WebMacro will fail to introspect
       the Java2 collections classes properly.
-</ul>
-<p>
-See the website for a link to jikes; and check the FAQ and 
-mailing list if you have any trouble.
-<p>
-A few more notes:
-<ul> 
-  <li> Many classes have test harnesses on them, written as main(),
-       which you can use to test whether things are working for you.
-       See in particular org.webmacro.engine.StreamTemplate, as a good
-       example of how to use WebMacro outside of a servlet.
-
-  <li> There is a 'mkdoc' shell script available to create the JavaDoc 
-       documentation in under the webroot directory. This just contains
-       the correct javadoc command, so if you are running under NT you 
-       can inspect it to see the correct command line to generate 
-       the javadocs. 
-
 </ul>
 
 
@@ -424,10 +392,10 @@ was largely written by me--Justin Wells. It's my third attempt at
 a template oriented web framework, incorporating the experiences I
 had with the previous systems.
 <p>
-WebMacro is now being developed by a team of 
-<a href="CREDITS">core developers</a>. You can join the team if 
-you like as well--just read our <a href="POLICY">POLICY</a>
-document. 
+The core developers are listed in the <a href="CREDITS">CREDITS</a> 
+file. If you would like to join the WebMacro project you are more
+than welcome: read the <a href="POLICY">POLICY</a> document for 
+details on what you must do.
 <p>
 Of course there are all the people on the WebMacro mailing lists 
 who have helped out in supporting WebMacro. I used to list you 
