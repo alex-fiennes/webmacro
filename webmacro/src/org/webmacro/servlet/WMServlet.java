@@ -51,7 +51,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    private WebContext _wcPrototype;
    private boolean _started = false;
 
-   private final Stack _writerCache = new Stack();
+   private final SimpleStack _writerCache = new SimpleStack();
 
    /**
      * The name of the config entry we look for to find out what to 
@@ -160,7 +160,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       _wm.destroy();
       _wm = null;
       _started = false;
-      _writerCache.removeAllElements();
+      _writerCache.clear();
       super.destroy();
    }
 
