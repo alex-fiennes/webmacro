@@ -48,13 +48,13 @@ public class SMapCacheManager implements CacheManager {
    private boolean _delayReloadChecks=false;
    private long _checkForReloadDelay;
 
-   private static TimeLoop _tl;
+   private static final long DURATION = 1000;
+   private static final int PERIODS = 600; 
+
+   private static final TimeLoop _tl = new TimeLoop(DURATION,PERIODS);
    private Log _log;
 
-   private static final long DURATION = 1000;
-   private static int PERIODS = 600; 
    static {
-      _tl = new TimeLoop(DURATION, PERIODS); // 10min max, 1sec intervals
       _tl.setDaemon(true);
       _tl.start();
    }
