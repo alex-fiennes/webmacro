@@ -350,4 +350,9 @@ class BeanConf {
         s = b.getSetting("BeanDirective.AllowedPackages");
         allowedPackages = Arrays.asList(org.webmacro.servlet.TextTool.split(s, ","));
     }
+    public Map getGlobalBeans(){ return globalBeans; }
+    public Map getAppBeans(){ return appBeans; }
+    public List getImpliedPackages(){ return impliedPackages; }
+    public List getAllowedPackages(){ return allowedPackages; }
+    
 }
