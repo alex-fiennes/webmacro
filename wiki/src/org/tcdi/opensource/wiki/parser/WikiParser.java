@@ -41,7 +41,6 @@
  */
 package org.tcdi.opensource.wiki.parser;
 
-import java.io.*;
 import org.tcdi.opensource.wiki.*;
 import org.tcdi.opensource.wiki.builder.*;
 

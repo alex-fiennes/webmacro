@@ -41,7 +41,7 @@ value="$keywords.trim()"
 <input type='hidden' name='preview' value='false' >
 <input type=button value="Cancel" onClick="top.location.href='$PageName';"
        >&nbsp;<input type=button onClick="
-            window.open('', 'PREVIEW', 'scrollbars=yes,resizeable=yes,menubar=no,status=no,width=640,height=480');
+            window.open('', 'PREVIEW', 'scrollbars=yes,resizable=yes,menubar=no,status=no,width=640,height=480');
             this.form.target = 'PREVIEW';
             this.form.preview.value = 'true';
             this.form.submit();

@@ -16,8 +16,31 @@
         <tr><td>Username:</td><td><b>$UserToUpdate.Identifier</b></td></tr>
         <tr><td>Name:</td><td><input type='text' name='name' value='$Text.HTMLEncode($UserToUpdate.Name)' size=45></td></tr>
         <tr><td>Password:</td><td><input type='password' name='password' value=''></td></tr>
-        <tr><td>email:</td><td><input type='text' name='email' value='$Text.HTMLEncode($UserToUpdate.Attributes.email)' size=45></td></tr>
-        <tr><td colspan=2>is moderator? <input type='checkbox' name='moderator' value='true'  #if($UserToUpdate.IsModerator){ checked}></td></tr>
+        <tr><td>Email:</td><td><input type='text' name='email' value='$Text.HTMLEncode($UserToUpdate.Attributes.email)' size=45></td></tr>
+        <tr><td>Is moderator?</td><td><input type='checkbox' name='moderator' value='true'  #if($UserToUpdate.IsModerator){ checked}></td></tr>
+
+        #if ($ApprovalSystem.RunningInApproveMode){
+  		      <tr><td>Approval State:</td>
+  		      #set $stateValue = $UserToUpdate.ApprovalState
+  		      <td>
+				<select 
+				  name='approvalState'
+				  single 
+				  size='2'>
+					<option 
+				      value="$ApprovalSystem.APPROVAL_PENDING"
+				      #if ($stateValue == $ApprovalSystem.APPROVAL_PENDING) { selected}>
+				      Approval Pending
+				    </option>
+					<option 
+				      value="$ApprovalSystem.APPROVED"
+				      #if ($stateValue == $ApprovalSystem.APPROVED) { selected}>
+				      Approved
+				    </option>
+				</select>
+      		  </td></tr>
+  		}
+        
         </table>
         <p>
         

@@ -10,7 +10,14 @@
 		<fail message="Please define dir.install" />
         </target>
 
-        <!-- a taget for building a "resources.jar" file in
+        <!-- a target for cleaning out
+        	 the deployment directory.
+        -->
+        <target name="clean" depends="verify">
+			<delete dir="${dir.install}" />
+        </target>
+
+        <!-- a target for building a "resources.jar" file in
              the current directory
         -->
         <target name="resources" depends="verify">

@@ -8,10 +8,9 @@
  */
 package org.tcdi.opensource.wiki.servlet.admin;
 
-import org.tcdi.opensource.wiki.servlet.PageAction;
 import org.tcdi.opensource.wiki.WikiSystem;
 import org.tcdi.opensource.wiki.WikiUser;
-import org.tcdi.opensource.wiki.WikiPage;
+import org.tcdi.opensource.wiki.servlet.PageAction;
 import org.webmacro.servlet.WebContext;
 
 abstract class AdminAction implements PageAction {

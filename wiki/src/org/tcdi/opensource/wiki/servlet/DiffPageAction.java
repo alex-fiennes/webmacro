@@ -40,17 +40,16 @@
  */
 package org.tcdi.opensource.wiki.servlet;
 
-import org.tcdi.opensource.wiki.*;
-import org.tcdi.opensource.wiki.renderer.TextPageRenderer;
-import org.tcdi.opensource.wiki.renderer.WikiPageRenderer;
-import org.tcdi.opensource.wiki.renderer.TextURLRenderer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.tcdi.opensource.wiki.WikiPage;
+import org.tcdi.opensource.wiki.WikiSystem;
+import org.tcdi.opensource.wiki.WikiUser;
+import org.tcdi.opensource.wiki.WikiUtil;
 import org.tcdi.opensource.wiki.util.Diff;
 import org.webmacro.servlet.WebContext;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 
 
 public class DiffPageAction implements PageAction {

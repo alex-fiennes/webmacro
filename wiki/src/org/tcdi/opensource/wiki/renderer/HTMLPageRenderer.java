@@ -41,11 +41,7 @@
 
 package org.tcdi.opensource.wiki.renderer;
 
-import java.io.*;
-import java.util.*;
-
 import org.tcdi.opensource.wiki.*;
-import org.tcdi.opensource.wiki.renderer.*;
 
 /**
  * HTMLPageRenderer can render a WikiPage to HTML.  Supports all the

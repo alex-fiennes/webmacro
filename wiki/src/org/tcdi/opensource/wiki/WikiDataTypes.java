@@ -40,8 +40,6 @@
  */
 package org.tcdi.opensource.wiki;
 
-import java.io.Serializable;
-
 /**
  * this is simply a list of the various types a WikiData object can have.<p>
  * 

@@ -16,7 +16,7 @@
  * Copyright (C) 2000 Technology Concepts and Design, Inc.  All
  * Rights Reserved.
  *
- * Contributor(s): Lane Sharman (OpenDoors Software)
+ * Contributor(s): Lane Sharman (Open Doors Software)
  *                 Justin Wells (Semiotek Inc.)
  *                 Eric B. Ridge (Technology Concepts and Design, Inc.)
  *
@@ -33,14 +33,14 @@
  * GPL.
  *
  *
- * This product includes sofware developed by OpenDoors Software.
+ * This product includes sofware developed by Open Doors Software.
  *
  * This product includes software developed by Justin Wells and Semiotek Inc.
  * for use in the WebMacro ServletFramework (http://www.webmacro.org).
  */
 package org.tcdi.opensource.wiki;
 
-import org.opendoors.instant.vlh.VLHProvider;
+import org.opendoors.vlh.VLHProvider;
 import org.opendoors.intf.QueueListener;
 import org.tcdi.opensource.wiki.builder.WikiPageBuilder;
 import org.tcdi.opensource.wiki.parser.WikiParser;
@@ -49,6 +49,15 @@ import org.tcdi.opensource.wiki.renderer.HTMLURLRenderer;
 import org.tcdi.opensource.wiki.renderer.WikiPageRenderer;
 import org.tcdi.opensource.wiki.search.LuceneIndexer;
 import org.tcdi.opensource.wiki.search.WikiPageIndexer;
+import org.tcdi.opensource.wiki.servlet.DeletePageAction;
+import org.tcdi.opensource.wiki.servlet.EditPageAction;
+import org.tcdi.opensource.wiki.servlet.LoginAction;
+import org.tcdi.opensource.wiki.servlet.LogoutAction;
+import org.tcdi.opensource.wiki.servlet.PageAction;
+import org.tcdi.opensource.wiki.servlet.RegisterNewUserAction;
+import org.tcdi.opensource.wiki.servlet.SavePageAction;
+import org.tcdi.opensource.wiki.servlet.UserStatusAction;
+import org.tcdi.opensource.wiki.ControlFiles;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -86,7 +95,28 @@ final public class Wiki implements WikiSystem, QueueListener {
 
     /** the page builder class we should use */
     private Class _pageBuilderClass;
+    
+    /** 
+     * The approval system delegate for all approval logic.
+     */
+    private Approve _approveSystem;
+    
+    /**
+     *  Running in authenticated mode?
+     */
+    private boolean _privateMode;
+    private String _notLoggedInURL;
+    private String _notApprovedPrivateURL;
+    private ControlFiles _controlFiles; 
 
+
+    /**
+     * @return The Control Files Used By Wiki.
+     */
+    public ControlFiles getControlFiles()
+    {
+      return _controlFiles;
+    }
 
     /**
      * This constructor will load the specified .properties file
@@ -251,6 +281,8 @@ final public class Wiki implements WikiSystem, QueueListener {
 
         WikiUser newUser = new WikiUser(fullname, password);
         newUser.setIdentifier(uid);  // TODO: need another VLH store for a UID<-->username mapping
+        // delegate approval to approve system:
+        _approveSystem.newUser(newUser, this.isAdministrator(newUser));
 
         if (attributes != null) {
             Enumeration enum = attributes.keys();
@@ -281,6 +313,77 @@ final public class Wiki implements WikiSystem, QueueListener {
 
         return false;
     }
+    
+    public boolean isUserApproved(WikiUser user)
+    {
+      
+      return (user != null && _approveSystem.isUserApproved(user));
+    }
+
+    public void approveUser(WikiUser user)
+    {
+       if (user == null) throw new IllegalArgumentException("No User Provided");
+       _approveSystem.approveUser(user);
+    }
+    /**
+     * Returns a redirect url if the action is not authorized.
+     * @param user
+     * @param action
+     * @return url to redirect the browser if not authorized.
+     */
+    public String authorizeAction(WikiUser user, PageAction action, String pageName)
+    {
+      boolean userApproved = isUserApproved(user);
+      // strict authorization: 
+      // Case 1: User approved and public/anon wiki
+      String redirectValue = null;
+      if (userApproved && ! _privateMode)
+      {
+        // do nothing to return value
+        // possibly get/set some state value
+      }
+      //case 2: User approved and private wiki
+      if (userApproved && _privateMode)
+      {
+        // do nothing to return value
+        // possibly get/set some state value
+      }
+      //case 3: User not approved and public annon wiki
+      if (!userApproved && ! _privateMode)
+      {
+        if (action.getClass() == EditPageAction.class
+        || action.getClass() == DeletePageAction.class
+        || action.getClass() == SavePageAction.class)
+        {
+          throw new IllegalStateException("You are not approved to perform this action.");
+        }
+      }
+      //case 4: User not approved and private wiki
+      if (!userApproved && _privateMode)
+      {
+        if (action.getClass() == RegisterNewUserAction.class
+        || action.getClass() == LoginAction.class
+        || action.getClass() == LogoutAction.class
+        || (action.getClass() == UserStatusAction.class))
+        {
+          // do nothing as user is going to 
+          // one of allowed actions.
+        }
+        else
+        {
+          if (user == null)
+          {
+            redirectValue = _notLoggedInURL;
+          }
+          else
+          {
+            redirectValue = _notApprovedPrivateURL;
+          }
+        }
+      }
+      return redirectValue;
+    }
+    
 
     public Properties getProperties() {
         return _properties;
@@ -324,6 +427,7 @@ final public class Wiki implements WikiSystem, QueueListener {
         _propsFilename = propertiesFilename;
 
         reloadProperties();
+        _controlFiles = new ControlFiles(_properties.getProperty("Install.Dir"));
 
         _version = _properties.getProperty("Version");
 
@@ -347,6 +451,18 @@ final public class Wiki implements WikiSystem, QueueListener {
             System.err.println("Cannot load page builder class");
             e.printStackTrace();
         }
+        
+        // running in authenticated mode.
+        String val = _properties.getProperty("WikiRunMode");
+        _privateMode = (val !=  null && val.trim().equalsIgnoreCase("Private"));
+        _notLoggedInURL = _properties.getProperty("URLNotLoggedIn");
+        _notApprovedPrivateURL = _properties.getProperty("URLPrivateNotApproved");
+      
+
+         
+        
+        //create the approval system
+        _approveSystem = new Approve(_properties.getProperty("WikiRunMode"));
 
         // the page renderer
         _pageRenderer = new HTMLPageRenderer(new HTMLURLRenderer(this), this);
@@ -529,6 +645,15 @@ final public class Wiki implements WikiSystem, QueueListener {
                     break;
             }
         }
+    }
+
+    /* 
+     * Returns the approval system.
+     * @see org.tcdi.opensource.wiki.WikiSystem#getApprovalSystem()
+     */
+    public Approve getApprovalSystem()
+    {
+      return _approveSystem;
     }
  
 }

@@ -64,7 +64,8 @@
   
   <!-- prepares a new site for subsequent install. -->
   <target name="prepareNewWiki" depends="verify.site.name,prepare">
-    <copy todir="builds/${site.name}" overwrite='true'>
+	<delete dir="builds/${site.name}" />
+    <copy todir="builds/${site.name}">
         <fileset dir="builds/www.webmacro.org" >
           <includesfile name="FilesDirsToCreateAWiki.txt"/>
         </fileset>
@@ -84,6 +85,11 @@
                      dir="builds/${site.name}/">
 			<property name="dir.install" value="${dir.install}" />
 		</ant>
+	</target>
+	
+	<target name="cleanSite"  depends="verify.dir.install,verify.site.name">
+	  <delete dir="${dir.install}"/>
+	  <delete dir="builds/${site.name}"/>
 	</target>
 
 </project>

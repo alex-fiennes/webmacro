@@ -40,8 +40,6 @@
  */
 package org.tcdi.opensource.wiki.servlet;
 
-import java.util.*;
-import javax.servlet.http.Cookie;
 import org.webmacro.servlet.WebContext;
 
 import org.tcdi.opensource.wiki.*;

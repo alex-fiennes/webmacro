@@ -40,12 +40,10 @@
  */
 package org.tcdi.opensource.wiki.search;
 
-import java.io.*;
 import java.util.*;
 
 import com.lucene.analysis.Analyzer;
 import com.lucene.analysis.StopAnalyzer;
-import com.lucene.document.Document;
 import com.lucene.search.Searcher;
 import com.lucene.search.IndexSearcher;
 import com.lucene.search.Query;

@@ -41,7 +41,6 @@
 
 package org.tcdi.opensource.wiki.servlet;
 
-import java.util.*;
 import javax.servlet.http.Cookie;
 import org.webmacro.servlet.WebContext;
 
@@ -67,14 +66,21 @@ public class LoginAction implements PageAction {
      * redirect to the start page.
      */
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
+        //System.out.println("Logging user in with value=" + user);
         String method = wc.getRequest().getMethod();
         if (method.equalsIgnoreCase ("GET")) {
             return;
         } else if (method.equalsIgnoreCase ("POST")) {
             if (!loginUser (wiki, wc))
                 throw new PageAction.PageActionException ("Authentication failed");
-            else    // redirect to wiki start page
+            else {
+              //System.out.println("User logged in=" + user + " approved=" + wiki.isUserApproved(user));
+              WikiUser loggedInUser = (WikiUser) wiki.getUser(wc.getForm("username"));
+              if (wiki.isUserApproved(loggedInUser))   // redirect to wiki start page or approval pending
                 throw new PageAction.RedirectException (wiki.getStartPage ());
+              else
+                throw new PageAction.RedirectException ("UserStatus");
+            }
         } else {
             throw new PageAction.PageActionException ("Unknown method: " + method);
         }

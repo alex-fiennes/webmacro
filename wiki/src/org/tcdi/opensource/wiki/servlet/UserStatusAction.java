@@ -41,58 +41,42 @@
 
 package org.tcdi.opensource.wiki.servlet;
 
-import javax.servlet.http.Cookie;
 import org.webmacro.servlet.WebContext;
 
 import org.tcdi.opensource.wiki.*;
 
 /**
- * Log out the current user by removing his Cookie
- * @author  e_ridge
+ * Provides a status of the user and the site in general.
+ * Useful for linking an unapproved user to the administrators
+ * who can approve the user.
+ *
+ * @author  Lane Sharman
  */
-public class LogoutAction implements PageAction {
+public class UserStatusAction implements PageAction {
 
     /**
-     * can only log out if "?logout=true" is specified in the request
+     * only accept if the URI ends with <em>RecentChanges</em>
      */
     public boolean accept(WikiSystem wiki, WebContext wc, WikiUser user) {
-        String logout = wc.getForm ("logout");
-        return logout != null && logout.equals ("true");
+        return wc.getRequest().getRequestURI().endsWith ("UserStatus");
     }
     
     /**
-     * we redirect to the start page of the specified wiki, after
-     * removing any cookie associed with this request
      */
     public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
-        String cookieName = wiki.getProperties().getProperty ("CookieName");
-        try {
-            // create and add a null, expired cookie
-            Cookie c = new Cookie(cookieName, "");
-            c.setPath("/");
-            c.setMaxAge(0); 
-
-            wc.getResponse().addCookie(c);
-        } catch (Exception e) {
-            // should never happen
-            throw new PageAction.PageActionException (e.toString());
-        }
-        
-        throw new PageAction.RedirectException (wiki.getStartPage ());
     }
     
     /**
-     * no template for this action, because we do a redirect during perform()
+     * template is the "UserStatusAction.Template" configuration option
      */
     public String getTemplateName(WikiSystem wiki, WikiPage page) {
-        return null;
+        return wiki.getProperties().getProperty ("UserStatusAction.Template");
     }
     
     /**
      * no page name for this action
      */
     public String getWikiPageName(WikiSystem wiki, WebContext wc) {
-        return null;
+        return "UserStatus";
     }
-    
-}
+ }

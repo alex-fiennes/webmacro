@@ -1,0 +1,32 @@
+#set $PageName = "ControlFiles"
+#include as template "header.wm"
+
+
+
+#foreach $entry in $Wiki.ControlFiles.Entries indexing $i from 0 {
+    <form method='post' action='AdminControlFiles'>
+    <input type='hidden' name='name' value='$entry.Name'>
+    <input type='hidden' name='index' value='$i'>
+
+	<table border=0 cellspacing=4 width="90%" align="center"
+	<tr>
+	    <td valign=top colspan=2>
+		    <div class="SectionHeader">
+		    $entry.Description
+		    </div>
+	    </td>
+	</tr><tr>
+		<td align=top>
+			$entry.Path<br>
+			<input type=submit name="ACTION" value='Update'>
+		</td>
+		<td>
+    		<textarea name="contents" rows=19 cols=80 wrap=yes>$entry.Contents</textarea>
+    	</td>
+	</tr>
+	</table>
+
+	</form>
+}
+
+#include as template "footer.wm"

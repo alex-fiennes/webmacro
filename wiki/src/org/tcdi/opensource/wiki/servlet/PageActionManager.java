@@ -75,7 +75,6 @@ public class PageActionManager {
                 return action;
             }
         }
-        
         return null;
     }
     

@@ -40,8 +40,6 @@
  */
 package org.tcdi.opensource.wiki.search;
 
-import java.util.List;
-
 import org.tcdi.opensource.wiki.*;
 
 /**

@@ -116,6 +116,25 @@ public class WikiServlet extends WMServlet {
         // stuff the webcontext with useful stuff
         stuffContext (wc, wikiPage, user, pageName);
         
+        //Query the wiki system for a redirect page
+        //in case we are running in private mode or
+        //approved mode. 
+        //todo: Capture one time the first requested page
+        //so that on a successful login, the user is taken
+        //there instead of the default home page.
+        String redirectURL = _wiki.authorizeAction(user, action, pageName);
+        if (redirectURL != null)
+        {
+           try {
+               wc.getResponse().sendRedirect (redirectURL);
+           }
+           catch (IOException ioe) {
+               throw new HandlerException ("Cannot redirect to " 
+                               + redirectURL, ioe);
+           }
+           return null;
+        }
+        
         if (action == null)
             throw new HandlerException ("Unable to find a PageAction to handle"
                                       + " this request.");
@@ -173,7 +192,7 @@ public class WikiServlet extends WMServlet {
             
             WikiUser user = (WikiUser) ((uid == null) ? null : _wiki.getUser(uid));
             if (user != null) {
-                // udate the last accessed attribute for this user
+                // update the last accessed attribute for this user
                 user.setAttribute("LastAccessed", new Date().toString());
                 user.setAttribute("IPAddress", wc.getRequest().getRemoteAddr());
             }

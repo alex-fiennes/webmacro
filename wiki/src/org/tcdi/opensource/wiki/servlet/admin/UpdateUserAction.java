@@ -42,6 +42,11 @@ public class UpdateUserAction extends AdminAction {
             if (password.length() > 0)
                 userToUpdate.setPassword(WikiUtil.getMD5(password));
             userToUpdate.setAttribute("email", email);
+            // running in approval mode?
+            if (wiki.getApprovalSystem().isRunningInApproveMode()) {
+                int state = Integer.parseInt(wc.getForm("approvalState"));
+                userToUpdate.setApprovalState(state);
+            }
 
             wiki.updateUser(userToUpdate);
             wc.put ("Saved", Boolean.TRUE);
@@ -51,6 +56,7 @@ public class UpdateUserAction extends AdminAction {
         }
 
         wc.put("UserToUpdate", userToUpdate);
+        wc.put("ApprovalSystem", wiki.getApprovalSystem());
     }
 
     public String getTemplateName(WikiSystem wiki, WikiPage page) {

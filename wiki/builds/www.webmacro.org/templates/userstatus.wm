@@ -1,0 +1,49 @@
+#set $PageName = "UserStatus"
+#include as template "header.wm"
+
+
+<table border=0 cellspacing=4 width="70%" align="center"
+<tr>
+
+    <td valign=top>
+
+    <div class="SectionHeader">
+    Site Information
+    </div>
+    <table cellspacing=4 ><tr>
+	    <td>Wiki Runtime Mode</td>
+    	<td>$Wiki.Properties.WikiRunDescription</td>
+    	</tr><tr>
+    	<td>Wiki Version</td>
+    	<td>$Wiki.Properties.Version</td>
+	</tr></table>    	
+	<br>    
+    <div class="SectionHeader">
+    User Information
+    </div>
+    <table cellspacing=4 >
+	    <tr>
+	    <td>User Value </td>
+	    #if ($User) {
+		   <td><b>$User.Identifier</b></td>
+	   	}
+	   	#else {
+		   <td><b>Anonymous User</b></td>
+		}
+	   </tr>
+
+				<tr>
+				<td>Approval State</td>
+		#if ($Wiki.ApprovalSystem.RunningInApproveMode) {
+				<td>$Wiki.ApprovalSystem.getAsText($User.ApprovalState)</td>
+		}
+		#else {
+				<td>Not Running In Approval Mode</td>
+		}
+				</tr>
+	</table>
+    </td>
+
+</tr>
+</table>
+#include as template "footer.wm"

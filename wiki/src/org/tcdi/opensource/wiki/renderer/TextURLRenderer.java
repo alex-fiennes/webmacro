@@ -6,8 +6,6 @@
 
 package org.tcdi.opensource.wiki.renderer;
 
-import org.tcdi.opensource.wiki.*;
-
 /**
  *
  * @author  e_ridge

@@ -53,6 +53,7 @@ public class WikiUser implements Serializable
    String _name;         // full name, ie Eric B. Ridge
    String _password;
    boolean _isModerator;
+   int approvalState;
    
    Hashtable _attributes = new Hashtable ();
    
@@ -60,8 +61,11 @@ public class WikiUser implements Serializable
    
    static Object _sync = new Object ();
    static long _cntr = 0;
+   
+   
                                      
    
+ 
    public WikiUser (String name, String password)
    {
       this (name, password, false);  
@@ -73,6 +77,7 @@ public class WikiUser implements Serializable
       _password = password;
       _isModerator = isModerator;
       _identifier = createIdentifier ();
+      
    }
    
    private String createIdentifier ()
@@ -110,4 +115,21 @@ public class WikiUser implements Serializable
       
    public boolean containsAttribute (String key) { return _attributes.containsKey (key.toLowerCase()); }
    public String removeAttribute (String key)    { return (String) _attributes.remove (key.toLowerCase()); }
+   
+  /**
+    * @return The approval state.
+    */
+   public int getApprovalState()
+   {
+     return approvalState;
+   }
+
+   /**
+    * @param approvalState Sets the approval state.
+    */
+   public void setApprovalState(int approvalState)
+   {
+     this.approvalState = approvalState;
+   }
+
 }

@@ -42,11 +42,24 @@ package org.tcdi.opensource.wiki;
 
 import java.util.*;
 
-import org.tcdi.opensource.wiki.parser.*;
-import org.tcdi.opensource.wiki.renderer.*;
+import org.tcdi.opensource.wiki.renderer.WikiPageRenderer;
+import org.tcdi.opensource.wiki.servlet.PageAction;
 
 /**
- * WikiSystem describes a WikiSystem.  Plain and Simple.
+ * WikiSystem describes a WebMacro WikiSystem.
+ * <p>
+ * A WM Wiki can run in two modes creating four states:
+ * <pre>
+ * Approval Mode On or Off
+ * Private Mode On or Off
+ * </pre>
+ * The modes are independent of one another. The state
+ * of each mode is identified in the wiki system properties
+ * file.
+ * <p>
+ * To bootstrap a wiki, it is probably a good idea to run
+ * with approval off until you get the administrators (moderators)
+ * created in the user store.
  *
  * @author Eric B. Ridge
  */
@@ -73,9 +86,15 @@ public interface WikiSystem extends WikiTermMatcher {
         }
     }
 
-    /**
-     * How many "current" pages do we have?
-     */ 
+    
+  /**
+   * Returns the control files of the wiki system.
+   */ 
+   public ControlFiles getControlFiles();
+  
+   /**
+    * How many "current" pages do we have?
+    */ 
     public int getPageCount();
     
     /**
@@ -211,6 +230,31 @@ public interface WikiSystem extends WikiTermMatcher {
      * @return true is user is an administrator of this WikiSystem
      */
     public boolean isAdministrator(WikiUser user);
+  
+    /**
+     * @param user WikiUser to check for approved.
+     * @return true is user approved to operate this wiki.
+     */
+    public boolean isUserApproved(WikiUser user);
+      
+    /**
+     * Approve the user to operate the wiki system.
+     * @param user WikiUser to approve.
+     */
+    public void approveUser(WikiUser user);
+    
+    /**
+     * The wiki system can run in authorized, private mode.
+     * <p>
+     * The wiki servlet will use this method to authorize
+     * the action or to obtain a redirection value
+     * if the action is not authorized.
+     * @param user The WikiUser, possibly null, performing the action.
+     * @param action The Wiki action requested.
+     * @return Null if authorized; else if not null, the servlet 
+     * will redirect to the url returned.
+     */
+    public String authorizeAction(WikiUser user, PageAction action, String pageName);
     
     /**
      * access to the Properties used by the WikiSystem
@@ -269,4 +313,9 @@ public interface WikiSystem extends WikiTermMatcher {
      * Returns a tree-like structure ordered by page links.
      */ 
     public List getPageTree();
+
+    /**
+     * @return
+     */
+    public Approve getApprovalSystem();
 }

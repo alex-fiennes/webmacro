@@ -64,7 +64,10 @@
       
 #if ($User) {
    <span class="ModeratedNotice">
-   You have been authenticated as <b>$User.Identifier</b>
+   You have been authenticated as <b>$User.Identifier</b>.
+   #if ($Wiki.ApprovalSystem.RunningInApproveMode) {
+	   $Wiki.ApprovalSystem.getAsText($User.ApprovalState)
+   }
    </span>
 }
 
