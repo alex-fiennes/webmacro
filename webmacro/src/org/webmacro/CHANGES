@@ -1,3 +1,8 @@
+-- Nov-2000 keats: added code to Context that allows get() and put() to
+   work when a _bean has been set.  If the _bean has an appropriate get()
+   or put() method, get()/put() calls on the context will be delegated
+   to the _bean.
+
 -- Oct-2000 brian: Break out StringMacroAdapter from MacroAdapter; 
    break out {Escape,Encode,Silence}Filter from their respective directives;
    make BlockBuilder flatten embedded blocks (but still doesn't fully
