@@ -47,6 +47,8 @@ final public class UrlProvider extends CachingProvider
 
    Broker _broker;
 
+    private String defaultEncoding;
+
    /**
      * We serve up "url" type resources
      */
@@ -57,6 +59,7 @@ final public class UrlProvider extends CachingProvider
    {
       super.init(b,config);
       _broker = b;
+      defaultEncoding = config.getSetting("TemplateEncoding");
    }
 
    /**
@@ -91,13 +94,17 @@ final public class UrlProvider extends CachingProvider
              uc = _broker.getResource(name).openConnection();
              is = uc.getInputStream();
            }
-           else 
+           else {
+               e.printStackTrace();
              throw e;
+           }
          }
 
          String encoding = uc.getContentEncoding();
          if (encoding == null) {
-            encoding = "UTF-8";
+             // we have to guess encoding, so let's take
+             // our default TemplateEncoding
+             encoding = defaultEncoding;
          }
          Reader in = new InputStreamReader(
                            new BufferedInputStream(is), encoding);
