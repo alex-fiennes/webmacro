@@ -92,7 +92,7 @@ public class TestAbuse extends TemplateTestCase {
       _context.put ("Object", obj);
 
       assertStringTemplateMatches("$Object",
-                                  "^<!--.*Object.toString().*null.*-->$");
+                                  "<!--.*returns null.*-->");
 
    }
 

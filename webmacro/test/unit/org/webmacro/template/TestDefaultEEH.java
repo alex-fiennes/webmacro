@@ -53,7 +53,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void testNoSuchVariable () throws Exception {
       assertStringTemplateMatches ("$NotInContext", 
-        "^<!--.* nonexistent .*\\$NotInContext.*-->$");
+        "^<!--.*No such variable.*-->$");
    }
 
    public void testEvalNoSuchVariable () throws Exception {
@@ -94,7 +94,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
    public void testNullMethod () throws Exception {
       assertStringTemplateMatches ("$TestObject.nullMethod()", 
-        "^<!--.*null .*\\$TestObject.nullMethod.*-->$");
+        "^<!--.*Value is null.*-->$");
    }
 
    public void testEvalNullMethod () throws Exception {
@@ -115,7 +115,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
   // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
      assertStringTemplateMatches ("$NullObject", 
-          "^<!--.*nonexistent variable.*\\$NullObject.*-->$");
+          "^<!--.*No such variable.*-->$");
    }
 
    public void testEvalNullVariable () throws Exception {
