@@ -140,7 +140,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          _log.exception(e);
          _problem = "WebMacro application code failed to initialize: \n"
             + e + "\n" + "This error is the result of a failure in the\n"
-            + e + "code supplied by the application programmer.\n";
+                + "code supplied by the application programmer.\n";
       }
 
       _started = true;
@@ -181,6 +181,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       _wm.destroy();
       _wm = null;
       _started = false;
+      super.destroy();
    }
 
    /**

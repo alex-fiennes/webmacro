@@ -92,7 +92,7 @@ final public class WC extends HashMap implements WebContext
      * @param resp the servlet response object we need to fill in
      * @param requestType a constant, as defined in Reactor, naming req type
      */
-   WC(final Broker broker) {
+   public WC(final Broker broker) {
       _broker = broker;
       try {
          String tools = (String) _broker.getValue("config","TemplateTools");
