@@ -3,26 +3,48 @@ package org.webmacro.util;
 
 import java.io.*;
 
+/**
+  * This writer buffers characters into a char array. Also, if you pass 
+  * it a char array, it queues it into a queue of char array. The goal 
+  * is to handle string processing with as little copying as possible. 
+  * You can reset it and re-use the same local buffer to avoid a malloc
+  * as well. 
+  * <p>
+  * UNSYNCHRONIZED: It is not safe to use this writer from multiple 
+  * threads. It is an unsynchronized writer. It is intended for use 
+  * in WebMacro, where only one thread exists within a single request,
+  * and is also the only thread with access to mutable data.
+  */
 final public class QueueWriter extends Writer
 {
 
    /**
-     * The array of buffers where written data is stored
+     * The array of buffers where written data is stored. Nulls in this 
+     * array indicate that storage in local[] is used instead.
      */
    private char buffer[][];
 
    /**
-     * The offset into the array in the buffer
+     * This is where local data is kept. When the buffer[i] entry 
+     * evaluates to a null, that means the offsets refer to this array.
+     */
+   private char local[];
+
+   /**
+     * The offset into the array in the buffer. If the array in the buffer
+     * is null, then this is the offset into local[].
      */
    private int offset[];
 
    /**
-     * The number of characters to write in the array in the buffer
+     * The number of characters to write in the array in the buffer. If 
+     * the array in the buffer is null, this is the length of the data
+     * stored in local[].
      */
    private int length[];
 
    /**
-     * The number of buffers
+     * The number of buffers we have.
      */
    private int count;
 
@@ -32,39 +54,42 @@ final public class QueueWriter extends Writer
    private int size;
 
    /**
-     * The last buffer added was locally allocated
+     * The current position in the local buffer
      */
-   private boolean local;
+   private int localPos;
 
    /**
      * Create a new Writer
      */
    public QueueWriter() {
-      this(100);
+      this(1024);
    }
 
    /**
      * Create a new buffer. The integer argument is the expected number
-     * of things we will write to this buffer.
+     * of bytes locally written
      */
-   public QueueWriter(int expectedWrites) {
-      buffer = new char[expectedWrites][];
-      offset = new int[expectedWrites];
-      length = new int[expectedWrites];
+   public QueueWriter(int defaultSize) {
+      buffer = new char[64][];
+      offset = new int[64];
+      length = new int[64];
+      local  = new char[defaultSize];
+      localPos = 0;
       count = -1;
       size = 0;
-      local = false;
    }
 
 
+   /**
+     * This relatively expensive operation expands the number of buffers
+     * this class is capable of tracking.
+     */
    private void increaseCapacity() {
       int oldSize = buffer.length;
       int newSize = oldSize * 2 + 1;
       char[][] tmpBuffer = new char[newSize][];
       int[] tmpOffset = new int[newSize];
       int[] tmpLength = new int[newSize];
-
-System.out.println("Incresing capacity");
 
       // copy the old arrays to the new arrays
 
@@ -84,19 +109,31 @@ System.out.println("Incresing capacity");
       length = tmpLength;
    }
 
-   private void newBuffer(int size) {
-      count++;
-      if (count >= buffer.length) {
-         increaseCapacity();
+   /**
+     * This increases the size of the local buffer.
+     */
+   private void ensureLocalCapacity(int size) {
+      if (count < 0 || buffer[count] != null) {
+         count++;
+         offset[count] = localPos;
+         length[count] = 0;
+         if (count >= buffer.length) {
+            increaseCapacity();
+         }
       }
-      buffer[count] = new char[size];
-      offset[count] = 0;
-      length[count] = 0;
-      local = true;
+      if ((localPos + size) >= local.length) {
+         char[] tmpLocal = new char[local.length * 2 + size];
+         System.arraycopy(local,0,tmpLocal,0,local.length);  
+         local = tmpLocal;
+      }
    }
 
+   /**
+     * Write the c[] array to the local buffer for later writing out. Note
+     * that this copies a reference. Subsequent changes to c *will* be
+     * reflected in the output.
+     */
    public void write(char c[], int off, int len) { 
-System.out.println("write_array");
       count++;
       if (count >= buffer.length) {
          increaseCapacity();
@@ -108,57 +145,82 @@ System.out.println("write_array");
       // update statistics 
 
       size += len;
-      local = false;
    }
 
    /**
      * Write a character to the buffer
      */
    public void write(final int c) { 
-System.out.println("write_character: " + c);
-      if (!local) {
-         newBuffer(16); 
-      } else if (length[count] == buffer[count].length) {
-         newBuffer(length[count] * 2 + 1);
-      }
-      buffer[count][length[count]++] = (char)c;
+      ensureLocalCapacity(1);
+      local[localPos++] = (char)c;
+      length[count]++;
+      size++;
    }
 
    public void write(final String str, int off, int len) 
    { 
-System.out.println("write_string: " + str);
-      if (!local) {
-         newBuffer(len + 16);
-      } 
-
-      size += len; // do this here before len is destroyed
-
-      final int end = off + len;
-      while(off < end) {
-         int  bufpos = length[count];
-         char buf[] = buffer[count];
-         int num = (bufpos + len < buf.length) ? len : (buf.length - bufpos);
-         str.getChars(off,off + num, buf, bufpos);
-         length[count] += num;
-         off += num;
-         len -= num;
-         if (off < end) {
-            newBuffer(buf.length * 2 + 1);
-         }
-      }
+      ensureLocalCapacity(len);
+      str.getChars(off,off + len,local,localPos);
+      localPos += len;
+      length[count] += len;
+      size += len;
    }
 
    public String toString()
    {
       StringBuffer buf = new StringBuffer(size);
+      char[] b;
       for (int i = 0; i <= count; i++) {
-         buf.append(buffer[i],offset[i],length[i]);
+         b = (buffer[i] == null) ? local : buffer[i];
+         buf.append(b,offset[i],length[i]);
       }
       return buf.toString();
    }
 
+   public void writeTo(Writer out) 
+      throws IOException
+   {
+      char[] b;
+      for (int i = 0; i <= count; i++) {
+         b = (buffer[i] == null) ? local : buffer[i];
+         out.write(b,offset[i],length[i]);
+      }
+   }
+
+   /**
+     * Return the total number of characters stored in the buffer
+     */
+   public int size() {
+      return size;
+   }
+
+   /**
+     * Reset the buffer so it can be used again
+     */
+   public void reset() {
+      for (int i = 0; i <= count; i++) {
+         buffer[i] = null;
+         offset[i] = 0;
+         length[i] = 0;
+         localPos = 0;
+         count = -1;
+         size = 0;
+      }
+      
+   }
+
+   /**
+     * Does nothing
+     */
    public void flush() { }
+
+
+   /**
+     * Does nothing
+     */
    public void close() { }
+
+
 
    public static void main(String arg[]) throws Exception {
 
@@ -168,6 +230,7 @@ System.out.println("write_string: " + str);
 
       for (int i = 0; i < arg.length; i++) {
          qw.write(arg[i],1,arg[i].length() - 2);
+         // qw.write(arg[i]);
          qw.write(' ');
          qw.write(cary,7,6);
       }
