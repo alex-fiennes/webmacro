@@ -19,8 +19,7 @@ onClick=
 '$urlProps.hrefOnly',
 'popup',
 'resizable=$scriptProps.resizeable,toolbar=no,status=no,location=no,scrollbars=yes,width=$scriptProps.width,height=$scriptProps.height,screenX=0,screenY=0,alwaysRaised=yes')"> 
-$urlProps.hrefLabel</a>
-}
+$urlProps.hrefLabel</a>}
 
 ## splitWindow()(contentProps, frameProps) where:
 ## arg1 corresponds to the content properties

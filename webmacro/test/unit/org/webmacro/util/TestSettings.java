@@ -22,27 +22,27 @@ public class TestSettings extends TestCase {
 //      String k[] = s.getKeys();
 //      for (int i=0; i<k.length; i++) 
 //        System.out.println("/" + k[i] + "/" + s.getSetting(k[i]) + "/");
-    assert(s.getIntegerSetting("one") == 1);
-    assert(s.getIntegerSetting("two") == 2);
-    assert(s.getIntegerSetting("three") == 3);
-    assert(s.getIntegerSetting("four") == 4);
-    assert(s.getIntegerSetting("notthere", 0) == 0);
-    assert(s.getSetting("a").equals("a"));
-    assert(s.getSetting("b").equals("b"));
-    assert(s.getSetting("c").equals("c"));
-    assert(s.getSetting("d").equals("d"));
-    assert(s.getSetting("e").equals("e"));
-    assert(s.getSetting("f").equals("f"));
+    assertTrue(s.getIntegerSetting("one") == 1);
+    assertTrue(s.getIntegerSetting("two") == 2);
+    assertTrue(s.getIntegerSetting("three") == 3);
+    assertTrue(s.getIntegerSetting("four") == 4);
+    assertTrue(s.getIntegerSetting("notthere", 0) == 0);
+    assertTrue(s.getSetting("a").equals("a"));
+    assertTrue(s.getSetting("b").equals("b"));
+    assertTrue(s.getSetting("c").equals("c"));
+    assertTrue(s.getSetting("d").equals("d"));
+    assertTrue(s.getSetting("e").equals("e"));
+    assertTrue(s.getSetting("f").equals("f"));
 
-    assert(s.getSetting("a.b.c").equals("abc"));
-    assert(s.getSetting("a.*.c").equals("astarc"));
+    assertTrue(s.getSetting("a.b.c").equals("abc"));
+    assertTrue(s.getSetting("a.*.c").equals("astarc"));
 
-    assert(s.getSetting("quoted").equals("quoted"));
-    assert(s.getSetting("quoted2").equals("quoted2"));
-    assert(s.getSetting("quoted3").equals(" quoted3 "));
-    assert(s.getSetting("with.spaces").equals("with spaces"));
-    assert(s.getSetting("nothing").equals(""));
-    assert(s.getSetting("alsonothing").equals(""));
+    assertTrue(s.getSetting("quoted").equals("quoted"));
+    assertTrue(s.getSetting("quoted2").equals("quoted2"));
+    assertTrue(s.getSetting("quoted3").equals(" quoted3 "));
+    assertTrue(s.getSetting("with.spaces").equals("with spaces"));
+    assertTrue(s.getSetting("nothing").equals(""));
+    assertTrue(s.getSetting("alsonothing").equals(""));
   }
 
   public void testOcclude() throws Exception {
@@ -51,8 +51,8 @@ public class TestSettings extends TestCase {
     s.load("org/webmacro/util/settings1.properties");
     s.load("org/webmacro/util/settings2.properties");
 
-    assert(s.getSetting("a").equals("aa"));
-    assert(s.getSetting("bb").equals("bb"));
+    assertTrue(s.getSetting("a").equals("aa"));
+    assertTrue(s.getSetting("bb").equals("bb"));
   }
 
   public void testSubsettings() throws Exception {
@@ -63,12 +63,12 @@ public class TestSettings extends TestCase {
     Settings sssStar = new SubSettings(ss, "*");
     Settings ssss = new SubSettings(s, "sub.sub");
 
-    assert(s.getSetting("sub.sub.a").equals("a"));
-    assert(ss.getSetting("sub.a").equals("a"));
-    assert(ss.getSetting("a").equals("not a"));
-    assert(sss.getSetting("a").equals("a"));
-    assert(ssss.getSetting("a").equals("a"));
-    assert(sssStar.getSetting("a").equals("default"));
+    assertTrue(s.getSetting("sub.sub.a").equals("a"));
+    assertTrue(ss.getSetting("sub.a").equals("a"));
+    assertTrue(ss.getSetting("a").equals("not a"));
+    assertTrue(sss.getSetting("a").equals("a"));
+    assertTrue(ssss.getSetting("a").equals("a"));
+    assertTrue(sssStar.getSetting("a").equals("default"));
   }
 }
 

@@ -88,7 +88,7 @@ public class TestBlocks extends TemplateTestCase {
                   + "#end\n";
 
       String output = executeStringTemplate (tmpl);
-      assert (output.indexOf ("should not be here") == -1);
+      assertTrue (output.indexOf ("should not be here") == -1);
    }
 
    public void testNoEND1 () throws Exception {

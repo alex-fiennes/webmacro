@@ -43,8 +43,15 @@ public class TestDirectiveParser extends TemplateTestCase {
   }
 
   public void testBadDir() throws Exception {
-    assertStringTemplateThrows("#doh", 
+    boolean relax = _wm.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
+    if (!relax) {
+      assertStringTemplateThrows("#doh", 
                                 org.webmacro.engine.BuildException.class);
+    }
+    else {
+      assertStringTemplateMatches("#doh", "#doh");
+    }
+ 
   }
 
   public static class DirectiveOne extends BaseDirective {

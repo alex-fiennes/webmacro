@@ -11,4 +11,6 @@
 ## showVar(arg) shows the argument if it is not null
 #macro showVar($a) { #if ($a) { $a} }
 
-
+## the following is not a macro:
+## #ffccdd #BeginDirective #EndDirective
+## With RelaxedDirectiveChecking On These should pass on thru

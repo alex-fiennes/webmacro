@@ -64,9 +64,10 @@ public class TestParseInclude extends TemplateTestCase {
                 "pass");
 
 
-        // include /etc/password
-        assertStringTemplateMatches("#include \"/etc/passwd\"",
-                ".*root:.*");
+        // include the current directory build file
+        String fileName = "\"" + System.getProperty("user.dir") + "/build.xml\"";
+        assertStringTemplateMatches("#include " + fileName,
+                ".*project.*");
 
         // include http://www.yahoo.com/
         assertStringTemplateMatches("#include \"http://www.webmacro.org\"",
@@ -94,6 +95,23 @@ public class TestParseInclude extends TemplateTestCase {
         assertStringTemplateMatches( "#include as macro \"org/webmacro/template/macrosandbox/all.wmm\"\n"
                      + "#setVar($foo, \"brian\")\n"
                      + "#showVar($foo)", "brian");
+
+    }
+    /** Tests that the property "RelaxedDirectiveBuilding" is properly interpreted. */
+    public void testRelaxedDirectiveBuild() {
+      
+        boolean relax = _wm.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
+        System.out.println("RelaxedDirectiveBuilding=" + relax);   
+        try {
+          String input = "#ffffff #BeginTemplate # A Comment";
+          String output = executeStringTemplate(input);
+          if (relax) assertEquals(input, output);
+          else fail("Exception not thrown when evaluating template.");
+        }
+        catch (Exception e) {
+          if (relax) 
+            fail("relax = true but test template did not build");
+        }
     }
     
     /** executes out of the standard macro/ distribution. */
@@ -101,6 +119,13 @@ public class TestParseInclude extends TemplateTestCase {
       // execute the pay pal eCommerce test case and store the output
       String value = executeFileTemplate("org/webmacro/template/ecomm.wm");
       store(System.getProperty("user.dir") + "/" + "ecomm.html", value);
+   }
+        
+    /** executes out of the standard macro/ distribution. */
+    public void testVerisignMacros() throws Exception {
+      // execute the pay pal eCommerce test case and store the output
+      String value = executeFileTemplate("org/webmacro/template/verisign.wm");
+      store(System.getProperty("user.dir") + "/" + "verisign.html", value);
    }
         
 

@@ -42,7 +42,7 @@ public class TestFastWriter extends TestCase {
 
         System.err.println (size + " bytes in " + ((end-start)/1000D) + " seconds.");
 
-        assert (after.equals(data));
+        assertTrue (after.equals(data));
     }
 
 

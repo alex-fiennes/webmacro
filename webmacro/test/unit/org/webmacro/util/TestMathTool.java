@@ -19,7 +19,7 @@ public class TestMathTool extends TestCase {
     public void testRandom () {
         for (int x=0; x<1000000; x++) {
             int rnd = MathTool.random(3, 5);
-            assert (""+rnd, rnd >= 3 && rnd <=5);
+            assertTrue (""+rnd, rnd >= 3 && rnd <=5);
         }
     }
 }

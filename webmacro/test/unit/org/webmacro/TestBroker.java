@@ -30,33 +30,33 @@ public class TestBroker extends TestCase {
   public void testBrokerLocal () throws Exception {
      _broker.setBrokerLocal ("MyName", "Mud");
 
-     assert (_broker.getBrokerLocal ("MyName")
+     assertTrue (_broker.getBrokerLocal ("MyName")
                     .toString().equals ("Mud"));
   }
 
   public void testGetSettings() throws Exception {
      Settings s = _broker.getSettings();
-     assert (s != null);
-     assert (_broker.getSetting("ErrorTemplate")
+     assertTrue (s != null);
+     assertTrue (_broker.getSetting("ErrorTemplate")
                     .equals ("error.wm"));
   }
 
   public void testGetProvider() throws Exception {
      Provider p = _broker.getProvider ("template");
-     assert (p != null);
+     assertTrue (p != null);
   }
 
   public void testGetLog() throws Exception {
      Log l = _broker.getLog ("template");
-     assert (l != null);
+     assertTrue (l != null);
 
      l = _broker.getLog ("NewLog");
-     assert (l != null);
+     assertTrue (l != null);
   }
 
   public void testGetResource() throws Exception {
      java.net.URL url = _broker.getResource ("WebMacro.defaults");
-     assert (url != null);
+     assertTrue (url != null);
   }
 }
 

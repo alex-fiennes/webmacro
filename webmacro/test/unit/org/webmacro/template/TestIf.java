@@ -14,7 +14,7 @@ public class TestIf extends TemplateTestCase {
 
    public TestIf (String name) {
       super (name);
-      System.setProperty("org.webmacro.LogLevel", "DEBUG");
+      //System.setProperty("org.webmacro.LogLevel", "DEBUG");
    }
 
    public void stuffContext (Context context) throws Exception {

@@ -3,3 +3,4 @@
   Includes all wm macros in the ecomm directory.
 }
 #include as macro "ecomm/paypal.wmm"
+#include as macro "ecomm/verisign.wmm"

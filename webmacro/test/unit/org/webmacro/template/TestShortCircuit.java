@@ -56,14 +56,14 @@ public class TestShortCircuit extends TemplateTestCase {
       bm1.reset();
       String tmpl = "#if (true || $BM1.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
-      assert (bm1.whichMethod == null);
+      assertTrue (bm1.whichMethod == null);
    }
 
    public void testVarOr () throws Exception {
       bm1.reset();
       String tmpl = "#if ($TRUE || $BM1.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
-      assert (bm1.whichMethod == null);
+      assertTrue (bm1.whichMethod == null);
    }
 
    public void testConstAndOr () throws Exception {
@@ -71,8 +71,8 @@ public class TestShortCircuit extends TemplateTestCase {
       bm2.reset ();
       String tmpl = "#if ((true && $BM1.gimmeTrue()) || $BM2.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals(tmpl, "pass");
-      assert (bm1.whichMethod.equals ("gimmeTrue"));
-      assert (bm2.whichMethod == null);
+      assertTrue (bm1.whichMethod.equals ("gimmeTrue"));
+      assertTrue (bm2.whichMethod == null);
    }
    
    public void testVarAndOr() throws Exception {
@@ -80,8 +80,8 @@ public class TestShortCircuit extends TemplateTestCase {
       bm2.reset ();
       String tmpl = "#if (($TRUE && $BM1.gimmeTrue()) || $BM2.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals(tmpl, "pass");
-      assert (bm1.whichMethod.equals ("gimmeTrue"));
-      assert (bm2.whichMethod == null);
+      assertTrue (bm1.whichMethod.equals ("gimmeTrue"));
+      assertTrue (bm2.whichMethod == null);
    }
 
    public void testConstOrAnd () throws Exception {
@@ -90,13 +90,13 @@ public class TestShortCircuit extends TemplateTestCase {
 
       String tmpl = "#if ((true || $BM1.gimmeTrue()) || $BM2.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
-      assert (bm1.whichMethod == null);
-      assert (bm2.whichMethod == null);
+      assertTrue (bm1.whichMethod == null);
+      assertTrue (bm2.whichMethod == null);
 
       tmpl = "#if (true || $BM1.gimmeTrue() || $BM2.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
-      assert (bm1.whichMethod == null);
-      assert (bm2.whichMethod == null);
+      assertTrue (bm1.whichMethod == null);
+      assertTrue (bm2.whichMethod == null);
    }
 
    public void testVarOrAnd () throws Exception {
@@ -105,7 +105,7 @@ public class TestShortCircuit extends TemplateTestCase {
 
       String tmpl = "#if (($TRUE || $BM1.gimmeTrue()) || $BM2.gimmeTrue()) {pass} #else {fail}";
       assertStringTemplateEquals (tmpl, "pass");
-      assert (bm1.whichMethod == null);
-      assert (bm2.whichMethod == null);
+      assertTrue (bm1.whichMethod == null);
+      assertTrue (bm2.whichMethod == null);
    }
 }

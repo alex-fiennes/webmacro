@@ -25,93 +25,93 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
    }
 
   public void testGoodVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testGoodMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testGoodProperty () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testNoSuchVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testNoSuchMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testNoSuchProperty () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testVoidMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testNullMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testThrowsMethod() throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
    /** A variable in the context who's .toString() method returns null */
   public void testNullVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
 
   public void testEvalGoodVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalGoodMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalGoodProperty () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalNoSuchVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalNoSuchMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
   
   public void testNoSuchMethodWithArguments () throws Exception {
-    assert(false);
+    assertTrue(false);
   }   
 
   public void testEvalNoSuchMethodWithArguments () throws Exception {
-    assert(false);
+    assertTrue(false);
   }   
 
   public void testEvalNoSuchProperty () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalVoidMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalNullMethod () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalThrowsMethod() throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   public void testEvalNullVariable () throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
   /**
@@ -119,7 +119,7 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
    * It has always thrown a PropertyExcpetion, and probably still should.
    */
   public void testEvaluationOfNullReturnValue() throws Exception {
-    assert(false);
+    assertTrue(false);
   }
 
 

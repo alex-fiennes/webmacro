@@ -38,6 +38,7 @@ public class MacroBuilder implements Builder {
    private String name;
    private ListBuilder argsBuilder;
    private int lineNo, colNo;
+   private String[] nullArgs = new String[0];
 
    public MacroBuilder(String name,
                        ListBuilder argsBuilder,
@@ -53,8 +54,13 @@ public class MacroBuilder implements Builder {
     */
    public Object build(BuildContext bc) throws BuildException {
       MacroDefinition md = bc.getMacro(name);
-      if (md == null)
+      if (md == null) {
+        boolean relax = bc.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
+        if (relax)
+          return "#" + name + " ";
+        else
          throw new BuildException ("#" + name + ": no such Macro or Directive");
+      }
       Object[] args = argsBuilder.buildAsArray(bc);
       return md.expand(args, bc);
    }

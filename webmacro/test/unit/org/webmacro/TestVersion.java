@@ -24,10 +24,10 @@ public class TestVersion extends TestCase {
    * by making sure the version does NOT equal the tag @VERSION@  
    */
   public void testVersion () throws Exception {
-     assert (!WebMacro.VERSION.equals("@VERSION@"));
+     assertTrue (!WebMacro.VERSION.equals("@VERSION@"));
   }
 
   public void testBuildDate() throws Exception {
-      assert (!WebMacro.BUILD_DATE.equals("@BUILD_DATE@"));
+      assertTrue (!WebMacro.BUILD_DATE.equals("@BUILD_DATE@"));
   }
 }

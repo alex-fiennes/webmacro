@@ -21,8 +21,11 @@ public class TestMacro extends TemplateTestCase {
    }
 
     public void testUndefinedMacro() throws Exception {
+      boolean relax = _wm.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
+      if (! relax) {
         assertStringTemplateThrows ("#foo()", BuildException.class, "#foo: no such [M,m]acro or [D,d]irective at \\w+:\\d+\\.\\d+");
         assertStringTemplateThrows ("#foo", BuildException.class, "#foo: no such [M,m]acro or [D,d]irective at \\w+:\\d+\\.\\d+");
+      }
     }
 
   public void testNoArgs() throws Exception {

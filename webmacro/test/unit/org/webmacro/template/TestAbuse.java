@@ -65,7 +65,7 @@ public class TestAbuse extends TemplateTestCase {
     */
    public void testMultiLineIf () throws Exception {
       System.err.println ("NEED TO REVISIT: TestAbuse.testMultiLineIf()");
-      assert (true);
+      assertTrue (true);
 //      String tmpl = "#if (true\n&& true && true\n) {pass} #else {fail}";
 //      assertStringTemplateEquals (tmpl, "pass");
 

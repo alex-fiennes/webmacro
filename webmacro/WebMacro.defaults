@@ -99,7 +99,6 @@ LogUsingServletLog: TRUE
 #LogFile: /path/to/log/file
 
 
-
 #
 # Error Handling
 #
@@ -162,6 +161,18 @@ Profile.time: 120000
 
 # Don't change these values unless you know what you're doing. They
 # allow you to fine-tune, extend, and customize WebMacro's behavior.
+
+#
+# Relaxed Directive Building.
+#
+# If set to true, text blocks produced by tools such as DreamWeaver
+# and other html editors will not choke the parse/build phase
+# when they introduce strings with a preceding # such as
+# #ffffff, #BeginDirective and #Comment. By default the property is
+# set to false. Therefore, WebMacro will fail fast on this type of text.
+
+RelaxedDirectiveBuilding: False
+
 
 
 # ResourceProviders are pluggable modules that are used to load

@@ -68,31 +68,31 @@ public class TestGetSet extends TemplateTestCase {
      to.intField = 1;
      assertStringTemplateEquals ("$TestObject.intField", "1"); 
      assertStringTemplateEquals ("#set $TestObject.intField=2", "");
-     assert(to.intField == 2);
+     assertTrue(to.intField == 2);
 
      to.intField = 1;
      assertStringTemplateEquals ("#set $TestObject.intField=$two", "");
-     assert(to.intField == 2);
+     assertTrue(to.intField == 2);
 
      to.longField = 1;
      assertStringTemplateEquals ("$TestObject.longField", "1"); 
      assertStringTemplateEquals ("#set $TestObject.longField=2", "");
-     assert(to.longField == 2);
+     assertTrue(to.longField == 2);
 
      to.longField = 1;
      assertStringTemplateEquals ("$TestObject.longField", "1"); 
      assertStringTemplateEquals ("#set $TestObject.longField=$twoLong", "");
-     assert(to.longField == 2);
+     assertTrue(to.longField == 2);
 
      to.setInt(1);
      assertStringTemplateEquals ("$TestObject.Int", "1"); 
      assertStringTemplateEquals ("#set $TestObject.Int=2", "");
-     assert(to.getInt() == 2);
+     assertTrue(to.getInt() == 2);
 
      to.setInt(1);
      assertStringTemplateEquals ("$TestObject.Int", "1"); 
      assertStringTemplateEquals ("#set $TestObject.Int=$two", "");
-     assert(to.getInt() == 2);
+     assertTrue(to.getInt() == 2);
    }
 
    /** Using WM shorthand syntax, get an object from
@@ -115,7 +115,7 @@ public class TestGetSet extends TemplateTestCase {
       assertBooleanExpr("$foo == null", true);
       to2.obj = new Object();
       assertStringTemplateEquals("$TestObject2.setObjectValue($foo)", "");
-      assert(to2.obj == null);
+      assertTrue(to2.obj == null);
    }
 
    /** call the ".length" field of an array */

@@ -163,12 +163,12 @@ public abstract class EncodingTestCase extends TestCase {
 
     protected void assertByteArrayEquals(byte[] a,byte[] b) throws Exception {
         if (a == b) return;
-        assert("One byte array is null",
+        assertTrue("One byte array is null",
                ((a != null) && (b != null)));
-        assert("Size of binary output differs",
+        assertTrue("Size of binary output differs",
                a.length == b.length);
         for (int i=0; i < a.length; i++) {
-            assert("Binary output differs",
+            assertTrue("Binary output differs",
                    a[i] == b[i]);
         }
     }

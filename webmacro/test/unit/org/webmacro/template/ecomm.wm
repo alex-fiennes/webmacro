@@ -7,6 +7,17 @@
 ## set up some useful data for the transaction.
 ## see the paypalSetup macro for the property name specs.
 #bean $System = "java.lang.System" scope=static
+
+## verisign data...
+#bean $App = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $App.LoginName = "lanesharman"
+  #set $App.PartnerName = "VeriSign"
+}
+#bean $Tran = "org.webmacro.util.SparseProperties" scope=page onNew {
+  #set $Tran.Amount = "100.00"
+  #set $Tran.TranType = "S"
+}
+
 #bean $cust = "org.webmacro.util.SparseProperties" scope=page onNew {
   #set $cust.firstName = $System.getProperty("user.name")
 }

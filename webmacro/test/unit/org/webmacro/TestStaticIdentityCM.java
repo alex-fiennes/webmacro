@@ -46,7 +46,7 @@ public class TestStaticIdentityCM extends TestCase {
             threads[i].join();
         }
         for (int i=0; i < THREADS; i++) {
-            assert("Test integrity check failed in thread "+i,
+            assertTrue("Test integrity check failed in thread "+i,
                    threads[i].correct);
         }
     }
@@ -58,15 +58,15 @@ public class TestStaticIdentityCM extends TestCase {
     public void testCacheIdentityBehaviour() {
         String key1 = new String("foo");
         String key2 = new String("foo");
-        assert("test preconditions not met: keys should be different",
+        assertTrue("test preconditions not met: keys should be different",
                key1 != key2 && key1.equals(key2));
         Object cached1 = new Object();
         Object cached2 = new Object();
         cm.put(key1,cached1);
         cm.put(key2,cached2);
-        assert("cm returned wrong object",
+        assertTrue("cm returned wrong object",
                cm.get(key1) == cached1);
-        assert("cm returned wrong object",
+        assertTrue("cm returned wrong object",
                cm.get(key2) == cached2);
     }
 

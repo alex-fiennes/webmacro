@@ -46,14 +46,14 @@ public class TestMultipleInstances extends TestCase {
             if (_instanceOne != null)
                 executeStringTemplate(_instanceOne, _instanceOne.getContext(), template);
         } catch (Exception e) {
-            assert(e.toString().indexOf("No such directive #foo") > -1);
+            assertTrue(e.toString().indexOf("No such directive #foo") > -1);
         }
 
         // against the other WM instance, this should return the string "foo"
         System.err.println ();
         System.err.println ("----------- instance 2 -----------------");
         output = executeStringTemplate(_instanceTwo, _instanceTwo.getContext(), template);
-        assert(output.equals("foo"));
+        assertTrue(output.equals("foo"));
     }
 
 
