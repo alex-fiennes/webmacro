@@ -134,6 +134,14 @@ public abstract class TemplateTestCase extends TestCase
         else
             assertTrue(result == null ? "null" : result.toString(), result.equals(_context.get("assertEvaluationEquals")));
     }
+    
+    protected void showError(String templateName, String resultText, String result)
+    {
+      System.err.println("/" + templateName + "/ does not "
+              + "evaluate to /" + resultText + "/ "
+              + "result=/" + result + "/");
+      assertTrue(false);
+    }
 
 
     /**
@@ -156,10 +164,7 @@ public abstract class TemplateTestCase extends TestCase
 
         if (result == null || !result.equals(resultText))
         {
-            System.err.println("/" + templateName + "/ does not "
-                    + "evaluate to /" + resultText + "/ "
-                    + "result=/" + result + "/");
-            assertTrue(false);
+          showError(templateName, resultText, result);
         }
     }
 
