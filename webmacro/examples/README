@@ -35,8 +35,8 @@ your system CLASSPATH
 means different things for different servlet runners, but will include either
 your "htdocs" directory or your WEB-INF/ directory/.war file.
 
-Here is an overview:
 
+Below is an overview of the examples included with this release:
 
    HelloWorld 
    ----------
