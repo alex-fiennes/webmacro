@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.webmacro.*;
 import org.webmacro.util.*;
+import org.webmacro.engine.*;
 
 import junit.framework.*;
 
@@ -42,22 +43,28 @@ public class TestVariables extends TemplateTestCase {
   }
 
   public void testDefaultEEHExpand() throws Exception {
-    String result;
-    Exception caught = null;
+    _context.setEvaluationExceptionHandler(
+      new DefaultEvaluationExceptionHandler());
 
     assertStringTemplateEquals("", "");
     assertStringTemplateEquals("$TestObject", "TestObject");
     assertStringTemplateEquals("$TestObject.voidMethod()", "");
     assertStringTemplateThrows("$TestObject.noSuchMethod()", 
-                               PropertyException.NoSuchMethodException.class);
+                             PropertyException.NoSuchMethodException.class);
+    assertStringTemplateThrows("$TestObject.noSuchProperty", 
+                             PropertyException.NoSuchPropertyException.class);
     assertStringTemplateMatches("$NoSuchObject", 
-                              "^<!-- .* nonexistent .* \\$NoSuchObject -->$");
-    assertStringTemplateThrows("$NullObject", 
-                              PropertyException.NullVariableException.class);
+      "^<!-- .* nonexistent .*\\$NoSuchObject.*-->$");
+    assertStringTemplateMatches("$TestObject.returnNull()", 
+      "^<!-- .* null variable .*\\$TestObject.returnNull.*-->$");
+//      assertStringTemplateThrows("$NullObject", 
+//                                PropertyException.NullVariableException.class);
   }
 
   public void testDefaultEEHEval() throws Exception {
-    String result;
+    _context.setEvaluationExceptionHandler(
+      new DefaultEvaluationExceptionHandler());
+
   }
 }
 
