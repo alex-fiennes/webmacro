@@ -1,0 +1,23 @@
+<!-- helptoc.tml -->
+## Provides the control for listing help files in a separate window
+## Requires $org.webmacro.servlet.ListTool to be in the context
+## as List.
+
+## create arrays and then create more powerful list structures
+## available for manipulation by the list tool:
+#set $hrefs = ["AboutAcctiva.lbi", "HowDo.lbi"]
+#set $refsList = $List.toList($hrefs)
+
+#set $titles = ["About Acctiva", "How Do I..."]
+#set $titlesList = $List.toList($titles)
+
+<html>
+
+#foreach $href in $hrefs indexing $index from 0 {
+	<a href="$List.getItem($refsList, $index)">$List.getItem($titlesList, $index)</a><br>
+}
+
+</html>
+
+
+
