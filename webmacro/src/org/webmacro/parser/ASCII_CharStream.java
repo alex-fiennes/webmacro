@@ -48,36 +48,21 @@ public final class ASCII_CharStream
     }
   }
 
-  public String status() {
-    return ((curBuf == bufA)? "A " : "B ") 
-      + Integer.toString(curBuf.curPos) + "/"
-      + Integer.toString(curBuf.dataLen) + " ";
-  }
-
-  private Buffer bufA, bufB, curBuf, otherBuf, tokenBuf;
-  private int tokenBegin;
+  private Buffer bufA, bufB, curBuf, otherBuf, tokenBeginBuf;
+  private int tokenBeginPos;
   private int backupChars;
-
-  public static final boolean staticFlag = false;
 
   private int column = 0;
   private int line = 1;
-
   private boolean prevCharIsCR = false;
   private boolean prevCharIsLF = false;
 
   private java.io.Reader inputStream;
 
-  private void swapBuf() {
-    if (otherBuf == null) {
-      curBuf = bufB;
-      otherBuf = bufA;
-    }
-    else {
-      Buffer tmp = curBuf;
-      curBuf = otherBuf;
-      otherBuf = tmp;
-    }
+  private final void swapBuf() {
+    Buffer tmp = curBuf;
+    curBuf = otherBuf;
+    otherBuf = tmp;
   }
 
   private final void FillBuff() throws java.io.IOException
@@ -92,9 +77,9 @@ public final class ASCII_CharStream
     // we expand this buffer.  Otherwise, we swap buffers.  
     // This guarantees we will be able to back up at least 2K characters. 
     if (curBuf.size - curBuf.dataLen < 2048) {
-      if (tokenBegin >= 0 
-          && ((tokenBuf == curBuf && tokenBegin < 2048)
-              || tokenBuf != curBuf)) {
+      if (tokenBeginPos >= 0 
+          && ((tokenBeginBuf == curBuf && tokenBeginPos < 2048)
+              || tokenBeginBuf != curBuf)) {
         curBuf.expand(2048);
       }
       else {
@@ -115,21 +100,22 @@ public final class ASCII_CharStream
       return;
     }
     catch(java.io.IOException e) {
-      --curBuf.curPos;
-      if (tokenBegin == -1) {
-        tokenBegin = curBuf.curPos;
-        tokenBuf   = curBuf;
-      throw e;
+      if (curBuf.curPos > 0)
+        --curBuf.curPos;
+      if (tokenBeginPos == -1) {
+        tokenBeginPos = curBuf.curPos;
+        tokenBeginBuf   = curBuf;
       }
+      throw e;
     }
   }
 
   public final char BeginToken() throws java.io.IOException
   {
-     tokenBegin = -1;
+     tokenBeginPos = -1;
      char c = readChar();
-     tokenBuf   = curBuf;
-     tokenBegin = curBuf.curPos;
+     tokenBeginBuf = curBuf;
+     tokenBeginPos = curBuf.curPos;
 
      return c;
   }
@@ -176,24 +162,28 @@ public final class ASCII_CharStream
 
   public final char readChar() throws java.io.IOException
   {
-     if (++curBuf.curPos >= curBuf.dataLen) {
-       if (backupChars > 0) 
-         swapBuf();
-       else
-         FillBuff();
-     };
+    // When we hit the end of the buffer, if we're backing up, we just
+    // swap, if we're not, we fill.  
+    if (++curBuf.curPos >= curBuf.dataLen) {
+      if (backupChars > 0) {
+        --curBuf.curPos;  
+        swapBuf();
+      }
+      else
+        FillBuff();
+    };
 
-     char c = (char)((char)0xff & curBuf.buffer[curBuf.curPos]);
+    char c = (char)((char)0xff & curBuf.buffer[curBuf.curPos]);
 
-     // No need to update line numbers if we've already processed this char
-     if (backupChars > 0) 
-       --backupChars;
-     else
-       UpdateLineColumn(c);
-
-     return (c);
+    // No need to update line numbers if we've already processed this char
+    if (backupChars > 0) 
+      --backupChars;
+    else
+      UpdateLineColumn(c);
+    
+    return (c);
   }
-
+  
   /**
    * @deprecated 
    * @see #getEndColumn
@@ -221,24 +211,20 @@ public final class ASCII_CharStream
   }
 
   public final int getBeginColumn() {
-     return tokenBuf.bufcolumn[tokenBegin];
+     return tokenBeginBuf.bufcolumn[tokenBeginPos];
   }
 
   public final int getBeginLine() {
-     return tokenBuf.bufline[tokenBegin];
+     return tokenBeginBuf.bufline[tokenBeginPos];
   }
 
   public final void backup(int amount)  {
     backupChars += amount;
-    if (curBuf.curPos - amount < -1) {
+    if (curBuf.curPos - amount < 0) {
       int addlChars = amount - 1 - curBuf.curPos;
       curBuf.curPos = 0;
       swapBuf();
       curBuf.curPos = curBuf.dataLen - addlChars - 1;
-      if (curBuf.curPos < -1) {
-        // Throw something
-        // System.out.println("ASCII_CharStream: Attempt to back up too far");
-      }
     }
     else {
       curBuf.curPos -= amount;
@@ -248,18 +234,7 @@ public final class ASCII_CharStream
   public ASCII_CharStream(java.io.Reader dstream, int startline,
                           int startcolumn, int buffersize)
   {
-    inputStream = dstream;
-    line = startline;
-    column = startcolumn - 1;
-
-    bufA = new Buffer(buffersize);
-    bufB = new Buffer(buffersize);
-    prevCharIsLF = prevCharIsCR = false;
-    curBuf = bufA;
-    otherBuf = null;
-    backupChars = 0;
-    tokenBegin = -1;
-    tokenBuf = null;
+    ReInit(dstream, startline, startcolumn, buffersize);
   }
 
   public ASCII_CharStream(java.io.Reader dstream, int startline,
@@ -280,14 +255,14 @@ public final class ASCII_CharStream
     if (bufB == null || bufB.size != buffersize)
       bufB = new Buffer(buffersize);
     curBuf = bufA;
-    otherBuf = null;
+    otherBuf = bufB;
+    curBuf.curPos = otherBuf.dataLen = -1;
+    curBuf.dataLen = otherBuf.dataLen = 0;
 
     prevCharIsLF = prevCharIsCR = false;
-    tokenBegin = -1;
-    tokenBuf = null;
+    tokenBeginPos = -1;
+    tokenBeginBuf = null;
     backupChars = 0;
-    curBuf.curPos = -1;
-    curBuf.dataLen = 0;
   }
 
   public void ReInit(java.io.Reader dstream, int startline,
@@ -323,12 +298,12 @@ public final class ASCII_CharStream
 
   public final String GetImage()
   {
-    if (tokenBuf == curBuf) 
-        return new String(curBuf.buffer, tokenBegin, 
-                          curBuf.curPos - tokenBegin + 1);
+    if (tokenBeginBuf == curBuf) 
+        return new String(curBuf.buffer, tokenBeginPos, 
+                          curBuf.curPos - tokenBeginPos + 1);
      else
-        return new String(otherBuf.buffer, tokenBegin, 
-                          otherBuf.dataLen - tokenBegin) 
+        return new String(otherBuf.buffer, tokenBeginPos, 
+                          otherBuf.dataLen - tokenBeginPos) 
           + new String(curBuf.buffer, 0, curBuf.curPos + 1);
   }
 
@@ -340,7 +315,7 @@ public final class ASCII_CharStream
         System.arraycopy(curBuf.buffer, curBuf.curPos - len + 1, ret, 0, len);
      else
      {
-       if (otherBuf != null)
+       if (otherBuf.dataLen >= len - curBuf.curPos - 1)
          System.arraycopy(otherBuf.buffer, 
                           otherBuf.dataLen - (len - curBuf.curPos - 1), ret, 0,
                           len - curBuf.curPos - 1);
