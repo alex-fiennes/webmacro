@@ -74,7 +74,9 @@ final public class TemplateProvider extends CachingProvider
 
       try {
          _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
-         _templatePath = config.getSetting("TemplatePath");
+         _templatePath = config.getSetting("TemplatePath", "");
+         if (_templatePath.equals(""))
+           _log.info("Template path is empty; will load from class path");
          StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
          _templateDirectory = new String[ st.countTokens() ];
@@ -86,7 +88,7 @@ final public class TemplateProvider extends CachingProvider
          }
 
       } catch(Exception e) {
-         throw new InitException("Could not initialize",e);
+         throw new InitException("Could not initialize", e);
       }
    }
 
@@ -170,7 +172,6 @@ final public class TemplateProvider extends CachingProvider
    {
       _log.debug("Looking for template: " + fileName);
       for (int i=0; i <_templateDirectory.length; i++) {
-         Template t;
          String dir = _templateDirectory[i];
          File tFile  = new File(dir,fileName);
          if (tFile.canRead()) {
