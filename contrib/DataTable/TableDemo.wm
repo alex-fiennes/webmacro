@@ -23,9 +23,54 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
 <body>
 <h3>ResultSetDataTable Demo</h3>
 
-<b>Table 1, iterate over fields dynamically</b>
+  <b>Table 1, fields by name</b> <i>(NOTE: the errors in BADCOL are intentional.)</i>
+  #set $tbl.RowColors = ["\#CCCCCC", "\#FFFFFF"]
   <table border="1" width="$tableWidth">
-    <tr><th>Row \#</th>
+    <tr bgcolor='#4488CC'>
+      <th>First Name</th><th>Last Name</th><th>ID</th>
+      <th>BadCol</th>
+    </tr>
+    #foreach $row in $tbl
+      <tr bgcolor="$row.Color">
+        <td>$row.FIRSTNAME</td><td>$row.LASTNAME</td><td>$row.ID</td>
+        <td>$row.BADCOL</td>
+      </tr>
+    #end
+  </table>
+  #include "TableNav.wm"
+
+<b>Table 2, fields by number, with row attributes</b><br>
+<i>Note: the error in the last column is there intentionally for illustration</i><br>
+
+#set $tbl.ErrorString = "ERR: "
+#set $tbl.HideErrors = "false"
+##set $tbl.RowColors = ["\#FF00CC", "\#CC4400", "\#00CCCC"]
+#set $oldvals = $tbl.putRowAttribute("bgcolor", ["\#CC00CC", "\#4444CC", "\#FF88AA"])
+#set $oldvals = $tbl.putRowAttribute("fgcolor", ["\#33FF33", "\#AAAA33", "\#005555"])
+#set $oldvals = $tbl.putRowAttribute("styleBegin", ["<i>", "<u>"])
+#set $oldvals = $tbl.putRowAttribute("styleEnd", ["</i>", "</u>"])
+  <table border="1" width="$tableWidth">
+    <tr bgcolor="\#DDDDDD">
+      <th>Field 3</th><th>Field 1</th><th>Field 2</th>
+      <th>Field 99</th>
+    </tr>
+    #foreach $row in $tbl
+      <tr bgcolor="$row.Attributes.bgcolor">
+        <td>
+          <font color="$row.Attributes.fgcolor">
+            $row.Attributes.styleBegin$row.itemAt(3)$row.Attributes.styleEnd
+          </font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(1)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(2)</font></td>
+        <td><font color="$row.Attributes.fgcolor">$row.itemAt(99)</font></td>
+      </tr>
+    #end
+  </table>
+  #include "TableNav.wm"
+
+<b>Table 3, iterate over fields dynamically and include child table</b>
+  <table border="1" width="$tableWidth" bgcolor="#DDFF88">
+    <tr bgcolor='#DDDDDD'><th>Row \#</th>
       #foreach $col in $tbl.ColumnNames
         #begin <th>$col</th> #end
     </tr>
@@ -38,10 +83,10 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
       #if ($row.Data)
         #set $tbl2 = $row.Data.Table
         #if ($tbl2.size()>0)
-        <tr>
+        <tr bgcolor='#AAFF88'>
            <td>Child records</td>
            <td colspan='$tbl.ColumnCount'>
-             <table border='1'>
+             <table border='1' width='100%'>
                <tr><th>Row \#</th>
                  #foreach $col2 in $tbl2.ColumnNames
                    <th>$col2</th>
@@ -60,52 +105,6 @@ $Response.setHeader("Cache-Control","no-cache;no-store")
         <tr>
         #end
       #end
-    #end
-  </table>
-  #include "TableNav.wm"
-
-<b>Table 2, fields by number, with row attributes</b><br>
-<i>Note: the error in the last column is there intentionally for illustration</i><br>
-
-#set $tbl.ErrorString = "ERR: "
-#set $tbl.HideErrors = "false"
-##set $tbl.RowColors = ["\#FF00CC", "\#CC4400", "\#00CCCC"]
-#set $oldvals = $tbl.putRowAttribute("bgcolor", ["\#CC00CC", "\#4444CC", "\#FFAAAA"])
-#set $oldvals = $tbl.putRowAttribute("fgcolor", ["\#33FF33", "\#AAAA33", "\#005555"])
-#set $oldvals = $tbl.putRowAttribute("styleBegin", ["<i>", "<u>"])
-#set $oldvals = $tbl.putRowAttribute("styleEnd", ["</i>", "</u>"])
-  <table border="1" width="$tableWidth">
-    <tr bgcolor="\#888888">
-      <th>Field 3</th><th>Field 1</th><th>Field 2</th>
-      <th>Field 99</th>
-    </tr>
-    #foreach $row in $tbl
-      <tr bgcolor="$row.Attributes.bgcolor">
-        <td>
-          <font color="$row.Attributes.fgcolor">
-            $row.Attributes.styleBegin$row.itemAt(3)$row.Attributes.styleEnd
-          </font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.itemAt(1)</font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.itemAt(2)</font></td>
-        <td><font color="$row.Attributes.fgcolor">$row.itemAt(99)</font></td>
-      </tr>
-    #end
-  </table>
-
-  #include "TableNav.wm"
-
-  <b>Table 3, fields by name</b> <i>(NOTE: the errors in BADCOL are intentional.)</i>
-  #set $tbl.RowColors = ["\#999999", "\#FFFFFF"]
-  <table border="1" width="$tableWidth">
-    <tr>
-      <th>First Name</th><th>Last Name</th><th>ID</th>
-      <th>BadCol</th>
-    </tr>
-    #foreach $row in $tbl
-      <tr bgcolor="$row.Color">
-        <td>$row.FIRSTNAME</td><td>$row.LASTNAME</td><td>$row.ID</td>
-        <td>$row.BADCOL</td>
-      </tr>
     #end
   </table>
   #include "TableNav.wm"
