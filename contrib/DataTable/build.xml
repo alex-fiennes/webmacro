@@ -76,7 +76,7 @@
   <target name="javadoc" depends="prepare">
     <javadoc sourcepath="src" destdir="${javadoc}"  
              packagenames="org.webmacro.*" author="true" version="true" 
-             use="true" overview="readme.html">
+             use="true" overview="overview.html">
       <classpath refid="class.path" />
     </javadoc>
   </target>

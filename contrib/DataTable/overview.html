@@ -1,0 +1,93 @@
+<html>
+<head><title>Using the org.webmacro.datatable package</title>
+</head>
+<body>
+<h1>Using the org.webmacro.datatable package</h1>
+<p>
+The org.webmacro.datatable package is designed to simplify 
+the presentation of tabular data in WebMacro templates.
+Objects that implement the DataTable interface are put
+into the WebContext, giving the template designer access
+to a number of convenient properties.</p>
+<p>
+Two DataTable implementations are provided: SimpleDataTable and ResultSetDataTable. 
+A ResultSetDataTable is for use with data retrieved directly via a JDBC connection. 
+A simpleDataTable can be used with any kind of tabular data, for example data that from
+a RDBMS that is kept in a cache.   
+</p>
+<p>This package uses the Java2 collections API and JDBC2 for support of SQL3 datatypes 
+(CLOBs and Arrays).  It should work with any version of WebMacro.
+</p>
+<p>
+DataTable objects are generally used in conjunction with
+the #foreach directive in a WebMacro template as follows:</p>
+<code>
+  &lt;table border="1"&gt;<br>
+  &nbsp;&nbsp;&lt;tr&gt;
+  &lt;th&gt;A FIELD&lt;/th&gt;
+  &lt;th&gt;ANOTHER FIELD&lt;/th&gt;
+  &lt;th&gt;YET ANOTHER&lt;/th&gt;
+  &lt;/tr&gt;<br>
+  #foreach $row in $tbl {<br>
+  &nbsp;&nbsp;&lt;tr&gt;
+  &lt;td&gt;$row.A_FIELD&lt;/td&gt;
+  &lt;td&gt;$row.ANOTHER_FIELD&lt;/td&gt;
+  &lt;td&gt;$row.YET_ANOTHER&lt;/td&gt;
+  &lt;/tr&gt;<br>
+  }<br>
+  &lt;/table&gt;
+</code>
+<p>This would produce a table like:</p>
+<table border="1">
+<tr><th>A FIELD</th><th>ANOTHER FIELD</th><th>YET ANOTHER</th></tr>
+<tr><td>1234</td><td>Yadda yadda</td><td>Blah blah</td></tr>
+<tr><td>3456</td><td>Yabba dabba</td><td>Zsa Zsa</td></tr>
+<tr><td>7890</td><td>Dabba doo</td><td>Rah rah</td></tr>
+</table>
+<p>
+A DataTable is a list of SimpleTableRow objects.  Each 
+SimpleTableRow is a map which allows column values to 
+accessed by name, as above, or by index (starting at 1):
+</p>
+<code>
+  $row.itemAt(1), $row.itemAt(2), etc.
+</code>
+<p>
+Field names and values can also be iterated over:
+</p>
+<code>
+  #foreach $col in $row { $col.Name=$col.Value&lt;br&gt; }
+</code>
+<p>
+Notice that $col has two properties, Name and Value. 
+"$col" is equivalent to "$col.Value" when rendered as HTML.
+</p>
+<p>
+The ResultSetDataTable is generally created through its static 
+factory "create" methods:
+</p>
+<code>
+...<br>
+public Template handle(WebContext context) throws HandlerException {<br>
+    // get a JDBC connection -- normally from a connection pool<br>
+    Connection conn = getConnection();<br>
+    String sql = "SELECT a_field, another_field, yet_another FROM some_table";<br>
+    try { <br>
+      &nbsp;&nbsp;DataTable tbl = ResultSetDataTable.create(conn, sql, pageSize, skipRows);<br>
+      &nbsp;&nbsp;context.put("tbl", tbl); // place the table in the context<br>  
+    } catch (Exception e){ <br>
+      &nbsp;&nbsp;throw new HandlerException(e.getMessage()); <br>
+    } finally { <br>
+      &nbsp;&nbsp;  releaseConnection(conn); // return connection to the pool<br> 
+    } <br>
+} // end handle()<br>
+...<br>
+</code>
+<p>
+There are numerous other useful methods of DataTable and SimpleTableRow objects
+to facilitate things like line numbers, paging, alternating colors, etc.
+See the JavaDocs and
+ <a href="../AboutDemo.html">sample application</a> for more information.
+</p>
+</body>
+</html>
