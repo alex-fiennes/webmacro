@@ -1,8 +1,8 @@
-WebMacro 1.1b1
+WebMacro 1.1b2
 ---------------
                     
-This is the fist in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
-new features such as #macro, #count, and $functions().
+This is the second in a series of Beta releases for WebMacro 1.1.  WM 1.1 includes
+new features such as #macro, #count, $functions(), and various bugfixes.
 
 WebMacro is alive, and this release is proof!
 
@@ -12,14 +12,26 @@ The best place for information about WebMacro is our website:
 In addition, WebMacro has relocated the management aspects of the project to
 SourceForge (http://www.sourceforge.net/projects/webmacro/).  We hope this
 will prove to give the WebMacro community continued support.  We also hope
-it will make our lives a bit easier too!
+it will make our lives a bit easier!
 
-Please note that our mailing list address has changed.  
-Visit http://www.webmacro.org/MailingList for details.
-
+Note that because of the move to SourceForge our mailing list address has changed.  
+Please visit http://www.webmacro.org/MailingList for details.
 
 Changes in this Release
 -----------------------
+
+- more documentation concerning new features (brian, keats, lane)
+
+- fixed bugs 69, 66, and 59 (eric)
+
+- WMServlet.doGet() is no longer "final" (eric)
+
+- logging API now accepts "Throwable"s instead of "Exception"s. (eric)
+   This one might require you to recompile your classes. 
+
+
+Changes Prior to this Release
+-----------------------------
 
 - added #macro directive (brian)
 
@@ -30,11 +42,6 @@ Changes in this Release
 - cleanup some error messages (eric)
 
 - moved to SourceForge (eric)
-
-
-
-Changes Prior to this Release
------------------------------
 
 - Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
 

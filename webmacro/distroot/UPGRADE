@@ -2,78 +2,13 @@ Potential Pitfalls While Ugrading
 ---------------------------------
 
 If you are upgrading from early versions of WebMacro, you should
-probably read this file.  If you're upgrading from 0.97 or better, 
-you can (probably) ignore all of this.  :)
+probably read this file. 
 
+Since WebMacro 1.0, only 1 minor API change has been made.  WebMacro's
+simple logging API has been changed to accept "Throwable"s instead of 
+"Exceptions".  This only impacts those who have implemented their own
+LogTargets.  If you have implemeted your own LogTargets, or have otherwise
+referenced the org.webmacro.Log object (either directory or indirectly), 
+you will need to recompile _your_ code base.
 
-1) WebMacro no longer requires a "WebMacro.properties" file (it is
-completely optional).  WebMacro now has a "WebMacro.defaults" file that
-is included in the .jar file.  This file is used as a base for WM's
-configuration.  If you find you need to change values, simply create a 
-"WebMacro.properties" file and include *only* the keys you need to change.
-WM will combine these two files to form the final configuration.
-
-This also means you don't need to configure a TemplatePath, so long as you
-meet one of the following requirements:
-
-   1) Using WM in standalone mode, your templates are accessible via the
-   system CLASSPATH; or
-   
-   2) Subclassing WMServlet in a Servlet 2.0 environment (Apache/JServ), 
-   your templates are available via your servlet container CLASSPATH; or
-   
-   3) Subclassing WMServlet in a Servlet 2.1+ environment (Turbine or Resin), 
-   your templates are available in your "application directory".  Depending
-   on your servlet engine, this could be your WEB-INF/ directory, or your 
-   "htdocs" directory.
-
-However, if you don't like WM doing this for you, you can simply add a
-"TemplatePath: /path/to/templates" in your custom WebMacro.properties file.
-
-
-2) If you are using WebMacro in standalone mode (ie, not subclassing
-WMServlet), you are most likely using a FastWriter.  The signatures for
-FastWriter's constructors have changed to include a Broker:
-   public FastWriter(Broker broker, OutputStream out, String encoding)
-
-Your code can be easily adjusted by simply passing in the Broker returned
-from the getBroker() method of your WebMacro instance:
-   FastWriter fw = new FastWriter (_wm.getBroker(), System.out, "UTF8");
-    
-    
-3) If you are sublcassing WMServlet, your handle() method most likely
-contains something like this at the end:
-      ...
-   Template t;
-   try {
-      t = getTemplate ("mytemplate.wm")   
-   } catch (NotFoundExceptoin nfe) {
-      System.err.println ("mytemplate.wm could not be found!");
-   }
-   
-   return t;
-   
-the getTemplate() method of WMServlet now throws a ResourceException, instead
-of a NotFoundException.  Simply change your catch block to catch the
-ResourceException and you'll be just fine.
-
-
-4) org.webmacro.Context now implements java.util.Map.  This change, although
-it won't adversly affect how you use the Context object, will *require*
-you to recompile all your classes that use org.webmacro.Context.  Sorry
-for the inconvienence.
-
-5) If you are upgrading from a release several back from this release, recompile
-all your sources against the webmacro.jar. Don't assume that your old signatures
-match.  If one of your signatures is mismatched and will cause a fatal runtime
-error!
-
-6) #silence, #filter, #encode are disabled until further notice
-
-7) There are a lot of good resources on the website for documenting how
-to do the new things that are available now with WM.
-
-If you experience any problems or find any bugs, please send mail to
-webmacro@spitfire.velocet.net. 
-
-EOF
+Beyond this, no other public API changes have been made.
