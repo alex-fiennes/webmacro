@@ -148,6 +148,8 @@ Profile.time: 120000
 # to add new modules to WebMacro, or replace existing modules. 
 # They are all implementations of org.webmacro.broker.ResourceProvider
 
+Providers: 
+
 Providers.template:  org.webmacro.resource.TemplateProvider 
 Providers.url:       org.webmacro.resource.UrlProvider 
 Providers.config:    org.webmacro.resource.ConfigProvider 
@@ -155,7 +157,6 @@ Providers.directive: org.webmacro.directive.DirectiveProvider
 Providers.parser:    org.webmacro.engine.ParserProvider
 Providers.encoder:   org.webmacro.util.EncoderProvider
 
-Providers: 
 
 
 #
@@ -214,7 +215,7 @@ type.Enabled = true
 #
 # TemplateExtensions - a list of (comma-separated) file extensions
 #                      that are assumed to be templates when
-#                      #include is used withough qualifing the
+#                      #include is used without qualifing the
 #                      file type
 #
 # StrictCompatibility - if true, then the directive works exactly
