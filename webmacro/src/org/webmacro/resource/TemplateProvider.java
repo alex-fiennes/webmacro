@@ -72,7 +72,7 @@ final public class TemplateProvider extends CachingProvider
     * ReloadContext for file templates.  Uses last-modified to determine
     * if resource should be reloaded.
     */
-   private static class FTReloadContext extends CacheReloadContext {
+   public static class FTReloadContext extends CacheReloadContext {
       private File file;
       private long lastModified;
 
