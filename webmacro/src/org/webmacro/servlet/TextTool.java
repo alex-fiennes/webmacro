@@ -107,7 +107,7 @@ public class TextTool implements ContextTool {
     * If any paramer is <code>null</code>, <code>replace()</code> returns
     * the value of <code>src</code>.<p>
     *
-    * @returns String with all occurrences of <code>from</code> replaced with
+    * @return String with all occurrences of <code>from</code> replaced with
     *          <code>to</code> in <code>src</code> or <code>src</code> if
     *          <code>from</code> not found
     */
@@ -262,7 +262,7 @@ public class TextTool implements ContextTool {
    public static String rtrim(String s) {
       if (s == null) return null;
       for (int i = s.length() - 1; i > -1; i--) {
-         if (!Character.isWhitespace(s.charAt(i))) return s.substring(0, i);
+         if (!Character.isWhitespace(s.charAt(i))) return s.substring(0, i+1);
       }
       // if all WS return empty string
       return "";

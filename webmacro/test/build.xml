@@ -3,8 +3,9 @@
   <property name="unit.root" value="${test.root}/unit"/>
   <property name="unit.classes" value="${test.root}/unit-classes"/>
   <property name="unit.reports" value="${test.root}/unit-reports"/>
+  <property name="test" value="Test*" />
 
-  <taskdef name="junit" 
+  <taskdef name="junit"
    classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
 
   <path id="class.path">
@@ -46,7 +47,7 @@
       <classpath refid="unit.class.path"/>
       <formatter type="plain" />
       <batchtest fork="yes" todir="${unit.reports}">
-        <fileset dir="${unit.root}" includes="**/Test*.java" />
+        <fileset dir="${unit.root}" includes="**/${test}.java" />
       </batchtest>
     </junit>
   </target>
@@ -66,7 +67,7 @@
       <classpath refid="unit.class.path"/>
       <formatter type="plain" />
       <batchtest fork="yes" todir="${unit.reports}">
-        <fileset dir="${unit.root}" includes="**/Test*.java" />
+        <fileset dir="${unit.root}" includes="**/${test}.java" />
       </batchtest>
     </junit>
   </target>
