@@ -49,13 +49,12 @@ public class WMParser_impl {
     parser.setBroker(broker);
     Builder bb = parser.WMDocument();
     Context context = null;
-    String encoding = "UTF8"; // XXX: main, should be ok
 
     try {
        context = wm.getContext();
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
-       Block b = (Block) bb.build(new BuildContext(broker,encoding));
+       Block b = (Block) bb.build(new BuildContext(broker));
        // TemplateDumper d = new TemplateDumper();
        // b.accept(d);
        // System.out.println("---------------------------------------------");
