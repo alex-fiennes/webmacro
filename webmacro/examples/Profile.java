@@ -13,7 +13,20 @@ import org.webmacro.profile.*;
   * and if it has prints out some statistics about how WebMacro
   * has been performing. Note that to enable profiling you need
   * to do two things: enable it in org.webmacro.Flags and also 
-  * in the WebMacro.properties file.
+  * in the WebMacro.properties file.<p>
+  *
+  *
+  * ******NOTICE*****
+  * To use this example, *you* must enable the #profile directive
+  * by adding the following lines to your local WebMacro.properties file.
+  * 
+  *    Directives.profile: org.webmacro.directive.ProfileDirective
+  *    Profile.rate: 0
+  *
+  * If you don't have a WebMacro.properties file, simply make one
+  * and place it in the CLASSPATH of your JDK, servlet container, or
+  * web-app.  
+  *
   */
 public class Profile extends WMServlet
 {

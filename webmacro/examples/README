@@ -62,6 +62,9 @@ Below is an overview of the examples included with this release:
    A servlet that illustrates how to use the #profile directive to time
    various operations in a WebMacro application.
    
+   To use this example, you must enable the #profile directive.  See the
+   comments in profile.wm or Profile.java for more information.
+   
    Standalone
    ----------
    

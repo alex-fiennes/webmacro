@@ -1,3 +1,17 @@
+#comment {
+
+   ******NOTICE*****
+   To use this example, *you* must enable the #profile directive
+   by adding the following lines to your local WebMacro.properties file.
+   
+      Directives.profile: org.webmacro.directive.ProfileDirective
+      Profile.rate: 0
+
+   If you don't have a WebMacro.properties file, simply make one
+   and place it in the CLASSPATH of your JDK, servlet container, or
+   web-app.
+
+}
 <html><head><title>WebMacro Profile</title></head>
 
 #set $Response.ContentType = "text/html"
