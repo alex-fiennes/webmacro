@@ -300,6 +300,17 @@ Parsers:
 
 Parsers.wm:  org.webmacro.parser.WMParser
 
+
+#
+# FastWriter Configuration
+#
+# Misconfiguration of these settings can cause severe performance
+# and resource penalties
+
+FastWriter.MaxPoolSize = 10
+FastWriter.DefaultBufferSize = 4096
+
+
 #
 # Template caching
 #

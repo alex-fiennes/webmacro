@@ -67,8 +67,6 @@ public class FastWriter extends Writer {
 	 * encoded strings concatenated together.
 	 */
 	public static final String SAFE_UNICODE_ENCODING;
-	public static final int DEFAULT_BUFFER_SIZE = 4096;
-	public static final int MAX_POOL_SIZE = 10;
 
 	// find the safe encoding
 	static {
@@ -83,6 +81,8 @@ public class FastWriter extends Writer {
 	}
 
 
+    private final int DEFAULT_BUFFER_SIZE;
+	private final int MAX_POOL_SIZE;
 	private final String _encoding;      // what encoding we use
 	private final Writer _bwriter;
 	private final ByteBufferOutputStream _bstream;
@@ -111,6 +111,8 @@ public class FastWriter extends Writer {
 	 */
 	public FastWriter( Broker broker, OutputStream out, String encoding )
 		throws UnsupportedEncodingException {
+        MAX_POOL_SIZE = broker.getSettings().getIntegerSetting("FastWriter.MaxPoolSize", 10);
+        DEFAULT_BUFFER_SIZE = broker.getSettings().getIntegerSetting("FastWriter.DefaultBufferSize", 4096);
 		_encoding = hackEncoding( encoding );
 		_bstream = new ByteBufferOutputStream( DEFAULT_BUFFER_SIZE );
 		_bwriter = new OutputStreamWriter( _bstream, _encoding );
