@@ -74,6 +74,24 @@ public final class DirectiveProvider implements Provider
           throw new IntrospectionException("Class " + dirClassName 
             + " does not have a getDescriptor() method", e);
         }
+        
+        // added by Keats 5Jul01
+        // use introspection to invoke the static init method of directive, if it exists
+        Class[] cArg = { Broker.class };
+        try {
+            java.lang.reflect.Method m = directive.getMethod("init", cArg);
+            Object[] brokerArg = { _broker };
+            try {
+                m.invoke(null, brokerArg);
+            }
+            catch (Exception e){
+                _log.warning("Unable to invoke the init method for the directive " 
+                + directive.getName(), e);
+            }
+        }
+        catch (Exception e){
+        }
+
         newDesc.name = (dirName != null && !dirName.equals(""))
           ? dirName : templateDesc.name;
         oldDesc = (DirectiveDescriptor) _descriptors.get(newDesc.name);
