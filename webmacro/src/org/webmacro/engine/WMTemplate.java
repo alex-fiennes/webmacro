@@ -77,14 +77,14 @@ abstract public class WMTemplate implements Template
      * Create a new Template. Constructors must supply a broker.
      */
    protected WMTemplate(Broker broker) {
-      this(broker,"wm");
+      this("wm", broker);
    }
 
    /**
      * Create a new Template specifying both the broker and the 
      * parsing language.
      */
-   protected WMTemplate(Broker broker, String parserName) {
+   protected WMTemplate(String parserName, Broker broker) {
       _broker = broker;
       _parserName = parserName;
       _log = broker.getLog("template");

@@ -39,17 +39,17 @@ public class FileTemplate extends WMTemplate
    /**
      * Instantiate a template based on the specified filename
      */
-   public FileTemplate(Broker broker, String filename, String encoding)
+   public FileTemplate(Broker broker, String filename)
    {
-      super(broker,encoding);
+      super(broker);
       myFile = new File(filename);
    }
 
    /**
      * Instantiate a template based on the specified file
      */
-   public FileTemplate(Broker broker, File templateFile, String encoding) {
-      super(broker,encoding);
+   public FileTemplate(Broker broker, File templateFile) {
+      super(broker);
       myFile = templateFile;
    }
 
