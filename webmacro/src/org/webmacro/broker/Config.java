@@ -232,6 +232,20 @@ public class Config implements ResourceProvider
      */
    final public static String LOG_FILE = "LogFile";
 
+	// marcelh start 04092000
+   /**
+     * If this propertie is given and set to 'TRUE'
+     * there will be a diverent logfile for each day.
+     */
+   final public static String LOG_FILE_EACH_DAY = "LogFilePerDay";
+
+	/**
+     * If this propertie is given and set to 'TRUE'
+     * there will be a diverent logfile for each day.
+     */
+   final public static String LOG_FILE_DATE_FORMAT = "LogFileDateFormat";
+	// marcelh end 04092000
+
    /**
      * Whether exceptions are traced in the log or not is set in 
      * the log file as the variable LogTraceExceptions and can 
@@ -322,6 +336,11 @@ public class Config implements ResourceProvider
    private void ctor(InputStream configStream) 
       throws BrokerInitException
    {
+		// marcelh start 04092000
+		String	strLogFileEachDay;
+		String	strLogFileDateFormat;
+		// marcelh end 04092000
+	
       // set default values
 
       Properties defaults = new Properties();
@@ -352,6 +371,18 @@ public class Config implements ResourceProvider
 
       // initialize logging
       try {
+			// marcelh start 04092000
+			strLogFileEachDay		= get(LOG_FILE_EACH_DAY);
+ 			strLogFileDateFormat	= get(LOG_FILE_DATE_FORMAT);
+			if (strLogFileEachDay != null)
+			{
+				Log.setLogFileEachDay(isTrue(strLogFileEachDay));
+			}
+ 			if (strLogFileDateFormat != null)
+ 			{
+				Log.setLogFileDateFormat(strLogFileDateFormat);
+ 			}
+			// marcelh end 04092000
          Log.setTarget(get(LOG_FILE));
          Log.setLevel(Log.getConstant(get(LOG_LEVEL)));
          boolean trace = 
