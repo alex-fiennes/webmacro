@@ -346,10 +346,10 @@ public class IncludeDirective extends Directive {
 
       if (_log.loggingDebug()) {
          _log.debug("Including '" + _strFilename + "' as "
-                 + (_type == TYPE_MACRO)    ? "MACRO"
+                 + ((_type == TYPE_MACRO)    ? "MACRO"
                  : (_type == TYPE_TEMPLATE) ? "TEMPLATE"
                  : (_type == TYPE_TEXT)     ? "TEXT"
-                 : "UNKNOWN.  Throwing exceptin");
+                 : "UNKNOWN.  Throwing exceptin"));
       }
 
       Object toInclude = getThingToInclude(broker, _type, _strFilename);
