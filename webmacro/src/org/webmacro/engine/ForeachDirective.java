@@ -20,11 +20,11 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.util.java2.*;
 import org.webmacro.*;
 import java.util.*;
 import java.io.*;
 import org.webmacro.util.*;
+import com.sun.java.util.collections.Iterator;
 
 /**
   * This directive is used to iterate through the members of a list. 
@@ -116,7 +116,7 @@ final class ForeachDirective implements Directive
          }
       }
 
-      com.sun.java.util.collections.Iterator iter;
+      Iterator iter;
       try {
          iter = PropertyOperator.getIterator(list);
       } catch (Exception e) {

@@ -19,14 +19,12 @@
 
 
 package org.webmacro.engine;
-import org.webmacro.util.java2.*;
 import java.util.*;
 import java.io.*;
 import org.webmacro.broker.Config;
 import org.webmacro.util.*;
 import java.lang.reflect.*;
 import org.webmacro.*;
-// import com.sun.java.util.*;
 
 /**
   * The WMParser implements the traditional WebMacro script syntax: it's

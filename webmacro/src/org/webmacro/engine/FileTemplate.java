@@ -19,7 +19,6 @@
 
 
 package org.webmacro.engine;
-import org.webmacro.util.java2.*;
 import java.util.*;
 import java.io.*;
 import org.webmacro.util.*;

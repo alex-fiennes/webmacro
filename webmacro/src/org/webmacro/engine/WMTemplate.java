@@ -24,7 +24,8 @@ import java.util.*;
 import java.io.*;
 import org.webmacro.util.*;
 import org.webmacro.*;
-import org.webmacro.util.java2.*;
+
+import com.sun.java.util.collections.Map;
 
 /**
   * Template objects represent the user defined layout into which the 
@@ -67,17 +68,17 @@ abstract public class WMTemplate implements Template
    /**
      * Template parameters
      */
-   private HashMap _parameters;
+   private Map _parameters;
 
    /**
      * Template filters
      */
-   private HashMap _filters;
+   private Map _filters;
 
    /**
      * Template macros
      */
-   private HashMap _macros;
+   private Map _macros;
 
    /**
      * Create a new Template. Constructors must supply a broker.
@@ -146,9 +147,9 @@ abstract public class WMTemplate implements Template
       // be written to main memory at the close.
 
       Block newContent = null;
-      HashMap newParameters = null;
+      Map newParameters = null;
       Reader source = null;
-      HashMap newFilters = null;
+      Map newFilters = null;
       try {
          Parser parser = getParser();
          Reader in = getReader();
@@ -281,7 +282,7 @@ abstract public class WMTemplate implements Template
       }
    }
 
-   public HashMap getParameters()
+   public Map getParameters()
    {
       return _parameters;
    }

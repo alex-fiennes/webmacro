@@ -19,13 +19,11 @@
 
 
 package org.webmacro.engine;
-import org.webmacro.util.java2.*;
 import java.util.*;
 import java.io.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
 import java.lang.reflect.*;
-// import com.sun.java.util.*;
 
 /**
   * A block represents the text between two {}'s in a template, or else 

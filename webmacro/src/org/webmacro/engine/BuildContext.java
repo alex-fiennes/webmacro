@@ -3,11 +3,13 @@ package org.webmacro.engine;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
-import org.webmacro.util.java2.*;
+
+import com.sun.java.util.collections.Map;
+import com.sun.java.util.collections.HashMap;
 
 /**
   * Contains data structures which are manipulated during the 
-  * builder phase of parsing. It extends HashMap so that 
+  * builder phase of parsing. It extends Map so that 
   * user provided directives can store information in it during
   * the builder phase. Although WebMacro's built in directives
   * make no use of this hashtable (they use the other structures
@@ -18,9 +20,9 @@ import org.webmacro.util.java2.*;
 public final class BuildContext extends Context
 {
 
-   private final HashMap _filters = new HashMap();
+   private final Map _filters = new HashMap();
 
-   private final HashMap _types = new HashMap();
+   private final Map _types = new HashMap();
 
    public BuildContext(Broker b) {
       super(b);
@@ -67,7 +69,7 @@ public final class BuildContext extends Context
    }
 
 
-   public HashMap getFilters() {
+   public Map getFilters() {
       return _filters;
    }
 
