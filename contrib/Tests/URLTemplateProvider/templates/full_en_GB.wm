@@ -1,0 +1,5 @@
+<P>Webmacro template include</P>
+#foreach $x in $vec #begin
+	$x
+#end
+OK
