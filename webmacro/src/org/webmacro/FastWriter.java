@@ -218,8 +218,6 @@ final public class FastWriter extends Writer
                _out.write(_bbuf, 0, _c2b.nextByteIndex());
             } 
          }
-      } catch (Exception e) {
-        throw new IOException("Unicode conversion error: " + e);
       } finally {
         _c2b.reset();
       }
