@@ -41,6 +41,14 @@ consider the end of the file as the end of the block. (eric)
 
 - releases can now be downloaded in binary and/or source form. (eric)
 
+- find out which version of WM you have with this simple command:
+  java -jar webmacro.jar
+
+- started a macros/ area to keep useful #macro's (lane)
+
+- additional unit tests for #macros, parser bugs, and other things (lane, eric)
+ 
+
 
 Changes Prior to this Release
 -----------------------------
