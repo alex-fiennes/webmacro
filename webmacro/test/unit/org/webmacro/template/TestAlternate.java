@@ -67,4 +67,9 @@ public class TestAlternate extends TemplateTestCase {
       String template="#alternate $i through $Enumeration\n$i$i$i$i";
       assertStringTemplateEquals(template, "abca");
    }
+
+   public void testInlineArray() throws Exception {
+      String template="#alternate $i through [\"red\",\"blue\",\"green\"]\n$i$i$i$i";
+      assertStringTemplateEquals(template,"redbluegreenred");
+   }
 }
