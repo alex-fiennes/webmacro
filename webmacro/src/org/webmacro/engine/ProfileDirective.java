@@ -79,8 +79,11 @@ final class ProfileDirective implements Directive, Visitable
       Object ret;
       boolean timing = context.isTiming();
       if (timing) context.startTiming(myName);
-      ret = myBlock.evaluate(context);
-      if (timing) context.stopTiming();
+      try {
+         ret = myBlock.evaluate(context);
+      } finally {
+         if (timing) context.stopTiming();
+      }
       return ret;
    }  
 

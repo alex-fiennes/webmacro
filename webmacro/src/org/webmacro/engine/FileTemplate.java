@@ -37,20 +37,46 @@ public class FileTemplate extends WMTemplate
    private final File myFile;
 
    /**
-     * Instantiate a template based on the specified filename
+     * What encoding I use to read my templates
+     */
+   private final String myEncoding;
+
+   /**
+     * Instantiate a template based on the specified filename using
+     * the default encoding from WebMacro.properties (TemplateEncoding), 
+     * or if not  specified there then the UTF-8 encoding.
      */
    public FileTemplate(Broker broker, String filename)
    {
-      super(broker);
-      myFile = new File(filename);
+      this (broker, new File(filename), defaultEncoding(broker));
    }
 
    /**
-     * Instantiate a template based on the specified file
+     * Instantiate a template based on the specified file using
+     * the default encoding from WebMacro.properties (TemplateEncoding), 
+     * if not specified there then the UTF-8 encoding.
      */
    public FileTemplate(Broker broker, File templateFile) {
+      this (broker, templateFile, defaultEncoding(broker));
+   }
+
+   /** 
+     * Instantiate a template based on the specified file using
+     * the specified encoding to read the template.
+     */
+   public FileTemplate(Broker broker, File tmplFile, String encoding) {
       super(broker);
-      myFile = templateFile;
+      myFile = tmplFile;
+      myEncoding = encoding;
+   }
+
+   private static final String defaultEncoding(Broker b) {
+      try {
+         return (String) b.get("config", "TemplateEncoding");
+      } catch (Exception e) {
+         return "UTF-8";
+      }
+
    }
 
 
@@ -59,7 +85,8 @@ public class FileTemplate extends WMTemplate
      * call this method in order to locate a stream.
      */
    protected Reader getReader() throws IOException {
-      return new BufferedReader(new FileReader(myFile));
+      return new BufferedReader(new InputStreamReader(
+            new FileInputStream(myFile), myEncoding));
    }
 
    /**

@@ -51,12 +51,12 @@ abstract public class WMTemplate implements Template
    /**
      * The resource broker used to resolve things in this template
      */
-   private Broker _broker;
+   final private Broker _broker;
 
    /**
      * Where we log our errors
      */
-   private Log _log;
+   final private Log _log;
 
    /**
      * What this template contains is a top level block
@@ -64,7 +64,8 @@ abstract public class WMTemplate implements Template
    private Block _content; 
 
    /**
-     *
+     * Which parser (grammar) is used to parse this template, 
+     * typically "wm"
      */
    private String _parserName;
 
