@@ -297,6 +297,7 @@ CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
 #
 
 Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
+#Encoder.*.CacheManager: org.webmacro.resource.StaticIdentityCacheManager
 #Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
 PropertyOperator.CacheManager: org.webmacro.resource.StaticSMapCacheManager
@@ -321,6 +322,16 @@ SMapCacheManager.*.UseSoftReferences: TRUE
 StaticSMapCacheManager.*.CacheBuckets: 1001
 StaticSMapCacheManager.*.CacheFactor: 5
 
+# CheckForReloadDelay sets, how often a cached template should
+# be checked for reload at maximum. 0 (which is the default) means
+# to check on every request. Positive values stand for a period
+# of time in milliseconds. Templates are only checked once in this
+# interval.
+
+# 60 seconds for templates requested via http
+#CheckForReloadDelay.http=60000
+# 10 seconds for normal file templates
+#CheckForReloadDelay.file=10000
 
 # GenerationalCacheManager properties (if used)
 
