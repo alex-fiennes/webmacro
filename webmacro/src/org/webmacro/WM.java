@@ -314,7 +314,7 @@ public class WM implements WebMacro
     * This method takes care of all the typical work involved
     * in writing a template.<p>
     *
-    * This method uses the default <code>TemplateEncoding</code> specified in
+    * This method uses the default <code>TemplateOutputEncoding</code> specified in
     * WebMacro.defaults or your custom WebMacro.properties.
     *
     * @param templateName name of Template to write.  Must be accessible
@@ -333,7 +333,7 @@ public class WM implements WebMacro
             throws java.io.IOException, ResourceException, PropertyException {
 
       writeTemplate (templateName, out, 
-                     getConfig ("TemplateEncoding"), context); 
+                     getConfig (WMConstants.TEMPLATE_OUTPUT_ENCODING), context); 
    }
 
    /**
@@ -346,7 +346,7 @@ public class WM implements WebMacro
     * @param out          where the output of the template should go
     * @param encoding     character encoding to use when writing the template
     *                     if the encoding is <code>null</code>, the default
-    *                     <code>TemplateEncoding</code> is used
+    *                     <code>TemplateOutputEncoding</code> is used
     * @param context      The Context (can be a WebContext too) used
     *                     during the template evaluation phase
     * @throws java.io.IOException if the template cannot be written to the
@@ -360,7 +360,7 @@ public class WM implements WebMacro
               throws java.io.IOException, ResourceException, PropertyException {
      
       if (encoding == null)
-         encoding = getConfig ("TemplateEncoding");
+         encoding = getConfig (WMConstants.TEMPLATE_OUTPUT_ENCODING);
 
       Template tmpl = getTemplate (templateName);
       FastWriter fw = getFastWriter (out, encoding);

@@ -150,7 +150,7 @@ public interface WebMacro
     * This method takes care of all the typical work involved
     * in writing a template.<p>
     *
-    * This method uses the <code>TemplateEncoding</code> defined in
+    * This method uses the <code>TemplateOutputEncoding</code> defined in
     * WebMacro.defaults, or your custom WebMacro.properties.
     *
     * @param templateName name of Template to write.  Must be accessible
@@ -177,7 +177,7 @@ public interface WebMacro
     * @param out          where the output of the template should go
     * @param encoding     character encoding to use when writing the template
     *                     if the encoding is <code>null</code>, the default
-    *                     <code>TemplateEncoding</code> is used
+    *                     <code>TemplateOutputEncoding</code> is used
     * @param context      The Context (can be a WebContext too) used
     *                     during the template evaluation phase
     * @throws java.io.IOException if the template cannot be written to the
