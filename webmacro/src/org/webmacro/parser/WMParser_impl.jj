@@ -49,17 +49,19 @@ public class WMParser_impl {
   // JavaCC hack for doing lexical state transitions syntactically
 
   void SetState(int state) {
-    while (token.next != null) {
-      Token t = token;
-      while (t.next != null && t.next.next != null) {
-        t = t.next;
-      }
+    if (state != token_source.curLexState) {
+      while (token.next != null) {
+        Token t = token;
+        while (t.next != null && t.next.next != null) {
+          t = t.next;
+        }
 
-      token_source.backup(t.next.image.length());
-      t.next = null; 
-    };
-    jj_ntk = -1;
-    token_source.SwitchTo(state); 
+        token_source.backup(t.next.image.length());
+        t.next = null; 
+      };
+      jj_ntk = -1;
+      token_source.SwitchTo(state); 
+    }
   }
 }
 
@@ -277,9 +279,6 @@ Object parse_arg(ArgDescriptor arg) {
 
   case Directive.ArgType_RVALUE:
     return RValue();
-
-  case Directive.ArgType_QUOTEDSTRING:
-    return QuotedString();
 
   case Directive.ArgType_PUNCT:
     switch (arg.punctId) {
@@ -533,16 +532,14 @@ Builder QuotedString() : {
   int entryState = token_source.curLexState;
   Token t;
   QuotedStringBuilder qs = new QuotedStringBuilder();
-  Builder b, term;
 }
 {
   <QUOTE> { SetState(QS); } 
   ( t=<QS_TEXT> { qs.addElement(t.image); }
     | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
     | t=<SLASH> { qs.addElement(t.image); }
-    | LOOKAHEAD(<DOLLAR>) { SetState(WM); } 
-      term=VariableReference() { qs.addElement(term); } 
-      { SetState(QS); } ) * 
+    | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
+  ) * 
   <QUOTE> 
   { SetState(entryState); }
   { return qs; }
@@ -730,6 +727,19 @@ void Comment(ParserBlockBuilder b) : {
   { SetState(DEFAULT); }
 }
 
+void DollarReference(Vector v) : {
+  int entryState = token_source.curLexState;
+  Object o;
+}
+{
+  { SetState(WM); }
+  ( LOOKAHEAD(<DOLLAR> <WORD> | <DOLLAR> <LPAREN> <WORD>)
+      o=VariableReference() { v.addElement(o); }
+    | <DOLLAR> { v.addElement("$"); }
+  )
+  { SetState(entryState); }
+}
+
 void WMContent(ParserBlockBuilder b) : {
   Token t;
   Object o;
@@ -740,10 +750,7 @@ void WMContent(ParserBlockBuilder b) : {
     | t=<SLASH>     { b.addElement(t.image); }
     | Directive(b) 
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) 
-          { SetState(WM); } 
-          o=VariableReference() 
-          { b.addElement(o); SetState(DEFAULT); }
+    | LOOKAHEAD(<DOLLAR>) DollarReference(b)
   ) 
 }
 
