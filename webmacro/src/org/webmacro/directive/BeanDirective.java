@@ -107,7 +107,7 @@ public class BeanDirective extends Directive {
     public Object build(DirectiveBuilder builder, BuildContext bc)
     throws BuildException {        
         _broker = bc.getBroker();
-        
+        _log = _broker.getLog("directive");
         // BeanConf object is created by the init method when this directive
         // is registered by the DirectiveProvider
         beanConf = (BeanConf)_broker.getBrokerLocal("BeanDirective.Conf");
@@ -138,10 +138,9 @@ public class BeanDirective extends Directive {
         }
         onNewBlock = (Block)builder.getArg(BEAN_ON_NEW_BLOCK, bc);                
         
-        if (DEBUG) 
-            System.err.println("DBG: #bean, target="+target
-            +", className="+_className+", scope="+scope
-            +", isStaticClass="+isStaticClass+", initArgs="+initArgObj);
+        _log.debug("BeanDirective, target="+target
+        +", className="+_className+", scope="+scope
+        +", isStaticClass="+isStaticClass+", initArgs="+initArgObj);
         return this;
     }
     
@@ -209,7 +208,10 @@ public class BeanDirective extends Directive {
                             }
                         }
                     } else {
-                        throw new PropertyException("#bean usage error: session scope is only valid with servlets!");
+                        PropertyException e = new PropertyException(
+                            "#bean usage error: session scope is only valid with servlets!");
+                        _broker.getEvaluationExceptionHandler().evaluate(
+                            target, context, e);
                     }
                     break;
                 default:    
@@ -234,17 +236,15 @@ public class BeanDirective extends Directive {
                     break;
             }
             
-            if (DEBUG) System.err.println("#bean: Class " + _className + " loaded.");
+            _log.debug("BeanDirective: Class " + _className + " loaded.");
             target.setValue(context, o);
         }
         catch (PropertyException e) {
-            if (DEBUG) System.err.println("#bean: Class " + _className + " failed: " + e);
-            this._log.error("#bean: Class " + _className + " failed.", e);
-            throw e;
+            this._broker.getEvaluationExceptionHandler().evaluate(target, context, e);
         }
         catch (Exception e) {
-            String errorText = "#bean: Unable to load bean " + target + " of type " + _className;
-            context.getBroker().getLog("engine").error(errorText, e);
+            String errorText = "BeanDirective: Unable to load bean " + target + " of type " + _className;
+            _log.error(errorText, e);
             writeWarning(errorText, context, out);
         }
         if (isNew && onNewBlock != null)
@@ -288,10 +288,12 @@ public class BeanDirective extends Directive {
                     }
                 }
             }
-            if (o == null) throw new InstantiationException(
-            "Unable to construct object of type " + c.getName()
-            + " using the supplied arguments: "
-            + java.util.Arrays.asList(args).toString());
+            if (o == null){
+                throw new InstantiationException(
+                    "Unable to construct object of type " + c.getName()
+                    + " using the supplied arguments: "
+                    + java.util.Arrays.asList(args).toString());
+            }
         }
         return o;
     }
@@ -311,10 +313,9 @@ public class BeanDirective extends Directive {
         synchronized (b){
             BeanConf bCfg = new BeanConf(b);
             b.setBrokerLocal("BeanDirective.Conf", bCfg);
-            if (DEBUG){
-                System.err.println("DBG: #bean - impliedPackages: " + bCfg.impliedPackages);
-                System.err.println("DBG: #bean - allowedPackages: " + bCfg.allowedPackages);
-            }
+            Log log = b.getLog("directive");
+            log.debug("BeanDirective initialization - impliedPackages: " + bCfg.impliedPackages);
+            log.debug("BeanDirective initialization - allowedPackages: " + bCfg.allowedPackages);
         }
     }        
     
