@@ -1,3 +1,4 @@
+package org.webmacro.examples;
 
 // import the WebMacro core interfaces
 import org.webmacro.*;
