@@ -408,9 +408,9 @@ public class TextTool extends ContextTool
         TextTool tt = TextTool.getInstance();
         String input1 = "This is a test";
         String input2 = "This is a test";
-        String[] split = tt.split(input2, " ");
+        String[] split = TextTool.split(input2, " ");
 
-        System.err.println(tt.replace(input1, "is", "isn't"));
+        System.err.println(TextTool.replace(input1, "is", "isn't"));
 
         for (int x = 0; x < split.length; x++)
             System.err.println("/" + split[x] + "/");
