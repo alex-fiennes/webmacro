@@ -757,37 +757,37 @@ public class ListUtil
 
         out.println("List/Array results");
         out.print("toList(): ");
-        out.println(lu.toList(l) + "/" + lu.toList(arr));
+        out.println(ListUtil.toList(l) + "/" + ListUtil.toList(arr));
         out.print("size: ");
-        out.println(lu.size(l) + "/" + lu.size(arr));
+        out.println(ListUtil.size(l) + "/" + ListUtil.size(arr));
         out.print("contains(\"bird\"): ");
-        out.println(lu.contains(l, "bird") + "/" + lu.contains(arr, "bird"));
+        out.println(ListUtil.contains(l, "bird") + "/" + ListUtil.contains(arr, "bird"));
         out.print("contains(\"fish\"): ");
-        out.println(lu.contains(l, "fish") + "/" + lu.contains(arr, "fish"));
+        out.println(ListUtil.contains(l, "fish") + "/" + ListUtil.contains(arr, "fish"));
         out.print("isArray: ");
         out.println(lu.isArray(l) + "/" + lu.isArray(arr));
         out.print("isList: ");
         out.println(lu.isList(l) + "/" + lu.isList(arr));
         out.print("getItem(5): ");
-        out.println(lu.getItem(l, 5) + "/" + lu.getItem(arr, 5));
+        out.println(ListUtil.getItem(l, 5) + "/" + ListUtil.getItem(arr, 5));
         out.print("getItem(0): ");
         try
         {
-            out.println(lu.getItem(l, 0) + "/" + lu.getItem(arr, 0));
+            out.println(ListUtil.getItem(l, 0) + "/" + ListUtil.getItem(arr, 0));
         }
         catch (Exception e)
         {
             out.println(e);
         }
-        out.println("toList(null): " + lu.toList(null));
-        out.println("toList(\"a string\"): " + lu.toList("a string"));
+        out.println("toList(null): " + ListUtil.toList(null));
+        out.println("toList(\"a string\"): " + ListUtil.toList("a string"));
 
         StringTokenizer st = new StringTokenizer(
                 "This is a bunch of words!");
-        List l2 = lu.toList(st);
+        List l2 = ListUtil.toList(st);
         out.println("toList(Enumeration): " + l2);
         Iterator iter = l2.listIterator();
-        List l3 = lu.toList(iter);
+        List l3 = ListUtil.toList(iter);
         out.println("toList(Iterator): " + l3 + ", iter.hasNext(): " + iter.hasNext());
         // test split
         out.println("List split with fill");
