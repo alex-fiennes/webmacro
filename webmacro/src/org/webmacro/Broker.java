@@ -574,12 +574,12 @@ public class Broker
    synchronized public void shutdown() {
       _log.notice("shutting down");
       Enumeration e = _providers.elements();
-      _providers.clear();
       while (e.hasMoreElements()) {
          Provider pr = (Provider) e.nextElement();
          _log.info("stopping: " + pr);
          pr.destroy();
       }
+      _providers.clear();
       _ls.flush();
    }
 
