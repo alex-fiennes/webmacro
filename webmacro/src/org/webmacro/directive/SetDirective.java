@@ -7,8 +7,7 @@ import org.webmacro.engine.*;
 public class SetDirective extends Directive {
 
   private static final int SET_TARGET = 1;
-  private static final int SET_EQ     = 2;
-  private static final int SET_RESULT = 3;
+  private static final int SET_RESULT = 2;
 
   private Variable target;
   private Object   result;
@@ -16,7 +15,7 @@ public class SetDirective extends Directive {
   private static final ArgDescriptor[] 
     myArgs = new ArgDescriptor[] {
       new LValueArg(SET_TARGET), 
-      new PunctArg(SET_EQ, Directive.Punct_EQUALS),
+      new AssignmentArg(),
       new RValueArg(SET_RESULT)
     };
 
@@ -46,9 +45,9 @@ public class SetDirective extends Directive {
       else
         target.setValue(context, result);
     } catch (ContextException e) {
-      //Engine.log.exception(e);
-      //Engine.log.error("Set: Unable to set value: " +target);
-      out.write("<!--\n Unable to set value: " + target + " \n-->");
+      String errorText = "Set: Unable to set value: " + target;
+      context.getBroker().getLog("engine").error(errorText);
+      writeWarning(errorText, out);
     }
   } 
 
