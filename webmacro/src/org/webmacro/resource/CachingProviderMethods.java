@@ -8,7 +8,7 @@ public interface CachingProviderMethods {
    /**
      * Load an object from permanent storage (or construct it) on
      * demand.  */
-   public TimedReference load(String query)
+   public CacheableElement load(String query)
       throws ResourceException; 
 
    /**

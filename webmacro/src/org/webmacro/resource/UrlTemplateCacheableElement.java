@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
+ * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.  
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
@@ -23,21 +23,22 @@
 
 package org.webmacro.resource;
 
+import java.net.*;
 import java.io.*;
 import org.webmacro.*;
 
-public class FileTemplateTimedReference extends TimedReference {
-  File file;
-  long lastModified;
-  
-  FileTemplateTimedReference(Template t, long timeout, 
-                             File file, long lastModified) {
-    super(t, timeout);
-    this.file = file;
-    this.lastModified = lastModified;
-  }
- 
-  public boolean shouldReload() {
-    return (lastModified != file.lastModified());
-  }
+public class UrlTemplateCacheableElement extends CacheableElement {
+   long lastModified;
+   URL url;
+
+   public UrlTemplateCacheableElement(Object o, URL u, long lastModified) {
+      super(o);
+      this.lastModified = lastModified;
+      this.url = u;
+   }
+
+   public boolean shouldReload() {
+      return (lastModified != UrlProvider.getUrlLastModified(url));
+   }
 }
+
