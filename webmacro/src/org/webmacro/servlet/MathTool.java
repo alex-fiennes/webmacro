@@ -98,7 +98,7 @@ public class MathTool implements ContextTool {
     * and <code>end</code>, inclusive
     */
    public static final int random(int start, int end) {
-      return start + (int) (end *java.lang.Math.random()/(Integer.MAX_VALUE+1.0));
+      return start + (int)((end - start + 1) * java.lang.Math.random());
    }
 
    /**
@@ -185,5 +185,14 @@ public class MathTool implements ContextTool {
     * Perform necessary cleanup work
     */
    public void destroy(Object o) {
+   }
+   
+   public static void main(String[] args){
+      System.out.println("Generating 200 random ints between 10 and 99 inclusive:");
+      for (int i=0; i<200; i++){
+         System.out.print(MathTool.random(10, 99) + " ");
+         if (((i + 1) % 20) == 0) System.out.println();
+      }
+      System.out.println("\nDone.");
    }
 }
