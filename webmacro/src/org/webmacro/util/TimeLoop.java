@@ -59,14 +59,12 @@ public class TimeLoop {
     static Map instances = new HashMap();
     
     /**
-     * Get an instance of a TimeLoop scheduler. All clients
+     * Create an instance of a TimeLoop scheduler. All clients
      * using the same duration and periods settings will be served
-     * by the same background thread, whereas the returned TimeLoop
-     * object is unique. Be sure to call the <code>destroy</code>
-     * method when you no longer need the scheduler.
+     * by the same background thread. Be sure to call the <code>destroy</code>
+     * method when you no longer need this scheduler.
      * @param duration duration of each period (in ms)
      * @param periods number of periods for the scheduler.
-     * @return scheduler
      */
     public TimeLoop (long duration,int periods) {
         super();
