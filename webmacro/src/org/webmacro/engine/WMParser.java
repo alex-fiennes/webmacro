@@ -628,7 +628,7 @@ e.printStackTrace();
 
       int c = in.nextChar();
       while ((c != quoteChar) && (c != in.EOF)) {
-         if (c == '$') {
+         if ((c == '$') && !in.isEscaped()) {
             Object child = parseVariable(in); // may return a string 
             c = in.getChar();
 
