@@ -5,8 +5,16 @@ The applications in this area are contributions which are supported, if at
 all, by their authors. They are not part of the WebMacro core, though they 
 might prove to be very useful :-) 
 
-If you have a contribution you would like to submit to this area please 
-contact Justin Wells (justin@webmacro.org) and request CVS write access. 
+If you have a contribution you would like to submit to this area, you can
+by simply setting your CVSROOT to:
+
+    CVSROOT=:pserver:wm@cvs.webmacro.org:/root
+    cvs login  <password="webmacro">
+    cvs checkout wmcontrib 
+
+Please notify the WebMacro mailing list (webmacro@semiotek.com) of your 
+contributions.  Also, please be very considerate of the files in /wmcontrib
+and only remove *your* files.  If at any point you are not sure what to do,
+ASK THE LIST!  Somebody there will be glad to help.
 
 Your contribution must be opensource under some opensource license. 
-
