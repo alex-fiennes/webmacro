@@ -27,9 +27,19 @@ package org.webmacro;
   */
 public class ContextException extends WebMacroException
 {
+   public ContextException() 
+   {
+      super();
+   }
+
    public ContextException(String reason) 
    {
       super(reason);
+   }
+
+   public ContextException(String reason, Exception e) 
+   {
+      super(reason, e);
    }
 
 }
