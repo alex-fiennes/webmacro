@@ -23,7 +23,10 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.Log;
+import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
 /**
@@ -39,78 +42,80 @@ import org.webmacro.util.Settings;
 
 public class CrankyEvaluationExceptionHandler implements EvaluationExceptionHandler {
 
-    private Log _log;
+   private Log _log;
 
-    public CrankyEvaluationExceptionHandler() {
-    }
+   public CrankyEvaluationExceptionHandler() {
+   }
 
-    public CrankyEvaluationExceptionHandler(Broker b) {
-        init(b, b.getSettings());
-    }
+   public CrankyEvaluationExceptionHandler(Broker b) {
+      init(b, b.getSettings());
+   }
 
-    public void init(Broker b, Settings config) {
-        _log = b.getLog("engine");
-    }
+   public void init(Broker b, Settings config) {
+      _log = b.getLog("engine");
+   }
 
-    public void evaluate(Variable variable, Context context, Exception problem)
-            throws PropertyException {
+   public void evaluate(Variable variable, Context context, Exception problem)
+         throws PropertyException {
 
-        // if it's a PropertyException set the current context location
-        if (problem instanceof PropertyException) {
-            ((PropertyException) problem)
-                    .setContextLocation(context.getCurrentLocation());
-        } else {
-            // else, wrap it
-            problem = new PropertyException("Error evaluating $"
-                                          + variable.getVariableName(),
-                                          problem,
-                                          context.getCurrentLocation());
-        }
-
-
-        // log it
-        if (_log != null)
-            _log.warning("Error evaluating $" + variable.getVariableName(), problem);
+      // if it's a PropertyException set the current context location
+      if (problem instanceof PropertyException) {
+         ((PropertyException) problem)
+               .setContextLocation(context.getCurrentLocation());
+      }
+      else {
+         // else, wrap it
+         problem = new PropertyException("Error evaluating $"
+                                         + variable.getVariableName(),
+                                         problem,
+                                         context.getCurrentLocation());
+      }
 
 
-        // and rethrow it
-        throw (PropertyException) problem;
-    }
-
-    public String expand(Variable variable, Context context, Exception problem)
-            throws PropertyException {
-
-        // if it's a PropertyException set the current context location
-        if (problem instanceof PropertyException) {
-            ((PropertyException) problem)
-                    .setContextLocation(context.getCurrentLocation());
-        } else {
-            // else, wrap it
-            problem = new PropertyException("Error expanding $"
-                                          + variable.getVariableName(),
-                                          problem,
-                                          context.getCurrentLocation());
-        }
+      // log it
+      if (_log != null)
+         _log.warning("Error evaluating $" + variable.getVariableName(), problem);
 
 
-        // log it
-        if (_log != null)
-            _log.warning("Error expanding $" + variable.getVariableName(), problem);
+      // and rethrow it
+      throw (PropertyException) problem;
+   }
+
+   public String expand(Variable variable, Context context, Exception problem)
+         throws PropertyException {
+
+      // if it's a PropertyException set the current context location
+      if (problem instanceof PropertyException) {
+         ((PropertyException) problem)
+               .setContextLocation(context.getCurrentLocation());
+      }
+      else {
+         // else, wrap it
+         problem = new PropertyException("Error expanding $"
+                                         + variable.getVariableName(),
+                                         problem,
+                                         context.getCurrentLocation());
+      }
 
 
-        // and rethrow it
-        throw (PropertyException) problem;
-
-    }
-
-
-    public String warningString(String warningText) throws PropertyException {
-        throw new PropertyException("Evaluation warning: " + warningText);
-    }
+      // log it
+      if (_log != null)
+         _log.warning("Error expanding $" + variable.getVariableName(), problem);
 
 
-    public String errorString(String errorText) throws PropertyException {
-        throw new PropertyException("Evaluation error: " + errorText);
-    }
+      // and rethrow it
+      throw (PropertyException) problem;
+
+   }
+
+
+   public String warningString(String warningText) throws PropertyException {
+      throw new PropertyException("Evaluation warning: " + warningText);
+   }
+
+
+   public String errorString(String errorText) throws PropertyException {
+      throw new PropertyException("Evaluation error: " + errorText);
+   }
 }
 

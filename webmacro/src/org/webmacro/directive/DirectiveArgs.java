@@ -22,8 +22,8 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
-import org.webmacro.engine.*;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
 
 /**
  * Interface used for setting and retrieving directive arguments.
@@ -34,14 +34,14 @@ import org.webmacro.engine.*;
 
 public interface DirectiveArgs {
 
-  public int getArgCount () throws BuildException;
+   public int getArgCount() throws BuildException;
 
-  public Object getExactArg (int idx) throws BuildException;
+   public Object getExactArg(int idx) throws BuildException;
 
-  public Object getArg(int id) throws BuildException;
+   public Object getArg(int id) throws BuildException;
 
-  public Object getArg(int id, BuildContext bc) throws BuildException;
+   public Object getArg(int id, BuildContext bc) throws BuildException;
 
-  public void setArg(int id, Object o) throws BuildException;
+   public void setArg(int id, Object o) throws BuildException;
 
 }

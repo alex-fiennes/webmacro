@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,42 +9,46 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.servlet;
 
-import org.webmacro.*;
-import java.io.*;
-import javax.servlet.http.*;
 import javax.servlet.*;
+import javax.servlet.http.*;
+
+import org.webmacro.Context;
+import org.webmacro.ContextTool;
+import org.webmacro.PropertyException;
 
 /**
-  * Provide Template with access to form data.
-  */
-public class CookieTool implements ContextTool
-{
-   public Object init(Context context) 
-      throws PropertyException
-   {
+ * Provide Template with access to form data.
+ */
+public class CookieTool implements ContextTool {
+
+   public Object init(Context context)
+         throws PropertyException {
       try {
          WebContext wc = (WebContext) context;
          CookieJar fl = new CookieJar(wc.getRequest(), wc.getResponse());
          return fl;
-      } catch (ClassCastException ce) {
+      }
+      catch (ClassCastException ce) {
          throw new PropertyException(
                "This only works with WebContext", ce);
       }
 
    }
-   public void destroy(Object o) { }
+
+   public void destroy(Object o) {
+   }
 }

@@ -9,8 +9,7 @@
 * Direct all questions and comments to support@opendoors.com
 */
 package org.opendoors.cache;
-import java.util.Properties;
-import java.util.Hashtable;
+
 
 /**
  * Some cache implementations will
@@ -22,13 +21,13 @@ import java.util.Hashtable;
  */
 public interface UpdateableCache extends Cache {
 
-	/**
-	 * Updates the cache.
-	 * <p>
-	 * Upon completion, the cache is up to date
-	 * w/respect to all pending updates.
-	 */
-	public void update();
+   /**
+    * Updates the cache.
+    * <p>
+    * Upon completion, the cache is up to date
+    * w/respect to all pending updates.
+    */
+   public void update();
 
 }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,23 +9,29 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 package org.webmacro.util;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
-import org.webmacro.*;
-import org.webmacro.resource.*;
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.ResourceException;
+import org.webmacro.resource.CacheElement;
+import org.webmacro.resource.CacheManager;
+import org.webmacro.resource.ResourceLoader;
+import org.webmacro.resource.TrivialCacheManager;
 
 /**
  * An encoder is used to encode strings into a particular encoding in
@@ -48,10 +54,10 @@ import org.webmacro.resource.*;
  * @author Michael Bayne
  */
 
-public class Encoder implements ResourceLoader 
-{
+public class Encoder implements ResourceLoader {
+
    private String _encoding;
-   private CacheManager _cache; 
+   private CacheManager _cache;
    private Log _log;
 
    /**
@@ -62,21 +68,20 @@ public class Encoder implements ResourceLoader
     * encoding.
     */
    public Encoder(String encoding)
-      throws UnsupportedEncodingException
-   {
+         throws UnsupportedEncodingException {
       // enforce some specific rules related to choice of encodings
-      if (encoding == null || 
-          encoding.equalsIgnoreCase("UNICODE") || 
-          encoding.equalsIgnoreCase("UNICODEBIG") || 
-          encoding.equalsIgnoreCase("UNICODELITTLE") || 
-          encoding.equalsIgnoreCase("UTF16")) {
+      if (encoding == null ||
+            encoding.equalsIgnoreCase("UNICODE") ||
+            encoding.equalsIgnoreCase("UNICODEBIG") ||
+            encoding.equalsIgnoreCase("UNICODELITTLE") ||
+            encoding.equalsIgnoreCase("UTF16")) {
          String err = "The encoding you specified is invalid: " +
-            encoding + ". Note that the UNICODE and UTF16 encodings " +
-            "are not supported by WebMacro because they prefix the " +
-            "stream with a marker indicating whether the stream is " +
-            "big endian or little endian. Instead choose the byte " +
-            "ordering yourself by using the UTF-16BE or UTF-16LE " +
-            "encodings.";
+               encoding + ". Note that the UNICODE and UTF16 encodings " +
+               "are not supported by WebMacro because they prefix the " +
+               "stream with a marker indicating whether the stream is " +
+               "big endian or little endian. Instead choose the byte " +
+               "ordering yourself by using the UTF-16BE or UTF-16LE " +
+               "encodings.";
          throw new UnsupportedEncodingException(err);
       }
 
@@ -89,13 +94,13 @@ public class Encoder implements ResourceLoader
       _encoding = encoding;
    }
 
-   public void init(Broker b, Settings config) 
-   throws InitException {
+   public void init(Broker b, Settings config)
+         throws InitException {
       String cacheManager;
       _log = b.getLog("resource", "Object loading and caching");
 
       cacheManager = b.getSetting("Encoder." + _encoding + ".CacheManager");
-      if (cacheManager == null) 
+      if (cacheManager == null)
          cacheManager = b.getSetting("Encoder.*.CacheManager");
       if (cacheManager == null || cacheManager.equals("")) {
          _log.info("No cache manager specified for encoding " + _encoding
@@ -108,7 +113,7 @@ public class Encoder implements ResourceLoader
             _cache = (CacheManager) c.newInstance();
          }
          catch (Exception e) {
-            _log.warning("Unable to load cache manager " + cacheManager 
+            _log.warning("Unable to load cache manager " + cacheManager
                          + " for encoding type " + _encoding
                          + ", using TrivialCacheManager.  Reason:\n" + e);
             _cache = new TrivialCacheManager();
@@ -122,18 +127,17 @@ public class Encoder implements ResourceLoader
     * demand.
     */
    public Object load(Object query, CacheElement ce)
-      throws ResourceException
-   {
+         throws ResourceException {
       try {
          if (query instanceof Block) {
-            String[] source = ((Block)query).text;
+            String[] source = ((Block) query).text;
             byte[][] encoded = new byte[source.length][];
             for (int i = 0; i < source.length; i++) {
                encoded[i] = source[i].getBytes(_encoding);
             }
             return encoded;
 
-         } 
+         }
          else if (query instanceof String) {
             return ((String) query).getBytes(_encoding);
          }
@@ -141,7 +145,8 @@ public class Encoder implements ResourceLoader
             return query.toString().getBytes(_encoding);
          }
 
-      } catch (UnsupportedEncodingException uee) {
+      }
+      catch (UnsupportedEncodingException uee) {
          // this should never happen as we check in the constructor to
          // ensure that the encoding is supported
          throw new ResourceException("Unable to encode: " + uee);
@@ -149,10 +154,11 @@ public class Encoder implements ResourceLoader
    }
 
    public Object load(String query, CacheElement ce)
-      throws ResourceException {
+         throws ResourceException {
       try {
          return query.getBytes(_encoding);
-      } catch (UnsupportedEncodingException uee) {
+      }
+      catch (UnsupportedEncodingException uee) {
          // this should never happen as we check in the constructor to
          // ensure that the encoding is supported
          throw new ResourceException("Unable to encode: " + uee);
@@ -169,14 +175,13 @@ public class Encoder implements ResourceLoader
     * Java encoding mechanism does not provide support for the encoding
     * used by this encoder instance.
     */
-   public final byte[] encode (String source)
-      throws UnsupportedEncodingException
-   {
+   public final byte[] encode(String source)
+         throws UnsupportedEncodingException {
       try {
          return (byte[]) _cache.get(source, this);
       }
       catch (ResourceException e) {
-         throw new UnsupportedEncodingException("Encoder: Could not encode; " 
+         throw new UnsupportedEncodingException("Encoder: Could not encode; "
                                                 + e);
       }
    }
@@ -191,14 +196,13 @@ public class Encoder implements ResourceLoader
     * Java encoding mechanism does not provide support for the encoding
     * used by this encoder instance.
     */
-   public final byte[][] encode (Block source)
-      throws UnsupportedEncodingException
-   {
+   public final byte[][] encode(Block source)
+         throws UnsupportedEncodingException {
       try {
          return (byte[][]) _cache.get(source, this);
       }
       catch (ResourceException e) {
-         throw new UnsupportedEncodingException("Encoder: Could not encode; " 
+         throw new UnsupportedEncodingException("Encoder: Could not encode; "
                                                 + e);
       }
    }
@@ -208,12 +212,11 @@ public class Encoder implements ResourceLoader
     * entire blocks of text at once (and have those encoded blocks
     * cached).
     */
-   public static class Block
-   {
+   public static class Block {
+
       public String[] text;
 
-      public Block (String[] text)
-      {
+      public Block(String[] text) {
          this.text = text;
 
          // we compute the combined hash of our string array so that we
@@ -221,26 +224,24 @@ public class Encoder implements ResourceLoader
          // strings to maintain happy independent existences
          long strhash = 0;
          for (int i = 0; i < text.length; i++) {
-            strhash = (strhash + (long)text[i].hashCode()) %
-               Integer.MAX_VALUE;
+            strhash = (strhash + (long) text[i].hashCode()) %
+                  Integer.MAX_VALUE;
          }
-         _hashCode = (int)strhash;
+         _hashCode = (int) strhash;
       }
 
-      public int hashCode ()
-      {
+      public int hashCode() {
          return _hashCode;
       }
 
-      public boolean equals (Object other)
-      {
+      public boolean equals(Object other) {
          // we try to be as efficient as possible about this, but to be
          // correct, we have to compare every string
          if (!(other instanceof Block)) {
             return false;
          }
 
-         Block ob = (Block)other;
+         Block ob = (Block) other;
 
          // check the obvious things
          if (this == ob || text == ob.text) {

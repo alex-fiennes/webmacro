@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,22 +9,19 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.engine;
-import java.util.*;
-import org.webmacro.*;
-import org.webmacro.util.*;
 
 
 /**
@@ -33,33 +30,33 @@ import org.webmacro.util.*;
  * Represents the invocation of a (C-style) macro, which gets expanded
  * during the building of a template.  Not to be confused with Macro
  * as used by WebMacro, which is something else.
- * @author Brian Goetz 
+ * @author Brian Goetz
  */
 
-public class MacroBuilder implements Builder
-{
-  private String name;
-  private ListBuilder argsBuilder;
-  private int lineNo, colNo;
+public class MacroBuilder implements Builder {
 
-  public MacroBuilder(String name,
-                      ListBuilder argsBuilder, 
-                      int lineNo, int colNo) {
-    this.name = name;
-    this.argsBuilder = argsBuilder;
-    this.lineNo = lineNo;
-    this.colNo = colNo;
-  }
+   private String name;
+   private ListBuilder argsBuilder;
+   private int lineNo, colNo;
 
-  /**
-   * Expand the macro.  Gets the macro definition from the build context.  
-   */
-  public Object build(BuildContext bc) throws BuildException {
-    MacroDefinition md = bc.getMacro(name);
-    if (md == null)
-      throw new BuildException("No such macro " + name);
-    Object[] args = argsBuilder.buildAsArray(bc);
-    return md.expand(args, bc);
-  }
+   public MacroBuilder(String name,
+                       ListBuilder argsBuilder,
+                       int lineNo, int colNo) {
+      this.name = name;
+      this.argsBuilder = argsBuilder;
+      this.lineNo = lineNo;
+      this.colNo = colNo;
+   }
+
+   /**
+    * Expand the macro.  Gets the macro definition from the build context.
+    */
+   public Object build(BuildContext bc) throws BuildException {
+      MacroDefinition md = bc.getMacro(name);
+      if (md == null)
+         throw new BuildException("No such macro " + name);
+      Object[] args = argsBuilder.buildAsArray(bc);
+      return md.expand(args, bc);
+   }
 }
 

@@ -23,21 +23,24 @@
 package org.webmacro.directive;
 
 import java.util.*;
-import org.webmacro.engine.*;
-import org.webmacro.*;
-import org.webmacro.util.*;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.Provider;
+import org.webmacro.engine.IntrospectionException;
+import org.webmacro.util.Settings;
 
 /**
-  * Utility class to assist in the creation of directives.
-  */
-public final class DirectiveProvider implements Provider
-{
+ * Utility class to assist in the creation of directives.
+ */
+public final class DirectiveProvider implements Provider {
 
    public static final String DIRECTIVE_KEY = "directive";
 
    // BULDER CLASS MANAGEMENT
 
-   private final Hashtable _descriptors  = new Hashtable();
+   private final Hashtable _descriptors = new Hashtable();
    private Log _log;
    private Broker _broker;
 
@@ -47,107 +50,109 @@ public final class DirectiveProvider implements Provider
     * in the Settings of the Broker.
     */
    private class SettingHandler extends Settings.ListSettingHandler {
-       public void processSetting(String settingKey, String settingValue) {
-          try {
-             registerDirective(settingValue, settingKey);
-          } catch (Exception ce) {
-             _log.warning("Exception loading directive " + settingValue, ce);
-          }
-       }
-    }
 
-
-    /**
-     * Register an org.webmacro.directive.DirectiveDescriptor to be used
-     * as if it were a real Directive named <code>dirName</code>.<p>
-     *
-     * If the specified <code>dirName</code> is already registered, it is
-     * happily, and silently replaced.<p>
-     *
-     * Once registered, one can use this "directive" from a template like so:<pre>
-     *    #dirName arg1 arg2 argN
-     *
-     * where the args are dependant on the DirectiveDescriptor
-     * </pre>
-     *
-     * @param dd the DirectiveDescriptor
-     * @param dirName name of the "directive"
-     */
-    public final void registerDescriptor (DirectiveDescriptor dd, String dirName) {
-        _descriptors.put (dirName, dd);
-    }
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            registerDirective(settingValue, settingKey);
+         }
+         catch (Exception ce) {
+            _log.warning("Exception loading directive " + settingValue, ce);
+         }
+      }
+   }
 
 
    /**
-     * Register a new directive class, so that a builder
-     * of this type can be retrieved later.
-     * @exception IntrospectionException something wrong with the class
-     * @exception InitException duplicate registration
-     */
+    * Register an org.webmacro.directive.DirectiveDescriptor to be used
+    * as if it were a real Directive named <code>dirName</code>.<p>
+    *
+    * If the specified <code>dirName</code> is already registered, it is
+    * happily, and silently replaced.<p>
+    *
+    * Once registered, one can use this "directive" from a template like so:<pre>
+    *    #dirName arg1 arg2 argN
+    *
+    * where the args are dependant on the DirectiveDescriptor
+    * </pre>
+    *
+    * @param dd the DirectiveDescriptor
+    * @param dirName name of the "directive"
+    */
+   public final void registerDescriptor(DirectiveDescriptor dd, String dirName) {
+      _descriptors.put(dirName, dd);
+   }
+
+
+   /**
+    * Register a new directive class, so that a builder
+    * of this type can be retrieved later.
+    * @exception IntrospectionException something wrong with the class
+    * @exception InitException duplicate registration
+    */
    public final void registerDirective(String dirClassName, String dirName)
-      throws IntrospectionException, InitException
-   {
+         throws IntrospectionException, InitException {
       Class directive = null;
       DirectiveDescriptor templateDesc, newDesc, oldDesc;
       try {
-        directive = _broker.classForName(dirClassName);
-      } catch (Exception e) {
+         directive = _broker.classForName(dirClassName);
+      }
+      catch (Exception e) {
          throw new IntrospectionException("No class " + dirClassName, e);
       }
 
       // Make sure this class is an instance of o.w.directive.Directive
       if (Directive.class.isAssignableFrom(directive)) {
-        try {
-          templateDesc = (DirectiveDescriptor)
-            directive.getMethod("getDescriptor", null).invoke(null, null);
-          newDesc = new DirectiveDescriptor(templateDesc.name,
-                                            templateDesc.dirClass,
-                                            templateDesc.args,
-                                            templateDesc.subdirectives);
-          if (newDesc.dirClass == null)
-            newDesc.dirClass = directive;
-        }
-        catch (Exception e) {
-          throw new IntrospectionException("Class " + dirClassName
-            + " does not have a getDescriptor() method", e);
-        }
+         try {
+            templateDesc = (DirectiveDescriptor)
+                  directive.getMethod("getDescriptor", null).invoke(null, null);
+            newDesc = new DirectiveDescriptor(templateDesc.name,
+                                              templateDesc.dirClass,
+                                              templateDesc.args,
+                                              templateDesc.subdirectives);
+            if (newDesc.dirClass == null)
+               newDesc.dirClass = directive;
+         }
+         catch (Exception e) {
+            throw new IntrospectionException("Class " + dirClassName
+                                             + " does not have a getDescriptor() method", e);
+         }
 
-        // added by Keats 5Jul01
-        // use introspection to invoke the static init method of directive, if it exists
-        Class[] cArg = { Broker.class };
-        try {
+         // added by Keats 5Jul01
+         // use introspection to invoke the static init method of directive, if it exists
+         Class[] cArg = {Broker.class};
+         try {
             java.lang.reflect.Method m = directive.getMethod("init", cArg);
-            Object[] brokerArg = { _broker };
+            Object[] brokerArg = {_broker};
             try {
-                m.invoke(null, brokerArg);
+               m.invoke(null, brokerArg);
             }
-            catch (Exception e){
-                _log.warning("Unable to invoke the init method for the directive "
-                + directive.getName(), e);
+            catch (Exception e) {
+               _log.warning("Unable to invoke the init method for the directive "
+                            + directive.getName(), e);
             }
-        }
-        catch (Exception e){
-        }
+         }
+         catch (Exception e) {
+         }
 
-        newDesc.name = (dirName != null && !dirName.equals(""))
-          ? dirName : templateDesc.name;
-        oldDesc = (DirectiveDescriptor) _descriptors.get(newDesc.name);
-        if (oldDesc == null) {
-          _descriptors.put(newDesc.name, newDesc);
-          _log.info("Registered directive: " + newDesc.name);
-        } else if (newDesc.dirClass != oldDesc.dirClass) {
-          throw new InitException("Attempt to register directive " + directive
-             + " failed because " + oldDesc.dirClass.getName()
-             + " is already registered for type " + newDesc.name);
-        }
+         newDesc.name = (dirName != null && !dirName.equals(""))
+               ? dirName : templateDesc.name;
+         oldDesc = (DirectiveDescriptor) _descriptors.get(newDesc.name);
+         if (oldDesc == null) {
+            _descriptors.put(newDesc.name, newDesc);
+            _log.info("Registered directive: " + newDesc.name);
+         }
+         else if (newDesc.dirClass != oldDesc.dirClass) {
+            throw new InitException("Attempt to register directive " + directive
+                                    + " failed because " + oldDesc.dirClass.getName()
+                                    + " is already registered for type " + newDesc.name);
+         }
       }
    }
 
    /**
-     * Create a builder for the named directive
-     */
-   private final DirectiveDescriptor getDescriptor(String directiveName)
-   {
+    * Create a builder for the named directive
+    */
+   private final DirectiveDescriptor getDescriptor(String directiveName) {
       return (DirectiveDescriptor) _descriptors.get(directiveName);
    }
 
@@ -159,33 +164,32 @@ public final class DirectiveProvider implements Provider
       return DIRECTIVE_KEY;
    }
 
-   public void init(Broker broker, Settings config) throws InitException
-   {
+   public void init(Broker broker, Settings config) throws InitException {
       _broker = broker;
       _log = broker.getLog("directive");
       try {
          config.processListSetting("Directives", new SettingHandler());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
          _log.warning("Error initializing DirectiveProvider", e);
-        throw new InitException("Could not initialize DirectiveProvider", e);
+         throw new InitException("Could not initialize DirectiveProvider", e);
       }
    }
 
-   public void destroy()
-   {
+   public void destroy() {
       _descriptors.clear();
    }
 
-  /**
-   * The DirectiveProvider doesn't throw an exception when it can't find
-   * the directive -- it just returns null.
-   */
-   public Object get(String name)
-   {
-     return getDescriptor(name);
+   /**
+    * The DirectiveProvider doesn't throw an exception when it can't find
+    * the directive -- it just returns null.
+    */
+   public Object get(String name) {
+      return getDescriptor(name);
    }
 
-   public void flush() { }
+   public void flush() {
+   }
 }
 
 

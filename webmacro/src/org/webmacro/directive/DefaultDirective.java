@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,93 +9,98 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 package org.webmacro.directive;
 
 import java.io.*;
+
 import org.webmacro.*;
-import org.webmacro.engine.*;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+import org.webmacro.engine.Variable;
 
 public class DefaultDirective extends Directive {
 
-  private static final int DEFAULT_TARGET = 1;
-  private static final int DEFAULT_TO = 2;
-  private static final int DEFAULT_RESULT = 3;
+   private static final int DEFAULT_TARGET = 1;
+   private static final int DEFAULT_TO = 2;
+   private static final int DEFAULT_RESULT = 3;
 
-  private Variable target;
-  private Object   result;
+   private Variable target;
+   private Object result;
 
-  private static final ArgDescriptor[] 
-    myArgs = new ArgDescriptor[] {
-      new LValueArg(DEFAULT_TARGET), 
-      new OptionalGroup(2),
-      //new KeywordArg(DEFAULT_TO, "to"),
-      new AssignmentArg(),
-      new RValueArg(DEFAULT_RESULT)
-    };
+   private static final ArgDescriptor[]
+         myArgs = new ArgDescriptor[]{
+            new LValueArg(DEFAULT_TARGET),
+            new OptionalGroup(2),
+            //new KeywordArg(DEFAULT_TO, "to"),
+            new AssignmentArg(),
+            new RValueArg(DEFAULT_RESULT)
+         };
 
-  private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("default", null, myArgs, null);
+   private static final DirectiveDescriptor
+         myDescr = new DirectiveDescriptor("default", null, myArgs, null);
 
-  public static DirectiveDescriptor getDescriptor() {
-    return myDescr;
-  }
+   public static DirectiveDescriptor getDescriptor() {
+      return myDescr;
+   }
 
-  public DefaultDirective() {}
+   public DefaultDirective() {
+   }
 
-  public Object build(DirectiveBuilder builder, 
-                      BuildContext bc) 
-  throws BuildException {
-    try {
-      target = (Variable) builder.getArg(DEFAULT_TARGET, bc);
-    }
-    catch (ClassCastException e) {
-      throw new NotVariableBuildException(myDescr.name, e);
-    }
-    if (!target.isSimpleName()){
-      throw new NotSimpleVariableBuildException(myDescr.name);
-    }
-    //Object oeq = builder.getArg(DEFAULT_AS, bc);
-    result = builder.getArg(DEFAULT_RESULT, bc);
-    if (result == null) result = "";
-    return this;
-  }
+   public Object build(DirectiveBuilder builder,
+                       BuildContext bc)
+         throws BuildException {
+      try {
+         target = (Variable) builder.getArg(DEFAULT_TARGET, bc);
+      }
+      catch (ClassCastException e) {
+         throw new NotVariableBuildException(myDescr.name, e);
+      }
+      if (!target.isSimpleName()) {
+         throw new NotSimpleVariableBuildException(myDescr.name);
+      }
+      //Object oeq = builder.getArg(DEFAULT_AS, bc);
+      result = builder.getArg(DEFAULT_RESULT, bc);
+      if (result == null) result = "";
+      return this;
+   }
 
-  public void write(FastWriter out, Context context) 
-    throws PropertyException, IOException {
+   public void write(FastWriter out, Context context)
+         throws PropertyException, IOException {
 
-    try {
-      // check if target in context already
-      if (context.containsKey(target.getName())) return;  // already defined, do nothing
-      if (result instanceof Macro) 
-        target.setValue(context, ((Macro) result).evaluate(context));
-      else
-        target.setValue(context, result);
-    } catch (PropertyException e) {
-      throw e;
-    }
-    catch (Exception e) {
-      String errorText = "#default: Unable to set default value for " + target;
-      context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, context, out);
-    }
-  } 
+      try {
+         // check if target in context already
+         if (context.containsKey(target.getName())) return;  // already defined, do nothing
+         if (result instanceof Macro)
+            target.setValue(context, ((Macro) result).evaluate(context));
+         else
+            target.setValue(context, result);
+      }
+      catch (PropertyException e) {
+         throw e;
+      }
+      catch (Exception e) {
+         String errorText = "#default: Unable to set default value for " + target;
+         context.getBroker().getLog("engine").error(errorText);
+         writeWarning(errorText, context, out);
+      }
+   }
 
-  public void accept(TemplateVisitor v) {
-    v.beginDirective(myDescr.name);
-    v.visitDirectiveArg("DefaultTarget", target);
-    v.visitDirectiveArg("DefaultValue", result);
-    v.endDirective();
-  }
+   public void accept(TemplateVisitor v) {
+      v.beginDirective(myDescr.name);
+      v.visitDirectiveArg("DefaultTarget", target);
+      v.visitDirectiveArg("DefaultValue", result);
+      v.endDirective();
+   }
 
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,29 +9,27 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.util;
 
-import java.io.*;
 
 /**
-  * This is a simple stack. I would have liked to use java.util.Stack, but 
-  * I need a stack that returns "null" when the Stack is empty, rather than
-  * throwing an exception.
-  */
-final public class SimpleStack
-{
+ * This is a simple stack. I would have liked to use java.util.Stack, but
+ * I need a stack that returns "null" when the Stack is empty, rather than
+ * throwing an exception.
+ */
+final public class SimpleStack {
 
    private Object[] _stack;
    private int _count = 0;
@@ -73,9 +71,10 @@ final public class SimpleStack
    public void ensureCapacity(int numElems) {
       if (_stack == null) {
          _stack = new Object[numElems];
-      } else if (numElems > _stack.length) {
+      }
+      else if (numElems > _stack.length) {
          Object[] newStack = new Object[numElems];
-         System.arraycopy(_stack,0,newStack,0,_stack.length);
+         System.arraycopy(_stack, 0, newStack, 0, _stack.length);
          _stack = newStack;
       }
    }
@@ -88,7 +87,7 @@ final public class SimpleStack
       }
       System.out.println("Number of elements on stack: " + ss.size());
       Object o;
-      while ( (o = ss.pop()) != null) {
+      while ((o = ss.pop()) != null) {
          System.out.println("pop: " + o);
       }
       System.out.println("Number of elements on stack: " + ss.size());

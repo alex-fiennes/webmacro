@@ -3,129 +3,129 @@ package org.webmacro.parser;
 
 public interface WMParser_implConstants {
 
-  int EOF = 0;
-  int _ALPHA_CHAR = 1;
-  int _NUM_CHAR = 2;
-  int _ALPHANUM_CHAR = 3;
-  int _IDENTIFIER_CHAR = 4;
-  int _IDENTIFIER = 5;
-  int _NEWLINE = 6;
-  int _WHITESPACE = 7;
-  int _QCHAR = 8;
-  int _RESTOFLINE = 9;
-  int _COMMENT = 10;
-  int STUFF = 11;
-  int RBRACE = 12;
-  int END = 13;
-  int BEGIN = 14;
-  int LBRACE = 15;
-  int POUNDPOUND = 17;
-  int RESTOFLINE = 18;
-  int COMMENT_ELSE = 19;
-  int DOLLAR = 20;
-  int QCHAR = 21;
-  int SLASH = 22;
-  int POUND = 23;
-  int QUOTE = 24;
-  int SQUOTE = 25;
-  int NULL = 26;
-  int TRUE = 27;
-  int FALSE = 28;
-  int UNDEFINED = 29;
-  int WS = 30;
-  int NEWLINE = 31;
-  int LPAREN = 32;
-  int RPAREN = 33;
-  int LBRACKET = 34;
-  int RBRACKET = 35;
-  int DOT = 36;
-  int OP_LT = 37;
-  int OP_LE = 38;
-  int OP_GT = 39;
-  int OP_GE = 40;
-  int OP_EQ = 41;
-  int OP_SET = 42;
-  int OP_NE = 43;
-  int OP_PLUS = 44;
-  int OP_MINUS = 45;
-  int OP_MULT = 46;
-  int OP_DIV = 47;
-  int OP_AND = 48;
-  int OP_OR = 49;
-  int OP_NOT = 50;
-  int COMMA = 51;
-  int SEMI = 52;
-  int WORD = 53;
-  int NUMBER = 54;
-  int OTHER = 55;
-  int QS_TEXT = 56;
-  int SQS_TEXT = 57;
+   int EOF = 0;
+   int _ALPHA_CHAR = 1;
+   int _NUM_CHAR = 2;
+   int _ALPHANUM_CHAR = 3;
+   int _IDENTIFIER_CHAR = 4;
+   int _IDENTIFIER = 5;
+   int _NEWLINE = 6;
+   int _WHITESPACE = 7;
+   int _QCHAR = 8;
+   int _RESTOFLINE = 9;
+   int _COMMENT = 10;
+   int STUFF = 11;
+   int RBRACE = 12;
+   int END = 13;
+   int BEGIN = 14;
+   int LBRACE = 15;
+   int POUNDPOUND = 17;
+   int RESTOFLINE = 18;
+   int COMMENT_ELSE = 19;
+   int DOLLAR = 20;
+   int QCHAR = 21;
+   int SLASH = 22;
+   int POUND = 23;
+   int QUOTE = 24;
+   int SQUOTE = 25;
+   int NULL = 26;
+   int TRUE = 27;
+   int FALSE = 28;
+   int UNDEFINED = 29;
+   int WS = 30;
+   int NEWLINE = 31;
+   int LPAREN = 32;
+   int RPAREN = 33;
+   int LBRACKET = 34;
+   int RBRACKET = 35;
+   int DOT = 36;
+   int OP_LT = 37;
+   int OP_LE = 38;
+   int OP_GT = 39;
+   int OP_GE = 40;
+   int OP_EQ = 41;
+   int OP_SET = 42;
+   int OP_NE = 43;
+   int OP_PLUS = 44;
+   int OP_MINUS = 45;
+   int OP_MULT = 46;
+   int OP_DIV = 47;
+   int OP_AND = 48;
+   int OP_OR = 49;
+   int OP_NOT = 50;
+   int COMMA = 51;
+   int SEMI = 52;
+   int WORD = 53;
+   int NUMBER = 54;
+   int OTHER = 55;
+   int QS_TEXT = 56;
+   int SQS_TEXT = 57;
 
-  int SQS = 0;
-  int QS = 1;
-  int COMMENT = 2;
-  int WM = 3;
-  int DEFAULT = 4;
+   int SQS = 0;
+   int QS = 1;
+   int COMMENT = 2;
+   int WM = 3;
+   int DEFAULT = 4;
 
-  String[] tokenImage = {
-    "<EOF>",
-    "<_ALPHA_CHAR>",
-    "<_NUM_CHAR>",
-    "<_ALPHANUM_CHAR>",
-    "<_IDENTIFIER_CHAR>",
-    "<_IDENTIFIER>",
-    "<_NEWLINE>",
-    "<_WHITESPACE>",
-    "<_QCHAR>",
-    "<_RESTOFLINE>",
-    "<_COMMENT>",
-    "<STUFF>",
-    "\"}\"",
-    "\"#end\"",
-    "\"#begin\"",
-    "\"{\"",
-    "<token of kind 16>",
-    "\"##\"",
-    "<RESTOFLINE>",
-    "<COMMENT_ELSE>",
-    "\"$\"",
-    "<QCHAR>",
-    "\"\\\\\"",
-    "\"#\"",
-    "\"\\\"\"",
-    "\"\\\'\"",
-    "\"null\"",
-    "\"true\"",
-    "\"false\"",
-    "\"undefined\"",
-    "<WS>",
-    "<NEWLINE>",
-    "\"(\"",
-    "\")\"",
-    "\"[\"",
-    "\"]\"",
-    "\".\"",
-    "\"<\"",
-    "\"<=\"",
-    "\">\"",
-    "\">=\"",
-    "\"==\"",
-    "\"=\"",
-    "<OP_NE>",
-    "\"+\"",
-    "\"-\"",
-    "\"*\"",
-    "\"/\"",
-    "<OP_AND>",
-    "<OP_OR>",
-    "<OP_NOT>",
-    "\",\"",
-    "\";\"",
-    "<WORD>",
-    "<NUMBER>",
-    "<OTHER>",
-    "<QS_TEXT>",
-    "<SQS_TEXT>",
-  };
+   String[] tokenImage = {
+      "<EOF>",
+      "<_ALPHA_CHAR>",
+      "<_NUM_CHAR>",
+      "<_ALPHANUM_CHAR>",
+      "<_IDENTIFIER_CHAR>",
+      "<_IDENTIFIER>",
+      "<_NEWLINE>",
+      "<_WHITESPACE>",
+      "<_QCHAR>",
+      "<_RESTOFLINE>",
+      "<_COMMENT>",
+      "<STUFF>",
+      "\"}\"",
+      "\"#end\"",
+      "\"#begin\"",
+      "\"{\"",
+      "<token of kind 16>",
+      "\"##\"",
+      "<RESTOFLINE>",
+      "<COMMENT_ELSE>",
+      "\"$\"",
+      "<QCHAR>",
+      "\"\\\\\"",
+      "\"#\"",
+      "\"\\\"\"",
+      "\"\\\'\"",
+      "\"null\"",
+      "\"true\"",
+      "\"false\"",
+      "\"undefined\"",
+      "<WS>",
+      "<NEWLINE>",
+      "\"(\"",
+      "\")\"",
+      "\"[\"",
+      "\"]\"",
+      "\".\"",
+      "\"<\"",
+      "\"<=\"",
+      "\">\"",
+      "\">=\"",
+      "\"==\"",
+      "\"=\"",
+      "<OP_NE>",
+      "\"+\"",
+      "\"-\"",
+      "\"*\"",
+      "\"/\"",
+      "<OP_AND>",
+      "<OP_OR>",
+      "<OP_NOT>",
+      "\",\"",
+      "\";\"",
+      "<WORD>",
+      "<NUMBER>",
+      "<OTHER>",
+      "<QS_TEXT>",
+      "<SQS_TEXT>",
+   };
 
 }

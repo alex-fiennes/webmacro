@@ -34,8 +34,8 @@ package org.webmacro;
  * EvaluationExceptionHandlers have their context location set
  * (line and column numbers from template).
  */
-public class PropertyException extends ContextException
-{
+public class PropertyException extends ContextException {
+
    private String _contextLocation;
 
    public PropertyException(String reason) {
@@ -46,16 +46,16 @@ public class PropertyException extends ContextException
       super(reason, e);
    }
 
-    public PropertyException(String reason, Throwable e, String contextLocation) {
-       super(reason, e);
-       _contextLocation = contextLocation;
-    }
+   public PropertyException(String reason, Throwable e, String contextLocation) {
+      super(reason, e);
+      _contextLocation = contextLocation;
+   }
 
    /**
     * Record the line and column info from the template that
     * caused this ProeprtyException to be thrown.
     */
-   public void setContextLocation (String location) {
+   public void setContextLocation(String location) {
       _contextLocation = location;
    }
 
@@ -65,7 +65,7 @@ public class PropertyException extends ContextException
     *         if this exception instance wasn't previously handled
     *         by a core EvaluationExceptionHandler.
     */
-   public String getContextLocation () {
+   public String getContextLocation() {
       return _contextLocation;
    }
 
@@ -74,10 +74,10 @@ public class PropertyException extends ContextException
     * Overloaded to return the <code>reason</code> specified during construction
     * <b>plus</b> the context location, if any.
     */
-   public String getMessage () {
+   public String getMessage() {
       String msg = super.getMessage();
       if (_contextLocation != null && msg != null)
-          msg += " at " + _contextLocation;
+         msg += " at " + _contextLocation;
 
       return msg;
    }
@@ -91,13 +91,14 @@ public class PropertyException extends ContextException
     */
 
    public static class NoSuchVariableException extends PropertyException {
-     public String variableName;
 
-     public NoSuchVariableException(String variableName) {
-       super("No such variable: $" + variableName);
+      public String variableName;
 
-       this.variableName = variableName;
-     }
+      public NoSuchVariableException(String variableName) {
+         super("No such variable: $" + variableName);
+
+         this.variableName = variableName;
+      }
    }
 
 
@@ -107,13 +108,14 @@ public class PropertyException extends ContextException
     */
 
    public static class NullToStringException extends PropertyException {
-     public String variableName;
 
-     public NullToStringException(String variableName) {
-       super(".toString() returns null: $" + variableName);
+      public String variableName;
 
-       this.variableName = variableName;
-     }
+      public NullToStringException(String variableName) {
+         super(".toString() returns null: $" + variableName);
+
+         this.variableName = variableName;
+      }
    }
 
 
@@ -123,12 +125,13 @@ public class PropertyException extends ContextException
     * was being evaluated.
     */
    public static class NullValueException extends PropertyException {
-     public String variableName;
 
-     public NullValueException(String variableName) {
-       super("Value is null: $" + variableName);
-       this.variableName = variableName;
-     }
+      public String variableName;
+
+      public NullValueException(String variableName) {
+         super("Value is null: $" + variableName);
+         this.variableName = variableName;
+      }
    }
 
 
@@ -137,6 +140,7 @@ public class PropertyException extends ContextException
     * the requested method.
     */
    public static class NoSuchMethodException extends PropertyException {
+
       public String methodName, className, variableName;
 
       public NoSuchMethodException(String methodName,
@@ -155,13 +159,14 @@ public class PropertyException extends ContextException
     * the a method with the request name and argument list
     */
    public static class NoSuchMethodWithArgumentsException extends PropertyException {
+
       public String methodName, className, arguments;
 
       public NoSuchMethodWithArgumentsException(String methodName,
                                                 String className,
                                                 String arguments) {
          super("No public method " + methodName + "(" + arguments + ")"
-             + " in class " + className);
+               + " in class " + className);
          this.className = className;
          this.methodName = methodName;
          this.arguments = arguments;
@@ -173,6 +178,7 @@ public class PropertyException extends ContextException
     * the requested property.
     */
    public static class NoSuchPropertyException extends PropertyException {
+
       String propertyName, className, variableName;
 
       public NoSuchPropertyException(String propertyName,
@@ -192,11 +198,12 @@ public class PropertyException extends ContextException
     * value of a void method
     */
    public static class VoidValueException extends PropertyException {
+
       String variableName;
 
 
       public VoidValueException() {
-        super("Attempt to use void value");
+         super("Attempt to use void value");
       }
 
       public VoidValueException(String variableName) {
@@ -205,14 +212,15 @@ public class PropertyException extends ContextException
       }
    }
 
-    /**
-     * Exception thrown when a Variable isn't of the specified class type.
-     */
-    public static class InvalidTypeException extends PropertyException {
-        public InvalidTypeException (String variableName, Class clazz) {
-            super ("$" + variableName + " is not a " + clazz.getName());
-        }
-    }
+   /**
+    * Exception thrown when a Variable isn't of the specified class type.
+    */
+   public static class InvalidTypeException extends PropertyException {
+
+      public InvalidTypeException(String variableName, Class clazz) {
+         super("$" + variableName + " is not a " + clazz.getName());
+      }
+   }
 
 
    /**
@@ -220,11 +228,12 @@ public class PropertyException extends ContextException
     * not be invoked from a template due to security constraints
     */
    public static class RestrictedPropertyException extends PropertyException {
+
       String propertyName, className, variableName;
 
       public RestrictedPropertyException(String propertyName,
-                                     String variableName,
-                                     String className) {
+                                         String variableName,
+                                         String className) {
          super("The property " + propertyName + " on variable $"
                + variableName + " of class " + className + " may not be accessed from a template.");
          this.variableName = variableName;
@@ -239,11 +248,12 @@ public class PropertyException extends ContextException
     * not be invoked from a template due to security constraints
     */
    public static class RestrictedMethodException extends PropertyException {
+
       String propertyName, className, variableName;
 
       public RestrictedMethodException(String propertyName,
-                                     String variableName,
-                                     String className) {
+                                       String variableName,
+                                       String className) {
          super("The method " + propertyName + " on variable $"
                + variableName + " of class " + className + " may not be accessed from a template.");
          this.variableName = variableName;
@@ -257,27 +267,28 @@ public class PropertyException extends ContextException
     * the requested method.
     */
    public static class UndefinedVariableException extends PropertyException {
+
       private String _msg = "Attempted to dereference an undefined variable.";
 
-      public UndefinedVariableException(){
+      public UndefinedVariableException() {
          super(null);
       }
 
-       /**
-        * Overloaded to return the <code>reason</code> specified during construction
-        * <b>plus</b> the context location, if any.
-        */
-       public String getMessage () {
-          String msg = _msg;
-          String loc = getContextLocation();
-          if (loc != null)
-              msg += " at " + loc;
-          return msg;
-       }
-       
-       public void setMessage(String msg){
-           _msg = msg;
-       }
+      /**
+       * Overloaded to return the <code>reason</code> specified during construction
+       * <b>plus</b> the context location, if any.
+       */
+      public String getMessage() {
+         String msg = _msg;
+         String loc = getContextLocation();
+         if (loc != null)
+            msg += " at " + loc;
+         return msg;
+      }
+
+      public void setMessage(String msg) {
+         _msg = msg;
+      }
    }
-   
+
 }

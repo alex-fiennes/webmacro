@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,15 +9,15 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
@@ -31,14 +31,14 @@
  */
 package org.webmacro.servlet;
 
-import org.webmacro.*;
-import org.webmacro.util.*;
-
-import java.net.*;
-import java.io.*;
 import javax.servlet.*;
 
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.util.Settings;
+
 abstract public class ServletBroker extends Broker {
+
    protected ServletContext _servletContext;
 
    protected ServletBroker(ServletContext sc) throws InitException {
@@ -49,10 +49,10 @@ abstract public class ServletBroker extends Broker {
    public void initLog(Settings config) {
       String logFile = config.getSetting("LogFile");
       if ((logFile == null || logFile.equals(""))
-          && _config.getBooleanSetting("LogUsingServletLog"))
-        _ls.addTarget(new ServletLog(_servletContext, _config));
+            && _config.getBooleanSetting("LogUsingServletLog"))
+         _ls.addTarget(new ServletLog(_servletContext, _config));
       else
-        initLog();
+         initLog();
    }
 
    public static Broker getBroker(Servlet s) throws InitException {
@@ -69,8 +69,8 @@ abstract public class ServletBroker extends Broker {
       }
 
       Broker b;
-      if (majorVersion > 2 
-          || (majorVersion == 2 && minorVersion >= 2))
+      if (majorVersion > 2
+            || (majorVersion == 2 && minorVersion >= 2))
          b = Servlet22Broker.getBroker(s);
       else
          b = Servlet20Broker.getBroker(s);
@@ -78,7 +78,7 @@ abstract public class ServletBroker extends Broker {
       return b;
    }
 
-    public ServletContext getServletContext() {
-        return _servletContext;
-    }
+   public ServletContext getServletContext() {
+      return _servletContext;
+   }
 }

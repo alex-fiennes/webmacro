@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,35 +9,33 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 package org.webmacro.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 
 import org.webmacro.*;
-import org.webmacro.util.Settings;
 
 /**
  * A provider which dispenses Encoders, which are used for encoding
- * Strings and caching the results. 
+ * Strings and caching the results.
  * @since 0.96
  * @author Michael Bayne
  */
 
-public class EncoderProvider implements Provider
-{
+public class EncoderProvider implements Provider {
+
    private Map _encoders = new HashMap();
    private Broker _broker;
    private Settings _config;
@@ -51,8 +49,7 @@ public class EncoderProvider implements Provider
    /**
     * Return an array representing the types this provider serves up
     */
-   public String getType ()
-   {
+   public String getType() {
       return TYPE;
    }
 
@@ -62,8 +59,7 @@ public class EncoderProvider implements Provider
     * initialization parameters of their own devising, but they must be
     * sure to call super.init() in their overridden methods.
     */
-   public void init (Broker b, Settings config) throws InitException
-   {
+   public void init(Broker b, Settings config) throws InitException {
       _broker = b;
       _config = config;
    }
@@ -90,8 +86,7 @@ public class EncoderProvider implements Provider
    /**
     * Clear any cache this provider may be maintaining.
     */
-   public synchronized void flush ()
-   {
+   public synchronized void flush() {
       // clean out the encoder cache
       _encoders.clear();
    }
@@ -99,8 +94,7 @@ public class EncoderProvider implements Provider
    /**
     * Close down this provider, freeing any allocated resources.
     */
-   public synchronized void destroy ()
-   {
+   public synchronized void destroy() {
       // clear out our reference to the encoder cache to allow it to be
       // garbage collected
       _encoders = null;
@@ -109,15 +103,14 @@ public class EncoderProvider implements Provider
    /**
     * Get the object associated with the specified query.
     */
-   public synchronized Object get(String encoding) throws ResourceException
-   {
+   public synchronized Object get(String encoding) throws ResourceException {
       Encoder encoder = null;
-      
+
       // make sure we're not inadvertently being called after we've
       // already been destroy()ed
       if (_encoders != null) {
-         encoder = (Encoder)_encoders.get(encoding);
-         
+         encoder = (Encoder) _encoders.get(encoding);
+
          if (encoder == null) {
             try {
                // create and cache a new encoder instance for this

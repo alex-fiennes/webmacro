@@ -10,19 +10,19 @@ package org.webmacro.engine;
  * Simple class for wrapping a Class instance of a static class.  This allows
  * static classes to be placed into the context.
  * @author  keats_kirsch
- * @version 
+ * @version
  */
 final public class StaticClassWrapper {
 
-    private Class _wrappedClass;
-    
-    /** Creates new StaticClassWrapper */
-    public StaticClassWrapper(final Class c) {
-        _wrappedClass = c;
-    }
+   private Class _wrappedClass;
 
-    final public Class get() {
-        return _wrappedClass;
-    }
-    
+   /** Creates new StaticClassWrapper */
+   public StaticClassWrapper(final Class c) {
+      _wrappedClass = c;
+   }
+
+   final public Class get() {
+      return _wrappedClass;
+   }
+
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,15 +9,15 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
@@ -25,8 +25,7 @@ package org.webmacro.util;
 
 import java.util.*;
 
-public class SelectList implements Enumeration
-{
+public class SelectList implements Enumeration {
 
    Object[] _values;
    int _current;
@@ -45,8 +44,8 @@ public class SelectList implements Enumeration
    public Object nextElement() throws NoSuchElementException {
       _current++;
       if (_current >= _values.length) {
-         throw new NoSuchElementException("List only has " 
-               + _values.length + " elements");
+         throw new NoSuchElementException("List only has "
+                                          + _values.length + " elements");
       }
       return this;
    }
@@ -62,7 +61,8 @@ public class SelectList implements Enumeration
    public Object getValue() {
       try {
          return _values[_current];
-      } catch (Exception e) { 
+      }
+      catch (Exception e) {
          return null;
       }
    }
@@ -70,7 +70,8 @@ public class SelectList implements Enumeration
    public String toString() {
       try {
          return _values[_current].toString();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
          return null;
       }
    }

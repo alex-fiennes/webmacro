@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,36 +9,35 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.util;
 
 /**
-  * A pool is a stack-like container which you can add and remove 
-  * objects from. It is useful for recycling objects rather than 
-  * re-creating them. See ScalablePool and UPool.
-  */
-public interface Pool
-{
+ * A pool is a stack-like container which you can add and remove
+ * objects from. It is useful for recycling objects rather than
+ * re-creating them. See ScalablePool and UPool.
+ */
+public interface Pool {
 
    /**
-     * Add an item to the pool for later re-use
-     */
+    * Add an item to the pool for later re-use
+    */
    public void put(final Object o);
 
    /**
-     * Get an item from the pool
-     */
+    * Get an item from the pool
+    */
    public Object get();
 
 }

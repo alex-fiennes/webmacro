@@ -1,9 +1,5 @@
 package org.webmacro.tools;
 
-import java.util.*;
-import java.io.*;
-
-import org.webmacro.*;
 import org.webmacro.util.WMEval;
 
 /**
@@ -22,35 +18,35 @@ import org.webmacro.util.WMEval;
 
 public class EvalTemplates {
 
-  private WMEval wm = new WMEval(); // constructs an encapsulation of WM
-  
-  /**
-   * Evaluates a single template file argument.
-   * Exceptions are reported to standard error, not thrown.
-   */
-  public void run(String inputTemplate) {
-    System.out.println("Template File=" + inputTemplate); 
-    try {
-      wm.eval(wm.getNewContext(), inputTemplate, null, false, null); 
-    }
-    catch (Exception e) {
-      System.err.println("Unable to evaluate input.");
-      e.printStackTrace();
-    }
-  }
+   private WMEval wm = new WMEval(); // constructs an encapsulation of WM
 
-  /**
-   * Normally this main is invoked from an ant task but it can
-   * be invoked from any main launcher including 
-   * a command line.
-   * @param args One or more file references to an input template file name.
-   */
-  public static void main(String[] args) throws Exception {
-    if (args == null) return;
-    EvalTemplates ev = new EvalTemplates();
-    for (int i=0; i<args.length; i++) { 
-      ev.run(args[i]);
-    }
-  }
+   /**
+    * Evaluates a single template file argument.
+    * Exceptions are reported to standard error, not thrown.
+    */
+   public void run(String inputTemplate) {
+      System.out.println("Template File=" + inputTemplate);
+      try {
+         wm.eval(wm.getNewContext(), inputTemplate, null, false, null);
+      }
+      catch (Exception e) {
+         System.err.println("Unable to evaluate input.");
+         e.printStackTrace();
+      }
+   }
+
+   /**
+    * Normally this main is invoked from an ant task but it can
+    * be invoked from any main launcher including
+    * a command line.
+    * @param args One or more file references to an input template file name.
+    */
+   public static void main(String[] args) throws Exception {
+      if (args == null) return;
+      EvalTemplates ev = new EvalTemplates();
+      for (int i = 0; i < args.length; i++) {
+         ev.run(args[i]);
+      }
+   }
 }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,21 +9,21 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.resource;
-import  org.webmacro.*;
-import  org.webmacro.util.Clock;
+
+import org.webmacro.util.Clock;
 
 /**
  * TimedReloadContext acts as an Decorator for Reload context to support
@@ -38,40 +38,42 @@ import  org.webmacro.util.Clock;
  **/
 
 public class TimedReloadContext extends CacheReloadContext {
-    private CacheReloadContext reloadContext;
-    private long nextCheck;
-    private long checkInterval;
 
-    /**
-     * Construct a new TimedReloadContext decorator.
-     * This is just a wrapper object for another CacheReloadContext, ensuring
-     * that the shouldReload() method of the refrenced reload context is only
-     * called once per checkInterval milliseconds.
-     * @param reloadContext reload context to wrap around
-     * @param checkInterval interval to check for reload at most in milliseconds
-     **/
-    public TimedReloadContext(CacheReloadContext reloadContext,long checkInterval) {
-        super();
-        this.reloadContext = reloadContext;
-        this.checkInterval = checkInterval;
-        this.nextCheck = Clock.TIME + checkInterval;
-    }
+   private CacheReloadContext reloadContext;
+   private long nextCheck;
+   private long checkInterval;
 
-    /**
-     * Check, whether the underlying resource should be reloaded.
-     * This method will simply call the shouldReload() method of the
-     * referenced reload context, except when this method was called
-     * again in the last checkInterval milliseconds. In this case,
-     * this method will simply return false.
-     * @return whether resource should be reloaded.
-     **/
-    public boolean shouldReload() {
-        //long time = System.currentTimeMillis();
-        if (Clock.TIME >= nextCheck) {
-            nextCheck = Clock.TIME + checkInterval;
-            return reloadContext.shouldReload();
-        } else {
-            return false;
-        }
-    }
+   /**
+    * Construct a new TimedReloadContext decorator.
+    * This is just a wrapper object for another CacheReloadContext, ensuring
+    * that the shouldReload() method of the refrenced reload context is only
+    * called once per checkInterval milliseconds.
+    * @param reloadContext reload context to wrap around
+    * @param checkInterval interval to check for reload at most in milliseconds
+    **/
+   public TimedReloadContext(CacheReloadContext reloadContext, long checkInterval) {
+      super();
+      this.reloadContext = reloadContext;
+      this.checkInterval = checkInterval;
+      this.nextCheck = Clock.TIME + checkInterval;
+   }
+
+   /**
+    * Check, whether the underlying resource should be reloaded.
+    * This method will simply call the shouldReload() method of the
+    * referenced reload context, except when this method was called
+    * again in the last checkInterval milliseconds. In this case,
+    * this method will simply return false.
+    * @return whether resource should be reloaded.
+    **/
+   public boolean shouldReload() {
+      //long time = System.currentTimeMillis();
+      if (Clock.TIME >= nextCheck) {
+         nextCheck = Clock.TIME + checkInterval;
+         return reloadContext.shouldReload();
+      }
+      else {
+         return false;
+      }
+   }
 }

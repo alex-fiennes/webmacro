@@ -11,6 +11,7 @@
 */
 
 package org.opendoors.cache.immutable;
+
 import org.opendoors.cache.Cache;
 
 /**
@@ -21,21 +22,21 @@ import org.opendoors.cache.Cache;
  */
 public class Depopulate implements Runnable {
 
-  private Cache cache;
-  int n, m;
+   private Cache cache;
+   int n, m;
 
-  /** Construct the depopulator with test parameters. */
-  public Depopulate(Cache cache, int n, int m) {
-    this.cache = cache;
-    this.n = n;
-    this.m = m;
-  }
+   /** Construct the depopulator with test parameters. */
+   public Depopulate(Cache cache, int n, int m) {
+      this.cache = cache;
+      this.n = n;
+      this.m = m;
+   }
 
-  /** Depopulates the cache according to the instance parameters. */
-  public void run() {
-    for (int value = n; value < m; value++) {
-      Integer i = new Integer(value);
-      cache.invalidate(i);
-    }
-  }
+   /** Depopulates the cache according to the instance parameters. */
+   public void run() {
+      for (int value = n; value < m; value++) {
+         Integer i = new Integer(value);
+         cache.invalidate(i);
+      }
+   }
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,59 +9,58 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 
 package org.webmacro.util;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.LinkedList;
+import java.util.*;
 
 
 /**
-  * This map has a fixed number of buckets. Each bucket is an LRU 
-  * cache. The map never increases the number of buckets once it has
-  * been created. The advantage is that it synchronizes on the bucket
-  * so multiple threads can access the map simultaneously without 
-  * blocking, providing they access different buckets.
-  */
-final public class SimpleHashMap implements SimpleMap
-{
+ * This map has a fixed number of buckets. Each bucket is an LRU
+ * cache. The map never increases the number of buckets once it has
+ * been created. The advantage is that it synchronizes on the bucket
+ * so multiple threads can access the map simultaneously without
+ * blocking, providing they access different buckets.
+ */
+final public class SimpleHashMap implements SimpleMap {
+
    private MapNode[] _map;
    private Object[] _locks;
 
-    private static class MapNode {
-        final Object key;
-        Object value;
-        MapNode next;
-        
-        MapNode(Object key) {
-            this.key = key;
-        }
-    }
+   private static class MapNode {
+
+      final Object key;
+      Object value;
+      MapNode next;
+
+      MapNode(Object key) {
+         this.key = key;
+      }
+   }
 
    /**
-     * Create a new SimpleMap with 1001 LRU buckets
-     */
+    * Create a new SimpleMap with 1001 LRU buckets
+    */
    public SimpleHashMap() {
       this(1001);
    }
 
    /**
-     * Create a new SimpleMap with 'size' LRU buckets
-     */
+    * Create a new SimpleMap with 'size' LRU buckets
+    */
    public SimpleHashMap(int size) {
-      _map = new MapNode[size];      
+      _map = new MapNode[size];
       _locks = new Object[size];
       for (int i = 0; i < size; i++) {
          _locks[i] = new Object();
@@ -69,8 +68,8 @@ final public class SimpleHashMap implements SimpleMap
    }
 
    /**
-     * Add a key to the SimpleMap. 
-     */
+    * Add a key to the SimpleMap.
+    */
    public void put(Object key, Object value) {
       if (key == null) {
          return;
@@ -80,8 +79,10 @@ final public class SimpleHashMap implements SimpleMap
          return;
       }
       int hash = key.hashCode() % _map.length;
-      if (hash < 0) { hash *= -1; }
-      synchronized(_locks[hash]) {
+      if (hash < 0) {
+         hash *= -1;
+      }
+      synchronized (_locks[hash]) {
          MapNode m = _map[hash];
          while (m != null) {
             if ((m.key == key) || (m.key.equals(key))) {
@@ -98,13 +99,15 @@ final public class SimpleHashMap implements SimpleMap
    }
 
    /**
-     * Get the value of 'key' back. Returns null if no such key.
-     */
+    * Get the value of 'key' back. Returns null if no such key.
+    */
    public Object get(Object key) {
       int hash = key.hashCode() % _map.length;
-      if (hash < 0) { hash *= -1; }
+      if (hash < 0) {
+         hash *= -1;
+      }
       MapNode last = null;
-      synchronized(_locks[hash]) {
+      synchronized (_locks[hash]) {
          MapNode m = _map[hash];
          if (m == null) return null;
          while (m != null) {
@@ -118,18 +121,20 @@ final public class SimpleHashMap implements SimpleMap
             }
             last = m;
             m = m.next;
-         } 
+         }
       }
       return null;
    }
 
    /**
-     * Ensure that the key does not appear in the map
-     */
+    * Ensure that the key does not appear in the map
+    */
    public Object remove(Object key) {
       int hash = key.hashCode() % _map.length;
-      if (hash < 0) { hash *= -1; }
-      synchronized(_locks[hash]) {
+      if (hash < 0) {
+         hash *= -1;
+      }
+      synchronized (_locks[hash]) {
          MapNode m = _map[hash];
          if (m == null) return null;
          MapNode last = null;
@@ -137,7 +142,8 @@ final public class SimpleHashMap implements SimpleMap
             if ((m.key == key) || (m.key.equals(key))) {
                if (last == null) {
                   _map[hash] = m.next; // may be to null :-)
-               } else {
+               }
+               else {
                   last.next = m.next;
                }
                return m;
@@ -151,23 +157,23 @@ final public class SimpleHashMap implements SimpleMap
 
    public void clear() {
       for (int i = 0; i < _map.length; i++) {
-         synchronized(_locks[i]) {
+         synchronized (_locks[i]) {
             _map[i] = null;
          }
       }
    }
-   
+
 
    /**
-     * Returns an iterator that will walk along a snapshot of the keys of 
-     * this SimpleMap. If the Map changes during the creation of this 
-     * iterator some values may be missed or included twice, but otherwise
-     * it will work. The remove() method on this iterator is well defined.
-     */
+    * Returns an iterator that will walk along a snapshot of the keys of
+    * this SimpleMap. If the Map changes during the creation of this
+    * iterator some values may be missed or included twice, but otherwise
+    * it will work. The remove() method on this iterator is well defined.
+    */
    public Iterator iterator() {
       LinkedList ll = new LinkedList();
       for (int i = 0; i < _map.length; i++) {
-         synchronized(_locks[i]) {
+         synchronized (_locks[i]) {
             MapNode m = _map[i];
             while (m != null) {
                ll.add(m.key);
@@ -189,7 +195,7 @@ final public class SimpleHashMap implements SimpleMap
          }
 
          public void remove() {
-             SimpleHashMap.this.remove(last);
+            SimpleHashMap.this.remove(last);
          }
       };
    }
@@ -203,7 +209,7 @@ final public class SimpleHashMap implements SimpleMap
          System.out.println("*** Adding " + arg[i] + " = " + oi);
          sm.put(arg[i], oi);
          for (int j = 0; j < arg.length; j++) {
-            System.out.println(arg[j] + " ==> " + sm.get(arg[j]));      
+            System.out.println(arg[j] + " ==> " + sm.get(arg[j]));
          }
          System.out.println("==========\n");
       }
@@ -221,6 +227,6 @@ final public class SimpleHashMap implements SimpleMap
             System.out.println(key2 + " => " + sm.get(key2));
          }
          System.out.println("==========\n");
-     }
+      }
    }
 }
