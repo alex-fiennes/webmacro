@@ -44,8 +44,8 @@ public class WM implements WebMacro
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
-   final private Broker _broker;      // cache for rapid access
-   final private BrokerOwner _owner; // mgr that loads/unloads broker
+   /*final*/ private Broker _broker;      // cache for rapid access
+   /*final*/ private BrokerOwner _owner; // mgr that loads/unloads broker
    private boolean _alive = false;   // so we don't unload twice
 
    /**
@@ -194,7 +194,7 @@ public class WM implements WebMacro
 
 final class BrokerOwner {
 
-   final public String _config;
+   /*final*/ String _config;
    private ResourceBroker _broker;
    private static int _brokerUsers = 0;
 
