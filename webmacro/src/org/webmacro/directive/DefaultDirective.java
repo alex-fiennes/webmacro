@@ -39,7 +39,8 @@ public class DefaultDirective extends Directive {
     myArgs = new ArgDescriptor[] {
       new LValueArg(DEFAULT_TARGET), 
       new OptionalGroup(2),
-      new KeywordArg(DEFAULT_TO, "to"),
+      //new KeywordArg(DEFAULT_TO, "to"),
+      new AssignmentArg(),
       new RValueArg(DEFAULT_RESULT)
     };
 
