@@ -132,8 +132,7 @@ public class ListUtil {
       }
       else {
          // put the object into a single element list
-         Object[] oa = new Object[1];
-         oa[0] = arg;
+         Object[] oa = { arg };
          list = Arrays.asList(oa);
       }
       return list;

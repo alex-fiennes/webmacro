@@ -163,8 +163,7 @@ public class BeanDirective extends Directive {
             initArgs = (Object[]) initArgObj;
          }
          else {
-            initArgs = new Object[1];
-            initArgs[0] = initArgObj;
+            initArgs = new Object[] { initArgObj };
          }
 
          Object o = null;

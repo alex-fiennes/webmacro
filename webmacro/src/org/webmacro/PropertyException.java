@@ -39,6 +39,7 @@ package org.webmacro;
  * @version	27-07-2002
  */
 public class PropertyException extends ContextException {
+    private String _message = null;
 
 	public PropertyException( String reason ) {
 		super( reason );
@@ -53,7 +54,22 @@ public class PropertyException extends ContextException {
 		setContextLocation( contextLocation );
 	}
 
-	// Subclasses
+    public void setMessage (String message) {
+        _message = message;
+    }
+
+    public String getMessage() {
+        if (_message == null) {
+            return super.getMessage();
+        } else {
+            String msg = _message;
+            if ( getContextLocation() != null && msg != null ) {
+                msg += " at " + getContextLocation();
+            }
+            return msg;
+        }
+    }
+    // Subclasses
 
 
 	/**

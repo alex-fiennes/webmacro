@@ -213,9 +213,7 @@ public class ComponentMap {
       StringBuffer log = null;
       try {
          Constructor ctor = c.getConstructor(_ctorArgs1);
-         Object[] args = new Object[2];
-         args[0] = key;
-         args[1] = new SubSettings(_config, key);
+         Object[] args = { key,  new SubSettings(_config, key) };
          instance = ctor.newInstance(args);
       }
       catch (Exception e) {
@@ -233,8 +231,7 @@ public class ComponentMap {
       if (instance == null) {
          try {
             Constructor ctor = c.getConstructor(_ctorArgs2);
-            Object[] args = new Object[1];
-            args[0] = key;
+            Object[] args = { key };
             instance = ctor.newInstance(args);
          }
          catch (Exception e) {

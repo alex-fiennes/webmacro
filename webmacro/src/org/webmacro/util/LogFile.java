@@ -124,7 +124,6 @@ public class LogFile extends AbstractLogFile {
 	}
 
 	public void log( Date date, String name, String level, String message, Throwable e ) {
-		Object[] _args = new Object[ 4 ];
 
 		if ( _logFilePerDay ) {
 			_actLogDate = _logFileSuffix.format( Calendar.getInstance().getTime() );
@@ -138,20 +137,15 @@ public class LogFile extends AbstractLogFile {
 			}
 		}
 
-		synchronized ( _args ) {
-			_args[ 0 ] = date;
-			_args[ 1 ] = name;
-			_args[ 2 ] = level;
-			_args[ 3 ] = message;
-			_out.println( _mf.format( _args ) );
-			if ( _trace && ( e != null ) ) {
-				e.printStackTrace( _out );
-			}
+        Object[] _args = { date, name, level, message };
+        _out.println( _mf.format( _args ) );
+        if ( _trace && ( e != null ) ) {
+            e.printStackTrace( _out );
+        }
 
-			if ( _logFileAutoFlush ) {
-				flush();
-			}
-		}
+        if ( _logFileAutoFlush ) {
+            flush();
+        }
 	}
 
 	public void flush() {

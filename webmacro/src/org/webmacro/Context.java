@@ -616,9 +616,7 @@ public class Context implements Map, Cloneable {
             && parmTypes[0].equals(_ctorArgs1[0])
             && parmTypes[1].equals(_ctorArgs1[1])){
                ctor = ctors[i];
-               Object[] args = new Object[2];
-               args[0] = key;
-               args[1] = new SubSettings(_broker.getSettings(), key);
+               Object[] args = { key, new SubSettings(_broker.getSettings(), key) };
                try {
                   instance = ctor.newInstance(args);
                }
@@ -635,8 +633,7 @@ public class Context implements Map, Cloneable {
             parmTypes = ctors[i].getParameterTypes();
             if (parmTypes.length == 1 && parmTypes[0].equals(_ctorArgs1[0])){
                ctor = ctors[i];
-               Object[] args = new Object[1];
-               args[0] = key;
+               Object[] args = { key };
                try {
                   instance = ctor.newInstance(args);
                }

@@ -1232,8 +1232,7 @@ final class UnaryMethodAccessor extends MethodAccessor {
 
    final boolean set(final Object instance, final Object value)
          throws PropertyException, NoSuchMethodException {
-      Object[] args = new Object[1];
-      args[0] = value;
+      Object[] args = { value };
       return setImpl(instance, args);
    }
 
@@ -1256,16 +1255,13 @@ final class BinaryMethodAccessor extends MethodAccessor {
 
    final Object get(final Object instance, String prop)
          throws PropertyException, NoSuchMethodException {
-      Object[] args = new Object[1];
-      args[0] = prop;
+      Object[] args = { prop };
       return PropertyOperator.invoke(_getMethod, instance, args);
    }
 
    final boolean set(final Object instance, String prop, Object value)
          throws PropertyException, NoSuchMethodException {
-      Object[] args = new Object[2];
-      args[0] = prop;
-      args[1] = value;
+      Object[] args = { prop, value };
       return setImpl(instance, args);
    }
 }
