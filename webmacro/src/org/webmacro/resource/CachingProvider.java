@@ -54,10 +54,12 @@ abstract public class CachingProvider implements Provider,
       String cacheManager;
 
       _log = b.getLog("resource", "Object loading and caching");
-      cacheManager = b.getSetting("CachingProvider.CacheManager." + getType());
+
+      cacheManager = b.getSetting("CachingProvider." + getType() 
+                                  + ".CacheManager");
       if (cacheManager == null) 
-        cacheManager = b.getSetting("CachingProvider.CacheManager");
-      if (cacheManager == null) {
+        cacheManager = b.getSetting("CachingProvider.*.CacheManager");
+      if (cacheManager == null || cacheManager.equals("")) {
          _log.info("CachingProvider: No cache manager specified for " 
                    + getType() + ", using TrivialCacheManager");
          _cache = new TrivialCacheManager();

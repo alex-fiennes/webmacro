@@ -93,10 +93,11 @@ public class Encoder implements ResourceLoader
    throws InitException {
       String cacheManager;
       _log = b.getLog("resource", "Object loading and caching");
-      cacheManager = b.getSetting("EncoderProvider.CacheManager." + _encoding);
+
+      cacheManager = b.getSetting("Encoder." + _encoding + ".CacheManager");
       if (cacheManager == null) 
-         cacheManager = b.getSetting("EncoderProvider.CacheManager");
-      if (cacheManager == null) {
+         cacheManager = b.getSetting("Encoder.*.CacheManager");
+      if (cacheManager == null || cacheManager.equals("")) {
          _log.info("No cache manager specified for encoding " + _encoding
                    + ", using TrivialCacheManager");
          _cache = new TrivialCacheManager();
@@ -113,15 +114,7 @@ public class Encoder implements ResourceLoader
             _cache = new TrivialCacheManager();
          }
       }
-      _cache.init(b, config, getType());
-   }
-
-   /**
-    * Return an array representing the types this provider serves up
-    */
-   public String getType()
-   {
-      return "encoding_" + _encoding;
+      _cache.init(b, config, _encoding);
    }
 
    /**

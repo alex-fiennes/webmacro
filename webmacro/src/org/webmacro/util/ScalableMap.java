@@ -31,14 +31,26 @@ package org.webmacro.util;
   */
 final public class ScalableMap {
 
-   final int factor = 5;
-   final SimpleMap[] _maps = new SimpleMap[factor];
-   int pos = 0;
+   public final static int DEFAULT_FACTOR = 5, DEFAULT_SIZE=1001;
 
-   public ScalableMap(final int size) {
+   private final int factor;
+   private final SimpleMap[] _maps;
+   private int pos = 0;
+
+   public ScalableMap(int factor, int size) {
+      this.factor = factor;
+      _maps = new SimpleMap[factor];
       for (int i = 0; i < factor; i++) {
          _maps[i] = new SimpleMap(size);
       }
+   }
+
+   public ScalableMap(int size) {
+     this(DEFAULT_FACTOR, size);
+   }
+
+   public ScalableMap() {
+      this(DEFAULT_FACTOR, DEFAULT_SIZE);
    }
 
    public void put(final Object key, final Object value) {

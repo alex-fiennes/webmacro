@@ -122,6 +122,7 @@ Providers.url:       org.webmacro.resource.UrlProvider
 Providers.config:    org.webmacro.resource.ConfigProvider 
 Providers.directive: org.webmacro.directive.DirectiveProvider 
 Providers.parser:    org.webmacro.engine.ParserProvider
+Providers.encoder:   org.webmacro.util.EncoderProvider
 
 Providers: 
 
@@ -206,15 +207,15 @@ Parsers.wm:  org.webmacro.parser.WMParser
 # Template caching
 #
 
-CachingProvider.CacheManager.template: org.webmacro.resource.SimpleCacheManager
-CachingProvider.CacheManager.url:      org.webmacro.resource.SimpleCacheManager
+CachingProvider.template.CacheManager: org.webmacro.resource.SimpleCacheManager
+CachingProvider.url.CacheManager:      org.webmacro.resource.SimpleCacheManager
 
 
 #
 # Encoding caching
 #
 
-EncoderProvider.CacheManager:          org.webmacro.resource.SimpleCacheManager
+Encoder.*.CacheManager: org.webmacro.resource.SimpleCacheManager
 
 
 # SimpleCacheManager caches templates for efficiency; it uses ExpireTime
@@ -225,9 +226,9 @@ EncoderProvider.CacheManager:          org.webmacro.resource.SimpleCacheManager
 #    - A negative value means WebMacro will only recompile templates 
 #        when they change.
 
-SimpleCacheManager.template.ExpireTime: 30000
-SimpleCacheManager.template.ReloadOnChange: true
-SimpleCacheManager.url.ExpireTime: 30000
-SimpleCacheManager.url.ReloadOnChange: true
+SimpleCacheManager.*.ExpireTime: 30000
+SimpleCacheManager.*.ReloadOnChange: true
 
-
+# Advanced properties: 
+# SimpleCacheManager.*.CacheBuckets: 1001
+# SimpleCacheManager.*.CacheFactor: 5
