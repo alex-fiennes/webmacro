@@ -58,6 +58,7 @@ final public class SimpleMap
          return;
       }
       int hash = key.hashCode() % _map.length;
+      if (hash < 0) { hash *= -1; }
       synchronized(_locks[hash]) {
          MapNode m = _map[hash];
          while (m != null) {
@@ -79,6 +80,7 @@ final public class SimpleMap
      */
    public Object get(Object key) {
       int hash = key.hashCode() % _map.length;
+      if (hash < 0) { hash *= -1; }
       MapNode last = null;
       synchronized(_locks[hash]) {
          MapNode m = _map[hash];
@@ -104,6 +106,7 @@ final public class SimpleMap
      */
    public void remove(Object key) {
       int hash = key.hashCode() % _map.length;
+      if (hash < 0) { hash *= -1; }
       synchronized(_locks[hash]) {
          MapNode m = _map[hash];
          if (m == null) return;
