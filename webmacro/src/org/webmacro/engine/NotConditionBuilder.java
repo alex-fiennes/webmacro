@@ -32,7 +32,7 @@ final class NotCondition extends Condition implements Macro {
       _cond = c;
    }
 
-   final public boolean test(Object context) {
+   final public boolean test(Context context) {
       return (! _cond.test(context) );
    }
 }

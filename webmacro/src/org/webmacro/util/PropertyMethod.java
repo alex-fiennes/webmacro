@@ -103,7 +103,7 @@ final public class PropertyMethod implements Named
      * object via the PropertyReference.evaluate method.
      * @exception InvalidContextException a PropertyReference in the arguments failed to resolve against the supplied context
      */
-   final public Object[] getArguments(Object context)
+   final public Object[] getArguments(Context context)
       throws InvalidContextException
    {
       Object[] argList;

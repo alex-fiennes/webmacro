@@ -3,6 +3,7 @@ package org.webmacro.engine;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
+import org.webmacro.util.java2.*;
 
 /**
   * Contains data structures which are manipulated during the 
@@ -14,21 +15,13 @@ import org.webmacro.util.*;
   * might. Therefore you should adopt a sensible naming scheme for 
   * your keys, to avoid conflicting with keys inserted by someone else.
   */
-public final class BuildContext extends Hashtable 
+public final class BuildContext extends Context
 {
-
-   private final Hashtable _params = new Hashtable();
 
    private final Hashtable _filters = new Hashtable();
 
-   private final Broker _broker;
-
    public BuildContext(Broker b) {
-      _broker = b;
-   }
-
-   public final Hashtable getParameters() {
-      return _params;
+      super(b);
    }
 
    public final Parser getParser(String pname) 
@@ -41,10 +34,6 @@ public final class BuildContext extends Hashtable
          Engine.log.error("Broker unable to load parsers");
          throw new NotFoundException("ERROR: Broker cannot load any parsers");
       }
-   }
-
-   public Broker getBroker() {
-      return _broker;
    }
 
    /**
@@ -79,10 +68,5 @@ public final class BuildContext extends Hashtable
    public Hashtable getFilters() {
       return _filters;
    }
-
 }
-
-
-
-
 

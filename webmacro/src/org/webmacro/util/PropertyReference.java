@@ -37,7 +37,7 @@ public interface PropertyReference
      * @return The appropriate value given this context
      * @exception InvalidContextException required data not found in context
      */
-   public Object evaluate(Object context) throws 
+   public Object evaluate(Context context) throws 
       InvalidContextException;
 
 }

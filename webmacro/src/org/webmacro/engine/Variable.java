@@ -132,7 +132,7 @@ final class Variable implements Macro
      * recursively call its evaluate method.
      * @return String 
      */
-   final public Object evaluate(Object context)
+   final public Object evaluate(Context context)
    {
       try {
          Object val = getValue(context);
@@ -140,7 +140,7 @@ final class Variable implements Macro
             val = ((Macro) val).evaluate(context); // recurse
          } 
          if (_filter != null) {
-            val = _filter.evaluate(val);
+            val = _filter.evaluate(context.subContext(val));
          }
          return val;
       } catch (NullPointerException e) {
@@ -162,7 +162,7 @@ final class Variable implements Macro
      * @exception InvalidContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   final public void write(Writer out, Object context) 
+   final public void write(Writer out, Context context) 
        throws InvalidContextException, IOException
    {
       try {
@@ -194,11 +194,11 @@ final class Variable implements Macro
      * and return it
      * @exception InvalidContextException If the property does not exist
      */
-   final Object getValue(Object context) 
+   final Object getValue(Context context) 
       throws InvalidContextException
    {
       try {
-         return PropertyOperator.getProperty(context, _names);
+         return context.getProperty(_names);
       } catch (Exception e) {
          Engine.log.exception(e);
          String warning = "Variable: unable to access " + this + ";";
@@ -211,12 +211,12 @@ final class Variable implements Macro
      * using introspection, and set it to the supplied value.
      * @exception InvalidContextException If the property does not exist
      */
-   final void setValue(Object context, Object newValue)
+   final void setValue(Context context, Object newValue)
       throws InvalidContextException
    {
 
       try{
-         if (!PropertyOperator.setProperty(context,_names,newValue)) {
+         if (!context.setProperty(_names,newValue)) {
             throw new PropertyException("No method to set \"" + _vname + 
                "\" to type " +
                ((newValue == null) ? "null" : newValue.getClass().toString()) 

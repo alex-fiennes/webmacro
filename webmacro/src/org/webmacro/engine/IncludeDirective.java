@@ -83,7 +83,7 @@ class IncludeDirective implements Directive
      * a string. 
      * @exception InvalidContextException is required data is missing
      */ 
-   final public Object evaluate(Object context)
+   final public Object evaluate(Context context)
       throws InvalidContextException
    {
 
@@ -115,7 +115,7 @@ class IncludeDirective implements Directive
      * @exception IOException if an error occurred with out
      * @exception InvalidContextException if required data was missing
      */
-   final public void write(Writer out, Object context) 
+   final public void write(Writer out, Context context) 
       throws InvalidContextException, IOException
    {
       out.write((String) evaluate(context));

@@ -70,7 +70,7 @@ class List implements Macro
       _content = content;
    }
 
-   public void write(Writer out, Object context)
+   public void write(Writer out, Context context)
       throws InvalidContextException, IOException
    {
       out.write(evaluate(context).toString());
@@ -90,7 +90,7 @@ class List implements Macro
       return sb.toString();
    }
 
-   public Object evaluate(Object context) 
+   public Object evaluate(Context context) 
       throws InvalidContextException
    {
       Object[] ret = new Object[ _content.length ];

@@ -91,13 +91,13 @@ public class StreamTemplate extends WMTemplate
 
       // Build a context
       WebMacro wm = null;
-      Hashtable context = null;
+      Context context = null;
 
       try {
          wm = new WM();
-         context = new Hashtable();
+         context = new Context(null);
          Object names[] = { "prop" };
-         PropertyOperator.setProperty(context, names, "Example property");
+         context.setProperty(names, "Example property");
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -121,7 +121,7 @@ public class StreamTemplate extends WMTemplate
 
       System.out.println("*** CONTEXT ***");
       {
-         Enumeration elem = context.keys();
+         Enumeration elem = context.getLocalVariables().keys();
          while (elem.hasMoreElements()) {
             Object key = elem.nextElement();
             System.out.println("context: " + key + " --> " + context.get(key));

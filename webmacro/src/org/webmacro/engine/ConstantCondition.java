@@ -1,7 +1,7 @@
 
 
 package org.webmacro.engine;
-
+import org.webmacro.*;
 
 /**
   * This condition is set with a term value which is already 
@@ -21,7 +21,7 @@ final class ConstantCondition extends Condition {
       _value = isTrue(cond);
    }
 
-   final public boolean test(Object context) {
+   final public boolean test(Context context) {
       return _value;
    }
 

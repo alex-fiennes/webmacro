@@ -50,7 +50,7 @@ final class EqualCondition extends Condition implements Macro {
    private final Macro _l,_r;
    EqualCondition(Macro l, Macro r) { _l = l; _r = r; }
 
-   public final boolean test(Object context) {
+   public final boolean test(Context context) {
       Object left, right;
       try { left = _l.evaluate(context); }
       catch (Exception e) { left = null; }
@@ -76,7 +76,7 @@ final class EqualConstantCondition extends Condition implements Macro {
       _l = l; _r = r; 
    }
 
-   public final boolean test(Object context) {
+   public final boolean test(Context context) {
       Object left;
       try { 
          left = _l.evaluate(context); 

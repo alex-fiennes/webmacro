@@ -428,6 +428,9 @@ public class WMParser implements Parser
                marker = "#end";
             } else if (in.parseString("{")) {
                marker = "}";
+            } else {
+               throw new ParseException(in, "Expected block after directive: " 
+                     + dirB);
             }
             StringBuffer buf = new StringBuffer();
             in.parseUntil(buf,marker);

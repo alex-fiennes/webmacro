@@ -29,14 +29,14 @@ final public class MacroAdapter implements Macro
    /**
      * Returns the wrapped object, context is ignored.
      */
-   public final Object evaluate(Object context) {
+   public final Object evaluate(Context context) {
       return _self;
    }
 
    /**
      * Just calls toString() and writes that, context is ignored.
      */
-   public final void write(Writer out, Object context) 
+   public final void write(Writer out, Context context) 
       throws IOException
    {
       out.write(_self.toString());
@@ -100,14 +100,14 @@ final class StringMacroAdapter implements Macro
    /**
      * Returns the wrapped object, context is ignored.
      */
-   public final Object evaluate(Object context) {
+   public final Object evaluate(Context context) {
       return toString();
    }
 
    /**
      * Just calls toString() and writes that, context is ignored.
      */
-   public final void write(Writer out, Object context) 
+   public final void write(Writer out, Context context) 
       throws IOException
    {
       out.write(_self);

@@ -68,8 +68,10 @@ final public class PropertyOperator
 
    /**
      * Attempt to retrieve a property using the rules of property 
-     * introspection described above.
-     * @param context outermost container which is introspected
+     * introspection described above. Begin reading names at position 
+     * start in the array of names.
+     * @param context is used to resolve sub-properties in arguments
+     * @param instance is the root of introspection
      * @param names property names, one per array entry 
      * @return the property described by the names, inside the instance
      * @exception PropertyException the property we'd like to look at
@@ -77,17 +79,29 @@ final public class PropertyOperator
      * @exception InvalidContextException one of the names is a PropertyReference which could not be evaluated against the supplied context
      */
    static final public Object getProperty(
-         final Object context, final Object[] names) 
+         final Context context, final Object instance, 
+         final Object[] names, int start) 
       throws PropertyException, SecurityException, InvalidContextException
    {
       try {
-         return getOperator(context.getClass()).getProperty(
-               context,context,names,0,names.length - 1);
+         return getOperator(instance.getClass()).getProperty(
+               context,instance,names,start,names.length - 1);
       } catch (NoSuchMethodException e) {
          _log.exception(e);
          throw new PropertyException("No method to access property: " + e,e);
       }
    }
+
+   /**
+     * Calls getProperty(context, instance, names, 0)
+     */
+   static final public Object getProperty(
+         final Context context, final Object instance, final Object[] names) 
+      throws PropertyException, SecurityException, InvalidContextException
+   {
+      return getProperty(context, instance, names, 0);
+   }
+
 
    /**
      * Given a property description name, attempt to set the property
@@ -100,16 +114,28 @@ final public class PropertyOperator
      * @exception InvalidContextException a PropertyReference in the argument names could not be resolved against the supplied context
      */
    static final public boolean setProperty(
-         final Object context, final Object[] names, final Object value) 
+         final Context context, Object instance, 
+         final Object[] names, int start, final Object value) 
       throws PropertyException, SecurityException, InvalidContextException
    {
       try {
-         return getOperator(context.getClass()).setProperty(context,context,names,value,0);
+         return getOperator(instance.getClass()).setProperty(context,instance,names,value,start);
       } catch (NoSuchMethodException e) {
          throw new PropertyException("No method to access property: " + e,e);
       }
    }
 
+   /**
+     * Calls setProperty(context, names, 0, value)
+     */
+   static final public boolean setProperty(
+         final Context context, final Object instance, 
+         final Object[] names, final Object value) 
+      throws PropertyException, SecurityException, InvalidContextException
+   { 
+      return setProperty(context,instance,names,0,value);
+   }
+ 
    /**
      * Evaluate the supplied object and work out a way to return it 
      * as an iterator.
@@ -459,7 +485,7 @@ final public class PropertyOperator
      *
      */
    private Object getProperty(
-         final Object context, final Object instance, final Object[] names, 
+         final Context context, final Object instance, final Object[] names, 
             int start, int end) 
       throws PropertyException, NoSuchMethodException, InvalidContextException
    {
@@ -598,7 +624,7 @@ final public class PropertyOperator
      * @return true if we succeeded in setting, false otherwise
      */
    private boolean setProperty(
-         Object context, Object instance, Object[] names, Object value, int pos) 
+         Context context, Object instance, Object[] names, Object value, int pos) 
       throws PropertyException, NoSuchMethodException, InvalidContextException
    {
       if (_debug) {

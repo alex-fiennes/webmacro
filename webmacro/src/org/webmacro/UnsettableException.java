@@ -1,4 +1,5 @@
 
+
 /*
  * Copyright (c) 1998, 1999 Semiotek Inc. All Rights Reserved.
  *
@@ -20,34 +21,24 @@
 
 package org.webmacro;
 
-import java.util.*;
-import java.io.*;
-
 
 /**
-  * Directives, variables, macro calls, blocks, conditions, text, etc., all 
-  * have this as their supertype.
+  * This exception is thrown on attempt to set something that is
+  * not settable. 
+  * @see ContextTool
   */
-public interface Macro extends org.webmacro.util.PropertyReference
+public class UnsettableException extends InvalidContextException 
 {
 
    /**
-     * Interpret the directive and write it out, using the values in
-     * the supplied context as appropriate.
+     * Constructor only requires a reason 
      * <p>
-     * @exception InvalidContextException if required data was missing from context
-     * @exception IOException if we could not successfully write to out
+     * @param reason explains what went wrong
      */
-   public void write(Writer out, Context context) 
-      throws InvalidContextException, IOException;
-
-   /**
-     * same as out but returns a String
-     * <p>
-     * @exception InvalidContextException if required data was missing from context
-     */
-   public Object evaluate(Context context)
-      throws InvalidContextException;
-
+   public UnsettableException(String reason) {
+      super(reason);
+   }
+ 
 }
+
 

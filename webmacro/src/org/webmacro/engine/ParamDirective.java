@@ -38,8 +38,6 @@ abstract class ParamDirective implements Directive
          Object lhs, Argument[] args)
       throws BuildException
    {
-      Hashtable paramContext = rc.getParameters();
-
       if ((args.length != 1) || (! args[0].getName().equals("="))) {
          throw new BuildException("ParamDirective expects \"=\" argument");
       }
@@ -48,10 +46,10 @@ abstract class ParamDirective implements Directive
       // perform static evaluation of parameters
       try {
          if (rhs instanceof Macro) {
-            rhs = ((Macro) rhs).evaluate(paramContext);
+            rhs = ((Macro) rhs).evaluate(rc);
          }
          Variable v = (Variable) lhs;
-         v.setValue(paramContext, rhs);
+         v.setValue(rc, rhs);
       } catch (ClassCastException e) {
          throw new BuildException("lhs of param set must be a variable");  
       } catch (Exception e) {

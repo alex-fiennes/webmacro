@@ -115,7 +115,7 @@ final class IfDirective implements Directive
      * basic operation as calling write.
      * @exception InvalidContextException is required data is missing
      */ 
-   public Object evaluate(Object context)
+   public Object evaluate(Context context)
       throws InvalidContextException
    {
       try {
@@ -136,7 +136,7 @@ final class IfDirective implements Directive
      * @exception InvalidContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(Writer out, Object context) 
+   public void write(Writer out, Context context) 
       throws InvalidContextException, IOException
    {
 

@@ -108,7 +108,7 @@ final class QuotedString extends Vector implements Macro
      * contained variables and removing the quotation marks.
      * @exception InvalidContextException is required data is missing
      */
-   public Object evaluate(Object data)
+   public Object evaluate(Context data)
       throws InvalidContextException
    {
       Object o;
@@ -139,7 +139,7 @@ final class QuotedString extends Vector implements Macro
      * @exception InvalidContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   final public void write(Writer out, Object data) 
+   final public void write(Writer out, Context data) 
 	throws InvalidContextException, IOException
    {
       out.write(evaluate(data).toString()); // evaluate never returns null

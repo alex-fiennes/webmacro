@@ -129,7 +129,7 @@ abstract public class WMTemplate implements Template
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
          BuildContext bc = new BuildContext(_broker);
-         newParameters = bc.getParameters();
+         newParameters = bc.getLocalVariables();
          newFilters = bc.getFilters();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
@@ -156,7 +156,7 @@ abstract public class WMTemplate implements Template
      * such as unable to read template or unable to introspect the context
      * then this method will return a null string.
      */
-   public final Object evaluate(Object data)
+   public final Object evaluate(Context data)
    {
       StringWriter sw = new SizedStringWriter(4096); // 4 kilobytes arbitrary
       try {
@@ -181,7 +181,7 @@ abstract public class WMTemplate implements Template
      * @exception IOException if there is a problem writing to the Writer
      * @return whether the operation was a success
      */
-   public final void write(Writer out, Object data) 
+   public final void write(Writer out, Context data) 
       throws IOException
    {
 
@@ -254,7 +254,6 @@ abstract public class WMTemplate implements Template
          }
       }
    }
-
 
    public Iterator getParameterNames()
       throws IOException, TemplateException

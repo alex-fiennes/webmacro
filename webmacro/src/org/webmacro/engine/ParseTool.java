@@ -682,6 +682,9 @@ final class ParseTool
    public final void parseUntil(StringBuffer buf, String marker) 
       throws ParseException
    {
+      if (marker == null) {
+         return;
+      }
       if (marker.length() < 1) {
          return;
       } 

@@ -76,7 +76,7 @@ final class SetDirective implements Directive
      * @exception InvalidContextException is required data is missing
      * @exception IOException if could not write to output stream
      */
-   public final void write(Writer out, Object context) 
+   public final void write(Writer out, Context context) 
       throws InvalidContextException, IOException
    {
        
@@ -92,7 +92,7 @@ final class SetDirective implements Directive
      * Evaluate the current macro. The evaluate function for the list
      * directive
      */ 
-   public final Object evaluate(Object context)
+   public final Object evaluate(Context context)
    {
       // do nothing
       try {

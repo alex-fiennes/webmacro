@@ -48,7 +48,7 @@ final public class Block implements Macro
      * @exception InvalidContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(final Writer out, final Object context) 
+   public void write(final Writer out, final Context context) 
       throws InvalidContextException, IOException
    {
       for(int i = 0; i < _content.length; i++) {
@@ -61,7 +61,7 @@ final public class Block implements Macro
      * <p>
      * @exception InvalidContextException if required data was missing from context
      */
-   public Object evaluate(Object context) throws InvalidContextException
+   public Object evaluate(Context context) throws InvalidContextException
    {
       try {
          SizedStringWriter sw = 

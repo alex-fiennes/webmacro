@@ -19,8 +19,7 @@ public class ParamBuilder implements Builder
       throws BuildException
    {
       Variable var = VariableBuilder.newVariable(_names,bc,_filtered);
-      Object context = bc.getParameters();
-      return var.evaluate(context);
+      return var.evaluate(bc);
    }
 
    public String toString() {

@@ -102,7 +102,7 @@ final class ForeachDirective implements Directive
      * @exception InvalidContextException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
-   public void write(Writer out, Object context) 
+   public void write(Writer out, Context context) 
       throws InvalidContextException, IOException
    {
       // now clobber values outside the loop:
@@ -162,7 +162,7 @@ final class ForeachDirective implements Directive
      * result as a string.
      * @exception InvalidContextException is required data is missing
      */ 
-   public Object evaluate(Object context)
+   public Object evaluate(Context context)
       throws InvalidContextException
    {
       try {

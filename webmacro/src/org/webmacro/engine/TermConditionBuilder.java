@@ -33,13 +33,13 @@ final class TermCondition extends Condition implements Macro {
       _term = term;
    }
 
-   final public Object evaluate(Object context) 
+   final public Object evaluate(Context context) 
       throws InvalidContextException
    {
       return _term.evaluate(context);
    }
 
-   final public boolean test(Object context) {
+   final public boolean test(Context context) {
       try {
          return isTrue(_term.evaluate(context));
       } catch (Exception e) {

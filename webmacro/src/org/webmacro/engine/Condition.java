@@ -49,7 +49,7 @@ abstract public class Condition
    /**
      * Evaluate the condition and write it out
      */
-   final public void write(Writer out, Object context) 
+   final public void write(Writer out, Context context) 
       throws InvalidContextException, IOException
    {
       out.write(evaluate(context).toString());
@@ -58,7 +58,7 @@ abstract public class Condition
    /**
      * Return an object representing this condition
      */
-   public Object evaluate(Object context) 
+   public Object evaluate(Context context) 
       throws InvalidContextException
    {
       if (test(context)) {
@@ -72,7 +72,7 @@ abstract public class Condition
      * Returns true if the condition is logically true; returns false if the
      * condition is either logically false or undefined.
      */
-   public abstract boolean test(Object context);
+   public abstract boolean test(Context context);
 
 
    /**
