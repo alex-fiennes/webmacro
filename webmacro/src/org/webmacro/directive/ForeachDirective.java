@@ -150,6 +150,9 @@ public class ForeachDirective extends Directive {
         context.getBroker().getLog("engine").error(errorText);
         writeWarning(errorText, context, out);
       }
+      catch (Exception e) {
+         throw new PropertyException ("Unable to iterate list", e);
+      }
       body.write(out, context);
       ++loopIndex;
     }
