@@ -190,7 +190,7 @@ public class Settings {
    public int getIntegerSetting(String key) {
       String snum = getSetting(key);
       try {
-         return Integer.parseInt(key);
+         return Integer.parseInt(snum);
       } catch (Exception e) {
          return 0;
       }
