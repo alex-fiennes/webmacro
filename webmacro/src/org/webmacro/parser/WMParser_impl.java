@@ -73,7 +73,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
         token_source.backup(t.next.image.length());
         t.next = null;
-      };
+      }
       jj_ntk = -1;
       token_source.SwitchTo(state);
     }
@@ -162,7 +162,7 @@ public class WMParser_impl implements WMParser_implConstants {
   default:
     throw new ParseException("ParseDirectiveArg: Unknown argument type "
                              + arg.type);
-  };
+  }
   }
 
   boolean parse_arg_group(ArgDescriptor[] args, int i,
