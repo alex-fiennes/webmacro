@@ -147,9 +147,9 @@ public class WM implements WebMacro
      * you subclass this message, be sure to call super.finalize() since this is one 
      * of the cases where it matters. 
      */
-   protected void finalize() {
-      super.finalize();
+   protected void finalize() throws Throwable {
       destroy();
+      super.finalize();
    }
 
 
