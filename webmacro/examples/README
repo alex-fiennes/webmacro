@@ -9,8 +9,34 @@ is the easiest to get going.
 In each case you will find comments inside the .java file explaining
 what the example is, and how to get it working.
 
-Here is an overview:
+Previous versions of WebMacro *required* you to customize the WebMacro.properties
+file, espically the "TemplatePath" value.  This is no longer required!  In fact,
+in most cases you don't even need a WebMacro.properties file!
 
+Included in the webmacro.jar file is a file named "WebMacro.defaults".  This
+file contains all the default configuration settings for WebMacro.  Should
+you need to change a key/value, DO NOT change it in the WebMacro.defaults.
+Create a new file, "WebMacro.properties", and put in it *only* the keys/values
+you wish to change.  WebMacro first loads it's .defaults, then if it exists
+loads WebMacro.properties overriding any values set by .defaults.
+
+Also, you no longer need to specify a TemplatePath.  WebMacro, depending on your
+execution environment, will automagically find your templates:
+
+1) WM in standalone mode (ie, not in a servlet):
+   If using the "new WM();" constructor, WebMacro will search for templates in
+your system CLASSPATH
+
+2) WM in a Servlet 2.0 environment (ie, Apache/JServ):
+   WebMacro will search for templates in your servlet container CLASSPATH
+
+3) WM in a Servlet >2.0 environment (ie, Turbine or Resin):
+   WebMacro will search for templates in your "application directory".  This
+means different things for different servlet runners, but will include either
+your "htdocs" directory or your WEB-INF/ directory/.war file.
+
+
+Below is an overview of the examples included with this release:
 
    HelloWorld 
    ----------
@@ -27,14 +53,20 @@ Here is an overview:
    Also shows WebMacro using and introspecting some ordinary objects.
  
 
-   TestWM
-   ------
-
-   A handler. This is an alternate way of using WebMacro that may 
-   be convenient to people who would like to build controller servlets
-   from existing classes. A handler is an interface you can implement
-   rather than subclassing WMServlet. But then configuration becomes
-   slightly trickier.
- 
-
+   Standalone
+   ----------
    
+   An advanced HelloWorld servlet that does *not* subclass WMServlet.  This
+   example, although a servlet, manages it's own WebMacro instance internally.
+   It also demonstrates how to create FastWriters, Contexts, and how to write
+   Templates.  If you're trying to fit WebMacro into an existing servlet
+   application, this example will be of the most benefit for you.
+
+
+   NoServlet
+   ---------
+
+   A standalone command-line program which demonstrates how to create
+   a WebMacro instance and a Context along with getting and writing
+   a template.  If you plan on using WebMacro outside of a servlet
+   environment, look here first!

@@ -1,0 +1,38 @@
+use an object that is null:
+we should see a 1 line warning that the object is null.  Possibly same message as "NotInContext" below
+$NullObject
+
+use an object that is not null:
+we should see:  Eric Ridge
+$TestObject
+
+use an object that *does* exist in the context, but who's toString() method returns null:
+we should see a 1 line warning that although the object exists, it's value is null
+$TestObject2
+
+use an object not in the Context:
+we should see a 1 line warning that the object is not in the context. 
+$NotInContext
+
+use known-good methods of TestObject:
+we should see:
+   Eric == Eric
+   Ridge == Ridge
+$TestObject.FirstName == $TestObject.getFirstName()
+$TestObject.LastName == $TestObject.getLastName()
+
+use a method that doesn't exist in as a sub-property:
+we should see a 1 line warning that TestObject.FirstName.NotThere is a method that doesn't exist
+$TestObject.FirstName.NotThere
+
+use method of TestObject that returns null:
+we should see a 1 line warning that the method call returned null
+$TestObject.returnNull()
+
+use void method of TestObject:
+we shouldn't see anything here.
+$TestObject.voidMethod()
+
+use a method that doesn't exist in TestObject:
+we should see a 1 line warning that TestObject doesn't contain a method named ThisMethodDoesNotExist
+$TestObject.ThisMethodDoesNotExist()

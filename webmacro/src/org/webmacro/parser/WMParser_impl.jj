@@ -10,6 +10,7 @@ import org.webmacro.*;
 import org.webmacro.engine.*;
 import org.webmacro.directive.*;
 import org.webmacro.directive.Directive;
+import org.webmacro.directive.DirectiveProvider;
 import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
 import org.webmacro.directive.Directive.Subdirective;
@@ -26,10 +27,22 @@ import org.webmacro.directive.Directive.Subdirective;
 public class WMParser_impl {
 
   private Broker broker;
+  private BackupCharStream stream;
+  private Stack blockStack = new Stack();
+
+  public WMParser_impl(Broker broker, BackupCharStream stream) {
+    this(stream);
+    this.stream = stream;
+    this.broker = broker;
+  }
 
   public WMParser_impl(Broker broker, java.io.Reader reader) {
-    this(new BackupCharStream(reader));
-    this.broker = broker;
+    this(broker, new BackupCharStream(reader));
+  }
+
+  public void ReInit(java.io.Reader reader) {
+    stream.ReInit(reader);
+    ReInit(stream);
   }
 
   // Standalone test harness
@@ -78,6 +91,31 @@ public class WMParser_impl {
       token_source.SwitchTo(state); 
     }
   }
+
+  private boolean lookahead_not_breaking_subd() {
+    int entryState = token_source.curLexState;
+    boolean retVal = true;
+    Object o = blockStack.peek();
+    if (o == null)
+      return true;
+    Subdirective[] subdirectives = (Subdirective[]) o;
+
+    if (getToken(1).kind == POUND
+        && getToken(2).kind == STUFF) {
+      String word = getToken(2).image;
+      for (int i=0; i<subdirectives.length; i++) 
+        if (subdirectives[i].isBreaking 
+            && word.startsWith(subdirectives[i].name)
+            && (word.length() == subdirectives[i].name.length()
+                || !Character.isJavaIdentifierPart(
+                      word.charAt(subdirectives[i].name.length())))) {
+          retVal = false;
+          break;
+        }
+    } 
+    return retVal;
+  } 
+
 
   private static String SEMI_FEATURE = 
     "Use of semicolon to delimit property reference -- use $( ) instead";
@@ -233,7 +271,7 @@ TOKEN_MGR_DECLS : {
 /* ********************* */
 
 /* Used by JAVACODE productions to do lookahead.  
-   All lookahead productions assume state WM */
+   All lookahead productions assume state WM unless otherwise stated */
 
 // is the next thing a subdirective? 
 JAVACODE
@@ -265,7 +303,6 @@ boolean lookahead_keyword(String keyword) {
     return false;
 }
 
-
 /* ************************** */
 /* Directive Argument Parsing */
 /* ************************** */
@@ -277,22 +314,24 @@ boolean lookahead_keyword(String keyword) {
 // throw a parse exception
 
 JAVACODE 
-Object parse_arg(ArgDescriptor arg) {
+Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   switch (arg.type) {
   case Directive.ArgType_CONDITION:
     return Conditional();
       
   case Directive.ArgType_BLOCK: {
-    OptionalWsNl();
+    OptionalWsNlWs();
     SetState(DEFAULT);
-    BlockBuilder b = Block();
+    BlockBuilder b;
+    b = Block(descriptor.hasBreakingSubdirectives
+              ? descriptor.subdirectives : null);
     SetState(WM);
     OptionalWs();
     return b;
   }
 
   case Directive.ArgType_LITBLOCK: {
-    OptionalWsNl();
+    OptionalWsNlWs();
     SetState(DEFAULT);
     BlockBuilder b = LiteralBlock();
     SetState(WM);
@@ -332,8 +371,9 @@ Object parse_arg(ArgDescriptor arg) {
 // group is not seen.  
 
 JAVACODE
-boolean parse_arg_group(ArgDescriptor[] args, int i, 
-                         DirectiveArgs da) 
+boolean parse_arg_group(DirectiveDescriptor descriptor,
+                        ArgDescriptor[] args, int i, 
+                        DirectiveArgs da) 
   throws BuildException {
   if (args[i].optional) 
     if (!lookahead_keyword(args[args[i].children[0]].keyword))
@@ -341,10 +381,10 @@ boolean parse_arg_group(ArgDescriptor[] args, int i,
   for (int j=0; j<args[i].subordinateArgs; j++) {
     ArgDescriptor child = args[args[i].children[j]];
     if (child.type == Directive.ArgType_GROUP) {
-      parse_arg_group(args, args[i].children[j], da);
+      parse_arg_group(descriptor, args, args[i].children[j], da);
     }
     else {
-      Object o = parse_arg(child);
+      Object o = parse_arg(descriptor, child);
       da.setArg(child.id, o);
     }
   }
@@ -354,23 +394,24 @@ boolean parse_arg_group(ArgDescriptor[] args, int i,
 //parse_args -- parse a whole directive's worth of arguments 
 
 JAVACODE 
-void parse_args(ArgDescriptor[] args, DirectiveArgs da) {
+void parse_args(DirectiveDescriptor descriptor, 
+                ArgDescriptor[] args, DirectiveArgs da) {
   try {
     for (int i=0; i < args.length; ) {
       ArgDescriptor arg = args[i];
 
       if (arg.type == Directive.ArgType_GROUP) 
-        parse_arg_group(args, i, da);
+        parse_arg_group(descriptor, args, i, da);
       else if (arg.type == Directive.ArgType_CHOICE) {
         for (int j=0; j<arg.subordinateArgs; j++) {
           // Each child is a GROUP, so we want to look at child's first child
           ArgDescriptor child = args[arg.children[j]];
           if (lookahead_keyword(args[child.children[0]].keyword)) 
-            parse_arg_group(args, arg.children[j], da);
+            parse_arg_group(descriptor, args, arg.children[j], da);
         }
       }
       else {
-        Object o = parse_arg(arg);
+        Object o = parse_arg(descriptor, arg);
         da.setArg(arg.id, o);
       }
       i = arg.nextArg;
@@ -396,7 +437,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
 
   try { 
     descriptor = 
-      (DirectiveDescriptor) broker.get("org.webmacro.directive.Directive", 
+      (DirectiveDescriptor) broker.get(DirectiveProvider.DIRECTIVE_KEY,
                                        directive);
     if (!descriptor.valid) 
       throw new ParseException("Descriptor for directive " + directive
@@ -407,20 +448,22 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
                              + System.getProperty("line.separator"), e); 
   }
   db = new DirectiveBuilder(descriptor);
-  parse_args(descriptor.args, db);
+  parse_args(descriptor, descriptor.args, db);
 
   if (descriptor.subdirectives != null 
       && descriptor.subdirectives.length > 0) {
     DirectiveArgs da;
 
     while ((subd = lookahead_subdirective(descriptor.subdirectives)) != null) {
-      SubdirectiveStart();
       try {
+        if (!db.subdirectiveOk(subd.id)) 
+          break;
+        SubdirectiveStart();
         da = db.newSubdirective(subd.id);
       } catch (BuildException e) {
         throw new ParseException("BuildException", e);
       };
-      parse_args(subd.args, da);
+      parse_args(descriptor, subd.args, da);
     }
   }
   OptionalWs();
@@ -431,10 +474,16 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
 
 /* Utility productions used by above JavaCode productions (State: WM) */
 
-void OptionalWsNl() : {
+void OptionalWsNlWs() : {
 }
 {
   [ <WS> ] [ <NEWLINE> [ <WS> ] ]
+}
+
+void OptionalWsNl() : {
+}
+{
+  [ <WS> ] [ <NEWLINE> ]
 }
 
 void OptionalWs() : {
@@ -446,7 +495,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 { 
-  OptionalWsNl() <POUND> <WORD> [ <WS> ] 
+  OptionalWsNlWs() <POUND> <WORD> [ <WS> ] 
 }
 
 
@@ -522,23 +571,23 @@ Object Conditional() : {
 /* Productions used in WM variable references.  State: WM.  */
 
 // Used by VariableReference; shouldn't be used outside it
-void VariableReferenceGuts(Vector v) : {
+void VariableReferenceGuts(ArrayList v) : {
   Token t;
   Object element;
   ListBuilder argList;
 }
 {
-  t=<WORD> { v.addElement(t.image); }
-  ( <DOT> t=<WORD> { element = t.image; } 
+  t=<WORD> { v.add(t.image); }
+  ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; } 
     [ <LPAREN> argList=ArgList() <RPAREN> 
       { element = new PropertyMethodBuilder((String) element, argList); }
     ]  
-    { v.addElement(element); }
+    { v.add(element); }
   )*  
 }
 
 Builder VariableReference() : {
-  Vector v = new Vector();
+  ArrayList v = new ArrayList();
 }
 {
   <DOLLAR> 
@@ -548,8 +597,7 @@ Builder VariableReference() : {
     | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )
   { 
-    Object[] names = new Object[v.size()];
-    v.copyInto(names);
+    Object[] names = v.toArray();
     return new VariableBuilder(names, false);
   }
 }
@@ -617,52 +665,54 @@ Object Term() : {
     | <FALSE>          { e = Boolean.FALSE; }
     | <OP_NOT> [<WS>] e=Term() { e = new Expression.NotBuilder(e); }
     | t=<NUMBER>           
-      { try { e = new Long(t.image); } 
+      { try { e = new Integer(t.image); } 
         catch (NumberFormatException ex) { e=null; } }
     | <OP_MINUS>t=<NUMBER> 
-      { try { long l = Long.parseLong(t.image); e = new Long(-l); }
+      { try { int i = Integer.parseInt(t.image); e = new Integer(-i); }
         catch (NumberFormatException ex) { e=null; } }
   ) 
   { return e; }
 }
 
 Object Factor() : {
-  Object e1, e2=null;
-  Token op=null;
+  Object e, e2;
+  Token op;
 }
 {
-  e1=Term() 
-  [ LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) 
-                 [<WS>] e2=Factor() ]
-  { 
-    if (op == null)
-      return e1;
-    else if (op.kind == OP_MULT) 
-      return new Expression.MultiplyBuilder(e1, e2);
-    else if (op.kind == OP_DIV) 
-      return new Expression.DivideBuilder(e1, e2);
-    else 
-      throw new ParseException("internal parser error in Factor()");
-  }
+  e=Term() 
+  (
+    LOOKAHEAD(2) [<WS>] (op=<OP_MULT> | op=<OP_DIV>) [<WS>] e2=Term() 
+    { 
+      if (op.kind == OP_MULT) 
+        e = new Expression.MultiplyBuilder(e, e2);
+      else if (op.kind == OP_DIV) 
+        e = new Expression.DivideBuilder(e, e2);
+      else 
+        throw new ParseException("internal parser error in Factor()");
+    }
+  )*
+  { return e; }
 }
 
 Object AExpression() : {
-  Object e1, e2=null;
-  Token op=null;
+  Object e, e2;
+  Token op;
 }
 {
-  e1=Factor() 
-  [ LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) 
-                 [<WS>] e2=AExpression() ] 
-  { 
-    if (op == null)
-      return e1;
-    else if (op.kind == OP_PLUS) 
-      return new Expression.AddBuilder(e1, e2);
-    else if (op.kind == OP_MINUS) 
-      return new Expression.SubtractBuilder(e1, e2);
-    else 
-      throw new ParseException("internal parser error in AExpression()");
+  e=Factor() 
+  ( 
+    LOOKAHEAD(2) [<WS>] (op=<OP_PLUS> | op=<OP_MINUS>) [<WS>] e2=Factor() 
+    { 
+      if (op.kind == OP_PLUS) 
+        e = new Expression.AddBuilder(e, e2);
+      else if (op.kind == OP_MINUS) 
+        e = new Expression.SubtractBuilder(e, e2);
+      else 
+        throw new ParseException("internal parser error in AExpression()");
+    }
+  )*
+  {
+    return e;
   }
 }
 
@@ -704,31 +754,31 @@ Object CExpression() : {
 }
 
 Object AndExpression() : {
-  Object e1, e2=null;
+  Object e, e2;
 }
 {
-  e1=CExpression() 
-  [ LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=AndExpression() ]
-  { 
-    if (e2 == null) 
-      return e1;
-    else 
-      return new Expression.AndBuilder(e1, e2);
-  }
+  e=CExpression() 
+  (
+    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression() 
+    { 
+      e = new Expression.AndBuilder(e, e2);
+    }
+  )*
+  { return e; }
 }
 
 Object OrExpression() : {
-  Object e1, e2=null;
+  Object e, e2;
 }
 {
-  e1=AndExpression() 
-  [ LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=OrExpression() ]
-  { 
-    if (e2 == null) 
-      return e1;
-    else 
-      return new Expression.OrBuilder(e1, e2);
-  }
+  e=AndExpression() 
+  (
+    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression() 
+    { 
+      e = new Expression.OrBuilder(e, e2);
+    }
+  )*
+  { return e; }
 }
 
 Object Expression() : {
@@ -745,11 +795,19 @@ Object Expression() : {
 
 /* All of the following operate in the DEFAULT state */
 
+JAVACODE void EatWsNl() {
+  int entryState = token_source.curLexState;
+  SetState(WM);
+  OptionalWsNl();
+  SetState(entryState); 
+}
+
 // Parses an entire directive.  Treats # as text if the previous character
 // is a letter, digit, or certain special characters (=, ', ")
 void Directive(ParserBlockBuilder b) : {
   Token t;
   Object o;
+  Subdirective s;
 }
 {
   <POUND>
@@ -783,8 +841,8 @@ void DollarReference(Vector v) : {
 {
   { SetState(WM); }
   ( LOOKAHEAD(<DOLLAR> [ <DOLLAR> ] [ <LPAREN> ] <WORD>)
-      o=VariableReference() { v.addElement(o); }
-    | <DOLLAR> { v.addElement("$"); }
+      o=VariableReference() { v.add(o); }
+    | <DOLLAR> { v.add("$"); }
   )
   { SetState(entryState); }
 }
@@ -798,6 +856,19 @@ void WMContent(ParserBlockBuilder b) : {
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
     | Directive(b) 
+    | Comment(b)
+    | LOOKAHEAD(<DOLLAR>) DollarReference(b)
+  ) 
+}
+
+void WMContentNoDirective(ParserBlockBuilder b) : {
+  Token t;
+  Object o;
+}
+{
+  ( t=<STUFF>       { b.addElement(t.image); }
+    | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
+    | t=<SLASH>     { b.addElement(t.image); }
     | Comment(b)
     | LOOKAHEAD(<DOLLAR>) DollarReference(b)
   ) 
@@ -835,22 +906,29 @@ BlockBuilder LiteralBlock() : {
   { return block; }
 }
 
-BlockBuilder Block() : {
+BlockBuilder Block(Subdirective[] subdirectives) : {
   ParserBlockBuilder block = new ParserBlockBuilder();
   Token t;
 }
 { 
+  { blockStack.push(subdirectives); }
   ( 
-    LOOKAHEAD(<LBRACE>) 
-    ( <LBRACE> 
-      ( WMContent(block) 
+    ( <LBRACE> EatWsNl()
+      ( 
+        WMContent(block) 
         | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
-      ) * <RBRACE> { block.eatTrailingWs(); } )
-  | ( [ <BEGIN> ] 
-      ( WMContent(block) 
+      ) * 
+      <RBRACE> EatWsNl()
+    )
+  | ( [ <BEGIN> ] EatWsNl()
+      ( WMContentNoDirective(block) 
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
-      ) * <END> { block.eatTrailingWs(); } )
+        | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() }) 
+          Directive(block)
+      ) * [ <END> ] { block.eatTrailingWsNl(); } EatWsNl() 
+    )
   )
+  { blockStack.pop(); }
   { return block; }
 }
 

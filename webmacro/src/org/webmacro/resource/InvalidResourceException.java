@@ -21,35 +21,25 @@
  */
 
 
+/**
+ * Thrown when a resource was found but could not be loaded, for example
+ * if a template doesn't parse.
+ * @since 0.96
+ */
+
 package org.webmacro.resource;
 
-import java.lang.ref.SoftReference;
+import org.webmacro.*;
 
 /**
-  * This class is used by CachingProvider to manage object 
-  * references with timeouts. A TimedReference can be 
-  * garbage collected prior to the timeout, but will be 
-  * released no later than the specified timeout.
+  * Resource exists but could not be loaded for some reason
   */
-public class TimedReference extends SoftReference {
-   final long _timeout;
-
-   /**
-     * Construct a soft reference, specifying how long the 
-     * reference is valid for. Beyond the specified timeout 
-     * this object will return null.
-     */
-   public TimedReference(Object referent, long timeout) {
-      super(referent);
-      _timeout = timeout;
+public class InvalidResourceException extends ResourceException {
+   public InvalidResourceException(String reason, Exception e) {
+      super(reason,e);
    }
-
-   /**
-     * Return the number of milliseconds this object is valid
-     * for, beginning with the creation time.
-     */
-   public long getTimeout() {
-      return _timeout;
+   public InvalidResourceException(String reason) {
+      super(reason);
    }
-
 }
+

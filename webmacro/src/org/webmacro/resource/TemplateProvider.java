@@ -31,9 +31,7 @@ import  java.io.*;
 /**
   * The TemplateProvider is the WebMacro class responsible for 
   * loading templates. You could replace it with your own version
-  * in the configuration file. This implementation caches templates
-  * using soft references for a maximum amount of time specified
-  * in the configuration. Templates are loaded from the filesystem,
+  * in the configuration file. Templates are loaded from the filesystem,
   * relative to the TemplatePath specified in teh configuration.
   * <p>
   * Ordinarily you would not accses this class directly, but 
@@ -50,8 +48,8 @@ final public class TemplateProvider extends CachingProvider
    private String _templateDirectory[] = null;
    private Broker _broker = null;
    private String _templatePath;
-   private int _cacheDuration;
-   private HashMap _lastModifiedCache = new HashMap (100);	// key = fileName, value=lastModified
+   private Log _log;
+   private BrokerTemplateProviderHelper _btpHelper;
 
    static {
       try {
@@ -61,6 +59,25 @@ final public class TemplateProvider extends CachingProvider
       }
    }
 
+   /** 
+    * ReloadContext for file templates.  Uses last-modified to determine
+    * if resource should be reloaded.
+    */
+   private static class FTReloadContext extends CacheReloadContext {
+      private File file;
+      private long lastModified;
+
+      public FTReloadContext(File f, long lastModified) {
+         this.file = f;
+         this.lastModified = lastModified;
+      }
+
+      public boolean shouldReload() {
+        return (lastModified != file.lastModified());
+      }
+   }
+
+         
    /**
      * Create a new TemplateProvider that uses the specified directory
      * as the source for Template objects that it will return
@@ -73,31 +90,25 @@ final public class TemplateProvider extends CachingProvider
       _log = b.getLog("resource", "Object loading and caching");
 
       try {
-         _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
-         _templatePath = config.getSetting("TemplatePath");
-         if (_templatePath == null) {
-           _log.error("TemplatePath not specified in properties");
-           _templatePath = "";
+         _templatePath = config.getSetting("TemplatePath", "");
+         if (_templatePath.equals(""))
+           _log.info("Template path is empty; will load from class path");
+         else {
+            StringTokenizer st = 
+               new StringTokenizer(_templatePath, _pathSeparator);
+            _templateDirectory = new String[ st.countTokens() ];
+            for (int i=0; i < _templateDirectory.length; i++) {
+               String dir = st.nextToken(); 
+               _templateDirectory[i] = dir;
+            }
          }
-         StringTokenizer st = 
-            new StringTokenizer(_templatePath, _pathSeparator);
-         _templateDirectory = new String[ st.countTokens() ];
-         int i;
-         for (i=0; i < _templateDirectory.length; i++) 
-         {
-            String dir = st.nextToken(); 
-            _templateDirectory[i] = dir;
-         }
-
+         _btpHelper = new BrokerTemplateProviderHelper();
+         _btpHelper.init(b, config);
+         _btpHelper.setReload(_cacheSupportsReload);
       } catch(Exception e) {
-         throw new InitException("Could not initialize",e);
+         throw new InitException("Could not initialize", e);
       }
    }
-
-   /**
-     * Where we write our log messages 
-     */
-   private Log _log;
 
    /**
      * Supports the "template" type
@@ -109,78 +120,68 @@ final public class TemplateProvider extends CachingProvider
    /**
      * Grab a template based on its name.
      */
-   final public TimedReference load(String name) throws NotFoundException 
-   {
-      _log.info("Loading template: " + name);
-      Template t = getTemplate(name);
-      if (t == null) {
+   final public Object load(String name, CacheElement ce)
+   throws ResourceException  {
+      Object ret = null;
+
+      if (_log.loggingInfo())
+         _log.info("Loading template: " + name);
+
+      File tFile = findFileTemplate(name);
+      if (tFile != null) {
+         try {
+            Template t = new FileTemplate(_broker, tFile);
+            ret = t;
+            if (_cacheSupportsReload)
+               ce.setReloadContext(
+                  new FTReloadContext(tFile, tFile.lastModified()));
+         }
+         catch (NullPointerException npe) {
+            _log.warning("TemplateProvider: Template not found: " + name, 
+                         npe);
+         }
+         catch (Exception e) {  
+            // Parse error
+            _log.warning ("TemplateProvider: Error occured while parsing " 
+                          + name, e);
+            throw new InvalidResourceException("Error parsing template " 
+                                               + name, e);
+         }
+      }
+      else {
+         // Let the BrokerTemplateProvider have a crack at it 
+         ret = _btpHelper.load(name, ce);
+      }
+
+      if (ret == null) {
          throw new NotFoundException(
             this + " could not locate " + name + " on path " + _templatePath);
       }
-      return new TimedReference(t, _cacheDuration);   
+      return ret;
    }
 
-   /**
-     * if the cached last modified value of the template file
-     * differs from the current last modified value of the template file
-     * return true.  Otherwise, return false
-     *
-     * @return true if template should be reloaded
-     */
-   final public boolean shouldReload (String fileName) {
-      File tFile = findTemplate (fileName);
-      Long lm = (Long) _lastModifiedCache.get (fileName);
-      return (lm == null || lm.longValue() != tFile.lastModified());
-   }
 
    // IMPLEMENTATION
 
    /**
-     * Find the specified template in the directory managed by this 
-     * template store. Any path specified in the filename is relative
-     * to the directory managed by the template store. 
-     * <p>
-     * @param fileName relative to the current directory fo the store
-     * @return a template matching that name, or null if one cannot be found
-     */
-   final public Template getTemplate(String fileName) {
-      File tFile = findTemplate (fileName);
-      Template t = null;
-		
-      try {
-         t = new FileTemplate (_broker, tFile);
-         t.parse ();
-         _lastModifiedCache.put (fileName, new Long (tFile.lastModified()));
-         return t;
-      }
-      catch (NullPointerException npe) {
-         _log.warning ("TemplateProvider: Template not found: " + fileName);
-      }
-      catch (Exception e) {  
-         // this probably occured b/c of a parsing error.
-         // should throw some kind of ParseErrorException here instead
-         _log.warning ("TemplateProvider: Error occured while getting " + fileName, e);
-      }
-
-      return null;
-   }
-   
-   /**
-    * @param fileName the template filename to find, relative to the TemplatePath
+    * @param fileName the template filename to find, relative to the
+    * TemplatePath
     * @return a File object that represents the specified template file.
-    * @return null if template file cannot be found.
-    */
-   final private File findTemplate (String fileName)
+    * @return null if template file cannot be found.  */
+   final private File findFileTemplate(String fileName)
    {
-      _log.debug("Looking for template: " + fileName);
-      for (int i=0; i <_templateDirectory.length; i++) {
-         Template t;
-         String dir = _templateDirectory[i];
-         File tFile  = new File(dir,fileName);
-         if (tFile.canRead()) {
-            _log.debug("TemplateProvider: Found " + fileName + " in " + dir);
-             return tFile;
-         }      
+      if (_templateDirectory != null) {
+         if (_log.loggingDebug())
+             _log.debug("Looking for template in TemplatePath: " + fileName);
+         for (int i=0; i <_templateDirectory.length; i++) {
+            String dir = _templateDirectory[i];
+            File tFile  = new File(dir,fileName);
+            if (tFile.canRead()) {
+               if (_log.loggingDebug())
+                  _log.debug("TemplateProvider: Found "+fileName+" in "+dir);
+               return tFile;
+            }      
+         }
       }
       return null;
    }

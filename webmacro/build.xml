@@ -1,0 +1,150 @@
+<!--
+  In order to compile WebMacro, you may need to set these environment variables
+    JAVACC_HOME: your JavaCC installation
+ -->
+
+<project name="WebMacro" default="compile" basedir=".">
+
+  <property name="app.name"       value="webmacro"/>
+  <property name="classes"        value="classes"/>
+  <property name="dist"           value="webmacro"/>
+  <property name="javadoc"        value="javadoc"/>
+  <property name="jar"            value="${app.name}.jar"/>
+  <property name="src.jar"        value="${app.name}-src.jar"/>
+  <property environment="ENV" />
+  <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
+
+  <taskdef name="javacc" 
+           classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
+
+  <path id="class.path">
+    <fileset dir="lib">
+      <include name="*.jar" /> <include name="*.zip" />
+    </fileset>
+    <pathelement location="${classes}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+  <property name="classpath.resolved" refid="class.path"/>
+
+  <target name="prepare">
+    <mkdir  dir="${classes}"/>
+    <mkdir  dir="${javadoc}"/>
+    <mkdir  dir="${dist}"/>
+    <available property="javacc.present" classname="COM.sun.labs.javacc.Main"
+               classpath="${javacc.home}/JavaCC.zip" />
+  </target>
+
+
+  <target name="clean" depends="test-clean">
+    <delete dir="${classes}"/>
+    <delete dir="${javadoc}"/>
+    <delete dir="${dist}"/>
+    <delete file="${jar}"/>
+    <delete file="${src.jar}"/>
+  </target>
+
+
+  <target name="precompile" depends="prepare" if="javacc.present">
+    <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
+            javacchome="${javacc.home}" />
+  </target>
+
+  <target name="compile" depends="prepare, precompile">
+    <javac srcdir="src" destdir="${classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath refid="class.path" />
+    </javac>
+    <copy todir="${classes}">
+      <fileset dir="src" includes="**/*.properties" />
+      <fileset dir="." includes="WebMacro.defaults"/>
+    </copy>
+  </target>
+
+
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="src" destdir="${javadoc}"  
+             packagenames="org.webmacro.*" author="true" version="true" 
+             use="true">
+      <classpath refid="class.path" />
+    </javadoc>
+  </target>
+
+
+  <target name="jar" depends="prepare,compile">
+    <jar jarfile="${jar}" basedir="${classes}"/>
+    <jar jarfile="${src.jar}" basedir="." 
+         includes="src/**,webroot/**,build.xml"/>
+  </target>
+
+  <target name="dist" depends="prepare,compile,jar,javadoc">
+    <mkdir dir="${dist}/webroot" />
+    <copy todir="${dist}/webroot">
+      <fileset dir="webroot"/>
+    </copy>
+    <mkdir dir="${dist}/api" />
+    <copy todir="${dist}/api">
+      <fileset dir="${javadoc}"/>
+    </copy>
+    <copy todir="${dist}" file="${src.jar}"/>
+    <copy todir="${dist}" file="${jar}"/>
+    <copy todir="${dist}">
+      <fileset dir="webroot" 
+               includes="LICENSE,CREDITS,README.html,RELEASE-NOTES.html"/>
+    </copy>
+  </target>
+
+  <target name="contrib" depends="compile" >
+    <ant antfile="contrib/build.xml" target="all" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test" depends="compile" >
+    <ant antfile="test/build.xml" target="all" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-unit" depends="compile" >
+    <ant antfile="test/build.xml" target="unit" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-validate" depends="compile" >
+    <ant antfile="test/build.xml" target="validate" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-templates" depends="compile" >
+    <ant antfile="test/build.xml" target="templates" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-clean" >
+    <ant antfile="test/build.xml" target="clean">
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="all" depends="clean,prepare,compile,contrib,javadoc,dist,test-unit"/>
+
+  <!--
+  <taskdef name="wmtemplates" 
+   classname="org.webmacro.tools.WMTemplateAntTask" >
+    <classpath refid="class.path" />
+  </taskdef>
+
+  <target name="templates">
+    <wmtemplates>
+      <fileset dir="." includes="*.wm"/>
+      <classpath refid="class.path" />
+    </wmtemplates>
+  </target>
+  -->
+
+</project>
+
+

@@ -1,0 +1,93 @@
+## synthetictest.wm
+##
+#comment {
+author: Lane Sharman lane@opendoors.com
+date			change
+1 - apr - 2001	initial revision
+
+This test when run successfully, produces no output except whitespace.
+This test has one variable, $home, which must be modified to run
+on your host.
+
+This is a synthetic test emulating
+all essential features of WM. Its serves
+multiple purposes. First, it excercises
+all the core features of WM and acts as 
+a general regression test. Second, it can
+be used to test new features. Third, and
+principally, this is a load test. Are there
+any bottlenecks. In other words, WM is as
+strong as its weakest link. synthetictest.wmt
+exposes that link in conjunction with java profiling
+tools.
+
+synthetictest.wmt depends on synthetictest.java
+}
+## test include which includes a zero length file using the provided home property
+#include "org/webmacro/template/load/0.wm"
+
+## test parsing the file:
+#parse "org/webmacro/template/load/0.wm"
+
+## test set:
+#set $dir = "org/webmacro/template/load"
+#set $file = "0.wm"
+
+## test include and parse using variable references
+#include "$(dir)/$(file)"
+#parse "$(dir)/$(file)"
+#include "$dir/$file"
+#parse "$dir/$file"
+
+##
+## test introspection on $item a properties element
+## and conditional evaluation
+
+#set $item = "ATestValue"
+#if ($item == "ATestValue") {
+	#parse "org/webmacro/template/load/0.wm"
+}
+#else {
+	Runtime Failure: on line 49, \$item failed to evaluate
+}
+
+##
+## iteration testing
+
+#set $list = ["one", "two", "three"]
+
+#set $counter = 0
+#foreach $element in $list indexing $index from 0 limit 1 {
+	#set $counter = $counter + 1
+	#if ($counter != 1) {
+		Runtime Failure: on line 70, iteration limit was 1
+	}
+	#if ($index != 0) {
+		Runtime Failure: on line 74, index was not zero
+	}
+}
+
+#set $counter = 0
+#alternate $color through [ "red", "blue", "green" ]
+#foreach $element in $list indexing $index  from 0 limit 3 {
+	#set $counter = $counter + 1
+	#set $itemColor = $color
+}
+#if ($counter != 3 || $itemColor != "green") {
+	Runtime Failure: on line 81, iteration or alternate did not perform properly.
+	$counter should be 3
+	$color should be green
+}
+
+## the text command
+#text {
+}
+
+##
+## executes the optional load feature of the synthetic test
+#if ($runLoad) {
+	#set $target = "$dir"
+	#foreach $template in $load {
+		#parse "$dir/$template"
+	}
+}

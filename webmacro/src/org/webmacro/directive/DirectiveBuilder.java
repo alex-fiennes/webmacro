@@ -153,6 +153,16 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
     return ah;
   }
 
+  /** 
+   * Check to see if the specified subdirective is OK at this point.
+   * The only reason it wouldn't be is because we've already got one
+   * and its not a repeating subdirective
+   */
+  public boolean subdirectiveOk(int subdId) throws BuildException { 
+    int index = findSubdirectiveIndex(subdId);
+    return desc.subdirectives[index].repeating || subdirectives[index] == null;
+  }
+
   /**
    * Retrieves the ArgsHolder for the associated subdirective so that the
    * subdirective arguments can be retrieved.  Only valid if the specified

@@ -1,0 +1,89 @@
+<project name="WebMacro.Tests" default="all" basedir=".">
+  <property name="test.root" value="test"/>
+  <property name="template.root" value="${test.root}/templates"/>
+  <property name="unit.root" value="${test.root}/unit"/>
+  <property name="unit.classes" value="${test.root}/unit-classes"/>
+  <property name="unit.reports" value="${test.root}/unit-reports"/>
+
+  <taskdef name="junit" 
+   classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
+
+  <path id="class.path">
+    <pathelement path="${java.class.path}" />
+  </path>
+  <property name="class.path.resolved" refid="class.path"/>
+
+  <path id="unit.class.path">
+    <pathelement location="${unit.classes}" />
+    <pathelement location="${unit.root}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <path id="template.class.path">
+    <pathelement location="${template.root}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+
+  <target name="templates-clean">
+    <delete>
+      <fileset dir="${template.root}" includes="**/*.class,**/*.wm.out"/>
+    </delete>
+  </target>
+
+  <target name="templates-compile">
+    <javac srcdir="${template.root}" destdir="${template.root}"
+           debug="on" optimize="off" deprecation="off" includes="*.java">
+      <classpath refid="template.class.path"/>
+    </javac>
+  </target>
+
+  <target name="templates" depends="templates-compile">
+    <exec executable="sh" failonerror="yes">
+      <arg line="${template.root}/test-templates.sh"/>
+      <arg line="${template.root}"/>
+      <env key="CLASSPATH" path="${class.path.resolved}"/>
+    </exec>
+  </target>
+
+  <target name="unit-clean">
+    <delete dir="${unit.classes}"/>
+    <delete dir="${unit.reports}"/>
+  </target>
+
+  <target name="unit-prepare">
+    <mkdir  dir="${unit.classes}"/>
+    <mkdir  dir="${unit.reports}"/>
+  </target>
+
+  <target name="unit-compile" depends="unit-prepare">
+    <javac srcdir="${unit.root}" destdir="${unit.classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath refid="unit.class.path"/>
+    </javac>
+  </target>
+
+  <target name="unit" depends="unit-compile">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="unit.class.path"/>
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="${unit.reports}">
+        <fileset dir="${unit.root}" includes="**/Test*.java" />
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="unit-validate" depends="unit-compile">
+    <junit printsummary="yes" haltonfailure="yes" >
+      <classpath refid="unit.class.path"/>
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="${unit.reports}">
+        <fileset dir="${unit.root}" includes="**/Test*.java" />
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="all" depends="templates,unit" />
+  <target name="clean" depends="unit-clean,templates-clean" />
+</project>
+

@@ -21,10 +21,12 @@ package org.webmacro;
 
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
+import org.webmacro.engine.*;
 
 import java.util.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
+import java.lang.ref.WeakReference;
 
 /**
   * The Broker is responsible for loading and initializing almost everything
@@ -42,50 +44,289 @@ import java.net.URL;
   * load templates, parse templates, fetch URLs, or perform most of its
   * other basic functions.
   */
-final public class Broker
+public class Broker
 {
 
    public static final String WEBMACRO_DEFAULTS = "WebMacro.defaults";
    public static final String WEBMACRO_PROPERTIES = "WebMacro.properties";
+   public static final String SETTINGS_PREFIX = "org.webmacro";
 
-   final private Hashtable _providers = new Hashtable();
-   final private Settings _config;
-   final private String _name;
-   final private LogSystem _ls;
-   final private Log _log;
-   final private ProfileCategory _prof;
+   public static final WeakHashMap brokers = new WeakHashMap();
+   private static Settings _defaultSettings;
+   protected static ClassLoader
+     _myClassLoader = Broker.class.getClassLoader(), 
+     _systemClassLoader = ClassLoader.getSystemClassLoader();
 
-   static private Settings initSettings() throws InitException
+   final protected Hashtable _providers = new Hashtable();
+   final protected Settings _config = new Settings();
+   final protected String _name;
+   final protected LogSystem _ls;
+   final public PropertyOperatorCache _propertyOperators
+     = new PropertyOperatorCache();
+
+   protected Log _log;
+   protected ProfileCategory _prof;
+   private EvaluationExceptionHandler _eeHandler;
+
+   /*
+    * Constructors.  Callers shouldn't use them; they should use the
+    * factory methods (getBroker). 
+    *
+    * Broker construction is kind of confusing.  There's a common
+    * constructor, which initializes the log and a few other private
+    * fields but doesn't do much else.  There's a bit of a
+    * chicken-and-egg problem with loading the properties; we want to
+    * be able to post log messages to indicate success or failure of
+    * finding the configuration files, but we can't set a log target
+    * until we do so.  The log system writes to standard error until
+    * we set a target, so we let the constructor set up the default
+    * target, then try and load properties, and then continue with the
+    * setup by calling the various init() routines.
+    */
+
+   /**
+    * Equivalent to Broker("WebMacro.properties"), except that it doesn't
+    * complain if WebMacro.properties can't be found.  
+    */
+   protected Broker() throws InitException
    {
-      Settings defaults = new Settings();
-      try {
-         defaults.load(WEBMACRO_DEFAULTS);
-      } catch (java.io.IOException e) {
-         throw new InitException("IO Error reading " + WEBMACRO_DEFAULTS, e);
-      }
-      return new Settings(defaults);
+      this((Broker) null, WEBMACRO_PROPERTIES);
+      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
+        + ", " + "(System Properties)";
+      loadDefaultSettings();
+      loadSettings(WEBMACRO_PROPERTIES, true);
+      loadSystemSettings();
+      initLog();
+      _log.notice("Loaded settings from " + propertySource);
+      init();
    }
 
-   static private Settings fileSettings(String name) throws InitException
+   /**
+     * Search the classpath for the properties file under 
+     * the specified name.
+     * @param fileName Use this name instead of "WebMacro.properties"
+     */
+   protected Broker(String fileName) throws InitException
    {
+      this((Broker) null, fileName);
+      String propertySource = WEBMACRO_DEFAULTS + ", " + fileName;
+      loadDefaultSettings();
+      boolean loaded = loadSettings(fileName, false);
+      if (!loaded) 
+        propertySource += "(not found)";
+      loadSystemSettings();
+      propertySource += ", " + "(System Properties)";
+      initLog();
+      _log.notice("Loaded settings from " + propertySource);
+      init();
+   }
+
+   /**
+     * Explicitly provide the properties that WebMacro should 
+     * configure from. You also need to specify a name for this
+     * set of properties so WebMacro can figure out whether 
+     * two brokers point at the same properties information.
+     * @param config WebMacro's configuration settings
+     * @param name Two brokers are the "same" if they have the same name
+     */
+   protected Broker(Broker dummy, String name)
+      throws InitException
+   {
+      _name = name;
+      _ls = LogSystem.getInstance(_name);
+      _log = _ls.getLog("broker", "general object loader and configuration");
+   }
+
+   /** 
+    * Constructors should call this after they've set up the properties
+    * to set up the log target.  If subclasses are going to set up logging
+    * themselves, then they don't have to call it.
+    */
+   protected void initLog() {
       try {
-         Settings s = initSettings();
-         s.load(name);
-         return s;
+         LogTarget lt = new LogFile(_config);
+         _ls.addTarget(lt);
+         _log.notice("starting " + this.getClass().getName() 
+                     + ": " + _name);
       } catch (IOException e) {
-         throw new InitException("Error reading from " + name, e);
+         _log.error("Failed to open logfile", e);
       }
    }
 
-   static private Settings urlSettings(URL u) throws InitException
-   {
-      try {
-         Settings s = initSettings();
-         s.load(u);
-         return s;
-      } catch (IOException e) {
-         throw new InitException("Error reading from " + u.toString(), e);
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            Class pClass = Class.forName(settingValue);
+            Provider instance = (Provider) pClass.newInstance();
+            addProvider(instance, settingKey);
+         } catch (Exception e) {
+            _log.error("Provider (" + settingValue + ") failed to load", e);
+         }
       }
+   }
+
+   /** 
+    * Constructors should call this after they've set up the properties
+    * to set up common things like profiling, providers, etc. 
+    */
+   protected void init() throws InitException {
+      String eehClass;
+
+      // Initialize the property operator cache
+      _propertyOperators.init(this, _config);
+
+      // Write out our properties as debug records
+      if (_log.loggingDebug()) {
+         String[] properties = _config.getKeys();
+         Arrays.sort(properties);
+         for (int i=0; i<properties.length; i++) 
+            _log.debug("Property " + properties[i] + ": " 
+                       + _config.getSetting(properties[i]));
+      }
+
+      // set up profiling
+      ProfileSystem ps = ProfileSystem.getInstance();
+      int pRate = _config.getIntegerSetting("Profile.rate",0);
+      int pTime = _config.getIntegerSetting("Profile.time",60000);
+
+      _log.debug("Profiling rate=" + pRate + " time=" + pTime);
+
+      if ((pRate != 0) && (pTime != 0)) {
+         _prof = ps.newProfileCategory(_name, pRate, pTime);   
+         _log.debug("ProfileSystem.newProfileCategory: " + _prof);
+      } else {
+         _prof = null;
+      }
+      if (_prof != null) {
+         _log.notice("Profiling started: " + _prof);
+      } else {
+         _log.info("Profiling not started.");
+      }
+
+      // set up providers
+      _config.processListSetting("Providers", new SettingHandler());
+      if (_providers.size() == 0) {
+         _log.error("No Providers specified");
+         throw new InitException("No Providers specified in configuration");
+      }
+
+      eehClass = _config.getSetting("ExceptionHandler");
+      if (eehClass != null && !eehClass.equals("")) {
+        try {
+          _eeHandler = (EvaluationExceptionHandler) 
+            Class.forName(eehClass).newInstance();
+        }
+        catch (Exception e) {
+          _log.warning("Unable to instantiate exception handler of class " 
+                       + eehClass + "; " + e);
+        }
+      }
+      if (_eeHandler == null)
+        _eeHandler = new DefaultEvaluationExceptionHandler();
+
+      _eeHandler.init(this, _config);
+   }
+
+   /* Factory methods -- the supported way of getting a Broker */
+
+   public static Broker getBroker() throws InitException {
+      try {
+         Broker b = findBroker(WEBMACRO_PROPERTIES);
+         if (b == null) {
+            b = new Broker();
+            register(WEBMACRO_PROPERTIES, b);
+         }
+         return b;
+      }
+      catch (InitException e) {
+         Log log = LogSystem.getSystemLog("wm");
+         log.error("Failed to initialize WebMacro with default config");
+         throw e;
+      }
+   }
+
+   public static Broker getBroker(String settingsFile) throws InitException {
+      try {
+         Broker b = findBroker(settingsFile);
+         if (b == null) {
+            b = new Broker(settingsFile);
+            register(settingsFile, b);
+         }
+         return b;
+      }
+      catch (InitException e) {
+         Log log = LogSystem.getSystemLog("wm");
+         log.error("Failed to initialize WebMacro from " + settingsFile);
+         throw e;
+      }
+   }
+
+   /* Static (internal) methods used for loading settings */
+
+   protected synchronized void loadDefaultSettings() 
+   throws InitException {
+      if (_defaultSettings == null) {
+         try {
+            _defaultSettings = new Settings(WEBMACRO_DEFAULTS);
+         }
+         catch (IOException e) {
+            throw new InitException("IO Error reading " + WEBMACRO_DEFAULTS, 
+                                    e);
+         }
+      }
+      // _log.notice("Loading properties file " + WEBMACRO_DEFAULTS);
+      _config.load(_defaultSettings);
+   }
+
+   protected boolean loadSettings(String name, 
+                                  boolean optional) throws InitException
+   {
+      URL u = getResource(name);
+      if (u != null) {
+         try {
+            _config.load(u);
+            return true;
+         } catch (IOException e) {
+           if (optional) 
+              _log.notice("Cannot find properties file " + name 
+                          + ", continuing");
+           e.printStackTrace();
+            if (!optional)
+               throw new InitException("Error reading settings from " + name, 
+                                       e);
+         }
+      }
+      else {
+         if (!optional)
+            throw new InitException("Error reading settings from " + name);
+      }
+      return false;
+   }
+
+   protected void loadSystemSettings() {
+      // _log.notice("Loading properties from system properties");
+      _config.load(System.getProperties(), SETTINGS_PREFIX);
+   }
+
+   /**
+    * Used to maintain a weak map mapping the partition key to the
+    * Broker.  Registers a broker for a given partition key. 
+    */
+   protected static void register(Object key, Broker broker) {
+      brokers.put(key, new WeakReference(broker));
+   }
+
+   /**
+    * Find the broker for the specified partition key, if one is
+    * registered.  Used by factory methods to ensure that there is
+    * only one broker per WM partition 
+    */
+   protected static Broker findBroker(Object key) {
+      WeakReference ref = (WeakReference) brokers.get(key);
+      if (ref != null) 
+         return (Broker) ref.get();
+      else 
+         return null;
    }
 
    /**
@@ -113,117 +354,28 @@ final public class Broker
    }
 
    /**
-     * Equivalent to Broker("WebMacro.properties")
+     * Access to the settings in WebMacro.properties
      */
-   public Broker() throws InitException
-   {
-      this(fileSettings(WEBMACRO_PROPERTIES), WEBMACRO_PROPERTIES);
+   public int getIntegerSetting(String key, int defaultValue) {
+      return _config.getIntegerSetting(key, defaultValue);
    }
 
-   /**
-     * Search the classpath for the properties file under 
-     * the specified name.
-     * @param fileName Use this name instead of "WebMacro.properties"
-     */
-   public Broker(String fileName) throws InitException
-   {
-      this(fileSettings(fileName), fileName);
-   }
-
-   /**
-     * Load the properties file from the specified URL and 
-     * initialize WebMacro.
-     * @param url The URL WebMacro should read its properties from
-     */
-   public Broker(URL url) throws InitException
-   {
-      this(urlSettings(url), url.toString());
-   }
-
-
-   /**
-     * Explicitly provide the properties that WebMacro should 
-     * configure from. You also need to specify a name for this
-     * set of properties so WebMacro can figure out whether 
-     * two brokers point at the same properties information.
-     * @param config WebMacro's configuration settings
-     * @param name Two brokers are the "same" if they have the same name
-     */
-   public Broker(Settings settings, String name)
-      throws InitException
-   {
-      _config = settings;
-      _name = name;
-      _ls = LogSystem.getInstance(name);
-      _log = _ls.getLog("broker", "general object loader and configuration");
-
-      try {
-         LogTarget lt = new LogFile(settings);
-         _ls.addTarget(lt);
-         _log.notice("start: " + name);
-      } catch (IOException e) {
-         _log.error("Failed to open logfile", e);
-      }
-
-      if (_config == null) {
-         _log.error("no configuration: perhaps some config file is missing? ");
-         throw new InitException("No configuration supplied: " +
-              "perhaps some configuration file could not be located?");
-      }
-
-      // set up profiling
-
-      ProfileSystem ps = ProfileSystem.getInstance();
-      int pRate = _config.getIntegerSetting("Profile.rate",0);
-      int pTime = _config.getIntegerSetting("Profile.time",60000);
-
-      _log.debug("Profiling rate=" + pRate + " time=" + pTime);
-
-      if ((pRate != 0) && (pTime != 0)) {
-         _prof = ps.newProfileCategory(name, pRate, pTime);   
-         _log.debug("ProfileSystem.newProfileCategory: " + _prof);
-      } else {
-         _prof = null;
-      }
-      if (_prof != null) {
-         _log.notice("Profiling started: " + _prof);
-      } else {
-         _log.info("Profiling not started.");
-      }
-
-      // set up providers
-
-      String providers = _config.getSetting("Providers");
-      if (providers == null) {
-         _log.error("configuration exists but has no Providers listed");
-         throw new InitException("No providers in configuration");
-      }
-
-      Enumeration pen = new StringTokenizer(providers);
-      Class pClass;
-      Provider instance;
-
-      while (pen.hasMoreElements()) {
-         String className = (String) pen.nextElement();
-         try {
-            pClass = Class.forName(className);
-            instance = (Provider) pClass.newInstance();
-            addProvider(instance);
-         } catch (Exception e) {
-            _log.error("Provider (" + className + ") failed to load", e);
-         }
-      }
-   }
 
    /**
      * Register a new provider, calling its getType() method to find
      * out what type of requests it wants to serve.
      */
-   public void addProvider(Provider p) throws InitException
+   public void addProvider(Provider p, String pType) throws InitException
    {
-      p.init(this,_config);
-      _providers.put(p.getType(),p);
+      String name = pType;
+      if (pType == null || pType.equals(""))
+         pType = p.getType();
+      p.init(this, _config);
+      _providers.put(pType, p);
       _log.info("Loaded provider " + p);
+      if (!pType.equals(p.getType()))
+         _log.info("Provider name remapped from " + p.getType() 
+                   + " to " + pType);
    }
 
    /**
@@ -263,6 +415,58 @@ final public class Broker
       return _ls.getLog(type,type);
    }
 
+   /**
+    * Get the EvaluationExceptionHandler 
+    */
+   public EvaluationExceptionHandler getEvaluationExceptionHandler() {
+      return _eeHandler;
+   }
+
+
+   /**
+    * Set a new EvaluationExceptionHandler 
+    */
+   public void setEvaluationExceptionHandler(EvaluationExceptionHandler eeh) {
+      _eeHandler = eeh;
+   }
+
+
+   /** 
+    * Get a resource (file) from the the Broker's class loader.  
+    * We look first with the Broker's class loader, then with the system
+    * class loader, and then for a file.
+    */
+   public URL getResource(String name) {
+      URL u = _myClassLoader.getResource(name);
+      if (u == null) 
+         u = _systemClassLoader.getResource(name);
+      if (u == null) {
+         try {
+            u = new URL("file", null, -1, name); 
+            File f = new File(u.getFile());
+            if (!f.exists())
+               u = null;
+         }
+         catch (MalformedURLException ignored) {}
+      }
+      return u;
+   }
+
+   /**
+    * Get a resource (file) from the Broker's class loader 
+    */
+   public InputStream getResourceAsStream(String name) {
+      InputStream is = _myClassLoader.getResourceAsStream(name);
+      if (is == null) 
+         is = _systemClassLoader.getResourceAsStream(name);
+      if (is == null) {
+         try {
+            is = new FileInputStream(name);
+         } catch (FileNotFoundException ignored) {}
+      }
+      return is;
+   }
+
 
    /**
      * Get a profile instance that can be used to instrument code. 
@@ -278,7 +482,7 @@ final public class Broker
      * Look up query against a provider using its integer type handle.
      */
    public Object get(String type, final String query) 
-      throws NotFoundException
+      throws ResourceException
    {
       return getProvider(type).get(query);
    }
@@ -288,7 +492,7 @@ final public class Broker
      * @deprecated call get(String,String) instead
      */
    final public Object getValue(String type, String query) 
-      throws NotFoundException
+      throws ResourceException
    {
       return get(type,query);
    }

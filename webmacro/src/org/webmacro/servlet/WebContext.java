@@ -61,7 +61,7 @@ public class WebContext extends Context
    /**
      * Log configuration errors, context errors, etc.
      */
-   final private Log _log;
+  private Log _log;
 
    /**
      * The request for this http connect
@@ -82,13 +82,7 @@ public class WebContext extends Context
    public WebContext(final Broker broker) 
    {
       super(broker);
-      _log = broker.getLog("webcon", "WebContext lifecycle information");
-      try {
-         String tools = (String) broker.get("config","WebContextTools");
-         loadTools(tools);
-      } catch (NotFoundException ne) {
-         _log.warning("could not load WebContextTools from config", ne);
-      }
+      loadTools("WebContextTools");
    }
 
 

@@ -69,8 +69,10 @@ class IfDirective extends Directive {
     };
   private static final Subdirective[] 
     ifSubdirectives = new Subdirective[] {
-      new OptionalRepeatingSubdirective(IF_ELSEIF, "elseif", elseifArgs), 
-      new OptionalSubdirective(IF_ELSE, "else", elseArgs)
+      new OptionalRepeatingSubdirective(IF_ELSEIF, "elseif", elseifArgs, 
+                                        Subdirective.BREAKING), 
+      new OptionalSubdirective(IF_ELSE, "else", elseArgs, 
+                               Subdirective.BREAKING)
     };
 
   private static final DirectiveDescriptor 
@@ -179,7 +181,17 @@ class IfDirective extends Directive {
     throws PropertyException, IOException {
 
     for (int i=0; i<nConditions; i++) {
-      if (Expression.isTrue(conditions[i].evaluate(context))) {
+      boolean b=false;
+
+      try {
+        b = Expression.isTrue(conditions[i].evaluate(context));
+      }
+      catch (Exception e) {
+        String warning = "#if: Error evaluating condition: " + e;
+        context.getLog("engine").warning(warning);
+        writeWarning(warning, context, out);
+      }
+      if (b) {
         blocks[i].write(out, context);
         return;
       }
@@ -203,3 +215,4 @@ class IfDirective extends Directive {
   }
   
 }
+

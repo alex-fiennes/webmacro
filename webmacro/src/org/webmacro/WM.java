@@ -27,12 +27,12 @@ import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
+import org.webmacro.servlet.*;
+
 import java.util.*;
-
-import org.webmacro.servlet.WebContext;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 
 /**
@@ -48,14 +48,12 @@ public class WM implements WebMacro
 {
 
    final private static Map _brokers = new HashMap();
-   final private static BrokerOwner _default = new BrokerOwner();
    final private Context _context;
-   final private WebContext _webContext;
+   private WebContext _webContext = null;
 
    // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
    final private Broker _broker;      // cache for rapid access
-   final private BrokerOwner _owner; // mgr that loads/unloads broker
 
    private boolean _alive = false;   // so we don't unload twice
 
@@ -66,59 +64,42 @@ public class WM implements WebMacro
    final private ThreadLocal _contextCache;
    final private ThreadLocal _webContextCache;
 
+
    public WM() throws InitException
    {
-      this(null);
+      this(Broker.getBroker());
    }
 
-   public WM(String config) throws InitException
-   {
-      BrokerOwner owner = null;
-      Broker broker = null;
-      try {
-         if (config == null) {
-            owner = _default;
-         } else {
-            synchronized(_brokers) {
-               owner = (BrokerOwner) _brokers.get(config);
-               if (owner == null) {
-                  owner = new BrokerOwner(config);
-                  _brokers.put(config,owner);
-               }
-            }
-         }
-         broker = owner.init();
-      } finally {
-         _owner = owner;
-         _broker = broker;
-         if (_broker != null) {
-            _alive = true;
-            _log = _broker.getLog("wm", "WebMacro instance lifecycle");
-            _log.info("new " + this);
-            _context = new Context(_broker);
-            _webContext = new WebContext(_broker);
-            _contextCache = new ThreadLocal() {
-               public Object initialValue() { return new ScalablePool(); }
-            };
-            _webContextCache = new ThreadLocal() {
-               public Object initialValue() { return new ScalablePool(); }
-            };
+   public WM(String config) throws InitException {
+      this(Broker.getBroker(config));
+   }
 
-         } else {
-            _alive = false;
-            _log = LogSystem.getSystemLog("wm");
-            _log.error("Failed to initialized WebMacro from: " + config);
-            _context = null;
-            _contextCache = null;
-            _webContextCache = null;
-            _webContext = null;
-         }
-      }
-  
+   public WM(Servlet s) throws InitException {
+      this(ServletBroker.getBroker(s));
+   }
+
+   protected WM(Broker broker) throws InitException {
+      if (broker == null) 
+         throw new InitException("No Broker passed to WM()");
+
+      _broker = broker;
+      _alive = true;
+      _log = _broker.getLog("wm", "WebMacro instance lifecycle");
+      _log.info("new " + this);
+      _context = new Context(_broker);
+      _contextCache = new ThreadLocal() {
+            public Object initialValue() { return new ScalablePool(); }
+         };
+      _webContext = new WebContext (_broker);
+      _webContextCache = new ThreadLocal() {
+            public Object initialValue() { return new ScalablePool(); }
+         };
+      
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
-      } catch (NotFoundException nfe) {
+      } 
+      catch (NotFoundException nfe) {
          _log.error("Could not load configuration", nfe);
          throw new InitException("Could not locate provider; "
             + "This implies that WebMacro is badly misconfigured, you\n"
@@ -128,7 +109,6 @@ public class WM implements WebMacro
             + "was not found on your CLASSPATH.", nfe);
       }
    }
-
 
    /**
      * Call this method when you are finished with WebMacro. If you
@@ -144,7 +124,7 @@ public class WM implements WebMacro
    final public void destroy() {
       if (_alive) {
          _alive = false;
-         _owner.done();
+         _webContext = null;
          _log.info("shutdown " + this);
       }
    }
@@ -169,8 +149,12 @@ public class WM implements WebMacro
      * to call super.finalize() since this is one of the cases where
      * it matters.  */
    protected void finalize() throws Throwable {
-      destroy();
-      super.finalize();
+      try {
+         destroy();
+      }
+      finally {
+         super.finalize();
+      }
    }
 
 
@@ -191,6 +175,21 @@ public class WM implements WebMacro
       return _broker;
    }
 
+   /**
+    * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+    * A FastWriter is used when writing templates to an output stream
+    *
+    * @param out The output stream the FastWriter should write to.  Typically
+    *           this will be your ServletOutputStream
+    * @param enctype the Encoding type to use
+    */
+   final public FastWriter getFastWriter (OutputStream out, String enctype)
+                                          throws UnsupportedEncodingException {
+       return FastWriter.getInstance (_broker, out, enctype);
+   }
+   
+   
+   
    /**
      * Instantiate a new context from a pool. This method is more 
      * efficient, in terms of object creation, than creating a 
@@ -232,10 +231,11 @@ public class WM implements WebMacro
 
    /**
      * Retrieve a template from the "template" provider.
-     * @exception NotFoundException if the template was not found
+     * @exception NotFoundException  if the template could not be found
+     * @exception ResourceException  if the template could not be loaded
      */
    final public Template getTemplate(String key) 
-      throws NotFoundException
+      throws ResourceException
    {
       return (Template) _tmplProvider.get(key); 
    }
@@ -243,10 +243,11 @@ public class WM implements WebMacro
    /**
      * Retrieve a URL from the "url" provider. Equivalent to 
      * getBroker().getValue("url",url)
-     * @exception NotFoundException if the template was not found
+     * @exception NotFoundException  if the template could not be found
+     * @exception ResourceException  if the template could not be loaded
      */
    final public String getURL(String url) 
-      throws NotFoundException
+      throws ResourceException
    {
       return (String) _urlProvider.get(url);
    }
@@ -259,7 +260,13 @@ public class WM implements WebMacro
    final public String getConfig(String key) 
       throws NotFoundException
    {
-      return (String) _broker.get("config", key);
+      try {
+         return (String) _broker.get("config", key);
+      }
+      catch (NotFoundException e) { throw e; }
+      catch (ResourceException e) { 
+        throw new NotFoundException(e.toString(), e); 
+      }
    }
 
    /**
@@ -277,67 +284,5 @@ public class WM implements WebMacro
      */
    final public Log getLog(String type) {
       return _broker.getLog(type,type);
-   }
-
-}
-
-
-final class BrokerOwner {
-
-   /*final*/ String _config;
-   private Broker _broker;
-   private static int _brokerUsers = 0;
-
-   BrokerOwner() {
-      this(null);
-   }
-
-   BrokerOwner(String config) {
-      _config = config;
-      _broker = null;
-      _brokerUsers = 0;
-   }
-
-   synchronized Broker init() throws InitException 
-   {
-      _brokerUsers++;
-      if (_broker == null) {
-         try {
-            _broker = (_config == null) ?  new Broker() : new Broker(_config);
-         } catch (InitException e) {
-e.printStackTrace();
-            _broker = null;
-            _brokerUsers = 0; 
-            throw e; // rethrow
-         } catch (Throwable t) {
-            _broker = null;
-            _brokerUsers = 0;
-            throw new InitException(
-"An unexpected exception was raised during initialization. This is bad,\n" +
-"there is either a bug in WebMacro, or your configuration is messed up.\n" +
-"\nHere are some clues: if you got a ClassNotFound exception, either\n" +
-"something is missing from your classpath (odd since this code ran)\n" +
-"or your JVM is failing some important classfile due to bytecode problems\n" +
-"and then claiming that, it does not exist... you might also see some kind\n" +
-"of VerifyException or error in that case. If you suspect something like\n" +
-"this is happening, recompile the WebMacro base classes with your own Java\n" +
-"compiler and libraries--usually that helps. It could also be that your\n" +
-"JVM is not new enough. Again you could try recompiling, but if it is\n" +
-"older than Java 1.1.7 you might be out of luck. If none of this helps,\n" +
-"please join the WebMacro mailing list and let us know about the problem,\n" +
-"because yet another possibility is WebMacro has a bug--and anyway, we \n" +
-"might know a workaround, or at least like to hear about the bug.\n", t);
-
-         }
-      }
-      return _broker;
-   }
-
-   synchronized void done() {
-         _brokerUsers--;
-         if ((_brokerUsers == 0) && (_broker != null)) {
-            _broker.shutdown(); 
-            _broker = null;
-         }
    }
 }

@@ -213,7 +213,7 @@ public class ComponentMap
          Constructor ctor = c.getConstructor(_ctorArgs1);
          Object[] args = new Object[2];
          args[0] = key;
-         args[1] = _config.getSubSettings(key);
+         args[1] = new SubSettings(_config, key);
          instance = ctor.newInstance(args);
       } catch (Exception e) { 
          log = new StringBuffer();

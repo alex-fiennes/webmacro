@@ -32,15 +32,124 @@ package org.webmacro;
   */
 public class PropertyException extends ContextException
 {
-   public PropertyException(String reason)
-   {
+
+   public PropertyException(String reason) {
       super(reason);
    }
 
-   public PropertyException(String reason, Throwable e) 
-   {
+   public PropertyException(String reason, Throwable e) {
       super(reason, e);
    }
 
+
+   // Subclasses
+
+
+   /**
+    * NoSuchVariableException indicates that a variable did not exist
+    * in the context against which it was being evaluated.
+    */
+
+   public static class NoSuchVariableException extends PropertyException {
+     public String variableName;
+
+     public NoSuchVariableException(String variableName) {
+       super("Attempt to evaluate unbound variable $" + variableName);
+       
+       this.variableName = variableName;
+     }
+   }
+
+
+   /**
+    * NullStringException indicates that a variable exists but its
+    * .toString() method returns null
+    */
+
+   public static class NullToStringException extends PropertyException {
+     public String variableName;
+
+     public NullToStringException(String variableName) {
+       super("Attempt to expand variable whose toString() returns null: $" 
+             + variableName);
+       
+       this.variableName = variableName;
+     }
+   }
+
+
+   /**
+    * NullValueException indicates that a variable or property
+    * exists, but evaluated to null in the context against which it
+    * was being evaluated.  
+    */
+   public static class NullValueException extends PropertyException {
+     public String variableName;
+
+     public NullValueException(String variableName) {
+       super("Attempt to dereference null value $" + variableName);
+       this.variableName = variableName;
+     }
+   }
+
+
+   /**
+    * NoSuchMethodException indicates that the variable did not have
+    * the requested method.  
+    */
+   public static class NoSuchMethodException extends PropertyException {
+      String methodName, className, variableName;
+
+      public NoSuchMethodException(String methodName, 
+                                   String variableName, 
+                                   String className) {
+         super("No public method " + methodName + " on variable $" 
+               + variableName + " of class " + className);
+         this.variableName = variableName;
+         this.className = className;
+         this.methodName = methodName;
+      }
+   }
+
+
+   /**
+    * NoSuchPropertyException indicates that the variable did not have
+    * the requested property.  
+    */
+   public static class NoSuchPropertyException extends PropertyException {
+      String propertyName, className, variableName;
+
+      public NoSuchPropertyException(String propertyName, 
+                                     String variableName, 
+                                     String className) {
+         super("No public property " + propertyName + " on variable $" 
+               + variableName + " of class " + className);
+         this.variableName = variableName;
+         this.className = className;
+         this.propertyName = propertyName;
+      }
+   }
+
+
+   /**
+    * VoidValueException indicates that someone tried to use the return
+    * value of a void method
+    */
+   public static class VoidValueException extends PropertyException {
+      String variableName;
+
+     
+      public VoidValueException() {
+        super("Attempt to use void value");
+      }
+
+      public VoidValueException(String variableName) {
+         super("Variable $" + variableName + " has a void value ");
+         this.variableName = variableName;
+      }
+   }
+
+
 }
+
 

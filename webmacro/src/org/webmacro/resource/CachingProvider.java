@@ -27,134 +27,94 @@ import org.webmacro.*;
 import org.webmacro.util.*;
 import java.lang.ref.Reference;
 
-abstract public class CachingProvider implements Provider
+/**
+ * CacheManager is an abstract base class for providers which wish to 
+ * implement caching functionality.  By extending CachingProvider and
+ * implementing the methods in ResourceLoader, a provider can
+ * automatically support caching using any CacheManager.  CachingProvider
+ * looks in the properties file to find the desired cache manager. 
+ * @since 0.96
+ */
+
+abstract public class CachingProvider implements Provider, 
+                                                 ResourceLoader
 {
-
-   private ScalableMap _cache;
-   private Object[] _writeLocks = new Object[101];
-
-   private static final TimeLoop _tl;
+   private CacheManager _cache; 
    private Log _log;
-
-   private static final long DURATION = 1000;
-   private static int PERIODS = 600; 
-   static {
-      _tl = new TimeLoop(DURATION, PERIODS); // 10min max, 1sec intervals
-      _tl.setDaemon(true);
-      _tl.start();
-   }
+   protected boolean _cacheSupportsReload;
 
    public CachingProvider() { 
-      for (int i=0; i<_writeLocks.length; i++) {
-        _writeLocks[i] = new Object();
-      }
    }
    
    /**
-     * You must implement this, loading an object from permanent
-     * storage (or constructing it) on demand. 
-     */
-   abstract public TimedReference load(String query)
-      throws NotFoundException; 
-
-
-   /**
-     * should object be loaded again?  or is the cache value valid?<p>
-     *
-     * regardless of return value, CachingProvider will still reload
-     * the object if CachingProvider's cache is invalid
-     */
-   abstract public boolean shouldReload(String query);
-
-   /**
-     * If you over-ride this method be sure and call super.init(...)
+     * If you override this method be sure and call super.init(...)
      */
    public void init(Broker b, Settings config) throws InitException
    {
+      String cacheManager;
+
       _log = b.getLog("resource", "Object loading and caching");
-      _cache = new ScalableMap(1001);
+
+      cacheManager = b.getSetting("CachingProvider." + getType() 
+                                  + ".CacheManager");
+      if (cacheManager == null) 
+        cacheManager = b.getSetting("CachingProvider.*.CacheManager");
+      if (cacheManager == null || cacheManager.equals("")) {
+         _log.info("CachingProvider: No cache manager specified for " 
+                   + getType() + ", using TrivialCacheManager");
+         _cache = new TrivialCacheManager();
+      }
+      else {
+         try {
+            _cache = (CacheManager) Class.forName(cacheManager).newInstance();
+         }
+         catch (Exception e) {
+            _log.warning("Unable to load cache manager " + cacheManager 
+                         + " for resource type " + getType()
+                         + ", using TrivialCacheManager.  Reason:\n" + e);
+            _cache = new TrivialCacheManager();
+         }
+      }
+      _cache.init(b, config, getType());
+      _cacheSupportsReload = _cache.supportsReload();
    }
 
    /**
-     * Clear the cache. If you over-ride this method be sure 
+     * Clear the cache. If you override this method be sure 
      * and call super.flush().
      */
    public void flush() {
-      _cache.clear();
+      _cache.flush();
    }
 
    /**
-     * Close down the provider. If you over-ride this method be
+     * Close down the provider. If you override this method be
      * sure and call super.destroy().
      */
    public void destroy() {
-      _cache = null;
+      _cache.destroy();
    }
 
    /**
-     * Get the object associated with the specific query, first 
-     * trying to look it up in a cache. If it's not there, then
-     * call load(String) to load it into the cache.
+     * Get the object associated with the specific query, using the
+     * specified cache manager. 
      */
-   public Object get(final String query) throws NotFoundException
-   {
-      // should the template be reloaded, regardless of cached status?
-      boolean reload = shouldReload (query);   
-      TimedReference r;
-      try {
-         r = (TimedReference) _cache.get(query);
-      } catch (NullPointerException e) {
-         throw new NotFoundException(this + " is not initialized", e);
-      }
-      Object o = null;
-      if (r != null) {
-         o = r.get();
-      }
-      if (o == null || reload) {
+   public Object get(String query) throws ResourceException {
+      return _cache.get(query, this);
+   }
 
-         // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
-         // this looks like double-checked locking but it isn't, we
-         // synchronized on a less expensive lock inside _cache.get()
-         // the following line lets us simultaneously load up to 
-         // writeLocks.length resources.
-         
-         int lockIndex = query.hashCode() % _writeLocks.length;
-         if (lockIndex < 0) lockIndex = -lockIndex;
-         synchronized(_writeLocks[lockIndex])
-         {
-            r = (TimedReference) _cache.get(query);
-            if (r != null){ 
-              o = r.get();
-            }
-            if (o == null || reload) {
-               r = load(query);
-               if (r != null) {
-                  _cache.put(query,r);
-               }
-               o = r.get();
-               try {
-                  _log.debug("cached: " + query + " for " + r.getTimeout());
-                  // if timeout of TimedReference is < 0,
-                  // then don't schedule a removal from cache
-                  if (r.getTimeout() >= 0) {   
-                     _tl.scheduleTime( 
-                        new Runnable() { 
-                           public void run() { 
-                              _cache.remove(query); 
-                              _log.debug("cache expired: " + query);
-                           } 
-                        }, r.getTimeout());
-                  }
-               } catch (Exception e) {
-                  _log.error("CachingProvider caught an exception", e);
-               }
-            }
-         } 
-      }
-      return o;
+   /* 
+    * The cache manager will call this version; the providers implement
+    * the other version; so dispatch 
+    */
+   public Object load(Object query, CacheElement ce)
+     throws ResourceException {
+     return load((String) query, ce);
    }
 
    public String toString() {
       return "CachingProvider(type = " + getType() + ")";
    }
+
+   
 }

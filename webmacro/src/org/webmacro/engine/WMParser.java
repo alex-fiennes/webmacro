@@ -51,24 +51,24 @@ public class WMParser implements Parser
    // Parser Interface
 
    /**
-     * Return a short name that identifies this parser. This name could,
-     * for example, be used as the extension for files which contain 
-     * syntax parsable by this parser.
-     */
+    * Return a short name that identifies this parser. This name could,
+    * for example, be used as the extension for files which contain 
+    * syntax parsable by this parser.
+    */
    public final String getParserName() {
       return "wm";
    }
 
 
    /**
-     * Parse everything up until one of the characters $ # { or }
-     * appending everything read to the supplied stringbuffer. If
-     * the # { } was preceeded by WS then that will not be appended
-     * to buf, but rather will be appended to ws. The character read
-     * will be returned.
-     */
+    * Parse everything up until one of the characters $ # { or }
+    * appending everything read to the supplied stringbuffer. If
+    * the # { } was preceeded by WS then that will not be appended
+    * to buf, but rather will be appended to ws. The character read
+    * will be returned.
+    */
    private int parseUntilMacroChar(ParseTool in, 
-         StringBuffer buf, StringBuffer ws) 
+                                   StringBuffer buf, StringBuffer ws) 
       throws IOException
    {
       boolean readSome = false;
@@ -76,8 +76,8 @@ public class WMParser implements Parser
 
       int c = in.getChar();
       while (true) 
-      {
-         switch(c) {
+         {
+            switch(c) {
 
             case '#': case '}': EOF:
                if ((start != -1) && !in.isEscaped()) {
@@ -123,19 +123,19 @@ public class WMParser implements Parser
                start = -1;
                break;
 
+            }
+            buf.append((char) c);
+            c = in.nextChar();
+            readSome = true;
          }
-         buf.append((char) c);
-         c = in.nextChar();
-         readSome = true;
-      }
    }
 
 
    /**
-     * Parse a block that appears on the supplied input Reader. The 
-     * name supplied is used in error messages to identify the source
-     * being parsed.
-     */
+    * Parse a block that appears on the supplied input Reader. The 
+    * name supplied is used in error messages to identify the source
+    * being parsed.
+    */
    public BlockBuilder parseBlock(String name, Reader in)
       throws ParseToolException, IOException
    {
@@ -149,12 +149,12 @@ public class WMParser implements Parser
 
 
    /**
-     * Attempt to parse the block, or return null if what follows the 
-     * current position is not actually a block. 
-     * <p>
-     * @exception ParseToolException if the sytax was invalid and we could not recover
-     * @exception IOException if we could not successfullly read the parseTool
-     */
+    * Attempt to parse the block, or return null if what follows the 
+    * current position is not actually a block. 
+    * <p>
+    * @exception ParseToolException if the sytax was invalid and we could not recover
+    * @exception IOException if we could not successfullly read the parseTool
+    */
    protected BlockBuilder parseBlockImpl(ParseTool in) 
       throws ParseToolException, IOException
    {
@@ -162,7 +162,7 @@ public class WMParser implements Parser
    }
 
    private BlockBuilder parseBlockImpl(ParseTool in, boolean expectEnd, 
-               boolean delim)
+                                       boolean delim)
       throws ParseToolException, IOException
    {
       boolean parens;
@@ -185,17 +185,17 @@ public class WMParser implements Parser
       boolean lineStart;
       StringBuffer ws = new StringBuffer();
       while (inBlock)
-      {
-
-         ws.setLength(0);
-         int cur = parseUntilMacroChar(in,str,ws);
-         lineStart = ((ws.length() > 0) && (ws.charAt(0) == '\n'));
-
-         // a block can contain strings, blocks, variables, and directives
-         child = null;
-
-         switch(cur) {
-
+         {
+            
+            ws.setLength(0);
+            int cur = parseUntilMacroChar(in,str,ws);
+            lineStart = ((ws.length() > 0) && (ws.charAt(0) == '\n'));
+            
+            // a block can contain strings, blocks, variables, and directives
+            child = null;
+            
+            switch(cur) {
+               
             case '#': // directive
                child = parseDirective(in);
                if (child == END_BLOCK) {
@@ -227,11 +227,11 @@ public class WMParser implements Parser
                }
                break;
 
-	    case ParseTool.EOF: // end this block
+            case ParseTool.EOF: // end this block
                str.append(ws.toString()); // preserve whitespace at EOF
-	       inBlock = false; // breaks the loop
-	       break; 
-
+               inBlock = false; // breaks the loop
+               break; 
+               
             case '$': // variable
                str.append(ws.toString()); // preserve whitespace before var
                child = parseVariable(in,true);
@@ -239,25 +239,25 @@ public class WMParser implements Parser
 
             default: // error, we should have handled everything
                throw new ParseToolException(in,
-                     "Parser bug: expected macro char, got " + (char) cur);
+                                            "Parser bug: expected macro char, got " + (char) cur);
 
-         }
+            }
     
-         if (inBlock && (child == null)) {
-            // failed to read a child, so append everything we read
-            str.append((char) cur);
-            in.nextChar(); 
-         } else {
-            // successfully read some kind of child, or we're quitting
-            // so write the string we've built up 
-            b.addElement(str.toString());
-            str.setLength(0);
+            if (inBlock && (child == null)) {
+               // failed to read a child, so append everything we read
+               str.append((char) cur);
+               in.nextChar(); 
+            } else {
+               // successfully read some kind of child, or we're quitting
+               // so write the string we've built up 
+               b.addElement(str.toString());
+               str.setLength(0);
 
-	    if (child != null) {
-               b.addElement(child);
-	    }
+               if (child != null) {
+                  b.addElement(child);
+               }
+            }
          }
-      }
 
       // check for close parens
       if (parens && !in.parseChar('}')) {
@@ -269,8 +269,8 @@ public class WMParser implements Parser
 
 
    /**
-     * Return the directive corresponding with the supplied name
-     */
+    * Return the directive corresponding with the supplied name
+    */
    final DirectiveBuilder getDirectiveBuilder(String name) 
       throws NotFoundException
    {
@@ -279,21 +279,21 @@ public class WMParser implements Parser
       } catch (NotFoundException e) {
          throw e;
       } catch (Exception e) {
-        throw new NotFoundException("Could not load directive " + name, e);
+         throw new NotFoundException("Could not load directive " + name, e);
       }
    }
 
 
    /**
-     * Parse a directive. The syntax for a directive is determined by 
-     * querying it to determine what data values it requires. See the
-     * DirectiveBuilder class for more details. This routine also handles
-     * other notations which begin with '#', the only other current on 
-     * being a comment, which begins with ## and extends to the end of
-     * the line. If a # is read but the preceding character does not 
-     * permit its interpetation as a directive, then it will simply 
-     * be returned as a string.
-     */
+    * Parse a directive. The syntax for a directive is determined by 
+    * querying it to determine what data values it requires. See the
+    * DirectiveBuilder class for more details. This routine also handles
+    * other notations which begin with '#', the only other current on 
+    * being a comment, which begins with ## and extends to the end of
+    * the line. If a # is read but the preceding character does not 
+    * permit its interpetation as a directive, then it will simply 
+    * be returned as a string.
+    */
    private Builder parseDirective(ParseTool in) 
       throws ParseToolException, IOException 
    {
@@ -347,7 +347,7 @@ public class WMParser implements Parser
             dirB = getDirectiveBuilder(dirName);
             if (dirB == null) {
                throw new ParseToolException(in, "Unrecognized directive: " 
-                     + dirName);
+                                            + dirName);
             }
             if (subDir && !dirB.isSubDirective()) {
                // we required a subdirective, but got a primary directive
@@ -379,11 +379,11 @@ public class WMParser implements Parser
 
                String[] args = dirB.getArgumentNames();
                while ((arg = in.parseStrings(args)) != null) 
-               {
-                  in.skipSpaces();
-                  obj = parseTerm(in); 
-                  dirB.addArgument(arg,obj);
-               }
+                  {
+                     in.skipSpaces();
+                     obj = parseTerm(in); 
+                     dirB.addArgument(arg,obj);
+                  }
             }
          } 
 
@@ -396,7 +396,7 @@ public class WMParser implements Parser
                marker = "}";
             } else {
                throw new ParseToolException(in, "Expected block after directive: " 
-                     + dirB);
+                                            + dirB);
             }
             StringBuffer buf = new StringBuffer();
             in.parseUntil(buf,marker);
@@ -414,7 +414,7 @@ public class WMParser implements Parser
                   dirB.setContents(b);
                } else {
                   throw new ParseToolException(in, "Expected block after " 
-                        + dirName);
+                                               + dirName);
                }
             }
          }
@@ -434,11 +434,11 @@ public class WMParser implements Parser
          child = dirB;
       } catch (BuildException be) {
          throw new ParseToolException(in, "Error parsing directive: " 
-               + be.getMessage());
+                                      + be.getMessage());
       } catch (NotFoundException e) {
-e.printStackTrace();
+         // e.printStackTrace();
          throw new ParseToolException(in, "Unrecognized directive: " 
-               + dirName);
+                                      + dirName);
       }
 
       return child;
@@ -446,15 +446,15 @@ e.printStackTrace();
 
 
    /**
-     * Attempt to parse a variable name. The name will start with a '$',      
-     * and the next thing on the parseTool is the variables name,
-     * followed by an optional ';'. If the name begins with $$ it will be
-     * considered a static parameter and must only contain a single name;
-     * the value of the parameter will be returned as a string.
-     * @exception ParseToolException on unrecoverable parse error
-     * @exception IOException on failure to read from parseTool
-     * @return a Variable object 
-     */
+    * Attempt to parse a variable name. The name will start with a '$',      
+    * and the next thing on the parseTool is the variables name,
+    * followed by an optional ';'. If the name begins with $$ it will be
+    * considered a static parameter and must only contain a single name;
+    * the value of the parameter will be returned as a string.
+    * @exception ParseToolException on unrecoverable parse error
+    * @exception IOException on failure to read from parseTool
+    * @return a Variable object 
+    */
    static public Object parseVariable(ParseTool in, boolean filtered)
       throws ParseToolException, IOException
    {
@@ -496,7 +496,7 @@ e.printStackTrace();
 
       if ((closeChar != 0) && !in.parseChar(closeChar)) {
          throw new ParseToolException(in, "Expected closing bracket" + 
-               " after variable name " + Variable.makeName(oname));
+                                      " after variable name " + Variable.makeName(oname));
       } else {
          in.parseChar(';'); // eat optional ;
       }
@@ -509,63 +509,63 @@ e.printStackTrace();
    }
 
    /**
-     * Parse a term. A term is a name or a quoted string, or 
-     * a variable, or a number.  
-     * <p>
-     * @return a String, Variable, or QuotedString 
-     * @exception ParseToolException if the sytax was invalid and we could not recover
-     * @exception IOException if we could not successfullly read the parseTool
-     */
-    static public Object parseTerm(ParseTool in)
+    * Parse a term. A term is a name or a quoted string, or 
+    * a variable, or a number.  
+    * <p>
+    * @return a String, Variable, or QuotedString 
+    * @exception ParseToolException if the sytax was invalid and we could not recover
+    * @exception IOException if we could not successfullly read the parseTool
+    */
+   static public Object parseTerm(ParseTool in)
       throws ParseToolException, IOException
    {
       Object term = null;;
       int last;
 
       switch(in.getChar()) {
-         case '$': // variable
-            term = parseVariable(in,false); 
-            if (term instanceof String) {
-               throw new ParseToolException(in, 
-                     "Unexpected character after " + term + ": " 
-                     + "expected variable name start, instead got " 
-                     + in.getChar());
-            }
-            break;
+      case '$': // variable
+         term = parseVariable(in,false); 
+         if (term instanceof String) {
+            throw new ParseToolException(in, 
+                                         "Unexpected character after " + term + ": " 
+                                         + "expected variable name start, instead got " 
+                                         + in.getChar());
+         }
+         break;
 
-         case '[': // list
-            term = parseList(in);
-            break;
+      case '[': // list
+         term = parseList(in);
+         break;
 
-         case '\"': case '\'':
-            term = parseQuotedString(in);
-            break;
+      case '\"': case '\'':
+         term = parseQuotedString(in);
+         break;
 
-         default:
-            term = in.parseName();
-            if (term == null) {
-               term = in.parseNumber();
-            } else if (term.equals("false") || term.equals("FALSE") || term.equals("False")) {
-               return Boolean.FALSE;
-            } else if (term.equals("true") || term.equals("TRUE") || term.equals("True")) {
-               return Boolean.TRUE;
-            } 
-            break;
+      default:
+         term = in.parseName();
+         if (term == null) {
+            term = in.parseNumber();
+         } else if (term.equals("false") || term.equals("FALSE") || term.equals("False")) {
+            return Boolean.FALSE;
+         } else if (term.equals("true") || term.equals("TRUE") || term.equals("True")) {
+            return Boolean.TRUE;
+         } 
+         break;
       }
       return term;
    }
 
    
    /**
-     * Beginning with the quotation mark, parse everything up until the 
-     * close quotation mark. It is a parse error if EOL or EOF happen 
-     * before the end of the close quotation mark. The quoted string can 
-     * begin with either a single or double quotation mark, and then it 
-     * must end with the same mark. Inside a quoted string, variables 
-     * and parameters are recognized and properly substituted.
-     * @exception ParseToolException on unrecoverable parse error
-     * @exception IOException on failure to read from parseTool
-     */
+    * Beginning with the quotation mark, parse everything up until the 
+    * close quotation mark. It is a parse error if EOL or EOF happen 
+    * before the end of the close quotation mark. The quoted string can 
+    * begin with either a single or double quotation mark, and then it 
+    * must end with the same mark. Inside a quoted string, variables 
+    * and parameters are recognized and properly substituted.
+    * @exception ParseToolException on unrecoverable parse error
+    * @exception IOException on failure to read from parseTool
+    */
    static public Object parseQuotedString(ParseTool in) 
       throws ParseToolException, IOException
    {
@@ -609,26 +609,26 @@ e.printStackTrace();
          in.nextChar();
       } else {
          throw new ParseToolException(in, "Expected closing quote: " 
-               + (char) quoteChar);
+                                      + (char) quoteChar);
       }
 
       if ((qString.size() == 1) && !(qString.elementAt(0) instanceof Builder)) 
-      {
-         // XXX: #use directive fails without this, because it needs to 
-         // access target and source during the parse phase, before the 
-         // build has been completed. 
-         return qString.elementAt(0); 
-      } else {
-         return qString;
-      }
+         {
+            // XXX: #use directive fails without this, because it needs to 
+            // access target and source during the parse phase, before the 
+            // build has been completed. 
+            return qString.elementAt(0); 
+         } else {
+            return qString;
+         }
    }
 
    
    /**
-     * Create a Macro representing a List. These evaluate to
-     * type Objects[], after recursively resolving macros in the list.
-     * This list values may optionally be separated by commas.
-     */
+    * Create a Macro representing a List. These evaluate to
+    * type Objects[], after recursively resolving macros in the list.
+    * This list values may optionally be separated by commas.
+    */
    static public ListBuilder parseList(ParseTool in) 
       throws ParseToolException, IOException
    {
@@ -637,9 +637,9 @@ e.printStackTrace();
 
       int endChar;
       switch (in.getChar()) {
-         case '(': endChar = ')'; break;
-         case '[': endChar = ']'; break;
-         default : return null;
+      case '(': endChar = ')'; break;
+      case '[': endChar = ']'; break;
+      default : return null;
       }
 
       // create the list object
@@ -657,7 +657,7 @@ e.printStackTrace();
       // find the end character
       if (! in.parseChar((char) endChar) ) {
          throw new ParseToolException(in, "Expected end of list, instead got " 
-               + in.getChar());
+                                      + in.getChar());
       }
 
       return newList;
@@ -665,13 +665,13 @@ e.printStackTrace();
 
 
    /** 
-     * Parse the expression and return a macro that will evaluate
-     * to Boolean.TRUE or Boolean.FALSE depending on the condition.
-     * <p>
-     * @return boolean
-     * @exception ParseToolException if the sytax was invalid and we could not recover
-     * @exception IOException if we could not successfullly read the parseTool
-     */
+    * Parse the expression and return a macro that will evaluate
+    * to Boolean.TRUE or Boolean.FALSE depending on the condition.
+    * <p>
+    * @return boolean
+    * @exception ParseToolException if the sytax was invalid and we could not recover
+    * @exception IOException if we could not successfullly read the parseTool
+    */
    public Builder parseCondition(ParseTool in) 
       throws ParseToolException, IOException
    {
@@ -684,14 +684,14 @@ e.printStackTrace();
 
       // get lhs and possibly only sub-expression
       switch(in.getChar())
-      {
+         {
          case '!': cond = parseNotCondition(in); break;
          case '(': cond = parseCondition(in); break;
          default : cond = parseTermCondition(in); break;
-      }
+         }
       if (null == cond) {
          throw new ParseToolException(in,"Expected term/expression, got: " 
-               + (char) in.getChar());
+                                      + (char) in.getChar());
       }
 
       // read left-associative operators
@@ -700,11 +700,11 @@ e.printStackTrace();
          Builder oper;
          in.skipSpaces();
          switch(in.getChar()) {
-            case '!': oper = parseNotEqualCondition(cond,in); break;
-            case '=': oper = parseEqualCondition(cond,in); break;
-            case '&': oper = parseAndCondition(cond,in); break;
-            case '|': oper = parseOrCondition(cond,in); break;
-            default : oper = null;
+         case '!': oper = parseNotEqualCondition(cond,in); break;
+         case '=': oper = parseEqualCondition(cond,in); break;
+         case '&': oper = parseAndCondition(cond,in); break;
+         case '|': oper = parseOrCondition(cond,in); break;
+         default : oper = null;
          }
          if (oper == null) {
             moreTerms = false;
@@ -723,8 +723,8 @@ e.printStackTrace();
    }
 
    /**
-     * Utility function to parse the operator and right term of a binary cond
-     */
+    * Utility function to parse the operator and right term of a binary cond
+    */
    private Builder parseBinOp(char[] opChars, ParseTool in) 
       throws IOException, ParseToolException
    {
@@ -734,8 +734,8 @@ e.printStackTrace();
                return null;
             } else {
                throw new ParseToolException(in, "Expected character " + opChars[i] 
-                     + " after " + opChars[i - 1] + " but got " 
-                     + (char) in.getChar());
+                                            + " after " + opChars[i - 1] + " but got " 
+                                            + (char) in.getChar());
             } 
          }
       }
@@ -744,7 +744,7 @@ e.printStackTrace();
       Builder right = parseCondition(in); 
       if (null == right) {
          throw new ParseToolException(in,"Expected term/expression after operator "
-                +" but got: " + (char) in.getChar());
+                                      +" but got: " + (char) in.getChar());
       }
       return right;
    }

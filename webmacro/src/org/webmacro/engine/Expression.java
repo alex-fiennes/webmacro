@@ -56,6 +56,13 @@ public abstract class Expression {
             || o instanceof Byte);
   }
 
+  public static Object numberObject(long result, Object op1, Object op2) {
+     if (op1.getClass() == Long.class || op2.getClass() == Long.class)
+        return new Long(result);
+     else 
+        return new Integer((int) result);
+  }
+
   public static long numberValue(Object o) {
     return ((Number) o).longValue();
   }
@@ -111,27 +118,65 @@ public abstract class Expression {
     }
   }
 
-  public static class AndOperation extends BinaryOperation {
-    public AndOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "And"; };
+  public static class AndOperation extends ExpressionBase {
+    private Object _l, _r;
+    
+    public AndOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public Object operate(Object l, Object r) {
-      return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
+    public Object evaluate(Context context) 
+      throws PropertyException  {
+      Object l, r;
+
+      try { 
+        l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      } catch (Exception e) { l = null; }
+      if (!isTrue(l)) 
+        return FALSE;
+      try { 
+        r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      } catch (Exception e) { r = null; }
+      if (!isTrue(r))
+        return FALSE;
+
+      return TRUE;
+    }
+
+    public void accept(TemplateVisitor v) { 
+      v.visitBinaryOperation("And", _l, _r);
     }
   }
 
-  public static class OrOperation extends BinaryOperation {
-    public OrOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Or"; };
+  public static class OrOperation extends ExpressionBase {
+    private Object _l, _r;
+    
+    public OrOperation(Object l, Object r) { _l = l; _r = r; }
 
-    public Object operate(Object l, Object r) {
-      return (Expression.isTrue(l) || Expression.isTrue(r)) ? TRUE : FALSE;
+    public Object evaluate(Context context) 
+      throws PropertyException  {
+      Object l, r;
+
+      try { 
+        l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      } catch (Exception e) { l = null; }
+      if (isTrue(l)) 
+        return TRUE;
+      try { 
+        r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      } catch (Exception e) { r = null; }
+      if (isTrue(r))
+        return TRUE;
+
+      return FALSE;
+    }
+
+    public void accept(TemplateVisitor v) { 
+      v.visitBinaryOperation("Or", _l, _r);
     }
   }
 
   public static class NotOperation extends UnaryOperation {
     public NotOperation(Object o) { super(o); }
-    public String getName() { return "Not"; };
+    public String getName() { return "Not"; }
 
     public Object operate(Object o) {
       return (!Expression.isTrue(o)) ? TRUE : FALSE;
@@ -141,43 +186,43 @@ public abstract class Expression {
 
   public static class AddOperation extends BinaryOperation {
     public AddOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Add"; };
+    public String getName() { return "Add"; }
 
     public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Add requires numeric operands");
       else
-        return new Long(numberValue(l) + numberValue(r));
+        return numberObject(numberValue(l) + numberValue(r), l, r);
     }
   }
 
   public static class SubtractOperation extends BinaryOperation {
     public SubtractOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Subtract"; };
+    public String getName() { return "Subtract"; }
 
     public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Subtract requires numeric operands");
       else
-        return new Long(numberValue(l) - numberValue(r));
+        return numberObject(numberValue(l) - numberValue(r), l, r);
     }
   }
 
   public static class MultiplyOperation extends BinaryOperation {
     public MultiplyOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Multiply"; };
+    public String getName() { return "Multiply"; }
 
     public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
         throw new PropertyException("Multiply requires numeric operands");
       else
-        return new Long(numberValue(l) * numberValue(r));
+        return numberObject(numberValue(l) * numberValue(r), l, r);
     }
   }
 
   public static class DivideOperation extends BinaryOperation {
     public DivideOperation(Object l, Object r) { super(l, r); }
-    public String getName() { return "Divide"; };
+    public String getName() { return "Divide"; }
 
     public Object operate(Object l, Object r) throws PropertyException {
       if (!isNumber(l) || !isNumber(r))
@@ -187,7 +232,7 @@ public abstract class Expression {
         if (denom == 0)
           throw new PropertyException("Divide by zero");
         else 
-          return new Long(numberValue(l) / denom);
+          return numberObject(numberValue(l) / denom, l, r);
       }
     }
   }
@@ -207,21 +252,27 @@ public abstract class Expression {
 
     public Object operate(Object l, Object r) throws PropertyException {
       Boolean b=null;
+      boolean lIsNumber = isNumber(l), rIsNumber=isNumber(r);
 
-      if ((l instanceof String) && (r instanceof String)) 
-        b = compare((String) l, (String) r);
-      else if (isNumber(l) && isNumber(r))
+      if (lIsNumber && rIsNumber)
         b = compare(numberValue(l), numberValue(r));
-      else if (l instanceof String && isNumber(r)) 
-        b = compare((String) l, Long.toString(numberValue(r)));
-      else if (isNumber(l) && r instanceof String) 
-        b = compare(Long.toString(numberValue(l)), (String) r);
-      else if (l == null) 
-        b = compareNull(r);
-      else if (r == null) 
-        b = compareNull(l);
-      else 
-        b = compare(l, r);
+      else {
+        boolean lIsString = (l instanceof String), 
+          rIsString = (r instanceof String);
+
+        if (lIsString && rIsString) 
+          b = compare((String) l, (String) r);
+        else if (lIsString && rIsNumber) 
+          b = compare((String) l, Long.toString(numberValue(r)));
+        else if (lIsNumber && rIsString) 
+          b = compare(Long.toString(numberValue(l)), (String) r);
+        else if (l == null) 
+          b = compareNull(r);
+        else if (r == null) 
+          b = compareNull(l);
+        else 
+          b = compare(l, r);
+      }
 
       if (b == null)
         throw new PropertyException("Objects not comparable");
@@ -232,7 +283,7 @@ public abstract class Expression {
 
   public static class CompareEq extends Compare {
     public CompareEq(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareEq"; };
+    public String getName() { return "CompareEq"; }
 
     public Boolean compare(Object l, Object r) {
       return (l.equals(r)) ? TRUE : FALSE;
@@ -253,7 +304,7 @@ public abstract class Expression {
 
   public static class CompareNe extends Compare {
     public CompareNe(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareNe"; };
+    public String getName() { return "CompareNe"; }
 
     public Boolean compare(Object l, Object r) {
       return (l.equals(r)) ? TRUE : FALSE;
@@ -274,7 +325,7 @@ public abstract class Expression {
 
   public static class CompareLe extends Compare {
     public CompareLe(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareLe"; };
+    public String getName() { return "CompareLe"; }
 
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) <= 0) ? TRUE : FALSE;
@@ -287,7 +338,7 @@ public abstract class Expression {
 
   public static class CompareLt extends Compare {
     public CompareLt(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareLt"; };
+    public String getName() { return "CompareLt"; }
 
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) < 0) ? TRUE : FALSE;
@@ -300,7 +351,7 @@ public abstract class Expression {
 
   public static class CompareGe extends Compare {
     public CompareGe(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareGe"; };
+    public String getName() { return "CompareGe"; }
 
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) >= 0) ? TRUE : FALSE;
@@ -313,7 +364,7 @@ public abstract class Expression {
 
   public static class CompareGt extends Compare {
     public CompareGt(Object l, Object r) { super(l, r); }
-    public String getName() { return "CompareGt"; };
+    public String getName() { return "CompareGt"; }
 
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) > 0) ? TRUE : FALSE;
@@ -346,7 +397,7 @@ public abstract class Expression {
 
   public abstract static class UnaryOperationBuilder implements Builder {
 
-    private Object _o;;
+    private Object _o;
 
     public UnaryOperationBuilder(Object o) { _o = o; }
 
@@ -419,7 +470,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) + numberValue(r));
+          return numberObject(numberValue(l) + numberValue(r), l, r);
         else
           throw new BuildException("Add requires numeric operands");
       }
@@ -434,7 +485,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) - numberValue(r));
+          return numberObject(numberValue(l) - numberValue(r), l, r);
         else
           throw new BuildException("Subtract requires numeric operands");
       }
@@ -449,7 +500,7 @@ public abstract class Expression {
     public Object build(Object l, Object r) throws BuildException {
       if (!(l instanceof Macro) && !(r instanceof Macro)) {
         if (isNumber(l) && isNumber(r))
-          return new Long(numberValue(l) * numberValue(r));
+          return numberObject(numberValue(l) * numberValue(r), l, r);
         else
           throw new BuildException("Multiply requires numeric operands");
       }
@@ -468,7 +519,7 @@ public abstract class Expression {
           if (denom == 0)
             throw new BuildException("Divide by zero");
           else 
-            return new Long(numberValue(l) / denom);
+            return numberObject(numberValue(l) / denom, l, r);
         }
         else
           throw new BuildException("Divide requires numeric operands");
@@ -573,6 +624,4 @@ public abstract class Expression {
         catch (PropertyException e) { throw new BuildException(e.toString()); }
     }
   }
-
-
 }

@@ -86,6 +86,16 @@ public interface Log {
      */
    public void error(String msg, Exception e);
 
+  /**
+   * Ask the log system if it wants these kinds of log messages.
+   * This is because the overhead of creating log messages is high,
+   * even if we're not going to log them, because it usually involves
+   * several string concatenations.  */
+
+   public boolean loggingDebug();
+   public boolean loggingInfo();
+   public boolean loggingNotice();
+   public boolean loggingWarning();
 }
 
 

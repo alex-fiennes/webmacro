@@ -58,7 +58,7 @@ public interface Provider {
   /**
     * Get the object associated with the specified query
     */
-  public Object get(String query) throws NotFoundException; 
+  public Object get(String query) throws ResourceException; 
 
 }
 

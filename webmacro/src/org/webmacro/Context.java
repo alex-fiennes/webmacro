@@ -24,8 +24,10 @@
 package org.webmacro;
 
 import java.util.*;
+import java.lang.reflect.*;
 import org.webmacro.util.*;
 import org.webmacro.profile.*;
+import org.webmacro.engine.EvaluationExceptionHandler;
 
 /**
   * A Context contains state. The idea is to put all of the data you 
@@ -48,12 +50,12 @@ import org.webmacro.profile.*;
   */
 public class Context implements Map, Cloneable
 {
-   final private Broker _broker;
-   final private ComponentMap _tools;
-   final private Log _log;
-
+   private Broker _broker;
+   private HashMap _tools = new HashMap();
+   private Log _log;
 
    private HashMap _initializedTools = new HashMap();
+   private EvaluationExceptionHandler _eeHandler;
 
    private Map _variables = new HashMap();
    private Pool _contextPool = null;
@@ -65,12 +67,20 @@ public class Context implements Map, Cloneable
       _prof = broker.newProfile();
       if (_prof != null) { startTiming("Context life"); }
       if (_prof != null) { startTiming("Context init"); }
-         _broker = broker;
-         _log = broker.getLog("context", "property and evaluation errors");
-         Settings config = broker.getSettings();
-         _tools = new ComponentMap(config);
-         loadTools(broker.getSetting("ContextTools"));
+      _broker = broker;
+      _log = broker.getLog("context", "property and evaluation errors");
+      loadTools("ContextTools");
       if (_prof != null) { stopTiming(); }
+   }
+
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            addTool(settingKey, settingValue, "Tool");
+         } catch (Exception e) {
+            _log.error("Provider (" + settingValue + ") failed to load", e);
+         }
+      }
    }
 
    /**
@@ -78,12 +88,8 @@ public class Context implements Map, Cloneable
      * the ComponentMap class for a description of the format of
      * this string.
      */
-   final protected void loadTools(String tools) {
-      _tools.load(tools, "Tool");
-      Iterator i = _tools.keys();
-      while (i.hasNext()) {
-         _log.info("Registered ContextTool:" + i.next());
-      }
+   final protected void loadTools(String keyName) {
+      _broker.getSettings().processListSetting(keyName, new SettingHandler());
    }
 
    /**
@@ -138,6 +144,7 @@ public class Context implements Map, Cloneable
          ct.destroy(m.getValue());
       }
       _initializedTools.clear();
+      _eeHandler = null;
       if (_prof != null) {
          stopTiming();
         _prof.destroy();
@@ -169,15 +176,35 @@ public class Context implements Map, Cloneable
       return _broker.getLog(type, type);
    }
 
+   /**
+    * Get the EvaluationExceptionHandler 
+    */
+   public EvaluationExceptionHandler getEvaluationExceptionHandler() {
+     if (_eeHandler != null)
+        return _eeHandler;
+     else 
+        return _broker.getEvaluationExceptionHandler();
+   }
+
+
+   /**
+    * Set a new EvaluationExceptionHandler 
+    */
+   public void setEvaluationExceptionHandler(EvaluationExceptionHandler eeh) {
+      _eeHandler = eeh;
+   }
+
+
    /** 
      * Get the named object/property from the Context. If the Object
      * does not exist and there is a tool of the same name then the 
      * Object will be instantiated and managed by the tool.
+     * If there's no such variable, it throws. 
      */
-   final public Object get(Object name) 
-   {
+   final public Object internalGet(Object name) 
+   throws PropertyException {
       Object ret = _variables.get(name);
-      if (ret == null) {
+      if (ret == null && !_variables.containsKey(name)) {
          Object tool = _tools.get(name);
          if(tool != null) {
             try {
@@ -189,8 +216,24 @@ public class Context implements Map, Cloneable
                _log.error("Unable to initialize ContextTool: " + name, e);
             }
          }
+         else 
+            throw new 
+               PropertyException.NoSuchVariableException(name.toString());
       }
       return ret;
+   }
+
+   /** 
+     * Get the named object/property from the Context; returns null if
+     * not found.
+     */
+   final public Object get(Object name) {
+      try { 
+         return internalGet(name);
+      }
+      catch (PropertyException e) {
+         return null;
+      }
    }
 
    /**
@@ -208,24 +251,22 @@ public class Context implements Map, Cloneable
      * in the context. The subsequent names are properties of 
      * that object which will be searched using introspection.
      */
-   final public Object get(Object[] names) 
+   final public Object internalGet(Object[] names) 
       throws PropertyException 
    {
       Object instance;
       try {
-         instance = get(names[0]);
+         instance = internalGet(names[0]);
       } catch (ArrayIndexOutOfBoundsException e) {
          throw new PropertyException(
             "Attempt to access property with a zero length name array");
       }
-      if (names.length == 1) {
+      if (names.length == 1) 
          return instance;
-      } else if (instance == null) {
-         throw new PropertyException("Failed to get property $"
-            + names[0] + "." + names[1] + ": there is no such variable $("
-            + names[0] + ") in the context, or it is set to null.");
-      }
-      return PropertyOperator.getProperty(this,instance,names,1);
+      else if (instance == null)
+         throw new PropertyException.NullValueException(names[0].toString());
+      else 
+         return _broker._propertyOperators.getProperty(this,instance,names,1);
    }
 
    /**
@@ -244,11 +285,12 @@ public class Context implements Map, Cloneable
       } else {
          Object instance;
          try {
-            instance = get(names[0]);
+            instance = internalGet(names[0]);
          } catch (ArrayIndexOutOfBoundsException e) {
             return false;
          }
-         return PropertyOperator.setProperty(this,instance,names,1,value);
+         return _broker._propertyOperators
+           .setProperty(this,instance,names,1,value);
       }
    }
 
@@ -258,7 +300,7 @@ public class Context implements Map, Cloneable
      */
    public Object getProperty(Object name) throws PropertyException
    {
-      return get(name);
+      return internalGet(name);
    }
 
    /**
@@ -278,7 +320,7 @@ public class Context implements Map, Cloneable
      */
    public Object getProperty(Object names[]) throws PropertyException
    {
-      return get(names);
+      return internalGet(names);
    }
 
    /**
@@ -401,6 +443,87 @@ public class Context implements Map, Cloneable
    final public Collection values() {
       return _variables.values();
    }   
+
+   // Adding new tools to the context
+   private static final Class[] _ctorArgs1 = { 
+      java.lang.String.class, 
+      org.webmacro.util.Settings.class 
+   };
+   private static final Class[] _ctorArgs2 = { java.lang.String.class };
+
+   private void addTool(String key, String className, String suffix) {
+
+      Class c;
+      try {
+         c = Class.forName(className);
+      } catch (ClassNotFoundException e) {
+         _log.warning("Context: Could not locate class for context tool " 
+                      + className);
+         return;
+      }
+      if (key == null || key.equals("")) {
+         key = className;
+         int start = 0;
+         int end = key.length();
+         int lastDot = key.lastIndexOf('.');
+         if (lastDot != -1) {
+            start = lastDot + 1;
+         }
+         if (key.endsWith(suffix)) {
+            end -= suffix.length();
+         }
+         key = key.substring(start, end);
+      }
+
+      Object instance = null;
+      StringBuffer log = null;
+      try {
+         Constructor ctor = c.getConstructor(_ctorArgs1);
+         Object[] args = new Object[2];
+         args[0] = key;
+         args[1] = new SubSettings(_broker.getSettings(), key);
+         instance = ctor.newInstance(args);
+      } catch (Exception e) { 
+         log = new StringBuffer();
+         log.append("Error loading component key=");
+         log.append(key);
+         log.append(" class=");
+         log.append(c.toString());
+         log.append("\n");
+         log.append("Trying 2-argument constructor: ");
+         log.append(e.toString()); 
+         log.append("\n");
+      }
+
+      if (instance == null) {
+         try {
+            Constructor ctor = c.getConstructor(_ctorArgs2);
+            Object[] args = new Object[1];
+            args[0] = key;
+            instance = ctor.newInstance(args);
+         } catch (Exception e) { 
+            log.append("Trying 1-argument constructor: ");
+            log.append(e.toString());
+            log.append("\n");
+         }
+      }
+
+      if (instance == null) {
+         try {
+            instance = c.newInstance();
+         } catch (Exception e) {
+            log.append("Trying 0-argument constructor: ");
+            log.append(e.toString()); 
+            log.append("\n");
+            _log.warning(log.toString());
+            return;
+         }
+      }
+      _tools.put(key, instance);
+      _log.info("Registered ContextTool " + key);
+   }
+
+
 
    //////////////////////////////////////////////////////////////
 

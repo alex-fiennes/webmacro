@@ -30,7 +30,11 @@ public class ParseDirective extends Directive {
 
   private static final int PARSE_TEMPLATE = 1;
 
-  private Macro template;
+  // We store one or the other of these; a Macro or a String.  
+  // This is an optimization, so we don't have to evaluate it if its
+  // not a macro, and we don't have to use instanceof on the common code path
+  private Macro template = null;
+  private String templateString = null;
 
   private static final ArgDescriptor[] 
     myArgs = new ArgDescriptor[] {
@@ -48,34 +52,52 @@ public class ParseDirective extends Directive {
                       BuildContext bc) 
   throws BuildException {
     Object o = builder.getArg(PARSE_TEMPLATE, bc);
-    if (o instanceof Macro) {
+    if (o instanceof Macro) 
       template = (Macro) o;
-      return this;
-    } 
     else 
-      try {
-        return bc.getBroker().get("template", o.toString());
-      } catch (NotFoundException ne) {
-        throw new BuildException("#parse: Template " + o + " not found: ", 
-                                 ne); 
-      }
+      templateString = o.toString();
+
+    return this;
   }
 
   public void write(FastWriter out, Context context) 
     throws PropertyException, IOException {
 
-    String fname = template.evaluate(context).toString();
+    String fname;
+
+    fname = templateString;
+    if (fname == null) {
+      try {
+        fname = template.evaluate(context).toString();
+      }
+      catch (Exception e) {
+        String warning = "#parse: Can't resolve template name";
+        context.getLog("engine").warning(warning, e);
+        writeWarning(warning, context, out);
+      }
+    }
+    if (fname == null) {
+      writeWarning("#parse: file name not specified ", context, out);
+      throw new PropertyException("#parse: file name is null");
+    }
+
     try {
       Template tmpl = (Template) context.getBroker().get("template", fname);
       tmpl.write(out,context);
     } catch (IOException e) {
       String warning = "#parse: Error reading template: " + fname;
       context.getLog("engine").warning(warning, e);
-      writeWarning(warning, out);
-    } catch (Exception e) {
+      writeWarning(warning, context, out);
+    } 
+    catch (NotFoundException e) {
       String warning = "#parse: Template not found: " + fname;
       context.getLog("engine").warning(warning,e);
-      writeWarning(warning, out);
+      writeWarning(warning, context, out);
+    }
+    catch (Exception e) {
+      String warning = "#parse: Template could not be loaded: " + fname;
+      context.getLog("engine").warning(warning, e);
+      writeWarning(warning, context, out);
     }
   }
   
@@ -86,3 +108,4 @@ public class ParseDirective extends Directive {
   }
 
 }
+

@@ -31,7 +31,7 @@ public class SandBox extends WMServlet
 
          view = getTemplate("sandbox.wm");
 
-      } catch (NotFoundException e) {
+      } catch (ResourceException e) {
 
          // If this happens you have not set WebMacro up correctly:
          // either WebMacro isn't up and running well enough to be able 

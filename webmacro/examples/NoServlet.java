@@ -40,7 +40,7 @@ public class NoServlet
     Template t = wm.getTemplate("noservlet.wm");
 
     // Create FastWriter for fast output encoding
-    FastWriter fw = new FastWriter(System.out, "US-ASCII");
+    FastWriter fw = wm.getFastWriter (System.out, "UTF8");
     // write the template to the output, using our context
     t.write(fw, c);
     fw.close();

@@ -46,7 +46,7 @@ final class GlobalVariable extends Variable
    public final Object getValue(Context context) 
       throws PropertyException
    {
-      return context.get(_names);
+      return context.getProperty(_names);
    }
 
    /**

@@ -1,0 +1,97 @@
+###
+## synthetictest.wmt
+##
+#comment {
+author: Lane Sharman lane@opendoors.com
+date			change
+1 - apr - 2001	initial revision
+
+This is a synthetic test emulating
+all essential features of WM. Its serves
+multiple purposes. First, it excercises
+all the core features of WM and acts as 
+a general regression test. Second, it can
+be used to test new features. Third, and
+principally, this is a load test. Are there
+any bottlenecks. In other words, WM is as
+strong as its weakest link. synthetictest.wmt
+exposes that link in conjunction with java profiling
+tools.
+
+synthetictest.wmt depends on synthetictest.java
+}
+## test include which includes a zero length file using the provided home property
+
+#include "$home/template/load/0.wmt"
+
+## test parsing the file:
+#parse "template/load/0.wmt"
+
+## test set:
+#set $dir = "template/load/"
+#set $file = "0.wmt"
+
+## test include and parse using variable references
+#include "$(home)$(dir)$(file)"
+#parse "$(dir)$(file)"
+#include "$home$dir$file"
+#parse "$dir$file"
+
+##
+## test introspection on $item a properties element
+## and conditional evaluation
+
+#set $item.Value = "ATestValue"
+#if ($item.Value == "ATestValue) {
+	#parse "template/load/0.wmt"
+}
+#else {
+	Runtime Failure: on line 49, \$item failed to evaluate
+}
+
+## basic arithemetic
+#set $now = ($now / 100) * 100
+#if ( (($now / 100) * 100) - 100 + 100 == $now ) {
+	#parse "template/load/0.wmt"
+}
+#else {
+	Runtime Failure: on line 48, \$now failed on basic arithmetic
+}
+
+##
+## iteration testing
+
+#set $list = ["one", "two", "three"]
+#foreach $element in $list indexing $index from 0 limit 0 {
+	Runtime Failure: on line 63, iteration limit was zero
+}
+#set $counter = 0
+#foreach $element in $list indexing $index from 0 limit 1 {
+	#set $counter = $counter + 1
+	if ($counter != 1) {
+		Runtime Failure: on line 70, iteration limit was 1
+	}
+	if ($index != 0) {
+		Runtime Failure: on line 74, index was not zero
+	}
+}
+#alternate $color through [ "red", "blue", "green" ]
+#set $counter = 0
+#foreach $element in $list indexing $index from 0 limit 3 {
+	#set $counter = $counter + 1
+}
+if ($counter != 3 || $color != "green") {
+	Runtime Failure: on line 81, iteration or alternate did not perform.
+}
+
+## the text command
+#text {
+}
+
+##
+## generate the principal output
+## which also tests parsing and writing performance
+#foreach $template in $load {
+	#parse $template
+}
+

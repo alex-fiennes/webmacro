@@ -23,6 +23,8 @@
 
 package org.webmacro;
 
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
   * WebMacro Manager Interface
@@ -67,19 +69,39 @@ public interface WebMacro
      */
    public Broker getBroker();
 
+   
+   /**
+    * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+    * A FastWriter is used when writing templates to an output stream.<p>
+    *
+    * If using a FastWriter directly, <b>always</b> make sure to <code>flush()</code>
+    * and <code>close()</code> it when you're finished.  Closing it 
+    * automatically returns back to the pool for later reuse.
+    *
+    * @param out The output stream the FastWriter should write to.  Typically
+    *            this will be your ServletOutputStream
+    * @param enctype the Encoding type to use
+    *
+    * @throws java.io.UnsupportedEncodingException if the encoding type
+    *         specified is not supported by your JVM.
+    */
+   public FastWriter getFastWriter (OutputStream out, String enctype) 
+                                        throws UnsupportedEncodingException;
+   
    /**
      * Retrieve a template from the "template" provider. Equivalent to 
      * getBroker().get(TemplateProvider.getType(),key)
      * @exception NotFoundException if the template was not found
+     * @exception ResourceException if the template could not be loaded
      */
-   public Template getTemplate(String key) throws NotFoundException;
+   public Template getTemplate(String key) throws ResourceException;
 
    /**
      * Retrieve the contents of a URL as a String. The only advantage of
      * using this instead of a regular URL object is that the result may 
      * be cached for repeated use. 
      */
-   public String getURL(String url) throws NotFoundException;
+   public String getURL(String url) throws ResourceException;
 
    /**
      * Retrieve configuration information from the "config" provider.
@@ -118,8 +140,8 @@ public interface WebMacro
      * WebMacro under a servlet this is the preferred method, 
      * otherwise you ought to use getContext().
      */
-   public org.webmacro.servlet.WebContext getWebContext(javax.servlet.http.HttpServletRequest req, javax.servlet.http.HttpServletResponse resp);
-
-
+   public org.webmacro.servlet.WebContext 
+     getWebContext(javax.servlet.http.HttpServletRequest req, 
+                   javax.servlet.http.HttpServletResponse resp);
 }
 

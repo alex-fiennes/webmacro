@@ -55,7 +55,10 @@ public class VariableBuilder implements Builder
 
       Object type = bc.getVariableType(c[0].toString());
       if (type == Variable.PROPERTY_TYPE) {
-         v = new PropertyVariable(c); 
+         if (c.length == 1) 
+            v = new SimplePropertyVariable(c);
+         else
+            v = new PropertyVariable(c); 
       } else if (type == Variable.LOCAL_TYPE) {
          v = new GlobalVariable(c);
       } else {

@@ -55,7 +55,8 @@ public final class DirectiveDescriptor {
   public ArgDescriptor[]          args;
   public Subdirective[]           subdirectives;
 
-  public boolean                  valid=false;
+  public boolean                  valid=false, 
+                                  hasBreakingSubdirectives=false;
 
   public DirectiveDescriptor(String name, 
                              Class dirClass, 
@@ -73,6 +74,8 @@ public final class DirectiveDescriptor {
       for (int i=0; i<this.subdirectives.length; i++) {
         completeArgs(this.subdirectives[i].args);
         valid &= validateArgs(this.subdirectives[i].args);
+        if (this.subdirectives[i].isBreaking)
+          hasBreakingSubdirectives = true;
       }
     }
   }

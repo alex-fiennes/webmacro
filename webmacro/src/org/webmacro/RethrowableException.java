@@ -38,19 +38,23 @@ package org.webmacro;
  * debugging information.  The PrintStackTrace routine will print the
  * stack trace for both the original exception and the point at which
  * the exception was rethrown.  
+ *
+ * @author Brian Goetz (Quiotix Corp) 
+ * @since 0.96
  */
 public class RethrowableException extends Exception {
+  
   private Throwable caught;
 
   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
   public RethrowableException() {
     super();
-  };
+  }
 
   public RethrowableException(String s) {
     super(s);
-  };
+  }
 
   public RethrowableException(String s, Throwable e) {
     super(s + System.getProperty("line.separator") + e);
@@ -58,30 +62,37 @@ public class RethrowableException extends Exception {
     while (caught instanceof RethrowableException) {
       caught = ((RethrowableException) caught).caught;
     }
-  };
+  }
 
   public void printStackTrace() {
     super.printStackTrace();
     if (caught != null) {
       System.err.println(RETHROW_MESSAGE);
       caught.printStackTrace();
-    };
-  };
+    }
+  }
 
   public void printStackTrace(java.io.PrintStream ps) {
     super.printStackTrace(ps);
     if (caught != null) {
       ps.println(RETHROW_MESSAGE);
       caught.printStackTrace(ps);
-    };
-  };
+    }
+  }
 
   public void printStackTrace(java.io.PrintWriter pw) {
     super.printStackTrace(pw);
     if (caught != null) {
       pw.println(RETHROW_MESSAGE);
       caught.printStackTrace(pw);
-    };
-  };
-
-};
+    }
+  }
+    
+  /**
+   * allow access to underlying exception
+   */
+  public Throwable getCaught() {
+    return caught;
+  }
+    
+}

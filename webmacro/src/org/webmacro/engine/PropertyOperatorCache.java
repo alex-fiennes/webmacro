@@ -20,10 +20,160 @@
  * See www.webmacro.org for more information on the WebMacro project.  
  */
 
-package org.webmacro.util;
+
+package org.webmacro.engine;
+
 import java.util.*;
 import java.lang.reflect.*;
+
 import org.webmacro.*;
+import org.webmacro.util.*;
+import org.webmacro.resource.*;
+
+final public class PropertyOperatorCache { 
+
+   private CacheManager _cache; 
+   private Log _log;
+
+   public PropertyOperatorCache() { 
+   }
+   
+   final public void init(Broker b, Settings config) throws InitException
+   {
+      String cacheManager;
+
+      _log = b.getLog("resource", "Object loading and caching");
+
+      cacheManager = b.getSetting("PropertyOperator.CacheManager");
+      if (cacheManager == null || cacheManager.equals("")) {
+         _log.info("CachingProvider: No cache manager specified for PropertyOperator, using StaticSMapCacheManager");
+         _cache = new StaticSMapCacheManager();
+      }
+      else {
+         try {
+            _cache = (CacheManager) Class.forName(cacheManager).newInstance();
+         }
+         catch (Exception e) {
+            _log.warning("Unable to load cache manager " + cacheManager 
+                         + " for PropertyOperator, using StaticSMapCacheManager.  Reason:\n" + e);
+            _cache = new StaticSMapCacheManager();
+         }
+      }
+      _cache.init(b, config, "PropertyOperator");
+   }
+
+
+   final public PropertyOperator getOperator(final Class type)
+   throws PropertyException {
+      Object o = _cache.get(type);
+      if (o == null) {
+         PropertyOperator po = new PropertyOperator(type, this);
+         _cache.put(type, po);
+         return po;
+      }
+      else 
+        return (PropertyOperator) o;
+   }
+
+   /**
+     * Attempt to retrieve a property using the rules of property 
+     * introspection described above. Begin reading names at position 
+     * start in the array of names.
+     * @param context is used to resolve sub-properties in arguments
+     * @param instance is the root of introspection
+     * @param names property names, one per array entry 
+     * @return the property described by the names, inside the instance
+     * @exception PropertyException the property we'd like to look at
+     * @exception SecurityExeption you are not permitted to try
+     */
+   final public Object getProperty(final Context context, 
+                                   final Object instance, 
+                                   final Object[] names, 
+                                   int start) 
+   throws PropertyException, SecurityException {
+      if (instance == null) {
+         return null;
+      } else {
+         return getOperator(instance.getClass()).getProperty(
+            context,instance,names,start,names.length - 1);
+      }
+   }
+
+   /**
+     * Calls getProperty(context, instance, names, 0)
+     */
+   final public Object getProperty(final Context context, 
+                                   final Object instance, 
+                                   final Object[] names) 
+   throws PropertyException, SecurityException {
+      return getProperty(context, instance, names, 0);
+   }
+
+
+   /**
+     * Given a property description name, attempt to set the property
+     * value to the supplied object.
+     * @param context An object containing a property
+     * @param names The string names of that property 
+     * @param value the new value the property is to be set to
+     * @exception PropertyException not possible to set the property
+     * @exception SecurityException you are not permitted to try
+     */
+   final public boolean setProperty(final Context context, 
+                                    Object instance, 
+                                    final Object[] names, 
+                                    int start, 
+                                    final Object value) 
+   throws PropertyException, SecurityException {
+      try {
+         if (instance == null) {
+            return false;
+         }
+         return getOperator(instance.getClass())
+            .setProperty(context,instance,names,value,start);
+      }
+      catch (PropertyException e) {
+         throw e;
+      }
+      catch (NoSuchMethodException e) {
+         throw new PropertyException("No method to access property: " + e, e);
+      }
+   }
+   
+   /**
+     * Calls setProperty(context, names, 0, value)
+     */
+   final public boolean setProperty(final Context context, 
+                                    final Object instance, 
+                                    final Object[] names, 
+                                    final Object value) 
+   throws PropertyException, SecurityException { 
+      return setProperty(context,instance,names,0,value);
+   }
+ 
+   /**
+     * Evaluate the supplied object and work out a way to return it 
+     * as an iterator.
+     * @param context an object believed to represent a list
+     * @return an Iterator that iterates through that list
+     * @exception PropertyException could not extract iterator from instance
+     */
+   final public Iterator getIterator(Object instance)
+   throws PropertyException {
+     if (instance instanceof Object[]) 
+       return new ArrayIterator((Object[]) instance);
+     else if (instance.getClass().isArray()) 
+       return new PrimitiveArrayIterator(instance);
+     else if (instance instanceof Iterator) 
+       return (Iterator) instance;
+     else if (instance instanceof Enumeration) 
+       return new EnumIterator((Enumeration) instance);
+     else 
+       return getOperator(instance.getClass()).findIterator(instance);
+   }
+
+}
+
 
 
 /**
@@ -57,134 +207,9 @@ import org.webmacro.*;
   *     Order.getCustomer("Fred").getName().Last
   * </pre>
   */
-final public class PropertyOperator
+
+final class PropertyOperator
 {
-
-   // static public interface
-
-   /**
-     * Attempt to retrieve a property using the rules of property 
-     * introspection described above. Begin reading names at position 
-     * start in the array of names.
-     * @param context is used to resolve sub-properties in arguments
-     * @param instance is the root of introspection
-     * @param names property names, one per array entry 
-     * @return the property described by the names, inside the instance
-     * @exception PropertyException the property we'd like to look at
-     * @exception SecurityExeption you are not permitted to try
-     */
-   static final public Object getProperty(
-         final Context context, final Object instance, 
-         final Object[] names, int start) 
-      throws PropertyException, SecurityException
-   {
-      if (instance == null) {
-         return null;
-      } else {
-         return getOperator(instance.getClass()).getProperty(
-            context,instance,names,start,names.length - 1);
-      }
-   }
-
-   /**
-     * Calls getProperty(context, instance, names, 0)
-     */
-   static final public Object getProperty(
-         final Context context, final Object instance, final Object[] names) 
-      throws PropertyException, SecurityException
-   {
-      return getProperty(context, instance, names, 0);
-   }
-
-
-   /**
-     * Given a property description name, attempt to set the property
-     * value to the supplied object.
-     * @param context An object containing a property
-     * @param names The string names of that property 
-     * @param value the new value the property is to be set to
-     * @exception PropertyException not possible to set the property
-     * @exception SecurityException you are not permitted to try
-     */
-   static final public boolean setProperty(
-         final Context context, Object instance, 
-         final Object[] names, int start, final Object value) 
-      throws PropertyException, SecurityException
-   {
-      try {
-         if (instance == null) {
-            return false;
-         }
-         return getOperator(instance.getClass()).setProperty(context,instance,names,value,start);
-      } catch (NoSuchMethodException e) {
-         throw new PropertyException("No method to access property: " + e, e);
-      }
-   }
-
-   /**
-     * Calls setProperty(context, names, 0, value)
-     */
-   static final public boolean setProperty(
-         final Context context, final Object instance, 
-         final Object[] names, final Object value) 
-      throws PropertyException, SecurityException
-   { 
-      return setProperty(context,instance,names,0,value);
-   }
- 
-   /**
-     * Evaluate the supplied object and work out a way to return it 
-     * as an iterator.
-     * @param context an object believed to represent a list
-     * @return an Iterator that iterates through that list
-     * @exception PropertyException could not extract iterator from instance
-     */
-   static final public Iterator getIterator(Object instance)
-      throws PropertyException
-   {
-     if (instance instanceof Object[]) 
-       return new ArrayIterator((Object[])instance);
-     else if (instance.getClass().isArray()) 
-       return new PrimitiveArrayIterator(instance);
-     else if (instance instanceof Iterator) 
-       return (Iterator) instance;
-     else if (instance instanceof Enumeration) 
-       return new EnumIterator((Enumeration)instance);
-     else 
-       return getOperator(instance.getClass()).findIterator(instance);
-   }
-
-   // operator cache
-
-   /**
-     * Private cache of all the property operators constructed so far
-     */
-   static private ScalableMap _operators = new ScalableMap(10001);
-
-   /**
-     * Find the PropertyOperator that knows about this type of object
-     */
-   static private PropertyOperator getOperator(final Class type)
-      throws PropertyException
-   {
-      PropertyOperator o = (PropertyOperator) _operators.get(type);
-      if (o == null) {
-         synchronized (_operators) {
-            // if ((_operators.size() * 2) > _operators.capacity()) {
-            // _operators = _operators.copy(_operators.capacity() * 2 + 1);
-            // }
-
-            try {
-               o = new PropertyOperator(type);
-            } catch (Exception e) {
-               e.printStackTrace();
-            }
-            _operators.put(type,o); 
-         }
-      }
-      return o;
-   }
-
    /**
      * My accessors for fields, and binary methods
      */
@@ -209,6 +234,16 @@ final public class PropertyOperator
      * The iterator method we found
      */
    private Method iteratorMethod = null;
+
+   /**
+    * An accessor for array lengths
+    */
+   private static LengthAccessor _lengthAccessor = new LengthAccessor();
+
+   /** 
+    * The property operator cache 
+    */
+   final private PropertyOperatorCache _cache;
 
    /**
      * Get the public methods for the named class. The vector meths 
@@ -340,11 +375,14 @@ final public class PropertyOperator
    /**
      * Construct a property operator for the target class
      */
-   private PropertyOperator(final Class target)
+   public PropertyOperator(final Class target, PropertyOperatorCache cache)
       throws SecurityException, PropertyException
    {
 
       Accessor acc;
+
+      // Save the cache
+      _cache = cache;
 
       // introspect fields first
 
@@ -355,6 +393,8 @@ final public class PropertyOperator
             _unaryAccessors.put(acc.getName(),acc);
          } 
       }
+      if (target.isArray()) 
+        _unaryAccessors.put("length", _lengthAccessor);
 
       // introspect methods second
 
@@ -466,9 +506,10 @@ final public class PropertyOperator
      * @return the property requested
      *
      */
-   private Object getProperty(
-         final Context context, final Object instance, final Object[] names, 
-            int start, int end) 
+    public Object getProperty(final Context context, 
+                              final Object instance, 
+                              final Object[] names, 
+                              int start, int end) 
       throws PropertyException
    {
       String prop;
@@ -483,13 +524,19 @@ final public class PropertyOperator
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
          if (acc == null) {
-            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
+            throw new PropertyException.NoSuchMethodException(
+                        pm.toString(), 
+                        fillInName(names, start), 
+                        instance.getClass().getName());
          }
          try {
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
+            throw new PropertyException.NoSuchMethodException(
+                        pm.toString(), 
+                        fillInName(names, start), 
+                        instance.getClass().getName());
          }
 
       } else {
@@ -543,15 +590,19 @@ final public class PropertyOperator
       } 
       
       if (acc == null) {
-         throw new PropertyException("No public method on object " + 
-               instance + " of " + instance.getClass() + 
-               " for property " + names[start] + "--is this the right class?");
+         // user tried to access a property of a property that doesn't exist
+         // ex:  $TestObject.FirstName.NotThere
+         throw new PropertyException.NoSuchPropertyException(
+                     prop, fillInName(names, start), 
+                     instance.getClass().getName());
       }
 
       if (start <= end) {
          try {
-           return getOperator(nextProp.getClass()).getProperty(context,nextProp,names,start,end);
+           return _cache.getOperator(nextProp.getClass())
+             .getProperty(context,nextProp,names,start,end);
          } catch (NullPointerException e) {
+             // will we ever get here? --eric
             throw new PropertyException("No way to access property " + 
                   names[start] + " on object " + instance + " of " 
                   + instance.getClass() + "--possibly null?");
@@ -559,6 +610,24 @@ final public class PropertyOperator
       } else {
          return nextProp;
       }
+   }
+   
+   /**
+    * given an object[] of names, append them together up to index
+    * <code>end</code> in the form of
+    * <code>Name1.Name2.Name3.NameN</code> 
+    */
+   private static final String fillInName (Object[] names, int end)
+   {
+        StringBuffer sb = new StringBuffer ();
+        for (int x=0; x<end; x++)
+        {
+            if (x > 0)
+                sb.append (".");
+            sb.append (names[x]);
+        }
+        
+        return sb.toString ();
    }
 
    /**
@@ -574,8 +643,11 @@ final public class PropertyOperator
      * @param pos   we could set names[pos] from here
      * @return true if we succeeded in setting, false otherwise
      */
-   private boolean setProperty(
-         Context context, Object instance, Object[] names, Object value, int pos) 
+   public boolean setProperty(Context context, 
+                              Object instance, 
+                              Object[] names, 
+                              Object value, 
+                              int pos) 
       throws PropertyException, NoSuchMethodException
    {
       // names[pos] is what we could set from here
@@ -585,8 +657,9 @@ final public class PropertyOperator
 
       // if we're not yet at the binary-settable parent, go there
       if (pos < binPos) {
-         Object grandparent = getProperty(context,instance,names,pos,binPos - 1);
-         PropertyOperator po = getOperator(grandparent.getClass());
+         Object grandparent = getProperty(context, instance, names, 
+                                          pos, binPos - 1);
+         PropertyOperator po = _cache.getOperator(grandparent.getClass());
          return po.setProperty(context,grandparent,names,value,binPos);
       } 
 
@@ -598,7 +671,7 @@ final public class PropertyOperator
          try {
             parent = getProperty(context,instance,names,pos,pos);
             if (parent != null) {
-               PropertyOperator po = getOperator(parent.getClass());
+               PropertyOperator po = _cache.getOperator(parent.getClass());
                if (po.setProperty(context,parent,names,value,pos+1)) {
                   return true;
                }
@@ -646,7 +719,7 @@ final public class PropertyOperator
      * @exception PropertyException current object is not any sort of list
      * @return an iterator representing the current object's list
      */
-   private Iterator findIterator(Object instance)
+   public Iterator findIterator(Object instance)
       throws PropertyException
    {
       if (iteratorMethod != null) {
@@ -678,7 +751,17 @@ final public class PropertyOperator
       throws PropertyException, NoSuchMethodException
    {
       try {
-         return meth.invoke(instance,args);
+         Object obj = meth.invoke (instance, args);
+         
+         // if the method's return type is void return the VoidMacro
+         // instance, instead of the 'null' we used to return here
+         // otherwise, just return whatever the method returned
+         if (obj == null 
+             && meth.getReturnType() == java.lang.Void.TYPE)
+            return org.webmacro.engine.VoidMacro.instance;
+         else
+            return obj;
+         
       } catch (IllegalAccessException e) {
          throw new PropertyException(
             "You don't have permission to access the requested method (" +
@@ -822,6 +905,35 @@ final class FieldAccessor extends Accessor
 
 
 /**
+  * An accessor that knows how to get/set from a field
+  */
+final class LengthAccessor extends Accessor
+{
+   LengthAccessor() {
+      super("length");
+   }
+
+   final Object get(final Object instance)
+      throws PropertyException
+   {
+      Object[] array = (Object[]) instance;
+      try {
+         return new Integer(java.lang.reflect.Array.getLength(array));
+      } catch (Exception e) {
+         throw new PropertyException("Unable to fetch length of object " 
+                                     + instance + " of " + instance.getClass(),
+                                     e);
+      }
+   }
+
+   final boolean set(final Object instance, final Object value)
+      throws PropertyException {
+      throw new PropertyException("Cannot set length of array");
+   }
+}
+
+
+/**
   * accessor for direct method calls, rather than property-style
   */
 final class DirectAccessor extends Accessor
@@ -843,38 +955,35 @@ final class DirectAccessor extends Accessor
 
    final boolean matches(Class[] sig, Class[] args)
    {
-      if (args.length != sig.length) {
+      if (args.length != sig.length) 
          return false;
-      }
 
-      for (int i = 0; i < sig.length; i++) {
-         try {
-            if (! sig[i].isAssignableFrom(args[i]))
-            {
-               if (sig[i].isPrimitive())
-               {
-                  Class s = sig[i];
-                  Class a = args[i];
-                  if (
-                      (s.equals(Integer.TYPE) && a.equals(Integer.class)) ||
-                      (s.equals(Boolean.TYPE) && a.equals(Boolean.class)) || 
-                      (s.equals(Character.TYPE) && a.equals(Character.class)) ||  
-                      (s.equals(Long.TYPE) && a.equals(Long.class)) ||  
-                      (s.equals(Short.TYPE) && a.equals(Short.class)) ||  
-                      (s.equals(Double.TYPE) && a.equals(Double.class)) ||  
-                      (s.equals(Float.TYPE) && a.equals(Float.class)) ||  
-                      (s.equals(Void.TYPE) && a.equals(Void.class)) ||  
-                      (s.equals(Byte.TYPE) && a.equals(Byte.class)) 
-                      )
-                  {
-                      continue;
-                  }
-               }
-               return false;
+      try {
+         for (int i = 0; i < sig.length; i++) {
+            Class s = sig[i];
+            Class a = args[i];
+            if (s.isPrimitive()) {
+               if ((s == Integer.TYPE && a == Integer.class) ||
+                   (s == Boolean.TYPE && a == Boolean.class) || 
+                   (s == Character.TYPE && a == Character.class) ||  
+                   (s == Long.TYPE && a == Long.class) ||  
+                   (s == Short.TYPE && a == Short.class) ||  
+                   (s == Double.TYPE && a == Double.class) ||  
+                   (s == Float.TYPE && a == Float.class) ||  
+                   (s == Void.TYPE && a == Void.class) ||  
+                   (s == Byte.TYPE && a == Byte.class)) 
+                  continue;
+               else
+                  return false;
             }
-         } catch (NullPointerException e) {
-            return false; // XXX: block nulls, isAssign... throws this
+            else if (a == null || s.isAssignableFrom(a)) 
+               continue;
+            else 
+               return false;
          }
+      }
+      catch (NullPointerException e) {
+         return false; // XXX: block nulls, isAssign... throws this
       }
       return true;
    }
@@ -922,10 +1031,11 @@ final class DirectAccessor extends Accessor
 
 abstract class MethodAccessor extends Accessor
 {
-   Method _getMethod;           // only one get method allowed
-   Method[] _setMethods = null; // may be multiple set methods
-   Class[]  _setParams = null;  // variable arg type for set meth N
-   int setCount = 0;            // how many set methods do we have
+   protected Method _getMethod;           // only one get method allowed
+   private Method[] _setMethods = null; // may be multiple set methods
+   private Class[]  _setParams = null;  // variable arg type for set meth N
+   private Class[]  _setPrimitiveType = null;
+   private int setCount = 0;            // how many set methods do we have
 
    abstract int numArgsGet();
    abstract int numArgsSet();
@@ -935,6 +1045,29 @@ abstract class MethodAccessor extends Accessor
    {
       super(name);
       addMethod(m,params);
+   }
+
+   private Class getWrapperClass(Class s) {
+      if (s == Integer.TYPE)
+         return Integer.class;
+      else if (s == Boolean.TYPE)
+         return Boolean.class;
+      else if (s == Character.TYPE)
+         return Character.class;
+      else if (s == Long.TYPE)
+         return Long.class;
+      else if (s == Short.TYPE)
+         return Short.class;
+      else if (s == Double.TYPE)
+         return Double.class;
+      else if (s == Float.TYPE)
+         return Float.class;
+      else if (s == Void.TYPE)
+         return Void.class;
+      else if (s == Byte.TYPE)
+         return Byte.class;
+      else 
+         return null;
    }
 
    final void addMethod(final Method m, Class[] params) 
@@ -951,18 +1084,25 @@ abstract class MethodAccessor extends Accessor
          if (_setMethods == null) {
             _setMethods = new Method[1];
             _setParams = new Class[1];
+            _setPrimitiveType = new Class[1];
          } else if (_setMethods.length <= setCount) {
-            Method[] tmpMethods = new Method[ (setCount + 1) * 2 ];
-            Class[] tmpParams  = new Class[(setCount + 1) * 2 ];
+            Method[] tmpMethods  = new Method[ (setCount + 1) * 2 ];
+            Class[] tmpParams    = new Class[(setCount + 1) * 2 ];
+            Class[] tmpPrimitive = new Class[(setCount + 1) * 2 ];
             System.arraycopy(_setMethods,0,tmpMethods,0,_setMethods.length);
             System.arraycopy(_setParams,0,tmpParams,0,_setParams.length);
+            System.arraycopy(_setPrimitiveType,0,tmpPrimitive,0,_setParams.length);
             _setMethods = tmpMethods;
             _setParams = tmpParams;
+            _setPrimitiveType = tmpPrimitive;
          }
 
          // record the method, and the type of the variable parameter
          _setMethods[setCount - 1] = m;
          _setParams[setCount - 1] = params[setArgsLength - 1];
+         if (_setParams[setCount-1].isPrimitive())
+            _setPrimitiveType[setCount-1] 
+               = getWrapperClass(_setParams[setCount-1]);
 
       } else {
          throw new PropertyException("PropertyOperator FAILED for method " 
@@ -977,7 +1117,18 @@ abstract class MethodAccessor extends Accessor
       for (int i = 0; i < setCount; i++) {
          Object arg = args[args.length - 1];
          // XXX: null values are blocked by the next line
-         if (_setParams[i].isInstance(args[args.length - 1])) {
+         if (_setParams[i].isPrimitive()) {
+            if (arg.getClass() == _setPrimitiveType[i]) {
+               try {
+                  PropertyOperator.invoke(_setMethods[i],inst,args);
+                  return true;
+               } catch (Exception e){
+                  // ignore exception
+               }
+            }
+         }
+         else if (arg == null 
+                  || _setParams[i].isInstance(args[args.length - 1])) {
             PropertyOperator.invoke(_setMethods[i],inst,args);
             return true;
          }
@@ -1054,5 +1205,3 @@ final class BinaryMethodAccessor extends MethodAccessor
       return setImpl(instance,args);
    }
 }
-
-

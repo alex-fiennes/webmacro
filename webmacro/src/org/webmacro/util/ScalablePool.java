@@ -47,7 +47,7 @@ final public class ScalablePool implements Pool
    public ScalablePool() {
       for (int i = 0; i <= FAST_HASH; i++) {
          _stack[i] = new Object[10];
-	 _lock[i] = new Object();
+         _lock[i] = new Object();
          _count[i] = 0;
       }
    }
@@ -83,19 +83,19 @@ final public class ScalablePool implements Pool
       Object ret = null;
   
       for (int i = 0; i < FAST_HASH; i++) {
-	      int hash = _hash2++ & FAST_HASH; 
-	      synchronized(_lock[hash]) {
-		 int count = _count[hash];
-		 Object[] stack = _stack[hash];
-		 if (count == 0) {
-                     continue;
-                 }
-		 count--;
-		 ret = stack[count];
-		 stack[count] = null;
-		 _count[hash] = count; 
-	      }
-	      return ret;
+         int hash = _hash2++ & FAST_HASH; 
+         synchronized(_lock[hash]) {
+            int count = _count[hash];
+            Object[] stack = _stack[hash];
+            if (count == 0) {
+               continue;
+            }
+            count--;
+            ret = stack[count];
+            stack[count] = null;
+            _count[hash] = count; 
+         }
+         return ret;
       }
       return null;
    }

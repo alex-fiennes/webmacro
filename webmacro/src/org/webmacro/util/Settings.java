@@ -29,15 +29,20 @@ import java.net.*;
 
 public class Settings {
 
-   Properties _props;
-   String _prefix;
+   abstract public static class ListSettingHandler {
+      abstract public void processSetting(String settingKey, 
+                                          String settingValue);
+   } 
+
+   protected static final String[] stringArray = new String[0];
+
+   private Properties _props;
 
    /**
      * Create an empty Settings object
      */
    public Settings() {
       _props = new Properties();
-      _prefix = null;
    }
 
    /**
@@ -67,9 +72,9 @@ public class Settings {
      * Instantiate a new Settings object using the properties 
      * supplied as the settings values.
      */
-   public Settings(Properties values) {
-      _props = values;
-      _prefix = null;
+   protected Settings(Properties values) {
+      this();
+      load(values);
    }
 
    /**
@@ -77,26 +82,9 @@ public class Settings {
      * Settings as the defaults
      */
    public Settings(Settings defaults) {
-      Properties p = new Properties();
-      String keys[] = defaults.keys();
-      for (int i = 0; i < keys.length; i++) {
-         p.setProperty(keys[i], defaults.getSetting(keys[i]));
-      }
-      _props = new Properties(p);
-      _prefix = null;
+      this();
+      load(defaults);
    }
-
-   /**
-     * Instantiate a new Settings object using the properties 
-     * supplied as the settings values. Only properties begining
-     * with the supplied prefix are considered, and they are 
-     * treated as though the prefix were not there.
-     */
-   private Settings(Properties p, String prefix) {
-      _props = p;
-      _prefix = prefix;
-   }
-
 
    /**
      * Load settings from the supplied fileName, searching for 
@@ -116,25 +104,10 @@ public class Settings {
 
       if (u == null) {
          StringBuffer error = new StringBuffer();
-         error.append("Unable to locate the configuration file: ");
+         error.append("Unable to load the properties file: ");
          error.append(fileName);
-         error.append("\n");
-         error.append("This may mean the system could not be started. The \n");
-         error.append("following list should be where I looked for it:\n");
-         error.append("\n");
-         error.append("   my classpath:\n");
-         try {
-            buildPath(error, fileName, cl.getResources("."));
-         } catch (Exception e) { }
-         error.append("\n");
-         error.append("   system classpath:\n");
-         try {
-            buildPath(error, fileName, ClassLoader.getSystemResources("."));
-         } catch (Exception e) { }
-         error.append("\n\n");
-         error.append("Please create an appropriate " + fileName + " at one of the above\n");
-         error.append("locations. Alternately this Settings class can be configured from\n");
-         error.append("a Properties object, if you want to modify the init code.\n");
+         error.append(" via the class path\n");
+         error.append("This indicates a configuration error.");
          throw new InitException(error.toString());
       }
       load(u);       
@@ -149,36 +122,70 @@ public class Settings {
       in.close();
    }
 
-   private static
-   void buildPath(StringBuffer b, String fileName, Enumeration e)
-   {  
-      while (e.hasMoreElements()) {
-         b.append("\t");
-         b.append(e.nextElement().toString());
-         b.append(fileName);
-         b.append("\n");
+   /**
+     * Load settings from the supplied input stream
+     */
+   public void load(InputStream in) throws IOException {
+      _props.load(in);
+   }
+
+   /**
+    * Load settings from a Settings
+    */
+   public void load(Settings defaults) {
+      String keys[] = defaults.getKeys();
+      for (int i = 0; i < keys.length; i++) {
+         _props.setProperty(keys[i], defaults.getSetting(keys[i]));
       }
    }
 
    /**
-     * Prefix the key for use with the underlying Properties
-     */
-   private String prefix(String key) {
-      return (_prefix == null) ? key : (_prefix + "." + key);
+    * Load settings from a Properties, only extracting properties
+    * which have the specified prefix
+    */
+   public void load(Properties props, String prefix) {
+      Enumeration e = props.propertyNames();
+      String dotPrefix = (prefix == null) ? "" : prefix + ".";
+      while (e.hasMoreElements()) {
+         String key = (String) e.nextElement();
+         if (prefix == null)
+            _props.setProperty(key, props.getProperty(key));
+         else if (key.startsWith(dotPrefix)) 
+            _props.setProperty(key.substring(dotPrefix.length()), 
+                               props.getProperty(key));
+      }
+   }
+
+   /**
+    * Load settings from a Properties
+    */
+   public void load(Properties props) {
+      load (props, null);
    }
 
    /**
      * Find out if a setting is defined
      */
    public boolean containsKey(String key) {
-      return _props.containsKey(prefix(key));
+      return _props.containsKey(key);
    }
 
    /**
-     * Get a setting
+     * Get a setting.  We trim leading and trailing spaces (since the 
+     * property file loader doesn't) and, if the result is a quoted string,
+     * remove the quotes. 
      */
    public String getSetting(String key) {
-      return _props.getProperty(prefix(key));
+     String prop = _props.getProperty(key);
+     if (prop != null)
+       prop = prop.trim();
+     if (prop != null 
+         && prop.length() > 2 
+         && prop.charAt(0) == '"' 
+         && prop.charAt(prop.length()-1) == '"')
+       prop = prop.substring(1, prop.length()-1);
+
+     return prop;
    }
 
    /**
@@ -193,12 +200,7 @@ public class Settings {
      * Get a setting and convert it to an int 
      */
    public int getIntegerSetting(String key) {
-      String snum = getSetting(key);
-      try {
-         return Integer.parseInt(snum);
-      } catch (Exception e) {
-         return 0;
-      }
+      return getIntegerSetting(key, 0);
    }
 
    /**
@@ -206,7 +208,12 @@ public class Settings {
      */
    public int getIntegerSetting(String key, int defaultValue) {
       if (containsKey(key)) {
-         return getIntegerSetting(key);
+         try {
+            return Integer.parseInt(getSetting(key));
+         }
+         catch (Exception e) {
+            return defaultValue;
+         }
       } else {
          return defaultValue;
       }
@@ -238,42 +245,55 @@ public class Settings {
    }
 
    /**
-     * Get a subset of the settings in this file. The 
-     * returned Settings object will be just those settings 
-     * beginning with the supplied prefix, with the 
-     * prefix chopped off. So if this settings file had 
-     * a setting "LogLevel.foo" then the settings file
-     * returned by getSubSettings("LogLevel") would contain
-     * the key "foo".
+     * Get the keys for this settings object as an array
      */
-   public Settings getSubSettings(String prefix) {
-      if (_prefix == null) {
-         return new Settings(_props, prefix);
-      } else {
-         String subPrefix = _prefix + "." + prefix;
-         return new Settings(_props, subPrefix);
-      }
+   public String[] getKeys() {
+      return (String[]) _props.keySet().toArray(stringArray);
    }
 
    /**
-     * Get the keys for this settings object as an array
+     * Get the values from this settings object as a properties
      */
-   public String[] keys() {
-      ArrayList al = new ArrayList();
-      Enumeration i = _props.keys();
-      String dotPrefix = _prefix + ".";
-      while (i.hasMoreElements()) {
-         String key = (String) i.nextElement();
-         if (_prefix == null) {
-            al.add(key);
-         } else {
-            if (key.startsWith(dotPrefix)) {
-               al.add(key.substring(dotPrefix.length()));
-            }
-         }
-      }
-      return (String[]) al.toArray(new String[0]);
+   public Properties getAsProperties() {
+      String[] keys = getKeys();
+      Properties p = new Properties();
+
+      for (int i=0; i<keys.length; i++) 
+         p.setProperty(keys[i], getSetting(keys[i]));
+
+      return p;
    }
+
+   /** 
+    * Iterate through a list of settings.  If the settingName is
+    * "foo", then the SettingHandler will be called once for each
+    * element of the space-separated list setting "foo", plus once
+    * for each setting of the form "foo.x".  In the case of "foo.x", 
+    * settingName will be passed as "x"; when processing the list setting,
+    * settingName will be passed as "".
+    * This is designed to support settings of the form
+    *   Directives.a: ADirective
+    *   Directives.b: BDirective
+    *   Directives:   CDirective DDirective
+    */
+   public void processListSetting(String settingName, ListSettingHandler h) {
+      // First, the list setting, if any
+      String listNames = getSetting(settingName);
+      if (listNames != null) {
+         Enumeration denum = new StringTokenizer(listNames);
+         while (denum.hasMoreElements()) 
+            h.processSetting("", ((String) denum.nextElement()));
+      }
+
+      Settings s = new SubSettings(this, settingName);
+      String[] keys = s.getKeys();
+      for (int i=0; i<keys.length; i++) {
+        String value = s.getSetting(keys[i]).trim();
+        if (value.equals(""))
+          continue;
+        h.processSetting(keys[i], value);
+      }
+   }      
 
 
    /**
@@ -285,10 +305,16 @@ public class Settings {
       Settings s = new Settings();
       s.load("Test.properties");
 
-      Settings sb = s.getSubSettings("b");
-      String[] keys = sb.keys();
+      Settings sb = new SubSettings(s, "b");
+      String[] keys = sb.getKeys();
       for (int i = 0; i < keys.length; i++) {
-         System.out.println("prop " + keys[i] + " = " + sb.getSetting(keys[i]));
+         System.out.println("sub-prop " + keys[i] + " = " + sb.getSetting(keys[i]));
+      }
+
+      Settings ssb = new SubSettings(sb, "b");
+      keys = ssb.getKeys();
+      for (int i = 0; i < keys.length; i++) {
+         System.out.println("sub-sub-prop " + keys[i] + " = " + ssb.getSetting(keys[i]));
       }
 
       System.out.println("LogTraceExceptions is: " + s.getBooleanSetting("LogTraceExceptions"));

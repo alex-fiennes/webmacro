@@ -1,0 +1,15 @@
+You should see the following:
+	template 1
+	template 2
+	template 3
+template 1template 2template 3
+
+
+
+
+You should see: 
+  template 1
+  #parse "template2.wmt"
+template 1
+#parse "template2.wmt"
+

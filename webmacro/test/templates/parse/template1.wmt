@@ -1,0 +1,2 @@
+template 1
+#parse "template2.wmt"

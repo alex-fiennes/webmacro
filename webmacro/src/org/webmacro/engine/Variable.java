@@ -145,22 +145,34 @@ public abstract class Variable implements Macro, Visitable
      * recursively call its evaluate method.
      * @return String 
      */
-   final public Object evaluate(Context context)
-   {
+   final public Object evaluate(Context context) throws PropertyException {
       try {
          Object val = getValue(context);
          if (val instanceof Macro) {
             val = ((Macro) val).evaluate(context); // recurse
          } 
          return val;
-      } catch (NullPointerException e) {
-         context.getLog("engine", "parsing and template execution").warning("Variable: " + _vname + " does not exist",e);
-         return "<!--\n unable to access variable " 
-            + _vname + ": not found in " + context + "\n -->";
-      } catch (Exception e) {
-         context.getLog("engine").warning("Variable: " + _vname + " does not exist",e);
-         return "<!--\n unable to access variable " 
-            + _vname + ": " + e + " \n-->";
+      } 
+      catch (NullPointerException e) {
+         // May throw
+         context.getEvaluationExceptionHandler()
+           .evaluate(this, context, 
+                     new PropertyException.NullValueException(_vname));
+         return null;
+      } 
+      catch (PropertyException e) {
+         // May throw
+         context.getEvaluationExceptionHandler()
+           .evaluate(this, context, e);
+         return null;
+      }
+      catch (Exception e) {
+         // May throw
+         context.getEvaluationExceptionHandler()
+           .evaluate(this, context, 
+                     new PropertyException("Variable: exception evaluating " 
+                                           + _vname, e));
+         return null;
       }
    }
 
@@ -171,27 +183,49 @@ public abstract class Variable implements Macro, Visitable
      * @exception IOException if could not write to output stream
      */
    final public void write(FastWriter out, Context context) 
-       throws PropertyException, IOException
-   {
+   throws PropertyException, IOException {
       try {
          Object val = getValue(context);
          if (val instanceof Macro) {
-            ((Macro) val).write(out,context);
-         } else {
+            ((Macro) val).write(out, context);
+         } 
+         else {
             if (val != null) {
-               out.write(val.toString());
-            } else {
-               String warning = "Attempt to write out null variable: "
-                                 + _vname;
-               context.getLog("engine").warning(warning);
-               out.write("<!--\n warning: " + warning + " \n-->");
+               String v = val.toString();
+               if (v != null) 
+                  out.write(v);
+               else {
+                  out.write(context.getEvaluationExceptionHandler()
+                            .expand(this, context, 
+                                   new PropertyException.NullToStringException(_vname)));
+               }
+            } 
+            else {
+               if (isSimpleName()) {
+                  // user accessed a variable that isn't in the context
+                  //     $ObjectNotInContext
+                  out.write(context.getEvaluationExceptionHandler()
+                            .expand(this, context, 
+                                    new PropertyException.NoSuchVariableException(_vname)));
+               } 
+               else {
+                  // user accessed a valid property who's value is null
+                  out.write(context.getEvaluationExceptionHandler()
+                            .expand(this, context, 
+                                    new PropertyException.NullValueException(_vname)));
+               }
             }
          }
-      } catch (Exception e) {
-         context.getLog("engine").warning("Variable: " + _vname + 
-               " failed to evaluate:" + e, e);
-         out.write("<!-- error: variable " + _vname + 
-               " failed to evaluate: " + e + " -->");
+      } 
+      catch (PropertyException e) {
+         out.write(context.getEvaluationExceptionHandler()
+                   .expand(this, context, e));
+      }
+      catch (Exception e) {
+          // something we weren't expecting happened!
+          // I wonder if we would ever get here?  --eric
+         out.write(context.getEvaluationExceptionHandler()
+                   .expand(this, context, e));
       }
    }
 
@@ -226,6 +260,13 @@ public abstract class Variable implements Macro, Visitable
      * representing its type. For example local:a.b.c
      */
    public abstract String toString();
+
+   /** 
+    * Return the canonical name for this variable
+    */
+   public String getVariableName() {
+      return _vname;
+   }
 
    public void accept(TemplateVisitor v) { v.visitVariable(this, _names); } 
 

@@ -200,14 +200,14 @@ public class LogSource implements Log {
    }
 
    /**
-     * A shortform for debug(msg,null)
+     * A shortform for warning(msg,null)
      */
    public void warning(String msg) {
       log(LogSystem.WARNING,msg,null);
    }
 
    /**
-     * A shortform for debug(msg,null)
+     * A shortform for error(msg,null)
      */
    public void error(String msg) {
       log(LogSystem.ERROR,msg,null);
@@ -223,6 +223,22 @@ public class LogSource implements Log {
       log(LogSystem.ERROR,msg,e);
    }
 
+
+   public boolean loggingDebug() { 
+      return (_targets[LogSystem.DEBUG] != null);
+   }
+
+   public boolean loggingInfo() { 
+      return (_targets[LogSystem.INFO] != null);
+   }
+
+   public boolean loggingNotice() { 
+      return (_targets[LogSystem.NOTICE] != null);
+   }
+
+   public boolean loggingWarning() { 
+      return (_targets[LogSystem.WARNING] != null);
+   }
 
    protected void log(int level, String msg, Exception e) {
       LogTarget[] targets = _targets[level];

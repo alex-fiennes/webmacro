@@ -1,0 +1,31 @@
+we should see "truetruetrue" (on the next line): 
+#if(true){true}#if(true){true}#if(true){true}
+
+we should see "truefalse" (on the next line): 
+#if(false){false}#else{true}#if(true){false}#else{true} 
+
+we should see "true" (on the next line):
+#if(true) {
+true
+}
+
+^---should only be 1 line of whitespace above
+we should see "true" (on the next line):
+#if(true)
+{
+true
+}
+
+^---should only be 1 line of whitespace above
+we should see 12345 (on the next line):
+#foreach $number in $Numbers {$number}
+
+we should see 1 2 3 4 5 each on their own line, w/ no whitespace between:
+#foreach $number in $Numbers {
+$number
+} this should be on the same line as the number 5
+
+^---should only be 1 line between here and the number 5 above
+we should see 1 2 3 4 5 each on their own line, w/ no whitespace between:
+#foreach $number in $Numbers {
+$number} this should be on the same line as the number 5

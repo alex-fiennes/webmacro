@@ -142,11 +142,6 @@ final public class URLTemplateProvider extends CachingProvider
 
 
     /**
-     * How long to keep templates cached for (in milliseconds)
-     */
-    private int _cacheDuration;
-
-    /**
      * The value of TemplatePath in WebMacro inititialization file.
      * This is a semicolon separated string with individual values like
      * <ol>
@@ -195,12 +190,6 @@ final public class URLTemplateProvider extends CachingProvider
         _log = b.getLog("resource", "general object loading");
 
         try {
-            try {
-                String cacheStr = config.getSetting("TemplateExpireTime");
-                _cacheDuration = Integer.valueOf(cacheStr).intValue();
-            } catch (Exception ee) {
-                // use default
-            }
             _templatePath = config.getSetting("TemplatePath");
             StringTokenizer st =
             new StringTokenizer(_templatePath, _pathSeparator);
@@ -223,12 +212,13 @@ final public class URLTemplateProvider extends CachingProvider
     * contain it if we found it.
     * @param name The name of the  template to load
     * @throws NotFoundException if no matching template can be found
-    * @return A TimedReference
+    * @throws ResourceException if template cannot be loaded
+    * @return the requested resource
     */
 
-    final public TimedReference load(String name) throws NotFoundException
-    {
-        return load(name,_baseURL);
+    final public Object load(String name, CacheElement ce) 
+    throws ResourceException {
+        return load(name, _baseURL);
     }
 
     /**
@@ -240,10 +230,10 @@ final public class URLTemplateProvider extends CachingProvider
      * @return a template matching that name, or null if one cannot be found
      */
 
-    final public TimedReference load(String name, URL base)
-    throws NotFoundException
+    final public Object load(String name, URL base)
+    throws ResourceException
     {
-        _log.debug("Load URLTemplate: ("+base+","+name+") duration="+_cacheDuration);
+        _log.debug("Load URLTemplate: ("+base+","+name+")");
         try {
             Template _tmpl = null;
 
@@ -261,11 +251,11 @@ final public class URLTemplateProvider extends CachingProvider
                 this + " could not locate " + name + " on path " + _templatePath);
             }
             templateNameCache.put(name, _tmpl);
-            return new TimedReference(_tmpl, _cacheDuration);
+            return _tmpl;
         }
         catch (IOException e) {
             _log.debug(e.getClass().getName()+" "+e.getMessage());
-            throw new NotFoundException(e.getMessage());
+            throw new ResourceException(e.getMessage());
         }
     }
 

@@ -59,7 +59,7 @@ public class Profile extends WMServlet
       context.startTiming("getTemplate");
       try {
          view = getTemplate("profile.wm");
-      } catch (NotFoundException e) {
+      } catch (ResourceException e) {
          throw new HandlerException(
             "Profiler was unable to load the template profile.wm: your" 
             + " WebMacro system is not set up properly. Please get "

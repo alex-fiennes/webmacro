@@ -77,13 +77,13 @@ public class AlternateDirective extends Directive {
     catch (ClassCastException e) {
       String errorText = "#alternate: target is not a list: " + list;
       context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, out);
+      writeWarning(errorText, context, out);
     }
     catch (PropertyException e) {
       String errorText = "#alternate: Unable to set value: " + target
         + "\n" + e.toString();
       context.getBroker().getLog("engine").error(errorText);
-      writeWarning(errorText, out);
+      writeWarning(errorText, context, out);
     }
   } 
 

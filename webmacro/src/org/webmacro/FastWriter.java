@@ -59,6 +59,7 @@ public class FastWriter extends Writer
      * encoded strings concatenated together. 
      */
    final public static String SAFE_UNICODE_ENCODING;
+   final public static int DEFAULT_BUFFER_SIZE = 4096;
 
    // find the safe encoding
    static {
@@ -75,7 +76,7 @@ public class FastWriter extends Writer
    final private String _encoding;      // what encoding we use
    final private Writer _bwriter;
    final private ByteBufferOutputStream _bstream;
-   final private EncodingCache _cache;
+   final private Encoder _encoder;
    
    private OutputStream _out;
 
@@ -91,19 +92,26 @@ public class FastWriter extends Writer
    private boolean _buffered;
 
    final private static Hashtable _writerCache = new Hashtable();
+   private Pool _myPool = null;
 
    /**
     * Create a FastWriter to the target outputstream. You must specify
     * a character encoding. You can also call writeTo(), toString(), 
     * and toByteArray() to access any un-flush()ed contents.
     */
-   public FastWriter(OutputStream out, String encoding)
-      throws java.io.UnsupportedEncodingException
+   public FastWriter(Broker broker, OutputStream out, String encoding)
+      throws UnsupportedEncodingException
    {
       _encoding = encoding;
-      _bstream = new ByteBufferOutputStream(4096);
+      _bstream = new ByteBufferOutputStream(DEFAULT_BUFFER_SIZE);
       _bwriter = new OutputStreamWriter(_bstream, encoding);
-      _cache = EncodingCache.getInstance(encoding);
+
+      // fetch our encoder from the broker
+      try {
+         _encoder = (Encoder) broker.get(EncoderProvider.TYPE, encoding);
+      } catch (ResourceException re) {
+          throw new UnsupportedEncodingException(re.getMessage());
+      }
 
       _encodeProperly = true;
       _buffered = false;
@@ -115,10 +123,10 @@ public class FastWriter extends Writer
      * Create a new FastWriter with no output stream target. You can
      * still call writeTo(), toString(), and toByteArray().
      */
-   public FastWriter(String encoding) 
+   public FastWriter(Broker broker, String encoding) 
       throws java.io.UnsupportedEncodingException
    {
-      this(null,encoding);
+      this(broker, null, encoding);
    }
 
 
@@ -131,11 +139,11 @@ public class FastWriter extends Writer
    }
 
    /**
-     * Get the encoding cache used by this FastWriter to transform 
+     * Get the encoder used by this FastWriter to transform 
      * char[] data into byte[] data.
      */
-   public EncodingCache getEncodingCache() {
-      return _cache;
+   public Encoder getEncoder() {
+      return _encoder;
    }
 
    /**
@@ -173,46 +181,37 @@ public class FastWriter extends Writer
      * Write characters to the output stream performing slow unicode
      * conversion unless AsciiHack is on.
      */
-   public void write(char[] cbuf) 
+   public void write(char[] cbuf) throws java.io.IOException
    {
-     try {
-         if (_encodeProperly) {
-            _bwriter.write(cbuf,0,cbuf.length);
-            _buffered = true;
-         } else {
-            int len = cbuf.length;
-            if (_buf.length < len) _buf = new byte[len];
-            for (int i = 0; i < len; i++) {
-               _buf[i] = (byte) cbuf[i];
-            }
-            _bstream.write(_buf,0,len);
+      if (_encodeProperly) {
+         _bwriter.write(cbuf,0,cbuf.length);
+         _buffered = true;
+      } else {
+         int len = cbuf.length;
+         if (_buf.length < len) _buf = new byte[len];
+         for (int i = 0; i < len; i++) {
+            _buf[i] = (byte) cbuf[i];
          }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+         _bstream.write(_buf,0,len);
       }
-
    }
 
    /**
      * Write characters to to the output stream performing slow unicode
      * conversion unless the AsciiHack is on. 
      */
-   public void write(char[] cbuf, int offset, int len) 
+   public void write(char[] cbuf, int offset, int len) throws java.io.IOException
    {
-      try {
-         if (_encodeProperly) {
-            _bwriter.write(cbuf,offset,len);
-            _buffered = true;
-         } else {
-            if (_buf.length < len) _buf = new byte[len];
-            int end = offset + len;
-            for (int i = offset; i < end; i++) {
-               _buf[i] = (byte) cbuf[i];
-            }
-            _bstream.write(_buf,0,len);
+      if (_encodeProperly) {
+         _bwriter.write(cbuf,offset,len);
+         _buffered = true;
+      } else {
+         if (_buf.length < len) _buf = new byte[len];
+         int end = offset + len;
+         for (int i = offset; i < end; i++) {
+            _buf[i] = (byte) cbuf[i];
          }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+         _bstream.write(_buf,0,len);
       }
    }
 
@@ -220,17 +219,13 @@ public class FastWriter extends Writer
      * Write a single character, performing slow unicode conversion
      * unless AsciiHack is on.
      */
-   public void write(int c) 
+   public void write(int c) throws java.io.IOException
    {
-      try {
-         if (_encodeProperly ) {
-            _bwriter.write(c);
-            _buffered = true;
-         } else {
-            _bstream.write((byte) c);
-         }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+      if (_encodeProperly ) {
+         _bwriter.write(c);
+         _buffered = true;
+      } else {
+         _bstream.write((byte) c);
       }
    }
 
@@ -238,29 +233,25 @@ public class FastWriter extends Writer
      * Write a string to the underlying output stream, performing
      * unicode conversion.
      */
-   public void write(final String s) 
+   public void write(final String s) throws java.io.IOException
    {
       final int len = s.length();
       try{
-      	s.getChars(0,len,_cbuf,0);
+         s.getChars(0,len,_cbuf,0);
       } catch (IndexOutOfBoundsException e) {
-        _cbuf = new char[len + (len - _cbuf.length)]; 
-      	s.getChars(0,len,_cbuf,0);
+         _cbuf = new char[len + (len - _cbuf.length)]; 
+         s.getChars(0,len,_cbuf,0);
       }
 
-      try {
-         if (_encodeProperly) {
-            _bwriter.write(_cbuf,0,len);
-            _buffered = true;
-         } else {
-            if (_buf.length < len) _buf = new byte[len];
-            for (int i = 0; i < len; i++) {
-               _buf[i] = (byte) _cbuf[i];
-            }
-            _bstream.write(_buf,0,len);
+      if (_encodeProperly) {
+         _bwriter.write(_cbuf,0,len);
+         _buffered = true;
+      } else {
+         if (_buf.length < len) _buf = new byte[len];
+         for (int i = 0; i < len; i++) {
+            _buf[i] = (byte) _cbuf[i];
          }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+         _bstream.write(_buf,0,len);
       }
    }
 
@@ -268,41 +259,42 @@ public class FastWriter extends Writer
     * Write a string to the underlying output stream, performing
     * unicode conversion.
     */
-   public void write(final String s, final int off, final int len) 
+   public void write(final String s, final int off, final int len) throws java.io.IOException
    {
       try{
-      	s.getChars(off,off + len,_cbuf,0);
+         s.getChars(off,off + len,_cbuf,0);
       } catch (IndexOutOfBoundsException e) {
-        _cbuf = new char[len + (len - _cbuf.length)]; 
-      	s.getChars(off,off + len,_cbuf,0);
+         _cbuf = new char[len + (len - _cbuf.length)]; 
+         s.getChars(off,off + len,_cbuf,0);
       }
 
-      try {
-         if (_encodeProperly) {
-            _bwriter.write(_cbuf,0,len);
-            _buffered = true;
-         } else {
-            if (_buf.length < len) _buf = new byte[len];
-            for (int i = 0; i < len; i++) {
-               _buf[i] = (byte) _cbuf[i];
-            }
-            _bstream.write(_buf,0,len);
+      if (_encodeProperly) {
+         _bwriter.write(_cbuf,0,len);
+         _buffered = true;
+      } else {
+         if (_buf.length < len) _buf = new byte[len];
+         for (int i = 0; i < len; i++) {
+            _buf[i] = (byte) _cbuf[i];
          }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+         _bstream.write(_buf,0,len);
       }
    }
 
    /**
-     * Write a string tot he underlying output stream, performing
+     * Write a string to the underlying output stream, performing
      * unicode conversion if necessary--try and read the encoding
      * from an encoding cache if possible.
      */
    public void writeStatic(final String s) 
    {
       if (_buffered) bflush();
-      byte[] b = _cache.encode(s);
-      _bstream.write(b,0,b.length);
+      try {
+         byte[] b = _encoder.encode(s);
+         _bstream.write(b,0,b.length);
+      } catch (UnsupportedEncodingException uee) {
+         // this should never happen
+         uee.printStackTrace();
+      }
    }
 
    /**
@@ -327,7 +319,9 @@ public class FastWriter extends Writer
      try { 
         _bwriter.flush(); 
         _buffered = false; 
-     } catch (IOException e) { e.printStackTrace(); }
+     } catch (IOException e) { 
+        e.printStackTrace(); 
+     }
    }
 
 
@@ -408,7 +402,8 @@ public class FastWriter extends Writer
      * Get a new FastWriter. You must then call writeTo(..) before
      * attempting to write to the FastWriter.
      */
-   public static FastWriter getInstance(OutputStream out, String encoding) 
+   public static FastWriter getInstance(Broker broker, OutputStream out,
+                                        String encoding) 
       throws UnsupportedEncodingException
    {
       FastWriter fw = null;
@@ -420,25 +415,25 @@ public class FastWriter extends Writer
             return fw;
          }
       }
-      return new FastWriter(out,encoding);
+      return new FastWriter(broker, out, encoding);
    }
 
    /**
      * Return a FastWriter with the specified encoding and no output stream.
      */
-   public static FastWriter getInstance(String encoding) 
+   public static FastWriter getInstance(Broker broker, String encoding) 
       throws UnsupportedEncodingException
    {
-      return getInstance(null,encoding);
+      return getInstance(broker, null, encoding);
    }
 
    /**
      * Return a FastWriter with default encoding and no output stream.
      */
-   public static FastWriter getInstance() 
+   public static FastWriter getInstance(Broker broker) 
    {
       try {
-         return getInstance(null, SAFE_UNICODE_ENCODING);
+         return getInstance(broker, null, SAFE_UNICODE_ENCODING);
       } catch (UnsupportedEncodingException e) {
          e.printStackTrace(); // never gonna happen
          return null;
@@ -460,39 +455,15 @@ public class FastWriter extends Writer
       }
       if (_open) {
         _open = false;
-        Pool p = (Pool) _writerCache.get(_encoding);
-        if (p == null) {
-          p = new UPool(7);
-          _writerCache.put(_encoding,p);
+        if (_myPool == null) {
+          // get/create the pool this FW should be using
+          _myPool = (Pool) _writerCache.get (_encoding);
+          if (_myPool == null) {
+            _myPool = new UPool (7);
+            _writerCache.put(_encoding, _myPool);
+          }
         }
-        p.put(this);
+        _myPool.put (this);
       }
    }
-
-   public static void main(String arg[]) {
-
-      System.out.println("----START----");
-      try {
-         FastWriter fw = FastWriter.getInstance();
-         fw.setAsciiHack(false);
-         for (int i = 0; i < arg.length; i++) {
-            System.out.println("Writing: " + arg[i]);
-            fw.writeStatic("write: ");
-            fw.write(arg[i]);
-            fw.writeStatic("\n");
-
-            fw.writeStatic("cache: ");
-            fw.writeStatic(arg[i]);
-            fw.writeStatic("\n");
-         }
-         fw.writeTo(System.out);
-         fw.close();
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-      System.out.println("----DONE----");
-
-   }
-
 }
-

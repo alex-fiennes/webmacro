@@ -59,14 +59,14 @@ final class ErrorHandler implements Handler
      try {
        templateName = (String) broker.get("config", WMServlet.ERROR_TEMPLATE);
      } 
-     catch (NotFoundException e) {
+     catch (ResourceException e) {
        templateName = WMServlet.ERROR_TEMPLATE_DEFAULT;
      }
 
      try {
        _errorTemplate = (Template) broker.get("template", templateName);
      }
-     catch (NotFoundException e) {
+     catch (ResourceException e) {
        _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT);
      }
      

@@ -40,6 +40,7 @@ public final class ParserProvider implements Provider
 
    private static final Hashtable _parsers  = new Hashtable();
 
+   private Log _log;
    private final Class[] _brokerParam = { Broker.class };
    private final Object[] _brokerArg = new Object[1];
 
@@ -48,28 +49,30 @@ public final class ParserProvider implements Provider
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */
-   public final void register(String pClassName) 
+   public final void register(String pClassName, String pType) 
       throws IntrospectionException, InitException
    {
-
+      Class pclass;
       String pname = extractName(pClassName);
-      Class pclass = null;
+      String name = (pType != null && !pType.equals("")) 
+                  ? pType : pname;
       try {
          pclass = Class.forName(pClassName);
       } catch (Exception e) {
          throw new IntrospectionException("No class " + pClassName);
       }
       try {
-         Parser p = (Parser) _parsers.get(pname);
+         _log.info("Registering parser: " + name + " (" + pClassName + ")"); 
+         Parser p = (Parser) _parsers.get(name);
          if (p == null) {
             Constructor ctor = pclass.getConstructor(_brokerParam);
             p = (Parser) ctor.newInstance(_brokerArg);
-            _parsers.put(pname, p);
+            _parsers.put(name, p);
          } else if (! pclass.equals(p.getClass())) {
             throw new InitException(
                   "Attempt to register parser " + pClassName
                   + " failed because " + p.getClass() 
-                  + " is already registered for type " + pname);
+                  + " is already registered for type " + name);
          }
       } catch (InstantiationException ne) {
         throw new IntrospectionException("Parsers could not be instantiated", 
@@ -116,21 +119,23 @@ public final class ParserProvider implements Provider
       return "parser";
    }
 
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+               register(settingValue, settingKey);
+         } catch (Exception ce) {
+           _log.error("Could not load parser: " + settingValue, ce);
+         }
+      }
+   }
+
    public void init(Broker broker, Settings p) throws InitException
    {
       _brokerArg[0] = broker;
+      _log = broker.getLog("engine");
+
       try {
-         String parsers = p.getSetting("Parsers");
-         Enumeration penum = new StringTokenizer(parsers);
-         while (penum.hasMoreElements()) {
-            String par = (String) penum.nextElement();
-            try {
-               broker.getLog("engine", "parsing and template execution").info("Registering parser: " + par); 
-               register(par);
-            } catch (Exception ce) {
-               broker.getLog("engine", "parsing and template execution").error("Could not load parser: " + par);    
-            }
-         }
+         p.processListSetting("Parsers", new SettingHandler());
       } catch (Exception e) {
          throw new InitException("Could not init ParserProvider",e);
       }
@@ -146,7 +151,7 @@ public final class ParserProvider implements Provider
       try {
          return getParser(name);
       } catch (Exception e) {
-        throw new NotFoundException("No such directive: " + name, e);
+        throw new NotFoundException("No such parser: " + name, e);
       }
    }
 

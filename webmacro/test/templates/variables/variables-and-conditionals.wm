@@ -1,0 +1,12 @@
+these should all say "pass":
+
+        NotInContext: #if($NotInContext) { fail } #else { pass }
+     VoidMethod call: #if($TestObject.voidMethod()) { fail } #else { pass }
+     NullMethod call: #if($TestObject.returnNull()) { fail } #else { pass }
+      BadMethod call: #if($TestObject.badMethod()) { fail } #else { pass }
+         BadProperty: #if($TestObject.NoProperty) { fail } #else { pass }
+               false: #if(false) { fail } #else { pass }
+                true: #if(true) { pass } #else { fail }
+
+Personally, I believe that VoidMethod, BadMethod, and ThrowsException
+should output a <!-- warning --> message, not "pass" or "fail"

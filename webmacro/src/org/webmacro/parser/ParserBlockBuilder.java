@@ -101,6 +101,37 @@ public class ParserBlockBuilder extends BlockBuilder {
     markLiteral();
   }
 
+  final public void eatLeadingWsNl() {
+    int i, j, l;
+
+    i = size() - 1;
+    if ( i < 0 || i+1 == literalMark ) 
+      return;
+
+    Object o = elementAt(i);
+    if (! (o instanceof String)) 
+      return;
+    String s = (String) o;
+    j = 0; l = s.length();
+    while (j < l && Character.isSpaceChar(s.charAt(j)))
+      j++;
+    if (j < l) {
+      if (s.charAt(j) == '\r')
+        j++;
+      else if (s.charAt(j) == '\n') {
+        j++;
+        if (j < l && s.charAt(j) == '\r')
+          j++;
+      }
+    }
+
+    if (j >= l) 
+      remove(i);
+    else if (j > 0)
+      setElementAt(s.substring(j), i);
+    markLiteral();
+  }
+
   final public boolean directiveOk() {
     if (size() == 0 || size() == literalMark) 
       return true;

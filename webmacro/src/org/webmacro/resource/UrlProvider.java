@@ -45,10 +45,19 @@ final public class UrlProvider extends CachingProvider
    static final public long MAX_TIMEOUT = 60000;
    static final public long MIN_TIMEOUT = 5000;
 
+   Broker _broker;
+
    /**
      * We serve up "url" type resources
      */
    final public String getType() { return "url"; }
+
+
+   public void init(Broker b, Settings config) throws InitException
+   {
+      super.init(b,config);
+      _broker = b;
+   }
 
    /**
      * Load a URL from the specified name and return it. The expire
@@ -60,9 +69,8 @@ final public class UrlProvider extends CachingProvider
      * and files from the filesystem, will be cached for AVG_TIMEOUT
      * milliseconds.
      */
-   final public TimedReference load(String name) 
-      throws NotFoundException
-   {
+   final public Object load(String name, CacheElement ce) 
+   throws ResourceException {
 
       try {
          URL u;
@@ -72,13 +80,27 @@ final public class UrlProvider extends CachingProvider
             u = new URL(name);
          }
 
-         URLConnection uc = u.openConnection();
+         URLConnection uc;
+         InputStream is;
+         try {
+           uc = u.openConnection();
+           is = uc.getInputStream();
+         }
+         catch (IOException e) {
+           if (name.indexOf(":") < 3) {
+             uc = _broker.getResource(name).openConnection();
+             is = uc.getInputStream();
+           }
+           else 
+             throw e;
+         }
 
          String encoding = uc.getContentEncoding();
          if (encoding == null) {
             encoding = "UTF-8";
          }
-         Reader in = new InputStreamReader(new BufferedInputStream(uc.getInputStream()),encoding);
+         Reader in = new InputStreamReader(
+                           new BufferedInputStream(is), encoding);
 
          int length = uc.getContentLength();
          if (length == -1) {
@@ -102,22 +124,71 @@ final public class UrlProvider extends CachingProvider
             sw.write(buf, 0, num);
          }
          in.close();
-         return new TimedReference(sw.toString(), timeout);
+         return sw.toString();
       } catch (Exception e) {
-         throw new NotFoundException(this + " unable to load " + name, e);
+         throw new ResourceException(this + " unable to load " + name, e);
       }
    }
 	
-	/**
-	  * Always return false.  It is not possible to decide if an object
-	  * fetched from a URL should be reloaded or not.  Returning false
-	  * will cause the CachingProvider to load() only when it's cache
-	  * has expired.
-	  */
-	final public boolean shouldReload (String name) {
-		return false;
-	}
 
+   /**
+    * Utility routine to get the last modification date for a URL.  
+    * The standard implementation of .getLastModified() doesn't work
+    * for file or jar URLs, so we try to be a bit more clever (running
+    * the risk that we'll shoot ourselves in the foot, of course.)
+    * Also used by BrokerTemplateProvider; maybe this should go somewhere
+    * else? 
+    */
+   public static long getUrlLastModified(URL u) {
+      String protocol = u.getProtocol();
+      if (protocol.equals("file")) {
+         // We're going to use the File mechanism instead
+         File f = new File(u.getFile());
+         return f.lastModified();
+      }
+      else if (protocol.equals("jar")) {
+         // We'll extract the jar source and recurse
+         String source = u.getFile();
+         int lastIndex = source.lastIndexOf("!");
+         if (lastIndex > 0) 
+            source = source.substring(lastIndex);
+         try {
+            return getUrlLastModified(new URL(source));
+         } 
+         catch (MalformedURLException e) {
+            return 0;
+         }
+      }
+      else {
+         // Ask the URL, maybe it knows
+         try {
+            URLConnection uc = u.openConnection();
+            uc.connect();
+            return uc.getLastModified();
+         }
+         catch (IOException e) { 
+            return 0;
+         }
+      }
+   }
+
+   /**
+    * Utility routine to get the input stream associated with a URL.  
+    * It special-cases "file" URLs because this way is faster.  If it
+    * doesn't work on some platforms (I could imagine some Windows JVM
+    * breaking) then we can back off to the standard implementation.
+    * Also used by BrokerTemplateProvider; maybe this should go somewhere
+    * else? 
+    */
+  public static InputStream getUrlInputStream(URL u) throws IOException {
+    if (u.getProtocol().equals("file")) {
+       InputStream is = new FileInputStream(new File(u.getFile()));
+       return is;
+    }
+    else
+       return u.openStream();
+  }
+  
 }
 
 

@@ -25,12 +25,17 @@ package org.webmacro.directive;
 import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
+import org.webmacro.resource.*;
 
 public class IncludeDirective extends Directive {
 
   private static final int INCLUDE_FILE = 1;
 
-  private Macro file;
+  // We store one or the other of these; a Macro or a String.  
+  // This is an optimization, so we don't have to evaluate it if its
+  // not a macro, and we don't have to use instanceof on the common code path
+  private Macro file = null;
+  private String fileString = null;
 
   private static final ArgDescriptor[] 
     myArgs = new ArgDescriptor[] {
@@ -48,42 +53,43 @@ public class IncludeDirective extends Directive {
                       BuildContext bc) 
   throws BuildException {
     Object o = builder.getArg(INCLUDE_FILE, bc);
-    if (o instanceof Macro) {
+    if (o instanceof Macro) 
       file = (Macro) o;
-      return this;
-    } 
-    else if (o == null) 
-      throw new BuildException("#include: file name is null");
-    else {
-      try {
-        return getFile(bc, o.toString());
-      } 
-      catch(Exception e) {
-        throw new BuildException("#include: exception retrieving file "
-                                 + o.toString(), e);
-      }
-    }
+    else 
+      fileString = o.toString();
+
+    return this;
   }
 
   public void write(FastWriter out, Context context) 
     throws PropertyException, IOException {
 
-    Object fname = file.evaluate(context);
+    String fname;
+
+    fname = fileString;
     if (fname == null) {
-      writeWarning("#include: cannot retrieve file " 
-                   + fname.toString(), out);
+      try {
+        fname = file.evaluate(context).toString();
+      }
+      catch (Exception e) {
+        String warning = "#include: Can't resolve file name";
+        context.getLog("engine").warning(warning, e);
+        writeWarning(warning, context, out);
+      }
+    }
+    if (fname == null) {
+      writeWarning("#include: file name not specified ", context, out);
       throw new PropertyException("#include: file name is null");
     }
-    else {
-      try {
-        out.write(getFile(context, fname.toString()));
-      } 
-      catch (Exception e) {
-        writeWarning("#include: cannot retrieve file " 
-                     + fname.toString(), out);
-        throw new PropertyException("#include: cannot retrieve file "
-                                   + fname.toString(), e);
-      }
+
+    try {
+      out.write(getFile(context, fname.toString()));
+    } 
+    catch (Exception e) {
+      writeWarning("#include: cannot retrieve file " 
+                   + fname.toString(), context, out);
+      throw new PropertyException("#include: cannot retrieve file "
+                                  + fname.toString(), e);
     }
   }
   
@@ -98,8 +104,13 @@ public class IncludeDirective extends Directive {
       result = c.getBroker().get("url", fileName).toString();
     } catch (NotFoundException ne) {
       error = "Cannot include " + fileName + ": NOT FOUND";
-    }  catch (NullPointerException ne) {
+    } catch (NullPointerException ne) {
       error = "Could not load target " + name + ": NULL VALUE";
+    } catch (InvalidResourceException re) {
+      error = "Cannot include " + fileName + ": INVALID RESOURCE";
+    } catch (ResourceException re) {
+      error = "Cannot include " + fileName + ": RESOURCE EXCEPTION: "
+        + re;
     }
     if (error != null) {
       throw new IOException("#include failed: " + error);

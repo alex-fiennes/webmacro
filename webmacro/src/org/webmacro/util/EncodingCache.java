@@ -110,35 +110,35 @@ final public class EncodingCache {
       if (hash < 0) hash = -hash;
       Bucket b = _cache[hash];
       synchronized(b) { 
-	      if (b.string1 == s) 
-		  return b.bytes1;
-	      else if (b.string2 == s) 
-		  return b.bytes2;
-	      else if (b.string3 == s) 
-		  return b.bytes3;
-	      else if (b.string4 == s) 
-		  return b.bytes4;
-	      else if (b.string5 == s) 
-		  return b.bytes5;
-	      else if (s == null)
-                  return null;
+         if (b.string1 == s) 
+            return b.bytes1;
+         else if (b.string2 == s) 
+            return b.bytes2;
+         else if (b.string3 == s) 
+            return b.bytes3;
+         else if (b.string4 == s) 
+            return b.bytes4;
+         else if (b.string5 == s) 
+            return b.bytes5;
+         else if (s == null)
+            return null;
 
          try {
-              byte[] buf = s.getBytes(_encoding);
+            byte[] buf = s.getBytes(_encoding);
 
-              b.string5 = b.string4;
-              b.string4 = b.string3;
-              b.string3 = b.string2;
-              b.string2 = b.string1;
-              b.string1 = s;
+            b.string5 = b.string4;
+            b.string4 = b.string3;
+            b.string3 = b.string2;
+            b.string2 = b.string1;
+            b.string1 = s;
 
-              b.bytes5 = b.bytes4;
-              b.bytes4 = b.bytes3;
-              b.bytes3 = b.bytes2;
-              b.bytes2 = b.bytes1;
-              b.bytes1 = buf;;
+            b.bytes5 = b.bytes4;
+            b.bytes4 = b.bytes3;
+            b.bytes3 = b.bytes2;
+            b.bytes2 = b.bytes1;
+            b.bytes1 = buf;;
 
-              return buf; 
+            return buf; 
          } catch (UnsupportedEncodingException e) {
             e.printStackTrace(); // never happen: we check in ctor
             return null;
@@ -155,40 +155,40 @@ final public class EncodingCache {
       hash %= _size;
       ArrayBucket b = _acache[hash];
       synchronized(b) { 
-	      if (b.string1 == s) 
-		  return b.bytes1;
-	      else if (b.string2 == s) 
-		  return b.bytes2;
-	      else if (b.string3 == s) 
-		  return b.bytes3;
-	      else if (b.string4 == s) 
-		  return b.bytes4;
-	      else if (b.string5 == s) 
-		  return b.bytes5;
-	      else if (s == null)
-                  return null;
+         if (b.string1 == s) 
+            return b.bytes1;
+         else if (b.string2 == s) 
+            return b.bytes2;
+         else if (b.string3 == s) 
+            return b.bytes3;
+         else if (b.string4 == s) 
+            return b.bytes4;
+         else if (b.string5 == s) 
+            return b.bytes5;
+         else if (s == null)
+            return null;
 
          try {
-              byte[][] buf = new byte[s.length][];
-              for (int i = 0; i < buf.length; i++) {
-                 if (s[i] != null) {
-                    buf[i] = s[i].getBytes(_encoding);
-                 }
-              }
+            byte[][] buf = new byte[s.length][];
+            for (int i = 0; i < buf.length; i++) {
+               if (s[i] != null) {
+                  buf[i] = s[i].getBytes(_encoding);
+               }
+            }
 
-              b.string5 = b.string4;
-              b.string4 = b.string3;
-              b.string3 = b.string2;
-              b.string2 = b.string1;
-              b.string1 = s;
+            b.string5 = b.string4;
+            b.string4 = b.string3;
+            b.string3 = b.string2;
+            b.string2 = b.string1;
+            b.string1 = s;
 
-              b.bytes5 = b.bytes4;
-              b.bytes4 = b.bytes3;
-              b.bytes3 = b.bytes2;
-              b.bytes2 = b.bytes1;
-              b.bytes1 = buf;;
+            b.bytes5 = b.bytes4;
+            b.bytes4 = b.bytes3;
+            b.bytes3 = b.bytes2;
+            b.bytes2 = b.bytes1;
+            b.bytes1 = buf;;
 
-              return buf; 
+            return buf; 
          } catch (UnsupportedEncodingException e) {
             e.printStackTrace(); // never happen: we check in ctor
             return null;

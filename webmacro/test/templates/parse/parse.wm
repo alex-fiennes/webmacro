@@ -1,0 +1,12 @@
+You should see the following:
+	template 1
+	template 2
+	template 3
+
+#parse "template1.wmt"
+
+You should see: 
+  template 1
+  \#parse "template2.wmt"
+
+#include "template1.wmt"

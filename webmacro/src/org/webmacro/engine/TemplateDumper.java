@@ -22,6 +22,8 @@
 
 package org.webmacro.engine;
 
+import java.io.*;
+
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
@@ -51,22 +53,22 @@ public class TemplateDumper extends TemplateVisitor {
 
   public void visitString(String s) { 
     print(s); 
-  };
+  }
 
   public void beginBlock() { 
     newLine(); 
     println("#begin"); 
-  };
+  }
 
   public void endBlock() {
     newLine();
     println("#end"); 
-  };
+  }
 
   public void beginDirective(String directiveName) {
     newLine();
     print("#" + directiveName + " "); 
-  };
+  }
 
   public void visitDirectiveArg(String argName, Object o) {
     print(":" + argName + ":");
@@ -76,7 +78,7 @@ public class TemplateDumper extends TemplateVisitor {
       print("<NULL>");
     else
       print(o.toString());
-  };
+  }
 
   public void visitBinaryOperation(String opType, Object l, Object r) {
     print(opType + "(");
@@ -90,7 +92,7 @@ public class TemplateDumper extends TemplateVisitor {
     else 
       print((r != null)? r.toString() : "<NULL>");
     print(")");
-  };
+  }
 
   public void visitUnaryOperation(String opType, Object o) {
     print(opType + "(" + ((o != null)? o.toString() : "<NULL>")
@@ -103,5 +105,17 @@ public class TemplateDumper extends TemplateVisitor {
 
   public void visitUnknownMacro(String macroType, Macro m) {
     print("[Unknown macro type " + macroType + "]");
-  };
+  }
+
+  public static void main(String args[]) throws Exception { 
+    WM wm = new WM();
+    Context context = wm.getContext();
+    WMTemplate t = new StreamTemplate(wm.getBroker(), 
+                                      new InputStreamReader(System.in));
+    t.parse();
+    System.out.println("--------");
+    TemplateDumper td = new TemplateDumper();
+    t.accept(td);
+    System.out.println("--------");
+  }
 }
