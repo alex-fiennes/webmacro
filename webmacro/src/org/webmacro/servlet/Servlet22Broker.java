@@ -63,17 +63,18 @@ public class Servlet22Broker extends ServletBroker {
       throws InitException {
       Properties p = new Properties();
       Enumeration e = _servletContext.getInitParameterNames();
-      String dotPrefix = (prefix == null) ? "" : prefix + ".";
-      while (e.hasMoreElements()) {
-         String key = (String) e.nextElement();
-         if (prefix == null)
-            p.setProperty(key, _servletContext.getInitParameter(key));
-         else if (key.startsWith(dotPrefix)) 
-            p.setProperty(key, _servletContext.getInitParameter(key)
+      if (e != null) {
+         String dotPrefix = (prefix == null) ? "" : prefix + ".";
+         while (e.hasMoreElements()) {
+            String key = (String) e.nextElement();
+            if (prefix == null)
+               p.setProperty(key, _servletContext.getInitParameter(key));
+            else if (key.startsWith(dotPrefix)) 
+               p.setProperty(key, _servletContext.getInitParameter(key)
                                       .substring(dotPrefix.length()));
+         }
       }
       _config.load(p, prefix);
-      
    }
 
    public static Broker getBroker(Servlet s) throws InitException {
