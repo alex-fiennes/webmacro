@@ -41,8 +41,8 @@ public class TestStaticClasses extends TemplateTestCase
 
     public void testStaticClassWithNullAsFirstArg_1 () throws Exception
     {
-        assertEvalutionEquals("$SimpleClass.foo(null, null)", "arg is null");
-        assertEvalutionEquals("$SimpleInstance.foo(null, null)", "arg is null");
+        assertEvaluationEquals("$SimpleClass.foo(null, null)", "arg is null");
+        assertEvaluationEquals("$SimpleInstance.foo(null, null)", "arg is null");
     }
 
 
