@@ -70,7 +70,7 @@ final class ParseTool
    /**
      * Maximum number of positions in the stream that can be marked (4).
      */
-   final public int MAX_MARKS = 4;
+   final public int MAX_MARKS = 16;
 
    /**
      * A mark number that is invalid. If you pass this value to 
