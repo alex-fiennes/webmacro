@@ -108,6 +108,15 @@ public abstract class TemplateTestCase extends TestCase {
   }
 
 
+    public void assertEvalutionEquals (String eval, Object result) throws Exception {
+        String template = "#set $assertEvalutionEquals = " + eval;
+        executeStringTemplate(template);
+        if (result == null)
+            assert (_context.get("assertEvalutionEquals") == null);
+        else
+            assert (result==null ? "null" : result.toString(), result.equals(_context.get("assertEvalutionEquals")));
+    }
+
   /**
    * asserts that the specified template file (loaded via classpath) evaluates
    * to the given result text when evaluated against the current context
