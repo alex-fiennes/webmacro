@@ -275,8 +275,7 @@ public class WMParser_impl implements WMParser_implConstants {
                                + " is not valid");
   }
   catch (Exception e) {
-    throw new ParseException("Exception fetching directive "+directive
-                             + System.getProperty("line.separator"), e);
+    throw new ParseException("No such directive #" + directive);
   }
   db = new DirectiveBuilder(descriptor);
   parse_args(descriptor, descriptor.args, db);
@@ -708,6 +707,7 @@ public class WMParser_impl implements WMParser_implConstants {
   int entryState = token_source.curLexState;
   Token t;
   QuotedStringBuilder qs = new QuotedStringBuilder();
+  Object dr;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case QUOTE:
       jj_consume_token(QUOTE);
@@ -741,7 +741,8 @@ public class WMParser_impl implements WMParser_implConstants {
         default:
           jj_la1[30] = jj_gen;
           if (jj_2_9(2147483647)) {
-            DollarReference(qs);
+            dr = DollarReference();
+                                                   qs.addElement(dr);
           } else {
             jj_consume_token(-1);
             throw new ParseException();
@@ -782,7 +783,8 @@ public class WMParser_impl implements WMParser_implConstants {
         default:
           jj_la1[32] = jj_gen;
           if (jj_2_10(2147483647)) {
-            DollarReference(qs);
+            dr = DollarReference();
+                                                   qs.addElement(dr);
           } else {
             jj_consume_token(-1);
             throw new ParseException();
@@ -1278,18 +1280,17 @@ public class WMParser_impl implements WMParser_implConstants {
     SetState(DEFAULT);
   }
 
-  final public void DollarReference(Vector v) throws ParseException {
+  final public Object DollarReference() throws ParseException {
   int entryState = token_source.curLexState;
   Object o;
     SetState(WM);
     if (jj_2_17(2147483647)) {
       o = VariableReference();
-                              v.add(o);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case DOLLAR:
         jj_consume_token(DOLLAR);
-                 v.add("$");
+                 o = "$";
         break;
       default:
         jj_la1[58] = jj_gen;
@@ -1298,11 +1299,13 @@ public class WMParser_impl implements WMParser_implConstants {
       }
     }
     SetState(entryState);
+    {if (true) return o;}
+    throw new Error("Missing return statement in function");
   }
 
   final public void WMContent(ParserBlockBuilder b) throws ParseException {
   Token t;
-  Object o;
+  Object o, dr;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case STUFF:
       t = jj_consume_token(STUFF);
@@ -1325,7 +1328,8 @@ public class WMParser_impl implements WMParser_implConstants {
     default:
       jj_la1[59] = jj_gen;
       if (jj_2_18(2147483647)) {
-        DollarReference(b);
+        dr = DollarReference();
+                                                 b.addElement(dr);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1335,7 +1339,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final public void WMContentNoDirective(ParserBlockBuilder b) throws ParseException {
   Token t;
-  Object o;
+  Object o, dr;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case STUFF:
       t = jj_consume_token(STUFF);
@@ -1355,7 +1359,8 @@ public class WMParser_impl implements WMParser_implConstants {
     default:
       jj_la1[60] = jj_gen;
       if (jj_2_19(2147483647)) {
-        DollarReference(b);
+        dr = DollarReference();
+                                                 b.addElement(dr);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1911,12 +1916,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_57() {
-    if (jj_scan_token(OP_GT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_21() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1940,6 +1939,18 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3R_57() {
+    if (jj_scan_token(OP_GT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_23() {
+    if (jj_scan_token(LBRACE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3R_25() {
     if (jj_scan_token(OP_PLUS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1948,12 +1959,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_54() {
     if (jj_scan_token(OP_EQ)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_23() {
-    if (jj_scan_token(LBRACE)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1996,6 +2001,12 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3R_20() {
+    if (jj_scan_token(OP_MULT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3R_16() {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -2004,12 +2015,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_18() {
     if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_20() {
-    if (jj_scan_token(OP_MULT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2089,6 +2094,12 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3_19() {
+    if (jj_scan_token(DOLLAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_11() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2108,14 +2119,20 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_19() {
-    if (jj_scan_token(DOLLAR)) return true;
+  final private boolean jj_3R_28() {
+    if (jj_3R_23()) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_3R_23()) return true;
+  final private boolean jj_3R_72() {
+    if (jj_3R_76()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_71() {
+    if (jj_3R_75()) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2132,24 +2149,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_72() {
-    if (jj_3R_76()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_53() {
-    if (jj_scan_token(OP_MINUS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_71() {
-    if (jj_3R_75()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3R_70() {
     if (jj_scan_token(SLASH)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -2162,14 +2161,26 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(NUMBER)) return true;
+  final private boolean jj_3R_53() {
+    if (jj_scan_token(OP_MINUS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
   final private boolean jj_3_18() {
     if (jj_scan_token(DOLLAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_68() {
+    if (jj_scan_token(STUFF)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(NUMBER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2182,30 +2193,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_50() {
     if (jj_scan_token(FALSE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_68() {
-    if (jj_scan_token(STUFF)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_49() {
-    if (jj_scan_token(TRUE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_48() {
-    if (jj_scan_token(NULL)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_47() {
-    if (jj_3R_67()) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2230,14 +2217,32 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(WS)) return true;
+  final private boolean jj_3R_49() {
+    if (jj_scan_token(TRUE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_48() {
+    if (jj_scan_token(NULL)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_47() {
+    if (jj_3R_67()) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
   final private boolean jj_3R_46() {
     if (jj_3R_66()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_scan_token(WS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -2538,14 +2543,14 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_26() {
-    if (jj_scan_token(OP_MINUS)) return true;
+  final private boolean jj_3_22() {
+    if (jj_scan_token(POUND)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
-  final private boolean jj_3_22() {
-    if (jj_scan_token(POUND)) return true;
+  final private boolean jj_3R_26() {
+    if (jj_scan_token(OP_MINUS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

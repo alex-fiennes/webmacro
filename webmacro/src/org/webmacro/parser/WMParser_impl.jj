@@ -667,6 +667,7 @@ Builder QuotedString() : {
   int entryState = token_source.curLexState;
   Token t;
   QuotedStringBuilder qs = new QuotedStringBuilder();
+  Object dr;
 }
 {
   ( 
@@ -674,7 +675,7 @@ Builder QuotedString() : {
     ( t=<QS_TEXT> { qs.addElement(t.image); }
       | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
+      | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { qs.addElement(dr); }
     ) * 
     <QUOTE> 
   |
@@ -682,7 +683,7 @@ Builder QuotedString() : {
     ( t=<SQS_TEXT> { qs.addElement(t.image); }
       | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
       | t=<SLASH> { qs.addElement(t.image); }
-      | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
+      | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { qs.addElement(dr); }
     ) * 
     <SQUOTE> 
   )
@@ -906,22 +907,25 @@ void Comment(ParserBlockBuilder b) : {
   { SetState(DEFAULT); }
 }
 
-void DollarReference(Vector v) : {
+Object DollarReference() : {
   int entryState = token_source.curLexState;
   Object o;
 }
 {
   { SetState(WM); }
   ( LOOKAHEAD(<DOLLAR> [ <DOLLAR> ] [ <LPAREN> ] <WORD>)
-      o=VariableReference() { v.add(o); }
-    | <DOLLAR> { v.add("$"); }
+      o=VariableReference() 
+    | <DOLLAR> { o = "$"; }
   )
-  { SetState(entryState); }
+  { 
+    SetState(entryState); 
+    return o; 
+  }
 }
 
 void WMContent(ParserBlockBuilder b) : {
   Token t;
-  Object o;
+  Object o, dr;
 }
 {
   ( t=<STUFF>       { b.addElement(t.image); }
@@ -929,20 +933,20 @@ void WMContent(ParserBlockBuilder b) : {
     | t=<SLASH>     { b.addElement(t.image); }
     | Directive(b) 
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) DollarReference(b)
+    | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { b.addElement(dr); }
   ) 
 }
 
 void WMContentNoDirective(ParserBlockBuilder b) : {
   Token t;
-  Object o;
+  Object o, dr;
 }
 {
   ( t=<STUFF>       { b.addElement(t.image); }
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
     | Comment(b)
-    | LOOKAHEAD(<DOLLAR>) DollarReference(b)
+    | LOOKAHEAD(<DOLLAR>) dr=DollarReference() { b.addElement(dr); }
   ) 
 }
 

@@ -34,13 +34,18 @@ import java.lang.reflect.*;
   * end ({}'s around the whole document are not required). It contains 
   * all of the other directives, strings, etc. that can be in a template. 
   */
-public class BlockBuilder extends Vector implements Builder
+public class BlockBuilder implements Builder
 {
+   private static Macro[] mArray = new Macro[0];
+   private static String[] sArray = new String[0];
+
+   private ArrayList elements = new ArrayList();
+
    final public Object build(BuildContext bc) throws BuildException
    {
-      ArrayList content = new ArrayList(size());
+      ArrayList content = new ArrayList(elements.size());
       {
-         Iterator i = iterator();
+         Iterator i = elements.iterator();
          while (i.hasNext()) {
             Object o = i.next();
             if (o instanceof Builder) {
@@ -59,8 +64,8 @@ public class BlockBuilder extends Vector implements Builder
      // store that as an array of strings and an array of 
      // Macro objects and create a block.
 
-     ArrayList strings = new ArrayList((size() + 1) / 2);
-     ArrayList macros = new ArrayList((size() + 1) / 2);  
+     ArrayList strings = new ArrayList((elements.size() + 1) / 2);
+     ArrayList macros = new ArrayList((elements.size() + 1) / 2);  
      {
         Iterator i = content.iterator();        
         StringBuffer s = new StringBuffer();
@@ -78,9 +83,30 @@ public class BlockBuilder extends Vector implements Builder
         strings.add(s.toString());
      }
    
-     Macro m[] = (Macro[]) macros.toArray(new Macro[macros.size()]);
-     String s[] = (String[]) strings.toArray(new String[strings.size()]);
+     Macro m[] = (Macro[]) macros.toArray(mArray);
+     String s[] = (String[]) strings.toArray(sArray);
      return new Block(s,m);
    }
+
+   public void addElement(Object o) {
+      elements.add(o);
+   }
+
+   public int size() {
+      return elements.size();
+   }
+
+   public void remove(int i) {
+      elements.remove(i);
+   }
+  
+   public Object elementAt(int i) {
+      return elements.get(i);
+   }
+  
+   public Object setElementAt(Object o, int i) {
+      return elements.set(i, o);
+   }
+  
 }
 
