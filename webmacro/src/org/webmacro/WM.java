@@ -65,20 +65,42 @@ public class WM implements WebMacro
    final private ThreadLocal _webContextCache;
 
 
+   /**
+    * Constructs a WM which gets its properties (optionally) from the
+    * file WebMacro.properties, as found on the class path.  No servlet
+    * integration.  Templates will be loaded from the class path or from
+    * TemplatePath.   Most users will want to use the WM(Servlet) constructor.
+    */
    public WM() throws InitException
    {
       this(Broker.getBroker());
    }
 
+   /**
+    * Constructs a WM which gets its properties from the file specified,
+    * which must exist on the class path or be an absolute path.  No servlet
+    * integration.  Templates will be loaded from the class path or from
+    * TemplatePath.  Most users will want to use the WM(Servlet) constructor.
+    */
    public WM(String config) throws InitException {
       this(Broker.getBroker(config));
    }
 
+   /**
+    * Constructs a WM is tied to a Servlet broker.  Depending on the 
+    * servlet containers level of servlet support, property fetching,
+    * logging, and template fetching will be managed by the servlet broker.
+    */
    public WM(Servlet s) throws InitException {
       this(ServletBroker.getBroker(s));
    }
 
-   protected WM(Broker broker) throws InitException {
+   /**
+    * Constructs a WM from an arbitrary Broker.  Don't use this unless
+    * you have very specific needs and know what you are doing; constructing
+    * a properly functioning broker is not obvious. 
+    */
+   public WM(Broker broker) throws InitException {
       if (broker == null) 
          throw new InitException("No Broker passed to WM()");
 
