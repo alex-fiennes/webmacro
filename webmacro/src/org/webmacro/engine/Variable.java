@@ -70,7 +70,7 @@ import org.webmacro.*;
   * methods, and getFoo() over get("Foo").
   *
   */
-final class Variable implements Macro
+abstract class Variable implements Macro
 {
 
    /**
@@ -79,33 +79,19 @@ final class Variable implements Macro
    final protected String _vname;
 
    /**
-     * The filter for this variable, if any
-     */
-   final private Filter _filter;
-
-   /**
      * The name as an array
      */
-   final private Object[] _names;
+   final protected Object[] _names;
 
    /**
      * Create a variable with the supplied name. The elements of the name 
      * are either strings, or a method reference. 
      */
-   Variable(Object names[], Filter filter) {
+   Variable(Object names[]) {
       _vname = makeName(names).intern();
       _names = names;
-      _filter = filter;
    
    }
-
-   /**
-     * Return a string name of this variable
-     */
-   public final String toString() {
-      return "variable:" + _vname;
-   }
-
 
    /**
      * Return the property names for this variable. These are stringified
@@ -139,9 +125,6 @@ final class Variable implements Macro
          if (val instanceof Macro) {
             val = ((Macro) val).evaluate(context); // recurse
          } 
-         if (_filter != null) {
-            val = _filter.evaluate(context.clone(val));
-         }
          return val;
       } catch (NullPointerException e) {
          Engine.log.exception(e);
@@ -190,45 +173,17 @@ final class Variable implements Macro
    }
 
    /**
-     * Look up my value in the corresponding Map, possibly using introspection,
-     * and return it
-     * @exception InvalidContextException If the property does not exist
+     * The code to get the value represented by the variable from the 
+     * supplied context.
      */
-   final Object getValue(Context context) 
-      throws InvalidContextException
-   {
-      try {
-         return context.getProperty(_names);
-      } catch (Exception e) {
-         Engine.log.exception(e);
-         String warning = "Variable: unable to access " + this + ";";
-         throw new InvalidContextException(warning);
-      }
-   }
+   abstract Object getValue(Context context) throws InvalidContextException;
 
    /**
-     * Look up my the value of this variable in the specified Map, possibly
-     * using introspection, and set it to the supplied value.
-     * @exception InvalidContextException If the property does not exist
+     * The code to set the value represented by the variable in the 
+     * supplied context.
      */
-   final void setValue(Context context, Object newValue)
-      throws InvalidContextException
-   {
+   abstract void setValue(Context c, Object v) throws InvalidContextException;
 
-      try{
-         if (!context.setProperty(_names,newValue)) {
-            throw new PropertyException("No method to set \"" + _vname + 
-               "\" to type " +
-               ((newValue == null) ? "null" : newValue.getClass().toString()) 
-               + " in supplied context (" + context.getClass() + ")",null);
-         }
-      } catch (Exception e) {
-         Engine.log.exception(e);
-         String warning = "Variable.setValue: unable to access " + this + 
-            " (is it a public method/field?)";
-         throw new InvalidContextException(warning);
-      }
-   }
 }
 
 

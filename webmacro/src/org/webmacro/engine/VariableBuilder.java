@@ -8,25 +8,48 @@ public class VariableBuilder implements Builder
    private final Object[] _names;
    private final boolean _filtered;
 
+   final static protected Object PROPERTY_TYPE = null;
+   final static protected Object LOCAL_TYPE = new Object();
+   final static protected Object TOOL_TYPE = new Object();
+
    public VariableBuilder(Object names[], boolean filtered) {
       _names = names;
       _filtered = filtered;
    }
 
-   static Variable newVariable(
+   static Macro newVariable(
          Object names[], BuildContext bc, boolean filtered) 
       throws BuildException
    {
+
+      Variable v = null;
+
+      if (names.length < 1) {
+         throw new BuildException("Variable with name of length zero!");
+      }
+
       Object c[] = new Object[ names.length ];
       for (int i = 0; i < c.length; i++) {
          c[i] = (names[i] instanceof Builder) ? 
             ((Builder) names[i]).build(bc) : names[i];
       }
-      return new Variable(c, 
-            (filtered ? bc.getFilter(Variable.makePropertyNames(names)) 
-             : 
-             null));
-      
+
+      Object type = bc.getVariableType(c[0].toString());
+      if (type == PROPERTY_TYPE) {
+         v = new PropertyVariable(c); 
+      } else if (type == LOCAL_TYPE) {
+         v = new LocalVariable(c);
+      } else if (type == TOOL_TYPE) {
+         v = new ToolVariable(c);
+      } else {
+         throw new BuildException("Unrecognized Variable Type: " + type);
+      }
+
+      if (filtered) {
+        return new FilterMacro(v,bc.getFilter(v.getPropertyNames()));
+      } else {
+         return v;
+      }
    }
 
    public final Object build(BuildContext bc) throws BuildException

@@ -20,6 +20,8 @@ public final class BuildContext extends Context
 
    private final Hashtable _filters = new Hashtable();
 
+   private final Hashtable _types = new Hashtable();
+
    public BuildContext(Broker b) {
       super(b);
    }
@@ -68,5 +70,21 @@ public final class BuildContext extends Context
    public Hashtable getFilters() {
       return _filters;
    }
+
+   protected Object getVariableType(String name) {
+      return _types.get(name);
+   }
+
+   protected void setVariableType(String name, Object type)  {
+      if (name == null) {
+         return;
+      } 
+      if (type == null) {
+         _types.remove(name);
+      } else {
+         _types.put(name,type);
+      }
+   }
+
 }
 
