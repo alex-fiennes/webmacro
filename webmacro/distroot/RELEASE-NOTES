@@ -1,0 +1,93 @@
+WebMacro XXX
+------------
+                    
+This is a prelease of what WebMacro 1.0 is shaping up to be.  If you are
+currently using WebMacro in a production environment, you should not upgrade
+to this release.  However, if you're new to WebMacro or want to stay
+bleeding-edge, feel free to upgrade.  
+
+
+Changes in this Release
+-----------------------
+
+- Improved #include directive.  #parse has been deprecated.  #include directive
+can now easily do everything #parse did along with what #include does.  See the
+javadocs for org.webmacro.directive.IncludeDirective for usage information.
+
+Note that although #parse has been deprecated, it is still configured for use.  
+However, you should replace #parse with #include in your templates
+
+- added a #type directive that allows template to force the class type
+of Context variables.  See the javadocs for org.webmacro.directive.TypeDirective
+for usage information.
+
+- org.webmacro.Broker now has a local cache where you can store untyped state 
+information that needs to be tied to a specific Broker (WebMacro) instance.
+
+- Directives can now get the name they've been configured as (which could be
+different than the name specified by the DirectiveDescriptor) by calling
+(in build()):
+   String myName = builder.getName();
+
+- Fixed bug #37 in WMServlet where getOutputStream() was being called before the 
+content-type was being set.  This is violation of the JSDK 2.3 spec.
+
+- Removed old, unused sources related to the old parser
+
+
+Recent Changes up to this Release
+---------------------------------
+
+- New Context Tools:  $Math, $Variable, $Type, and $Text.  See the javadocs
+for org.webmacro.MathTool, VariableTool, TypeTool, and TextTool for
+usage information.
+
+- the directives #encode, #escape, and #silence are disabled by default.
+They are currently broken, and the same result can be acheived using the
+$Text tool:
+   $Text.URLEncode("Some String value here")
+   $Text.HTMLEncode("Some <html> text here")
+  
+- numerous bug fixes to the parser
+
+- tighter integration with the EvaluationExceptionHandler
+
+- improved logging messages
+
+- Refactor Broker to allow tighter integration with servlet containers -- load 
+templates, property files from WAR file or servlet zone, log to servlet log;
+
+- Pluggable cache manager interface -- use for resources, encodings, 
+PropertyOperator?; multiple cache managers include VeryFastCache; expose cache
+configuration parameters so administrators can tweak them
+
+- Simplified configuration mechanism for Providers, Directives, Tools, Parsers
+
+- Use broker to laod templates, property files
+
+- Make LogFormat? configurable; allow logging to servlet log 
+
+- Better error handling; filter exceptions through EvaluationExceptionHandler?, 
+reset output when template evaluation throws so the user can see what happened
+
+- CheckTemplate? tool, StreamTemplate? and TemplateDumper? tools
+
+- ANT build support
+
+- JUnit test framework
+
+- More defaults so its harder to misconfigure WM
+
+- performance enhancements
+
+- Improved block syntax -- #if .. #else .. #endif
+
+- Do arithmetic as int instead of long
+
+- Allow access to .length field of arrays
+
+- TemplatePath? is now optional; you can run WM with an empty .properties
+
+- Load settings from system properties and web.xml as well as .properties
+
+EOF
