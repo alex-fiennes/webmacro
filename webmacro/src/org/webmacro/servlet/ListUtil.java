@@ -410,43 +410,44 @@ public class ListUtil {
    * @param padValue Value that will be used for padding.
    * @return Array of array parts.
    */
-  public static Object[][] transposeSplit(Object[] arg, int colCount,
-      boolean pad, Object padValue) {
+   public static Object[][] transposeSplit(Object[] arg, int colCount,
+                                           boolean pad, Object padValue) {
 
-	int size = arg.length;
-	int rowCount = size / colCount;
-	Object[][] rows;
-	int tail = size % colCount;
-	if (tail != 0) {
-      ++rowCount;
-	}
-	if (tail != 0 && !pad) {
-      rows = new Object[rowCount][];
-      for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
-        if (rowNo < tail) {
-          rows[rowNo] = new Object[colCount];
-        } else {
-          rows[rowNo] = new Object[colCount - 1];
-        }
+      int size = arg.length;
+      int rowCount = size / colCount;
+      Object[][] rows;
+      boolean slack = (size % colCount) != 0;
+      if (slack) {
+         ++rowCount;
       }
-	} else {
-		rows = new Object[rowCount][colCount];
-	}
+      if (slack && !pad) {
+      int tail = size % rowCount;
+         rows = new Object[rowCount][];
+         for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
+            if (rowNo < tail) {
+               rows[rowNo] = new Object[colCount];
+            } else {
+               rows[rowNo] = new Object[colCount - 1];
+            }
+         }
+      } else {
+         rows = new Object[rowCount][colCount];
+      }
 
-	int pos = 0;
-	for (int colNo = 0; colNo < colCount; ++colNo) {
-		for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
-		    if (pos < size) {
-				rows[rowNo][colNo] = arg[pos++];
-		    } else if (pad) {
-			    rows[rowNo][colNo] = padValue;
-		    } else {
-				break;
-		    }
-		}
-	}
-	return rows;
-  }
+      int pos = 0;
+      for (int colNo = 0; colNo < colCount; ++colNo) {
+         for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
+            if (pos < size) {
+               rows[rowNo][colNo] = arg[pos++];
+            } else if (pad) {
+               rows[rowNo][colNo] = padValue;
+            } else {
+               break;
+            }
+         }
+      }
+      return rows;
+   }
 
   /**
    * Transposes and splits list into multiple lists of equal size. If list
@@ -528,86 +529,90 @@ public class ListUtil {
 	return rows;
   }
 
-  /** test harness */
-  public static void main(String[] args){
-    ListUtil lu = ListUtil.getInstance();
-    Object[] arr = {
-      "ant", "bird", "cat", "dog", "elephant", "ferret", "gopher"
-    };
-    ArrayList l = new ArrayList(Arrays.asList(arr));
-    java.io.PrintWriter out =
-      new java.io.PrintWriter(System.out, true);
+   /** test harness */
+   public static void main(String[] args){
+      ListUtil lu = ListUtil.getInstance();
+      Object[] arr = {
+         "ant", "bird", "cat", "dog", "elephant", "ferret", "gopher"
+      };
+      ArrayList l = new ArrayList(Arrays.asList(arr));
+      java.io.PrintWriter out =
+         new java.io.PrintWriter(System.out, true);
 
-    out.println("List/Array results");
-    out.print("toList(): ");
-    out.println(lu.toList(l) + "/" + lu.toList(arr));
-    out.print("size: ");
-    out.println(lu.size(l) + "/" + lu.size(arr));
-    out.print("contains(\"bird\"): ");
-    out.println(lu.contains(l, "bird") + "/" + lu.contains(arr, "bird"));
-    out.print("contains(\"fish\"): ");
-    out.println(lu.contains(l, "fish") + "/" + lu.contains(arr, "fish"));
-    out.print("isArray: ");
-    out.println(lu.isArray(l) + "/" + lu.isArray(arr));
-    out.print("isList: ");
-    out.println(lu.isList(l) + "/" + lu.isList(arr));
-    out.print("getItem(5): ");
-    out.println(lu.getItem(l, 5) + "/" + lu.getItem(arr, 5));
-    out.print("getItem(0): ");
-    try {
-      out.println(lu.getItem(l, 0) + "/" + lu.getItem(arr, 0));
-    } catch (Exception e){
-      out.println(e);
-    }
-    out.println("toList(null): " + lu.toList(null));
-    out.println("toList(\"a string\"): " + lu.toList("a string"));
+      out.println("List/Array results");
+      out.print("toList(): ");
+      out.println(lu.toList(l) + "/" + lu.toList(arr));
+      out.print("size: ");
+      out.println(lu.size(l) + "/" + lu.size(arr));
+      out.print("contains(\"bird\"): ");
+      out.println(lu.contains(l, "bird") + "/" + lu.contains(arr, "bird"));
+      out.print("contains(\"fish\"): ");
+      out.println(lu.contains(l, "fish") + "/" + lu.contains(arr, "fish"));
+      out.print("isArray: ");
+      out.println(lu.isArray(l) + "/" + lu.isArray(arr));
+      out.print("isList: ");
+      out.println(lu.isList(l) + "/" + lu.isList(arr));
+      out.print("getItem(5): ");
+      out.println(lu.getItem(l, 5) + "/" + lu.getItem(arr, 5));
+      out.print("getItem(0): ");
+      try {
+         out.println(lu.getItem(l, 0) + "/" + lu.getItem(arr, 0));
+      } catch (Exception e){
+         out.println(e);
+      }
+      out.println("toList(null): " + lu.toList(null));
+      out.println("toList(\"a string\"): " + lu.toList("a string"));
 
-    StringTokenizer st = new StringTokenizer(
-      "This is a bunch of words!");
-    List l2 = lu.toList(st);
-    out.println("toList(Enumeration): " + l2);
-    Iterator iter = l2.listIterator();
-    List l3 = lu.toList(iter);
-    out.println("toList(Iterator): " + l3 + ", iter.hasNext(): " + iter.hasNext());
-	// test split
-	out.println("List split with fill");
-	List splitList1 = split(l, 3, true);
-	for (Iterator it1 = splitList1.iterator(); it1.hasNext();) {
-		out.print("-: ");
-		List part = (List) it1.next();
-		for (Iterator it2 = part.iterator(); it2.hasNext();) {
-			out.print(it2.next() + ", ");
-		}
-		out.println("*");
-	}
-	out.println("List transposeSplit");
-	List splitList2 = transposeSplit(l, 3, false);
-	for (Iterator it1 = splitList2.iterator(); it1.hasNext();) {
-		out.print("-: ");
-		List part = (List) it1.next();
-		for (Iterator it2 = part.iterator(); it2.hasNext();) {
-			out.print(it2.next() + ", ");
-		}
-		out.println("*");
-	}
-	out.println("Array split");
-	Object[] splitArray1 = split(arr, 3, true);
-	for (int i = 0; i < splitArray1.length; ++i) {
-		out.print("-: ");
-		Object[] part = (Object[]) splitArray1[i];
-		for (int j = 0; j < part.length; ++j) {
-			out.print(part[j] + ", ");
-		}
-		out.println("*");
-	}
-	out.println("Array transposeSplit");
-	Object[][] splitArray3 = transposeSplit(arr, 3, true, "-");
-	for (int i = 0; i < splitArray3.length; ++i) {
-		out.print("-: ");
-		for (int j = 0; j < splitArray3[i].length; ++j) {
-			out.print(splitArray3[i][j] + ", ");
-		}
-		out.println("*");
-	}
-  }
+      StringTokenizer st = new StringTokenizer(
+                                               "This is a bunch of words!");
+      List l2 = lu.toList(st);
+      out.println("toList(Enumeration): " + l2);
+      Iterator iter = l2.listIterator();
+      List l3 = lu.toList(iter);
+      out.println("toList(Iterator): " + l3 + ", iter.hasNext(): " + iter.hasNext());
+      // test split
+      out.println("List split with fill");
+      List splitList1 = split(l, 3, true);
+      for (Iterator it1 = splitList1.iterator(); it1.hasNext();) {
+         out.print("-: ");
+         List part = (List) it1.next();
+         for (Iterator it2 = part.iterator(); it2.hasNext();) {
+            out.print(it2.next() + ", ");
+         }
+         out.println("*");
+      }
+      out.println("List transposeSplit");
+      List splitList2 = transposeSplit(l, 3, false);
+      for (Iterator it1 = splitList2.iterator(); it1.hasNext();) {
+         out.print("-: ");
+         List part = (List) it1.next();
+         for (Iterator it2 = part.iterator(); it2.hasNext();) {
+            out.print(it2.next() + ", ");
+         }
+         out.println("*");
+      }
+      out.println("Array split");
+      Object[] splitArray1 = split(new String[]{"pero"}, 2, false);
+      for (int i = 0; i < splitArray1.length; ++i) {
+         out.print("-: ");
+         Object[] part = (Object[]) splitArray1[i];
+         for (int j = 0; j < part.length; ++j) {
+            out.print(part[j] + ", ");
+         }
+         out.println("*");
+      }
+      out.println("Array transposeSplit");
+      Object[][] splitArray3 = transposeSplit(
+              new String[]{
+          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+          "11", "12", "14", "15", "16", "17", "18", "19"
+              }, 3, false);
+      for (int i = 0; i < splitArray3.length; ++i) {
+         out.print("-: ");
+         for (int j = 0; j < splitArray3[i].length; ++j) {
+            out.print(splitArray3[i][j] + ", ");
+         }
+         out.println("*");
+      }
+   }
 }
