@@ -51,13 +51,26 @@ final public class TemplateProvider extends CachingProvider
    private Broker _broker = null;
    private String _templatePath;
    private int _cacheDuration;
-   private HashMap _lastModifiedCache = new HashMap (100);	// key = fileName, value=lastModified
+   private Log _log;
+   private BrokerTemplateProviderHelper _btpHelper;
 
    static {
       try {
          _pathSeparator = System.getProperty("path.separator");
       } catch (Throwable t) {
          // do nothing
+      }
+   }
+
+   private static class TPTimedReference extends TimedReference {
+      File file;
+      long lastModified;
+
+      TPTimedReference(Object referent, long timeout, 
+                       File file, long lastModified) {
+         super(referent, timeout);
+         this.file = file;
+         this.lastModified = lastModified;
       }
    }
 
@@ -77,25 +90,21 @@ final public class TemplateProvider extends CachingProvider
          _templatePath = config.getSetting("TemplatePath", "");
          if (_templatePath.equals(""))
            _log.info("Template path is empty; will load from class path");
-         StringTokenizer st = 
-            new StringTokenizer(_templatePath, _pathSeparator);
-         _templateDirectory = new String[ st.countTokens() ];
-         int i;
-         for (i=0; i < _templateDirectory.length; i++) 
-         {
-            String dir = st.nextToken(); 
-            _templateDirectory[i] = dir;
+         else {
+            StringTokenizer st = 
+               new StringTokenizer(_templatePath, _pathSeparator);
+            _templateDirectory = new String[ st.countTokens() ];
+            for (int i=0; i < _templateDirectory.length; i++) {
+               String dir = st.nextToken(); 
+               _templateDirectory[i] = dir;
+            }
          }
-
+         _btpHelper = new BrokerTemplateProviderHelper();
+         _btpHelper.init(b, config);
       } catch(Exception e) {
          throw new InitException("Could not initialize", e);
       }
    }
-
-   /**
-     * Where we write our log messages 
-     */
-   private Log _log;
 
    /**
      * Supports the "template" type
@@ -109,13 +118,50 @@ final public class TemplateProvider extends CachingProvider
      */
    final public TimedReference load(String name) throws NotFoundException 
    {
+      TimedReference ret = null;
+
       _log.info("Loading template: " + name);
-      Template t = getTemplate(name);
-      if (t == null) {
+
+      File tFile = findFileTemplate(name);
+      if (tFile != null) {
+         try {
+            Template t = new FileTemplate (_broker, tFile);
+            ret = new TPTimedReference(t, _cacheDuration, 
+                                       tFile, tFile.lastModified());
+         }
+         catch (NullPointerException npe) {
+            _log.warning ("TemplateProvider: Template not found: " + name, 
+                          npe);
+         }
+         catch (Exception e) {  
+            // Parse error
+            _log.warning ("TemplateProvider: Error occured while parsing " 
+                          + name, e);
+            throw new NotFoundException("Error parsing template " + name, e);
+         }
+      }
+      else {
+         // Let the BrokerTemplateProvider have a crack at it 
+         ret = _btpHelper.load(name);
+      }
+
+      if (ret == null) {
          throw new NotFoundException(
             this + " could not locate " + name + " on path " + _templatePath);
       }
-      return new TimedReference(t, _cacheDuration);   
+      return ret;
+   }
+
+
+   private boolean testReference(String fileName, TimedReference ref) {
+      // This must have been the BrokerTemplateProviderHelper; dispatch to it
+      return _btpHelper.shouldReload(fileName, ref);
+   }
+
+   private boolean testReference(String fileName, TPTimedReference ref) {
+      // This is one of ours
+      TPTimedReference myRef = (TPTimedReference) ref;
+      return (myRef.lastModified != myRef.file.lastModified());
    }
 
    /**
@@ -125,59 +171,33 @@ final public class TemplateProvider extends CachingProvider
      *
      * @return true if template should be reloaded
      */
-   final public boolean shouldReload (String fileName) {
-      File tFile = findTemplate (fileName);
-      Long lm = (Long) _lastModifiedCache.get (fileName);
-      return (lm == null || lm.longValue() != tFile.lastModified());
+   final public boolean shouldReload(String fileName, TimedReference ref) {
+      if (ref == null)
+         return true;
+      else 
+         return testReference(fileName, ref);
    }
 
    // IMPLEMENTATION
 
-   /**
-     * Find the specified template in the directory managed by this 
-     * template store. Any path specified in the filename is relative
-     * to the directory managed by the template store. 
-     * <p>
-     * @param fileName relative to the current directory fo the store
-     * @return a template matching that name, or null if one cannot be found
-     */
-   final public Template getTemplate(String fileName) {
-      File tFile = findTemplate (fileName);
-      Template t = null;
-		
-      try {
-         t = new FileTemplate (_broker, tFile);
-         t.parse ();
-         _lastModifiedCache.put (fileName, new Long (tFile.lastModified()));
-         return t;
-      }
-      catch (NullPointerException npe) {
-         _log.warning ("TemplateProvider: Template not found: " + fileName, npe);
-      }
-      catch (Exception e) {  
-         // this probably occured b/c of a parsing error.
-         // should throw some kind of ParseErrorException here instead
-         _log.warning ("TemplateProvider: Error occured while getting " + fileName, e);
-      }
 
-      return null;
-   }
-   
    /**
-    * @param fileName the template filename to find, relative to the TemplatePath
+    * @param fileName the template filename to find, relative to the
+    * TemplatePath
     * @return a File object that represents the specified template file.
-    * @return null if template file cannot be found.
-    */
-   final private File findTemplate (String fileName)
+    * @return null if template file cannot be found.  */
+   final private File findFileTemplate(String fileName)
    {
-      _log.debug("Looking for template: " + fileName);
-      for (int i=0; i <_templateDirectory.length; i++) {
-         String dir = _templateDirectory[i];
-         File tFile  = new File(dir,fileName);
-         if (tFile.canRead()) {
-            _log.debug("TemplateProvider: Found " + fileName + " in " + dir);
-             return tFile;
-         }      
+      if (_templateDirectory != null) {
+         _log.debug("Looking for template in TemplatePath: " + fileName);
+         for (int i=0; i <_templateDirectory.length; i++) {
+            String dir = _templateDirectory[i];
+            File tFile  = new File(dir,fileName);
+            if (tFile.canRead()) {
+               _log.debug("TemplateProvider: Found "+fileName+" in "+dir);
+               return tFile;
+            }      
+         }
       }
       return null;
    }
