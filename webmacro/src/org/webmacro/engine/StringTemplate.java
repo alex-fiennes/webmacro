@@ -40,16 +40,35 @@ public class StringTemplate extends WMTemplate
    /** The text associated with this template */
    private final String templateText;
 
+    /** (Optional) name of this template */
+    private String templateName;
+
    /**
      * Instantiate a template. Encoding information
      * is not needed, as strings are already converted
      * to utf in java.
      */
-   public StringTemplate(Broker broker, String templateText)
+    public StringTemplate(Broker broker, String templateText) {
+        this(broker,templateText,"unknown");
+    }
+
+   /**
+     * Instantiate a template. Encoding information
+     * is not needed, as strings are already converted
+     * to utf in java.
+     * @param name name of string template to display in 
+     * error messages and logs
+     */
+   public StringTemplate(Broker broker, String templateText,String name)
    {
        super(broker);
        this.templateText = templateText;
+       this.templateName = name;
    }
+
+    public String getName() {
+        return templateName;
+    }
 
    /**
      * Get the stream the template should be read from. Parse will 
@@ -64,8 +83,23 @@ public class StringTemplate extends WMTemplate
      * from a file you might want to mention which it is--will be used to
      * produce error messages describing which template had a problem.
      */
-   public String toString() {
-      return "StringTemplate(" + templateText + ")";
-   }
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        b.append("StringTemplate(\"");
+        b.append(templateName);
+        if (templateText != null) {
+            b.append("\";\"");
+            // be sure to only show first 100 characters,
+            // otherwise it can get somewhat messy...
+            if (templateText.length() <= 100) {
+                b.append(templateText);
+            } else {
+                b.append(templateText.substring(0,100));
+                b.append("...");
+            }
+        }
+        b.append("\")");
+        return b.toString();
+    }
 
 }

@@ -67,7 +67,8 @@ final class ErrorHandler implements Handler
        _errorTemplate = (Template) broker.get("template", templateName);
      }
      catch (ResourceException e) {
-       _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT);
+       _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT,
+                                           "WebMacro default error template");
      }
      
      return _errorTemplate;

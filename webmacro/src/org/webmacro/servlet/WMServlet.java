@@ -307,7 +307,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             "some reason. This is likely a bug in the handler written " +
             "for this application. Here are the details:<p>" +
             "<pre>" + e + "</pre>");
-            execute (tmpl,_wcPrototype.newInstance (req,resp));
+            execute (tmpl, context);
         } finally
         {
             if (timing) context.stopTiming ();
