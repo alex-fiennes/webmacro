@@ -93,6 +93,12 @@
     </copy>
   </target>
 
+  <target name="contrib" depends="compile" >
+    <ant antfile="contrib/build.xml" target="all" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
   <target name="test" depends="compile" >
     <ant antfile="test/build.xml" target="all" >
       <property name="java.class.path" value="${classpath.resolved}"/>
@@ -123,7 +129,7 @@
     </ant>
   </target>
 
-  <target name="all" depends="clean,prepare,compile,javadoc,dist,test-validate"/>
+  <target name="all" depends="clean,prepare,compile,contrib,javadoc,dist,test-unit"/>
 
   <!--
   <taskdef name="wmtemplates" 
