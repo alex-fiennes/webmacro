@@ -15,6 +15,9 @@ candidate prior to release 1.
 Changes in this Release
 -----------------------
 
+- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
+
+- Fixed "characters get dropped" when parsing templates (brian)
 
 
 Changes Prior to this Release
