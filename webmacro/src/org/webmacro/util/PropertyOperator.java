@@ -709,7 +709,8 @@ final public class PropertyOperator
          // if the method's return type is void return the VoidMacro
          // instance, instead of the 'null' we used to return here
          // otherwise, just return whatever the method returned
-         if (meth.getReturnType() == java.lang.Void.TYPE)
+         if (obj == null 
+             && meth.getReturnType() == java.lang.Void.TYPE)
             return org.webmacro.engine.VoidMacro.instance;
          else
             return obj;
