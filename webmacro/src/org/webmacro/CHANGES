@@ -1,4 +1,5 @@
 
+-- WMServlet calls stop() from destroy() now (was always supposed to!)
 -- fixed bug in or condition
 -- added SelectList example class in util
 -- fixed problem with abstract subclass

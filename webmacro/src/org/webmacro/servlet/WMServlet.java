@@ -178,6 +178,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * will be called just before the broker is shut down.
      */
    final public synchronized void destroy() {
+      stop();
       _wm.destroy();
       _wm = null;
       _started = false;
