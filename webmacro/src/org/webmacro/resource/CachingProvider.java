@@ -51,12 +51,15 @@ abstract public class CachingProvider implements Provider,
      */
    public void init(Broker b, Settings config) throws InitException
    {
+      String cacheManager;
+
       _log = b.getLog("resource", "Object loading and caching");
-      String cacheManager = b.getSetting("CachingProvider." + getType() 
-                                         + ".CacheManager");
-      if (cacheManager == null || cacheManager.trim().length() == 0) {
-         _log.info("No cache manager specified for " + getType() 
-                   + ", using TrivialCacheManager");
+      cacheManager = b.getSetting("CachingProvider.CacheManager." + getType());
+      if (cacheManager == null) 
+        cacheManager = b.getSetting("CachingProvider.CacheManager");
+      if (cacheManager == null) {
+         _log.info("CachingProvider: No cache manager specified for " 
+                   + getType() + ", using TrivialCacheManager");
          _cache = new TrivialCacheManager();
       }
       else {

@@ -91,13 +91,12 @@ public class Encoder implements ResourceLoader
 
    public void init(Broker b, Settings config) 
    throws InitException {
+      String cacheManager;
       _log = b.getLog("resource", "Object loading and caching");
-      String cacheManager = b.getSetting("EncoderProvider." + _encoding
-                                         + ".CacheManager");
-      if (cacheManager == null || cacheManager.trim().length() == 0) {
+      cacheManager = b.getSetting("EncoderProvider.CacheManager." + _encoding);
+      if (cacheManager == null) 
          cacheManager = b.getSetting("EncoderProvider.CacheManager");
-      }
-      if (cacheManager == null || cacheManager.trim().length() == 0) {
+      if (cacheManager == null) {
          _log.info("No cache manager specified for encoding " + _encoding
                    + ", using TrivialCacheManager");
          _cache = new TrivialCacheManager();
