@@ -77,7 +77,7 @@ final public class WebContext extends Context
    {
       super(broker);
       try {
-         String tools = (String) broker.getValue("config","TemplateTools");
+         String tools = (String) broker.getValue("config","ContextTools");
          registerTools(tools);
       } catch (InvalidTypeException it) {
          _log.exception(it);
@@ -102,7 +102,7 @@ final public class WebContext extends Context
          // want: new local vars, both existing tools tables, no bean,
          // plus store req and resp somewhere, plus existing broker
 
-         WebContext wc = (WebContext) clone(null);
+         WebContext wc = (WebContext) clone();
          wc._request = req;
          wc._response = resp;
          return wc;
@@ -145,6 +145,7 @@ final public class WebContext extends Context
      * @see org.webmacro.util.Property
      */
    public final HttpServletResponse getResponse() { 
+System.out.println("WebContext.getResponse() called!");
       return _response; 
    }
 

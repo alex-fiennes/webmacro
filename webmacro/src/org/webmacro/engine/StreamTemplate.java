@@ -102,28 +102,30 @@ public class StreamTemplate extends WMTemplate
          e.printStackTrace();
       }
 
-      context.put("helloworld", "Hello World");
-      context.put("hello", "Hello");
-      context.put("file", "include.txt");
-      TestObject[] fruits = { new TestObject("apple",false),
-                       new TestObject("lemon",true),
-                       new TestObject("pear",false),
-                       new TestObject("orange",true),
-                       new TestObject("watermelon",false),
-                       new TestObject("peach",false),
-                       new TestObject("lime",true) };
-
-      SelectList sl = new SelectList(fruits, 3);
-      context.put("sl-fruits", sl);
-
-      context.put("fruits", fruits);
-      context.put("flipper", new TestObject("flip",false));
-
-      System.out.println("- - - - - - - - - - - - - - - - - - - -");
-      System.out.println("Context contains: helloWorld, hello, file, TestObject[] fruits, SelectList sl(fruits, 3), TestObject flipper"); 
-      System.out.println("- - - - - - - - - - - - - - - - - - - -");
-
       try {
+         context.put("helloworld", "Hello World");
+         context.put("hello", "Hello");
+         context.put("file", "include.txt");
+         TestObject[] fruits = { new TestObject("apple",false),
+                          new TestObject("lemon",true),
+                          new TestObject("pear",false),
+                          new TestObject("orange",true),
+                          new TestObject("watermelon",false),
+                          new TestObject("peach",false),
+                          new TestObject("lime",true) };
+
+         SelectList sl = new SelectList(fruits, 3);
+         context.put("sl-fruits", sl);
+
+         context.put("fruits", fruits);
+         context.put("flipper", new TestObject("flip",false));
+
+         context.registerTool("testTool", new TestTool());
+
+         System.out.println("- - - - - - - - - - - - - - - - - - - -");
+         System.out.println("Context contains: helloWorld, hello, file, TestObject[] fruits, SelectList sl(fruits, 3), TestObject flipper"); 
+         System.out.println("- - - - - - - - - - - - - - - - - - - -");
+
          Template t1 = new StreamTemplate(wm.getBroker(), 
                new InputStreamReader(System.in));
          t1.parse();

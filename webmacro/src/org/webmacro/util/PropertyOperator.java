@@ -84,8 +84,12 @@ final public class PropertyOperator
       throws PropertyException, SecurityException, InvalidContextException
    {
       try {
-         return getOperator(instance.getClass()).getProperty(
+         if (instance == null) {
+            return null;
+         } else {
+            return getOperator(instance.getClass()).getProperty(
                context,instance,names,start,names.length - 1);
+         }
       } catch (NoSuchMethodException e) {
          _log.exception(e);
          throw new PropertyException("No method to access property: " + e,e);
@@ -119,6 +123,9 @@ final public class PropertyOperator
       throws PropertyException, SecurityException, InvalidContextException
    {
       try {
+         if (instance == null) {
+            return false;
+         }
          return getOperator(instance.getClass()).setProperty(context,instance,names,value,start);
       } catch (NoSuchMethodException e) {
          throw new PropertyException("No method to access property: " + e,e);

@@ -192,7 +192,7 @@ public class Context implements Cloneable {
      * Subclasses can use this method to register new ContextTools
      * during construction or initialization of the Context. 
      */
-   final protected void registerTool(String name, ContextTool tool) 
+   final public void registerTool(String name, ContextTool tool) 
       throws InvalidContextException
    {
       if (_toolbox == null) {
@@ -219,7 +219,7 @@ public class Context implements Cloneable {
      * of class names which can be loaded and introspected. It is expected
      * this method will be used during construction or initialization.
      */
-   final protected void registerTools(String tools) {
+   final public void registerTools(String tools) {
       Enumeration tenum = new StringTokenizer(tools);
       while (tenum.hasMoreElements()) {
          String toolName = (String) tenum.nextElement();
@@ -324,7 +324,7 @@ public class Context implements Cloneable {
       if (names.length == 0) {
          return false;
       } else if (_bean == null) {
-         return setLocal(names, value);
+         return setLocal(names, value) || setTool(names, value);
       } else {
          return PropertyOperator.setProperty(this,_bean,names,value);      
       }
