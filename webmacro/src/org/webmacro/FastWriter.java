@@ -100,11 +100,9 @@ final public class FastWriter extends Writer
       _bstream = new ByteBufferOutputStream(4096);
       _bwriter = new OutputStreamWriter(_bstream, encoding);
 
-      // fetch our encoder via the EncoderProvider
+      // fetch our encoder from the broker
       try {
-          EncoderProvider provider = (EncoderProvider)
-              broker.getProvider(EncoderProvider.TYPE);
-          _encoder = (Encoder)provider.get(encoding);
+         _encoder = (Encoder) broker.get(EncoderProvider.TYPE, encoding);
       } catch (ResourceException re) {
           throw new UnsupportedEncodingException(re.getMessage());
       }
