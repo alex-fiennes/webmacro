@@ -1,5 +1,10 @@
 
+-- fixed problem with abstract subclass
+-- added super.destroy() to WMServlet.destroy()
+-- constructor for WC class is no longer private
+-- fixed typo in example WebMacro.properties file
 -- fixed '==' bug
+-- fixed extra printing of exception in WMServlet
 
 -- added back support for old legacy methods in WebContext, and then 
    fixed up the example applications so they compile.
