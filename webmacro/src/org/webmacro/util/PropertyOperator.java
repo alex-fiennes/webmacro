@@ -312,8 +312,6 @@ final public class PropertyOperator
                Class returnType = meth.getReturnType();
 
                // iterator supercedes enumeration supercedes Object[]
-               System.out.println("Return   CLASS: " + returnType);
-               System.out.println("Iterator CLASS: " + Iterator.class);
                Class iterClass = Iterator.class;
                boolean iterA = iterClass.isAssignableFrom(returnType);
                if (
