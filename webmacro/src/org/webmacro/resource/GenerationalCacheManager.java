@@ -79,7 +79,7 @@ public class GenerationalCacheManager implements CacheManager {
     }
 
     public void flush() {
-      cacheFactory.flush(cache);
+      cache.invalidateAll();
     }
 
     public void destroy() {
