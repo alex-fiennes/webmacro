@@ -74,19 +74,4 @@ abstract public class ServletBroker extends Broker {
       else
          return Servlet20Broker.getBroker(s);
    }
-
-   /** 
-    * Get a resource (file), using either the Broker's class loader, or
-    * the servlet's class loader, or the servlet context, whichever is
-    * appropriate
-    */
-   abstract public URL getResource(String name);
-
-   /**
-    * Get a resource (file), using either the Broker's class loader, or
-    * the servlet's class loader, or the servlet context, whichever is
-    * appropriate
-    */
-   abstract public InputStream getResourceAsStream(String name);
-   
 }

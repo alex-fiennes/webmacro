@@ -84,7 +84,7 @@ public class Servlet20Broker extends ServletBroker {
    public URL getResource(String name) {
       URL u = _servletClassLoader.getResource(name);
       if (u == null) 
-         u = _systemClassLoader.getResource(name);
+         u = super.getResource(name);
       return u;
    }
 
@@ -94,7 +94,7 @@ public class Servlet20Broker extends ServletBroker {
    public InputStream getResourceAsStream(String name) {
       InputStream is = _servletClassLoader.getResourceAsStream(name);
       if (is == null) 
-         is = _systemClassLoader.getResourceAsStream(name);
+         is = super.getResourceAsStream(name);
       return is;
    }
    

@@ -105,10 +105,15 @@ public class Servlet22Broker extends ServletBroker {
    public URL getResource(String name) {
       try {
          URL u = _servletContext.getResource(name);
+         if (u != null && u.getProtocol().equals("file")) {
+           File f = new File(u.getFile());
+           if (!f.exists())
+              u = null;
+         }
          if (u == null)
             u = _servletClassLoader.getResource(name);
          if (u == null) 
-            u = _systemClassLoader.getResource(name);
+            u = super.getResource(name);
          return u;
       }
       catch (MalformedURLException e) {
@@ -126,7 +131,7 @@ public class Servlet22Broker extends ServletBroker {
       if (is == null)
          is = _servletClassLoader.getResourceAsStream(name);
       if (is == null) 
-         is = _systemClassLoader.getResourceAsStream(name);
+         is = super.getResourceAsStream(name);
       return is;
    }
    

@@ -25,7 +25,7 @@ import org.webmacro.engine.*;
 
 import java.util.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.lang.ref.WeakReference;
 
 /**
@@ -424,12 +424,20 @@ public class Broker
 
 
    /** 
-    * Get a resource (file) from the the Broker's class loader
+    * Get a resource (file) from the the Broker's class loader.  
+    * We look first with the Broker's class loader, then with the system
+    * class loader, and then for a file.
     */
    public URL getResource(String name) {
       URL u = _myClassLoader.getResource(name);
       if (u == null) 
          u = _systemClassLoader.getResource(name);
+      if (u == null) {
+         try {
+            u = new URL("file", null, -1, name); 
+         }
+         catch (MalformedURLException ignored) {}
+      }
       return u;
    }
 
@@ -440,6 +448,11 @@ public class Broker
       InputStream is = _myClassLoader.getResourceAsStream(name);
       if (is == null) 
          is = _systemClassLoader.getResourceAsStream(name);
+      if (is == null) {
+         try {
+            is = new FileInputStream(name);
+         } catch (FileNotFoundException ignored) {}
+      }
       return is;
    }
 
