@@ -63,7 +63,7 @@ webmacro:
 	mkdir webmacro
 
 webmacro/webmacro.jar:	webmacro
-	CLASSPATH=$(CLASSPATH) jikes $(SOURCES)
+	CLASSPATH=$(CLASSPATH) javac $(SOURCES)
 	jar cf webmacro/webmacro.jar $(CLASSES)
 
 webmacro/src.zip:	webmacro
