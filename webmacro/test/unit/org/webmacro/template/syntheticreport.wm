@@ -1,0 +1,120 @@
+<html>
+<!-- 
+Author: Lane Sharman
+Date		Revision History
+4-Apr-01	Initial Draft of wm script.
+
+Usage: Please do not strip out the historical values. These are very important
+as a way of tracking historical changes in performance.
+-->
+<heading>
+<title>WM Synthetic Test Report</title>
+</heading>
+<body>
+<table align=center>
+<tr><th align=center>Current Synthetic Report</th></tr>
+
+<td>
+
+##
+## data table here:
+<table>
+<tr>
+<td>WebMacro Build Tested</td><td>CVS Version</td>
+</tr>
+
+<tr>
+<td>Date and Time of Test</td><td>$Today</td>
+</tr>
+
+<tr>
+<td>Configuration Settings and Options</td><td>Standard Configuration. Running test under ant.</td>
+</tr>
+
+<tr>
+<td>Host Description</td>
+<td>
+$SystemProperty.get("java.vm.vendor") 
+$SystemProperty.get("java.runtime.version")
+$SystemProperty.get("os.arch")
+Total Memory=$TotalMemory (MB)
+</td>
+</tr>
+
+<tr>
+<td>Iteration Count</td><td>$IterationCount</td>
+</tr>
+
+<tr>
+<td>Script Character Count</td><td>$CharacterCount</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis</td><td>$TotalElapsedTime</td>
+</tr>
+
+<tr>
+<td>Average Time To Evaluate Script in Millis</td><td>$AverageTime</td>
+</tr>
+</table>
+## end data table
+
+</td></tr></table>
+
+<hr>
+
+<table align=center>
+<tr><th align=center>Historical Baseline Values
+<br><a href="mailto:lane@opendoors.com">Baseline Mediator and Overlord</a>
+</th></tr>
+<td>
+
+## the following table is created by viewing the html output.
+## paste in the html when you are convinced it has historical value.
+## if it does, paste it in here and commit to cvs!
+<table>
+<tr>
+<td>WebMacro Build Tested</td><td>CVS Version</td>
+</tr>
+
+<tr>
+<td>Date and Time of Test</td><td>Wed Apr 04 14:04:01 PDT 2001</td>
+</tr>
+
+<tr>
+<td>Configuration Settings and Options</td><td>Standard Configuration. Running test under ant. 
+</tr>
+
+<tr>
+<td>Host Description</td>
+<td>
+Sun Microsystems Inc. 
+1.3.0-C
+x86
+Total Memory=3876 (MB)
+</td>
+</tr>
+
+<tr>
+<td>Iteration Count</td><td>10</td>
+</tr>
+
+<tr>
+<td>Script Character Count</td><td>10132</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis</td><td>761</td>
+</tr>
+
+<tr>
+<td>Average Time To Evaluate Script in Millis</td><td>76</td>
+</tr>
+</table>
+
+
+</td></tr></table>
+
+</body></html>
+
+
