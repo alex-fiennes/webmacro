@@ -35,6 +35,20 @@ public class TestWhitespace extends TemplateTestCase {
    }
 
    //
+   // test whitespace before a comment
+   //
+   public void testBeforeComment () throws Exception {
+      String tmpl = "#if (true)\n   ## Don't say anything\n#end";
+      assertStringTemplateEquals (tmpl, "");
+
+      tmpl = "#if (true)\n## Don't say anything\n#end";
+      assertStringTemplateEquals (tmpl, "");
+
+      tmpl = "   ## Don't say anything";
+      assertStringTemplateEquals (tmpl, "   ");
+   }
+
+   //
    // test whitespace before a directive
    //
 
