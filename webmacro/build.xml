@@ -126,7 +126,7 @@ Administrative targets:
         <copy todir="${classes}">
             <fileset dir="${tmpdir}" includes="**/*.properties" />
         </copy>
-        <copy file="webmacro.defaults.${wm-style}" tofile="${classes}/WebMacro.defaults"/>
+        <copy file="WebMacro.defaults.${wm-style}" tofile="${classes}/WebMacro.defaults"/>
 
         <touch file="${classes}/WM-VERSION-${version}" />
     </target>
