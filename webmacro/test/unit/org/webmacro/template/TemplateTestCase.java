@@ -33,7 +33,7 @@ public abstract class TemplateTestCase extends TestCase {
     */
    protected WebMacro createWebMacro () throws Exception
    {
-      return new WM ();
+     return new WM ();
    }
 
 
@@ -44,7 +44,7 @@ public abstract class TemplateTestCase extends TestCase {
    public void init () throws Exception
    {
       if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
-         System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
+         System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
       _wm = createWebMacro ();
       _context = _wm.getContext ();
 
@@ -99,6 +99,7 @@ public abstract class TemplateTestCase extends TestCase {
    *  and return the result. */
   public String executeStringTemplate(String templateText) throws Exception {
     Template template = new StringTemplate(_wm.getBroker(), templateText);
+    template.parse();
     FastWriter fw = FastWriter.getInstance(_wm.getBroker(), null, "UTF8");
     template.write (fw, _context);
     String output = fw.toString();
@@ -141,7 +142,9 @@ public abstract class TemplateTestCase extends TestCase {
     }
     catch (Exception e) {
       System.err.println("Execution of /" + templateText + "/" 
-                         + " threw " + e.getClass() + "/, expecting /" 
+                         + " threw " + e.getClass() 
+                         + "(" + e.getMessage() + ")"
+                         + ", expecting /" 
                          + resultText + "/");
       e.printStackTrace();
       assert(false);
@@ -158,10 +161,13 @@ public abstract class TemplateTestCase extends TestCase {
   }
 
   /** Asserts that the given template text throws the given exception
-   * when evaluated against the current context */
+   * when evaluated against the current context, and the message text
+   * matches the specified RE */
 
   public void assertStringTemplateThrows(String templateText, 
-                                         Class exceptionClass) {
+                                         Class exceptionClass,
+                                         String messageMatchText) 
+  throws Exception {
     String result = null;
     Exception caught = null;
 
@@ -183,6 +189,23 @@ public abstract class TemplateTestCase extends TestCase {
                          + exceptionClass);
       assert(false);
     }
+    else if (messageMatchText != null) {
+      RE re = new RE(messageMatchText);
+      if (!re.match(caught.getMessage())) {
+        System.err.println("Exception " + caught.getMessage()
+                           + "does not match /"
+                           + messageMatchText + "/");
+        assert(false);
+      }
+    }
+  }
+
+  /** Asserts that the given template text throws the given exception
+   * when evaluated against the current context */
+  public void assertStringTemplateThrows(String templateText, 
+                                         Class exceptionClass) 
+  throws Exception {
+    assertStringTemplateThrows(templateText, exceptionClass, null);
   }
 
   /** Asserts that the given template text matches the given regular

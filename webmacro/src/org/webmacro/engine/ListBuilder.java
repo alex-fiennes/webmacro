@@ -30,28 +30,35 @@ import java.lang.reflect.*;
 import org.webmacro.*;
 
 
+/**
+ * ListBuilder is used for building argument lists to function calls
+ * or array initializers.  If all of the arguments are compile-time
+ * constants, the build() method returns an Object[], otherwise it
+ * returns a ListMacro.  
+ */
+
 public final class ListBuilder extends Vector implements Builder
-{
+{ 
+   public final Object[] buildAsArray(BuildContext bc) throws BuildException {
+     Object c[] = new Object[ size() ];
+
+     for (int i = 0; i < c.length; i++) {
+       Object elem = elementAt(i);
+       c[i] = (elem instanceof Builder) ? 
+         ((Builder) elem).build(bc) : elem;
+     }
+     return c;
+   }
+
    public final Object build(BuildContext bc) throws BuildException
    {
-
       boolean isMacro = false;
-      Object c[] = new Object[ size() ];
+      Object[] c = buildAsArray(bc);
+      for (int i = 0; i < c.length; i++) 
+        if (c[i] instanceof Macro) 
+          isMacro = true;
 
-      for (int i = 0; i < c.length; i++) {
-         Object elem = elementAt(i);
-         c[i] = (elem instanceof Builder) ? 
-            ((Builder) elem).build(bc) : elem;
-         if (c[i] instanceof Macro) {
-            isMacro = true;
-         }
-      }
-
-      if (isMacro) {
-         return new ListMacro(c);
-      } else {
-         return c;
-      }
+      return (isMacro) ? (Object) new ListMacro(c) : c;
    }
 }
 

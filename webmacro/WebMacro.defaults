@@ -174,9 +174,12 @@ Providers.encoder:   org.webmacro.util.EncoderProvider
 Directives: 
 
 Directives.attribute:  org.webmacro.directive.AttributeDirective
+Directives.const:      org.webmacro.directive.AttributeDirective
 Directives.include:    org.webmacro.directive.IncludeDirective
 Directives.parse:      org.webmacro.directive.IncludeDirective
 Directives.set:        org.webmacro.directive.SetDirective
+Directives.setblock:   org.webmacro.directive.SetblockDirective
+Directives.macro:      org.webmacro.directive.MacroDirective
 Directives.if:         org.webmacro.directive.IfDirective
 Directives.text:       org.webmacro.directive.TextDirective
 Directives.comment:    org.webmacro.directive.CommentDirective

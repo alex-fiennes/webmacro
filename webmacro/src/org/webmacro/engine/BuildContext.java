@@ -37,11 +37,11 @@ import org.webmacro.util.*;
   * might. Therefore you should adopt a sensible naming scheme for 
   * your keys, to avoid conflicting with keys inserted by someone else.
   */
-public final class BuildContext extends Context
+public class BuildContext extends Context
 {
 
    private final Map _types = new HashMap();
-
+   private final Map _macros = new HashMap();
    private final FilterManager _filters = new FilterManager();
 
    public BuildContext(Broker b) {
@@ -111,5 +111,68 @@ public final class BuildContext extends Context
    public Macro getFilterMacro(Variable v) {
       return _filters.getMacro(v);
    }
+
+  /**
+   * Add a MacroDefinition to the build context
+   */
+   public void putMacro(String name, MacroDefinition macro) {
+      _macros.put(name, macro);
+   }
+
+  /**
+   * Search for a MacroDefinition in the build context
+   */
+   public MacroDefinition getMacro(String name) {
+      return (MacroDefinition) _macros.get(name);
+   }
+
+  /**
+   * Create a variable (or resolve a constant at build time) 
+   * Used by various build() routines
+   */
+  Object resolveVariableReference(Object names[], boolean filtered) 
+    throws BuildException
+  {
+    Object v = null;
+    
+    if (names.length < 1) 
+      throw new BuildException("Variable with name of length zero!");
+
+    Object c[] = new Object[ names.length ];
+    for (int i = 0; i < c.length; i++) {
+      c[i] = (names[i] instanceof Builder) ? 
+        ((Builder) names[i]).build(this) : names[i];
+    }
+
+    String firstName = c[0].toString();
+    Object type = getVariableType(firstName);
+    if (type == Variable.PROPERTY_TYPE) {
+      if (containsKey(firstName)) {
+        Object expansion = get(firstName);
+        if (expansion instanceof Macro) {
+          v = (c.length == 1) ? expansion
+            : new MacroPropertyVariable((Macro) expansion, c);
+        }
+        else {
+          v = (c.length == 1) ? expansion
+            : new ConstantPropertyVariable(expansion, c);
+        }
+      }
+      else {
+        v = (c.length == 1)
+          ? (Object) new SimplePropertyVariable(c)
+          : (Object) new PropertyVariable(c); 
+      }
+    } else if (type == Variable.LOCAL_TYPE) {
+      v = new GlobalVariable(c);
+    } else {
+      throw new BuildException("Unrecognized Variable Type: " + type);
+    }
+    
+    return (filtered && v instanceof Variable) 
+      ? getFilterMacro((Variable) v) : v;
+  }
+
 }
+
 

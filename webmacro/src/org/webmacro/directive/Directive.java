@@ -57,6 +57,9 @@ public abstract class Directive implements Macro, Visitable {
   public static final int ArgType_SUBDIRECTIVE = 8;
   public static final int ArgType_QUOTEDSTRING = 9;
   public static final int ArgType_STRING       = 10;
+  public static final int ArgType_NAME         = 11;
+  public static final int ArgType_ARGLIST      = 12;
+
   public static final int ArgType_GROUP        = 50;
   public static final int ArgType_CHOICE       = 51;
 
@@ -145,12 +148,11 @@ public abstract class Directive implements Macro, Visitable {
       this.type = type;
     }
 
-    protected void setOptional() {
-      optional = true;
+    protected void setOptional(boolean optional) {
+      this.optional = optional;
     }
 
-    protected void setOptional(int subordinateArgs) {
-      optional = true;
+    protected void setSubordinateArgs(int subordinateArgs) {
       this.subordinateArgs = subordinateArgs;
     }
   }
@@ -245,6 +247,24 @@ public abstract class Directive implements Macro, Visitable {
   }
 
   /**
+   * Name.  This is just a name, no $ in front of it. 
+   */
+  public static class NameArg extends ArgDescriptor {
+    public NameArg(int id) { 
+      super(id, ArgType_NAME); 
+    }
+  }
+
+  /**
+   * Argument list.  Accepts a ()-delimited list of simple variable names.
+   */
+  public static class FormalArgListArg extends ArgDescriptor {
+    public FormalArgListArg(int id) { 
+      super(id, ArgType_ARGLIST); 
+    }
+  }
+
+  /**
    * Optional group.  An optional group can begin with a Keyword argument.
    * If the keyword argument is not present in the input text, the entire
    * group is skipped.  Can contain other groups.  The argCount parameter
@@ -253,7 +273,8 @@ public abstract class Directive implements Macro, Visitable {
   public static class OptionalGroup extends ArgDescriptor {
     public OptionalGroup(int argCount) { 
       super(0, ArgType_GROUP); 
-      setOptional(argCount);
+      setOptional(true);
+      setSubordinateArgs(argCount);
     }
   }
 
@@ -271,7 +292,8 @@ public abstract class Directive implements Macro, Visitable {
 
     public OptionChoice(int groupCount) { 
       super(0, ArgType_CHOICE); 
-      setOptional(groupCount);
+      setOptional(true);
+      setSubordinateArgs(groupCount);
     }
   }
 
@@ -283,6 +305,19 @@ public abstract class Directive implements Macro, Visitable {
   public static class SingleOptionChoice extends OptionChoice {
     public SingleOptionChoice(int groupCount) { 
       super(groupCount); 
+      repeating = false;
+    }
+  }
+
+
+  /**
+   * The ExactlyOneChoice indicates that exactly one of several
+   * optional groups can be accepted, only once.  Otherwise works
+   * exactly as OptionChoice.  */
+  public static class ExactlyOneChoice extends OptionChoice {
+    public ExactlyOneChoice(int groupCount) { 
+      super(groupCount);
+      setOptional(false);
       repeating = false;
     }
   }
@@ -323,13 +358,13 @@ public abstract class Directive implements Macro, Visitable {
     public OptionalSubdirective(int id, String name,
                                 ArgDescriptor[] args) {
       super(id, name, args);
-      setOptional();
+      setOptional(true);
     }
 
     public OptionalSubdirective(int id, String name,
                                 ArgDescriptor[] args, int flags) {
       super(id, name, args, flags);
-      setOptional();
+      setOptional(true);
     }
   }
 

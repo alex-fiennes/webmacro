@@ -224,7 +224,7 @@ public class Context implements Map, Cloneable
      * Object will be instantiated and managed by the tool.
      * If there's no such variable, it throws. 
      */
-   final public Object internalGet(Object name) 
+   protected Object internalGet(Object name) 
    throws PropertyException {
       Object ret = _variables.get(name);
       if (ret == null && !_variables.containsKey(name)) {
@@ -283,7 +283,7 @@ public class Context implements Map, Cloneable
      * in the context. The subsequent names are properties of 
      * that object which will be searched using introspection.
      */
-   final public Object internalGet(Object[] names) 
+   protected Object internalGet(Object[] names) 
       throws PropertyException 
    {
       Object instance;
@@ -420,7 +420,7 @@ public class Context implements Map, Cloneable
    /**
      * Method from Map interface, operates on underlying Map
      */
-   final public boolean containsKey(Object key) {
+   public boolean containsKey(Object key) {
       return _variables.containsKey(key);
    }
 

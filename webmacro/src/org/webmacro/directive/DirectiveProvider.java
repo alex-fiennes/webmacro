@@ -109,16 +109,9 @@ public final class DirectiveProvider implements Provider
    /**
      * Create a builder for the named directive
      */
-   public final DirectiveDescriptor getDescriptor(String directiveName)
-      throws ClassNotFoundException
+   private final DirectiveDescriptor getDescriptor(String directiveName)
    {
-      DirectiveDescriptor descriptor = 
-         (DirectiveDescriptor) _descriptors.get(directiveName);
-      if (descriptor == null) {
-        throw new ClassNotFoundException(
-               "No directive matched the name " + directiveName);
-      }
-      return descriptor;
+      return (DirectiveDescriptor) _descriptors.get(directiveName);
    }
 
 
@@ -156,13 +149,13 @@ public final class DirectiveProvider implements Provider
       _descriptors.clear();
    }
 
-   public Object get(String name) throws NotFoundException
+  /**
+   * The DirectiveProvider doesn't throw an exception when it can't find
+   * the directive -- it just returns null.  
+   */
+   public Object get(String name) 
    {
-      try {
-         return getDescriptor(name);
-      } catch (Exception e) {
-        throw new NotFoundException("No such directive " + name, e);
-      }
+     return getDescriptor(name);
    }
 
    public void flush() { }

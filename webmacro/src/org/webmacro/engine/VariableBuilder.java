@@ -36,41 +36,9 @@ public class VariableBuilder implements Builder
       _filtered = filtered;
    }
 
-   static Macro newVariable(
-         Object names[], BuildContext bc, boolean filtered) 
-      throws BuildException
-   {
-
-      Variable v = null;
-
-      if (names.length < 1) {
-         throw new BuildException("Variable with name of length zero!");
-      }
-
-      Object c[] = new Object[ names.length ];
-      for (int i = 0; i < c.length; i++) {
-         c[i] = (names[i] instanceof Builder) ? 
-            ((Builder) names[i]).build(bc) : names[i];
-      }
-
-      Object type = bc.getVariableType(c[0].toString());
-      if (type == Variable.PROPERTY_TYPE) {
-         if (c.length == 1) 
-            v = new SimplePropertyVariable(c);
-         else
-            v = new PropertyVariable(c); 
-      } else if (type == Variable.LOCAL_TYPE) {
-         v = new GlobalVariable(c);
-      } else {
-         throw new BuildException("Unrecognized Variable Type: " + type);
-      }
-
-      return filtered ? bc.getFilterMacro(v) : v;
-   }
-
    public final Object build(BuildContext bc) throws BuildException
    {
-      return newVariable( _names, bc, _filtered);
+      return bc.resolveVariableReference( _names, _filtered);
    }
 }
 

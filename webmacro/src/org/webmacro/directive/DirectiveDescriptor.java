@@ -126,7 +126,6 @@ public final class DirectiveDescriptor {
    * Make sure that the structure of the arguments list is valid.  
    * This means that 
    *   GROUP arguments begin with a keyword, not optional
-   *   GROUP arguments cannot contain CHOICE arguments
    *   Each of the children of a CHOICE argument is an OPTIONAL GROUP 
    */
   private static boolean validateArgs(ArgDescriptor[] args) {
@@ -135,13 +134,10 @@ public final class DirectiveDescriptor {
       if (args[i].type == Directive.ArgType_GROUP) {
         if (args[i].subordinateArgs == 0)
           valid = false;
-        else if (args[args[i].children[0]].type != Directive.ArgType_KEYWORD
-            || args[args[i].children[0]].optional)
+        else if ((args[args[i].children[0]].type != Directive.ArgType_KEYWORD
+                  && args[args[i].children[0]].type != Directive.ArgType_ASSIGN)
+                 || args[args[i].children[0]].optional)
           valid = false;
-        for (int j=0; j<args[i].subordinateArgs; j++) {
-          if (args[args[i].children[j]].type == Directive.ArgType_CHOICE)
-            valid = false;
-        };
       }
       else if (args[i].type == Directive.ArgType_CHOICE) {
         for (int j=0; j<args[i].subordinateArgs; j++) {

@@ -42,6 +42,11 @@ public class TestDirectiveParser extends TemplateTestCase {
     public void write(FastWriter out, Context context) {}
   }
 
+  public void testBadDir() throws Exception {
+    assertStringTemplateThrows("#doh", 
+                                org.webmacro.engine.BuildException.class);
+  }
+
   public static class DirectiveOne extends BaseDirective {
 
     private static final ArgDescriptor[] 
@@ -51,7 +56,10 @@ public class TestDirectiveParser extends TemplateTestCase {
         new OptionalGroup(1), 
           new KeywordArg(3, "three"),
         new OptionalGroup(1), 
-          new KeywordArg(4, "four")
+          new KeywordArg(4, "four"),
+        new OptionalGroup(2), 
+          new AssignmentArg(),
+          new RValueArg(5)
             };
 
     private static final DirectiveDescriptor 
@@ -69,7 +77,10 @@ public class TestDirectiveParser extends TemplateTestCase {
     assertStringTemplateEquals("#one one two three", "");
     assertStringTemplateEquals("#one one two four", "");
     assertStringTemplateEquals("#one one two three four", "");
-    assertStringTemplateMatches("#one one three", "^<!--.*failed.*");
+    assertStringTemplateEquals("#one one two = $a", "");
+    assertStringTemplateEquals("#one one two=$a", "");
+    assertStringTemplateThrows("#one one three", 
+                               org.webmacro.engine.BuildException.class);
   }
 
 
@@ -146,6 +157,46 @@ public class TestDirectiveParser extends TemplateTestCase {
     assertStringTemplateEquals("#three page page global", "");
     assertStringTemplateEquals("#three page page global application", "");
     assertStringTemplateEquals("#three page page global page application page", "");
+  }
+
+  public static class DirectiveFour extends BaseDirective {
+
+    private static final ArgDescriptor[] 
+      myArgs = new ArgDescriptor[] {
+        new LValueArg(1),
+        new OptionalGroup(2),
+        new KeywordArg(3, "scope"),
+        new ExactlyOneChoice(4),
+        new OptionalGroup(1),
+        new KeywordArg(5, "global"),
+        new OptionalGroup(1),
+        new KeywordArg(6, "application"),
+        new OptionalGroup(1),
+        new KeywordArg(7, "session"),
+        new OptionalGroup(1),
+        new KeywordArg(8, "page"),
+      };
+
+    private static final DirectiveDescriptor 
+      myDescr = new DirectiveDescriptor(null, null, myArgs, null);
+
+    public static DirectiveDescriptor getDescriptor() {
+      return myDescr;
+    }
+  }
+
+  public void testFour() throws Exception {
+    registerDirective("four", 
+                      "org.webmacro.template.TestDirectiveParser$DirectiveFour");
+    assertStringTemplateEquals("#four $foo", "");
+    assertStringTemplateEquals("#four $foo scope global", "");
+    assertStringTemplateEquals("#four $foo scope application", "");
+    assertStringTemplateEquals("#four $foo scope page", "");
+    assertStringTemplateEquals("#four $foo scope session", "");
+    assertStringTemplateEquals("#four $foo scope session page", "page");
+    assertStringTemplateThrows("#four", BuildException.class);
+    assertStringTemplateThrows("#four $foo scope crap", BuildException.class);
+    assertStringTemplateThrows("#four $foo scope", BuildException.class);
   }
 }
 

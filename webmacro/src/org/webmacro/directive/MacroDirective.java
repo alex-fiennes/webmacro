@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
+ * Copyright (C) 1998-2001 Semiotek Inc.  All Rights Reserved.  
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
@@ -27,20 +27,22 @@ import org.webmacro.*;
 import org.webmacro.engine.*;
 
 /**
- * The #attribute directive allows you to set a template attribute such
- * that it is accessible from the servlet.  
+ * MacroDirective
+ * 
+ * @author Brian Goetz
  */
 
-public class AttributeDirective extends Directive {
+public class MacroDirective extends Directive {
 
-  private static final int ATTRIBUTE_TARGET = 1;
-  private static final int ATTRIBUTE_RESULT = 2;
+  private static final int MACRO_NAME = 1;
+  private static final int MACRO_ARGS = 2;
+  private static final int MACRO_BODY = 3;
 
   private static final ArgDescriptor[] 
     myArgs = new ArgDescriptor[] {
-      new LValueArg(ATTRIBUTE_TARGET), 
-      new AssignmentArg(),
-      new RValueArg(ATTRIBUTE_RESULT)
+      new NameArg(MACRO_NAME), 
+      new FormalArgListArg(MACRO_ARGS), 
+      new BlockArg(MACRO_BODY)
     };
 
   private static final DirectiveDescriptor 
@@ -50,25 +52,19 @@ public class AttributeDirective extends Directive {
     return myDescr;
   }
 
+  public MacroDirective() {}
+
   public Object build(DirectiveBuilder builder, 
                       BuildContext bc) 
   throws BuildException {
-    Variable target = null;
-    try {
-      target = (Variable) builder.getArg(ATTRIBUTE_TARGET, bc);
-      Object result = builder.getArg(ATTRIBUTE_RESULT, bc);
-      if (!target.isSimpleName()) 
-        throw new NotSimpleVariableBuildException(myDescr.name);
-
-      target.setValue(bc, result);
-    }
-    catch (ClassCastException e) {
-      throw new NotVariableBuildException(myDescr.name, e);
-    }
-    catch (PropertyException e) {
-      throw new BuildException("#attribute: Exception setting variable " 
-                               + target.toString(), e);
-    }
+    String name = (String) builder.getArg(MACRO_NAME, bc);
+    Object[] args = (Object[]) builder.getArg(MACRO_ARGS, bc);
+    String[] argNames = new String[args.length];
+    for (int i=0; i<args.length; i++) 
+      argNames[i] = (String) args[i];
+    Object body = builder.getArg(MACRO_BODY);
+    MacroDefinition macro = new MacroDefinition(name, argNames, body);
+    bc.putMacro(name, macro);
     return null;
   }
 
@@ -76,5 +72,7 @@ public class AttributeDirective extends Directive {
     throws PropertyException, IOException {
   } 
 
-}
+  public void accept(TemplateVisitor v) {
+  }
 
+}
