@@ -168,7 +168,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    public WebContext initWebContext() throws InitException
    {
-      return new WC(_broker);
+      return new WebContext(_broker);
    }
 
    /**

@@ -31,17 +31,17 @@ public interface Bag
    /**
      * Add an item to the bag
      */
-   public void put(String itemName, Object item);
+   public void put(String itemName, Object item) throws UnsettableException;
 
    /**
      * Get an item from the bag
      */
-   public Object get(String itemName);
+   public Object get(String itemName); 
 
    /**
      * Remove an item from the bag
      */
-   public void remove(String itemName);
+   public void remove(String itemName) throws UnsettableException;
 
 
 }

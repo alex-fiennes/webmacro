@@ -30,9 +30,9 @@ import javax.servlet.*;
 /**
   * Provide Template with access to form data.
   */
-public class CookieTool implements Macro
+public class CookieTool implements ContextTool
 {
-   public Object evaluate(Object context) 
+   public Object init(Context context) 
       throws InvalidContextException
    {
       try {
@@ -44,11 +44,5 @@ public class CookieTool implements Macro
          throw new InvalidContextException(
                "This only works with WebContext: " + ce);
       }
-   }
-
-   public void write(Writer out, Object context) 
-      throws InvalidContextException, IOException
-   {
-      out.write(evaluate(context).toString());
    }
 }

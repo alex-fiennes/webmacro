@@ -1,4 +1,5 @@
 
+
 /*
  * Copyright (c) 1998, 1999 Semiotek Inc. All Rights Reserved.
  *
@@ -18,29 +19,28 @@
  */
 
 
-package org.webmacro.servlet;
+package org.webmacro.util;
 
 import org.webmacro.*;
-import java.io.*;
-import javax.servlet.http.*;
-import javax.servlet.*;
+
 
 /**
-  * Provide Template with access to form data.
+  * This exception is thrown on attempt to set something that is
+  * not settable. 
+  * @see ContextTool
   */
-public class SessionTool implements ContextTool
+public class UnsettableException extends InvalidContextException 
 {
-   public Object init(Context context) 
-      throws InvalidContextException
-   {
-      try {
-         WebContext wc = (WebContext) context;
-         HttpSession s = wc.getRequest().getSession(true);
-         wc.put("Session", s);
-         return s;
-      } catch (ClassCastException ce) {
-         throw new InvalidContextException(
-               "SessionTool only works with WebContext: " + ce);
-      }
+
+   /**
+     * Constructor only requires a reason 
+     * <p>
+     * @param reason explains what went wrong
+     */
+   public UnsettableException(String reason) {
+      super(reason);
    }
+ 
 }
+
+

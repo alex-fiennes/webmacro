@@ -26,37 +26,20 @@ import java.io.*;
 
 /**
   * Provide Template variables that implement the CGI standard for 
-  * script variable names. This class demonstrates a useful technique
-  * for optimizing performance in a WebContext: it implements macro,
-  * and replaces itself in the context with an implementation class 
-  * if it gets called. The implementation class has a reference 
-  * to the _request object, and can provide functionality based on
-  * the context itself. After the first hit on $CGI in the same 
-  * template, access to it is rapid because the CGITool itself has
-  * been replaced by the implementation class. This works with 
-  * WebContext because we can predict what our name will be: It's
-  * our class name, minus the word "Tool".
+  * script variable names.
   */
-public class CGITool implements Macro
+public class CGITool implements ContextTool
 {
-   public Object evaluate(Object context) 
+   public Object init(Context context) 
       throws InvalidContextException
    {
       try {
          WebContext wc = (WebContext) context;
          CGI_Impersonator cgi = new CGI_Impersonator(wc.getRequest());
-         wc.put("CGI", cgi);
          return cgi;
       } catch (ClassCastException ce) {
          throw new InvalidContextException(
                "CGITool only works with WebContext: " + ce);
       }
    }
-
-   public void write(Writer out, Object context) 
-      throws InvalidContextException, IOException
-   {
-      out.write(evaluate(context).toString());
-   }
-
 }

@@ -34,7 +34,7 @@ import org.webmacro.*;
 /**
   * Provide access to form variables
   */
-final public class Form implements ContextTool
+final public class Form implements Bag
 {
 
    /**
@@ -63,10 +63,20 @@ final public class Form implements ContextTool
    /**
      * Unsupported
      */
-   final public void set(String key, Object value) 
+   final public void put(String key, Object value) 
       throws UnsettableException
    {
       throw new UnsettableException("Cannot set a form property");
+   }
+
+
+   /**
+     * Unsupported
+     */
+   final public void remove(String key) 
+      throws UnsettableException
+   {
+      throw new UnsettableException("Cannot unset a form property");
    }
 
 }

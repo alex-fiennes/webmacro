@@ -34,7 +34,7 @@ import org.webmacro.*;
 /**
   * Provide access to form variables
   */
-final public class CookieJar implements ContextTool
+final public class CookieJar
 {
 
    final private Cookie[] jar;

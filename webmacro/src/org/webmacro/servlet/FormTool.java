@@ -30,9 +30,9 @@ import javax.servlet.*;
 /**
   * Provide Template with access to form data.
   */
-public class FormTool implements Macro
+public class FormTool implements ContextTool
 {
-   public Object evaluate(Object context) 
+   public Object init(Context context) 
       throws InvalidContextException
    {
       try {
@@ -44,11 +44,5 @@ public class FormTool implements Macro
          throw new InvalidContextException(
                "FormTool only works with WebContext: " + ce);
       }
-   }
-
-   public void write(Writer out, Object context) 
-      throws InvalidContextException, IOException
-   {
-      out.write(evaluate(context).toString());
    }
 }

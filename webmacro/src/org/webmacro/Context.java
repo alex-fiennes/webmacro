@@ -2,16 +2,17 @@
 package org.webmacro;
 
 import java.util.*;
+import org.webmacro.*;
 import org.webmacro.util.*;
 
-public class Context {
-
-   final private Hashtable _locals;
-   final private Hashtable _tools;
+public class Context implements Cloneable {
 
    final private Broker _broker;
    final private Hashtable _toolbox;
-   final private Object _bean;
+   final private Hashtable _tools;
+
+   private Hashtable _locals;
+   private Object _bean;
 
    /**
      * Create an empty context--no bean, no tools, just local variables
@@ -42,25 +43,37 @@ public class Context {
       _locals = new Hashtable();
    }
 
-   private Context(final Broker broker, final Hashtable toolbox, 
-         final Object bean, final Hashtable tools)
-   {
-      _broker = broker;
-      _toolbox = toolbox;
-      _bean = bean;
-      _tools = tools;
-      _locals = new Hashtable();
+
+   /**
+     * All subclasses must provide sensible clone implementations
+     */
+   public Object clone() {
+      try {
+         return super.clone();
+      } catch (CloneNotSupportedException cnse) { 
+         return null;
+      }
    }
 
    /**
-     * Create a context which shares the tools and broker that this 
-     * context does, but uses the named bean as the top level object
-     * for introspection, and has its own local variables. If the 
-     * supplied bean is null, then local variables will be used as 
-     * the root of introspection.
+     * Create a new context base don this one, but using the specified 
+     * bean instead of this one
      */
-   final public Context subContext(Object bean) {
-      return new Context(_broker, _toolbox, bean, _tools);
+   public Context clone(Object bean) {
+      Context c = (Context) clone();
+      c._locals = new Hashtable();;
+      c._bean = bean;
+      return c;
+   }
+
+   /**
+     * Clear the context of its non-shared data
+     */
+   public void clear() {
+      _tools.clear();
+      _locals.clear();
+      _bean = null;
+      _locals = null;
    }
 
    /**
@@ -93,26 +106,40 @@ public class Context {
       return _locals;
    }
 
+
+   /**
+     * Subclasses can use this method to register new ContextTools
+     * into a prototypical context.
+     */
+   final protected void addTool(String name, Macro tool) 
+      throws InvalidContextException
+   {
+      if (_toolbox == null) {
+         throw new InvalidContextException("No tools in this context.");
+      }
+      _tools.put(name,tool);
+   }
+
    /**
      * Return the tool corresponding to the specified tool name, or 
      * null if there isn't one
      */
-   final public ContextTool getTool(String name) 
+   final public Object getTool(String name) 
       throws InvalidContextException
    {
       if (_toolbox == null) {
          throw new InvalidContextException("No tools in this context.");
       }
       try {
-         ContextTool t = null;
-         t = (ContextTool) _tools.get(name);
-         if (t == null) {
-            t = (ContextTool) _toolbox.get(name);
-            if (t != null) {
-               _tools.put(name,t.init(this));
+         Object ret = _tools.get(name);
+         if (ret == null) {
+            ContextTool tool = (ContextTool) _toolbox.get(name);
+            if (tool != null) {
+               ret = tool.init(this);
+               _tools.put(name,ret);
             }
          }
-         return t;
+         return ret;
       } catch (ClassCastException ce) {
          throw new InvalidContextException("Tool" + name  
                + " does not implement the ContextTool interface!");

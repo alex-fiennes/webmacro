@@ -140,7 +140,7 @@ final class Variable implements Macro
             val = ((Macro) val).evaluate(context); // recurse
          } 
          if (_filter != null) {
-            val = _filter.evaluate(context.subContext(val));
+            val = _filter.evaluate(context.clone(val));
          }
          return val;
       } catch (NullPointerException e) {

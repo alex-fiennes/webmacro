@@ -29,59 +29,137 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.webmacro.*;
 import org.webmacro.util.*;
-import org.webmacro.engine.*;
-import org.webmacro.resource.*;
 
 /**
-  * A WebContext is the point of intersection between the back-end
-  * Java code and the template script. Programmers are expected to
-  * place objects needed by the template into the WebContext,
-  * whereupon they become available in the template as a variable.
-  * <p>
-  * At the simplest level, this means you can create variables by
-  * adding them as strings: put("Title","Product Listings") creates
-  * a variable in the template called $Title which evaluates to 
-  * the string "Product Listings".
-  * <p>
-  * You can also put complex, bean-like, objects into the context
-  * and rely on WebMacro's property introspection to analyze your
-  * object and determine what sub-variables it can extract from
-  * the object you deposit.
-  * <p>
-  * For example, if you put a Customer object into the WebContext
-  * under the key "Buyer", then that creates a $Buyer variable
-  * in the template script. The template can then use methods
-  * on the Customer class via the introspector. So, $Buyer.Name
-  * might be translated into Customer.getName(). See the 
-  * PropertyOperator class for an explanation of the kinds of
-  * introspection that WebMacro will performed. 
-  * <p>
-  * Please note that if you put values into the map that have 
-  * the same name as properties already declared here then your values 
-  * will be hidden from the WebMacro script language--Property 
-  * introspection will find the properties before checking the map. 
-  * <p>
-  * If you absolutely must use the same names as the WebContext
-  * a workaround is to declare your own hashtable and 
-  * put them into that. Then put your hashtable into the context 
-  * like this: context.put("data", myHashtable)--then you can access
-  * the values of your hashtable as $data.Somevalue
+  * This is an implementation of the WebContext interface. It has the 
+  * ability to hook in commonly re-usable utilities via the configuraiton
+  * file for the Broker. These commonly re-usable utilities are then made
+  * available for use in the context. They include: Cookie, Form, FormList, 
+  * and several others--see the WebMacro.properties file for the actual 
+  * list, and a description of what's been loaded.
   * <p>
   * @see org.webmacro.servlet.Reactor
   * @see org.webmacro.util.Property
   * @see org.webmacro.util.Map
   */
-public interface WebContext extends Cloneable, Map
+final public class WebContext extends Context 
 {
+
+   // raw data fields that are always set, final, and available to the package
+
+   /**
+     * Log configuration errors, context errors, etc.
+     */
+   private final static Log _log = new Log("webcon","WebContext Messages");
+
+   /**
+     * The request for this http connect
+     */
+   HttpServletRequest _request = null;
+
+   /**
+     * The response for this http connect 
+     */
+   HttpServletResponse _response = null;
+
+   // property interface fields that are lazily set, non-final, and private
+
+   /**
+     * Find the name of a tool given the name of a class
+     */
+   private String getToolName(String cname)
+   {
+      int start = cname.lastIndexOf('.') + 1;
+      int end = (cname.endsWith("Tool")) ? 
+         (cname.length() - 4) : cname.length();
+      String ret = cname.substring(start,end);
+      return ret;
+   }
+               
+   /**
+     * Construct a new WebContext. This class will be loaded with a set
+     * of tools and other things, which can be configured. Actual 
+     * runtime instances which are used on a per-request basis 
+     * will be obtained from this prototype using the newInstance 
+     * factory method.
+     */
+   public WebContext(final Broker broker) 
+   {
+      super(broker);
+      try {
+         String tools = (String) broker.getValue("config","TemplateTools");
+         Enumeration tenum = new StringTokenizer(tools);
+         while (tenum.hasMoreElements()) {
+            String toolName = (String) tenum.nextElement();
+            try {
+               Class toolType = Class.forName(toolName);
+               String varName = getToolName(toolName);
+               Macro tool = (Macro) toolType.newInstance(); 
+               addTool(varName,tool);
+            } catch (ClassCastException cce) {
+               _log.exception(cce);
+               _log.error("Tool class " + toolName 
+                     + " newInstance returns invalid type.");
+            } catch (ClassNotFoundException ce) {
+               _log.exception(ce);
+               _log.error("Tool class " + toolName + " not found: " + ce);
+            } catch (IllegalAccessException ia) {
+               _log.exception(ia);
+               _log.error("Tool class and methods must be public for "
+                     + toolName + ": " + ia);
+            } catch (InvalidContextException e) {
+               _log.exception(e);
+               _log.error("InvalidContextException thrown while registering "
+                     + "Tool: " + toolName);
+            } catch (InstantiationException ie) {
+               _log.exception(ie);
+               _log.error("Tool class " + toolName + " must have a public zero "
+                     + "argument or default constructor: " + ie);
+            }
+         }
+      } catch (NotFoundException e) {
+         _log.exception(e);
+         _log.error("Could not locate TemplateTools in config: " + e);
+      } catch (InvalidTypeException e) {
+         _log.exception(e);
+         _log.error("Could not access config: " + e);
+      }
+   }
+
 
    /**
      * Create a new WebContext like this one, only with new values
      * for request and response
      */
-   public WebContext clone(
+   final public WebContext clone(
          final HttpServletRequest req, 
-         final HttpServletResponse resp);
+         final HttpServletResponse resp) 
+   {
+      try {
+
+         // want: new local vars, both existing tools tables, no bean,
+         // plus store req and resp somewhere, plus existing broker
+
+         WebContext wc = (WebContext) clone(null);
+         wc._request = req;
+         wc._response = resp;
+         return wc;
+      } catch (Exception e) {
+         _log.error("Clone not supported on WebContext!");
+         return null;
+      }
+   }
+
+   /**
+     * Clear a WebContext of it's non-shared data
+     */
+   public void clear() {
+      super.clear();
+      _request = null;
+      _response = null;
+   }
 
    /**
      * The HttpServletRequest object which contains information 
@@ -93,7 +171,9 @@ public interface WebContext extends Cloneable, Map
      * @see HttpServletRequest
      * @see org.webmacro.util.Property
      */
-   public HttpServletRequest getRequest();
+   public final HttpServletRequest getRequest() { 
+      return _request; 
+   }
 
    /**
      * The HttpServletResponse object which contains information
@@ -104,83 +184,74 @@ public interface WebContext extends Cloneable, Map
      * @see HttpServletResponse
      * @see org.webmacro.util.Property
      */
-   public HttpServletResponse getResponse();
+   public final HttpServletResponse getResponse() { 
+      return _response; 
+   }
 
-
-   /**
-     * The broker provides access to extended services and other 
-     * resources, which live in the org.webmacro.resource package,
-     * or that you define, or obtain from a third party.
-     */
-   public Broker getBroker();
-
-   /**
-     * A ContextTool is a simple object with get/set methods that provides
-     * some sort of extended functionality. Tools can generally be used 
-     * inside the context under their own names. This method helps the 
-     * back end programmer access them as well, by returning the tool 
-     * as an object with the ContextTool interface. If the named object
-     * is a Macro, it will be evaluated. If the result is a ContextTool, 
-     * it will be returned--otherwise an exception is raised.
-     * @exception InvalidContextException named object is not a ContextTool
-     */
-   public ContextTool getTool(String key) throws InvalidContextException;
-
-   /**
-     * This is a get() method. If the result is a Macro, it is evaluated
-     * first before returning it, so that the return of this method is 
-     * never a Macro. This is useful for accessing objects that change
-     * their behavior based on other objects in the context.
-     * @return a dereferenced object, or null if the key does not exist
-     * @exception InvalidContextException attempt to evaluate macro failed
-     */
-   public Object getMacro(String key) throws InvalidContextException;
 
    // LEGACY METHODS
 
-   /**
-     * Access a form value as a string. If there are multiple form 
-     * values corresponding to this name the first one is returned.
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public String getForm(String field);
 
+   public String getForm(String field) {
+      try {
+         Bag ct = (Bag) getTool("Form");
+         return (String) ct.get(field);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Form tool");
+         return null;
+      }
+   }
 
-   /**
-     * Access a form value as a list. If there is only one value 
-     * corresponding to this name it will be returned as a one 
-     * element array.
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public String[] getFormList(String field);
+   public String[] getFormList(String field) {
+      try {
+          Bag ct = (Bag) getTool("FormList");
+         return (String[]) ct.get(field);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load FormList tool");
+         return null;
+      }
+   }
 
+   public CGI_Impersonator getCGI() {
+      try {
+         return (CGI_Impersonator) getTool("CGI");
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load CGI tool");
+         return null;
+      }
+   }
 
-   /**
-     * Access to properties with names familiar to CGI programmers. 
-     * All of this data is available via the request and response 
-     * interfaces, but ex-CGI programmers may find this more familiar.
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public CGI_Impersonator getCGI();
+   public Cookie getCookie(String name) {
+      try {
+         CookieJar cj = (CookieJar) getTool("Cookie");
+         return (Cookie) cj.get(name);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Cookie tool");
+         return null;
+      }
+   }
 
+   public void setCookie(String name, String value) {
+      try {
+         CookieJar cj = (CookieJar) getTool("Cookie");
+         cj.set(name, value);
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Cookie tool");
+      }
+   }
 
-   /**
-     * Load a cookie by name.
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public Cookie getCookie(String cookieName);
-   
-
-   /**
-     * Set a cookie by name.
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public void setCookie(String name, String value);
-
-   /**
-     * Load the users session. 
-     * Tool interface: implemented by loading a ContextTool
-     */
-   public HttpSession getSession();
-
+   public HttpSession getSession() {
+      try {
+         return (HttpSession) getTool("Session");
+      } catch (Exception e) {
+         _log.exception(e);
+         _log.error("Could not load Session tool");
+         return null;
+      }
+   }
 }
