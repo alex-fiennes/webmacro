@@ -1,0 +1,186 @@
+
+<html><head><title>How WebMacro Works</title></head>
+<body bgcolor="white" text="black">
+
+<table width="95%">
+<tr><td width="70%"><h1>How WebMacro Works<hr></h1></td>
+     <td align="right"><a href="webmacro.html">BACK</a> |
+                       <a href="index.html">UP</a> |
+                       <a href="script.html">NEXT</a></td></tr>
+<tr><td>
+
+<h2>Installation Issues</h2>
+
+Consult the README.html that ships with WebMacro, but the main things
+you have to get right are:
+<ul>
+  <li>Install a Java Virtual Machine and a Servlet engine
+  <li>Put webmacro.jar somewhere on your classpath
+  <li>Put your servlet engine's .jar file on your classpath 
+  <li>Make sure WebMacro.properties is on your classpath as well
+  <li>Edit WebMacro.properties setting your TemplatePath correctly
+</ul>
+
+<h2>Introspection Rules</h2>
+
+WebMacro follows the JavaBeans specification when performing class
+analysis, but also extends that specification.
+<p>
+JavaBeans is essentially a set of conding conventions for how to 
+name accessor methods. If you follow those conventions then lots
+of tools, including WebMacro, will be able to analyze your class
+to learn what properties it has.
+<p>
+Here are examples of the properties that WebMacro can find:
+<p>
+When resolving $foo.Bar.Baz WebMacro can find:
+<ul>
+  <li>foo.Bar.Baz -- just field names
+  <li>foo.Bar.getBaz() -- a field and a JavaBeans accessor
+  <li>foo.getBar().getBaz() -- simple JavaBeans accessors
+  <li>foo.get("Bar").getBaz() -- hashtable lookup & accessor
+  <li>foo.getBar("Baz") -- Baz is a named property of Bar
+</ul>
+
+In the previous example, using #foreach, WebMacro needed to 
+extract some kind of Iterator object from $Results. It can 
+do that in any of these ways:
+<ul>
+  <li>results[] -- results is an array already
+  <li>results is already a Java2 Iterator
+  <li>results is already a Java1 Enumeration
+  <li>results.iterator() returns a Java2 Iterator (any Java2 collection)
+  <li>results.elements() returns a Java1 Enumeration (Vector, Hashtable)
+</ul>
+
+In cases where WebMacro needs to set a property, say $foo.Bar.Baz,
+it can find methods like these:
+<ul>
+  <li>foo.Bar.Baz = value -- all fields
+  <li>foo.Bar.setBaz(value) -- get a field and simple set accessor
+  <li>foo.getBar().setBaz(value) -- get accessor and set accessor
+  <li>foo.getBar().put("Baz", value) -- getBar() returns a hashtable?
+  <li>foo.setBar("Baz", value) -- eg: response.setHeader(header,value)
+</ul>
+
+NOTE: WebMacro can only access <b>public</b> fields and methods. The
+Java security API prevents WebMacro (or any other package) from 
+gaining access to the private, protected, or package protected
+data of your objects. If you want WebMacro to see your method, you
+<b>must</b> make a <i>public</i> method.
+
+<h2>Round bracket hack</h2>
+
+Template writers may need to access data from a Java object 
+which does not follow the Java beans spec, and does not follow
+any of the common extensions listed above that WebMacro can
+introspect.
+<p>
+In these cases you can explicitly name a Java method in a 
+WebMacro template using the <i>round bracket hack</i>:
+<pre>
+   $foo.name()
+   $bar.loadValue(10,$arg1,true)
+</pre>
+
+In this case $foo has a badly named accessor: name() should have
+been called getName(). On the other hand, $bar has a loadValue
+method which cannot easily be translated to a Java Bean method: 
+it takes three odd arguments. 
+<p>
+I call this the round bracket <i>hack</i> because any use of this
+syntax implies that the template author has some knowledge of 
+the exact Java class which implements $foo and $bar. If instead
+you could have written $foo.Name the programmer could have provided
+either a hashtable, or a method with public fields, or a method with
+public accessors. Since the template writer actually refers to the
+method by name the programmer winds up being restricted by the 
+template author.
+<p>
+A better solution would be to wrap the non-bean class in a JavaBean
+interface. In the future, when WebMacro's introspector is still 
+more powerfult han iti s now, the round bracket hack may be 
+deprecated and eventually removed.
+
+
+<h2>Concurrency Model: Context-per-thread</h2>
+
+Multiple threads can execute a WebMacro template simultaneously: the
+template is immutable. Once it is loaded and parsed it doesn't change.
+<p>
+Each thread should have its own Context. Think of a Context as 
+the place where each Thread keeps its local data. Since each 
+Context is accessible to only one Thread, it does not need to 
+be locked. 
+<p>
+Thus, WebMacro avoid many locks: Templates are not locked because they
+are immutable. Contexts are not locked because they are accessed by 
+only a single thread each. 
+<p>
+You will need synchronization locks in a WebMacro based servlet
+<i>only</i> when you explicitly share data between multiple threads.
+
+<h2>Performance</h2>
+
+WebMacro does a lot of work in order to generate your page, so you
+might wonder whether it's efficient. Here are some answers:
+<ul>
+  <li>Templates are compiled for efficiency. WebMacro runs a two-phase
+      compile which optomizes out some static content. Unicode 
+      character encoding/decoding is done at template compile time
+      and cached for re-use on each request.
+      <p>
+  <li>Class analysis is cached for efficiency. Analyzing Java 
+      classes is very expensive so WebMacro doesn't do that on 
+      every request. The first time a class is analyzed WebMacro
+      caches that data for later re-use. It turns out that invoking
+      a reflected method is quite fast, so if you can avoid the 
+      expense of the analysis there isn't that much of a hit.
+      <p>
+  <li>Lock-free design. There are very few synchronization locks 
+      in WebMacro, which helps concurrency a lot. Templates are
+      immutable and Contexts are accessed one-per-thread. There
+      are a few locks around various caches but they are constructed
+      to minimize the time a thread must spend inside the monitor,
+      the result being that a high degree of concurrency is possible.
+</ul>
+
+It turns out that for typical applications the cost of your back-end
+data source will swamp the cost of WebMacro. Generating a page is a 
+fairly efficient operation. You will need to concentrate on optomizing
+the portions of your application which perform I/O and other more 
+expensive operations--WebMacro will account for only a fraction of
+the cost of the page.
+
+
+<h2>Extending the Framework</h2>
+
+WebMacro loads almost all of its implementation from a configuration
+file at runtime. You can easily override, extend, or change its 
+behavior by naming your own files in the configuration file 
+instead of the defaults WebMacro ships with.
+<p>
+Here are some of the things you can plug in via configuration file:
+<ul>
+  <li>New directives for the script language (pluggable directives)
+  <li>What default variables are available in every template (Tools)
+  <li>Where templates are loaded from (template path)
+  <li>How and when templates are loaded (template provider)
+  <li>How long and whether templates are cached
+  <li>How the WebMacro language itself is parsed (pluggable parser)
+</ul>
+
+This is what makes WebMacro an extensible framework: almost every 
+aspect of its behavior can be easily overridden.
+<p>
+As the developer of an application framework you can take advantage
+of these features to customize WebMacro to your particular needs.
+
+
+</td></tr>
+<tr><td><hr></h1></td>
+     <td align="right"><a href="webmacro.html">BACK</a> |
+                       <a href="index.html">UP</a> |
+                       <a href="script.html">NEXT</a></td></tr>
+</table>
+</body></html>
