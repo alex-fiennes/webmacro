@@ -1,0 +1,554 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>ActionServlet Specification</title>
+	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
+	<!--#include virtual="vars.inc" -->
+<style>
+<!--
+.shadow {
+	filter: DropShadow(Color=#776699,OffX=3,OffY=3,Positive=1);
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+UL.main	{
+	list-style: none;
+}
+
+UL.sub  {
+	list-style: disc;
+}
+
+H1 {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+
+H3.main {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+-->
+</style>
+</head>
+<body>
+<TABLE WIDTH="560" ALIGN="CENTER" BORDER="0"><TR><TD ALIGN=CENTER>
+
+<TABLE WIDTH="90%" CELLPADDING="15" BGCOLOR="Silver"><TR><TD>
+<TABLE ALIGN=CENTER><TR><TD ALIGN=CENTER>
+<STRONG>&quot;Easy mapping of HTTP requests to methods of Java components&quot;</STRONG>
+</TD></TR><TR><TD CLASS="shadow" ALIGN=CENTER>
+<FONT COLOR="Red" SIZE="+3"><FONT SIZE="+4">A</FONT>CTION&nbsp;<FONT SIZE="+4">S</FONT>ERVLET</FONT>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+version 0.61<P>
+
+Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+</TD></TR><TR><TD>
+
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+
+<CENTER><H1>ActionServlet Specification</H1></CENTER>
+
+ <TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+ <H3>Table of contents</H3>
+
+ <DL>
+ <DT>1. <A HREF="#start">Definitions of terms</A>
+    <DL>
+    <DT>1.1 <A HREF="#components">Components</A>
+    <DT>1.2 <A HREF="#acm">Action methods</A>
+    <DT>1.3 <A HREF="#template">Templates</A>
+    <DT>1.4 <A HREF="#tha">Type handlers</A>
+    <DT>1.5 <A HREF="#config">ActionConfig (XML configuration file)</A>
+       <DL>
+       <DT>1.5.1 <A HREF="#el_application">The root &lt;application&gt; element</A>
+       <DT>1.5.2 <A HREF="#el_props">&lt;properties&gt; element</A>
+       <DT>1.5.3 <A HREF="#el_templates">&lt;templates&gt; element</A>
+       <DT>1.5.4 <A HREF="#el_handlers">&lt;type-handlers&gt; element</A>
+       <DT>1.5.5 <A HREF="#el_components">&lt;components&gt; element</A>
+          <DL>
+          <DT>1.5.5.1 <A HREF="#el_action">&lt;action&gt; elements</A>
+          <DT>1.5.5.2 <A HREF="#el_onreturn">&lt;on-return&gt; elements</A>
+          </DL>
+       <DT>1.5.6 <A HREF="#el_outvar">&lt;output-variable&gt; elements</A>
+       <DT>1.5.7 <A HREF="#allinone">All-in-one example</A>
+       </DL>
+    <DT>
+    </DL>
+ <DT>2. <A HREF="#http">HTTP request processing</A>
+ <DT>3. <A HREF="#usage">Development using ActionServlet (roles)</A>
+ <DT>
+ </DL>
+
+ </TD></TR></TABLE>
+ <HR WIDTH="90%">
+
+ <A NAME="start"></A>
+<FONT FACE="Arial" COLOR="green"><H2>1. Definitions of terms</H2></FONT>
+
+ <A NAME="components"></A> 
+ <H3>1.1 Components</H3>
+ are objects which <A HREF="#acm">action methods</A> are invoked by HTTP requests.
+ Each component is referenced by <A HREF="#config">ActionConfig</A>, where
+ it has specified <B>name</B>, Java <B>class</B> and <B>persistence</B>.<P>
+
+ Name server for referring component in <A HREF="#el_props"><TT>&lt;property&gt;</TT></A>
+ and <A HREF="#el_outvar"><TT>&lt;output-variable&gt;</TT></A> elements. Class determines
+ which class will be used to instantiate the component. Persistence determines durability 
+ of a component object and may be of three types:<P>
+
+ <UL>
+ <LI><TT>"application"</TT> persistence - the component object exists in only in one
+     copy per servlet. This is useful for implementing "global" methods that manipulate
+     with common application data.
+ <LI><TT>"session"</TT> persistence - each HTTP session owns a single copy of the
+     componenent object. This is useful for implementing user specific data like 
+	 "shopping carts" etc.
+ <LI><TT>"request"</TT> persistence - for each HTTP request is created a new component
+     object (except for page reload, which uses the same component).
+ </UL>
+
+ <P>Each component class must have a public constructor with a single parameter of type 
+ <TT>org.webmacro.as.ActionServlet</TT>, optionally it can have a second parameter of type
+ <TT>java.lang.String</TT> which will be passed the component name from ActionConfig.
+
+ <P>If the component wants to be notified when it 
+ is no longer used by ActionServlet, it should implement 
+ <A HREF="api/org/webmacro/as/Destroyed.html"><CODE>Destroyed</CODE></A> interface.
+
+ <A NAME="acm"></A>
+ <H3>1.2 Action methods</H3>
+ implement the behaviour of a component. Each action method must be declared <TT>public</TT>.
+ To parameters of action method are passed values of HTTP parameters automatically
+ converted to Java types by <A HREF="#tha">type handlers</A>}. The return values can be mapped 
+ onto template names by  <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A>
+ element.<P>
+
+ The action method to be invoked is chosen after the name of parameter '<B>action</B>' and,
+ optionally, '<B>form</B>' (if omitted, it has a default empty value: ""). For example,
+ "login" action would invoke <TT>someComponent.login(...)</TT> method. This binding is
+ done by <A HREF="#el_action"><TT>&lt;action&gt;</TT></A> element.
+
+ <A NAME="template"></A>
+ <H3>1.3 Templates</H3>
+ You should be familiar with <A HREF="http://www.webmacro.org">WebMacro</A> templates
+ already. The new thing is that you can pass HTTP parameter value(s) from template
+ directly to the component's action method.<P>
+
+ <B>Example:</B> the following HTML form defines a parameter named <TT>userName</TT>
+ and <TT>password</TT> (and of course, the mandatory 'action'):
+
+ <PRE>
+ &lt;FORM METHOD="POST"&gt;
+    User name: &lt;INPUT TYPE="Text" <B>NAME="userName"</B>&gt;
+    Password:  &lt;INPUT TYPE="Password" <B>NAME="password"</B>&gt;
+    &lt;INPUT TYPE="Submit" <B>NAME="action"</B> VALUE="Login"&gt;
+ &lt;/FORM&gt;</PRE>
+
+ Values of these parameters can be easily passed to the action method:
+
+ <PRE>public int login(String <B>userName</B>, String <B>password</B>)</PRE>
+
+ Note: A similar effect can be achieved by GET method - using a link like:<BR>
+ <TT>&lt;A&nbsp;HREF="LoginServlet?action=Login&amp;userName=John+password=18x79Z"&gt;login as John&lt;/A&gt;</TT><P>
+
+ <A NAME="tha"></A>
+ <H3>1.4 Type handlers</H3>
+
+ See <A HREF="api/org/webmacro/as/TypeHandler.html"><CODE>TypeHandler</CODE></A>, <A HREF="api/org/webmacro/as/SimpleTypeHandler.html"><CODE>SimpleTypeHandler</CODE></A>
+ and <A HREF="api/org/webmacro/as/CompositeTypeHandler.html"><CODE>CompositeTypeHandler</CODE></A> for more information.
+
+ <A NAME="config"></A>
+ <H3>1.5 ActionConfig (XML configuration file)</H3>
+ has a simple XML format and is divided into four main parts:
+ <A HREF="#el_props"><TT>&lt;properties&gt;</TT></A> (optional),
+ <A HREF="#el_templates"><TT>&lt;templates&gt;</TT></A> (optional),
+ <A HREF="#el_handlers"><TT>&lt;type-handlers&gt;</TT></A> (optional) and
+ <A HREF="#el_components"><TT>&lt;components&gt;</TT></A> (mandatory):<P>
+
+ <PRE>
+ &lt;?xml version="1.0"?&gt;
+ &lt;!DOCTYPE application SYSTEM
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd"&gt;
+
+ &lt;application&gt;
+    &lt;properties&gt;
+    ...
+    &lt;/properties&gt;
+
+    &lt;templates&gt;
+    ...
+    &lt;/templates&gt;
+
+    &lt;type-handlers&gt;
+    ...
+    &lt;/type-handlers&gt;
+
+    &lt;components&gt;
+    ...
+    &lt;/components&gt;
+ &lt;/application&gt;</PRE>
+
+ ActionConfig filename must be passed to ActionServlet via a servlet init parameter named
+ <TT>"ActionConfig"</TT>. For Servlet 2.2+ containers it is done in the <TT>servlet</TT>
+ tag in <TT>web.xml</TT> file.<P>
+ 
+ Example (piece of <TT>web.xml</TT>):
+
+ <PRE>
+    &lt;servlet>
+      &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+      &lt;servlet-class&gt;org.webmacro.as.ActionServlet&lt;/servlet-class&gt;
+
+      <B>&lt;init-param&gt;
+         &lt;param-name&gt;ActionConfig&lt;/param-name&gt;
+         &lt;param-value&gt;LoginServlet.xml&lt;/param-value&gt;
+      &lt;/init-param&gt;</B>
+   &lt;/servlet&gt;</PRE>
+ 
+ For other environments constult your servlet runtime documentation.<P>
+
+ <A NAME="el_application"></A>
+ <B>1.5.1 The root <TT>&lt;application&gt;</TT> element</B><P> may have optional <TT>repository</TT>
+ attribute, which specifies a directory where servlet components and other classes are stored
+ [TODO: future versions may accept also .jar repositories]. This attribute may be used only if you
+ don't subclass ActionServlet, otherwise it is expected that all classes are loaded from <TT>CLASSPATH</TT>
+ by the servlet runtime, as usually. Subelements of <TT>&lt;application&gt;</TT> are described
+ in the following sections.<P>
+
+ <B>Example:</B>
+ <PRE>
+ &lt;application repository="c:/servlets/App1/classes"&gt;
+    ...
+ &lt;/application&gt;
+ </PRE>
+
+ <B>1.5.2 <A NAME="el_props"><TT>&lt;properties&gt;</TT></A> element</B><P> contains one or more 
+ <TT>&lt;property&gt;</TT> subelements, which have attributes <TT>name</TT>, <TT>value</TT>
+ and optionally <TT>component</TT> (reffers to component <TT>name</TT>).<P>
+
+ <B>Example:</B >
+ <PRE>
+ &lt;properties&gt;
+    &lt;property name="server.url" value="http://some.server.com"/&gt;
+    &lt;property component="DbAccess" name="max.connections" value="10"/&gt;
+ &lt;/properties&gt;</PRE>
+
+ Value of each property is retrieved by <A HREF="api/org/webmacro/as/ActionServlet.html#getProperty(java.lang.String)"><CODE>getProperty(name)</CODE></A> and
+ <A HREF="api/org/webmacro/as/ActionServlet.html#getProperty(java.lang.String, java.lang.String)"><CODE>getProperty(component,name)</CODE></A> metod.
+ ActionServlet components should be configured via properties with <TT>component</TT> attribute,
+ other properties should be considered global.
+
+ <P><B>1.5.3 <A NAME="el_templates"><TT>&lt;templates&gt;</TT></A> element</B><P> contains one or more
+ <TT>&lt;template&gt;</TT> subelements, which are used to specify:
+
+ <UL>
+ <LI>which template is shown upon a new session - by <TT>is-new-session</TT> attribute (if this
+     attribute is never set to "true", the <A HREF="api/org/webmacro/as/ActionServlet.html#newSession(org.webmacro.servlet.WebContext)"><CODE>newSession()</CODE></A> method is
+     expected to do the job).
+ <LI>which <A HREF="#el_outvar"><TT>&lt;output-variable&gt;</TT></A>s will be set when the template
+     is shown (optional).
+ </UL><P>
+
+ Each <TT>&lt;template&gt;</TT> element must have a <TT>name</TT> attribute specifying the name of
+ the template.<P>
+
+ <B>Example 1:</B >
+ <PRE>
+ &lt;templates&gt;
+    &lt;template name="Login.wm" is-new-session="true"/&gt;
+ &lt;/templates&gt;</PRE>
+
+ <B>Example 2:</B>
+ <PRE>
+ &lt;templates&gt;
+    &lt;template name="Login.wm"/&gt;
+
+    &lt;template name="Main.wm" is-new-session="true"&gt;
+       &lt;output-variable name="isAuthenticated" 
+                        component="Authenticator" value="isAuthenticated()"/&gt;
+       &lt;output-variable name="user" 
+                        component="Authenticator" value="getUser()"/&gt;
+    &lt;/template&gt;
+ &lt;/templates&gt;</PRE>
+ 
+ In the second example is set WebMacro variable <TT>$isAuthenticated</TT> to the value returned by <TT>Authenticator.isAuthenticated()</TT> 
+ and <TT>$user</TT> to the value returned by <TT>Authenticator.getUser()</TT> every time the <TT>Main.wm</TT> template is shown.<P>
+
+ <B>1.5.4 <A NAME="el_handlers"><TT>&lt;type-handlers&gt;</TT></A> element</B><P> contains one
+ or more <TT>&lt;type-handler&gt;</TT> subelements, that bind <A HREF="#tha">type handlers</A> to
+ appropriate Java types.<P>
+
+ <B>Example:</B>
+ <PRE>
+ &lt;type-handlers&gt;
+    &lt;type-handler type="my.types.Email" class="my.handlers.EmailHandler"/&gt;
+    &lt;type-handler type="java.util.Date" class="my.handlers.DateHandler"/&gt;
+ &lt;/type-handlers&gt;
+ </PRE>
+
+ <B>1.5.5 <A NAME="el_components"><TT>&lt;components&gt;</TT></A> element</B><P> contains one or
+ more <TT>&lt;component&gt;</TT> elements (with attributes <TT>class</TT> and <TT>persistence</TT>),
+ which may contain zero or more <A HREF="#el_action"><TT>&lt;action&gt;</TT></A> and
+ <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A> subelements.<P>
+
+ <B>Example:</B>
+ <PRE>
+ &lt;components&gt;
+    &lt;component class="Authenticator" persistence="application"&gt;
+       &lt;action name="Login" method="login(String userName, String password)"/&gt;
+       &lt;on-return value="OK" show-template="SuccessfulLogin.wm"/&gt;
+       &lt;on-return value="ERROR" show-template="LoginError.wm"/&gt;
+    &lt;/component&gt;
+
+    &lt;component class="SearchEngine" persistence="application"&gt;
+       &lt;action name="Search" method="search(String str)"/&gt;
+       &lt;action form="Status" name="OK" method="getStatus()"/&gt;
+       &lt;on-return value="void" show-template="Main.wm"/&gt;
+    &lt;/component&gt;
+ &lt;/components&gt;
+ </PRE>
+
+ <B>1.5.5.1 Zero or more <A NAME="el_action"><TT>&lt;action&gt;</TT></A> elements</B>,<P> which bind
+ actions to components' action methods, can be specified inside each <TT>&lt;component&gt;</TT>
+ element (before <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements). Element <TT>&lt;action&gt;</TT> has attributes:<P>
+
+ <UL>
+ <LI><TT>name</TT> - specifies the name of 'action' (i.e. value of HTTP parameter
+     'action'), which will be bound to this component's action <TT>method</TT>,
+ <LI><TT>form</TT> (optional) - helps distinguish between different forms
+     with same actions (for example, if two forms contain same <TT>"OK"</TT> submit
+     buttons),
+ <LI><TT>method</TT> - contains action method declaration, which specifies
+     method name and its parameters. The return type and thrown exceptions are NOT
+     specified here. The types of parameters must be either primitive or fully
+     qualified class names (classes from <TT>java.lang</TT> package and
+     <TT>org.webmacro.servlet.WebContext</TT> needs not to be fully qualified).
+     Names of the parameters from the <TT>method</TT> attribute correspond to HTTP
+     parameter names (for <TT>WebContext</TT> the parameter name is ignored)!!!
+     Names of formal action method parameters in the source code may be different.
+ </UL>
+
+ <P><B>Example:</B>
+ <PRE>
+ &lt;component ...&gt;
+    &lt;action form="Search" name="OK" method="search(String str)"/&gt;
+    &lt;action form="Submit" name="OK" method="newURL(java.net.URL url)"/&gt;
+ &lt;/component&gt;</PRE>
+
+ Element <TT>&lt;action&gt;</TT> can optionally contain  one or more
+ <A HREF="#el_outvar"><TT>&lt;output-variable&gt;</TT></A> subelements, which put additional
+ variables to WebContext of the action.<P>
+
+ <B>Example:</B>
+ <PRE>
+ &lt;action name="Login" method="login(String userName, String password)"&gt;
+    &lt;output-variable name="user" component="Authenticator" value="getUser()"/&gt;
+ &lt;/action&gt;
+ </PRE>
+ </UL>
+
+ <B>1.5.5.2 Zero or more <A NAME="el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements</B><P>
+ can be specified inside <TT>&lt;component&gt;</TT> element after <TT>&lt;action&gt;</TT>s.
+ Each <TT>&lt;on-return&gt;</TT> has two attributes:
+
+ <UL>
+ <LI><TT>value</TT> - contains the <EM>name</EM>(!) of <TT>public static final</TT> field
+ of the component, which value will be compared to the return value of invoked action method.
+ A special name "<TT>void</TT>" is reserved for mapping of methods with <TT>void</TT> return type.
+ <LI><TT>show-template</TT> - contains the name of template to be shown if the values
+ match.
+ </UL><P>
+
+ <B>Example:</B>
+
+ <PRE>
+ public class MyComponent {
+    public static final int <B>OK</B> = 0;
+ }
+
+ &lt;component class="MyComponent" ...&gt;
+    &lt;action .../&gt;
+    &lt;on-return value="<B>OK</B>" show-template="SomeTemplate.wm"/&gt;
+    &lt;on-return value="<B>void</B>" show-template="OtherTemplate.wm"/&gt;
+ &lt;/component&gt;
+ </PRE>
+
+ <B>1.5.6 Zero or more <A NAME="el_outvar"><TT>&lt;output-variable&gt;</TT></A> elements</B><P>
+ can be specified inside <TT>&lt;template&gt;</TT> and/or <TT>&lt;action&gt;</TT> elements. It
+ has three attributes:<P>
+
+ <UL>
+ <LI><TT>name</TT> - determines name of the template $variable,
+ <LI><TT>component</TT> (optional) - reffers to the component's <TT>name</TT> from which the
+     <TT>value</TT> taken (the component is instantiated, if it doesn't yet exist),
+ <LI><TT>value</TT> - operator applied to the <TT>component</TT> (a method call, for example)
+     or to a $variable.
+ </UL><P>
+
+ Note 1: Output variables are evaluated in the specified order.<BR>
+ Note 2: First are set output variables of <TT>&lt;action&gt;</TT> and at last of
+         <TT>&lt;template&gt;</TT>.
+
+ <P><B>Example:</B> set $user to Authenticator.getUser() and $name to $user.getName()
+ <PRE>
+ &lt;output-variable name="user" component="Authenticator" value="getUser()"/&gt;
+ &lt;output-variable name="name" value="$user.Name"/&gt;</PRE>
+
+See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
+
+ <A NAME="allinone"></A>
+ <B>1.5.7 All-in-one example</B><P>
+
+ An example of ActionConfig may look like this:
+
+ <PRE>
+ &lt;?xml version="1.0"?&gt;
+ &lt;!DOCTYPE application SYSTEM
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd"&gt;
+
+ &lt;application&gt;
+    &lt;properties&gt;
+       &lt;property name="<B>max.users</B>" value="<B>500</B>"/&gt;
+
+       &lt;property component="<B>Authenticator</B>" 
+                 name="<B>password.retry</B>" value="<B>3</B>"/&gt;
+    &lt;/properties&gt;
+
+    &lt;templates&gt;
+       &lt;template name="<B>Login.wm</B>" is-new-session="<B>true</B>"/&gt;
+
+       &lt;template name="<B>Main.wm</B>"&gt;
+          &lt;output-variable name="<B>isAuthenticated</B>"
+                           component="<B>Authenticator</B>"
+                           value="<B>isAuthenticated()</B>"/&gt;
+       &lt;/template&gt;
+    &lt;/templates&gt;
+
+    &lt;type-handlers&gt;
+       &lt;type-handler name="<B>shop.types.Email</B>"
+                     class="<B>shop.handlers.EmailHandler</B>"/&gt;
+    &lt;/type-handlers&gt;
+
+    &lt;components&gt;
+       &lt;component name="<B>Main</B>" class="<B>shop.Main</B>" persistence="<B>application</B>"&gt;
+          &lt;action name="<B>showMain</B>" method="<B>showMain()</B>"/&gt;
+          &lt;action name="<B>showGoods</B>" method="<B>showGoods()</B>"&gt;
+             &lt;output-variable name="<B>goods</B>" value="<B>getGoods()</B>"/&gt;
+          &lt;/action&gt;
+       &lt;/component&gt;
+
+       &lt;component name= "<B>Authenticator</B>" 
+                  class="<B>shop.Authenticator</B>" persistence="<B>session</B>"&gt;
+          &lt;action name="<B>Login</B>" method="<B>login(String name,String passwd)</B>"/&gt;
+          &lt;on-return value="<B>OK</B>" show-template="<B>Main.wm</B>"/&gt;
+          &lt;on-return value="<B>ERROR</B>" show-template="<B>error.wm</B>"/&gt;
+       &lt;/component&gt;
+    &lt;/components&gt;
+ &lt;/application&gt;
+ </PRE>
+
+ <P><A NAME="http"></A>
+ <FONT FACE="Arial" COLOR="green"><H2>2. HTTP request processing</H2></FONT>
+ An example of typical lifecycle looks like this:
+ 
+ <CENTER><IMG SRC="images/auth2.gif" WIDTH=644 HEIGHT=386 BORDER=0></CENTER><P>
+
+ <TABLE BORDER=0><TR>
+ <TD VALIGN="top">I.</TD><TD> User clicks "Login" button <TT>-&gt;</TT> HTTP request with parameters "action",
+     "userName" and "password" is generated and passed to <TT>handle()</TT> method of
+	 the servlet.</TD></TR><TR>
+  <TD VALIGN="top">II.</TD><TD> According to <TT>&lt;action&gt;</TT> mappings in ActionConfig, "login" method
+     is chosen and invoked - "userName" and "password" parameters value are passed to the method.</TD></TR><TR>
+  <TD VALIGN="top">III.</TD><TD> Return value is mapped to template name by <TT>&lt;on-return&gt;</TT> element(s) 
+     in ActionConfig (for example, if <TT>OK</TT> is returned by <TT>login()</TT> method, then "SuccessfulLogin.wm"
+	 template name is chosen).</TD></TR><TR>
+  <TD VALIGN="top">IV.</TD><TD> The chosen template is loaded, processed by WebMacro and returned to the browser.</TD>
+</TR></TABLE>
+
+ <P>Detailed description of HTTP request processing follows:<P>
+
+ <OL>
+ <LI>A HTTP request is passed to <A HREF="api/org/webmacro/as/ActionServlet.html#handle(org.webmacro.servlet.WebContext)"><CODE>handle()</CODE></A> method.
+     ActionServlet requires that 'action' (and optional 'form') HTTP parameters
+     are defined in the request.
+ <LI>A component, which action method is bound to the 'action', is created (with respect
+     to its persistance), if it doesn't yet exist.
+ <LI><A HREF="api/org/webmacro/as/ActionServlet.html#beforeConversion(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String)"><CODE>beforeConversion()</CODE></A> method of
+     ActionServlet is called.
+ <LI>HTTP parameter values are converted to the values of Java types via type handlers.
+ <LI>If overriden, <A HREF="api/org/webmacro/as/ActionServlet.html#beforeInvoke(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object[])"><CODE>beforeInvoke()</CODE></A> method is called.
+ <LI>Appropriate action method is invoked (determined by <TT>&lt;action&gt;</TT> element).
+ <LI>If overriden, <A HREF="api/org/webmacro/as/ActionServlet.html#afterInvoke(java.lang.Object, org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object[])"><CODE>afterInvoke()</CODE></A> method is called.
+ <LI>If the return value of action method does not match any value of
+ public static final field of the component, then <A HREF="api/org/webmacro/as/ActionServlet.html#onReturn(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object)"><CODE>onReturn()</CODE></A>
+ method is called (otherwise <TT>&lt;on-return&gt;</TT> elements apply).
+ <LI>All <TT>&lt;output-variable&gt;</TT>s for the action and to-be-shown template are set.
+ </OL>
+
+ <P>Exceptions to this schema happen if:<P>
+
+ <UL>
+ <LI>conversion error occurrs - then <A HREF="api/org/webmacro/as/ActionServlet.html#conversionError(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ConversionException)"><CODE>conversionError()</CODE></A>
+     method is called,
+ <LI>'action' parameter is not defined in the HTTP request or is not defined for
+     specified 'form' - then <A HREF="api/org/webmacro/as/ActionServlet.html#unassignedAction(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String)"><CODE>unassignedAction()</CODE></A> is called,
+ <LI>an exception is thrown by action method - then <A HREF="api/org/webmacro/as/ActionServlet.html#onException(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ActionException)"><CODE>onException()</CODE></A>
+     method is called.
+ </UL><P>
+
+ Note: ActionServlet informs components when they are no longer used - see <A HREF="api/org/webmacro/as/Destroyed.html"><CODE>Destroyed</CODE></A> interface.
+
+ <P><A NAME="usage"></A>
+ <FONT FACE="Arial" COLOR="green"><H2>3. Development using ActionServlet (roles)</H2></FONT>
+
+ The development process with ActionServlet is divided into several separate tasks, which
+ can be performed by different roles:<P>
+
+ <OL>
+ <LI>Role: <EM>Designer</EM>
+ <UL>
+    <LI>Designs WebMacro templates - they provide the look and feel of the web application.
+ </UL><P>
+
+ <LI>Role: <EM>Developer</EM>
+ <UL>
+    <LI>Programs components - they encapsulate the bussiness logic.
+    <LI>Programs type handlers - they enable custom HTTP parameter type conversions.
+    <LI>Subclasses ActionServlet to modify its behaviour (optional).
+ </UL><P>
+
+ <LI>Role: <EM>Assembler</EM>
+ <UL>
+ <LI>Creates ActionConfig - it binds actions to components methods, maps return values
+     to templates, Java types to type handlers, assigns template variables and configure
+     properties.
+ <LI>Packages the web application (note: servlet init parameter <TT>ActionConfig</TT>
+     must be passed to ActionServlet - usually via <TT>web.xml</TT> file).
+ </UL><P>
+
+ <LI>Role: <EM>Deployer</EM>
+ <UL>
+ <LI>Deploys the web application - depends on the servlet runtime (usually in .war)
+ </UL>
+ </OL><P>
+
+ Advantages:<P>
+ <UL>
+ <LI>Designer needs not to know Java, but only the simple WebMacro scripting language.
+ <LI>Developer does not care about the look and feel (HTML code).
+ <LI>Components can be reusable - assembler can make application from existing components.
+ </UL>
+</TD></TR></TABLE>
+
+<P><!--#include virtual="/java/footer.inc" -->
+</TD></TR></TABLE>
+</body>
+</html>
