@@ -149,7 +149,16 @@ public class PropertyException extends ContextException
       }
    }
 
-
+    /**
+     * Exception thrown when a Variable isn't of the specified class type.
+     */
+    public static class InvalidTypeException extends PropertyException {
+        public InvalidTypeException (String variableName, Class clazz) { 
+            super ("$" + variableName + " is not a " + clazz.getName()); 
+        }
+    }
+   
+   
 }
 
 
