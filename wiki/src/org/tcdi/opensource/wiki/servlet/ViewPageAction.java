@@ -96,7 +96,8 @@ public class ViewPageAction implements PageAction {
         Properties props = wiki.getProperties();
 	String template = props.getProperty ("ViewPageAction.Template");
         if (page != null) {
-            template = props.getProperty (page.getTitle());
+            if (props.getProperty (page.getTitle()) != null)
+               template = props.getProperty (page.getTitle());
         } 
 
 	return template;
