@@ -11,6 +11,7 @@
 package org.webmacro.util;
 
 import java.util.Properties;
+import java.util.Enumeration;
 
 /**
  * Implement a behavior allowing for undefined properties to return
@@ -46,6 +47,30 @@ public class SparseProperties extends Properties
     {
         super(defaults);
         this.globalDefault = globalDefault;
+    }
+    
+    public static SparseProperties getTemplate()
+    {
+      return getTemplate(null);
+    }
+    
+    public static SparseProperties getTemplate(Properties template)
+    {
+      SparseProperties p = null;
+      if (template == null)
+      {
+        p = new SparseProperties();
+      }
+      else
+      {
+        p = new SparseProperties(template);
+      }
+      Enumeration e = p.keys();
+      while (e.hasMoreElements())
+      {
+        p.put(e.nextElement(), null);
+      }
+      return p;
     }
 
     /**

@@ -321,6 +321,19 @@ public class WMEval
         return value;
     }
 
+    /**
+     *  Evaluates the current context for the input file and writes it to the output file.
+     */
+    public String eval (String templateResourceFile, String outputFileName, boolean append) throws Exception
+    {
+      Template t = wm.getTemplate(templateResourceFile);
+      String val = t.evaluateAsString(context);
+      OutputStream out = new FileOutputStream(outputFileName, append);
+      out.write(val.getBytes());
+      out.close();
+      return val;
+    }      
+
 
     /**
      * Free up resources when no longer needed.
