@@ -32,7 +32,6 @@ PACKAGES = org.webmacro \
            org.webmacro.util \
            org.webmacro.directive \
            org.webmacro.parser \
-           org.webmacro.extractor \
            org.webmacro.profile \
            org.webmacro.servlet 
 
@@ -43,7 +42,7 @@ WEBROOT = webroot
 LEGAL_FILES = $(WEBROOT)/CREDITS $(WEBROOT)/LICENSE 
 
 # file taht you want copied into the jar file in addition to classes
-JAR_FILES = $(LEGAL_FILS) WebMacro.defaults
+JAR_FILES = $(LEGAL_FILES) WebMacro.defaults
 
 # files which you want included in the packaged distribution
 PROJECT_FILES = $(WEBROOT)/README.html $(WEBROOT)/RELEASE-NOTES.html
@@ -55,10 +54,10 @@ BUILD_FILES = Makefile $(LEGAL_FILES) WebMacro.defaults
 EXTRAS = contrib examples
 
 TEXT_FILES = LICENSE CREDITS *.html */*.html examples/* 
-		
+
 # general java configuration
-JAVA_HOME = /usr/java/jdk1.3
-JAVAC_FLAGS = -O -g
+# JAVA_HOME = /usr/java/jdk1.3
+JAVAC_FLAGS = -O -g -d .
 JAVADOC_FLAGS = -protected -use -version -author 
 
 #
@@ -71,9 +70,9 @@ PROJECT_TGZ = $(PROJECT).$(VERSION).tgz
 
 NEWLINE_FILES = $(foreach file, $(TEXT_FILES), $(PROJECT)/$(file))
 
-SOURCES = $(foreach dir, $(subst .,/,$(PACKAGES)), $(dir)/*.java) 
+SOURCES = $(foreach dir, $(subst .,/,$(PACKAGES)), src/$(dir)/*.java) 
 
-TARGETS = $(SOURCES:.java=.class)
+TARGETS = $(subst src/,, $(SOURCES:.java=.class))
 SOURCEFILES = $(wildcard $(SOURCES))
 
 DOC_DIR=$(PROJECT)/api
@@ -86,10 +85,10 @@ DIRECTORIES=$(DOC_DIR) $(WEB_DIR)
 JARFILE = $(PROJECT)/$(PROJECT).jar
 SRC_ZIP = $(PROJECT)/src.zip
 
-UNIXBIN = /usr/bin
-MKDIR = $(UNIXBIN)/mkdir
-RMFILE = $(UNIXBIN)/rm -rf
-TOUCH = $(UNIXBIN)/touch
+#UNIXBIN = /usr/bin/
+MKDIR = $(UNIXBIN)mkdir -p
+RMFILE = $(UNIXBIN)rm -rf
+TOUCH = $(UNIXBIN)touch
 CP = cp -r
 
 FLIPM = flip -m
@@ -98,10 +97,10 @@ UNCVS = find . -name 'CVS' | xargs rm -rf
 TGZ = tar -cvzf 
 ZIP = zip -r
 
-JAVABIN = $(JAVA_HOME)/bin
-JAVAC = $(JAVABIN)/javac
-JAR = $(JAVABIN)/jar
-JAVADOC = $(JAVABIN)/javadoc
+#JAVABIN = $(JAVA_HOME)/bin/
+JAVAC = $(JAVABIN)javac
+JAR = $(JAVABIN)jar
+JAVADOC = $(JAVABIN)javadoc
 
 %.class:%.java
 	$(JAVAC) $(JAVAC_FLAGS) $<
@@ -121,7 +120,7 @@ build: .build
 doc:    .doc
 .doc: $(DOC_DIR) $(SOURCEFILES)
 	@echo building javadoc in $(DOC_DIR)
-	@$(JAVADOC) $(JAVADOC_FLAGS) -d $(DOC_DIR) $(PACKAGES)
+	@(cd src; $(JAVADOC) $(JAVADOC_FLAGS) -d ../$(DOC_DIR) $(PACKAGES))
 	@$(TOUCH) .doc
 
 jar: $(JARFILE) 
