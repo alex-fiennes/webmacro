@@ -17,7 +17,12 @@
 #begin
    #foreach $guest in $registry {
       #profile parseGuest {
-         #parse "guest.wm"
+         ##parse "guest.wm" ## DOESN'T EXIST
+         <TR>
+         <TD>$guest.Name</TD>
+         <TD>$guest.Email</TD>
+         <TD>$guest.Comment</TD>
+         </TR>
       }
    } 
    </TABLE>
