@@ -75,7 +75,8 @@ To join the mailing list <a href="http://lists.semiotek.com/mailman/listinfo/web
 <h3><font color="green">How much does it cost?</font></h3>
 
 WebMacro is free under the GNU Public License and the Semiotek Public
-License (SPL). 
+License (SPL). See the <a href="License.html">License</a> page
+for details.
 <p>
 
 <h3><font color="green">Why is it free?</font></h3>
@@ -103,8 +104,10 @@ gains market share and beta testers, and you get WebMacro for free!
 <h3><font color="green">Who wrote it?</font></h3>
 
 WebMacro was designed and implemented primarily by Justin Wells at
-Semiotek Inc.; initially with a lot of help from Yuen-Ping Leung. The
-people on the mailing list also deserve a lot of credit as well: many
+Semiotek Inc.; initially with a lot of help from Yuen-Ping Leung.
+Now it is supported by a team of <a href="CREDITS">core developers</a>.
+<p>
+The people on the mailing list also deserve a lot of credit as well: many
 of the design ideas, and a large number of bug fixes, are due to 
 helpful list members! WebMacro's README gives them better credit.
 <p>
@@ -130,19 +133,19 @@ about Semiotek Inc., etc., you should contact us via the general address:
     file and are shipped as source code. Once compiled, they must be in 
     your classpath.<p>
 
-<li>Be sure that the webmacro.properties file is in your classpath, and
+<li>Be sure that the WebMacro.properties file is in your classpath, and
     that you have edited it to contain the correct values. It is sometimes
     confusing to know what CLASSPATH to use--put the properties file in
     the same place you put webmacro.jar<p>
 
 <li>Check your classpath carefully. Most problems with WebMacro are 
-    either incorrect paths in the webmacro.properties file, or else 
+    either incorrect paths in the WebMacro.properties file, or else 
     incorrect classpaths.<p>
 
 <li>Under NT: The \ character does not behave as expected in a Java
    properties file.  Instead of being a file separator, it is the
    escape character. You either have to use the Unix style / character,
-   or escape the \ (by doubling it) to name a path in webmacro.properties.
+   or escape the \ (by doubling it) to name a path in WebMacro.properties.
    Thus the path C:\webmacro\examples should be written either as
    C:/webmacro/examples or as C:\\webmacro\\examples<p>
 
@@ -190,18 +193,27 @@ will highlight WebMacro directives in templates.
 
 <h3><font color="green">Can I use JavaScript in a WebMacro template?</font></h3>
 
-Yes. However, to avoid conflicts with WebMacro's braces you must put 
-your JavaScript in a #use block, like this:
-<br>
+Yes. Use the #begin and #end tokens to delimit blocks so that there
+is no conflig with { and } characters. You need to escape the $'s 
+in your JavaScript with \ characters: \$foo. 
+<P>
+Alternately you can surround a JavaScript block with a #use 
+directive to disable parsing:
 <pre>
-  #use 'text' until end
-    Javascipt here will not be parsed, { and } are safe
-  end
+  #use 'text' 
+  #begin
+    Javascipt here will not be parsed, $foo { and } are safe
+  #end
 </pre>
+
+The WebMacro escape character \ will still be in effect within
+the #use block, though. To bring JavaScript in without having
+to escape anything load it in with a #include directive:
+<pre>
+   #include "somefile.js"
+</pre>
+
 <br>
-WebMacro will not attempt to parse anything between the start of 
-the #use directive and the matching 'end' statement. 
-<p>
 You only need to do this for blocks of JavaScript which include 
 {, }, #, or $ characters which are meaningful to WebMacro.
 

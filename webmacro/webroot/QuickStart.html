@@ -43,9 +43,8 @@ This document will give you a very brief overview of the package.
 <h3><font color="green">How To Install</font></h3>
 
 <ul>
-<li>You need to have a Java 1.1 VM in order to use this software; and if 
-    you want to compile it you'll also need JDK 1.1 as well. We developed
-    it under JDK 1.1.6, so you should probably have at least that.
+<li>You need to have a Java 1.2 VM in order to use this software; and if 
+    you want to compile it you'll also need JDK 1.2 as well.
     <p>
 <li>Follow the installation instructions in the <a href="README.html">README.html</a>
     text file included with the distribution. The short story is:
@@ -112,7 +111,7 @@ This document will give you a very brief overview of the package.
 
 <li>Write the core of your application in Java. This means subclassing 
     from org.webmacro.WMServlet, or else making use of the WebMacro 
-    interface and managing things yourself. 
+    interface and managing things yourself in standalone mode. 
     <p>
     Subclass from WMServlet and implement the handle() method. You may 
     also wish to implement the start() and stop() methods to handle 

@@ -18,7 +18,7 @@ is aimed at web page designers who are building the front end look and
 feel of an application based on WebMacro.
 <p>
 Programmers interested in the servlet back end should read the 
-<a href="/api/">API documentation</a>; and possibly my article on 
+<a href="api">API documentation</a>; and possibly my article on 
 the <a href="Servlet.html">Fundamentals of Servlet Design</a> which
 explains the idea behind WebMacro.
 <p>
@@ -400,10 +400,11 @@ Here's an example:
 The #else block is optional--you can leave it off.
 
 
-<h4><font color="green">#include <i>file</i></font></h4>
+<h4><font color="green">#include <i>URL</i></font></h4>
 
-Use the #include directive to read in a file. The contents of the 
-file will not be parsed, so this is a good way to include JavaScript and
+Use the #include directive to read in a URL. By default, if you don't 
+specify a protocol, file: is assumed. The contents of the URL will not be 
+parsed, so this is a good way to include JavaScript and
 other things that might conflict with WebMacro. 
 <p>
 You can also use it to read in standard block of HTML which you would 
@@ -411,7 +412,7 @@ like to include in every page.
 <p>
 Here is an example:
 <pre>
-   #include /web/script/banner.html
+   #include "http://myserver/web/script/banner.html"
 </pre>
 
 <h4><font color="green">#param <i>name</i> = <i>value</i></font></h4>
@@ -448,14 +449,15 @@ among several different templates.
 <p>
 Here are some examples:
 <pre>
-   #parse "C:/webmacro/library/banner.wm"
+   #parse "banner.wm"
 
-   #set $library = "C:/webmacro/library"
+   #set $library = "/webmacro/library"
    #parse "$library/banner.wm"
 </pre>
 
-Note that you must normally specify an absolute path to the target. Future
-versions of WebMacro may alleviate this restriction.
+Templates will be loaded using the ordinary WebMacro template 
+loading system--they'll come from the same place as the templates
+you load in your servlet.
 
 
 <h4><font color="green">#set <i>$property</i> = <i>value</i></font></h4>
@@ -464,7 +466,7 @@ Just as you can access values in the context, you can set them.
 <p>
 Here is a simple use of the #set keyword:
 <pre>
-    #set name = "Fred Flinstone"
+    #set $name = "Fred Flinstone"
     Hi my name is $name
 </pre>
 
@@ -484,13 +486,54 @@ to determine if it's possible to set the value in some way.
 <p>
 Refer to the PropertyOperator documentation for a complete list of the 
 mechanisms by which WebMacro can succeed in setting a value.
+<p>
+
+<h4><font color="green">#silence <i>$var</i></font></h4>
+
+WebMacro will spit out complaints if you try and display a variable
+which cannot be resolved. These complaints go to your log file, and
+get written to the template. This is so you find out quickly if 
+you mis-spell a variable name or attempt to use something on a 
+page which does not exist.
+<p>
+Frequently, however, you have variables which may or may not be 
+defined. In order to shut off warnings about those variables 
+you can do this:
+<pre>
+   #silence $var
+</pre>
+
+Now if $var is undefined you will not get any errors, and WM will
+simply substitute a null string in its place.
+<p>
+
+<h4><font color="green">#encode <i>$var</i> and #escape <i>$var</i></font></h4>
+
+Two common operations you need to perform in a web page are URL encoding
+and HTML escaping. URL encoding transforms a string into a version 
+which can be palced in a URL. HTML escaping turns any HTML characters,
+like &lt;, &gt;, and &amp; into HTML entity references so that they
+render properly on a page.
+<p>
+You can filter a variable through a URL encoder or HTML escaper like this:
+<pre>
+   #escape $html
+   #encode $query
+   Here is some HTML: $html
+   &lt;a href="$query?$query"&gt;
+</pre>
 
 
-<h4><font color="green">#use <i>'parser'</i> until <i>end-marker</i></font></h4>
+<h4><font color="green">#use <i>text|null</i></font></h4>
 
 The #use directive switches to a parser other than the one normally 
 used by WebMacro. It's a hook into other languages. Currently, the only
-other parser that WebMacro can call is a "text" parser that does nothing.
+other parsers that WebMacro can call is a "text" parser that spits out 
+its contents verbatim, and a "null" parser which functions like a 
+multi-line comment.
+<p>
+NOTE: The #use directive is likely going to go away and be replaced w
+with #text and #comment directives in the future.
 <p>
 You can use the "text" parser to mark off a portion of your template as 
 being non-Webmacro script. For example, you could surround some JavaScript
@@ -498,16 +541,17 @@ this way so that the {'s don't confuse Webmacro.
 <p>
 Here is how it works:
 <pre>
-   #use 'text' until '-end-'
+   #use 'text' 
+   #begin
       this appears verbatim in the output, the 
       #number signs and { characters do not }
       confuse WebMacro but will be output as is. 
       It is safe to put JavaScript code here.
-   -end-
+   #end
 </pre>
 
 The specified parser (in this case 'text') eats all the input until a 
-line matching the until clause is found (in this case '-end'). 
+line matching the until the #end marker is found.
 
 <h3><font color="green">Retrospective Overview</font></h3>
 

@@ -1,10 +1,44 @@
--- fixed bug relating to $ at end of line in quoted string
--- added apache style license in LICENSE
--- fixed bug relating to extra newline at top of file
--- replaced QueueWriter/Writer with FastWriter and corresponding changes to WMServlet
--- updated Macro interface to take a FastWriter
--- lots of optimizing
--- fixed spelling mistake in doRequest()
+-- renamed #silent to #silence, #htmlescape to #escape
+-- removed setEncoding()/getEncoding() from context and added it to 
+   the constructor for a template
+-- added means to pass encoding in to TemplateProvider, via 
+   the :encoding:/filename "url". If you leave off the encoding
+   you get some default (currently UTF8)
+-- Keats fixed Context bug (for real this time) related to using setBean
+-- Sebastian added HTMLEscape directive
+-- Brian uploaded new parser
+-- Keats fixed a bug in Context that prevented proper lookup
+-- rolling back Local change and changing Local to Global
+-- added EncodeDirective as a demonstration of Filter architecture
+-- added Filter architecture
+-- removed case for enabling/disabling c-style blocks
+-- { and } are not recognized except after a directive, meaning inside
+   a #begin or #end block you can write {} without fear
+-- Rolled back Log changes for get/set severe error in WMServlet since
+   it didn't support concurrent servlets. Rewrote changes in Log 
+   class so that in theory it could work some day, with one log 
+   per connection or something.
+-- Log file format has changed
+-- LogFilePerDay functionality added by Marcel
+-- GuestBook, Standalone, HelloWorld made part of org.webmacro.example
+   package, with explicit package name
+-- bug fixed in Context.java in which tools were not checked if the 
+   setBean() method had been used (filtering error)
+-- flush() bug fixed in WMTemplate
+
+-- Experimenting with QueueWriter in attempt to reduce the amount of copying
+   that occurs when you write in a servlet... this may not actually buy me 
+   anything so I may drop it. I know in Jakarta anyway that it's not likely
+   to matter much since the output is copied several times anyway. But it
+   might speed things up in resin and other servlet runners that do less
+   copying of the output.
+-- UrlProvider fixed so that it automatically adds the "file" protocol if 
+   no protocol is specified. This means that #include "/tmp/foo" will work
+   again. 
+-- Standalone example provided (Standalone.java) demonstrating use of 
+   the standalone WebMacro interface
+-- Standalone mode improved so that you do not need to deal with the broker. 
+
 -- WMTemplate has an overridable getParser() method to support alternates
 -- switched to com.sun.java.util.collections in JDK1.1
 -- InvalidContextException is deprecated, now ContextException
