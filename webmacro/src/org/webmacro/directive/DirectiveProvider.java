@@ -47,7 +47,7 @@ public final class DirectiveProvider implements Provider
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */
-   private final void register(String dirClassName, String dirName) 
+   public final void register(String dirClassName, String dirName) 
       throws IntrospectionException, InitException
    {
       Class directive = null;
