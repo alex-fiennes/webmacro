@@ -64,7 +64,6 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
    public void testNoSuchMethod () throws Exception {
       assertStringTemplateThrows ("$TestObject.noSuchMethod()",
         PropertyException.NoSuchMethodException.class);
-
    }
   
    public void testEvalNoSuchMethod () throws Exception {
@@ -82,7 +81,6 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
         PropertyException.NoSuchPropertyException.class);
    }
 
-
    public void testVoidMethod () throws Exception {
       assertStringTemplateEquals ("$TestObject.voidMethod()", "");
    }
@@ -91,7 +89,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
       assertStringTemplateThrows ("#set $foo=$TestObject.voidMethod()", 
                                   PropertyException.VoidValueException.class);
    }
-
+  
    public void testNullMethod () throws Exception {
       assertStringTemplateMatches ("$TestObject.nullMethod()", 
         "^<!--.*null .*\\$TestObject.nullMethod.*-->$");
@@ -100,6 +98,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
    public void testEvalNullMethod () throws Exception {
       assertStringTemplateMatches ("#set $foo=$TestObject.nullMethod()", "");
       assertBooleanExpr("$foo == null", true);
+      assertStringTemplateEquals ("#if ($TestObject.nullMethod() && $TestObject.nullMethod() == \"hello\"){fail} #else {pass}", "pass");
    }
 
    public void testThrowsMethod() throws Exception {
