@@ -16,8 +16,8 @@ public class TestTemplate extends AbstractTemplateEvaluator
     public static class TestObject
     {
         String firstName;
-        String lastName;
-        public TestObject (String firstName, String lastName);
+        String lastName;        
+        public TestObject (String firstName, String lastName)
         {
             this.firstName = firstName;
             this.lastName = lastName;

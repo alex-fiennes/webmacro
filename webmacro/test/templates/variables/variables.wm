@@ -9,5 +9,5 @@ $TestObject.FirstName  == $TestObject.getFirstName()
 $TestObject.LastName   == $TestObject.getLastName()
 
 use methods of FirstNameNull object:
-$TestObject.FirstName  == $TestObject.getFirstName()
-$TestObject.LastName   == $TestObject.getLastName()
+$FirstNameNull.FirstName  == $FirstNameNull.getFirstName()
+$FirstNameNull.LastName   == $FirstNameNull.getLastName()
