@@ -69,7 +69,7 @@ public class Broker
    private EvaluationExceptionHandler _eeHandler;
 
    /** a local map for one to dump stuff into, specific to this Broker */
-   private Hashtable _brokerLocal = new Hashtable();
+   private Map _brokerLocal = Collections.synchronizedMap (new HashMap());
    
    /*
     * Constructors.  Callers shouldn't use them; they should use the
