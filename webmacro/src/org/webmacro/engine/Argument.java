@@ -9,7 +9,7 @@ import org.webmacro.*;
   * to perform the action. The target object can be any kind of WebMacro
   * term. 
   */
-final class Argument
+public final class Argument
 {
 
    private String _name;

@@ -126,6 +126,7 @@ public class StreamTemplate extends WMTemplate
          t1.write(w,context);
          w.writeTo(System.out);
          w.close();
+         context.clear();
          System.out.println("*** DONE ***");
          //System.out.println(result);
         
