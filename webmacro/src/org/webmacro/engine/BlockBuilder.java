@@ -96,6 +96,7 @@ public class BlockBuilder implements Builder {
       ArrayList macros = new ArrayList((elements.size()));
       int[] ln = new int[elements.size()];
       int[] cn = new int[elements.size()];
+      int pos=0;
       Stack iterStack = new Stack();
       StringBuffer s = new StringBuffer();
       Context.TemplateEvaluationContext tec = bc.getTemplateEvaluationContext();
@@ -112,8 +113,8 @@ public class BlockBuilder implements Builder {
 
          // track line/column numbers in the build context
          // so that bc.getCurrentLocation() stays current
-         tec._lineNo = iter.getLineNo();
-         tec._columnNo = iter.getColNo();
+         tec._lineNo = ln[pos];
+         tec._columnNo = cn[pos++];
 
          if (o instanceof Builder)
             o = ((Builder) o).build(bc);
