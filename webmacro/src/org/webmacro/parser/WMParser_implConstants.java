@@ -27,41 +27,44 @@ public interface WMParser_implConstants {
   int SLASH = 22;
   int POUND = 23;
   int QUOTE = 24;
-  int NULL = 25;
-  int TRUE = 26;
-  int FALSE = 27;
-  int WS = 28;
-  int NEWLINE = 29;
-  int LPAREN = 30;
-  int RPAREN = 31;
-  int LBRACKET = 32;
-  int RBRACKET = 33;
-  int DOT = 34;
-  int OP_LT = 35;
-  int OP_LE = 36;
-  int OP_GT = 37;
-  int OP_GE = 38;
-  int OP_EQ = 39;
-  int OP_SET = 40;
-  int OP_NE = 41;
-  int OP_PLUS = 42;
-  int OP_MINUS = 43;
-  int OP_MULT = 44;
-  int OP_DIV = 45;
-  int OP_AND = 46;
-  int OP_OR = 47;
-  int OP_NOT = 48;
-  int COMMA = 49;
-  int SEMI = 50;
-  int WORD = 51;
-  int NUMBER = 52;
-  int OTHER = 53;
-  int QS_TEXT = 54;
+  int SQUOTE = 25;
+  int NULL = 26;
+  int TRUE = 27;
+  int FALSE = 28;
+  int WS = 29;
+  int NEWLINE = 30;
+  int LPAREN = 31;
+  int RPAREN = 32;
+  int LBRACKET = 33;
+  int RBRACKET = 34;
+  int DOT = 35;
+  int OP_LT = 36;
+  int OP_LE = 37;
+  int OP_GT = 38;
+  int OP_GE = 39;
+  int OP_EQ = 40;
+  int OP_SET = 41;
+  int OP_NE = 42;
+  int OP_PLUS = 43;
+  int OP_MINUS = 44;
+  int OP_MULT = 45;
+  int OP_DIV = 46;
+  int OP_AND = 47;
+  int OP_OR = 48;
+  int OP_NOT = 49;
+  int COMMA = 50;
+  int SEMI = 51;
+  int WORD = 52;
+  int NUMBER = 53;
+  int OTHER = 54;
+  int QS_TEXT = 55;
+  int SQS_TEXT = 56;
 
-  int QS = 0;
-  int COMMENT = 1;
-  int WM = 2;
-  int DEFAULT = 3;
+  int SQS = 0;
+  int QS = 1;
+  int COMMENT = 2;
+  int WM = 3;
+  int DEFAULT = 4;
 
   String[] tokenImage = {
     "<EOF>",
@@ -89,6 +92,7 @@ public interface WMParser_implConstants {
     "\"\\\\\"",
     "\"#\"",
     "\"\\\"\"",
+    "\"\\\'\"",
     "\"null\"",
     "\"true\"",
     "\"false\"",
@@ -119,6 +123,7 @@ public interface WMParser_implConstants {
     "<NUMBER>",
     "<OTHER>",
     "<QS_TEXT>",
+    "<SQS_TEXT>",
   };
 
 }

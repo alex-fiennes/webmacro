@@ -160,6 +160,8 @@ TOKEN_MGR_DECLS : {
   WM:      We are in this state when we are parsing a WM directive. 
   QS:      We are in this state when we are parsing a quoted string in
            an WM directive.  
+  SQS:     We are in this state when we are parsing a quoted string in
+           an WM directive, bounded by single quotes.  
   COMMENT: We are in this state when we are parsing a comment
 
   If there are any state dependencies, productions are tagged with comments
@@ -215,7 +217,7 @@ TOKEN_MGR_DECLS : {
 | <COMMENT_ELSE: ~[]>
 }
 
-<DEFAULT, WM, QS> TOKEN : {
+<DEFAULT, WM, QS, SQS> TOKEN : {
   <DOLLAR:    "$">
 | <QCHAR:     <_QCHAR> >  
 | <SLASH:     "\\">
@@ -227,6 +229,10 @@ TOKEN_MGR_DECLS : {
 
 <WM, QS> TOKEN : {
   <QUOTE:     "\""> 
+}
+
+<WM, SQS> TOKEN : {
+  <SQUOTE:     "\'"> 
 }
 
 <WM> TOKEN : {
@@ -263,6 +269,10 @@ TOKEN_MGR_DECLS : {
 
 <QS> TOKEN : {
   <QS_TEXT:      (~["\"", "$", "\r", "\n", "\\"])+>
+}
+
+<SQS> TOKEN : {
+  <SQS_TEXT:      (~["\'", "$", "\r", "\n", "\\"])+>
 }
 
 
@@ -626,13 +636,23 @@ Builder QuotedString() : {
   QuotedStringBuilder qs = new QuotedStringBuilder();
 }
 {
-  <QUOTE> { SetState(QS); } 
-  ( t=<QS_TEXT> { qs.addElement(t.image); }
-    | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
-    | t=<SLASH> { qs.addElement(t.image); }
-    | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
-  ) * 
-  <QUOTE> 
+  ( 
+    <QUOTE> { SetState(QS); } 
+    ( t=<QS_TEXT> { qs.addElement(t.image); }
+      | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
+      | t=<SLASH> { qs.addElement(t.image); }
+      | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
+    ) * 
+    <QUOTE> 
+  |
+    <SQUOTE> { SetState(SQS); } 
+    ( t=<SQS_TEXT> { qs.addElement(t.image); }
+      | t=<QCHAR> { qs.addElement(t.image.substring(1)); } 
+      | t=<SLASH> { qs.addElement(t.image); }
+      | LOOKAHEAD(<DOLLAR>) DollarReference(qs)
+    ) * 
+    <SQUOTE> 
+  )
   { SetState(entryState); }
   { return qs; }
 }
