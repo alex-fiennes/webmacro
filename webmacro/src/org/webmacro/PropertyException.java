@@ -251,6 +251,32 @@ public class PropertyException extends ContextException
          this.propertyName = propertyName;
       }
    }
+
+   /**
+    * UndefinedVariableException indicates that the variable did not have
+    * the requested method.
+    */
+   public static class UndefinedVariableException extends PropertyException {
+      public String variableName;
+
+      public UndefinedVariableException(){
+         super(null);
+      }
+
+       public void setVariableName(String variableName){
+             this.variableName = variableName;
+       }       
+       /**
+        * Overloaded to return the <code>reason</code> specified during construction
+        * <b>plus</b> the context location, if any.
+        */
+       public String getMessage () {
+          String msg = "Attempted to write an undefined variable: $" + this.variableName;
+          String loc = getContextLocation();
+          if (loc != null)
+              msg += " at " + loc;
+          return msg;
+       }
+   }
+   
 }
-
-
