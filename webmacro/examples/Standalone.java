@@ -1,4 +1,3 @@
-package org.webmacro.examples;
 
 /*
  * Copyright (c) 1998, 1999, 2000 Semiotek Inc. All Rights Reserved.
