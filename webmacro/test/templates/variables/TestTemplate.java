@@ -25,7 +25,7 @@ public class TestTemplate extends AbstractTemplateEvaluator
         
         public String getFirstName () { return firstName; }
         public String getLastName () { return lastName; }
-        public String toString () { return firstName + " " + lastName; }
+        public String toString () { return firstName + " " + lastName; }        public String returnNull () { return null; }        public void voidMethod() { ; }
         
     }
     
@@ -35,6 +35,5 @@ public class TestTemplate extends AbstractTemplateEvaluator
         
         c.put ("NullObject", nullObject);
         c.put ("TestObject", new TestObject ("Eric", "Ridge"));
-        c.put ("FirstNameNull", new TestObject (null, "Ridge"));        
     }
 }

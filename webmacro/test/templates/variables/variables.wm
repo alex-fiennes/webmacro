@@ -16,3 +16,6 @@ $TestObject.returnNull()
 
 use void method of TestObject:
 $TestObject.voidMethod()
+
+use a method that doesn't exist in TestObject:
+$TestObject.ThisMethodDoesNotExist()
