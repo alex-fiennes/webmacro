@@ -173,6 +173,7 @@ Providers:
 
 Directives: 
 
+Directives.attribute:  org.webmacro.directive.AttributeDirective
 Directives.include:    org.webmacro.directive.IncludeDirective
 Directives.parse:      org.webmacro.directive.IncludeDirective
 Directives.set:        org.webmacro.directive.SetDirective
