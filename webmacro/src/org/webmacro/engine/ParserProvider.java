@@ -37,7 +37,7 @@ public final class ParserProvider implements Provider
 
    // BULDER CLASS MANAGEMENT
 
-   private static final Hashtable _parsers  = new Hashtable();
+   private final Hashtable _parsers  = new Hashtable();
 
    private Broker _broker = null;
    private Log _log;
