@@ -32,12 +32,16 @@ import javax.servlet.*;
 
 public class ServletLog extends AbstractLogFile {
 
+   private static String servletDefaultFormat = "WebMacro:{1}\t{2}\t{3}";
    private ServletContext _servletContext;
 
    public ServletLog(ServletContext sc, Settings s) {
-      super(s);
-      _name = sc.toString();
-      if (_defaultLevel <= LogSystem.NOTICE) 
+     super(s);
+     if (_formatString == _defaultFormatString) 
+        _mf = new MessageFormat(servletDefaultFormat);
+     _servletContext = sc;
+     _name = sc.toString();
+     if (_defaultLevel <= LogSystem.NOTICE) 
          log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---", 
              null);
    }

@@ -48,6 +48,7 @@ public class Broker
 
    public static final String WEBMACRO_DEFAULTS = "WebMacro.defaults";
    public static final String WEBMACRO_PROPERTIES = "WebMacro.properties";
+   public static final String SETTINGS_PREFIX = "org.webmacro";
 
    public static final WeakHashMap brokers = new WeakHashMap();
    private static Settings _defaultSettings;
@@ -87,6 +88,8 @@ public class Broker
       this((Broker) null, WEBMACRO_PROPERTIES);
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
+      if (_config.getBooleanSetting("LoadSystemProperties")) 
+         loadSystemSettings();
       initLog();
       init();
    }
@@ -101,6 +104,8 @@ public class Broker
       this((Broker) null, fileName);
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, false);
+      if (_config.getBooleanSetting("LoadSystemProperties")) 
+         loadSystemSettings();
       initLog();
       init();
    }
@@ -130,7 +135,8 @@ public class Broker
       try {
          LogTarget lt = new LogFile(_config);
          _ls.addTarget(lt);
-         _log.notice("start: " + _name);
+         _log.notice("starting " + this.getClass().getName() 
+                     + ": " + _name);
       } catch (IOException e) {
          _log.error("Failed to open logfile", e);
       }
@@ -254,6 +260,11 @@ public class Broker
          if (!optional)
             throw new InitException("Error reading settings from " + name);
       }
+   }
+
+   protected void loadSystemSettings() {
+      _log.notice("Loading properties from system properties");
+      _config.load(System.getProperties(), SETTINGS_PREFIX);
    }
 
    /**

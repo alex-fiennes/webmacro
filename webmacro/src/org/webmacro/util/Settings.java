@@ -190,9 +190,8 @@ public class Settings {
      * Get a setting and convert it to an int 
      */
    public int getIntegerSetting(String key) {
-      String snum = getSetting(key);
       try {
-         return Integer.parseInt(key);
+         return Integer.parseInt(getSetting(key));
       } catch (Exception e) {
          return 0;
       }
@@ -203,7 +202,12 @@ public class Settings {
      */
    public int getIntegerSetting(String key, int defaultValue) {
       if (containsKey(key)) {
-         return getIntegerSetting(key);
+         try {
+            return Integer.parseInt(getSetting(key));
+         }
+         catch (Exception e) {
+            return defaultValue;
+         }
       } else {
          return defaultValue;
       }

@@ -36,8 +36,10 @@ abstract public class AbstractLogFile implements LogTarget {
 
    protected Map _levels = new HashMap();
    protected boolean _trace = false;
-   protected MessageFormat _mf = new MessageFormat("{0,time}\t{1}\t{2}\t{3}");
    protected int _defaultLevel = LogSystem.NOTICE;
+   protected String _defaultFormatString = "{0,time}\t{1}\t{2}\t{3}";
+   protected String _formatString = _defaultFormatString;
+   protected MessageFormat _mf;
 
    protected List _observers = new LinkedList();
    protected String _name;
@@ -55,7 +57,9 @@ abstract public class AbstractLogFile implements LogTarget {
       _defaultLevel = LogSystem.getLevel(slevel);
       String format = s.getSetting("LogFormat");
       if (format != null) 
-         _mf = new MessageFormat(format);
+         _formatString = format;
+      _mf = new MessageFormat(_formatString);
+      System.out.println("Format string is " + _formatString);
       Settings levels = new SubSettings(s, "LogLevel");
       String[] keys = levels.getKeys();
       for (int i = 0; i < keys.length; i++) 
@@ -65,6 +69,7 @@ abstract public class AbstractLogFile implements LogTarget {
 
 
    public AbstractLogFile() {
+      _mf = new MessageFormat(_formatString);
    }
 
 

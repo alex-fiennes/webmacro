@@ -551,7 +551,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    public WebMacro initWebMacro() throws InitException
    {
-      return new WM();
+      return new WM(this);
    }
 
    /**

@@ -24,7 +24,7 @@
 #   convenient value
 
 # TemplateExpireTime = 0
-TemplateExpireTime: 20000
+TemplateExpireTime: 30000
 
 
 # Character encoding. This is ONLY the encoding that is used to 
@@ -68,7 +68,7 @@ LogLevel: NOTICE
 # or method which is causing a fault.
 
 LogTraceExceptions: TRUE
-
+LogUsingServletLog: TRUE
 
 # Use the following to log to a file rather than stderr. If your 
 # standard error writes to a useful log already, you don't need this,
@@ -106,6 +106,15 @@ Profile.rate: 0
 # The default is 2 minutes (120000 milliseconds)
 
 Profile.time: 120000
+
+# Should we also look for properties in the System properties?  
+# Search order for properties is: 
+#   default properties file (WebMacro.defaults)
+#   application properties file (WebMacro.properties or other)
+#   system properties (prefixed with org.webmacro)
+#   servlet context arguments (2.2 and later, prefixed with org.webmacro)
+
+LoadSystemProperties: TRUE
 
 
 ###########################################################

@@ -74,8 +74,8 @@ public class WM implements WebMacro
       this(Broker.getBroker(config));
    }
 
-   public WM(ServletContext sc) throws InitException {
-      this(ServletBroker.getBroker(sc));
+   public WM(Servlet s) throws InitException {
+      this(ServletBroker.getBroker(s));
    }
 
    protected WM(Broker broker) throws InitException {
