@@ -66,8 +66,7 @@ abstract public class CachingProvider implements Provider,
       }
       else {
          try {
-            Class c = Class.forName(cacheManager);
-            _cache = (CacheManager) c.newInstance();
+            _cache = (CacheManager) Class.forName(cacheManager).newInstance();
          }
          catch (Exception e) {
             _log.warning("Unable to load cache manager " + cacheManager 

@@ -67,7 +67,7 @@ final public class EncodingCache {
    public EncodingCache(String encoding) 
       throws UnsupportedEncodingException
    {
-      this(encoding,10001);
+      this(encoding,1001);
    }
 
    /**

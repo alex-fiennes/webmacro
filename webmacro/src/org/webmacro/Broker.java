@@ -170,6 +170,7 @@ public class Broker
     * to set up common things like profiling, providers, etc. 
     */
    protected void init() throws InitException {
+      String eehClass;
 
       // Write out our properties as debug records
       if (_log.loggingDebug()) {
@@ -206,7 +207,19 @@ public class Broker
          throw new InitException("No Providers specified in configuration");
       }
 
-      _eeHandler = new DefaultEvaluationExceptionHandler();
+      eehClass = _config.getSetting("ExceptionHandler");
+      if (eehClass != null && !eehClass.equals("")) {
+        try {
+          _eeHandler = (EvaluationExceptionHandler) 
+            Class.forName(eehClass).newInstance();
+        }
+        catch (Exception e) {
+          _log.warning("Unable to instantiate exception handler of class " 
+                       + eehClass + "; " + e);
+        }
+      }
+      if (_eeHandler == null)
+        _eeHandler = new DefaultEvaluationExceptionHandler();
    }
 
    /* Factory methods -- the supported way of getting a Broker */

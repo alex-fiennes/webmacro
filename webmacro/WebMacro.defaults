@@ -69,6 +69,10 @@ LogUsingServletLog: TRUE
 ErrorTemplate: error.wm
 ErrorVariable: error
 
+# Set the default ExceptionHandler, which gets control when an evaluation
+# exception is encountered.  
+ExceptionHandler=org.webmacro.engine.DefaultEvaluationExceptionHandler
+
 # Set Profile.rate to control the impact of the profiler on your CPU. 
 # Set it to 0 to turn profiling off. Setting it to 1 incurs profiling 
 # overhead on every event. Setting it to a number reater than 1 
