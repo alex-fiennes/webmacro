@@ -11,10 +11,10 @@
 }
 <p>
 
-#profile TemplateStats {
+#profile "TemplateStats" {
    Profile categories:
    <ul>
-   #profile categories {
+   #profile "categories" {
    #foreach $cat in $cats {
       <li>$cat
    </ul>
@@ -25,9 +25,9 @@
 
    Profile Stats:
    <ul>
-   #profile callgraph {
+   #profile "callgraph" {
       #foreach $node in $stats {
-         #profile node {
+         #profile "node" {
             #set $callgraph = $node
             #parse "callgraph.wm"
          }
@@ -35,7 +35,7 @@
    }
 </ul>
 }
-#profile StaticText {
+#profile "StaticText" {
 
    This profiling servlet displays results that are created by WebMacro
    when profiling is enabled. There are three requirements for the 
