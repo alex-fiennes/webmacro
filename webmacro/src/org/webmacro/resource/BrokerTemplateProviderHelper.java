@@ -23,14 +23,15 @@
 
 package org.webmacro.resource;
 
-import java.io.*;
-import java.net.URL;
-
 import org.webmacro.*;
 import org.webmacro.engine.FileTemplate;
 import org.webmacro.engine.ParseException;
 import org.webmacro.engine.StreamTemplate;
 import org.webmacro.util.Settings;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * This class does the actual work of retrieving templates using the
@@ -43,140 +44,158 @@ import org.webmacro.util.Settings;
  * @since 0.96
  */
 final public class BrokerTemplateProviderHelper
-      implements ResourceLoader {
+        implements ResourceLoader
+{
 
-   // INITIALIZATION
+    // INITIALIZATION
 
-   private Broker _broker;
-   private int _cacheDuration;
-   private Log _log;
-   private boolean _cacheSupportsReload = true;
-   private ReloadDelayDecorator reloadDelay;
+    private Broker _broker;
+    private int _cacheDuration;
+    private Log _log;
+    private boolean _cacheSupportsReload = true;
+    private ReloadDelayDecorator reloadDelay;
 
-   private static class UrlReloadContext extends CacheReloadContext {
+    private static class UrlReloadContext extends CacheReloadContext
+    {
 
-      private long lastModified;
-      private URL url;
+        private long lastModified;
+        private URL url;
 
-      public UrlReloadContext(URL url, long lastModified) {
-         this.url = url;
-         this.lastModified = lastModified;
-      }
+        public UrlReloadContext (URL url, long lastModified)
+        {
+            this.url = url;
+            this.lastModified = lastModified;
+        }
 
-      public boolean shouldReload() {
-         return (lastModified != UrlProvider.getUrlLastModified(url));
-      }
-   }
+        public boolean shouldReload ()
+        {
+            return (lastModified != UrlProvider.getUrlLastModified(url));
+        }
+    }
 
-   /**
-    * Create a new TemplateProvider that uses the specified directory
-    * as the source for Template objects that it will return
-    * @exception InitException provider failed to initialize
-    */
-   public void init(Broker b, Settings config) throws InitException {
-      _broker = b;
-      _log = b.getLog("resource", "Object loading and caching");
-      _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
-      reloadDelay = new ReloadDelayDecorator();
-      reloadDelay.init(b, config);
-   }
+    /**
+     * Create a new TemplateProvider that uses the specified directory
+     * as the source for Template objects that it will return
+     * @exception InitException provider failed to initialize
+     */
+    public void init (Broker b, Settings config) throws InitException
+    {
+        _broker = b;
+        _log = b.getLog("resource", "Object loading and caching");
+        _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
+        reloadDelay = new ReloadDelayDecorator();
+        reloadDelay.init(b, config);
+    }
 
-   /**
-    * Grab a template based on its name.
-    */
-   final public Object load(String name, CacheElement ce)
-         throws ResourceException {
-      Template t = null;
-      URL tUrl;
-      Object ret = null;
+    /**
+     * Grab a template based on its name.
+     */
+    final public Object load (String name, CacheElement ce)
+            throws ResourceException
+    {
+        Template t = null;
+        URL tUrl;
+        Object ret = null;
 
-      tUrl = findTemplate(name);
-      try {
-         String protocol = tUrl.getProtocol();
-         // Treat files as a special case
-         if (protocol.equals("file")) {
-            File f = new File(tUrl.getFile());
-            long lastMod = f.lastModified();
+        tUrl = findTemplate(name);
+        try
+        {
+            String protocol = tUrl.getProtocol();
+            // Treat files as a special case
+            if (protocol.equals("file"))
+            {
+                File f = new File(tUrl.getFile());
+                long lastMod = f.lastModified();
 
-            t = new FileTemplate(_broker, f);
-            t.parse();
-            ret = t;
-            if (_cacheSupportsReload) {
-               CacheReloadContext reloadContext
-                     = new TemplateProvider.FTReloadContext(f, lastMod);
-               ce.setReloadContext(reloadDelay.decorate("file", reloadContext));
+                t = new FileTemplate(_broker, f);
+                t.parse();
+                ret = t;
+                if (_cacheSupportsReload)
+                {
+                    CacheReloadContext reloadContext
+                            = new TemplateProvider.FTReloadContext(f, lastMod);
+                    ce.setReloadContext(reloadDelay.decorate("file", reloadContext));
+                }
             }
-         }
-         else {
-            long lastMod = UrlProvider.getUrlLastModified(tUrl);
-            String encoding = tUrl.openConnection().getContentEncoding();
-            // encoding may be null. Will be handled by StreamTemplate
-            t = new StreamTemplate(_broker,
-                                   UrlProvider.getUrlInputStream(tUrl),
-                                   encoding);
-            t.setName(name);
-            t.parse();
-            ret = t;
-            if (_cacheSupportsReload) {
-               CacheReloadContext reloadContext = new UrlReloadContext(tUrl, lastMod);
-               ce.setReloadContext(reloadDelay.decorate(tUrl.getProtocol(),
-                                                        reloadContext));
+            else
+            {
+                long lastMod = UrlProvider.getUrlLastModified(tUrl);
+                String encoding = tUrl.openConnection().getContentEncoding();
+                // encoding may be null. Will be handled by StreamTemplate
+                t = new StreamTemplate(_broker,
+                        UrlProvider.getUrlInputStream(tUrl),
+                        encoding);
+                t.setName(name);
+                t.parse();
+                ret = t;
+                if (_cacheSupportsReload)
+                {
+                    CacheReloadContext reloadContext = new UrlReloadContext(tUrl, lastMod);
+                    ce.setReloadContext(reloadDelay.decorate(tUrl.getProtocol(),
+                            reloadContext));
+                }
             }
-         }
-      }
-      catch (NullPointerException npe) {
-         _log.warning("BrokerTemplateProvider: Template not found: " + name);
-      }
-      catch (ParseException e) {
-         _log.warning("BrokerTemplateProvider: Error occured while parsing "
-                      + name, e);
-         throw new InvalidResourceException("Error parsing template " + name,
-                                            e);
-      }
-      catch (IOException e) {
-         _log.warning("BrokerTemplateProvider: IOException while parsing "
-                      + name, e);
-         throw new InvalidResourceException("Error parsing template " + name,
-                                            e);
-      }
-      catch (Exception e) {
-         _log.warning("BrokerTemplateProvider: Error occured while fetching "
-                      + name, e);
-         throw new ResourceException("Error parsing template " + name, e);
-      }
-      if (ret == null)
-         throw new NotFoundException(this + " could not locate " + name);
+        }
+        catch (NullPointerException npe)
+        {
+            _log.warning("BrokerTemplateProvider: Template not found: " + name);
+        }
+        catch (ParseException e)
+        {
+            _log.warning("BrokerTemplateProvider: Error occured while parsing "
+                    + name, e);
+            throw new InvalidResourceException("Error parsing template " + name,
+                    e);
+        }
+        catch (IOException e)
+        {
+            _log.warning("BrokerTemplateProvider: IOException while parsing "
+                    + name, e);
+            throw new InvalidResourceException("Error parsing template " + name,
+                    e);
+        }
+        catch (Exception e)
+        {
+            _log.warning("BrokerTemplateProvider: Error occured while fetching "
+                    + name, e);
+            throw new ResourceException("Error parsing template " + name, e);
+        }
+        if (ret == null)
+            throw new NotFoundException(this + " could not locate " + name);
 
-      return ret;
-   }
+        return ret;
+    }
 
 
-   /** We don't implement this one */
-   public Object load(Object query, CacheElement ce)
-         throws ResourceException {
-      throw new ResourceException("CachingProvider: load(Object) not supported, use load(String)");
-   }
+    /** We don't implement this one */
+    public Object load (Object query, CacheElement ce)
+            throws ResourceException
+    {
+        throw new ResourceException("CachingProvider: load(Object) not supported, use load(String)");
+    }
 
-   public void setReload(boolean reload) {
-      _cacheSupportsReload = reload;
-   }
+    public void setReload (boolean reload)
+    {
+        _cacheSupportsReload = reload;
+    }
 
-   // IMPLEMENTATION
+    // IMPLEMENTATION
 
-   /**
-    * @param fileName the template filename to find
-    * @return a File object that represents the specified template file.
-    * @return null if template file cannot be found.  */
-   final private URL findTemplate(String fileName) {
-      if (_log.loggingDebug())
-         _log.debug("Looking for template in class path: " + fileName);
-      URL u = _broker.getTemplate(fileName);
-      if (u != null)
-         if (_log.loggingDebug())
-            _log.debug("BrokerTemplateProvider: Found " + fileName
-                       + " at " + u.toString());
-      return u;
-   }
+    /**
+     * @param fileName the template filename to find
+     * @return a File object that represents the specified template file.
+     * @return null if template file cannot be found.  */
+    final private URL findTemplate (String fileName)
+    {
+        if (_log.loggingDebug())
+            _log.debug("Looking for template in class path: " + fileName);
+        URL u = _broker.getTemplate(fileName);
+        if (u != null)
+            if (_log.loggingDebug())
+                _log.debug("BrokerTemplateProvider: Found " + fileName
+                        + " at " + u.toString());
+        return u;
+    }
 }
 
 

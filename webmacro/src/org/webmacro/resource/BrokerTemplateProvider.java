@@ -36,29 +36,33 @@ import org.webmacro.util.Settings;
  * @see Provider
  * @see BrokerTemplateProviderHelper
  */
-final public class BrokerTemplateProvider extends CachingProvider {
+final public class BrokerTemplateProvider extends CachingProvider
+{
 
-   private BrokerTemplateProviderHelper _helper;
-   private Log _log;
+    private BrokerTemplateProviderHelper _helper;
+    private Log _log;
 
-   public void init(Broker b, Settings config) throws InitException {
-      super.init(b, config);
-      _helper = new BrokerTemplateProviderHelper();
-      _helper.init(b, config);
-      _helper.setReload(_cacheSupportsReload);
-      _log = b.getLog("resource", "Object loading and caching");
-   }
+    public void init (Broker b, Settings config) throws InitException
+    {
+        super.init(b, config);
+        _helper = new BrokerTemplateProviderHelper();
+        _helper.init(b, config);
+        _helper.setReload(_cacheSupportsReload);
+        _log = b.getLog("resource", "Object loading and caching");
+    }
 
-   final public String getType() {
-      return "template";
-   }
+    final public String getType ()
+    {
+        return "template";
+    }
 
-   final public Object load(String name, CacheElement ce)
-         throws ResourceException {
-      if (_log.loggingInfo())
-         _log.info("Loading template: " + name);
-      return _helper.load(name, ce);
-   }
+    final public Object load (String name, CacheElement ce)
+            throws ResourceException
+    {
+        if (_log.loggingInfo())
+            _log.info("Loading template: " + name);
+        return _helper.load(name, ce);
+    }
 
 }
 

@@ -19,15 +19,16 @@ package org.opendoors.cache;
  * brings the cache up-to-date with
  * recent mutations to the cache.
  */
-public interface UpdateableCache extends Cache {
+public interface UpdateableCache extends Cache
+{
 
-   /**
-    * Updates the cache.
-    * <p>
-    * Upon completion, the cache is up to date
-    * w/respect to all pending updates.
-    */
-   public void update();
+    /**
+     * Updates the cache.
+     * <p>
+     * Upon completion, the cache is up to date
+     * w/respect to all pending updates.
+     */
+    public void update ();
 
 }
 

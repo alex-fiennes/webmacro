@@ -37,43 +37,48 @@ import org.webmacro.util.Clock;
  * @author skanthak@muehlheim.de
  **/
 
-public class TimedReloadContext extends CacheReloadContext {
+public class TimedReloadContext extends CacheReloadContext
+{
 
-   private CacheReloadContext reloadContext;
-   private long nextCheck;
-   private long checkInterval;
+    private CacheReloadContext reloadContext;
+    private long nextCheck;
+    private long checkInterval;
 
-   /**
-    * Construct a new TimedReloadContext decorator.
-    * This is just a wrapper object for another CacheReloadContext, ensuring
-    * that the shouldReload() method of the refrenced reload context is only
-    * called once per checkInterval milliseconds.
-    * @param reloadContext reload context to wrap around
-    * @param checkInterval interval to check for reload at most in milliseconds
-    **/
-   public TimedReloadContext(CacheReloadContext reloadContext, long checkInterval) {
-      super();
-      this.reloadContext = reloadContext;
-      this.checkInterval = checkInterval;
-      this.nextCheck = Clock.TIME + checkInterval;
-   }
+    /**
+     * Construct a new TimedReloadContext decorator.
+     * This is just a wrapper object for another CacheReloadContext, ensuring
+     * that the shouldReload() method of the refrenced reload context is only
+     * called once per checkInterval milliseconds.
+     * @param reloadContext reload context to wrap around
+     * @param checkInterval interval to check for reload at most in milliseconds
+     **/
+    public TimedReloadContext (CacheReloadContext reloadContext, long checkInterval)
+    {
+        super();
+        this.reloadContext = reloadContext;
+        this.checkInterval = checkInterval;
+        this.nextCheck = Clock.TIME + checkInterval;
+    }
 
-   /**
-    * Check, whether the underlying resource should be reloaded.
-    * This method will simply call the shouldReload() method of the
-    * referenced reload context, except when this method was called
-    * again in the last checkInterval milliseconds. In this case,
-    * this method will simply return false.
-    * @return whether resource should be reloaded.
-    **/
-   public boolean shouldReload() {
-      //long time = System.currentTimeMillis();
-      if (Clock.TIME >= nextCheck) {
-         nextCheck = Clock.TIME + checkInterval;
-         return reloadContext.shouldReload();
-      }
-      else {
-         return false;
-      }
-   }
+    /**
+     * Check, whether the underlying resource should be reloaded.
+     * This method will simply call the shouldReload() method of the
+     * referenced reload context, except when this method was called
+     * again in the last checkInterval milliseconds. In this case,
+     * this method will simply return false.
+     * @return whether resource should be reloaded.
+     **/
+    public boolean shouldReload ()
+    {
+        //long time = System.currentTimeMillis();
+        if (Clock.TIME >= nextCheck)
+        {
+            nextCheck = Clock.TIME + checkInterval;
+            return reloadContext.shouldReload();
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

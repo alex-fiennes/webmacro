@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -32,40 +30,47 @@ import org.webmacro.engine.Block;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
-public class TextDirective extends Directive {
+import java.io.IOException;
 
-   private static final int TEXT_BLOCK = 1;
+public class TextDirective extends Directive
+{
 
-   private Block block;
+    private static final int TEXT_BLOCK = 1;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LiteralBlockArg(TEXT_BLOCK)
-         };
+    private Block block;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("text", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LiteralBlockArg(TEXT_BLOCK)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("text", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      block = (Block) builder.getArg(TEXT_BLOCK, bc);
-      return this;
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-      block.write(out, context);
-   }
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        block = (Block) builder.getArg(TEXT_BLOCK, bc);
+        return this;
+    }
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      block.accept(v);
-      v.endDirective();
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+        block.write(out, context);
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        block.accept(v);
+        v.endDirective();
+    }
 
 }

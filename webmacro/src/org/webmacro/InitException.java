@@ -27,13 +27,16 @@ package org.webmacro;
  * This exception is used to indicate that a somethin was not propertly
  * able to initialize itself.
  */
-public class InitException extends WebMacroException {
+public class InitException extends WebMacroException
+{
 
-   public InitException(String reason) {
-      super(reason);
-   }
+    public InitException (String reason)
+    {
+        super(reason);
+    }
 
-   public InitException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    public InitException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 }

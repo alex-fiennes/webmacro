@@ -32,26 +32,28 @@ import org.webmacro.util.Settings;
  * object.
  * @author Sebastian Kanthak <skanthak@muehlheim.de>
  */
-public abstract class AbstractTemplateLoader implements TemplateLoader {
+public abstract class AbstractTemplateLoader implements TemplateLoader
+{
 
-   /** Our broker */
-   protected Broker broker;
+    /** Our broker */
+    protected Broker broker;
 
-   /** Log to use */
-   protected Log log;
+    /** Log to use */
+    protected Log log;
 
-   /** Helper class for loading templates from files or URLs */
-   protected TemplateLoaderHelper helper;
+    /** Helper class for loading templates from files or URLs */
+    protected TemplateLoaderHelper helper;
 
-   /**
-    * Sets up broker, reloadDelayDecorator and log.
-    * Don't forget to call super.init() if you override this
-    * method.
-    */
-   public void init(Broker b, Settings config) throws InitException {
-      this.broker = b;
-      log = b.getLog("resource", "Loading templates");
-      helper = new TemplateLoaderHelper();
-      helper.init(b, config);
-   }
+    /**
+     * Sets up broker, reloadDelayDecorator and log.
+     * Don't forget to call super.init() if you override this
+     * method.
+     */
+    public void init (Broker b, Settings config) throws InitException
+    {
+        this.broker = b;
+        log = b.getLog("resource", "Loading templates");
+        helper = new TemplateLoaderHelper();
+        helper.init(b, config);
+    }
 }

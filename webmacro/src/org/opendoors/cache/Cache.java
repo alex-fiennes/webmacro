@@ -24,50 +24,51 @@ package org.opendoors.cache;
  * @see UpdateableCache
  * @author Lane Sharman
  */
-public interface Cache {
+public interface Cache
+{
 
-   /**
-    * Invalidate an object in the cache according
-    * to the update strategy.
-    */
-   public void invalidate(Object key);
+    /**
+     * Invalidate an object in the cache according
+     * to the update strategy.
+     */
+    public void invalidate (Object key);
 
-   /**
-    * Invalidates all the objects in the cache in one shot.
-    * <p>
-    * The action is performed according to the update strategy
-    * of the implementation.
-    */
-   public void invalidateAll();
+    /**
+     * Invalidates all the objects in the cache in one shot.
+     * <p>
+     * The action is performed according to the update strategy
+     * of the implementation.
+     */
+    public void invalidateAll ();
 
-   /**
-    * Put an object in the cache possibly
-    * updating and replacing an existing value.
-    * <p>
-    * Note: some implementations elect to defer
-    * this operation so the element may not
-    * be immediately present.
-    */
-   public void put(Object key, Object value);
+    /**
+     * Put an object in the cache possibly
+     * updating and replacing an existing value.
+     * <p>
+     * Note: some implementations elect to defer
+     * this operation so the element may not
+     * be immediately present.
+     */
+    public void put (Object key, Object value);
 
-   /**
-    * Gets a value from the cache.
-    * <p>
-    * Returning null reports that the element
-    * cannot be found or regenerate with the key
-    * provided.
-    */
-   public Object get(Object key);
+    /**
+     * Gets a value from the cache.
+     * <p>
+     * Returning null reports that the element
+     * cannot be found or regenerate with the key
+     * provided.
+     */
+    public Object get (Object key);
 
-   /**
-    * Returns all the values in the cache.
-    */
-   public Object[] values();
+    /**
+     * Returns all the values in the cache.
+     */
+    public Object[] values ();
 
-   /**
-    * Returns all the keys in the cache.
-    */
-   public Object[] keys();
+    /**
+     * Returns all the keys in the cache.
+     */
+    public Object[] keys ();
 
 }
 

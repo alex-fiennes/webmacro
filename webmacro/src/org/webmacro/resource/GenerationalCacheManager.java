@@ -24,7 +24,6 @@ package org.webmacro.resource;
 import org.opendoors.cache.UpdateableCache;
 import org.opendoors.cache.immutable.CacheFactory;
 import org.opendoors.cache.immutable.CacheImpl;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
@@ -57,176 +56,199 @@ import org.webmacro.util.SubSettings;
  * @author Lane Sharman (lane@opendoors.com)
  * @since 0.96
  */
-public class GenerationalCacheManager implements CacheManager {
+public class GenerationalCacheManager implements CacheManager
+{
 
-   private static final String NAME = "GenerationalCacheManager";
+    private static final String NAME = "GenerationalCacheManager";
 
-   private UpdateableCache cache;
-   private Log log;
-   private CacheFactory cacheFactory;
-   private String resourceType;
-   private boolean reloadOnChange = false;
+    private UpdateableCache cache;
+    private Log log;
+    private CacheFactory cacheFactory;
+    private String resourceType;
+    private boolean reloadOnChange = false;
 
-   public GenerationalCacheManager() {
-   }
+    public GenerationalCacheManager ()
+    {
+    }
 
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException {
-      Settings s = new SubSettings(config, "GenerationalCacheManager." + resourceType);
-      Settings def = new SubSettings(config, "GenerationalCacheManager.*");
-      if (s.containsKey("ReloadOnChange")) {
-         reloadOnChange = s.getBooleanSetting("ReloadOnChange"); // for this resource type
-      }
-      else if (def.containsKey("ReloadOnChange")) {
-         reloadOnChange = def.getBooleanSetting("ReloadOnChange"); // all resource types
-      }
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException
+    {
+        Settings s = new SubSettings(config, "GenerationalCacheManager." + resourceType);
+        Settings def = new SubSettings(config, "GenerationalCacheManager.*");
+        if (s.containsKey("ReloadOnChange"))
+        {
+            reloadOnChange = s.getBooleanSetting("ReloadOnChange"); // for this resource type
+        }
+        else if (def.containsKey("ReloadOnChange"))
+        {
+            reloadOnChange = def.getBooleanSetting("ReloadOnChange"); // all resource types
+        }
 
-      cacheFactory = new CacheFactory(def.getAsProperties()); // uses the union
+        cacheFactory = new CacheFactory(def.getAsProperties()); // uses the union
 
-      this.cache = cacheFactory.initialize(null);
-      this.log = b.getLog("resource");
-      this.resourceType = resourceType;
+        this.cache = cacheFactory.initialize(null);
+        this.log = b.getLog("resource");
+        this.resourceType = resourceType;
 
-      log.info(NAME + "." + resourceType + ": " + "Reload=" + reloadOnChange);
-   }
+        log.info(NAME + "." + resourceType + ": " + "Reload=" + reloadOnChange);
+    }
 
-   public void flush() {
-      cache.invalidateAll();
-   }
+    public void flush ()
+    {
+        cache.invalidateAll();
+    }
 
-   public void destroy() {
-      cacheFactory.destroy(cache);
-   }
+    public void destroy ()
+    {
+        cacheFactory.destroy(cache);
+    }
 
-   /**
-    * Get the cached value and load
-    * it if it is not present or reloading
-    * is required.
-    */
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      if (reloadOnChange)
-         return getReloadable(query, helper);
-      else
-         return getUnreloadable(query, helper);
-   }
+    /**
+     * Get the cached value and load
+     * it if it is not present or reloading
+     * is required.
+     */
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        if (reloadOnChange)
+            return getReloadable(query, helper);
+        else
+            return getUnreloadable(query, helper);
+    }
 
-   /**
-    * Get the object associated with the specific query,
-    * trying to look it up in a cache. If it's not there, return null.
-    */
-   public Object get(final Object query) {
-      Object o = cache.get(query);
-      if (o != null && reloadOnChange)
-         return ((ScmCacheElement) o).value;
-      else
-         return o;
-   }
+    /**
+     * Get the object associated with the specific query,
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+    public Object get (final Object query)
+    {
+        Object o = cache.get(query);
+        if (o != null && reloadOnChange)
+            return ((ScmCacheElement) o).value;
+        else
+            return o;
+    }
 
-   /**
-    * Put an object in the cache
-    */
-   public void put(final Object query, Object resource) {
-      if (reloadOnChange) {
-         ScmCacheElement r = new ScmCacheElement();
-         r.value = resource;
-         cache.put(query, r);
-      }
-      else
-         cache.put(query, resource);
-   }
-
-   private Object getUnreloadable(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      Object o = cache.get(query);
-      if (o == null) {
-         o = helper.load(query, null);
-         if (o != null)
-            cache.put(query, o);
-      }
-      return o;
-   }
-
-
-   private Object getReloadable(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      Object o = null;
-      ScmCacheElement r = (ScmCacheElement) cache.get(query);
-      if (r != null)
-         o = r.value;
-      boolean reload = false;
-      if (o != null && r.reloadContext != null && reloadOnChange)
-         reload = r.reloadContext.shouldReload();
-      if (o == null || reload) {
-         if (r == null)
-            r = new ScmCacheElement();
-         o = helper.load(query, r);
-         if (o != null) {
-            r.value = o;
+    /**
+     * Put an object in the cache
+     */
+    public void put (final Object query, Object resource)
+    {
+        if (reloadOnChange)
+        {
+            ScmCacheElement r = new ScmCacheElement();
+            r.value = resource;
             cache.put(query, r);
-         }
-      }
-      return o;
-   }
+        }
+        else
+            cache.put(query, resource);
+    }
 
-   /** Invalidate an entry in the cache. */
-   public void invalidate(final Object query) {
-      cache.invalidate(query);
-   }
+    private Object getUnreloadable (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        Object o = cache.get(query);
+        if (o == null)
+        {
+            o = helper.load(query, null);
+            if (o != null)
+                cache.put(query, o);
+        }
+        return o;
+    }
 
 
-   /** This manager supports reloading and so this returns true. */
-   public boolean supportsReload() {
-      return true;
-   }
+    private Object getReloadable (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        Object o = null;
+        ScmCacheElement r = (ScmCacheElement) cache.get(query);
+        if (r != null)
+            o = r.value;
+        boolean reload = false;
+        if (o != null && r.reloadContext != null && reloadOnChange)
+            reload = r.reloadContext.shouldReload();
+        if (o == null || reload)
+        {
+            if (r == null)
+                r = new ScmCacheElement();
+            o = helper.load(query, r);
+            if (o != null)
+            {
+                r.value = o;
+                cache.put(query, r);
+            }
+        }
+        return o;
+    }
 
-   /** Returns the wm type of resource it is caching. */
-   public String getResourceType() {
-      return resourceType;
-   }
+    /** Invalidate an entry in the cache. */
+    public void invalidate (final Object query)
+    {
+        cache.invalidate(query);
+    }
 
-   /**
-    * A caching element
-    * smart enough to reload itself.
-    * <p>
-    * Note: SoftReference is a huge overhead hit so
-    * it has been obsoleted in favor of straight obj refs.
-    */
-   private static class ScmCacheElement extends CacheElement {
 
-      private Object value;
-      private CacheReloadContext reloadContext = null;
+    /** This manager supports reloading and so this returns true. */
+    public boolean supportsReload ()
+    {
+        return true;
+    }
 
-      public void setReloadContext(CacheReloadContext rc) {
-         this.reloadContext = rc;
-      }
-   }
+    /** Returns the wm type of resource it is caching. */
+    public String getResourceType ()
+    {
+        return resourceType;
+    }
 
-   /**
-    * Returns cache instrumentation statistics.
-    * <p>
-    * These statistics will be zero if the cache
-    * implementation is not using the instrumented get() routine.
-    * <p>
-    * Use of this routine is normally reserved for performance analysis
-    * and depends on recompiling org.opendoors.cache.immutable.CacheImpl
-    * @return an array of longs with the following def.<br>
-    * <pre>
-    * [0] The total number of gets, accesses.
-    * [1] The number of accesses which resulted in a hit to the immutable cache.
-    * [2] The number of accesses which resulted in a hit to the mutable cache.
-    * [3] The number of accesses which resulted in a fault and a need to
-    * regenerate the cache entry.
-    * </pre>
-    * @see org.opendoors.cache.impl.CacheImpl
-    */
-   public long[] getMetrics() {
-      long[] values = {0, 0, 0, 0}; // the default;
-      if (cache instanceof CacheImpl) {
-         CacheImpl impl = (CacheImpl) cache;
-         values = impl.getMetrics();
-      }
-      return values;
-   }
+    /**
+     * A caching element
+     * smart enough to reload itself.
+     * <p>
+     * Note: SoftReference is a huge overhead hit so
+     * it has been obsoleted in favor of straight obj refs.
+     */
+    private static class ScmCacheElement extends CacheElement
+    {
+
+        private Object value;
+        private CacheReloadContext reloadContext = null;
+
+        public void setReloadContext (CacheReloadContext rc)
+        {
+            this.reloadContext = rc;
+        }
+    }
+
+    /**
+     * Returns cache instrumentation statistics.
+     * <p>
+     * These statistics will be zero if the cache
+     * implementation is not using the instrumented get() routine.
+     * <p>
+     * Use of this routine is normally reserved for performance analysis
+     * and depends on recompiling org.opendoors.cache.immutable.CacheImpl
+     * @return an array of longs with the following def.<br>
+     * <pre>
+     * [0] The total number of gets, accesses.
+     * [1] The number of accesses which resulted in a hit to the immutable cache.
+     * [2] The number of accesses which resulted in a hit to the mutable cache.
+     * [3] The number of accesses which resulted in a fault and a need to
+     * regenerate the cache entry.
+     * </pre>
+     * @see org.opendoors.cache.impl.CacheImpl
+     */
+    public long[] getMetrics ()
+    {
+        long[] values = {0, 0, 0, 0}; // the default;
+        if (cache instanceof CacheImpl)
+        {
+            CacheImpl impl = (CacheImpl) cache;
+            values = impl.getMetrics();
+        }
+        return values;
+    }
 
 }

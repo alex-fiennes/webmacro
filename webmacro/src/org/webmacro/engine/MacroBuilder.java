@@ -33,36 +33,40 @@ package org.webmacro.engine;
  * @author Brian Goetz
  */
 
-public class MacroBuilder implements Builder {
+public class MacroBuilder implements Builder
+{
 
-   private String name;
-   private ListBuilder argsBuilder;
-   private int lineNo, colNo;
-   private String[] nullArgs = new String[0];
+    private String name;
+    private ListBuilder argsBuilder;
+    private int lineNo, colNo;
+    private String[] nullArgs = new String[0];
 
-   public MacroBuilder(String name,
-                       ListBuilder argsBuilder,
-                       int lineNo, int colNo) {
-      this.name = name;
-      this.argsBuilder = argsBuilder;
-      this.lineNo = lineNo;
-      this.colNo = colNo;
-   }
+    public MacroBuilder (String name,
+                         ListBuilder argsBuilder,
+                         int lineNo, int colNo)
+    {
+        this.name = name;
+        this.argsBuilder = argsBuilder;
+        this.lineNo = lineNo;
+        this.colNo = colNo;
+    }
 
-   /**
-    * Expand the macro.  Gets the macro definition from the build context.
-    */
-   public Object build(BuildContext bc) throws BuildException {
-      MacroDefinition md = bc.getMacro(name);
-      if (md == null) {
-        boolean relax = bc.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
-        if (relax)
-          return "#" + name + " ";
-        else
-         throw new BuildException ("#" + name + ": no such Macro or Directive");
-      }
-      Object[] args = argsBuilder.buildAsArray(bc);
-      return md.expand(args, bc);
-   }
+    /**
+     * Expand the macro.  Gets the macro definition from the build context.
+     */
+    public Object build (BuildContext bc) throws BuildException
+    {
+        MacroDefinition md = bc.getMacro(name);
+        if (md == null)
+        {
+            boolean relax = bc.getBroker().getBooleanSetting("RelaxedDirectiveBuilding");
+            if (relax)
+                return "#" + name + " ";
+            else
+                throw new BuildException("#" + name + ": no such Macro or Directive");
+        }
+        Object[] args = argsBuilder.buildAsArray(bc);
+        return md.expand(args, bc);
+    }
 }
 

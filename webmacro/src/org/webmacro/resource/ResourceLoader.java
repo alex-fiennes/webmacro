@@ -36,25 +36,26 @@ import org.webmacro.util.Settings;
  * @since 0.96
  * @author Brian Goetz
  */
-public interface ResourceLoader {
+public interface ResourceLoader
+{
 
-   /**
-    * Load an object from permanent storage (or construct it) on
-    * demand.  */
-   public Object load(String query, CacheElement ce)
-         throws ResourceException;
+    /**
+     * Load an object from permanent storage (or construct it) on
+     * demand.  */
+    public Object load (String query, CacheElement ce)
+            throws ResourceException;
 
-   /**
-    * Load an object from permanent storage (or construct it) on
-    * demand.  Classes which extend CachingProvider don't need to
-    * supply this, since providers will only be called with String
-    * queries.
-    */
-   public Object load(Object query, CacheElement ce)
-         throws ResourceException;
+    /**
+     * Load an object from permanent storage (or construct it) on
+     * demand.  Classes which extend CachingProvider don't need to
+     * supply this, since providers will only be called with String
+     * queries.
+     */
+    public Object load (Object query, CacheElement ce)
+            throws ResourceException;
 
-   /**
-    * Initialize this provider based on the specified config.
-    */
-   public void init(Broker b, Settings config) throws InitException;
+    /**
+     * Initialize this provider based on the specified config.
+     */
+    public void init (Broker b, Settings config) throws InitException;
 }

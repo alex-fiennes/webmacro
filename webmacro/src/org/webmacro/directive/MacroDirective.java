@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -32,54 +30,62 @@ import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.MacroDefinition;
 
+import java.io.IOException;
+
 /**
  * MacroDirective
  *
  * @author Brian Goetz
  */
 
-public class MacroDirective extends Directive {
+public class MacroDirective extends Directive
+{
 
-   private static final int MACRO_NAME = 1;
-   private static final int MACRO_ARGS = 2;
-   private static final int MACRO_BODY = 3;
+    private static final int MACRO_NAME = 1;
+    private static final int MACRO_ARGS = 2;
+    private static final int MACRO_BODY = 3;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new NameArg(MACRO_NAME),
-            new FormalArgListArg(MACRO_ARGS),
-            new BlockArg(MACRO_BODY)
-         };
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new NameArg(MACRO_NAME),
+                new FormalArgListArg(MACRO_ARGS),
+                new BlockArg(MACRO_BODY)
+            };
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor(null, null, myArgs, null);
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor(null, null, myArgs, null);
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public MacroDirective() {
-   }
+    public MacroDirective ()
+    {
+    }
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      String name = (String) builder.getArg(MACRO_NAME, bc);
-      Object[] args = (Object[]) builder.getArg(MACRO_ARGS, bc);
-      String[] argNames = new String[args.length];
-      for (int i = 0; i < args.length; i++)
-         argNames[i] = (String) args[i];
-      Object body = builder.getArg(MACRO_BODY);
-      MacroDefinition macro = new MacroDefinition(name, argNames, body);
-      bc.putMacro(name, macro);
-      return null;
-   }
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        String name = (String) builder.getArg(MACRO_NAME, bc);
+        Object[] args = (Object[]) builder.getArg(MACRO_ARGS, bc);
+        String[] argNames = new String[args.length];
+        for (int i = 0; i < args.length; i++)
+            argNames[i] = (String) args[i];
+        Object body = builder.getArg(MACRO_BODY);
+        MacroDefinition macro = new MacroDefinition(name, argNames, body);
+        bc.putMacro(name, macro);
+        return null;
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
 
-   public void accept(TemplateVisitor v) {
-   }
+    public void accept (TemplateVisitor v)
+    {
+    }
 
 }

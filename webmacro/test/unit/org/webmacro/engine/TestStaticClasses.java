@@ -8,35 +8,46 @@
  */
 package org.webmacro.engine;
 
-import junit.framework.TestCase;
-import org.webmacro.template.TemplateTestCase;
 import org.webmacro.Context;
+import org.webmacro.template.TemplateTestCase;
 
-public class TestStaticClasses extends TemplateTestCase {
+public class TestStaticClasses extends TemplateTestCase
+{
 
-    public static class Simple {
-        public static String foo (String arg, String arg2) {
-            if (arg ==  null)
+    public static class Simple
+    {
+        public static String foo (String arg, String arg2)
+        {
+            if (arg == null)
                 return "arg is null";
             else
                 return arg;
         }
     }
 
-    public TestStaticClasses(String s) {
+
+    public TestStaticClasses (String s)
+    {
         super(s);
     }
 
-    protected void stuffContext(Context context) throws Exception {
-        _context.put ("SimpleInstance", new Simple());
-        _context.put ("SimpleClass", Simple.class);
+
+    protected void stuffContext (Context context) throws Exception
+    {
+        _context.put("SimpleInstance", new Simple());
+        _context.put("SimpleClass", Simple.class);
     }
 
-    public void testStaticClassWithNullAsFirstArg_1 () throws Exception {
+
+    public void testStaticClassWithNullAsFirstArg_1 () throws Exception
+    {
         assertEvalutionEquals("$SimpleClass.foo(null, null)", "arg is null");
         assertEvalutionEquals("$SimpleInstance.foo(null, null)", "arg is null");
     }
-    public void testStaticClassWithNullAsFirstArg_2 () throws Exception {
+
+
+    public void testStaticClassWithNullAsFirstArg_2 () throws Exception
+    {
         executeStringTemplate("$SimpleClass.foo(null, null)");
         executeStringTemplate("$SimpleInstance.foo(null, null)");
     }

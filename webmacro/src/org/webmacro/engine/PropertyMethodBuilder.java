@@ -26,25 +26,30 @@ package org.webmacro.engine;
 import org.webmacro.Macro;
 import org.webmacro.util.PropertyMethod;
 
-public class PropertyMethodBuilder implements Builder {
+public class PropertyMethodBuilder implements Builder
+{
 
-   String _name;
-   ListBuilder _args;
+    String _name;
+    ListBuilder _args;
 
-   public PropertyMethodBuilder(String name, ListBuilder args) {
-      _name = name;
-      _args = args;
-   }
+    public PropertyMethodBuilder (String name, ListBuilder args)
+    {
+        _name = name;
+        _args = args;
+    }
 
-   public Object build(BuildContext bc) throws BuildException {
-      Object args = _args.build(bc);
-      if (args instanceof Macro) {
-         return new PropertyMethod(_name, (Macro) args);
-      }
-      else {
-         return new PropertyMethod(_name, (Object[]) args);
-      }
-   }
+    public Object build (BuildContext bc) throws BuildException
+    {
+        Object args = _args.build(bc);
+        if (args instanceof Macro)
+        {
+            return new PropertyMethod(_name, (Macro) args);
+        }
+        else
+        {
+            return new PropertyMethod(_name, (Object[]) args);
+        }
+    }
 
 
 }

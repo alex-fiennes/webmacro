@@ -41,82 +41,97 @@ package org.webmacro;
  *
  * @author Brian Goetz (Quiotix Corp)
  * @since 0.96 */
-public class RethrowableRuntimeException extends RuntimeException {
+public class RethrowableRuntimeException extends RuntimeException
+{
 
-   private Throwable cause;
+    private Throwable cause;
 
-   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
+    private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
-   public RethrowableRuntimeException() {
-      super();
-   }
+    public RethrowableRuntimeException ()
+    {
+        super();
+    }
 
-   public RethrowableRuntimeException(String s) {
-      super(s);
-   }
+    public RethrowableRuntimeException (String s)
+    {
+        super(s);
+    }
 
-   public RethrowableRuntimeException(String s, Throwable e) {
-      super(s + System.getProperty("line.separator") + e);
-      cause = e;
-      while (cause instanceof RethrowableRuntimeException) {
-         cause = ((RethrowableRuntimeException) cause).cause;
-      }
-   }
+    public RethrowableRuntimeException (String s, Throwable e)
+    {
+        super(s + System.getProperty("line.separator") + e);
+        cause = e;
+        while (cause instanceof RethrowableRuntimeException)
+        {
+            cause = ((RethrowableRuntimeException) cause).cause;
+        }
+    }
 
-   public void printStackTrace() {
-      super.printStackTrace();
-      if (cause != null) {
-         System.err.println(RETHROW_MESSAGE);
-         cause.printStackTrace();
-      }
-   }
+    public void printStackTrace ()
+    {
+        super.printStackTrace();
+        if (cause != null)
+        {
+            System.err.println(RETHROW_MESSAGE);
+            cause.printStackTrace();
+        }
+    }
 
-   public void printStackTrace(java.io.PrintStream ps) {
-      super.printStackTrace(ps);
-      if (cause != null) {
-         ps.println(RETHROW_MESSAGE);
-         cause.printStackTrace(ps);
-      }
-   }
+    public void printStackTrace (java.io.PrintStream ps)
+    {
+        super.printStackTrace(ps);
+        if (cause != null)
+        {
+            ps.println(RETHROW_MESSAGE);
+            cause.printStackTrace(ps);
+        }
+    }
 
-   public void printStackTrace(java.io.PrintWriter pw) {
-      super.printStackTrace(pw);
-      if (cause != null) {
-         pw.println(RETHROW_MESSAGE);
-         cause.printStackTrace(pw);
-      }
-   }
+    public void printStackTrace (java.io.PrintWriter pw)
+    {
+        super.printStackTrace(pw);
+        if (cause != null)
+        {
+            pw.println(RETHROW_MESSAGE);
+            cause.printStackTrace(pw);
+        }
+    }
 
-   /**
-    * allow access to underlying exception
-    * @deprecated you should use <code>getCause</code> instead
-    */
-   public Throwable getCaught() {
-      return getCause();
-   }
+    /**
+     * allow access to underlying exception
+     * @deprecated you should use <code>getCause</code> instead
+     */
+    public Throwable getCaught ()
+    {
+        return getCause();
+    }
 
-   /**
-    * Return the underlying exception provided at construction time
-    * or null if none was provided.
-    * @return underlying cause
-    * @since 1.1
-    */
-   public Throwable getCause() {
-      return cause;
-   }
+    /**
+     * Return the underlying exception provided at construction time
+     * or null if none was provided.
+     * @return underlying cause
+     * @since 1.1
+     */
+    public Throwable getCause ()
+    {
+        return cause;
+    }
 
-   /**
-    * Return the original exception cause. This will recursively
-    * extract the cause if cause is a subclass of
-    * <code>RethrowableException</code>.
-    * @return underlying root cause
-    * @since 1.1
-    */
-   public Throwable getRootCause() {
-      Throwable t = cause;
-      while (t != null && t instanceof RethrowableRuntimeException) {
-         t = ((RethrowableRuntimeException) t).cause;
-      }
-      return t;
-   }
+    /**
+     * Return the original exception cause. This will recursively
+     * extract the cause if cause is a subclass of
+     * <code>RethrowableException</code>.
+     * @return underlying root cause
+     * @since 1.1
+     */
+    public Throwable getRootCause ()
+    {
+        Throwable t = cause;
+        while (t != null && t instanceof RethrowableRuntimeException)
+        {
+            t = ((RethrowableRuntimeException) t).cause;
+        }
+        return t;
+    }
 }

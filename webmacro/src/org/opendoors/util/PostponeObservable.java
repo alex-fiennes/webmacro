@@ -14,7 +14,8 @@ package org.opendoors.util;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * PostponeObservable is the delegated instance for an observable
@@ -47,120 +48,134 @@ import java.util.*;
  * @see java.util.Observable
  * @see java.util.Observer
  */
-public class PostponeObservable extends Observable implements PropertyChangeListener {
+public class PostponeObservable extends Observable implements PropertyChangeListener
+{
 
-   //-------public members-----
-   /**
-    * On property change, postpone event notification this number of millis.
-    */
-   protected int postponeInterval = 120000; //2 minutes
+    //-------public members-----
+    /**
+     * On property change, postpone event notification this number of millis.
+     */
+    protected int postponeInterval = 120000; //2 minutes
 
-   /**
-    * While waiting to fire a notification,
-    * reset the interval if another change comes in.
-    */
-   protected boolean resetClockOnUpdate = true;
-
-
-   //-------private and protected members-----
-   private long timeToNotify = System.currentTimeMillis();
-
-   private Timer tick = null;
+    /**
+     * While waiting to fire a notification,
+     * reset the interval if another change comes in.
+     */
+    protected boolean resetClockOnUpdate = true;
 
 
-   //-------constructor(s)-----
-   /**
-    * Constructs a default observable.
-    */
-   public PostponeObservable() {
-      init();
-   }
+    //-------private and protected members-----
+    private long timeToNotify = System.currentTimeMillis();
 
-   /**
-    * Constructs a default observable with the following settings.
-    * @param The interval to wait in millis between notifications.
-    * @param Resets the clock so that changes can be aggregated
-    * over a period of time
-    */
-   public PostponeObservable(int postponeInterval, boolean resetClockOnUpdate) {
-      this.postponeInterval = postponeInterval;
-      this.resetClockOnUpdate = resetClockOnUpdate;
-      init();
-   }
-
-   /** Initializes the instance. */
-   protected void init() {
-      tick = new Timer("PropertyObservable", postponeInterval, false);
-      tick.addObserver(new TimerObserver());
-   }
-
-   //-------public initializers/destroyers-----
+    private Timer tick = null;
 
 
-   /** Sets the observable period. */
-   public void setPostponePeriod(int postponeInterval) {
-      this.postponeInterval = postponeInterval;
-      tick.setPeriod(postponeInterval);
-   }
+    //-------constructor(s)-----
+    /**
+     * Constructs a default observable.
+     */
+    public PostponeObservable ()
+    {
+        init();
+    }
 
-   /** Enables postponeability if true. */
-   public void enablePostponeability(boolean enable) {
-      this.resetClockOnUpdate = enable;
-   }
+    /**
+     * Constructs a default observable with the following settings.
+     * @param The interval to wait in millis between notifications.
+     * @param Resets the clock so that changes can be aggregated
+     * over a period of time
+     */
+    public PostponeObservable (int postponeInterval, boolean resetClockOnUpdate)
+    {
+        this.postponeInterval = postponeInterval;
+        this.resetClockOnUpdate = resetClockOnUpdate;
+        init();
+    }
 
-   //-------public event handlers-----
-   /**
-    * Using the property event model
-    * propagate a change event to the observable.
-    * @param evt The property change event which can be null.
-    */
-   public void propertyChange(PropertyChangeEvent evt) {
-      setChanged();
-   }
+    /** Initializes the instance. */
+    protected void init ()
+    {
+        tick = new Timer("PropertyObservable", postponeInterval, false);
+        tick.addObserver(new TimerObserver());
+    }
 
-   /**
-    * Call back from the timer when
-    * the observation period has expired.
-    */
-   public void timerAction() {
-      if (hasChanged() && (timeToNotify < System.currentTimeMillis())) {
-         notifyObservers();
-      }
-   }
+    //-------public initializers/destroyers-----
 
-   /**
-    * Signals that the observable has changed.
-    * <p>
-    * Observers will be
-    * notified when
-    * <pre>
-    * current time > (time of last change + postponeInterval)
-    * </pre>
-    * provided postponeability is enabled.
-    */
-   public void setChanged() {
-      super.setChanged();
-      if (resetClockOnUpdate) {
-         timeToNotify = (System.currentTimeMillis() + postponeInterval);
-      }
-   }
 
-   /** Destoys this instance and the associated timer. */
-   public void destroy() {
-      tick.stop();
-      tick = null;
-   }
+    /** Sets the observable period. */
+    public void setPostponePeriod (int postponeInterval)
+    {
+        this.postponeInterval = postponeInterval;
+        tick.setPeriod(postponeInterval);
+    }
 
-   /**
-    * Class which listens to updates in the observable tick and calls
-    * the timer notifiction method.
-    */
-   class TimerObserver implements Observer {
+    /** Enables postponeability if true. */
+    public void enablePostponeability (boolean enable)
+    {
+        this.resetClockOnUpdate = enable;
+    }
 
-      public void update(Observable o, Object arg) {
-         timerAction();
-      }
-   }
+    //-------public event handlers-----
+    /**
+     * Using the property event model
+     * propagate a change event to the observable.
+     * @param evt The property change event which can be null.
+     */
+    public void propertyChange (PropertyChangeEvent evt)
+    {
+        setChanged();
+    }
+
+    /**
+     * Call back from the timer when
+     * the observation period has expired.
+     */
+    public void timerAction ()
+    {
+        if (hasChanged() && (timeToNotify < System.currentTimeMillis()))
+        {
+            notifyObservers();
+        }
+    }
+
+    /**
+     * Signals that the observable has changed.
+     * <p>
+     * Observers will be
+     * notified when
+     * <pre>
+     * current time > (time of last change + postponeInterval)
+     * </pre>
+     * provided postponeability is enabled.
+     */
+    public void setChanged ()
+    {
+        super.setChanged();
+        if (resetClockOnUpdate)
+        {
+            timeToNotify = (System.currentTimeMillis() + postponeInterval);
+        }
+    }
+
+    /** Destoys this instance and the associated timer. */
+    public void destroy ()
+    {
+        tick.stop();
+        tick = null;
+    }
+
+    /**
+     * Class which listens to updates in the observable tick and calls
+     * the timer notifiction method.
+     */
+    class TimerObserver implements Observer
+    {
+
+        public void update (Observable o, Object arg)
+        {
+            timerAction();
+        }
+    }
 
 
 }

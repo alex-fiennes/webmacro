@@ -23,64 +23,75 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 import org.webmacro.UnsettableException;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
  * Provide access to form variables
  */
-final public class CookieJar {
+final public class CookieJar
+{
 
-   private Cookie[] jar;
-   private HttpServletResponse res;
+    private Cookie[] jar;
+    private HttpServletResponse res;
 
-   /**
-    * Read the form data from the supplied Request object
-    */
-   CookieJar(final HttpServletRequest rq, final HttpServletResponse rs) {
-      jar = rq.getCookies();
-      res = rs;
-   }
+    /**
+     * Read the form data from the supplied Request object
+     */
+    CookieJar (final HttpServletRequest rq, final HttpServletResponse rs)
+    {
+        jar = rq.getCookies();
+        res = rs;
+    }
 
-   /**
-    * Get a form value
-    */
-   final public Object get(String cookieName) {
-      if (jar == null) {
-         return null;
-      }
-      for (int i = 0; i < jar.length; i++) {
-         if ((jar[i] != null) && (jar[i].getName().equals(cookieName))) {
-            return jar[i];
-         }
-      }
-      return null;
-   }
+    /**
+     * Get a form value
+     */
+    final public Object get (String cookieName)
+    {
+        if (jar == null)
+        {
+            return null;
+        }
+        for (int i = 0; i < jar.length; i++)
+        {
+            if ((jar[i] != null) && (jar[i].getName().equals(cookieName)))
+            {
+                return jar[i];
+            }
+        }
+        return null;
+    }
 
-   /**
-    * Create a new cookie with the supplied name and value and set it
-    * in the response header.
-    */
-   public final void put(final String name, final String value) {
-      Cookie c = new Cookie(name, value);
-      res.addCookie(c);
-   }
+    /**
+     * Create a new cookie with the supplied name and value and set it
+     * in the response header.
+     */
+    public final void put (final String name, final String value)
+    {
+        Cookie c = new Cookie(name, value);
+        res.addCookie(c);
+    }
 
-   /**
-    * Calls put
-    */
-   public final void set(final String name, final Object value)
-         throws UnsettableException {
-      try {
-         put(name, (String) value);
-      }
-      catch (ClassCastException ce) {
-         throw new UnsettableException("Value must be a String");
-      }
-   }
+    /**
+     * Calls put
+     */
+    public final void set (final String name, final Object value)
+            throws UnsettableException
+    {
+        try
+        {
+            put(name, (String) value);
+        }
+        catch (ClassCastException ce)
+        {
+            throw new UnsettableException("Value must be a String");
+        }
+    }
 
 }
 

@@ -23,10 +23,13 @@
 
 package org.webmacro.resource;
 
-import java.util.*;
-
 import org.webmacro.*;
 import org.webmacro.util.Settings;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Alternative implementation of a TemplateProvider that uses TemplateLoaders to do the actual work.
@@ -61,91 +64,107 @@ import org.webmacro.util.Settings;
  * won't work otherwise.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class DelegatingTemplateProvider extends CachingProvider {
+public class DelegatingTemplateProvider extends CachingProvider
+{
 
-   private Broker broker;
-   private Log log;
-   private TemplateLoaderFactory factory;
-   private TemplateLoader[] templateLoaders;
+    private Broker broker;
+    private Log log;
+    private TemplateLoaderFactory factory;
+    private TemplateLoader[] templateLoaders;
 
-   public void init(Broker broker, Settings config) throws InitException {
-      super.init(broker, config);
-      this.broker = broker;
-      log = broker.getLog("resource", "DelegatingTemplateProvider");
+    public void init (Broker broker, Settings config) throws InitException
+    {
+        super.init(broker, config);
+        this.broker = broker;
+        log = broker.getLog("resource", "DelegatingTemplateProvider");
 
-      String factoryClass = config.getSetting("TemplateLoaderFactory", "");
-      log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory " + factoryClass);
-      factory = createFactory(factoryClass);
+        String factoryClass = config.getSetting("TemplateLoaderFactory", "");
+        log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory " + factoryClass);
+        factory = createFactory(factoryClass);
 
-      List loaders = new ArrayList();
+        List loaders = new ArrayList();
 
-      // for compatability reasons, check old TemplatePath setting
-      if (config.getBooleanSetting("DelegatingTemplateProvider.EmulateTemplatePath", false)) {
-         if (config.getSetting("TemplatePath", "").length() > 0) {
-            TemplateLoader loader = new TemplatePathTemplateLoader();
-            loader.init(broker, config);
-            loader.setConfig("");
-            loaders.add(loader);
-         }
-      }
+        // for compatability reasons, check old TemplatePath setting
+        if (config.getBooleanSetting("DelegatingTemplateProvider.EmulateTemplatePath", false))
+        {
+            if (config.getSetting("TemplatePath", "").length() > 0)
+            {
+                TemplateLoader loader = new TemplatePathTemplateLoader();
+                loader.init(broker, config);
+                loader.setConfig("");
+                loaders.add(loader);
+            }
+        }
 
-      int i = 0;
-      String loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i + 1)));
-      while (loader != null) {
-         loaders.add(factory.getTemplateLoader(broker, loader));
-         i++;
-         loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i + 1)));
-      }
-      templateLoaders = new TemplateLoader[loaders.size()];
-      loaders.toArray(templateLoaders);
-   }
+        int i = 0;
+        String loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i + 1)));
+        while (loader != null)
+        {
+            loaders.add(factory.getTemplateLoader(broker, loader));
+            i++;
+            loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i + 1)));
+        }
+        templateLoaders = new TemplateLoader[loaders.size()];
+        loaders.toArray(templateLoaders);
+    }
 
-   public String getType() {
-      return "template";
-   }
+    public String getType ()
+    {
+        return "template";
+    }
 
-   /**
-    * Ask all template loaders to load a template from query.
-    * Returns the template from the first provider, that returns a non-null value
-    * or throws a NotFoundException, if all providers return null.
-    */
-   public Object load(String query, CacheElement ce) throws ResourceException {
-      for (int i = 0; i < templateLoaders.length; i++) {
-         Template t = templateLoaders[i].load(query, ce);
-         if (t != null) {
-            return t;
-         }
-      }
-      throw new NotFoundException("Could not locate template " + query);
-   }
+    /**
+     * Ask all template loaders to load a template from query.
+     * Returns the template from the first provider, that returns a non-null value
+     * or throws a NotFoundException, if all providers return null.
+     */
+    public Object load (String query, CacheElement ce) throws ResourceException
+    {
+        for (int i = 0; i < templateLoaders.length; i++)
+        {
+            Template t = templateLoaders[i].load(query, ce);
+            if (t != null)
+            {
+                return t;
+            }
+        }
+        throw new NotFoundException("Could not locate template " + query);
+    }
 
-   /**
-    * Returns an unmodifieable list of this provider's template loaders.
-    * The list is has the same order used for searching templates. You may
-    * use this method to access template loaders and change their settings
-    * at runtime if they have an appropriate method.
-    * @return unmodifieable list of TemplateLoader objects
-    */
-   public List getTemplateLoaders() {
-      return Collections.unmodifiableList(Arrays.asList(templateLoaders));
-   }
+    /**
+     * Returns an unmodifieable list of this provider's template loaders.
+     * The list is has the same order used for searching templates. You may
+     * use this method to access template loaders and change their settings
+     * at runtime if they have an appropriate method.
+     * @return unmodifieable list of TemplateLoader objects
+     */
+    public List getTemplateLoaders ()
+    {
+        return Collections.unmodifiableList(Arrays.asList(templateLoaders));
+    }
 
-   protected TemplateLoaderFactory createFactory(String classname) throws InitException {
-      try {
-         return (TemplateLoaderFactory) Class.forName(classname).newInstance();
-      }
-      catch (ClassNotFoundException e) {
-         throw new InitException("Class " + classname + " for template loader factory not found", e);
-      }
-      catch (InstantiationException e) {
-         throw new InitException("Could not instantiate class " + classname + " for template loader factory", e);
-      }
-      catch (IllegalAccessException e) {
-         throw new InitException("Could not instantiate class " + classname + " for template loader facory", e);
-      }
-      catch (ClassCastException e) {
-         throw new InitException("Class " + classname + " for template loader factory does not implement " +
-                                 "interface org.webmacro.resource.TemplateLoaderFactory", e);
-      }
-   }
+    protected TemplateLoaderFactory createFactory (String classname) throws InitException
+    {
+        try
+        {
+            return (TemplateLoaderFactory) Class.forName(classname).newInstance();
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new InitException("Class " + classname + " for template loader factory not found", e);
+        }
+        catch (InstantiationException e)
+        {
+            throw new InitException("Could not instantiate class " + classname + " for template loader factory", e);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new InitException("Could not instantiate class " + classname + " for template loader facory", e);
+        }
+        catch (ClassCastException e)
+        {
+            throw new InitException("Class " + classname + " for template loader factory does not implement " +
+                    "interface org.webmacro.resource.TemplateLoaderFactory", e);
+        }
+    }
 }

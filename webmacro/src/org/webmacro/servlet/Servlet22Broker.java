@@ -23,16 +23,19 @@
 
 package org.webmacro.servlet;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import javax.servlet.*;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
 import org.webmacro.util.LogSystem;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * An implementation of Broker tailored for Servlet 2.2
@@ -43,179 +46,205 @@ import org.webmacro.util.LogSystem;
  * @since 0.96
  */
 
-public class Servlet22Broker extends ServletBroker {
+public class Servlet22Broker extends ServletBroker
+{
 
-   protected final ClassLoader _servletClassLoader;
-   protected String _templatePrefix;
+    protected final ClassLoader _servletClassLoader;
+    protected String _templatePrefix;
 
-   /**
-    * Creates the broker looking in WEB-INF first
-    * for WebMacro.properties before looking
-    * in the application root.
-    */
-   private Servlet22Broker(ServletContext sc,
-                           ClassLoader cl,
-                           Properties additionalProperties) throws InitException {
-      super(sc);
-      _servletClassLoader = cl;
-      String propertySource = WEBMACRO_DEFAULTS;
-      loadDefaultSettings();
-      boolean loaded = loadSettings("WEB-INF/" + WEBMACRO_PROPERTIES, true);
-      if (loaded)
-         propertySource += ", " + "WEB-INF/" + WEBMACRO_PROPERTIES;
-      else {
-         loadSettings(WEBMACRO_PROPERTIES, true);
-         propertySource += ", " + WEBMACRO_PROPERTIES;
-      }
-      propertySource += ", (WAR file)";
-      loadServletSettings(Broker.SETTINGS_PREFIX);
-      if (additionalProperties != null && additionalProperties.keySet().size() > 0) {
-         propertySource += ", (additional Properties)";
-         loadSettings(additionalProperties);
-      }
-      propertySource += ", (System Properties)";
-      loadSystemSettings();
-      initLog(_config);
+    /**
+     * Creates the broker looking in WEB-INF first
+     * for WebMacro.properties before looking
+     * in the application root.
+     */
+    private Servlet22Broker (ServletContext sc,
+                             ClassLoader cl,
+                             Properties additionalProperties) throws InitException
+    {
+        super(sc);
+        _servletClassLoader = cl;
+        String propertySource = WEBMACRO_DEFAULTS;
+        loadDefaultSettings();
+        boolean loaded = loadSettings("WEB-INF/" + WEBMACRO_PROPERTIES, true);
+        if (loaded)
+            propertySource += ", " + "WEB-INF/" + WEBMACRO_PROPERTIES;
+        else
+        {
+            loadSettings(WEBMACRO_PROPERTIES, true);
+            propertySource += ", " + WEBMACRO_PROPERTIES;
+        }
+        propertySource += ", (WAR file)";
+        loadServletSettings(Broker.SETTINGS_PREFIX);
+        if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+        {
+            propertySource += ", (additional Properties)";
+            loadSettings(additionalProperties);
+        }
+        propertySource += ", (System Properties)";
+        loadSystemSettings();
+        initLog(_config);
 
-      _log.notice("Loaded settings from " + propertySource);
-      init();
-   }
+        _log.notice("Loaded settings from " + propertySource);
+        init();
+    }
 
-   protected void loadServletSettings(String prefix)
-         throws InitException {
-      Properties p = new Properties();
-      Enumeration e = _servletContext.getInitParameterNames();
-      if (e != null) {
-         String dotPrefix = (prefix == null) ? "" : prefix + ".";
-         while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            if (prefix == null)
-               p.setProperty(key, _servletContext.getInitParameter(key));
-            else if (key.startsWith(dotPrefix))
-               p.setProperty(key, _servletContext.getInitParameter(key)
-                                  .substring(dotPrefix.length()));
-         }
-      }
-      _config.load(p, prefix);
-   }
+    protected void loadServletSettings (String prefix)
+            throws InitException
+    {
+        Properties p = new Properties();
+        Enumeration e = _servletContext.getInitParameterNames();
+        if (e != null)
+        {
+            String dotPrefix = (prefix == null) ? "" : prefix + ".";
+            while (e.hasMoreElements())
+            {
+                String key = (String) e.nextElement();
+                if (prefix == null)
+                    p.setProperty(key, _servletContext.getInitParameter(key));
+                else if (key.startsWith(dotPrefix))
+                    p.setProperty(key, _servletContext.getInitParameter(key)
+                            .substring(dotPrefix.length()));
+            }
+        }
+        _config.load(p, prefix);
+    }
 
-   protected void init() throws InitException {
-      super.init();
-      String s = getSetting("Servlet22Broker.TemplateLocation");
-      if (s == null || s.trim().equals(""))
-         _templatePrefix = null;
-      else
-         _templatePrefix = (s.endsWith("/")) ? s : s + "/";
-   }
+    protected void init () throws InitException
+    {
+        super.init();
+        String s = getSetting("Servlet22Broker.TemplateLocation");
+        if (s == null || s.trim().equals(""))
+            _templatePrefix = null;
+        else
+            _templatePrefix = (s.endsWith("/")) ? s : s + "/";
+    }
 
 
-   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
-      ServletContext sc = s.getServletConfig().getServletContext();
-      ClassLoader cl = s.getClass().getClassLoader();
-      try {
-         Object key = sc;
-         if (additionalProperties != null && additionalProperties.keySet().size() > 0)
-            key = new PropertiesPair(sc, additionalProperties);
+    public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
+    {
+        ServletContext sc = s.getServletConfig().getServletContext();
+        ClassLoader cl = s.getClass().getClassLoader();
+        try
+        {
+            Object key = sc;
+            if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+                key = new PropertiesPair(sc, additionalProperties);
 
-         Broker b = findBroker(key);
-         if (b == null) {
-            b = new Servlet22Broker(sc, cl, additionalProperties);
-            register(key, b);
-         }
-         else
-            b.getLog("broker").notice("Servlet "
-                                      + s.getServletConfig().getServletName()
-                                      + " joining Broker " + b.getName());
-         return b;
-      }
-      catch (InitException e) {
-         Log log = LogSystem.getSystemLog("wm");
-         log.error("Failed to initialized WebMacro from servlet context"
-                   + sc.toString());
-         throw e;
-      }
-   }
+            Broker b = findBroker(key);
+            if (b == null)
+            {
+                b = new Servlet22Broker(sc, cl, additionalProperties);
+                register(key, b);
+            }
+            else
+                b.getLog("broker").notice("Servlet "
+                        + s.getServletConfig().getServletName()
+                        + " joining Broker " + b.getName());
+            return b;
+        }
+        catch (InitException e)
+        {
+            Log log = LogSystem.getSystemLog("wm");
+            log.error("Failed to initialized WebMacro from servlet context"
+                    + sc.toString());
+            throw e;
+        }
+    }
 
-   /**
-    * Get a resource (file) from the the Broker's class loader
-    */
-   public URL getResource(String name) {
-      try {
-          // NOTE: Tomcat4 needs a leading '/'.
-          // However, when loading resources from the class-loader, they
-          // may _not_ start with a leading '/'. So we have to build
-          // up two different names. Ugly!
-          String contextName = name;
-          if (name.startsWith("/")) {
-              name = name.substring(1);
-          } else {
-              StringBuffer b = new StringBuffer(name.length()+1);
-              b.append("/");
-              b.append(name);
-              contextName = b.toString();
-          }
-          URL u = _servletContext.getResource(contextName);
-         if (u != null && u.getProtocol().equals("file")) {
-           File f = new File(u.getFile());
-           if (!f.exists())
-              u = null;
-         }
-         if (u == null) {
-            u = _servletClassLoader.getResource(name);
-         }
-         if (u == null)
-            u = super.getResource(name);
-         return u;
-      }
-      catch (MalformedURLException e) {
-         _log.warning("MalformedURLException caught in " +
-                      "ServletBroker.getResource for " + name);
-         return null;
-      }
-   }
+    /**
+     * Get a resource (file) from the the Broker's class loader
+     */
+    public URL getResource (String name)
+    {
+        try
+        {
+            // NOTE: Tomcat4 needs a leading '/'.
+            // However, when loading resources from the class-loader, they
+            // may _not_ start with a leading '/'. So we have to build
+            // up two different names. Ugly!
+            String contextName = name;
+            if (name.startsWith("/"))
+            {
+                name = name.substring(1);
+            }
+            else
+            {
+                StringBuffer b = new StringBuffer(name.length() + 1);
+                b.append("/");
+                b.append(name);
+                contextName = b.toString();
+            }
+            URL u = _servletContext.getResource(contextName);
+            if (u != null && u.getProtocol().equals("file"))
+            {
+                File f = new File(u.getFile());
+                if (!f.exists())
+                    u = null;
+            }
+            if (u == null)
+            {
+                u = _servletClassLoader.getResource(name);
+            }
+            if (u == null)
+                u = super.getResource(name);
+            return u;
+        }
+        catch (MalformedURLException e)
+        {
+            _log.warning("MalformedURLException caught in " +
+                    "ServletBroker.getResource for " + name);
+            return null;
+        }
+    }
 
-   /**
-    * Get a resource (file) from the Broker's class loader
-    */
-   public InputStream getResourceAsStream(String name) {
-      InputStream is = _servletContext.getResourceAsStream(name);
-      if (is == null)
-         is = _servletClassLoader.getResourceAsStream(name);
-      if (is == null)
-         is = super.getResourceAsStream(name);
-      return is;
-   }
+    /**
+     * Get a resource (file) from the Broker's class loader
+     */
+    public InputStream getResourceAsStream (String name)
+    {
+        InputStream is = _servletContext.getResourceAsStream(name);
+        if (is == null)
+            is = _servletClassLoader.getResourceAsStream(name);
+        if (is == null)
+            is = super.getResourceAsStream(name);
+        return is;
+    }
 
-   /**
-    * Get a template; kind of like getting a resource, but might come
-    * from a different place
-    */
-   public URL getTemplate(String name) {
-      if (_templatePrefix == null)
-         return getResource(name);
-      else {
-         URL u = getResource(_templatePrefix + name);
-         return (u != null) ? u : getResource(name);
-      }
-   }
+    /**
+     * Get a template; kind of like getting a resource, but might come
+     * from a different place
+     */
+    public URL getTemplate (String name)
+    {
+        if (_templatePrefix == null)
+            return getResource(name);
+        else
+        {
+            URL u = getResource(_templatePrefix + name);
+            return (u != null) ? u : getResource(name);
+        }
+    }
 
-   /**
-    * Loads a class by name. Uses the servlet classloader to load the
-    * class. If the class is not found uses the Broker classForName
-    * implementation.  */
+    /**
+     * Loads a class by name. Uses the servlet classloader to load the
+     * class. If the class is not found uses the Broker classForName
+     * implementation.  */
 
-   public Class classForName(String name) throws ClassNotFoundException {
-      Class cls = null;
-      try {
-         cls = _servletClassLoader.loadClass(name);
-      }
-      catch (ClassNotFoundException e) {
-      }
+    public Class classForName (String name) throws ClassNotFoundException
+    {
+        Class cls = null;
+        try
+        {
+            cls = _servletClassLoader.loadClass(name);
+        }
+        catch (ClassNotFoundException e)
+        {
+        }
 
-      if (cls == null)
-         cls = super.classForName(name);
+        if (cls == null)
+            cls = super.classForName(name);
 
-      return cls;
-   }
+        return cls;
+    }
 
 }

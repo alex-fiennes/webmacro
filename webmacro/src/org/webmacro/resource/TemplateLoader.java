@@ -35,37 +35,38 @@ import org.webmacro.util.Settings;
  * DelegatingTemplateProvider to do the actual work.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public interface TemplateLoader {
+public interface TemplateLoader
+{
 
-   /**
-    * Init this template loader*
-    */
-   void init(Broker b, Settings settings) throws InitException;
+    /**
+     * Init this template loader*
+     */
+    void init (Broker b, Settings settings) throws InitException;
 
-   /**
-    * Set the config options for this template loader.
-    * The config option is the path after the colon (":") in
-    * the TemplatePath setting for this loader.<br>
-    * This can be an path as well as JDBC settings or something
-    * completely different.
-    * @param config config options for this template loader
-    */
-   void setConfig(String config) throws InitException;
+    /**
+     * Set the config options for this template loader.
+     * The config option is the path after the colon (":") in
+     * the TemplatePath setting for this loader.<br>
+     * This can be an path as well as JDBC settings or something
+     * completely different.
+     * @param config config options for this template loader
+     */
+    void setConfig (String config) throws InitException;
 
-   /**
-    * Try to load a template.
-    * This method will create and return a template found in the location
-    * described by query or return null, if no such template exists. If
-    * a resource is found at the location, but no template could be created
-    * for some reason, a ResourceException is thrown.
-    * <br>
-    * If the cache element ce is not null, this method should set a reload
-    * context on the cache element to enable
-    * reload-on-demand for this template. If ce is null, caching is disabled.
-    * @param query location to load template from
-    * @param ce cache element that will be used for this template or null
-    * if no cache is used.
-    * @exception ResourceException if an error occured while loading the template
-    */
-   Template load(String query, CacheElement ce) throws ResourceException;
+    /**
+     * Try to load a template.
+     * This method will create and return a template found in the location
+     * described by query or return null, if no such template exists. If
+     * a resource is found at the location, but no template could be created
+     * for some reason, a ResourceException is thrown.
+     * <br>
+     * If the cache element ce is not null, this method should set a reload
+     * context on the cache element to enable
+     * reload-on-demand for this template. If ce is null, caching is disabled.
+     * @param query location to load template from
+     * @param ce cache element that will be used for this template or null
+     * if no cache is used.
+     * @exception ResourceException if an error occured while loading the template
+     */
+    Template load (String query, CacheElement ce) throws ResourceException;
 }

@@ -21,9 +21,14 @@
  */
 package org.webmacro.directive;
 
-import org.webmacro.directive.*;
-import org.webmacro.engine.*;
-import org.webmacro.*;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.engine.Block;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+import org.webmacro.engine.Variable;
 
 import java.io.IOException;
 
@@ -33,7 +38,8 @@ import java.io.IOException;
  * @author Eric B. Ridge (ebr@tcdi.com)
  * @since 1.1b1
  */
-public class CountDirective extends org.webmacro.directive.Directive {
+public class CountDirective extends org.webmacro.directive.Directive
+{
 
     private static final int COUNT_ITERATOR = 1;
     private static final int COUNT_FROM_K = 2;
@@ -58,7 +64,8 @@ public class CountDirective extends org.webmacro.directive.Directive {
 
     private static final DirectiveDescriptor _desc = new DirectiveDescriptor("count", null, _args, null);
 
-    public static DirectiveDescriptor getDescriptor() {
+    public static DirectiveDescriptor getDescriptor ()
+    {
         return _desc;
     }
 
@@ -70,10 +77,14 @@ public class CountDirective extends org.webmacro.directive.Directive {
 
     private int _start, _end, _step = 1;
 
-    public Object build(DirectiveBuilder builder, BuildContext bc) throws BuildException {
-        try {
+    public Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
+    {
+        try
+        {
             _iterator = (Variable) builder.getArg(COUNT_ITERATOR, bc);
-        } catch (ClassCastException e) {
+        }
+        catch (ClassCastException e)
+        {
             throw new Directive.NotVariableBuildException(_desc.name, e);
         }
         _objStart = builder.getArg(COUNT_START, bc);
@@ -82,29 +93,41 @@ public class CountDirective extends org.webmacro.directive.Directive {
         _body = (Block) builder.getArg(COUNT_BODY, bc);
 
         // attempt to go ahead and force the start, end, and step values into primitive ints
-        if (_objStart != null) {
-            if (_objStart instanceof Number) {
+        if (_objStart != null)
+        {
+            if (_objStart instanceof Number)
+            {
                 _start = ((Number) _objStart).intValue();
                 _objStart = null;
-            } else if (_objStart instanceof String) {
+            }
+            else if (_objStart instanceof String)
+            {
                 _start = Integer.parseInt((String) _objStart);
                 _objStart = null;
             }
         }
-        if (_objEnd != null) {
-            if (_objEnd instanceof Number) {
+        if (_objEnd != null)
+        {
+            if (_objEnd instanceof Number)
+            {
                 _end = ((Number) _objEnd).intValue();
                 _objEnd = null;
-            } else if (_objEnd instanceof String) {
+            }
+            else if (_objEnd instanceof String)
+            {
                 _end = Integer.parseInt((String) _objEnd);
                 _objEnd = null;
             }
         }
-        if (_objStep != null) {
-            if (_objStep instanceof Number) {
+        if (_objStep != null)
+        {
+            if (_objStep instanceof Number)
+            {
                 _step = ((Number) _objStep).intValue();
                 _objStep = null;
-            } else if (_objStep instanceof String) {
+            }
+            else if (_objStep instanceof String)
+            {
                 _step = Integer.parseInt((String) _objStep);
                 _objStep = null;
             }
@@ -113,56 +136,70 @@ public class CountDirective extends org.webmacro.directive.Directive {
         return this;
     }
 
-    public void write(FastWriter out, Context context) throws PropertyException, IOException {
-        int start=_start, end=_end, step = _step;
+    public void write (FastWriter out, Context context) throws PropertyException, IOException
+    {
+        int start = _start, end = _end, step = _step;
         Object tmp;
 
         // if necessary, do run-time evaluation of our
         // start, end, and step objects.
-        if ( (tmp = _objStart) != null) {
+        if ((tmp = _objStart) != null)
+        {
             while (tmp instanceof Macro)
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 start = Integer.parseInt(tmp.toString());
-            else {
+            else
+            {
                 writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
                 return;
             }
         }
 
-        if ( (tmp = _objEnd) != null) {
+        if ((tmp = _objEnd) != null)
+        {
             while (tmp instanceof Macro)
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 end = Integer.parseInt(tmp.toString());
-            else {
+            else
+            {
                 writeWarning("#count: Ending value cannot be null.  Not counting", context, out);
                 return;
             }
         }
 
-        if ( (tmp = _objStep) != null) {
+        if ((tmp = _objStep) != null)
+        {
             while (tmp instanceof Macro)
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 step = Integer.parseInt(tmp.toString());
-            else {
+            else
+            {
                 writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
                 return;
             }
         }
 
-        if (step > 0) {
-            for (; start<=end; start+=step) {
+        if (step > 0)
+        {
+            for (; start <= end; start += step)
+            {
                 _iterator.setValue(context, new Integer(start));
                 _body.write(out, context);
             }
-        } else if (step < 0) {
-            for (; start>=end; start+=step) {
+        }
+        else if (step < 0)
+        {
+            for (; start >= end; start += step)
+            {
                 _iterator.setValue(context, new Integer(start));
                 _body.write(out, context);
             }
-        } else {
+        }
+        else
+        {
             writeWarning("#count: step cannot be 0.  Not counting", context, out);
         }
     }

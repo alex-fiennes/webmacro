@@ -30,22 +30,23 @@ import org.webmacro.UnsettableException;
  * interface for generic containers which are less functional than
  * a dictionary, but similar in nature.
  */
-public interface Bag {
+public interface Bag
+{
 
-   /**
-    * Add an item to the bag
-    */
-   public void put(String itemName, Object item) throws UnsettableException;
+    /**
+     * Add an item to the bag
+     */
+    public void put (String itemName, Object item) throws UnsettableException;
 
-   /**
-    * Get an item from the bag
-    */
-   public Object get(String itemName);
+    /**
+     * Get an item from the bag
+     */
+    public Object get (String itemName);
 
-   /**
-    * Remove an item from the bag
-    */
-   public void remove(String itemName) throws UnsettableException;
+    /**
+     * Remove an item from the bag
+     */
+    public void remove (String itemName) throws UnsettableException;
 
 
 }

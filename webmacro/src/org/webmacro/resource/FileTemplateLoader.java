@@ -22,10 +22,10 @@
 
 package org.webmacro.resource;
 
-import java.io.*;
-
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
+
+import java.io.File;
 
 /**
  * Implementation of TemplateLoader that loads templates from a given directory.
@@ -34,38 +34,45 @@ import org.webmacro.Template;
  * the base path to find the template.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class FileTemplateLoader extends AbstractTemplateLoader {
+public class FileTemplateLoader extends AbstractTemplateLoader
+{
 
-   private String path;
+    private String path;
 
-   public void setConfig(String config) {
-      // leading slash isn't needed, because
-      // we use File constructor.
-      this.path = config;
+    public void setConfig (String config)
+    {
+        // leading slash isn't needed, because
+        // we use File constructor.
+        this.path = config;
 
-      // However, we can check, if the directory exists.
-      File f = new File(path);
-      if (!f.exists()) {
-         log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " does not exist.");
-      }
-      else if (!f.isDirectory()) {
-         log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " is not a directory.");
-      }
-   }
+        // However, we can check, if the directory exists.
+        File f = new File(path);
+        if (!f.exists())
+        {
+            log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " does not exist.");
+        }
+        else if (!f.isDirectory())
+        {
+            log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " is not a directory.");
+        }
+    }
 
-   /**
-    * Tries to load a template by interpreting query as
-    * a path relative to the path set by setPath.
-    */
-   public final Template load(String query, CacheElement ce) throws ResourceException {
-      File tFile = new File(path, query);
-      if (tFile.isFile() && tFile.canRead()) {
-         if (log.loggingDebug())
-            log.debug("FileTemplateProvider: Found template " + tFile.getAbsolutePath());
-         return helper.load(tFile, ce);
-      }
-      else {
-         return null;
-      }
-   }
+    /**
+     * Tries to load a template by interpreting query as
+     * a path relative to the path set by setPath.
+     */
+    public final Template load (String query, CacheElement ce) throws ResourceException
+    {
+        File tFile = new File(path, query);
+        if (tFile.isFile() && tFile.canRead())
+        {
+            if (log.loggingDebug())
+                log.debug("FileTemplateProvider: Found template " + tFile.getAbsolutePath());
+            return helper.load(tFile, ce);
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

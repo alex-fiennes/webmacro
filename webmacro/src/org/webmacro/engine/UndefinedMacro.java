@@ -27,42 +27,50 @@ import org.webmacro.*;
 /**
  * Looks like a Macro, but really it's an undefined variable.
  */
-public final class UndefinedMacro implements Macro, Visitable {
+public final class UndefinedMacro implements Macro, Visitable
+{
 
-   final static private UndefinedMacro _singleton = new UndefinedMacro();
+    final static private UndefinedMacro _singleton = new UndefinedMacro();
 
-   private UndefinedMacro() {
-   }
+    private UndefinedMacro ()
+    {
+    }
 
-   static public UndefinedMacro getInstance() {
-      return _singleton;
-   }
+    static public UndefinedMacro getInstance ()
+    {
+        return _singleton;
+    }
 
-   public final String toString() {
-      throw new UnsupportedOperationException(
-      "Cannot invoke toString() on an undefined variable.");
-   }
+    public final String toString ()
+    {
+        throw new UnsupportedOperationException(
+                "Cannot invoke toString() on an undefined variable.");
+    }
 
-   public void accept(TemplateVisitor v) {
-      v.visitString(toString());
-   }
+    public void accept (TemplateVisitor v)
+    {
+        v.visitString(toString());
+    }
 
-   /**
-    * Returns the wrapped object, context is ignored.
-    */
-   public final Object evaluate(Context context) {
-      return _singleton;
-   }
+    /**
+     * Returns the wrapped object, context is ignored.
+     */
+    public final Object evaluate (Context context)
+    {
+        return _singleton;
+    }
 
-   public Object get(Object key) {
-      return _singleton;
-   }
+    public Object get (Object key)
+    {
+        return _singleton;
+    }
 
-   /**
-    * Throws an exception -- cannot write an undefined
-    */
-   public final void write(FastWriter out, Context context)
-         throws PropertyException {
-      throw new PropertyException.UndefinedVariableException();
-   }
+    /**
+     * Throws an exception -- cannot write an undefined
+     */
+    public final void write (FastWriter out, Context context)
+            throws PropertyException
+    {
+        throw new PropertyException.UndefinedVariableException();
+    }
 }

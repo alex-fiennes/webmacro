@@ -24,9 +24,10 @@
 package org.webmacro.engine;
 
 
-public interface Builder {
+public interface Builder
+{
 
-   public Object build(BuildContext pc)
-         throws BuildException;
+    public Object build (BuildContext pc)
+            throws BuildException;
 
 }

@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -31,43 +29,51 @@ import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-public class PropertyDirective extends Directive {
+import java.io.IOException;
 
-   private static final int PROPERTY_TARGET = 1;
+public class PropertyDirective extends Directive
+{
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(PROPERTY_TARGET),
-         };
+    private static final int PROPERTY_TARGET = 1;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("property", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(PROPERTY_TARGET),
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("property", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      Variable target = null;
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-      try {
-         target = (Variable) builder.getArg(PROPERTY_TARGET, bc);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      if (!target.isSimpleName())
-         throw new NotSimpleVariableBuildException(myDescr.name);
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        Variable target = null;
 
-      bc.setVariableType(target.getName(), Variable.PROPERTY_TYPE);
-      return null;
-   }
+        try
+        {
+            target = (Variable) builder.getArg(PROPERTY_TARGET, bc);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        if (!target.isSimpleName())
+            throw new NotSimpleVariableBuildException(myDescr.name);
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+        bc.setVariableType(target.getName(), Variable.PROPERTY_TYPE);
+        return null;
+    }
+
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
 
 }
 

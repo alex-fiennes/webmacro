@@ -21,13 +21,13 @@
  */
 package org.webmacro.resource;
 
-import java.net.URL;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 import org.webmacro.util.Settings;
+
+import java.net.URL;
 
 /**
  * Implementation of TemplateLoader that loads template from the classpath.
@@ -39,42 +39,50 @@ import org.webmacro.util.Settings;
  * "templates/foo/bar.wm" in your classpath.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class ClassPathTemplateLoader extends AbstractTemplateLoader {
+public class ClassPathTemplateLoader extends AbstractTemplateLoader
+{
 
-   private ClassLoader loader;
-   private String path;
+    private ClassLoader loader;
+    private String path;
 
-   public void init(Broker broker, Settings config) throws InitException {
-      super.init(broker, config);
-      loader = broker.getClassLoader();
-   }
+    public void init (Broker broker, Settings config) throws InitException
+    {
+        super.init(broker, config);
+        loader = broker.getClassLoader();
+    }
 
-   public void setConfig(String config) {
-      // as we'll later use this as a prefix, it should end with a slash
-      if (config.length() > 0 && !config.endsWith("/")) {
-         if (log.loggingInfo())
-            log.info("ClassPathTemplateLoader: appending \"/\" to path " + config);
-         config = config.concat("/");
-      }
+    public void setConfig (String config)
+    {
+        // as we'll later use this as a prefix, it should end with a slash
+        if (config.length() > 0 && !config.endsWith("/"))
+        {
+            if (log.loggingInfo())
+                log.info("ClassPathTemplateLoader: appending \"/\" to path " + config);
+            config = config.concat("/");
+        }
 
-      // It isn't clear from the javadocs, whether ClassLoader.getResource()
-      // needs a starting slash, so won't add one at the moment. Even worse,
-      // most class-loaders require you to _not have_ a slash, so we'll
-      // remove it, if it exists
-      if (config.startsWith("/")) {
-	  config = config.substring(1);
-      }
-      this.path = config;
-   }
+        // It isn't clear from the javadocs, whether ClassLoader.getResource()
+        // needs a starting slash, so won't add one at the moment. Even worse,
+        // most class-loaders require you to _not have_ a slash, so we'll
+        // remove it, if it exists
+        if (config.startsWith("/"))
+        {
+            config = config.substring(1);
+        }
+        this.path = config;
+    }
 
-   public Template load(String query, CacheElement ce) throws ResourceException {
-      if (query.startsWith("/")) {
-	  query = query.substring(1);
-      }
-      URL url = loader.getResource(path.concat(query));
-      if (url != null && log.loggingDebug()) {
-         log.debug("ClassPathTemplateProvider: Found Template " + url.toString());
-      }
-      return (url != null) ? helper.load(url, ce) : null;
-   }
+    public Template load (String query, CacheElement ce) throws ResourceException
+    {
+        if (query.startsWith("/"))
+        {
+            query = query.substring(1);
+        }
+        URL url = loader.getResource(path.concat(query));
+        if (url != null && log.loggingDebug())
+        {
+            log.debug("ClassPathTemplateProvider: Found Template " + url.toString());
+        }
+        return (url != null) ? helper.load(url, ce) : null;
+    }
 }

@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -31,34 +29,41 @@ import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
-public class CommentDirective extends Directive {
+import java.io.IOException;
 
-   private static final int COMMENT_BLOCK = 1;
+public class CommentDirective extends Directive
+{
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LiteralBlockArg(COMMENT_BLOCK)
-         };
+    private static final int COMMENT_BLOCK = 1;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("comment", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LiteralBlockArg(COMMENT_BLOCK)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("comment", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      return null;
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        return null;
+    }
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      v.endDirective();
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        v.endDirective();
+    }
 }

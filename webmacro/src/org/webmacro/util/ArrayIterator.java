@@ -23,66 +23,78 @@
 
 package org.webmacro.util;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 
 /**
  * This provides an iterator interface to an array
  */
-final public class ArrayIterator implements Iterator {
+final public class ArrayIterator implements Iterator
+{
 
-   final Object[] a;
-   int pos;
+    final Object[] a;
+    int pos;
 
-   /**
-    * Construct an iterator given an enumeration
-    */
-   public ArrayIterator(Object[] array) {
-      this.a = array;
-      pos = 0;
-   }
+    /**
+     * Construct an iterator given an enumeration
+     */
+    public ArrayIterator (Object[] array)
+    {
+        this.a = array;
+        pos = 0;
+    }
 
-   /**
-    * Return true if we have not yet reached the end of the enumeration
-    */
-   final public boolean hasNext() {
-      return (pos < a.length);
-   }
+    /**
+     * Return true if we have not yet reached the end of the enumeration
+     */
+    final public boolean hasNext ()
+    {
+        return (pos < a.length);
+    }
 
-   /**
-    * Advance the iterator and return the next value. Return null if we
-    * reach the end of the enumeration.
-    */
-   final public Object next() throws NoSuchElementException {
-      if (pos < a.length) {
-         return a[pos++];
-      }
-      else {
-         throw new NoSuchElementException("Advanced beyond end of array");
-      }
-   }
+    /**
+     * Advance the iterator and return the next value. Return null if we
+     * reach the end of the enumeration.
+     */
+    final public Object next () throws NoSuchElementException
+    {
+        if (pos < a.length)
+        {
+            return a[pos++];
+        }
+        else
+        {
+            throw new NoSuchElementException("Advanced beyond end of array");
+        }
+    }
 
-   /**
-    * Unsupported
-    */
-   final public void remove() throws UnsupportedOperationException {
-      throw new UnsupportedOperationException();
-   }
+    /**
+     * Unsupported
+     */
+    final public void remove () throws UnsupportedOperationException
+    {
+        throw new UnsupportedOperationException();
+    }
 
-   /**
-    * Test harness
-    */
-   static public void main(String arg[]) {
+    /**
+     * Test harness
+     */
+    static public void main (String arg[])
+    {
 
-      try {
-         Iterator i = new ArrayIterator(arg);
-         while (i.hasNext()) {
-            System.out.println("item: " + i.next());
-         }
-      }
-      catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+        try
+        {
+            Iterator i = new ArrayIterator(arg);
+            while (i.hasNext())
+            {
+                System.out.println("item: " + i.next());
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
 

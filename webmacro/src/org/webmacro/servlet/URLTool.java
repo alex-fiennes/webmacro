@@ -23,70 +23,82 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.http.*;
-
 import org.webmacro.Context;
 import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpUtils;
 
 /**
  * Provide Template with access to url handing routines
  * @author Sebastian Kanthak (mailto:skanthak@muehlheim.de)
  */
-public class URLTool implements ContextTool {
+public class URLTool implements ContextTool
+{
 
-   public class URLToolImpl {
+    public class URLToolImpl
+    {
 
-      private final WebContext context;
+        private final WebContext context;
 
-      public URLToolImpl(WebContext context) {
-         super();
-         this.context = context;
-      }
+        public URLToolImpl (WebContext context)
+        {
+            super();
+            this.context = context;
+        }
 
-      /**
-       * Get the url thas was used to access this page,
-       * as it is returned by HttpUtils.getRequestURL.
-       * @return URL used to access this page without query string
-       */
-      public String getRequestURL() {
-         return HttpUtils.getRequestURL(context.getRequest()).toString();
-      }
+        /**
+         * Get the url thas was used to access this page,
+         * as it is returned by HttpUtils.getRequestURL.
+         * @return URL used to access this page without query string
+         */
+        public String getRequestURL ()
+        {
+            return HttpUtils.getRequestURL(context.getRequest()).toString();
+        }
 
-      /**
-       * Return the complete url, that was uses to access this page
-       * including path_info and query_string if present.
-       * <br>
-       * This method uses HttpUtils.getRequestURL to
-       * create the url and appends query_string if not null
-       * @return URL used to access this page, including query string
-       */
-      public String getCompleteRequestURL() {
-         HttpServletRequest req = context.getRequest();
-         StringBuffer b = HttpUtils.getRequestURL(req);
-         String query = req.getQueryString();
-         if (query != null) {
-            b.append("?");
-            b.append(query);
-         }
-         return b.toString();
-      }
+        /**
+         * Return the complete url, that was uses to access this page
+         * including path_info and query_string if present.
+         * <br>
+         * This method uses HttpUtils.getRequestURL to
+         * create the url and appends query_string if not null
+         * @return URL used to access this page, including query string
+         */
+        public String getCompleteRequestURL ()
+        {
+            HttpServletRequest req = context.getRequest();
+            StringBuffer b = HttpUtils.getRequestURL(req);
+            String query = req.getQueryString();
+            if (query != null)
+            {
+                b.append("?");
+                b.append(query);
+            }
+            return b.toString();
+        }
 
-      public String encode(String url) {
-         return context.getResponse().encodeURL(url);
-      }
-   }
+        public String encode (String url)
+        {
+            return context.getResponse().encodeURL(url);
+        }
+    }
 
-   public Object init(Context context) throws PropertyException {
-      try {
-         WebContext wc = (WebContext) context;
-         return new URLToolImpl(wc);
-      }
-      catch (ClassCastException ce) {
-         throw new PropertyException("URLTool only works with WebContext", ce);
-      }
-   }
+    public Object init (Context context) throws PropertyException
+    {
+        try
+        {
+            WebContext wc = (WebContext) context;
+            return new URLToolImpl(wc);
+        }
+        catch (ClassCastException ce)
+        {
+            throw new PropertyException("URLTool only works with WebContext", ce);
+        }
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

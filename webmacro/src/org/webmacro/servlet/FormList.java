@@ -23,56 +23,62 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 import org.webmacro.UnsettableException;
 import org.webmacro.util.Bag;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * Provide access to form variables
  */
-final public class FormList implements Bag {
+final public class FormList implements Bag
+{
 
-   /**
-    * This is the request object from the WebContext
-    */
-   final HttpServletRequest _request;
+    /**
+     * This is the request object from the WebContext
+     */
+    final HttpServletRequest _request;
 
-   /**
-    * Read the form data from the supplied Request object
-    */
-   FormList(final HttpServletRequest r) {
-      _request = r;
-   }
+    /**
+     * Read the form data from the supplied Request object
+     */
+    FormList (final HttpServletRequest r)
+    {
+        _request = r;
+    }
 
-   /**
-    * Get a form value
-    */
-   final public Object get(String field) {
-      try {
-         return _request.getParameterValues(field);
-      }
-      catch (NullPointerException ne) {
-         return null;
-      }
-   }
+    /**
+     * Get a form value
+     */
+    final public Object get (String field)
+    {
+        try
+        {
+            return _request.getParameterValues(field);
+        }
+        catch (NullPointerException ne)
+        {
+            return null;
+        }
+    }
 
-   /**
-    * Unsupported
-    */
-   final public void remove(String key)
-         throws UnsettableException {
-      throw new UnsettableException("Cannot unset a form property");
-   }
+    /**
+     * Unsupported
+     */
+    final public void remove (String key)
+            throws UnsettableException
+    {
+        throw new UnsettableException("Cannot unset a form property");
+    }
 
-   /**
-    * Unsupported
-    */
-   final public void put(String key, Object value)
-         throws UnsettableException {
-      throw new UnsettableException("Cannot set a form property");
-   }
+    /**
+     * Unsupported
+     */
+    final public void put (String key, Object value)
+            throws UnsettableException
+    {
+        throw new UnsettableException("Cannot set a form property");
+    }
 }
 

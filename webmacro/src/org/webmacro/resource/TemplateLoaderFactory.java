@@ -30,14 +30,15 @@ import org.webmacro.InitException;
  * based on a string describing the template loader.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public interface TemplateLoaderFactory {
+public interface TemplateLoaderFactory
+{
 
-   /**
-    * Create a template loader
-    * @param b broker to use
-    * @param config string describing template loader to construct
-    * @return template loader
-    * @exception InitException if template loader could not be constructed
-    */
-   TemplateLoader getTemplateLoader(Broker b, String config) throws InitException;
+    /**
+     * Create a template loader
+     * @param b broker to use
+     * @param config string describing template loader to construct
+     * @return template loader
+     * @exception InitException if template loader could not be constructed
+     */
+    TemplateLoader getTemplateLoader (Broker b, String config) throws InitException;
 }

@@ -42,100 +42,118 @@ import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
-public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHandler {
+public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHandler
+{
 
-   private Log _log;
+    private Log _log;
 
-   public DefaultEvaluationExceptionHandler() {
-   }
+    public DefaultEvaluationExceptionHandler ()
+    {
+    }
 
-   public DefaultEvaluationExceptionHandler(Broker b) {
-      init(b, b.getSettings());
-   }
+    public DefaultEvaluationExceptionHandler (Broker b)
+    {
+        init(b, b.getSettings());
+    }
 
-   public void init(Broker b, Settings config) {
-      _log = b.getLog("engine");
-   }
+    public void init (Broker b, Settings config)
+    {
+        _log = b.getLog("engine");
+    }
 
-   public void evaluate(Variable variable, Context context, Exception problem)
-         throws PropertyException {
+    public void evaluate (Variable variable, Context context, Exception problem)
+            throws PropertyException
+    {
 
-      // if we were given a ProperyException, record the context location.
-      if (problem instanceof PropertyException) {
-         ((PropertyException) problem)
-               .setContextLocation(context.getCurrentLocation());
-      }
-      else {
-         // wrap the exception in a PropertyException
-         problem = new PropertyException("Error evaluating $"
-                                         + variable.getVariableName(),
-                                         problem,
-                                         context.getCurrentLocation());
-      }
-
-
-      // log the warning message
-      if (_log != null) {
-         _log.error(problem.getMessage());
-      }
-
-
-      // we want to silently ignore these exceptions
-      if (problem instanceof PropertyException.NoSuchVariableException
-            || problem instanceof PropertyException.NullValueException
-            || problem instanceof PropertyException.NullToStringException) {
-
-         return;
-      }
-      else {
-         // but we need to complain about anything else
-         throw (PropertyException) problem;
-
-      }
-   }
-
-   public String expand(Variable variable, Context context, Exception problem)
-         throws PropertyException {
-
-      // if we were given a ProperyException, record the context location.
-      if (problem instanceof PropertyException) {
-         ((PropertyException) problem)
-               .setContextLocation(context.getCurrentLocation());
-      }
-      else {
-         // wrap the exception in a PropertyException
-         problem = new PropertyException("Error expanding $"
-                                         + variable.getVariableName(),
-                                         problem,
-                                         context.getCurrentLocation());
-      }
-
-      // log the error message
-      if (_log != null) {
-         _log.error(problem.getMessage());
-      }
-
-      // we just want to return an error message for these exceptions
-      if (problem instanceof PropertyException.NoSuchVariableException
-            || problem instanceof PropertyException.UndefinedVariableException
-            || problem instanceof PropertyException.NullValueException
-            || problem instanceof PropertyException.NullToStringException) {
-
-         return errorString(problem.getMessage());
-      }
-      else {
-         // but we need to complain about anything else
-         throw (PropertyException) problem;
-      }
-   }
+        // if we were given a ProperyException, record the context location.
+        if (problem instanceof PropertyException)
+        {
+            ((PropertyException) problem)
+                    .setContextLocation(context.getCurrentLocation());
+        }
+        else
+        {
+            // wrap the exception in a PropertyException
+            problem = new PropertyException("Error evaluating $"
+                    + variable.getVariableName(),
+                    problem,
+                    context.getCurrentLocation());
+        }
 
 
-   public String warningString(String warningText) {
-      return "<!-- " + warningText + " -->";
-   }
+        // log the warning message
+        if (_log != null)
+        {
+            _log.error(problem.getMessage());
+        }
 
 
-   public String errorString(String errorText) {
-      return "<!-- " + errorText + " -->";
-   }
+        // we want to silently ignore these exceptions
+        if (problem instanceof PropertyException.NoSuchVariableException
+                || problem instanceof PropertyException.NullValueException
+                || problem instanceof PropertyException.NullToStringException)
+        {
+
+            return;
+        }
+        else
+        {
+            // but we need to complain about anything else
+            throw (PropertyException) problem;
+
+        }
+    }
+
+    public String expand (Variable variable, Context context, Exception problem)
+            throws PropertyException
+    {
+
+        // if we were given a ProperyException, record the context location.
+        if (problem instanceof PropertyException)
+        {
+            ((PropertyException) problem)
+                    .setContextLocation(context.getCurrentLocation());
+        }
+        else
+        {
+            // wrap the exception in a PropertyException
+            problem = new PropertyException("Error expanding $"
+                    + variable.getVariableName(),
+                    problem,
+                    context.getCurrentLocation());
+        }
+
+        // log the error message
+        if (_log != null)
+        {
+            _log.error(problem.getMessage());
+        }
+
+        // we just want to return an error message for these exceptions
+        if (problem instanceof PropertyException.NoSuchVariableException
+                || problem instanceof PropertyException.UndefinedVariableException
+                || problem instanceof PropertyException.NullValueException
+                || problem instanceof PropertyException.NullToStringException)
+        {
+
+            return errorString(problem.getMessage());
+        }
+        else
+        {
+            // but we need to complain about anything else
+            throw (PropertyException) problem;
+        }
+    }
+
+
+    public String warningString (String warningText)
+    {
+        return "<!-- " + warningText + " -->";
+    }
+
+
+    public String errorString (String errorText)
+    {
+        return "<!-- " + errorText + " -->";
+    }
 }

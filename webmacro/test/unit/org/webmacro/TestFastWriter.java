@@ -10,27 +10,37 @@ package org.webmacro;
 
 import junit.framework.TestCase;
 
-public class TestFastWriter extends TestCase {
+public class TestFastWriter extends TestCase
+{
 
     private WebMacro wm;
-    public TestFastWriter(String name) {
+
+
+    public TestFastWriter (String name)
+    {
         super(name);
     }
 
-    protected void setUp() throws Exception {
+
+    protected void setUp () throws Exception
+    {
         java.lang.System.setProperty("org.webmacro.LogLevel", "NONE");
         wm = new WM();
     }
 
 
-    public void testFastWriter() throws Exception {
+    public void testFastWriter () throws Exception
+    {
         doIt(4 * 1024);
         doIt(10 * 1024);
         doIt(100 * 1024);
-        doIt(1000* 1024);
+        doIt(1000 * 1024);
         doIt(4000 * 1024);
     }
-    private void doIt(int size) throws Exception {
+
+
+    private void doIt (int size) throws Exception
+    {
         String data = makeData(size);
 
         long start = System.currentTimeMillis();
@@ -40,15 +50,16 @@ public class TestFastWriter extends TestCase {
         fw.close();
         long end = System.currentTimeMillis();
 
-        System.err.println (size + " bytes in " + ((end-start)/1000D) + " seconds.");
+        System.err.println(size + " bytes in " + ((end - start) / 1000D) + " seconds.");
 
-        assertTrue (after.equals(data));
+        assertTrue(after.equals(data));
     }
 
 
-    private String makeData (int size) {
+    private String makeData (int size)
+    {
         StringBuffer sb = new StringBuffer(size);
-        for (int x=0; x<size; x++)
+        for (int x = 0; x < size; x++)
             sb.append('x');
 
         return sb.toString();

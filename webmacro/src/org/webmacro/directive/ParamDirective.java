@@ -22,14 +22,14 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
+
+import java.io.IOException;
 
 /**
  * The #param directive is provided for backward compatibility.
@@ -40,51 +40,58 @@ import org.webmacro.engine.Variable;
  *   #set $a="stuff"
  */
 
-public class ParamDirective extends Directive {
+public class ParamDirective extends Directive
+{
 
-   private static final int PARAM_TARGET = 1;
-   private static final int PARAM_RESULT = 2;
+    private static final int PARAM_TARGET = 1;
+    private static final int PARAM_RESULT = 2;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(PARAM_TARGET),
-            new AssignmentArg(),
-            new RValueArg(PARAM_RESULT)
-         };
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(PARAM_TARGET),
+                new AssignmentArg(),
+                new RValueArg(PARAM_RESULT)
+            };
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("param", null, myArgs, null);
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("param", null, myArgs, null);
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      Variable target = null;
-      Object result = null;
-      try {
-         target = (Variable) builder.getArg(PARAM_TARGET, bc);
-         result = builder.getArg(PARAM_RESULT, bc);
-         if (!target.isSimpleName())
-            throw new NotSimpleVariableBuildException(myDescr.name);
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        Variable target = null;
+        Object result = null;
+        try
+        {
+            target = (Variable) builder.getArg(PARAM_TARGET, bc);
+            result = builder.getArg(PARAM_RESULT, bc);
+            if (!target.isSimpleName())
+                throw new NotSimpleVariableBuildException(myDescr.name);
 
-         target.setValue(bc, result);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      catch (PropertyException e) {
-         throw new BuildException("#param: Exception setting variable "
-                                  + target.toString(), e);
-      }
-      return new SetDirective(target, result);
-   }
+            target.setValue(bc, result);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        catch (PropertyException e)
+        {
+            throw new BuildException("#param: Exception setting variable "
+                    + target.toString(), e);
+        }
+        return new SetDirective(target, result);
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
 
 }
 

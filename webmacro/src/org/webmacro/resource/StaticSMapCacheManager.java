@@ -40,103 +40,115 @@ import org.webmacro.util.ScalableMap;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
 
-public class StaticSMapCacheManager implements CacheManager {
+public class StaticSMapCacheManager implements CacheManager
+{
 
-   private static final String NAME = "StaticSMapCacheManager";
-   private ScalableMap _cache;
-   private String _resourceType;
+    private static final String NAME = "StaticSMapCacheManager";
+    private ScalableMap _cache;
+    private String _resourceType;
 
-   private Log _log;
+    private Log _log;
 
-   public StaticSMapCacheManager() {
-   }
+    public StaticSMapCacheManager ()
+    {
+    }
 
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException {
-      int cacheSize, cacheFactor;
-      Settings ourSettings, defaultSettings;
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException
+    {
+        int cacheSize, cacheFactor;
+        Settings ourSettings, defaultSettings;
 
-      _log = b.getLog("resource", "Object loading and caching");
-      _resourceType = resourceType;
+        _log = b.getLog("resource", "Object loading and caching");
+        _resourceType = resourceType;
 
-      ourSettings = new SubSettings(config,
-                                    NAME + "." + _resourceType);
-      defaultSettings = new SubSettings(config, NAME + ".*");
+        ourSettings = new SubSettings(config,
+                NAME + "." + _resourceType);
+        defaultSettings = new SubSettings(config, NAME + ".*");
 
-      cacheSize = ourSettings.getIntegerSetting("CacheBuckets",
-                                                defaultSettings.getIntegerSetting("CacheBuckets",
-                                                                                  ScalableMap.DEFAULT_SIZE));
-      cacheFactor = ourSettings.getIntegerSetting("CacheFactor",
-                                                  defaultSettings.getIntegerSetting("CacheFactor",
-                                                                                    ScalableMap.DEFAULT_FACTOR));
-      _cache = new ScalableMap(cacheFactor, cacheSize);
+        cacheSize = ourSettings.getIntegerSetting("CacheBuckets",
+                defaultSettings.getIntegerSetting("CacheBuckets",
+                        ScalableMap.DEFAULT_SIZE));
+        cacheFactor = ourSettings.getIntegerSetting("CacheFactor",
+                defaultSettings.getIntegerSetting("CacheFactor",
+                        ScalableMap.DEFAULT_FACTOR));
+        _cache = new ScalableMap(cacheFactor, cacheSize);
 
-      _log.info(NAME + "." + _resourceType + ": "
+        _log.info(NAME + "." + _resourceType + ": "
                 + "buckets=" + cacheSize
                 + "; factor=" + cacheFactor);
-   }
+    }
 
-   /**
-    * Clear the cache.
-    */
-   public void flush() {
-      _cache.clear();
-   }
+    /**
+     * Clear the cache.
+     */
+    public void flush ()
+    {
+        _cache.clear();
+    }
 
-   /**
-    * Close down the provider.
-    */
-   public void destroy() {
-      _cache = null;
-   }
+    /**
+     * Close down the provider.
+     */
+    public void destroy ()
+    {
+        _cache = null;
+    }
 
-   public boolean supportsReload() {
-      return false;
-   }
+    public boolean supportsReload ()
+    {
+        return false;
+    }
 
-   /**
-    * Get the object associated with the specific query, first
-    * trying to look it up in a cache. If it's not there, then
-    * call load(String) to load it into the cache.
-    */
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      Object o = null;
+    /**
+     * Get the object associated with the specific query, first
+     * trying to look it up in a cache. If it's not there, then
+     * call load(String) to load it into the cache.
+     */
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        Object o = null;
 
-      o = _cache.get(query);
-      if (o == null) {
-         o = helper.load(query, null);
-         _cache.put(query, o);
-      }
-      return o;
-   }
+        o = _cache.get(query);
+        if (o == null)
+        {
+            o = helper.load(query, null);
+            _cache.put(query, o);
+        }
+        return o;
+    }
 
-   /**
-    * Get the object associated with the specific query,
-    * trying to look it up in a cache. If it's not there, return null.
-    */
-   public Object get(final Object query) {
-      return _cache.get(query);
-   }
+    /**
+     * Get the object associated with the specific query,
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+    public Object get (final Object query)
+    {
+        return _cache.get(query);
+    }
 
-   /**
-    * Put an object in the cache
-    */
-   public void put(final Object query, Object resource) {
-      _cache.put(query, resource);
-   }
+    /**
+     * Put an object in the cache
+     */
+    public void put (final Object query, Object resource)
+    {
+        _cache.put(query, resource);
+    }
 
-   /**
-    * This method throws an exception because this kind of a cache
-    * does not support individual element invalidation.
-    */
-   public void invalidate(final Object query) {
-      throw new IllegalStateException(
-            "Cannot invalidate an element in a Static Cache");
-   }
+    /**
+     * This method throws an exception because this kind of a cache
+     * does not support individual element invalidation.
+     */
+    public void invalidate (final Object query)
+    {
+        throw new IllegalStateException(
+                "Cannot invalidate an element in a Static Cache");
+    }
 
 
-   public String toString() {
-      return NAME + "(type = " + _resourceType + ")";
-   }
+    public String toString ()
+    {
+        return NAME + "(type = " + _resourceType + ")";
+    }
 }

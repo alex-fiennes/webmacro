@@ -23,31 +23,32 @@
 
 package org.webmacro;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * Directives, variables, macro calls, blocks, conditions, text, etc., all
  * have this as their supertype.
  */
-public interface Macro {
+public interface Macro
+{
 
-   /**
-    * Interpret the directive and write it out, using the values in
-    * the supplied context as appropriate.
-    * <p>
-    * @exception PropertyException if required data was missing from context
-    * @exception IOException if we could not successfully write to out
-    */
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException;
+    /**
+     * Interpret the directive and write it out, using the values in
+     * the supplied context as appropriate.
+     * <p>
+     * @exception PropertyException if required data was missing from context
+     * @exception IOException if we could not successfully write to out
+     */
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException;
 
-   /**
-    * same as out but returns a String
-    * <p>
-    * @exception PropertyException if required data was missing from context
-    */
-   public Object evaluate(Context context)
-         throws PropertyException;
+    /**
+     * same as out but returns a String
+     * <p>
+     * @exception PropertyException if required data was missing from context
+     */
+    public Object evaluate (Context context)
+            throws PropertyException;
 
 }
 

@@ -23,8 +23,8 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -37,166 +37,187 @@ import javax.servlet.http.*;
  * contained in this class with names that exactly duplicate the names
  * familiar to CGI programmers. eg: REQUEST_METHOD, PATH_INFO, etc.
  */
-final public class CGI_Impersonator {
+final public class CGI_Impersonator
+{
 
-   /**
-    * This is the request object from the WebContext
-    */
-   final HttpServletRequest requst_;
+    /**
+     * This is the request object from the WebContext
+     */
+    final HttpServletRequest requst_;
 
-   final ServletContext sc_;
+    final ServletContext sc_;
 
-   /**
-    * Use the supplied HttpServletRequest to produce the results
-    * below. Really this class just forwards methods to this sub
-    * object in order to provide a familiar interface to CGI programmers.
-    */
-   CGI_Impersonator(WebContext wc) {
-      requst_ = wc.getRequest();
-      // this is not very nice, but I don't see any other
-      // possibility to get the servlet context. We should
-      // provide a method in WebContext to hide this from our users.
-      sc_ = ((ServletBroker) wc.getBroker()).getServletContext();
-   }
+    /**
+     * Use the supplied HttpServletRequest to produce the results
+     * below. Really this class just forwards methods to this sub
+     * object in order to provide a familiar interface to CGI programmers.
+     */
+    CGI_Impersonator (WebContext wc)
+    {
+        requst_ = wc.getRequest();
+        // this is not very nice, but I don't see any other
+        // possibility to get the servlet context. We should
+        // provide a method in WebContext to hide this from our users.
+        sc_ = ((ServletBroker) wc.getBroker()).getServletContext();
+    }
 
-   /**
-    * Return the name of the server
-    */
-   final public String getSERVER_NAME() {
-      return requst_.getServerName();
-   }
+    /**
+     * Return the name of the server
+     */
+    final public String getSERVER_NAME ()
+    {
+        return requst_.getServerName();
+    }
 
-   /**
-    * Return the server info
-    */
-   final public String getSERVER_SOFTWARE() {
-      return sc_.getServerInfo();
-   }
+    /**
+     * Return the server info
+     */
+    final public String getSERVER_SOFTWARE ()
+    {
+        return sc_.getServerInfo();
+    }
 
 
-   /**
-    * Return the server protocol
-    */
-   final public String getSERVER_PROTOCOL() {
-      return requst_.getProtocol();
-   }
+    /**
+     * Return the server protocol
+     */
+    final public String getSERVER_PROTOCOL ()
+    {
+        return requst_.getProtocol();
+    }
 
-   /**
-    * Return the server port
-    */
-   final public Integer getSERVER_PORT() {
-      return new Integer(requst_.getServerPort());
-   }
+    /**
+     * Return the server port
+     */
+    final public Integer getSERVER_PORT ()
+    {
+        return new Integer(requst_.getServerPort());
+    }
 
-   /**
-    * Return what type of REQUEST this was: GET, POST, etc.
-    */
-   final public String getREQUEST_METHOD() {
-      return requst_.getMethod();
-   }
+    /**
+     * Return what type of REQUEST this was: GET, POST, etc.
+     */
+    final public String getREQUEST_METHOD ()
+    {
+        return requst_.getMethod();
+    }
 
-   /**
-    * What portion of the URL appeared as additional path beyond
-    * the SCRIPT_NAME portion? Return that as a string.
-    */
-   final public String getPATH_INFO() {
-      return requst_.getPathInfo();
-   }
+    /**
+     * What portion of the URL appeared as additional path beyond
+     * the SCRIPT_NAME portion? Return that as a string.
+     */
+    final public String getPATH_INFO ()
+    {
+        return requst_.getPathInfo();
+    }
 
-   /**
-    * Same as PATH_INFO but translated to a real path
-    */
-   final public String getPATH_TRANSLATED() {
-      return requst_.getPathTranslated();
-   }
+    /**
+     * Same as PATH_INFO but translated to a real path
+     */
+    final public String getPATH_TRANSLATED ()
+    {
+        return requst_.getPathTranslated();
+    }
 
-   /**
-    * What portion of the URL represented the servlet being run?
-    * Return that as a string.
-    */
-   final public String getSCRIPT_NAME() {
-      return requst_.getServletPath();
-   }
+    /**
+     * What portion of the URL represented the servlet being run?
+     * Return that as a string.
+     */
+    final public String getSCRIPT_NAME ()
+    {
+        return requst_.getServletPath();
+    }
 
-   /**
-    * What is the root of documents served by this servlet
-    *
-    * WARNING: the method called (getRealPath) is deprecated in Servlet 2.2
-    *
-    */
-   final public String getDOCUMENT_ROOT() {
-      return sc_.getRealPath("/");
-   }
+    /**
+     * What is the root of documents served by this servlet
+     *
+     * WARNING: the method called (getRealPath) is deprecated in Servlet 2.2
+     *
+     */
+    final public String getDOCUMENT_ROOT ()
+    {
+        return sc_.getRealPath("/");
+    }
 
-   /**
-    * In a GET request, return the query string that was submitted, if any
-    */
-   final public String getQUERY_STRING() {
-      return requst_.getQueryString();
-   }
+    /**
+     * In a GET request, return the query string that was submitted, if any
+     */
+    final public String getQUERY_STRING ()
+    {
+        return requst_.getQueryString();
+    }
 
-   /**
-    * Return the remote host connected to this request
-    */
-   final public String getREMOTE_HOST() {
-      return requst_.getRemoteHost();
-   }
+    /**
+     * Return the remote host connected to this request
+     */
+    final public String getREMOTE_HOST ()
+    {
+        return requst_.getRemoteHost();
+    }
 
-   /**
-    * Return the remove address connected to this servlet
-    */
-   final public String getREMOTE_ADDR() {
-      return requst_.getRemoteAddr();
-   }
+    /**
+     * Return the remove address connected to this servlet
+     */
+    final public String getREMOTE_ADDR ()
+    {
+        return requst_.getRemoteAddr();
+    }
 
-   /**
-    * Type of authorization for this request
-    */
-   final public String getAUTH_TYPE() {
-      return requst_.getAuthType();
-   }
+    /**
+     * Type of authorization for this request
+     */
+    final public String getAUTH_TYPE ()
+    {
+        return requst_.getAuthType();
+    }
 
-   /**
-    * Name of the remote user if it was supplied with the HTTP request
-    */
-   final public String getREMOTE_USER() {
-      return requst_.getRemoteUser();
-   }
+    /**
+     * Name of the remote user if it was supplied with the HTTP request
+     */
+    final public String getREMOTE_USER ()
+    {
+        return requst_.getRemoteUser();
+    }
 
-   /**
-    * Get the content type submitted to this request
-    */
-   final public String getCONTENT_TYPE() {
-      return requst_.getContentType();
-   }
+    /**
+     * Get the content type submitted to this request
+     */
+    final public String getCONTENT_TYPE ()
+    {
+        return requst_.getContentType();
+    }
 
-   /**
-    * Get the content length submitted to this request
-    */
-   final public Integer getCONTENT_LENGTH() {
-      return new Integer(requst_.getContentLength());
-   }
+    /**
+     * Get the content length submitted to this request
+     */
+    final public Integer getCONTENT_LENGTH ()
+    {
+        return new Integer(requst_.getContentLength());
+    }
 
-   /**
-    * What type of data is accepted by the client
-    */
-   final public String getHTTP_ACCEPT() {
-      return requst_.getHeader("Accept");
-   }
+    /**
+     * What type of data is accepted by the client
+     */
+    final public String getHTTP_ACCEPT ()
+    {
+        return requst_.getHeader("Accept");
+    }
 
-   /**
-    * Get the user agent (browser) connected to this request
-    */
-   final public String getHTTP_USER_AGENT() {
-      return requst_.getHeader("User-Agent");
-   }
+    /**
+     * Get the user agent (browser) connected to this request
+     */
+    final public String getHTTP_USER_AGENT ()
+    {
+        return requst_.getHeader("User-Agent");
+    }
 
-   /**
-    * Get the URL that the request claims to have visited prior to this one
-    */
-   final public String getHTTP_REFERER() {
-      return requst_.getHeader("Referer");
-   }
+    /**
+     * Get the URL that the request claims to have visited prior to this one
+     */
+    final public String getHTTP_REFERER ()
+    {
+        return requst_.getHeader("Referer");
+    }
 
 }
 

@@ -23,9 +23,6 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 import org.webmacro.Context;
 import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
@@ -33,21 +30,26 @@ import org.webmacro.PropertyException;
 /**
  * Provide Template with access to form data.
  */
-public class FormListTool implements ContextTool {
+public class FormListTool implements ContextTool
+{
 
-   public Object init(Context context)
-         throws PropertyException {
-      try {
-         WebContext wc = (WebContext) context;
-         FormList fl = new FormList(wc.getRequest());
-         return fl;
-      }
-      catch (ClassCastException ce) {
-         throw new PropertyException(
-               "This only works with WebContext", ce);
-      }
-   }
+    public Object init (Context context)
+            throws PropertyException
+    {
+        try
+        {
+            WebContext wc = (WebContext) context;
+            FormList fl = new FormList(wc.getRequest());
+            return fl;
+        }
+        catch (ClassCastException ce)
+        {
+            throw new PropertyException(
+                    "This only works with WebContext", ce);
+        }
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

@@ -31,8 +31,6 @@
 
 package org.webmacro.resource;
 
-import java.lang.ref.SoftReference;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
@@ -42,283 +40,329 @@ import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
 import org.webmacro.util.TimeLoop;
 
-public class SMapCacheManager implements CacheManager {
+import java.lang.ref.SoftReference;
 
-   private static final String NAME = "SMapCacheManager";
+public class SMapCacheManager implements CacheManager
+{
 
-   private ScalableMap _cache;
-   private MyCacheElement _protoCacheElement;
-   private Object[] _writeLocks = new Object[101];
-   private int _cacheDuration;
-   private String _resourceType;
-   private boolean _reloadOnChange = true, _useSoftReferences = true;
-   private boolean _delayReloadChecks = false;
-   private long _checkForReloadDelay;
+    private static final String NAME = "SMapCacheManager";
 
-   private static final long DURATION = 1000;
-   private static final int PERIODS = 600;
+    private ScalableMap _cache;
+    private MyCacheElement _protoCacheElement;
+    private Object[] _writeLocks = new Object[101];
+    private int _cacheDuration;
+    private String _resourceType;
+    private boolean _reloadOnChange = true, _useSoftReferences = true;
+    private boolean _delayReloadChecks = false;
+    private long _checkForReloadDelay;
 
-   private TimeLoop _tl;
+    private static final long DURATION = 1000;
+    private static final int PERIODS = 600;
 
-   private Log _log;
+    private TimeLoop _tl;
 
-   private abstract class MyCacheElement extends CacheElement implements Cloneable {
+    private Log _log;
 
-      private CacheReloadContext reloadContext = null;
+    private abstract class MyCacheElement extends CacheElement implements Cloneable
+    {
 
-      public void setReloadContext(CacheReloadContext rc) {
-         if (_delayReloadChecks && rc != null) {
-            this.reloadContext = new TimedReloadContext(rc, _checkForReloadDelay);
-         }
-         else {
-            this.reloadContext = rc;
-         }
-      }
+        private CacheReloadContext reloadContext = null;
 
-      public abstract Object getObject();
+        public void setReloadContext (CacheReloadContext rc)
+        {
+            if (_delayReloadChecks && rc != null)
+            {
+                this.reloadContext = new TimedReloadContext(rc, _checkForReloadDelay);
+            }
+            else
+            {
+                this.reloadContext = rc;
+            }
+        }
 
-      public abstract void setObject(Object o);
+        public abstract Object getObject ();
 
-      public Object clone() {
-         try {
-            return super.clone();
-         }
-         catch (CloneNotSupportedException e) {
-            // should never happen
-            return null;
-         }
-      }
-   }
+        public abstract void setObject (Object o);
 
-   private final class SoftScmCacheElement extends MyCacheElement {
+        public Object clone ()
+        {
+            try
+            {
+                return super.clone();
+            }
+            catch (CloneNotSupportedException e)
+            {
+                // should never happen
+                return null;
+            }
+        }
+    }
 
-      private SoftReference reference;
+    private final class SoftScmCacheElement extends MyCacheElement
+    {
 
-      public Object getObject() {
-         return reference.get();
-      }
+        private SoftReference reference;
 
-      public void setObject(Object o) {
-         reference = new SoftReference(o);
-      }
-   }
+        public Object getObject ()
+        {
+            return reference.get();
+        }
 
-   private final class DirectScmCacheElement extends MyCacheElement {
+        public void setObject (Object o)
+        {
+            reference = new SoftReference(o);
+        }
+    }
 
-      private Object object;
+    private final class DirectScmCacheElement extends MyCacheElement
+    {
 
-      public Object getObject() {
-         return object;
-      }
+        private Object object;
 
-      public void setObject(Object o) {
-         object = o;
-      }
-   }
+        public Object getObject ()
+        {
+            return object;
+        }
 
-   public SMapCacheManager() {
-      for (int i = 0; i < _writeLocks.length; i++) {
-         _writeLocks[i] = new Object();
-      }
-   }
+        public void setObject (Object o)
+        {
+            object = o;
+        }
+    }
 
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException {
-      int cacheSize, cacheFactor;
-      Settings ourSettings, defaultSettings;
+    public SMapCacheManager ()
+    {
+        for (int i = 0; i < _writeLocks.length; i++)
+        {
+            _writeLocks[i] = new Object();
+        }
+    }
 
-      _tl = new TimeLoop(DURATION, PERIODS);
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException
+    {
+        int cacheSize, cacheFactor;
+        Settings ourSettings, defaultSettings;
 
-      _log = b.getLog("resource", "Object loading and caching");
-      _resourceType = resourceType;
+        _tl = new TimeLoop(DURATION, PERIODS);
 
-      ourSettings = new SubSettings(config, NAME + "." + _resourceType);
-      defaultSettings = new SubSettings(config, NAME + ".*");
+        _log = b.getLog("resource", "Object loading and caching");
+        _resourceType = resourceType;
 
-      cacheSize = ourSettings.getIntegerSetting("CacheBuckets",
-                                                defaultSettings.getIntegerSetting("CacheBuckets",
-                                                                                  ScalableMap.DEFAULT_SIZE));
-      cacheFactor = ourSettings.getIntegerSetting("CacheFactor",
-                                                  defaultSettings.getIntegerSetting("CacheFactor",
-                                                                                    ScalableMap.DEFAULT_FACTOR));
-      _cache = new ScalableMap(cacheFactor, cacheSize);
+        ourSettings = new SubSettings(config, NAME + "." + _resourceType);
+        defaultSettings = new SubSettings(config, NAME + ".*");
 
-      _cacheDuration =
-            ourSettings.getIntegerSetting("ExpireTime",
-                                          defaultSettings.getIntegerSetting("ExpireTime",
-                                                                            config.getIntegerSetting("TemplateExpireTime", 0)));
-      _useSoftReferences =
-            (ourSettings.containsKey("UseSoftReferences"))
-            ? ourSettings.getBooleanSetting("UseSoftReferences")
-            : ((defaultSettings.containsKey("UseSoftReferences"))
-            ? defaultSettings.getBooleanSetting("UseSoftReferences") : true);
-      _reloadOnChange =
-            (ourSettings.containsKey("ReloadOnChange"))
-            ? ourSettings.getBooleanSetting("ReloadOnChange")
-            : ((defaultSettings.containsKey("ReloadOnChange"))
-            ? defaultSettings.getBooleanSetting("ReloadOnChange") : true);
+        cacheSize = ourSettings.getIntegerSetting("CacheBuckets",
+                defaultSettings.getIntegerSetting("CacheBuckets",
+                        ScalableMap.DEFAULT_SIZE));
+        cacheFactor = ourSettings.getIntegerSetting("CacheFactor",
+                defaultSettings.getIntegerSetting("CacheFactor",
+                        ScalableMap.DEFAULT_FACTOR));
+        _cache = new ScalableMap(cacheFactor, cacheSize);
 
-      _checkForReloadDelay =
-            (ourSettings.getIntegerSetting("CheckForReloadDelay",
-                                           defaultSettings.getIntegerSetting("CheckForReloadDelay", -1)));
-      _delayReloadChecks = _checkForReloadDelay > 0;
+        _cacheDuration =
+                ourSettings.getIntegerSetting("ExpireTime",
+                        defaultSettings.getIntegerSetting("ExpireTime",
+                                config.getIntegerSetting("TemplateExpireTime", 0)));
+        _useSoftReferences =
+                (ourSettings.containsKey("UseSoftReferences"))
+                ? ourSettings.getBooleanSetting("UseSoftReferences")
+                : ((defaultSettings.containsKey("UseSoftReferences"))
+                ? defaultSettings.getBooleanSetting("UseSoftReferences") : true);
+        _reloadOnChange =
+                (ourSettings.containsKey("ReloadOnChange"))
+                ? ourSettings.getBooleanSetting("ReloadOnChange")
+                : ((defaultSettings.containsKey("ReloadOnChange"))
+                ? defaultSettings.getBooleanSetting("ReloadOnChange") : true);
 
-      if (_useSoftReferences) {
-         _protoCacheElement = new SoftScmCacheElement();
-      }
-      else {
-         _protoCacheElement = new DirectScmCacheElement();
-      }
+        _checkForReloadDelay =
+                (ourSettings.getIntegerSetting("CheckForReloadDelay",
+                        defaultSettings.getIntegerSetting("CheckForReloadDelay", -1)));
+        _delayReloadChecks = _checkForReloadDelay > 0;
 
-      _log.info(NAME + "." + _resourceType + ": "
+        if (_useSoftReferences)
+        {
+            _protoCacheElement = new SoftScmCacheElement();
+        }
+        else
+        {
+            _protoCacheElement = new DirectScmCacheElement();
+        }
+
+        _log.info(NAME + "." + _resourceType + ": "
                 + "buckets=" + cacheSize
                 + "; factor=" + cacheFactor
                 + "; expireTime=" + _cacheDuration
                 + "; reload=" + _reloadOnChange
                 + "; softReference=" + _useSoftReferences
                 + "; checkForReloadDelay=" + _checkForReloadDelay);
-   }
+    }
 
-   /**
-    * Clear the cache.
-    */
-   public void flush() {
-      _cache.clear();
-   }
+    /**
+     * Clear the cache.
+     */
+    public void flush ()
+    {
+        _cache.clear();
+    }
 
-   /**
-    * Close down the provider.
-    */
-   public void destroy() {
-      _cache = null;
-      _tl.destroy();
-      _tl = null;
-   }
+    /**
+     * Close down the provider.
+     */
+    public void destroy ()
+    {
+        _cache = null;
+        _tl.destroy();
+        _tl = null;
+    }
 
-   public boolean supportsReload() {
-      return _reloadOnChange;
-   }
+    public boolean supportsReload ()
+    {
+        return _reloadOnChange;
+    }
 
-   /**
-    * Get the object associated with the specific query, first
-    * trying to look it up in a cache. If it's not there, then
-    * call load(String) to load it into the cache.
-    */
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      MyCacheElement r;
-      Object o = null;
-      boolean reload = false;
+    /**
+     * Get the object associated with the specific query, first
+     * trying to look it up in a cache. If it's not there, then
+     * call load(String) to load it into the cache.
+     */
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        MyCacheElement r;
+        Object o = null;
+        boolean reload = false;
 
-      // bg; Reordered this logic to only call shouldReload if we have a
-      // candidate for reloading.
-      try {
-         r = (MyCacheElement) _cache.get(query);
-         if (r != null)
-            o = r.getObject();
-      }
-      catch (NullPointerException e) {
-         throw new ResourceException(this + " is not initialized", e);
-      }
-      // should the template be reloaded, regardless of cached status?
-      if (o != null && r.reloadContext != null && _reloadOnChange)
-         reload = r.reloadContext.shouldReload();
-
-      if (o == null || reload) {
-
-         // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
-         // this looks like double-checked locking but it isn't, we
-         // synchronized on a less expensive lock inside _cache.get()
-         // the following line lets us simultaneously load up to
-         // writeLocks.length resources.
-
-         int lockIndex = query.hashCode() % _writeLocks.length;
-         if (lockIndex < 0) lockIndex = -lockIndex;
-         synchronized (_writeLocks[lockIndex]) {
+        // bg; Reordered this logic to only call shouldReload if we have a
+        // candidate for reloading.
+        try
+        {
             r = (MyCacheElement) _cache.get(query);
             if (r != null)
-               o = r.getObject();
-            else
-               r = (MyCacheElement) _protoCacheElement.clone();
-            if (o == null || reload) {
-               o = helper.load(query, r);
-               if (o != null) {
-                  r.setObject(o);
-                  _cache.put(query, r);
-               }
-               try {
-                  if (_log.loggingDebug())
-                     _log.debug("cached: " + query + " for " + _cacheDuration);
-                  // if timeout is < 0,
-                  // then don't schedule a removal from cache
-                  if (_cacheDuration >= 0) {
-                     _tl.scheduleTime(
-                           new Runnable() {
-                              public void run() {
-                                 if (_cache != null) {
-                                    _cache.remove(query);
-                                    if (_log.loggingDebug())
-                                       _log.debug("cache expired: " + query);
-                                 }
-                              }
-                           }, _cacheDuration);
-                  }
-               }
-               catch (Exception e) {
-                  _log.error("CachingProvider caught an exception", e);
-               }
+                o = r.getObject();
+        }
+        catch (NullPointerException e)
+        {
+            throw new ResourceException(this + " is not initialized", e);
+        }
+        // should the template be reloaded, regardless of cached status?
+        if (o != null && r.reloadContext != null && _reloadOnChange)
+            reload = r.reloadContext.shouldReload();
+
+        if (o == null || reload)
+        {
+
+            // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
+            // this looks like double-checked locking but it isn't, we
+            // synchronized on a less expensive lock inside _cache.get()
+            // the following line lets us simultaneously load up to
+            // writeLocks.length resources.
+
+            int lockIndex = query.hashCode() % _writeLocks.length;
+            if (lockIndex < 0) lockIndex = -lockIndex;
+            synchronized (_writeLocks[lockIndex])
+            {
+                r = (MyCacheElement) _cache.get(query);
+                if (r != null)
+                    o = r.getObject();
+                else
+                    r = (MyCacheElement) _protoCacheElement.clone();
+                if (o == null || reload)
+                {
+                    o = helper.load(query, r);
+                    if (o != null)
+                    {
+                        r.setObject(o);
+                        _cache.put(query, r);
+                    }
+                    try
+                    {
+                        if (_log.loggingDebug())
+                            _log.debug("cached: " + query + " for " + _cacheDuration);
+                        // if timeout is < 0,
+                        // then don't schedule a removal from cache
+                        if (_cacheDuration >= 0)
+                        {
+                            _tl.scheduleTime(
+                                    new Runnable()
+                                    {
+                                        public void run ()
+                                        {
+                                            if (_cache != null)
+                                            {
+                                                _cache.remove(query);
+                                                if (_log.loggingDebug())
+                                                    _log.debug("cache expired: " + query);
+                                            }
+                                        }
+                                    }, _cacheDuration);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _log.error("CachingProvider caught an exception", e);
+                    }
+                }
             }
-         }
-      }
-      return o;
-   }
+        }
+        return o;
+    }
 
-   /**
-    * Get the object associated with the specific query,
-    * trying to look it up in a cache. If it's not there, return null.
-    */
-   public Object get(final Object query) {
-      MyCacheElement r = (MyCacheElement) _cache.get(query);
-      if (r != null)
-         return r.getObject();
-      else
-         return null;
-   }
+    /**
+     * Get the object associated with the specific query,
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+    public Object get (final Object query)
+    {
+        MyCacheElement r = (MyCacheElement) _cache.get(query);
+        if (r != null)
+            return r.getObject();
+        else
+            return null;
+    }
 
-   /**
-    * Put an object in the cache
-    */
-   public void put(final Object query, Object resource) {
-      int lockIndex = query.hashCode() % _writeLocks.length;
-      if (lockIndex < 0) lockIndex = -lockIndex;
-      MyCacheElement r = (MyCacheElement) _protoCacheElement.clone();
-      r.setObject(resource);
-      synchronized (_writeLocks[lockIndex]) {
-         _cache.put(query, r);
-      }
-      if (_cacheDuration >= 0) {
-         if (_log.loggingDebug())
-            _log.debug("cached: " + query + " for " + _cacheDuration);
-         _tl.scheduleTime(new Runnable() {
-            public void run() {
-               _cache.remove(query);
-               if (_log.loggingDebug())
-                  _log.debug("cache expired: " + query);
-            }
-         }, _cacheDuration);
-      }
-   }
+    /**
+     * Put an object in the cache
+     */
+    public void put (final Object query, Object resource)
+    {
+        int lockIndex = query.hashCode() % _writeLocks.length;
+        if (lockIndex < 0) lockIndex = -lockIndex;
+        MyCacheElement r = (MyCacheElement) _protoCacheElement.clone();
+        r.setObject(resource);
+        synchronized (_writeLocks[lockIndex])
+        {
+            _cache.put(query, r);
+        }
+        if (_cacheDuration >= 0)
+        {
+            if (_log.loggingDebug())
+                _log.debug("cached: " + query + " for " + _cacheDuration);
+            _tl.scheduleTime(new Runnable()
+            {
+                public void run ()
+                {
+                    _cache.remove(query);
+                    if (_log.loggingDebug())
+                        _log.debug("cache expired: " + query);
+                }
+            }, _cacheDuration);
+        }
+    }
 
-   /** Removes a specific entry from the cache. */
-   public void invalidate(final Object query) {
-      int lockIndex = query.hashCode() % _writeLocks.length;
-      if (lockIndex < 0) lockIndex = -lockIndex;
-      synchronized (_writeLocks[lockIndex]) {
-         _cache.remove(query);
-      }
-   }
+    /** Removes a specific entry from the cache. */
+    public void invalidate (final Object query)
+    {
+        int lockIndex = query.hashCode() % _writeLocks.length;
+        if (lockIndex < 0) lockIndex = -lockIndex;
+        synchronized (_writeLocks[lockIndex])
+        {
+            _cache.remove(query);
+        }
+    }
 
-   public String toString() {
-      return NAME + "(type = " + _resourceType + ")";
-   }
+    public String toString ()
+    {
+        return NAME + "(type = " + _resourceType + ")";
+    }
 }

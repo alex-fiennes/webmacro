@@ -26,10 +26,12 @@ package org.webmacro.util;
 /**
  * One of the arguments supplied had an invalid value.
  */
-final public class InvalidArgumentException extends Exception {
+final public class InvalidArgumentException extends Exception
+{
 
-   public InvalidArgumentException(String reason) {
-      super(reason);
-   }
+    public InvalidArgumentException (String reason)
+    {
+        super(reason);
+    }
 }
 

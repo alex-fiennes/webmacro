@@ -34,14 +34,17 @@ import org.webmacro.ResourceException;
 /**
  * Resource exists but could not be loaded for some reason
  */
-public class InvalidResourceException extends ResourceException {
+public class InvalidResourceException extends ResourceException
+{
 
-   public InvalidResourceException(String reason, Exception e) {
-      super(reason, e);
-   }
+    public InvalidResourceException (String reason, Exception e)
+    {
+        super(reason, e);
+    }
 
-   public InvalidResourceException(String reason) {
-      super(reason);
-   }
+    public InvalidResourceException (String reason)
+    {
+        super(reason);
+    }
 }
 

@@ -12,9 +12,11 @@
 
 package org.opendoors.cache.immutable;
 
-import java.util.*;
-
 import org.opendoors.util.PostponeObservable;
+
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Default behavior for managing
@@ -45,107 +47,120 @@ import org.opendoors.util.PostponeObservable;
  * @see org.opendoors.cache.Cache
  * @see org.opendoors.cache.UpdateableCache
  */
-public class ChangeControl implements Observer {
+public class ChangeControl implements Observer
+{
 
-   /** The actual cache under management. */
-   protected CacheImpl cache;
+    /** The actual cache under management. */
+    protected CacheImpl cache;
 
-   /**
-    * The thread delegate for managing changes.
-    * By default, 5 seconds of inactivity must occur
-    * before pending updates are propagated
-    * and the immutable cache is upgraded.
-    */
-   protected PostponeObservable observable;
+    /**
+     * The thread delegate for managing changes.
+     * By default, 5 seconds of inactivity must occur
+     * before pending updates are propagated
+     * and the immutable cache is upgraded.
+     */
+    protected PostponeObservable observable;
 
-   /** The synch mutex. */
-   protected Object actionMutex = new Object();
+    /** The synch mutex. */
+    protected Object actionMutex = new Object();
 
-   /**
-    * The default constructor
-    * which does nothing.
-    */
-   public ChangeControl() {
-   }
+    /**
+     * The default constructor
+     * which does nothing.
+     */
+    public ChangeControl ()
+    {
+    }
 
-   /**
-    * Sets up the cache for change control: the cache, the refresh
-    * rate and returns the mutex.
-    * @param cache The cache to manage.
-    * @param refreshRate How often in millis to refresh the cache.
-    * @return The mutex synchronizing updates.
-    */
-   protected Object setCacheImpl(CacheImpl cache, int refreshRate) {
-      this.cache = cache;
-      observable = new PostponeObservable(refreshRate, true);
-      observable.addObserver(this);
-      return actionMutex;
-   }
+    /**
+     * Sets up the cache for change control: the cache, the refresh
+     * rate and returns the mutex.
+     * @param cache The cache to manage.
+     * @param refreshRate How often in millis to refresh the cache.
+     * @return The mutex synchronizing updates.
+     */
+    protected Object setCacheImpl (CacheImpl cache, int refreshRate)
+    {
+        this.cache = cache;
+        observable = new PostponeObservable(refreshRate, true);
+        observable.addObserver(this);
+        return actionMutex;
+    }
 
-   /**
-    * Schedules a removal of an element from the cache.
-    */
-   void invalidate(Object argument) {
-      synchronized (actionMutex) {
-         cache.mutable.remove(argument);
-         observable.propertyChange(null);
-      }
-   }
+    /**
+     * Schedules a removal of an element from the cache.
+     */
+    void invalidate (Object argument)
+    {
+        synchronized (actionMutex)
+        {
+            cache.mutable.remove(argument);
+            observable.propertyChange(null);
+        }
+    }
 
-   /**
-    * Schedules a removal of everything.
-    */
-   void invalidateAll() {
-      synchronized (actionMutex) {
-         cache.mutable.clear();
-         observable.setChanged();
-      }
-   }
+    /**
+     * Schedules a removal of everything.
+     */
+    void invalidateAll ()
+    {
+        synchronized (actionMutex)
+        {
+            cache.mutable.clear();
+            observable.setChanged();
+        }
+    }
 
 
-   /**
-    * Schedules a put to the queue.
-    */
-   void put(Object argument, Object value) {
-      synchronized (actionMutex) {
-         cache.mutable.put(argument, value);
-         observable.setChanged();
-      }
-   }
+    /**
+     * Schedules a put to the queue.
+     */
+    void put (Object argument, Object value)
+    {
+        synchronized (actionMutex)
+        {
+            cache.mutable.put(argument, value);
+            observable.setChanged();
+        }
+    }
 
-   /**
-    * Call back for changes pending to
-    * be implemented.
-    * <p>
-    * Cache has been idle for at least n seconds.
-    * <p>
-    * This routine implements the generational update
-    * such that the immutable becomes identical now
-    * to the most current image in the mutable instance.
-    */
-   public void update(Observable o, Object arg) {
-      synchronized (actionMutex) {
-         HashMap tmp = new HashMap(cache.mutable.size() * 2, (float) 0.5);
-         tmp.putAll(cache.mutable);
-         cache.immutable = tmp;
-         //System.out.println("Cache Updated. Mutable Size=" + cache.mutable.size());
-         //System.out.println("Cache Updated. Size=" + cache.immutable.size());
-      }
-   }
+    /**
+     * Call back for changes pending to
+     * be implemented.
+     * <p>
+     * Cache has been idle for at least n seconds.
+     * <p>
+     * This routine implements the generational update
+     * such that the immutable becomes identical now
+     * to the most current image in the mutable instance.
+     */
+    public void update (Observable o, Object arg)
+    {
+        synchronized (actionMutex)
+        {
+            HashMap tmp = new HashMap(cache.mutable.size() * 2, (float) 0.5);
+            tmp.putAll(cache.mutable);
+            cache.immutable = tmp;
+            //System.out.println("Cache Updated. Mutable Size=" + cache.mutable.size());
+            //System.out.println("Cache Updated. Size=" + cache.immutable.size());
+        }
+    }
 
-   /**
-    * Destroys this instance making it inoperable.
-    */
-   void destroy() {
-      synchronized (actionMutex) {
-         cache.mutable.clear();
-         cache.immutable.clear();
-         cache = null;
-      }
-      observable.destroy();
-      observable = null;
-      actionMutex = null;
-   }
+    /**
+     * Destroys this instance making it inoperable.
+     */
+    void destroy ()
+    {
+        synchronized (actionMutex)
+        {
+            cache.mutable.clear();
+            cache.immutable.clear();
+            cache = null;
+        }
+        observable.destroy();
+        observable = null;
+        actionMutex = null;
+    }
 
 
 }

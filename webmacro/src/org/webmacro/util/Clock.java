@@ -23,7 +23,7 @@
 
 package org.webmacro.util;
 
-import java.util.*;
+import java.util.Date;
 
 /**
  * This is an optimization. "System.currentTimeMillis()" is a relatively
@@ -33,111 +33,131 @@ import java.util.*;
  * class to gain rapid access to the current time in situations where
  * it is good enough to have "close" to the current time.
  */
-final public class Clock {
+final public class Clock
+{
 
-   /**
-    * Every tick interval the following variable is updated with the current system time
-    */
-   static public volatile long TIME;
+    /**
+     * Every tick interval the following variable is updated with the current system time
+     */
+    static public volatile long TIME;
 
-   /**
-    * Date information
-    */
-   private static long dateTime = System.currentTimeMillis();
-   private static Date date = new Date();
+    /**
+     * Date information
+     */
+    private static long dateTime = System.currentTimeMillis();
+    private static Date date = new Date();
 
-   private static Object _lock = new Object();
+    private static Object _lock = new Object();
 
-   /**
-    * The current date. This object is updated on the tick interval,
-    * but not faster than once per second.
-    */
-   public static Date getDate() {
-      synchronized (_lock) {
-         if (_clock != null) {
-            if ((TIME - dateTime) > 1000) {
-               date = new Date(TIME);
+    /**
+     * The current date. This object is updated on the tick interval,
+     * but not faster than once per second.
+     */
+    public static Date getDate ()
+    {
+        synchronized (_lock)
+        {
+            if (_clock != null)
+            {
+                if ((TIME - dateTime) > 1000)
+                {
+                    date = new Date(TIME);
+                }
             }
-         }
-         else {
-            // clock is not started yet
-            date = new Date();
-         }
-         return date;
-      }
-   }
+            else
+            {
+                // clock is not started yet
+                date = new Date();
+            }
+            return date;
+        }
+    }
 
-   /**
-    * The tick interval, how fast the clock updates the time. The default
-    * is once every 10 seconds.
-    */
-   static private int tickInterval = 10000;
+    /**
+     * The tick interval, how fast the clock updates the time. The default
+     * is once every 10 seconds.
+     */
+    static private int tickInterval = 10000;
 
-   /**
-    * The clock will tick at least this often. It may tick more often.
-    * Setting it to zero stops the clock. The actual tick interval used
-    * will be the smallest tick interval ever set. The tickInterval
-    * starts out as 10000 (ten seconds).
-    */
-   static public void setTickInterval(int interval) {
-      if (interval < 0) interval = 0;
+    /**
+     * The clock will tick at least this often. It may tick more often.
+     * Setting it to zero stops the clock. The actual tick interval used
+     * will be the smallest tick interval ever set. The tickInterval
+     * starts out as 10000 (ten seconds).
+     */
+    static public void setTickInterval (int interval)
+    {
+        if (interval < 0) interval = 0;
 
-      if ((tickInterval == 0) || (interval < tickInterval)) {
-         tickInterval = interval;
-         synchronized (_clock) {
-            _clock.notify();
+        if ((tickInterval == 0) || (interval < tickInterval))
+        {
+            tickInterval = interval;
+            synchronized (_clock)
+            {
+                _clock.notify();
+                _clock.setName("clock:" + tickInterval);
+            }
+        }
+    }
+
+    /**
+     * Set up the clock
+     */
+    static private Thread _clock;
+
+    static class ClockThread extends Thread
+    {
+
+        synchronized public void run ()
+        {
+            while (!Thread.currentThread().interrupted())
+            {
+                TIME = System.currentTimeMillis();
+                try
+                {
+                    if (tickInterval == 0)
+                        wait();
+                    else
+                        wait(tickInterval);
+                }
+                catch (InterruptedException e)
+                {
+                    break; // terminate
+                }
+            }
+        }
+    }
+
+    static private int _count;
+
+    public static synchronized void startClient ()
+    {
+        if (_count++ == 0)
+        {
+            _clock = new ClockThread();
+            _clock.setDaemon(true);
             _clock.setName("clock:" + tickInterval);
-         }
-      }
-   }
+            _clock.start();
+        }
+    }
 
-   /**
-    * Set up the clock
-    */
-   static private Thread _clock;
+    public static synchronized void stopClient ()
+    {
+        if (--_count == 0)
+        {
+            _clock.interrupt();
+            _clock = null;
+        }
+    }
 
-   static class ClockThread extends Thread {
-
-      synchronized public void run() {
-         while (!Thread.currentThread().interrupted()) {
-            TIME = System.currentTimeMillis();
-            try {
-               if (tickInterval == 0)
-                  wait();
-               else
-                  wait(tickInterval);
-            }
-            catch (InterruptedException e) {
-               break; // terminate
-            }
-         }
-      }
-   }
-
-   static private int _count;
-
-   public static synchronized void startClient() {
-      if (_count++ == 0) {
-         _clock = new ClockThread();
-         _clock.setDaemon(true);
-         _clock.setName("clock:" + tickInterval);
-         _clock.start();
-      }
-   }
-
-   public static synchronized void stopClient() {
-      if (--_count == 0) {
-         _clock.interrupt();
-         _clock = null;
-      }
-   }
-
-   public static void main(String arg[]) {
-      setTickInterval(1000);
-      while (true) {
-         System.out.println(TIME);
-      }
-   }
+    public static void main (String arg[])
+    {
+        setTickInterval(1000);
+        while (true)
+        {
+            System.out.println(TIME);
+        }
+    }
 
 }
 

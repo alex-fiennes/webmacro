@@ -37,185 +37,205 @@ import org.webmacro.engine.BlockBuilder;
  */
 
 
-public class ParserBlockBuilder extends BlockBuilder {
+public class ParserBlockBuilder extends BlockBuilder
+{
 
-   private int literalMark = 0;
+    private int literalMark = 0;
 
-   public ParserBlockBuilder() {
-      super();
-   }
+    public ParserBlockBuilder ()
+    {
+        super();
+    }
 
-   public ParserBlockBuilder(String name) {
-      super(name);
-   }
+    public ParserBlockBuilder (String name)
+    {
+        super(name);
+    }
 
-   /** Mark the last character in the block as being a literal (quoted
-    * with backslash) so we don't eat trailing quoted whitespace.
-    */
-   final public void markLiteral() {
-      literalMark = size();
-   }
+    /** Mark the last character in the block as being a literal (quoted
+     * with backslash) so we don't eat trailing quoted whitespace.
+     */
+    final public void markLiteral ()
+    {
+        literalMark = size();
+    }
 
-   private final static boolean isSpaceChar(char c) {
-      return (c == ' ' || c == '\t');
-   }
+    private final static boolean isSpaceChar (char c)
+    {
+        return (c == ' ' || c == '\t');
+    }
 
-   private final static int eatWs(String s, int pos) {
-      while (pos >= 0 && isSpaceChar(s.charAt(pos)))
-         pos--;
-      return pos;
-   }
-
-   private final static int eatOneWs(String s, int pos) {
-      if (pos >= 0 && isSpaceChar(s.charAt(pos)))
-         pos--;
-      return pos;
-   }
-
-   private final static int eatNl(String s, int pos) {
-      if (pos >= 0) {
-         if (s.charAt(pos) == '\r')
+    private final static int eatWs (String s, int pos)
+    {
+        while (pos >= 0 && isSpaceChar(s.charAt(pos)))
             pos--;
-         else if (s.charAt(pos) == '\n') {
+        return pos;
+    }
+
+    private final static int eatOneWs (String s, int pos)
+    {
+        if (pos >= 0 && isSpaceChar(s.charAt(pos)))
             pos--;
-            if (pos >= 0 && s.charAt(pos) == '\r')
-               pos--;
-         }
-      }
-      return pos;
-   }
+        return pos;
+    }
 
-   final public void eatTrailingWs() {
-      int i, j;
+    private final static int eatNl (String s, int pos)
+    {
+        if (pos >= 0)
+        {
+            if (s.charAt(pos) == '\r')
+                pos--;
+            else if (s.charAt(pos) == '\n')
+            {
+                pos--;
+                if (pos >= 0 && s.charAt(pos) == '\r')
+                    pos--;
+            }
+        }
+        return pos;
+    }
 
-      i = size() - 1;
-      if (i < 0 || i + 1 == literalMark)
-         return;
+    final public void eatTrailingWs ()
+    {
+        int i, j;
 
-      Object o = elementAt(i);
-      if (!(o instanceof String))
-         return;
-      String s = (String) o;
-      j = eatWs(s, s.length() - 1);
+        i = size() - 1;
+        if (i < 0 || i + 1 == literalMark)
+            return;
 
-      if (j < 0)
-         remove(i);
-      else if (j < s.length() - 1)
-         setElementAt(s.substring(0, j + 1), i);
-      markLiteral();
-   }
+        Object o = elementAt(i);
+        if (!(o instanceof String))
+            return;
+        String s = (String) o;
+        j = eatWs(s, s.length() - 1);
+
+        if (j < 0)
+            remove(i);
+        else if (j < s.length() - 1)
+            setElementAt(s.substring(0, j + 1), i);
+        markLiteral();
+    }
 
 
-   final public void eatTrailingWsNl() {
-      int i, j;
+    final public void eatTrailingWsNl ()
+    {
+        int i, j;
 
-      i = size() - 1;
-      if (i < 0 || i + 1 == literalMark)
-         return;
+        i = size() - 1;
+        if (i < 0 || i + 1 == literalMark)
+            return;
 
-      Object o = elementAt(i);
-      if (!(o instanceof String))
-         return;
-      String s = (String) o;
-      j = eatWs(s, s.length() - 1);
-      j = eatNl(s, j);
+        Object o = elementAt(i);
+        if (!(o instanceof String))
+            return;
+        String s = (String) o;
+        j = eatWs(s, s.length() - 1);
+        j = eatNl(s, j);
 
-      if (j < 0)
-         remove(i);
-      else if (j < s.length() - 1)
-         setElementAt(s.substring(0, j + 1), i);
-      markLiteral();
-   }
+        if (j < 0)
+            remove(i);
+        else if (j < s.length() - 1)
+            setElementAt(s.substring(0, j + 1), i);
+        markLiteral();
+    }
 
-   final public void eatTrailingWsNlWs() {
-      int i, j;
+    final public void eatTrailingWsNlWs ()
+    {
+        int i, j;
 
-      i = size() - 1;
-      if (i < 0 || i + 1 == literalMark)
-         return;
+        i = size() - 1;
+        if (i < 0 || i + 1 == literalMark)
+            return;
 
-      Object o = elementAt(i);
-      if (!(o instanceof String))
-         return;
-      String s = (String) o;
-      j = eatWs(s, s.length() - 1);
-      j = eatNl(s, j);
-      j = eatWs(s, j);
+        Object o = elementAt(i);
+        if (!(o instanceof String))
+            return;
+        String s = (String) o;
+        j = eatWs(s, s.length() - 1);
+        j = eatNl(s, j);
+        j = eatWs(s, j);
 
-      if (j < 0)
-         remove(i);
-      else if (j < s.length() - 1)
-         setElementAt(s.substring(0, j + 1), i);
-      markLiteral();
-   }
+        if (j < 0)
+            remove(i);
+        else if (j < s.length() - 1)
+            setElementAt(s.substring(0, j + 1), i);
+        markLiteral();
+    }
 
-   final public void eatOneWs() {
-      int i, j;
+    final public void eatOneWs ()
+    {
+        int i, j;
 
-      i = size() - 1;
-      if (i < 0 || i + 1 == literalMark)
-         return;
+        i = size() - 1;
+        if (i < 0 || i + 1 == literalMark)
+            return;
 
-      Object o = elementAt(i);
-      if (!(o instanceof String))
-         return;
-      String s = (String) o;
-      j = eatOneWs(s, s.length() - 1);
+        Object o = elementAt(i);
+        if (!(o instanceof String))
+            return;
+        String s = (String) o;
+        j = eatOneWs(s, s.length() - 1);
 
-      if (j < 0)
-         remove(i);
-      else if (j < s.length() - 1)
-         setElementAt(s.substring(0, j + 1), i);
-      markLiteral();
-   }
+        if (j < 0)
+            remove(i);
+        else if (j < s.length() - 1)
+            setElementAt(s.substring(0, j + 1), i);
+        markLiteral();
+    }
 
-   final public void eatLeadingWsNl() {
-      int i, j, l;
+    final public void eatLeadingWsNl ()
+    {
+        int i, j, l;
 
-      i = size() - 1;
-      if (i < 0 || i + 1 == literalMark)
-         return;
+        i = size() - 1;
+        if (i < 0 || i + 1 == literalMark)
+            return;
 
-      Object o = elementAt(i);
-      if (!(o instanceof String))
-         return;
-      String s = (String) o;
-      j = 0;
-      l = s.length();
-      while (j < l && isSpaceChar(s.charAt(j)))
-         j++;
-      if (j < l) {
-         if (s.charAt(j) == '\r')
+        Object o = elementAt(i);
+        if (!(o instanceof String))
+            return;
+        String s = (String) o;
+        j = 0;
+        l = s.length();
+        while (j < l && isSpaceChar(s.charAt(j)))
             j++;
-         else if (s.charAt(j) == '\n') {
-            j++;
-            if (j < l && s.charAt(j) == '\r')
-               j++;
-         }
-      }
+        if (j < l)
+        {
+            if (s.charAt(j) == '\r')
+                j++;
+            else if (s.charAt(j) == '\n')
+            {
+                j++;
+                if (j < l && s.charAt(j) == '\r')
+                    j++;
+            }
+        }
 
-      if (j >= l)
-         remove(i);
-      else if (j > 0)
-         setElementAt(s.substring(j), i);
-      markLiteral();
-   }
+        if (j >= l)
+            remove(i);
+        else if (j > 0)
+            setElementAt(s.substring(j), i);
+        markLiteral();
+    }
 
-   final public boolean directiveOk() {
-      if (size() == 0 || size() == literalMark)
-         return true;
-      else {
-         Object o = elementAt(size() - 1);
-         if (!(o instanceof String))
+    final public boolean directiveOk ()
+    {
+        if (size() == 0 || size() == literalMark)
             return true;
-         else {
-            String s = (String) o;
-            char ch = s.charAt(s.length() - 1);
-            if (ch == '=' || ch == '\'' || ch == '\"' || ch == ':'
-                  || Character.isLetterOrDigit(ch))
-               return false;
-         }
-      }
-      return true;
-   }
+        else
+        {
+            Object o = elementAt(size() - 1);
+            if (!(o instanceof String))
+                return true;
+            else
+            {
+                String s = (String) o;
+                char ch = s.charAt(s.length() - 1);
+                if (ch == '=' || ch == '\'' || ch == '\"' || ch == ':'
+                        || Character.isLetterOrDigit(ch))
+                    return false;
+            }
+        }
+        return true;
+    }
 }

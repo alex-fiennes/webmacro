@@ -26,18 +26,22 @@ package org.webmacro;
 /**
  * This is the base class of all WebMacro runtime exceptions.
  */
-public class WebMacroRuntimeException extends RethrowableRuntimeException {
+public class WebMacroRuntimeException extends RethrowableRuntimeException
+{
 
-   public WebMacroRuntimeException() {
-      super();
-   }
+    public WebMacroRuntimeException ()
+    {
+        super();
+    }
 
-   public WebMacroRuntimeException(String reason) {
-      super(reason);
-   }
+    public WebMacroRuntimeException (String reason)
+    {
+        super(reason);
+    }
 
-   public WebMacroRuntimeException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    public WebMacroRuntimeException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 }
 

@@ -42,92 +42,106 @@ import org.webmacro.PropertyException;
  * against a context. The introspection process will supply the
  * context and resolve these references at execution time.
  */
-public class PropertyMethod implements Named {
+public class PropertyMethod implements Named
+{
 
-   private Object _args;
-   private String _name;
-   private boolean _reference;
+    private Object _args;
+    private String _name;
+    private boolean _reference;
 
-   /**
-    * Create a new PropertyMethod
-    * @param name the name of the method to call
-    * @param args the arguments, including Macro objects
-    */
-   public PropertyMethod(String name, Object[] args) {
-      _name = name;
-      _args = args;
-      _reference = false;
-   }
+    /**
+     * Create a new PropertyMethod
+     * @param name the name of the method to call
+     * @param args the arguments, including Macro objects
+     */
+    public PropertyMethod (String name, Object[] args)
+    {
+        _name = name;
+        _args = args;
+        _reference = false;
+    }
 
-   /**
-    * Create a new PropertyMethod
-    * @param name the name of the method to call
-    * @param args the arguments, including Macro objects
-    */
-   public PropertyMethod(String name, Macro args) {
-      _name = name;
-      _args = args;
-      _reference = true;
-   }
+    /**
+     * Create a new PropertyMethod
+     * @param name the name of the method to call
+     * @param args the arguments, including Macro objects
+     */
+    public PropertyMethod (String name, Macro args)
+    {
+        _name = name;
+        _args = args;
+        _reference = true;
+    }
 
-   /**
-    * Return the name of this PropertyMethod
-    */
-   final public String getName() {
-      return _name;
-   }
+    /**
+     * Return the name of this PropertyMethod
+     */
+    final public String getName ()
+    {
+        return _name;
+    }
 
-   /**
-    * Return a signature of this method
-    */
-   final public String toString() {
-      if (_reference) {
-         return _name + _args.toString();
-      }
-      Object[] argList = (Object[]) _args;
-      StringBuffer vname = new StringBuffer();
-      vname.append(_name);
-      vname.append("(");
-      for (int i = 0; i < argList.length; i++) {
-         if (i != 0) {
-            vname.append(",");
-         }
-         vname.append(argList[i]);
-      }
-      vname.append(")");
-      return vname.toString();
-   }
-
-
-   /**
-    * Return the arguments for this method, after resolving them
-    * against the supplied context. Any arguments which are of
-    * type Macro will be resolved into a regular
-    * object via the Macro.evaluate method.
-    * @exception PropertyException a Macro in the arguments failed to resolve against the supplied context
-    */
-   final public Object[] getArguments(Context context)
-         throws PropertyException {
-      Object[] argList;
-      if (_reference) {
-         argList = (Object[]) ((Macro) _args).evaluate(context);
-      }
-      else {
-         argList = (Object[]) _args;
-      }
-
-      Object ret[] = new Object[argList.length];
-      System.arraycopy(argList, 0, ret, 0, argList.length);
-      for (int i = 0; i < ret.length; i++) {
-         while (ret[i] instanceof Macro) {
-            Object repl = ((Macro) ret[i]).evaluate(context);
-            if (repl == ret[i]) {
-               break; // avoid infinite loop
+    /**
+     * Return a signature of this method
+     */
+    final public String toString ()
+    {
+        if (_reference)
+        {
+            return _name + _args.toString();
+        }
+        Object[] argList = (Object[]) _args;
+        StringBuffer vname = new StringBuffer();
+        vname.append(_name);
+        vname.append("(");
+        for (int i = 0; i < argList.length; i++)
+        {
+            if (i != 0)
+            {
+                vname.append(",");
             }
-            ret[i] = repl;
-         }
-      }
-      return ret;
-   }
+            vname.append(argList[i]);
+        }
+        vname.append(")");
+        return vname.toString();
+    }
+
+
+    /**
+     * Return the arguments for this method, after resolving them
+     * against the supplied context. Any arguments which are of
+     * type Macro will be resolved into a regular
+     * object via the Macro.evaluate method.
+     * @exception PropertyException a Macro in the arguments failed to resolve against the supplied context
+     */
+    final public Object[] getArguments (Context context)
+            throws PropertyException
+    {
+        Object[] argList;
+        if (_reference)
+        {
+            argList = (Object[]) ((Macro) _args).evaluate(context);
+        }
+        else
+        {
+            argList = (Object[]) _args;
+        }
+
+        Object ret[] = new Object[argList.length];
+        System.arraycopy(argList, 0, ret, 0, argList.length);
+        for (int i = 0; i < ret.length; i++)
+        {
+            while (ret[i] instanceof Macro)
+            {
+                Object repl = ((Macro) ret[i]).evaluate(context);
+                if (repl == ret[i])
+                {
+                    break; // avoid infinite loop
+                }
+                ret[i] = repl;
+            }
+        }
+        return ret;
+    }
 
 }

@@ -33,12 +33,15 @@ import org.webmacro.ContextTool;
  * @since Oct. 2000
  * @see ListUtil
  */
-public class ListTool implements ContextTool {
+public class ListTool implements ContextTool
+{
 
-   public Object init(Context context) {
-      return ListUtil.getInstance();
-   }
+    public Object init (Context context)
+    {
+        return ListUtil.getInstance();
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

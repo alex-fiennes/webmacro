@@ -20,26 +20,30 @@ import org.opendoors.cache.Cache;
  * Use as a test driver to populate a cache.
  * @see Depopulate
  */
-public class Populate implements Runnable {
+public class Populate implements Runnable
+{
 
-   private Cache cache;
-   int n, m;
-   public long tet;
+    private Cache cache;
+    int n, m;
+    public long tet;
 
-   /** Construct the populator with test parameters. */
-   public Populate(Cache cache, int n, int m) {
-      this.cache = cache;
-      this.n = n;
-      this.m = m;
-   }
+    /** Construct the populator with test parameters. */
+    public Populate (Cache cache, int n, int m)
+    {
+        this.cache = cache;
+        this.n = n;
+        this.m = m;
+    }
 
-   /** Populates the cache according to the instance parameters. */
-   public void run() {
-      tet = System.currentTimeMillis();
-      for (int value = n; value < m; value++) {
-         Integer i = new Integer(value);
-         cache.put(i, i);
-      }
-      tet = System.currentTimeMillis() - tet;
-   }
+    /** Populates the cache according to the instance parameters. */
+    public void run ()
+    {
+        tet = System.currentTimeMillis();
+        for (int value = n; value < m; value++)
+        {
+            Integer i = new Integer(value);
+            cache.put(i, i);
+        }
+        tet = System.currentTimeMillis() - tet;
+    }
 }

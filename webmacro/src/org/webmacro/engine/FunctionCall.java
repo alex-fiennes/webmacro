@@ -23,9 +23,8 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-import org.webmacro.*;
-import org.webmacro.util.*;
+import org.webmacro.Macro;
+import org.webmacro.util.PropertyMethod;
 
 /**
  * Holder for standalone function calls $a($foo)
@@ -34,25 +33,25 @@ import org.webmacro.util.*;
  * @since 1.1
  */
 
-final public class FunctionCall extends PropertyMethod 
+final public class FunctionCall extends PropertyMethod
 {
-   /**
+    /**
      * Create a new FunctionCall
      * @param name the name of the method to call
      * @param args the arguments, including Macro objects
      */
-   public FunctionCall(String name, Object[] args)
-   {
-      super(name, args);
-   }
+    public FunctionCall (String name, Object[] args)
+    {
+        super(name, args);
+    }
 
-   /**
+    /**
      * Create a new FunctionCall
      * @param name the name of the method to call
      * @param args the arguments, including Macro objects
      */
-   public FunctionCall(String name, Macro args)
-   {
-      super(name, args);
-   }
+    public FunctionCall (String name, Macro args)
+    {
+        super(name, args);
+    }
 }

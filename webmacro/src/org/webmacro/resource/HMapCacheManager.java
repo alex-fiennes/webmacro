@@ -32,102 +32,118 @@
 
 package org.webmacro.resource;
 
-import java.util.*;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
-public class HMapCacheManager implements CacheManager {
+import java.util.HashMap;
 
-   private static final String NAME = "HMapCacheManager";
-   private HashMap _cache;
-   private String _resourceType;
+public class HMapCacheManager implements CacheManager
+{
 
-   private Log _log;
+    private static final String NAME = "HMapCacheManager";
+    private HashMap _cache;
+    private String _resourceType;
 
-   public HMapCacheManager() {
-   }
+    private Log _log;
 
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException {
+    public HMapCacheManager ()
+    {
+    }
 
-      _log = b.getLog("resource", "Object loading and caching");
-      _resourceType = resourceType;
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException
+    {
 
-      _cache = new HashMap();
+        _log = b.getLog("resource", "Object loading and caching");
+        _resourceType = resourceType;
 
-      _log.info(NAME + "." + _resourceType);
-   }
+        _cache = new HashMap();
 
-   /**
-    * Clear the cache.
-    */
-   public void flush() {
-      _cache.clear();
-   }
+        _log.info(NAME + "." + _resourceType);
+    }
 
-   /**
-    * Close down the provider.
-    */
-   public void destroy() {
-      _cache = null;
-   }
+    /**
+     * Clear the cache.
+     */
+    public void flush ()
+    {
+        _cache.clear();
+    }
 
-   public boolean supportsReload() {
-      return false;
-   }
+    /**
+     * Close down the provider.
+     */
+    public void destroy ()
+    {
+        _cache = null;
+    }
 
-   /**
-    * Get the object associated with the specific query, first
-    * trying to look it up in a cache. If it's not there, then
-    * call load(String) to load it into the cache.
-    */
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      Object o = null;
+    public boolean supportsReload ()
+    {
+        return false;
+    }
 
-      synchronized (_cache) {
-         o = _cache.get(query);
-      }
-      if (o == null) {
-         o = helper.load(query, null);
-         synchronized (_cache) {
-            _cache.put(query, o);
-         }
-      }
-      return o;
-   }
+    /**
+     * Get the object associated with the specific query, first
+     * trying to look it up in a cache. If it's not there, then
+     * call load(String) to load it into the cache.
+     */
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        Object o = null;
 
-   /**
-    * Get the object associated with the specific query,
-    * trying to look it up in a cache. If it's not there, return null.
-    */
-   public Object get(final Object query) {
-      return _cache.get(query);
-   }
+        synchronized (_cache)
+        {
+            o = _cache.get(query);
+        }
+        if (o == null)
+        {
+            o = helper.load(query, null);
+            synchronized (_cache)
+            {
+                _cache.put(query, o);
+            }
+        }
+        return o;
+    }
 
-   /**
-    * Put an object in the cache
-    */
-   public void put(final Object query, Object resource) {
-      synchronized (_cache) {
-         _cache.put(query, resource);
-      }
-   }
+    /**
+     * Get the object associated with the specific query,
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+    public Object get (final Object query)
+    {
+        return _cache.get(query);
+    }
 
-   /**
-    * Remove an element
-    */
-   public void invalidate(final Object query) {
-      synchronized (_cache) {
-         _cache.remove(query);
-      }
-   }
+    /**
+     * Put an object in the cache
+     */
+    public void put (final Object query, Object resource)
+    {
+        synchronized (_cache)
+        {
+            _cache.put(query, resource);
+        }
+    }
 
-   public String toString() {
-      return NAME + "(type = " + _resourceType + ")";
-   }
+    /**
+     * Remove an element
+     */
+    public void invalidate (final Object query)
+    {
+        synchronized (_cache)
+        {
+            _cache.remove(query);
+        }
+    }
+
+    public String toString ()
+    {
+        return NAME + "(type = " + _resourceType + ")";
+    }
 }

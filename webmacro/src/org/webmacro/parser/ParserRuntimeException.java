@@ -34,18 +34,22 @@ import org.webmacro.WebMacroRuntimeException;
  * code calling the parser.
  * @author Sebastian Kanthak
  */
-public class ParserRuntimeException extends WebMacroRuntimeException {
+public class ParserRuntimeException extends WebMacroRuntimeException
+{
 
-   public ParserRuntimeException() {
-      super();
-   }
+    public ParserRuntimeException ()
+    {
+        super();
+    }
 
-   public ParserRuntimeException(String reason) {
-      super(reason);
-   }
+    public ParserRuntimeException (String reason)
+    {
+        super(reason);
+    }
 
-   public ParserRuntimeException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    public ParserRuntimeException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 }
 

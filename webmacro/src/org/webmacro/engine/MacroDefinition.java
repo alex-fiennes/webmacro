@@ -33,46 +33,53 @@ package org.webmacro.engine;
  * @author Brian Goetz
  */
 
-public class MacroDefinition {
+public class MacroDefinition
+{
 
-   private String name;
-   private String[] argNames;
-   Object macroBody;
+    private String name;
+    private String[] argNames;
+    Object macroBody;
 
-   public MacroDefinition(String name,
-                          String[] argNames,
-                          Object macroBody) {
-      this.name = name;
-      this.argNames = argNames;
-      this.macroBody = macroBody;
-   }
+    public MacroDefinition (String name,
+                            String[] argNames,
+                            Object macroBody)
+    {
+        this.name = name;
+        this.argNames = argNames;
+        this.macroBody = macroBody;
+    }
 
-   public String[] getArgNames() {
-      return argNames;
-   }
+    public String[] getArgNames ()
+    {
+        return argNames;
+    }
 
-   public String getName() {
-      return name;
-   }
+    public String getName ()
+    {
+        return name;
+    }
 
-   public Object getMacroBody() {
-      return macroBody;
-   }
+    public Object getMacroBody ()
+    {
+        return macroBody;
+    }
 
-   public Object expand(Object[] args, BuildContext bc)
-         throws BuildException {
-      if (args.length != argNames.length)
-         throw new BuildException("#" + name + ": invoked with "
-                                  + args.length + " arguments, expecting "
-                                  + argNames.length + " arguments");
-      if (macroBody instanceof Builder) {
-         if (bc instanceof MacroBuildContext)
-            bc = ((MacroBuildContext) bc).getRootContext();
-         MacroBuildContext mbc = new MacroBuildContext(this, args, bc);
-         return ((Builder) macroBody).build(mbc);
-      }
-      else
-         return macroBody;
-   }
+    public Object expand (Object[] args, BuildContext bc)
+            throws BuildException
+    {
+        if (args.length != argNames.length)
+            throw new BuildException("#" + name + ": invoked with "
+                    + args.length + " arguments, expecting "
+                    + argNames.length + " arguments");
+        if (macroBody instanceof Builder)
+        {
+            if (bc instanceof MacroBuildContext)
+                bc = ((MacroBuildContext) bc).getRootContext();
+            MacroBuildContext mbc = new MacroBuildContext(this, args, bc);
+            return ((Builder) macroBody).build(mbc);
+        }
+        else
+            return macroBody;
+    }
 }
 

@@ -22,79 +22,91 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-public class SetDirective extends Directive {
+import java.io.IOException;
 
-   private static final int SET_TARGET = 1;
-   private static final int SET_RESULT = 2;
+public class SetDirective extends Directive
+{
 
-   private Variable target;
-   private Object result;
+    private static final int SET_TARGET = 1;
+    private static final int SET_RESULT = 2;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(SET_TARGET),
-            new AssignmentArg(),
-            new RValueArg(SET_RESULT)
-         };
+    private Variable target;
+    private Object result;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("set", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(SET_TARGET),
+                new AssignmentArg(),
+                new RValueArg(SET_RESULT)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("set", null, myArgs, null);
 
-   public SetDirective() {
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public SetDirective(Variable target, Object result) {
-      this.target = target;
-      this.result = result;
-   }
+    public SetDirective ()
+    {
+    }
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      try {
-         target = (Variable) builder.getArg(SET_TARGET, bc);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      result = builder.getArg(SET_RESULT, bc);
-      return this;
-   }
+    public SetDirective (Variable target, Object result)
+    {
+        this.target = target;
+        this.result = result;
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        try
+        {
+            target = (Variable) builder.getArg(SET_TARGET, bc);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        result = builder.getArg(SET_RESULT, bc);
+        return this;
+    }
 
-      try {
-         if (result instanceof Macro)
-            target.setValue(context, ((Macro) result).evaluate(context));
-         else
-            target.setValue(context, result);
-      }
-      catch (PropertyException e) {
-         throw e;
-      }
-      catch (Exception e) {
-         String errorText = "#set: Unable to set value: " + target;
-         writeWarning(errorText, context, out);
-      }
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      v.visitDirectiveArg("SetTarget", target);
-      v.visitDirectiveArg("SetValue", result);
-      v.endDirective();
-   }
+        try
+        {
+            if (result instanceof Macro)
+                target.setValue(context, ((Macro) result).evaluate(context));
+            else
+                target.setValue(context, result);
+        }
+        catch (PropertyException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            String errorText = "#set: Unable to set value: " + target;
+            writeWarning(errorText, context, out);
+        }
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        v.visitDirectiveArg("SetTarget", target);
+        v.visitDirectiveArg("SetValue", result);
+        v.endDirective();
+    }
 
 }

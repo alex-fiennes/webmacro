@@ -32,48 +32,53 @@ import org.webmacro.PropertyException;
  * @author Brian Goetz
  * @since 1.1
  */
-public class ConstantPropertyVariable extends Variable {
+public class ConstantPropertyVariable extends Variable
+{
 
-   private Object value;
+    private Object value;
 
-   /**
-    * No special initialization
-    */
-   ConstantPropertyVariable(Object value, Object names[]) {
-      super(names);
-      this.value = value;
-   }
+    /**
+     * No special initialization
+     */
+    ConstantPropertyVariable (Object value, Object names[])
+    {
+        super(names);
+        this.value = value;
+    }
 
-   /**
-    * Look up my value in the corresponding Map, possibly using introspection,
-    * and return it
-    * @exception PropertyException If the property does not exist
-    */
-   public final Object getValue(Context context)
-         throws PropertyException {
-      if (value == null)
-         throw new PropertyException.NullValueException(_names[0].toString());
-      else
-         return context.getBroker()
-               ._propertyOperators.getProperty(context, value, _names, 1);
-   }
+    /**
+     * Look up my value in the corresponding Map, possibly using introspection,
+     * and return it
+     * @exception PropertyException If the property does not exist
+     */
+    public final Object getValue (Context context)
+            throws PropertyException
+    {
+        if (value == null)
+            throw new PropertyException.NullValueException(_names[0].toString());
+        else
+            return context.getBroker()
+                    ._propertyOperators.getProperty(context, value, _names, 1);
+    }
 
-   /**
-    * Look up my the value of this variable in the specified Map, possibly
-    * using introspection, and set it to the supplied value.
-    * @exception PropertyException If the property does not exist
-    */
-   public final void setValue(Context context, Object newValue)
-         throws PropertyException {
-      throw new PropertyException("Cannot set properties of a constant");
-   }
+    /**
+     * Look up my the value of this variable in the specified Map, possibly
+     * using introspection, and set it to the supplied value.
+     * @exception PropertyException If the property does not exist
+     */
+    public final void setValue (Context context, Object newValue)
+            throws PropertyException
+    {
+        throw new PropertyException("Cannot set properties of a constant");
+    }
 
-   /**
-    * Return a string representation naming the variable for
-    * debugging purposes.
-    */
-   public final String toString() {
-      return "constant-property:" + _vname;
-   }
+    /**
+     * Return a string representation naming the variable for
+     * debugging purposes.
+     */
+    public final String toString ()
+    {
+        return "constant-property:" + _vname;
+    }
 
 }

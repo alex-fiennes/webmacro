@@ -28,15 +28,15 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.Log;
 import org.webmacro.util.Bag;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * This is an implementation of the WebContext interface. It has the
@@ -58,196 +58,226 @@ import org.webmacro.util.Bag;
  * should also be sure and implement the clear() method as well.
  * <p>
  */
-public class WebContext extends Context {
+public class WebContext extends Context
+{
 
-   /**
-    * Log configuration errors, context errors, etc.
-    */
-   private Log _log;
+    /**
+     * Log configuration errors, context errors, etc.
+     */
+    private Log _log;
 
-   /**
-    * The request for this http connect
-    */
-   HttpServletRequest _request = null;
+    /**
+     * The request for this http connect
+     */
+    HttpServletRequest _request = null;
 
-   /**
-    * The response for this http connect
-    */
-   HttpServletResponse _response = null;
+    /**
+     * The response for this http connect
+     */
+    HttpServletResponse _response = null;
 
-   // property interface fields that are lazily set, non-final, and private
+    // property interface fields that are lazily set, non-final, and private
 
-   /**
-    * Construct a new WebContext. The WebContext will have WebContextTools
-    * in addition to the ordinary ContextTools loaded from config.
-    */
-   public WebContext(final Broker broker) {
-      super(broker);
-      _log = broker.getLog("WebContext");
-      loadTools("WebContextTools");
-   }
+    /**
+     * Construct a new WebContext. The WebContext will have WebContextTools
+     * in addition to the ordinary ContextTools loaded from config.
+     */
+    public WebContext (final Broker broker)
+    {
+        super(broker);
+        _log = broker.getLog("WebContext");
+        loadTools("WebContextTools");
+    }
 
 
-   /**
-    * Create a new WebContext like this one, only with new values
-    * for request and response
-    */
-   final public WebContext newInstance(
-         final HttpServletRequest req,
-         final HttpServletResponse resp) {
-      try {
+    /**
+     * Create a new WebContext like this one, only with new values
+     * for request and response
+     */
+    final public WebContext newInstance (
+            final HttpServletRequest req,
+            final HttpServletResponse resp)
+    {
+        try
+        {
 
-         // want: new local vars, both existing tools tables, no bean,
-         // plus store req and resp somewhere, plus existing broker
+            // want: new local vars, both existing tools tables, no bean,
+            // plus store req and resp somewhere, plus existing broker
 
-         WebContext wc = (WebContext) clone();
-         wc._request = req;
-         wc._response = resp;
-         return wc;
-      }
-      catch (Exception e) {
-         _log.error("Clone not supported on WebContext!");
-         return null;
-      }
-   }
+            WebContext wc = (WebContext) clone();
+            wc._request = req;
+            wc._response = resp;
+            return wc;
+        }
+        catch (Exception e)
+        {
+            _log.error("Clone not supported on WebContext!");
+            return null;
+        }
+    }
 
-   /**
-    * Clear a WebContext of it's non-shared data
-    */
-   public void clear() {
-      _request = null;
-      _response = null;
-      super.clear();
-   }
+    /**
+     * Clear a WebContext of it's non-shared data
+     */
+    public void clear ()
+    {
+        _request = null;
+        _response = null;
+        super.clear();
+    }
 
-   /**
-    * Reinitalized a WebContext for a new request
-    */
-   public void reinitialize(HttpServletRequest req, HttpServletResponse resp) {
-      clear();
-      _request = req;
-      _response = resp;
-   }
+    /**
+     * Reinitalized a WebContext for a new request
+     */
+    public void reinitialize (HttpServletRequest req, HttpServletResponse resp)
+    {
+        clear();
+        _request = req;
+        _response = resp;
+    }
 
-   /**
-    * The HttpServletRequest object which contains information
-    * provided by the HttpServlet superclass about the Request.
-    * Much of this data is provided in other forms later on;
-    * those interfaces get their data from this object.
-    * In particular the form data has already been parsed.
-    * <p>
-    * @see HttpServletRequest
-    */
-   public final HttpServletRequest getRequest() {
-      return _request;
-   }
+    /**
+     * The HttpServletRequest object which contains information
+     * provided by the HttpServlet superclass about the Request.
+     * Much of this data is provided in other forms later on;
+     * those interfaces get their data from this object.
+     * In particular the form data has already been parsed.
+     * <p>
+     * @see HttpServletRequest
+     */
+    public final HttpServletRequest getRequest ()
+    {
+        return _request;
+    }
 
-   /**
-    * The HttpServletResponse object which contains information
-    * about the response we are going to send back. Many of these
-    * services are provided through other interfaces here as well;
-    * they are built on top of this object.
-    * <p>
-    * @see HttpServletResponse
-    */
-   public final HttpServletResponse getResponse() {
-      return _response;
-   }
+    /**
+     * The HttpServletResponse object which contains information
+     * about the response we are going to send back. Many of these
+     * services are provided through other interfaces here as well;
+     * they are built on top of this object.
+     * <p>
+     * @see HttpServletResponse
+     */
+    public final HttpServletResponse getResponse ()
+    {
+        return _response;
+    }
 
-   // CONVENIENCE METHODS
+    // CONVENIENCE METHODS
 
-   /**
-	 * Try to get the value of a form variable from the request
-	 */
-	final public Object getPossibleForm( String strKey ) {
-		try {
-			Form obForm = ( Form ) getProperty( "Form" );
-			return obForm.getPossibleForm( strKey );
-		}
-		catch ( Exception e ) {
-			_log.error( "Could not load Form tool", e );
-			return null;
-		}
-	}
+    /**
+     * Try to get the value of a form variable from the request
+     */
+    final public Object getPossibleForm (String strKey)
+    {
+        try
+        {
+            Form obForm = (Form) getProperty("Form");
+            return obForm.getPossibleForm(strKey);
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load Form tool", e);
+            return null;
+        }
+    }
 
-	/**
-    * Get the value of a form variable from the request
-    */
-   final public String getForm(String field) {
-      try {
-         Bag ct = (Bag) getProperty("Form");
-         return (String) ct.get(field);
-      }
-      catch (Exception e) {
-         _log.error("Could not load Form tool", e);
-         return null;
-      }
-   }
+    /**
+     * Get the value of a form variable from the request
+     */
+    final public String getForm (String field)
+    {
+        try
+        {
+            Bag ct = (Bag) getProperty("Form");
+            return (String) ct.get(field);
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load Form tool", e);
+            return null;
+        }
+    }
 
-   /**
-    * Get the value of a form variable from the request as an array
-    */
-   final public String[] getFormList(String field) {
-      try {
-         Bag ct = (Bag) getProperty("FormList");
-         return (String[]) ct.get(field);
-      }
-      catch (Exception e) {
-         _log.error("Could not load FormList tool", e);
-         return null;
-      }
-   }
+    /**
+     * Get the value of a form variable from the request as an array
+     */
+    final public String[] getFormList (String field)
+    {
+        try
+        {
+            Bag ct = (Bag) getProperty("FormList");
+            return (String[]) ct.get(field);
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load FormList tool", e);
+            return null;
+        }
+    }
 
-   /**
-    * Get the CGI Tool
-    */
-   final public CGI_Impersonator getCGI() {
-      try {
-         return (CGI_Impersonator) getProperty("CGI");
-      }
-      catch (Exception e) {
-         _log.error("Could not load CGI tool", e);
-         return null;
-      }
-   }
+    /**
+     * Get the CGI Tool
+     */
+    final public CGI_Impersonator getCGI ()
+    {
+        try
+        {
+            return (CGI_Impersonator) getProperty("CGI");
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load CGI tool", e);
+            return null;
+        }
+    }
 
-   /**
-    * get a cookie from the request
-    */
-   final public Cookie getCookie(String name) {
-      try {
-         CookieJar cj = (CookieJar) getProperty("Cookie");
-         return (Cookie) cj.get(name);
-      }
-      catch (Exception e) {
-         _log.error("Could not load Cookie tool", e);
-         return null;
-      }
-   }
+    /**
+     * get a cookie from the request
+     */
+    final public Cookie getCookie (String name)
+    {
+        try
+        {
+            CookieJar cj = (CookieJar) getProperty("Cookie");
+            return (Cookie) cj.get(name);
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load Cookie tool", e);
+            return null;
+        }
+    }
 
-   /**
-    * send a cookie in the response
-    */
-   final public void setCookie(String name, String value) {
-      try {
-         CookieJar cj = (CookieJar) getProperty("Cookie");
-         cj.set(name, value);
-      }
-      catch (Exception e) {
-         _log.error("Could not load Cookie tool", e);
-      }
-   }
+    /**
+     * send a cookie in the response
+     */
+    final public void setCookie (String name, String value)
+    {
+        try
+        {
+            CookieJar cj = (CookieJar) getProperty("Cookie");
+            cj.set(name, value);
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load Cookie tool", e);
+        }
+    }
 
-   /**
-    * get the session object
-    */
-   final public HttpSession getSession() {
-      try {
-         return (HttpSession) getProperty("Session");
-      }
-      catch (Exception e) {
-         _log.error("Could not load Session tool", e);
-         return null;
-      }
-   }
+    /**
+     * get the session object
+     */
+    final public HttpSession getSession ()
+    {
+        try
+        {
+            return (HttpSession) getProperty("Session");
+        }
+        catch (Exception e)
+        {
+            _log.error("Could not load Session tool", e);
+            return null;
+        }
+    }
 }

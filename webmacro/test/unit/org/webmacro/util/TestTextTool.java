@@ -11,19 +11,26 @@ package org.webmacro.util;
 import junit.framework.TestCase;
 import org.webmacro.servlet.TextTool;
 
-public class TestTextTool extends TestCase {
-    public TestTextTool(String s) {
+public class TestTextTool extends TestCase
+{
+    public TestTextTool (String s)
+    {
         super(s);
     }
 
-    public void testRTrim() {
+
+    public void testRTrim ()
+    {
         String toTrim = "This is a test     ";
         String expected = "This is a test";
-        assertEquals (expected, TextTool.rtrim(toTrim));
+        assertEquals(expected, TextTool.rtrim(toTrim));
     }
-    public void testLTrim() {
+
+
+    public void testLTrim ()
+    {
         String toTrim = "      This is a test     ";
         String expected = "This is a test     ";
-        assertEquals (expected, TextTool.ltrim(toTrim));
+        assertEquals(expected, TextTool.ltrim(toTrim));
     }
 }

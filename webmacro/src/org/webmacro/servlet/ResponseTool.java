@@ -30,20 +30,25 @@ import org.webmacro.PropertyException;
 /**
  * Provide Template with access to form data.
  */
-public class ResponseTool implements ContextTool {
+public class ResponseTool implements ContextTool
+{
 
-   public Object init(Context context)
-         throws PropertyException {
-      try {
-         WebContext wc = (WebContext) context;
-         return wc.getResponse();
-      }
-      catch (ClassCastException ce) {
-         throw new PropertyException(
-               "This only works with WebContext", ce);
-      }
-   }
+    public Object init (Context context)
+            throws PropertyException
+    {
+        try
+        {
+            WebContext wc = (WebContext) context;
+            return wc.getResponse();
+        }
+        catch (ClassCastException ce)
+        {
+            throw new PropertyException(
+                    "This only works with WebContext", ce);
+        }
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

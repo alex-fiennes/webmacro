@@ -14,13 +14,16 @@ package org.webmacro.util;
  *
  * @author  Keats
  */
-public class Eval {
-   
-   /** Private constructor for a static class */
-   private Eval() {
-   }
-   
-   static public Object eval(Object o){
-      return o;
-   }
+public class Eval
+{
+
+    /** Private constructor for a static class */
+    private Eval ()
+    {
+    }
+
+    static public Object eval (Object o)
+    {
+        return o;
+    }
 }

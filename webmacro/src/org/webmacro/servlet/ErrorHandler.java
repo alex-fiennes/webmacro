@@ -33,64 +33,73 @@ import org.webmacro.engine.StringTemplate;
  * be constructed--it writes out an error message
  * explaining what went wrong.
  */
-final class ErrorHandler implements Handler {
+final class ErrorHandler implements Handler
+{
 
-   private static final String DEFAULT_ERROR_TEXT =
-         "<HTML><HEAD><TITLE>Error</TITLE></HEAD>\n"
-         + "#set $Response.ContentType = \"text/html\"\n"
-         + "<BODY><H1>Error</H1>"
-         + "<HR>$error</BODY></HTML>";
+    private static final String DEFAULT_ERROR_TEXT =
+            "<HTML><HEAD><TITLE>Error</TITLE></HEAD>\n"
+            + "#set $Response.ContentType = \"text/html\"\n"
+            + "<BODY><H1>Error</H1>"
+            + "<HR>$error</BODY></HTML>";
 
-   private Template _errorTemplate = null;
+    private Template _errorTemplate = null;
 
-   /**
-    * The default error handler simply returns its template
-    * @see TemplateStore
-    * @exception HandlerException if you don't want to handle the connect
-    * @return A Template which can be used to interpret the connection
-    */
-   public Template accept(WebContext c)
-         throws HandlerException {
-      Broker broker = c.getBroker();
-      String templateName;
+    /**
+     * The default error handler simply returns its template
+     * @see TemplateStore
+     * @exception HandlerException if you don't want to handle the connect
+     * @return A Template which can be used to interpret the connection
+     */
+    public Template accept (WebContext c)
+            throws HandlerException
+    {
+        Broker broker = c.getBroker();
+        String templateName;
 
-      try {
-         templateName = (String) broker.get("config", WMServlet.ERROR_TEMPLATE);
-      }
-      catch (ResourceException e) {
-         templateName = WMServlet.ERROR_TEMPLATE_DEFAULT;
-      }
+        try
+        {
+            templateName = (String) broker.get("config", WMServlet.ERROR_TEMPLATE);
+        }
+        catch (ResourceException e)
+        {
+            templateName = WMServlet.ERROR_TEMPLATE_DEFAULT;
+        }
 
-      try {
-         _errorTemplate = (Template) broker.get("template", templateName);
-      }
-      catch (ResourceException e) {
-         _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT,
-                                             "WebMacro default error template");
-      }
+        try
+        {
+            _errorTemplate = (Template) broker.get("template", templateName);
+        }
+        catch (ResourceException e)
+        {
+            _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT,
+                    "WebMacro default error template");
+        }
 
-      return _errorTemplate;
-   }
+        return _errorTemplate;
+    }
 
-   /**
-    * Does nothing
-    */
-   public void destroy() {
-   }
+    /**
+     * Does nothing
+     */
+    public void destroy ()
+    {
+    }
 
-   /**
-    * Does nothing
-    */
-   public void init() {
-   }
+    /**
+     * Does nothing
+     */
+    public void init ()
+    {
+    }
 
 
-   /**
-    * Return the name of this handler
-    */
-   final public String toString() {
-      return "WebMacro ErrorHandler";
-   }
+    /**
+     * Return the name of this handler
+     */
+    final public String toString ()
+    {
+        return "WebMacro ErrorHandler";
+    }
 }
 
 

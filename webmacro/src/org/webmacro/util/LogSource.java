@@ -32,233 +32,268 @@ import org.webmacro.Log;
  * LogManager so you cannot instantiate one directly. Instead
  * you must ask the Logmanager or a log instance.
  */
-public class LogSource implements Log {
+public class LogSource implements Log
+{
 
-   final private String _type;
-   final private String _description;
-   final private String _category;
+    final private String _type;
+    final private String _description;
+    final private String _category;
 
-   /**
-    * The number of targets currently registered with this
-    * LogSource.
-    */
-   private int _tCount = 0; // count number of targets
+    /**
+     * The number of targets currently registered with this
+     * LogSource.
+     */
+    private int _tCount = 0; // count number of targets
 
-   final public boolean hasTargets() {
-      return (_tCount != 0);
-   }
+    final public boolean hasTargets ()
+    {
+        return (_tCount != 0);
+    }
 
-   final private LogTarget[][] _targets = new LogTarget[LogSystem.NONE][];
+    final private LogTarget[][] _targets = new LogTarget[LogSystem.NONE][];
 
-   /**
-    * A LogSource must have a category and a type: called by Logsystem
-    */
-   LogSource(String category, String type, String description) {
-      _category = category;
-      _type = type;
-      _description = description;
-   }
+    /**
+     * A LogSource must have a category and a type: called by Logsystem
+     */
+    LogSource (String category, String type, String description)
+    {
+        _category = category;
+        _type = type;
+        _description = description;
+    }
 
-   /**
-    * The type of this log source, as it would print in the log.
-    * For example "sys", or "log", or "wm". This type should be
-    * fairly short as it may be printed on every log line.
-    */
-   public String getType() {
-      return _type;
-   }
+    /**
+     * The type of this log source, as it would print in the log.
+     * For example "sys", or "log", or "wm". This type should be
+     * fairly short as it may be printed on every log line.
+     */
+    public String getType ()
+    {
+        return _type;
+    }
 
-   /**
-    * Get a description of this log source: what kind of messages
-    * does it contain? This can be a sentence or so of information
-    * about what kind of messages this log represents.
-    */
-   public String getDescription() {
-      return _description;
-   }
+    /**
+     * Get a description of this log source: what kind of messages
+     * does it contain? This can be a sentence or so of information
+     * about what kind of messages this log represents.
+     */
+    public String getDescription ()
+    {
+        return _description;
+    }
 
-   /**
-    * The category for this log source, as it woudl print in the
-    * log. This is the name which was passed to LogSystem to get
-    * the LogSystem instance from which this Log was created.
-    */
-   public String getCategory() {
-      return _category;
-   }
+    /**
+     * The category for this log source, as it woudl print in the
+     * log. This is the name which was passed to LogSystem to get
+     * the LogSystem instance from which this Log was created.
+     */
+    public String getCategory ()
+    {
+        return _category;
+    }
 
-   /**
-    * Explain myself
-    */
-   public String toString() {
-      return "LogSource(" + _category + "," + _type + "," + _description + ")";
-   }
+    /**
+     * Explain myself
+     */
+    public String toString ()
+    {
+        return "LogSource(" + _category + "," + _type + "," + _description + ")";
+    }
 
-   /**
-    * Called by LogSystem to add a target
-    */
-   void addTarget(LogTarget t, int level) {
+    /**
+     * Called by LogSystem to add a target
+     */
+    void addTarget (LogTarget t, int level)
+    {
 
-      if ((level < LogSystem.ALL) || (level > LogSystem.NONE)) {
-         error("Attempt to target with invalid log level: " + level);
-         return;
-      }
-
-      LogTarget[] ts = _targets[level];
-      if (ts == null) { // we're the first
-         ts = new LogTarget[1];
-         ts[0] = t;
-         _targets[level] = ts;
-         _tCount++;
-         return;
-      }
-
-      // already got it?
-      for (int i = 0; i < ts.length; i++) {
-         if (ts[i] == t) {
+        if ((level < LogSystem.ALL) || (level > LogSystem.NONE))
+        {
+            error("Attempt to target with invalid log level: " + level);
             return;
-         }
-      }
+        }
 
-      // add it
-      LogTarget[] nts = new LogTarget[ts.length + 1];
-      System.arraycopy(ts, 0, nts, 0, ts.length);
-      nts[ts.length] = t;
-      _targets[level] = nts;
-      _tCount++;
-   }
+        LogTarget[] ts = _targets[level];
+        if (ts == null)
+        { // we're the first
+            ts = new LogTarget[1];
+            ts[0] = t;
+            _targets[level] = ts;
+            _tCount++;
+            return;
+        }
 
-   /**
-    * Remove a target from a specific list
-    */
-   void removeTarget(LogTarget t, int level) {
-      LogTarget[] ts = _targets[level];
-      if (ts == null) {
-         return;
-      }
-      boolean match = false;
-      for (int i = 0; i < ts.length; i++) {
-         if (ts[i] == t) {
-            match = true;
-         }
-      }
-      if (!match) {
-         return;
-      }
-      _tCount--;
-      if (ts.length == 1) {
-         _targets[level] = null;
-      }
+        // already got it?
+        for (int i = 0; i < ts.length; i++)
+        {
+            if (ts[i] == t)
+            {
+                return;
+            }
+        }
 
-      LogTarget[] nts = new LogTarget[ts.length - 1];
-      int pos = 0;
-      for (int i = 0; i < ts.length; i++) {
-         if (ts[i] != t) {
-            nts[pos++] = ts[i];
-         }
-      }
-      _targets[level] = nts;
-   }
+        // add it
+        LogTarget[] nts = new LogTarget[ts.length + 1];
+        System.arraycopy(ts, 0, nts, 0, ts.length);
+        nts[ts.length] = t;
+        _targets[level] = nts;
+        _tCount++;
+    }
 
-   /**
-    * Debug messages are incidental programmer notes which should
-    * not be enabled in a production system. They are useful only
-    * during development.
-    */
-   public void debug(String msg, Throwable e) {
-      log(LogSystem.DEBUG, msg, e);
-   }
+    /**
+     * Remove a target from a specific list
+     */
+    void removeTarget (LogTarget t, int level)
+    {
+        LogTarget[] ts = _targets[level];
+        if (ts == null)
+        {
+            return;
+        }
+        boolean match = false;
+        for (int i = 0; i < ts.length; i++)
+        {
+            if (ts[i] == t)
+            {
+                match = true;
+            }
+        }
+        if (!match)
+        {
+            return;
+        }
+        _tCount--;
+        if (ts.length == 1)
+        {
+            _targets[level] = null;
+        }
 
-   /**
-    * A shortform for debug(msg,null)
-    */
-   public void debug(String msg) {
-      log(LogSystem.DEBUG, msg, null);
-   }
+        LogTarget[] nts = new LogTarget[ts.length - 1];
+        int pos = 0;
+        for (int i = 0; i < ts.length; i++)
+        {
+            if (ts[i] != t)
+            {
+                nts[pos++] = ts[i];
+            }
+        }
+        _targets[level] = nts;
+    }
 
-   /**
-    * Info is fairly unimportant information about routine processing
-    * within the system. They may be interesting on a production
-    * system, but also can typically be ignored.
-    */
-   public void info(String msg) {
-      log(LogSystem.INFO, msg, null);
-   }
+    /**
+     * Debug messages are incidental programmer notes which should
+     * not be enabled in a production system. They are useful only
+     * during development.
+     */
+    public void debug (String msg, Throwable e)
+    {
+        log(LogSystem.DEBUG, msg, e);
+    }
 
-   /**
-    * Notices are important information about routine processing
-    * within the system. For example, startup and shutdown messages.
-    * They are likely interesting to people running a production
-    * system since they provide timestamps for important events.
-    */
-   public void notice(String msg) {
-      log(LogSystem.NOTICE, msg, null);
-   }
+    /**
+     * A shortform for debug(msg,null)
+     */
+    public void debug (String msg)
+    {
+        log(LogSystem.DEBUG, msg, null);
+    }
 
-   /**
-    * Warnings are messages outlining unexpected non-routine events
-    * within the system. They may indicate larger problems, but in
-    * and of themselves refer to problems the system is capable of
-    * handling on its own. On a correctly functioning production
-    * system you would expect to see only a few warnings.
-    */
-   public void warning(String msg, Throwable e) {
-      log(LogSystem.WARNING, msg, e);
-   }
+    /**
+     * Info is fairly unimportant information about routine processing
+     * within the system. They may be interesting on a production
+     * system, but also can typically be ignored.
+     */
+    public void info (String msg)
+    {
+        log(LogSystem.INFO, msg, null);
+    }
 
-   /**
-    * A shortform for warning(msg,null)
-    */
-   public void warning(String msg) {
-      log(LogSystem.WARNING, msg, null);
-   }
+    /**
+     * Notices are important information about routine processing
+     * within the system. For example, startup and shutdown messages.
+     * They are likely interesting to people running a production
+     * system since they provide timestamps for important events.
+     */
+    public void notice (String msg)
+    {
+        log(LogSystem.NOTICE, msg, null);
+    }
 
-   /**
-    * A shortform for error(msg,null)
-    */
-   public void error(String msg) {
-      log(LogSystem.ERROR, msg, null);
-   }
+    /**
+     * Warnings are messages outlining unexpected non-routine events
+     * within the system. They may indicate larger problems, but in
+     * and of themselves refer to problems the system is capable of
+     * handling on its own. On a correctly functioning production
+     * system you would expect to see only a few warnings.
+     */
+    public void warning (String msg, Throwable e)
+    {
+        log(LogSystem.WARNING, msg, e);
+    }
 
-   /**
-    * An error is a major failure within the system. Typically it is
-    * something which cannot easily be handled by the system. On a
-    * correctly functioning production system you would not expect
-    * to see any error messages.
-    */
-   public void error(String msg, Throwable e) {
-      log(LogSystem.ERROR, msg, e);
-   }
+    /**
+     * A shortform for warning(msg,null)
+     */
+    public void warning (String msg)
+    {
+        log(LogSystem.WARNING, msg, null);
+    }
+
+    /**
+     * A shortform for error(msg,null)
+     */
+    public void error (String msg)
+    {
+        log(LogSystem.ERROR, msg, null);
+    }
+
+    /**
+     * An error is a major failure within the system. Typically it is
+     * something which cannot easily be handled by the system. On a
+     * correctly functioning production system you would not expect
+     * to see any error messages.
+     */
+    public void error (String msg, Throwable e)
+    {
+        log(LogSystem.ERROR, msg, e);
+    }
 
 
-   public boolean loggingDebug() {
-      return (_targets[LogSystem.DEBUG] != null);
-   }
+    public boolean loggingDebug ()
+    {
+        return (_targets[LogSystem.DEBUG] != null);
+    }
 
-   public boolean loggingInfo() {
-      return (_targets[LogSystem.INFO] != null);
-   }
+    public boolean loggingInfo ()
+    {
+        return (_targets[LogSystem.INFO] != null);
+    }
 
-   public boolean loggingNotice() {
-      return (_targets[LogSystem.NOTICE] != null);
-   }
+    public boolean loggingNotice ()
+    {
+        return (_targets[LogSystem.NOTICE] != null);
+    }
 
-   public boolean loggingWarning() {
-      return (_targets[LogSystem.WARNING] != null);
-   }
+    public boolean loggingWarning ()
+    {
+        return (_targets[LogSystem.WARNING] != null);
+    }
 
-   protected void log(int level, String msg, Throwable e) {
-      LogTarget[] targets = _targets[level];
-      if (targets == null) {
-         return;
-      }
-      String sLevel = LogSystem.LEVELS[level];
-      java.util.Date date = Clock.getDate();
-      boolean flush = (level >= LogSystem.NOTICE);
-      for (int i = 0; i < targets.length; i++) {
-         targets[i].log(date, _type, sLevel, msg, e);
-         if (flush) targets[i].flush();
-      }
-   }
+    protected void log (int level, String msg, Throwable e)
+    {
+        LogTarget[] targets = _targets[level];
+        if (targets == null)
+        {
+            return;
+        }
+        String sLevel = LogSystem.LEVELS[level];
+        java.util.Date date = Clock.getDate();
+        boolean flush = (level >= LogSystem.NOTICE);
+        for (int i = 0; i < targets.length; i++)
+        {
+            targets[i].log(date, _type, sLevel, msg, e);
+            if (flush) targets[i].flush();
+        }
+    }
 }
 
 

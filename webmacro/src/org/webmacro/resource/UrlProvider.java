@@ -23,15 +23,15 @@
 
 package org.webmacro.resource;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This is the canonical provider for mapping URLs to Handlers. The
@@ -42,168 +42,193 @@ import org.webmacro.util.Settings;
  * handlers based on whatever criteria you wanted.
  */
 
-final public class UrlProvider extends CachingProvider {
+final public class UrlProvider extends CachingProvider
+{
 
-   static final public long AVG_TIMEOUT = 10000;
-   static final public long MAX_TIMEOUT = 60000;
-   static final public long MIN_TIMEOUT = 5000;
+    static final public long AVG_TIMEOUT = 10000;
+    static final public long MAX_TIMEOUT = 60000;
+    static final public long MIN_TIMEOUT = 5000;
 
-   Broker _broker;
+    Broker _broker;
 
-   private String defaultEncoding;
+    private String defaultEncoding;
 
-   /**
-    * We serve up "url" type resources
-    */
-   final public String getType() {
-      return "url";
-   }
+    /**
+     * We serve up "url" type resources
+     */
+    final public String getType ()
+    {
+        return "url";
+    }
 
 
-   public void init(Broker b, Settings config) throws InitException {
-      super.init(b, config);
-      _broker = b;
-      defaultEncoding = config.getSetting("TemplateEncoding");
-   }
+    public void init (Broker b, Settings config) throws InitException
+    {
+        super.init(b, config);
+        _broker = b;
+        defaultEncoding = config.getSetting("TemplateEncoding");
+    }
 
-   /**
-    * Load a URL from the specified name and return it. The expire
-    * time for the SoftReference will be set to the expire time
-    * for the loaded URL.
-    * <p>
-    * Http expires information will be obeyed between the MIN_TIMEOUT
-    * and MAX_TIMEOUT bounds. URLs which do not specify a timeout,
-    * and files from the filesystem, will be cached for AVG_TIMEOUT
-    * milliseconds.
-    */
-   final public Object load(String name, CacheElement ce)
-         throws ResourceException {
+    /**
+     * Load a URL from the specified name and return it. The expire
+     * time for the SoftReference will be set to the expire time
+     * for the loaded URL.
+     * <p>
+     * Http expires information will be obeyed between the MIN_TIMEOUT
+     * and MAX_TIMEOUT bounds. URLs which do not specify a timeout,
+     * and files from the filesystem, will be cached for AVG_TIMEOUT
+     * milliseconds.
+     */
+    final public Object load (String name, CacheElement ce)
+            throws ResourceException
+    {
 
-      try {
-         URL u;
-         if (name.indexOf(":") < 3) {
-            u = new URL("file", null, -1, name);
-         }
-         else {
-            u = new URL(name);
-         }
-
-         URLConnection uc;
-         InputStream is;
-         try {
-            uc = u.openConnection();
-            is = uc.getInputStream();
-         }
-         catch (IOException e) {
-            if (name.indexOf(":") < 3) {
-               uc = _broker.getResource(name).openConnection();
-               is = uc.getInputStream();
+        try
+        {
+            URL u;
+            if (name.indexOf(":") < 3)
+            {
+                u = new URL("file", null, -1, name);
             }
-            else {
-               e.printStackTrace();
-               throw e;
+            else
+            {
+                u = new URL(name);
             }
-         }
 
-         String encoding = uc.getContentEncoding();
-         if (encoding == null) {
-            // we have to guess encoding, so let's take
-            // our default TemplateEncoding
-            encoding = defaultEncoding;
-         }
-         Reader in = new InputStreamReader(
-               new BufferedInputStream(is), encoding);
+            URLConnection uc;
+            InputStream is;
+            try
+            {
+                uc = u.openConnection();
+                is = uc.getInputStream();
+            }
+            catch (IOException e)
+            {
+                if (name.indexOf(":") < 3)
+                {
+                    uc = _broker.getResource(name).openConnection();
+                    is = uc.getInputStream();
+                }
+                else
+                {
+                    e.printStackTrace();
+                    throw e;
+                }
+            }
 
-         int length = uc.getContentLength();
-         if (length == -1) {
-            length = 1024;
-         }
-/**
-         long now = System.currentTimeMillis();
-         long timeout = uc.getExpiration();
-         if (timeout != 0) {
-            timeout -= now;
-         }
-         else {
-            timeout = AVG_TIMEOUT;
-         }
-         if (timeout > MAX_TIMEOUT)
-            timeout = MAX_TIMEOUT;
-         else if (timeout < MIN_TIMEOUT) timeout = MIN_TIMEOUT;
-**/
+            String encoding = uc.getContentEncoding();
+            if (encoding == null)
+            {
+                // we have to guess encoding, so let's take
+                // our default TemplateEncoding
+                encoding = defaultEncoding;
+            }
+            Reader in = new InputStreamReader(
+                    new BufferedInputStream(is), encoding);
 
-         char buf[] = new char[1024];
-         StringWriter sw = new StringWriter(length);
-         int num;
-         while ((num = in.read(buf)) != -1) {
-            sw.write(buf, 0, num);
-         }
-         in.close();
-         return sw.toString();
-      }
-      catch (Exception e) {
-         throw new ResourceException(this + " unable to load " + name, e);
-      }
-   }
+            int length = uc.getContentLength();
+            if (length == -1)
+            {
+                length = 1024;
+            }
+            /**
+             long now = System.currentTimeMillis();
+             long timeout = uc.getExpiration();
+             if (timeout != 0) {
+             timeout -= now;
+             }
+             else {
+             timeout = AVG_TIMEOUT;
+             }
+             if (timeout > MAX_TIMEOUT)
+             timeout = MAX_TIMEOUT;
+             else if (timeout < MIN_TIMEOUT) timeout = MIN_TIMEOUT;
+             **/
+
+            char buf[] = new char[1024];
+            StringWriter sw = new StringWriter(length);
+            int num;
+            while ((num = in.read(buf)) != -1)
+            {
+                sw.write(buf, 0, num);
+            }
+            in.close();
+            return sw.toString();
+        }
+        catch (Exception e)
+        {
+            throw new ResourceException(this + " unable to load " + name, e);
+        }
+    }
 
 
-   /**
-    * Utility routine to get the last modification date for a URL.
-    * The standard implementation of .getLastModified() doesn't work
-    * for file or jar URLs, so we try to be a bit more clever (running
-    * the risk that we'll shoot ourselves in the foot, of course.)
-    * Also used by BrokerTemplateProvider; maybe this should go somewhere
-    * else?
-    */
-   public static long getUrlLastModified(URL u) {
-      String protocol = u.getProtocol();
-      if (protocol.equals("file")) {
-         // We're going to use the File mechanism instead
-         File f = new File(u.getFile());
-         return f.lastModified();
-      }
-      else if (protocol.equals("jar")) {
-         // We'll extract the jar source and recurse
-         String source = u.getFile();
-         int lastIndex = source.lastIndexOf("!");
-         if (lastIndex > 0)
-            source = source.substring(0, lastIndex);
-         try {
-            return getUrlLastModified(new URL(source));
-         }
-         catch (MalformedURLException e) {
-            return 0;
-         }
-      }
-      else {
-         // Ask the URL, maybe it knows
-         try {
-            URLConnection uc = u.openConnection();
-            uc.connect();
-            return uc.getLastModified();
-         }
-         catch (IOException e) {
-            return 0;
-         }
-      }
-   }
+    /**
+     * Utility routine to get the last modification date for a URL.
+     * The standard implementation of .getLastModified() doesn't work
+     * for file or jar URLs, so we try to be a bit more clever (running
+     * the risk that we'll shoot ourselves in the foot, of course.)
+     * Also used by BrokerTemplateProvider; maybe this should go somewhere
+     * else?
+     */
+    public static long getUrlLastModified (URL u)
+    {
+        String protocol = u.getProtocol();
+        if (protocol.equals("file"))
+        {
+            // We're going to use the File mechanism instead
+            File f = new File(u.getFile());
+            return f.lastModified();
+        }
+        else if (protocol.equals("jar"))
+        {
+            // We'll extract the jar source and recurse
+            String source = u.getFile();
+            int lastIndex = source.lastIndexOf("!");
+            if (lastIndex > 0)
+                source = source.substring(0, lastIndex);
+            try
+            {
+                return getUrlLastModified(new URL(source));
+            }
+            catch (MalformedURLException e)
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            // Ask the URL, maybe it knows
+            try
+            {
+                URLConnection uc = u.openConnection();
+                uc.connect();
+                return uc.getLastModified();
+            }
+            catch (IOException e)
+            {
+                return 0;
+            }
+        }
+    }
 
-   /**
-    * Utility routine to get the input stream associated with a URL.
-    * It special-cases "file" URLs because this way is faster.  If it
-    * doesn't work on some platforms (I could imagine some Windows JVM
-    * breaking) then we can back off to the standard implementation.
-    * Also used by BrokerTemplateProvider; maybe this should go somewhere
-    * else?
-    */
-   public static InputStream getUrlInputStream(URL u) throws IOException {
-      if (u.getProtocol().equals("file")) {
-         InputStream is = new FileInputStream(new File(u.getFile()));
-         return is;
-      }
-      else
-         return u.openStream();
-   }
+    /**
+     * Utility routine to get the input stream associated with a URL.
+     * It special-cases "file" URLs because this way is faster.  If it
+     * doesn't work on some platforms (I could imagine some Windows JVM
+     * breaking) then we can back off to the standard implementation.
+     * Also used by BrokerTemplateProvider; maybe this should go somewhere
+     * else?
+     */
+    public static InputStream getUrlInputStream (URL u) throws IOException
+    {
+        if (u.getProtocol().equals("file"))
+        {
+            InputStream is = new FileInputStream(new File(u.getFile()));
+            return is;
+        }
+        else
+            return u.openStream();
+    }
 
 }
 

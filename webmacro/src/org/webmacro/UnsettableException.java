@@ -29,16 +29,18 @@ package org.webmacro;
  * not settable.
  * @see ContextTool
  */
-public class UnsettableException extends ContextException {
+public class UnsettableException extends ContextException
+{
 
-   /**
-    * Constructor only requires a reason
-    * <p>
-    * @param reason explains what went wrong
-    */
-   public UnsettableException(String reason) {
-      super(reason);
-   }
+    /**
+     * Constructor only requires a reason
+     * <p>
+     * @param reason explains what went wrong
+     */
+    public UnsettableException (String reason)
+    {
+        super(reason);
+    }
 
 }
 

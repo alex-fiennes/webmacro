@@ -31,108 +31,123 @@
  */
 package org.webmacro.servlet;
 
-import java.util.*;
-import javax.servlet.*;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.util.Settings;
 
-abstract public class ServletBroker extends Broker {
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import java.util.Map;
+import java.util.Properties;
+import java.util.WeakHashMap;
 
-   protected ServletContext _servletContext;
+abstract public class ServletBroker extends Broker
+{
 
-     /**
-      * Tracks ServletContexts we have been instantiated for, to prevent
-      * duplicate log targets where multiple ServletBroker instances are
-      * created. We use WeakHashMap instead of Set because it does the
-      * key polled removal for us.
-      */
-     private static Map servletContextsWithLogTargets = new WeakHashMap();
+    protected ServletContext _servletContext;
 
-     protected ServletBroker(ServletContext sc) throws InitException {
-      super((Broker) null, sc.toString());
-      _servletContext = sc;
-   }
+    /**
+     * Tracks ServletContexts we have been instantiated for, to prevent
+     * duplicate log targets where multiple ServletBroker instances are
+     * created. We use WeakHashMap instead of Set because it does the
+     * key polled removal for us.
+     */
+    private static Map servletContextsWithLogTargets = new WeakHashMap();
 
-   public void initLog(Settings config) {
-      String logFile = config.getSetting("LogFile");
-      if ((logFile == null || logFile.equals(""))
-            && _config.getBooleanSetting("LogUsingServletLog"))
-         addLogTarget();
-      else
-         initLog();
-   }
+    protected ServletBroker (ServletContext sc) throws InitException
+    {
+        super((Broker) null, sc.toString());
+        _servletContext = sc;
+    }
 
-     private void addLogTarget()
-     {
-          synchronized (servletContextsWithLogTargets)
-          {
-               if (!servletContextsWithLogTargets.containsKey(_servletContext))
-               {
-                    _ls.addTarget( new ServletLog( _servletContext, _config ));
-                    servletContextsWithLogTargets.put( _servletContext, Boolean.TRUE);
-               }
-          }
-     }
+    public void initLog (Settings config)
+    {
+        String logFile = config.getSetting("LogFile");
+        if ((logFile == null || logFile.equals(""))
+                && _config.getBooleanSetting("LogUsingServletLog"))
+            addLogTarget();
+        else
+            initLog();
+    }
 
-     public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
-      int minorVersion, majorVersion;
+    private void addLogTarget ()
+    {
+        synchronized (servletContextsWithLogTargets)
+        {
+            if (!servletContextsWithLogTargets.containsKey(_servletContext))
+            {
+                _ls.addTarget(new ServletLog(_servletContext, _config));
+                servletContextsWithLogTargets.put(_servletContext, Boolean.TRUE);
+            }
+        }
+    }
 
-      ServletContext sc = s.getServletConfig().getServletContext();
-      try {
-         majorVersion = sc.getMajorVersion();
-         minorVersion = sc.getMinorVersion();
-      }
-      catch (NoSuchMethodError e) {
-         majorVersion = 2;
-         minorVersion = 0;
-      }
+    public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
+    {
+        int minorVersion, majorVersion;
 
-      Broker b;
-      if (majorVersion > 2
-            || (majorVersion == 2 && minorVersion >= 2))
-         b = Servlet22Broker.getBroker(s, additionalProperties);
-      else
-         b = Servlet20Broker.getBroker(s, additionalProperties);
-      b.startClient();
-      return b;
-   }
+        ServletContext sc = s.getServletConfig().getServletContext();
+        try
+        {
+            majorVersion = sc.getMajorVersion();
+            minorVersion = sc.getMinorVersion();
+        }
+        catch (NoSuchMethodError e)
+        {
+            majorVersion = 2;
+            minorVersion = 0;
+        }
 
-   public static Broker getBroker(Servlet s) throws InitException {
-       return getBroker(s, null);
-   }
+        Broker b;
+        if (majorVersion > 2
+                || (majorVersion == 2 && minorVersion >= 2))
+            b = Servlet22Broker.getBroker(s, additionalProperties);
+        else
+            b = Servlet20Broker.getBroker(s, additionalProperties);
+        b.startClient();
+        return b;
+    }
 
-   public ServletContext getServletContext() {
-      return _servletContext;
-   }
+    public static Broker getBroker (Servlet s) throws InitException
+    {
+        return getBroker(s, null);
+    }
 
-   protected static final class PropertiesPair {
-       private final Object obj;
-       private final Properties p;
+    public ServletContext getServletContext ()
+    {
+        return _servletContext;
+    }
 
-       public PropertiesPair(Object s, Properties p) {
-           this.obj = s;
-           this.p = p;
-       }
+    protected static final class PropertiesPair
+    {
+        private final Object obj;
+        private final Properties p;
 
-       public boolean equals(Object o) {
-           if (this == o) return true;
-           if (!(o instanceof PropertiesPair)) return false;
+        public PropertiesPair (Object s, Properties p)
+        {
+            this.obj = s;
+            this.p = p;
+        }
 
-           final PropertiesPair servletPropertiesPair = (PropertiesPair) o;
+        public boolean equals (Object o)
+        {
+            if (this == o) return true;
+            if (!(o instanceof PropertiesPair)) return false;
 
-           if (!p.equals(servletPropertiesPair.p)) return false;
-           if (!obj.equals(servletPropertiesPair.obj)) return false;
+            final PropertiesPair servletPropertiesPair = (PropertiesPair) o;
 
-           return true;
-       }
+            if (!p.equals(servletPropertiesPair.p)) return false;
+            if (!obj.equals(servletPropertiesPair.obj)) return false;
 
-       public int hashCode() {
-           int result;
-           result = obj.hashCode();
-           result = 29 * result + p.hashCode();
-           return result;
-       }
-   }
+            return true;
+        }
+
+        public int hashCode ()
+        {
+            int result;
+            result = obj.hashCode();
+            result = 29 * result + p.hashCode();
+            return result;
+        }
+    }
 }

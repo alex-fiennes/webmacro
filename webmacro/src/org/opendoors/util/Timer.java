@@ -12,8 +12,8 @@
 
 package org.opendoors.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Observable;
 
 /**
  * This class provides timer and supporting events to client objects
@@ -29,133 +29,147 @@ import java.util.*;
  * Observable is thread-safe and supports multiple listeners to a single
  * observable such as an observable which fires every 24 hours.
  */
-public class Timer extends Observable implements Runnable, Serializable {
+public class Timer extends Observable implements Runnable, Serializable
+{
 
-   /** The timer thread. */
-   private transient Thread timerThread;
+    /** The timer thread. */
+    private transient Thread timerThread;
 
-   /** Signal to stop the thread. */
-   private transient boolean stopThread = false;
+    /** Signal to stop the thread. */
+    private transient boolean stopThread = false;
 
-   /** The name. */
-   private String name;
+    /** The name. */
+    private String name;
 
-   /** The interval for firing. */
-   private int period;  // in milliseconds
+    /** The interval for firing. */
+    private int period;  // in milliseconds
 
-   /** Is a one shot timer. */
-   private boolean oneShot;
+    /** Is a one shot timer. */
+    private boolean oneShot;
 
-   /**
-    * Public constructor to create a timer event source using factory defaults
-    * which are 1 second timer, recurring.
-    */
-   public Timer() {
-      this("PerSecondTimer", 1000, false);
-   }
+    /**
+     * Public constructor to create a timer event source using factory defaults
+     * which are 1 second timer, recurring.
+     */
+    public Timer ()
+    {
+        this("PerSecondTimer", 1000, false);
+    }
 
-   /**
-    * Construct a timer with the certain properties set.
-    * @param The name of the timer.
-    * @param The period in milliseconds.
-    * @param True if this is a oneShot instance
-    */
-   public Timer(String name, int period, boolean oneShot) {
-      super();
+    /**
+     * Construct a timer with the certain properties set.
+     * @param The name of the timer.
+     * @param The period in milliseconds.
+     * @param True if this is a oneShot instance
+     */
+    public Timer (String name, int period, boolean oneShot)
+    {
+        super();
 
-      // Set properties
-      this.name = name;
-      this.period = period;
-      this.oneShot = oneShot;
+        // Set properties
+        this.name = name;
+        this.period = period;
+        this.oneShot = oneShot;
 
-      // Create the clock thread
-      timerThread = new Thread(this, name);
-      timerThread.setDaemon(true);
-      timerThread.start();
-   }
+        // Create the clock thread
+        timerThread = new Thread(this, name);
+        timerThread.setDaemon(true);
+        timerThread.start();
+    }
 
-   /**
-    * Stop the timer
-    */
-   public void stop() {
-      stopThread = true;
-   }
+    /**
+     * Stop the timer
+     */
+    public void stop ()
+    {
+        stopThread = true;
+    }
 
 
-   // Accessor methods
-   /**
-    * Gets the name of the timer.
-    * @return The timer name.
-    */
-   public String getName() {
-      return name;
-   }
+    // Accessor methods
+    /**
+     * Gets the name of the timer.
+     * @return The timer name.
+     */
+    public String getName ()
+    {
+        return name;
+    }
 
-   /**
-    * Sets the name of the timer.
-    * @param The textual name.
-    */
-   public void setName(String n) {
-      name = n;
-   }
+    /**
+     * Sets the name of the timer.
+     * @param The textual name.
+     */
+    public void setName (String n)
+    {
+        name = n;
+    }
 
-   /**
-    * Gets the period between timer events.
-    * @return The interval in milliseconds
-    */
-   public int getPeriod() {
-      return period;
-   }
+    /**
+     * Gets the period between timer events.
+     * @return The interval in milliseconds
+     */
+    public int getPeriod ()
+    {
+        return period;
+    }
 
-   /**
-    * Sets the period in milliseconds.
-    * @param The interval.
-    */
-   public void setPeriod(int p) {
-      period = p;
-      if (timerThread != null)
-         timerThread.interrupt();
-   }
+    /**
+     * Sets the period in milliseconds.
+     * @param The interval.
+     */
+    public void setPeriod (int p)
+    {
+        period = p;
+        if (timerThread != null)
+            timerThread.interrupt();
+    }
 
-   /**
-    * Interrogates if this is a one-shot operation.
-    * @return  True, if a one-shot operation.
-    */
-   public boolean isOneShot() {
-      return oneShot;
-   }
+    /**
+     * Interrogates if this is a one-shot operation.
+     * @return  True, if a one-shot operation.
+     */
+    public boolean isOneShot ()
+    {
+        return oneShot;
+    }
 
-   /**
-    * Set this object to be one-shot or not.
-    * @param True, if one-shot operation desired
-    */
-   public void setOneShot(boolean os) {
-      oneShot = os;
-   }
+    /**
+     * Set this object to be one-shot or not.
+     * @param True, if one-shot operation desired
+     */
+    public void setOneShot (boolean os)
+    {
+        oneShot = os;
+    }
 
-   /**
-    * Run the timer.
-    */
-   public void run() {
-      while (timerThread != null) {
-         // Sleep for the period
-         try {
-            timerThread.sleep(period);
-         }
-         catch (InterruptedException e) {
-            // Restart the loop
-            continue;
-         }
+    /**
+     * Run the timer.
+     */
+    public void run ()
+    {
+        while (timerThread != null)
+        {
+            // Sleep for the period
+            try
+            {
+                timerThread.sleep(period);
+            }
+            catch (InterruptedException e)
+            {
+                // Restart the loop
+                continue;
+            }
 
-         // Fire an action event
-         setChanged();
-         notifyObservers();
+            // Fire an action event
+            setChanged();
+            notifyObservers();
 
-         if (oneShot || stopThread)
-            break;
-      }
-      // clean up:
-      timerThread = null;
-   }
+            if (oneShot || stopThread)
+                break;
+        }
+        // clean up:
+        timerThread = null;
+    }
 
 }

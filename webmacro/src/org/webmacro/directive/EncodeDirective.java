@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -32,41 +30,49 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.EncodeFilter;
 import org.webmacro.engine.Variable;
 
-public class EncodeDirective extends Directive {
+import java.io.IOException;
 
-   private static final int ENCODE_TARGET = 1;
+public class EncodeDirective extends Directive
+{
 
-   private static final EncodeFilter encodeFilter = new EncodeFilter();
+    private static final int ENCODE_TARGET = 1;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(ENCODE_TARGET),
-         };
+    private static final EncodeFilter encodeFilter = new EncodeFilter();
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("encode", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(ENCODE_TARGET),
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("encode", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      Variable target = null;
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-      try {
-         target = (Variable) builder.getArg(ENCODE_TARGET, bc);
-         bc.addFilter(target, encodeFilter);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      return null;
-   }
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        Variable target = null;
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+        try
+        {
+            target = (Variable) builder.getArg(ENCODE_TARGET, bc);
+            bc.addFilter(target, encodeFilter);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        return null;
+    }
+
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
 
 }

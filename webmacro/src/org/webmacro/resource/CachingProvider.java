@@ -36,84 +36,96 @@ import org.webmacro.util.Settings;
  */
 
 abstract public class CachingProvider implements Provider,
-      ResourceLoader {
+        ResourceLoader
+{
 
-   private CacheManager _cache;
-   private Log _log;
-   protected boolean _cacheSupportsReload;
+    private CacheManager _cache;
+    private Log _log;
+    protected boolean _cacheSupportsReload;
 
-   public CachingProvider() {
-   }
+    public CachingProvider ()
+    {
+    }
 
-   /**
-    * If you override this method be sure and call super.init(...)
-    */
-   public void init(Broker b, Settings config) throws InitException {
-      String cacheManager;
+    /**
+     * If you override this method be sure and call super.init(...)
+     */
+    public void init (Broker b, Settings config) throws InitException
+    {
+        String cacheManager;
 
-      _log = b.getLog("resource", "Object loading and caching");
+        _log = b.getLog("resource", "Object loading and caching");
 
-      cacheManager = b.getSetting("CachingProvider." + getType()
-                                  + ".CacheManager");
-      if (cacheManager == null)
-         cacheManager = b.getSetting("CachingProvider.*.CacheManager");
-      if (cacheManager == null || cacheManager.equals("")) {
-         _log.info("CachingProvider: No cache manager specified for "
-                   + getType() + ", using TrivialCacheManager");
-         _cache = new TrivialCacheManager();
-      }
-      else {
-         try {
-            _cache = (CacheManager) b.classForName(cacheManager).newInstance();
-         }
-         catch (Exception e) {
-            _log.warning("Unable to load cache manager " + cacheManager
-                         + " for resource type " + getType()
-                         + ", using TrivialCacheManager.  Reason:\n" + e);
+        cacheManager = b.getSetting("CachingProvider." + getType()
+                + ".CacheManager");
+        if (cacheManager == null)
+            cacheManager = b.getSetting("CachingProvider.*.CacheManager");
+        if (cacheManager == null || cacheManager.equals(""))
+        {
+            _log.info("CachingProvider: No cache manager specified for "
+                    + getType() + ", using TrivialCacheManager");
             _cache = new TrivialCacheManager();
-         }
-      }
-      _cache.init(b, config, getType());
-      _cacheSupportsReload = _cache.supportsReload();
-   }
+        }
+        else
+        {
+            try
+            {
+                _cache = (CacheManager) b.classForName(cacheManager).newInstance();
+            }
+            catch (Exception e)
+            {
+                _log.warning("Unable to load cache manager " + cacheManager
+                        + " for resource type " + getType()
+                        + ", using TrivialCacheManager.  Reason:\n" + e);
+                _cache = new TrivialCacheManager();
+            }
+        }
+        _cache.init(b, config, getType());
+        _cacheSupportsReload = _cache.supportsReload();
+    }
 
-   /**
-    * Clear the cache. If you override this method be sure
-    * and call super.flush().
-    */
-   public void flush() {
-      _cache.flush();
-   }
+    /**
+     * Clear the cache. If you override this method be sure
+     * and call super.flush().
+     */
+    public void flush ()
+    {
+        _cache.flush();
+    }
 
-   /**
-    * Close down the provider. If you override this method be
-    * sure and call super.destroy().
-    */
-   public void destroy() {
-      _cache.destroy();
-   }
+    /**
+     * Close down the provider. If you override this method be
+     * sure and call super.destroy().
+     */
+    public void destroy ()
+    {
+        _cache.destroy();
+    }
 
-   /**
-    * Get the object associated with the specific query, using the
-    * specified cache manager.
-    */
-   public Object get(String query) throws ResourceException {
-      return _cache.get(query, this);
-   }
+    /**
+     * Get the object associated with the specific query, using the
+     * specified cache manager.
+     */
+    public Object get (String query) throws ResourceException
+    {
+        return _cache.get(query, this);
+    }
 
-   /*
-    * Delegates to ResourceLoader implementers the load operation
-    * by casting the query as a string and invoking the
-    * implemented method.
-    */
-   public Object load(Object query, CacheElement ce)
-         throws ResourceException {
-      return ((ResourceLoader) this).load((String) query, ce);
-   }
+    /*
+     * Delegates to ResourceLoader implementers the load operation
+     * by casting the query as a string and invoking the
+     * implemented method.
+     */
+    public Object load (Object query, CacheElement ce)
+            throws ResourceException
+    {
+        return ((ResourceLoader) this).load((String) query, ce);
+    }
 
-   public String toString() {
-      return "CachingProvider(type = " + getType() + ")";
-   }
+    public String toString ()
+    {
+        return "CachingProvider(type = " + getType() + ")";
+    }
 
 
 }

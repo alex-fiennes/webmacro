@@ -21,16 +21,16 @@
  */
 package org.webmacro.resource;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.servlet.ServletContext;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 import org.webmacro.servlet.ServletBroker;
 import org.webmacro.util.Settings;
+
+import javax.servlet.ServletContext;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Implementation of TemplateLoader that loads template from web-apps.
@@ -49,49 +49,60 @@ import org.webmacro.util.Settings;
  * are missing. The starting slash is required by the servlet specification.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class ServletContextTemplateLoader extends AbstractTemplateLoader {
+public class ServletContextTemplateLoader extends AbstractTemplateLoader
+{
 
-   private ServletContext loader;
-   private String path;
+    private ServletContext loader;
+    private String path;
 
-   public void init(Broker broker, Settings config) throws InitException {
-      super.init(broker, config);
-      if (broker instanceof ServletBroker) {
-         loader = ((ServletBroker) broker).getServletContext();
-      }
-      else {
-         throw new InitException("ServletContextTemplateLoader only works with instances of " +
-                                 "org.webmacro.servlet.ServletBroker");
-      }
-   }
+    public void init (Broker broker, Settings config) throws InitException
+    {
+        super.init(broker, config);
+        if (broker instanceof ServletBroker)
+        {
+            loader = ((ServletBroker) broker).getServletContext();
+        }
+        else
+        {
+            throw new InitException("ServletContextTemplateLoader only works with instances of " +
+                    "org.webmacro.servlet.ServletBroker");
+        }
+    }
 
-   public void setConfig(String config) {
-      // as we'll later use this as a prefix, it should end with a slash
-      if (config.length() > 0 && !config.endsWith("/")) {
-         if (log.loggingInfo())
-            log.info("ServletContextTemplateLoader: appending \"/\" to path " + config);
-         config = config.concat("/");
-      }
+    public void setConfig (String config)
+    {
+        // as we'll later use this as a prefix, it should end with a slash
+        if (config.length() > 0 && !config.endsWith("/"))
+        {
+            if (log.loggingInfo())
+                log.info("ServletContextTemplateLoader: appending \"/\" to path " + config);
+            config = config.concat("/");
+        }
 
-      // the spec says, this has to start with a slash
-      if (!config.startsWith("/")) {
-         if (log.loggingInfo())
-            log.info("ServletContextTemplateLoader: adding \"/\" at the beginning of path " + config);
-         config = "/".concat(config);
-      }
-      this.path = config;
-   }
+        // the spec says, this has to start with a slash
+        if (!config.startsWith("/"))
+        {
+            if (log.loggingInfo())
+                log.info("ServletContextTemplateLoader: adding \"/\" at the beginning of path " + config);
+            config = "/".concat(config);
+        }
+        this.path = config;
+    }
 
-   public Template load(String query, CacheElement ce) throws ResourceException {
-      try {
-         URL url = loader.getResource(path.concat(query));
-         if (url != null && log.loggingDebug()) {
-            log.debug("ServletContextTemplateProvider: Found Template " + url.toString());
-         }
-         return (url != null) ? helper.load(url, ce) : null;
-      }
-      catch (MalformedURLException e) {
-         throw new InvalidResourceException("ServletContextTemplateLoader: Could not load " + query, e);
-      }
-   }
+    public Template load (String query, CacheElement ce) throws ResourceException
+    {
+        try
+        {
+            URL url = loader.getResource(path.concat(query));
+            if (url != null && log.loggingDebug())
+            {
+                log.debug("ServletContextTemplateProvider: Found Template " + url.toString());
+            }
+            return (url != null) ? helper.load(url, ce) : null;
+        }
+        catch (MalformedURLException e)
+        {
+            throw new InvalidResourceException("ServletContextTemplateLoader: Could not load " + query, e);
+        }
+    }
 }

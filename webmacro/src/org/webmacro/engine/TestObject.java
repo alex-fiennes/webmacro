@@ -23,78 +23,91 @@
 
 package org.webmacro.engine;
 
-import java.util.*;
+import java.util.Date;
 
 /**
  * This class exists for testing purposes only
  */
-public class TestObject {
+public class TestObject
+{
 
-   public String fname = "default fName";
-   public Date date;
-   private String pname;
-   private boolean valid;
+    public String fname = "default fName";
+    public Date date;
+    private String pname;
+    private boolean valid;
 
-   public TestObject(String n) {
-      pname = n;
-      date = new Date();
-   }
+    public TestObject (String n)
+    {
+        pname = n;
+        date = new Date();
+    }
 
-   public TestObject(String n, boolean b) {
-      this(n);
-      valid = b;
-   }
+    public TestObject (String n, boolean b)
+    {
+        this(n);
+        valid = b;
+    }
 
-   public String show(String arg) {
-      return "test(" + pname + ") showing string: " + arg;
-   }
+    public String show (String arg)
+    {
+        return "test(" + pname + ") showing string: " + arg;
+    }
 
-   public String show(Object arg) {
-      return "test(" + pname + ") showing object: " + arg;
-   }
+    public String show (Object arg)
+    {
+        return "test(" + pname + ") showing object: " + arg;
+    }
 
-   public String show(long arg) {
-      return "test(" + pname + ") showing long: " + arg;
-   }
+    public String show (long arg)
+    {
+        return "test(" + pname + ") showing long: " + arg;
+    }
 
-   public String show(int arg) {
-      return "test(" + pname + ") showing int: " + arg;
-   }
+    public String show (int arg)
+    {
+        return "test(" + pname + ") showing int: " + arg;
+    }
 
-   public String getName() {
-      return pname;
-   }
+    public String getName ()
+    {
+        return pname;
+    }
 
-   public void setName(String newName) {
-      pname = newName;
-   }
+    public void setName (String newName)
+    {
+        pname = newName;
+    }
 
-   public String getIsValid() {
-      return valid ? "yes" : null;
-   }
+    public String getIsValid ()
+    {
+        return valid ? "yes" : null;
+    }
 
-   public boolean isEven() {
-      boolean answer = false;
-      if ((count % 2) == 0) {
-         answer = true;
-      }
-      count++;
-      return answer;
-   }
+    public boolean isEven ()
+    {
+        boolean answer = false;
+        if ((count % 2) == 0)
+        {
+            answer = true;
+        }
+        count++;
+        return answer;
+    }
 
-   int count = 0;
+    int count = 0;
 
-   static public void main(String arg[]) {
+    static public void main (String arg[])
+    {
 
-      String a = "hi there";
-      Object b = a;
+        String a = "hi there";
+        Object b = a;
 
-      TestObject t = new TestObject("myTest");
+        TestObject t = new TestObject("myTest");
 
-      System.out.println(t.show(a));
-      System.out.println(t.show(b));
+        System.out.println(t.show(a));
+        System.out.println(t.show(b));
 
-   }
+    }
 
 }
 

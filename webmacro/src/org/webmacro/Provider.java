@@ -34,32 +34,33 @@ import org.webmacro.util.Settings;
  * the broker via WebMacro.properties you can extend or change
  * WebMacro's behavior.
  */
-public interface Provider {
+public interface Provider
+{
 
-   /**
-    * Return an array representing the types this provider serves up
-    */
-   public String getType();
+    /**
+     * Return an array representing the types this provider serves up
+     */
+    public String getType ();
 
-   /**
-    * Initialize this provider based on the specified config.
-    */
-   public void init(Broker b, Settings config) throws InitException;
+    /**
+     * Initialize this provider based on the specified config.
+     */
+    public void init (Broker b, Settings config) throws InitException;
 
-   /**
-    * Clear any cache this provider may be maintaining
-    */
-   public void flush();
+    /**
+     * Clear any cache this provider may be maintaining
+     */
+    public void flush ();
 
-   /**
-    * Close down this provider, freeing any allocated resources.
-    */
-   public void destroy();
+    /**
+     * Close down this provider, freeing any allocated resources.
+     */
+    public void destroy ();
 
-   /**
-    * Get the object associated with the specified query
-    */
-   public Object get(String query) throws ResourceException;
+    /**
+     * Get the object associated with the specified query
+     */
+    public Object get (String query) throws ResourceException;
 
 }
 

@@ -24,18 +24,21 @@
 package org.webmacro.engine;
 
 
-public class VariableBuilder implements Builder {
+public class VariableBuilder implements Builder
+{
 
-   private final Object[] _names;
-   private final boolean _filtered;
+    private final Object[] _names;
+    private final boolean _filtered;
 
-   public VariableBuilder(Object names[], boolean filtered) {
-      _names = names;
-      _filtered = filtered;
-   }
+    public VariableBuilder (Object names[], boolean filtered)
+    {
+        _names = names;
+        _filtered = filtered;
+    }
 
-   public final Object build(BuildContext bc) throws BuildException {
-      return bc.resolveVariableReference(_names, _filtered);
-   }
+    public final Object build (BuildContext bc) throws BuildException
+    {
+        return bc.resolveVariableReference(_names, _filtered);
+    }
 }
 

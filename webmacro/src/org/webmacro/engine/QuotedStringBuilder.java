@@ -23,47 +23,57 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-import java.util.*;
-
 import org.webmacro.*;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Vector;
 
-public final class QuotedStringBuilder extends Vector implements Builder {
 
-   final public Object build(BuildContext bc) throws BuildException {
-      StringBuffer str = new StringBuffer(100);
-      QuotedString qs = new QuotedString();
+public final class QuotedStringBuilder extends Vector implements Builder
+{
 
-      Enumeration enum = elements();
+    final public Object build (BuildContext bc) throws BuildException
+    {
+        StringBuffer str = new StringBuffer(100);
+        QuotedString qs = new QuotedString();
 
-      while (enum.hasMoreElements()) {
-         Object txt = enum.nextElement();
+        Enumeration enum = elements();
 
-         if (txt instanceof Builder) {
-            txt = ((Builder) txt).build(bc);
-         }
+        while (enum.hasMoreElements())
+        {
+            Object txt = enum.nextElement();
 
-         if (txt instanceof String) {
-            str.append(txt);
-         }
-         else {
+            if (txt instanceof Builder)
+            {
+                txt = ((Builder) txt).build(bc);
+            }
+
+            if (txt instanceof String)
+            {
+                str.append(txt);
+            }
+            else
+            {
+                qs.addElement(str.toString());
+                qs.addElement(txt);
+                str.setLength(0);
+            }
+        }
+        if (str.length() > 0)
+        {
             qs.addElement(str.toString());
-            qs.addElement(txt);
-            str.setLength(0);
-         }
-      }
-      if (str.length() > 0) {
-         qs.addElement(str.toString());
-      }
+        }
 
-      if (qs.size() == 1) {
-         return qs.elementAt(0);
-      }
-      else {
-         return qs;
-      }
-   }
+        if (qs.size() == 1)
+        {
+            return qs.elementAt(0);
+        }
+        else
+        {
+            return qs;
+        }
+    }
 }
 
 
@@ -93,71 +103,82 @@ public final class QuotedStringBuilder extends Vector implements Builder {
  *
  * </pre>Here the text inside the quotes is the QuotedString.
  */
-final class QuotedString extends Vector implements Macro, Visitable {
+final class QuotedString extends Vector implements Macro, Visitable
+{
 
-   /**
-    * conditionally include debugging statements in the compiled code
-    */
-   private static final boolean debug = false;
+    /**
+     * conditionally include debugging statements in the compiled code
+     */
+    private static final boolean debug = false;
 
-   /**
-    * Create a new quoted string
-    */
-   QuotedString() {
-   }
+    /**
+     * Create a new quoted string
+     */
+    QuotedString ()
+    {
+    }
 
-   /**
-    * Return the value of the quoted string, after substituting all
-    * contained variables and removing the quotation marks.
-    * @exception PropertyException is required data is missing
-    */
-   public Object evaluate(Context data)
-         throws PropertyException {
-      Object o;
-      StringBuffer str = new StringBuffer(96);
-      for (int i = 0; i < elementCount; i++) {
-         o = elementData[i];
-         if (!(o instanceof Macro)) {
-            str.append(o.toString());
-         }
-         else {    // should only contain Variables and Strings
-            try {
-               str.append(((Macro) o).evaluate(data));
+    /**
+     * Return the value of the quoted string, after substituting all
+     * contained variables and removing the quotation marks.
+     * @exception PropertyException is required data is missing
+     */
+    public Object evaluate (Context data)
+            throws PropertyException
+    {
+        Object o;
+        StringBuffer str = new StringBuffer(96);
+        for (int i = 0; i < elementCount; i++)
+        {
+            o = elementData[i];
+            if (!(o instanceof Macro))
+            {
+                str.append(o.toString());
             }
-            catch (ClassCastException e) {
-               throw new PropertyException(
-                     "QuotedString: Expected macro or string, got: " + o);
+            else
+            {    // should only contain Variables and Strings
+                try
+                {
+                    str.append(((Macro) o).evaluate(data));
+                }
+                catch (ClassCastException e)
+                {
+                    throw new PropertyException(
+                            "QuotedString: Expected macro or string, got: " + o);
+                }
             }
-         }
-      }
-      return str.toString(); // never null, we created it above
-   }
+        }
+        return str.toString(); // never null, we created it above
+    }
 
 
-   /**
-    * Write the quoted string out. Performs the same operation as
-    * evaluate(context) but writes it to the stream. Although this is
-    * required by the Macro superclass, we don't expect it to be used much
-    * since a quoted string does not really appear in a Block (it appears
-    * as the argument to a function or directive.)
-    * @exception PropertyException is required data is missing
-    * @exception IOException if could not write to output stream
-    */
-   final public void write(FastWriter out, Context data)
-         throws PropertyException, IOException {
-      out.write(evaluate(data).toString()); // evaluate never returns null
-   }
+    /**
+     * Write the quoted string out. Performs the same operation as
+     * evaluate(context) but writes it to the stream. Although this is
+     * required by the Macro superclass, we don't expect it to be used much
+     * since a quoted string does not really appear in a Block (it appears
+     * as the argument to a function or directive.)
+     * @exception PropertyException is required data is missing
+     * @exception IOException if could not write to output stream
+     */
+    final public void write (FastWriter out, Context data)
+            throws PropertyException, IOException
+    {
+        out.write(evaluate(data).toString()); // evaluate never returns null
+    }
 
-   public void accept(TemplateVisitor v) {
-      v.beginBlock();
-      for (int i = 0; i < elementCount; i++) {
-         Object o = elementData[i];
-         if (!(o instanceof Macro))
-            v.visitString((String) o);
-         else
-            v.visitMacro((Macro) o);
-      }
-      v.endBlock();
-   }
+    public void accept (TemplateVisitor v)
+    {
+        v.beginBlock();
+        for (int i = 0; i < elementCount; i++)
+        {
+            Object o = elementData[i];
+            if (!(o instanceof Macro))
+                v.visitString((String) o);
+            else
+                v.visitMacro((Macro) o);
+        }
+        v.endBlock();
+    }
 
 }

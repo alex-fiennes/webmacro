@@ -61,84 +61,100 @@
 */
 package org.webmacro.engine;
 
-import java.util.*;
-
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
-public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandler {
+import java.util.ArrayList;
 
-   private Log _log;
+public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandler
+{
 
-   public DebugEvaluationExceptionHandler() {
-   }
+    private Log _log;
 
-   public DebugEvaluationExceptionHandler(Broker b) {
-      init(b, b.getSettings());
-   }
+    public DebugEvaluationExceptionHandler ()
+    {
+    }
 
-   public void init(Broker b, Settings config) {
-      _log = b.getLog("engine");
-   }
+    public DebugEvaluationExceptionHandler (Broker b)
+    {
+        init(b, b.getSettings());
+    }
 
-   public void evaluate(Variable variable, Context context, Exception problem) throws PropertyException {
-      handleError(variable, context, problem);
-   }
+    public void init (Broker b, Settings config)
+    {
+        _log = b.getLog("engine");
+    }
 
-   public String expand(Variable variable, Context context, Exception problem) throws PropertyException {
-      return handleError(variable, context, problem);
-   }
+    public void evaluate (Variable variable, Context context, Exception problem) throws PropertyException
+    {
+        handleError(variable, context, problem);
+    }
 
-
-   private String handleError(Variable variable, Context context, Exception problem) throws PropertyException {
-      String strError;
-
-      ArrayList arlErrors = null;
-      PropertyException propEx = null;
-		if ( problem instanceof PropertyException ) {
-         propEx = (PropertyException) problem;
-		}
-		else {
-			propEx = new PropertyException("Error expanding $" + variable.getVariableName() );
-		}
-      propEx.setContextLocation(context.getCurrentLocation());
-      strError = propEx.getMessage();
-
-		if ( ( context.containsKey( "WMERROR" ) ) && ( context.get( "WMERROR" ) instanceof ArrayList ) ) {
-         arlErrors = (ArrayList) context.get("WMERROR");
-      }
-      else {
-         arlErrors = new ArrayList();
-         context.put("WMERROR", arlErrors);
-      }
-
-		if ( strError.lastIndexOf( "\r\n" ) >= 0 ) {
-			strError = strError.substring( strError.lastIndexOf( "\r\n" ) );
-			strError = strError.trim();
-		}
-
-		if ( !arlErrors.contains( strError ) ) {
-      arlErrors.add(strError);
-		}
-
-      if (_log != null) {
-         _log.warning(strError, propEx);
-      }
-      // and rethrow it
-      throw propEx;
-   }
+    public String expand (Variable variable, Context context, Exception problem) throws PropertyException
+    {
+        return handleError(variable, context, problem);
+    }
 
 
-   public String warningString(String strText) throws PropertyException {
-      throw new PropertyException("Evaluation warning: " + strText);
-   }
+    private String handleError (Variable variable, Context context, Exception problem) throws PropertyException
+    {
+        String strError;
+
+        ArrayList arlErrors = null;
+        PropertyException propEx = null;
+        if (problem instanceof PropertyException)
+        {
+            propEx = (PropertyException) problem;
+        }
+        else
+        {
+            propEx = new PropertyException("Error expanding $" + variable.getVariableName());
+        }
+        propEx.setContextLocation(context.getCurrentLocation());
+        strError = propEx.getMessage();
+
+        if ((context.containsKey("WMERROR")) && (context.get("WMERROR") instanceof ArrayList))
+        {
+            arlErrors = (ArrayList) context.get("WMERROR");
+        }
+        else
+        {
+            arlErrors = new ArrayList();
+            context.put("WMERROR", arlErrors);
+        }
+
+        if (strError.lastIndexOf("\r\n") >= 0)
+        {
+            strError = strError.substring(strError.lastIndexOf("\r\n"));
+            strError = strError.trim();
+        }
+
+        if (!arlErrors.contains(strError))
+        {
+            arlErrors.add(strError);
+        }
+
+        if (_log != null)
+        {
+            _log.warning(strError, propEx);
+        }
+        // and rethrow it
+        throw propEx;
+    }
 
 
-   public String errorString(String strText) throws PropertyException {
-      throw new PropertyException("Evaluation error: " + strText);
-   }
+    public String warningString (String strText) throws PropertyException
+    {
+        throw new PropertyException("Evaluation warning: " + strText);
+    }
+
+
+    public String errorString (String strText) throws PropertyException
+    {
+        throw new PropertyException("Evaluation error: " + strText);
+    }
 }
 

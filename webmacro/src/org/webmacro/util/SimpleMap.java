@@ -31,20 +31,21 @@ package org.webmacro.util;
  * of this interface.
  * @author skanthak@muehlheim.de
  */
-public interface SimpleMap {
+public interface SimpleMap
+{
 
-   public void put(Object key, Object value);
+    public void put (Object key, Object value);
 
-   /**
-    * Get the value of 'key' back. Returns null if no such key.
-    */
-   public Object get(Object key);
+    /**
+     * Get the value of 'key' back. Returns null if no such key.
+     */
+    public Object get (Object key);
 
-   /**
-    * Ensure that the key does not appear in the map
-    */
-   public Object remove(Object key);
+    /**
+     * Ensure that the key does not appear in the map
+     */
+    public Object remove (Object key);
 
-   public void clear();
+    public void clear ();
 
 }

@@ -34,38 +34,48 @@ import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
 
-public class TrivialCacheManager implements CacheManager {
+public class TrivialCacheManager implements CacheManager
+{
 
-   public TrivialCacheManager() {
-   }
+    public TrivialCacheManager ()
+    {
+    }
 
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException {
-   }
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException
+    {
+    }
 
-   public void flush() {
-   }
+    public void flush ()
+    {
+    }
 
-   public void destroy() {
-   }
+    public void destroy ()
+    {
+    }
 
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException {
-      return helper.load(query, null);
-   }
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException
+    {
+        return helper.load(query, null);
+    }
 
-   public Object get(final Object query) {
-      return null;
-   }
+    public Object get (final Object query)
+    {
+        return null;
+    }
 
-   public void put(final Object query, Object resource) {
-   }
+    public void put (final Object query, Object resource)
+    {
+    }
 
-   public boolean supportsReload() {
-      return false;
-   }
+    public boolean supportsReload ()
+    {
+        return false;
+    }
 
-   public void invalidate(final Object query) {
-   }
+    public void invalidate (final Object query)
+    {
+    }
 
 }

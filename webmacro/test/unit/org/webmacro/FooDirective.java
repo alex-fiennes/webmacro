@@ -22,42 +22,52 @@
 
 package org.webmacro;
 
-import java.io.*;
-import org.webmacro.*;
 import org.webmacro.directive.Directive;
-import org.webmacro.directive.DirectiveDescriptor;
 import org.webmacro.directive.DirectiveBuilder;
-import org.webmacro.engine.*;
+import org.webmacro.directive.DirectiveDescriptor;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
 
-public class FooDirective extends Directive {
+import java.io.IOException;
 
-  private static final ArgDescriptor[] 
-    myArgs = new ArgDescriptor[] {
+public class FooDirective extends Directive
+{
 
-    };
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
 
-  private static final DirectiveDescriptor
-    myDescr = new DirectiveDescriptor("foo", null, myArgs, null);
+            };
 
-  public static DirectiveDescriptor getDescriptor() {
-    return myDescr;
-  }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("foo", null, myArgs, null);
 
-  public Object build(DirectiveBuilder builder,
-                      BuildContext bc) 
-  throws BuildException {
-    return this;
-  }
 
-  public void write(FastWriter out, Context context) 
-    throws PropertyException, IOException {
-      out.write ("foo");
-  }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-  public void accept(TemplateVisitor v) {
-    v.beginDirective(myDescr.name);
-    v.endDirective();
-  }
+
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        return this;
+    }
+
+
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+        out.write("foo");
+    }
+
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        v.endDirective();
+    }
 
 }
 

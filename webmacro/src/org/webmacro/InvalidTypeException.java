@@ -27,9 +27,11 @@ package org.webmacro;
  * You used a class or argument that was incorrect, unknown,
  * or otherwise invalid.
  */
-public class InvalidTypeException extends WebMacroException {
+public class InvalidTypeException extends WebMacroException
+{
 
-   public InvalidTypeException(String reason) {
-      super(reason);
-   }
+    public InvalidTypeException (String reason)
+    {
+        super(reason);
+    }
 }

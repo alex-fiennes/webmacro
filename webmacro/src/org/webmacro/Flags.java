@@ -38,23 +38,25 @@ package org.webmacro;
  * classpath trick, you probably need to compile the WebMacro
  * sources with these constants set to "true" first.
  */
-public final class Flags {
+public final class Flags
+{
 
-   /**
-    * Nobody is allowed to create one
-    */
-   private Flags() {
-   }
+    /**
+     * Nobody is allowed to create one
+     */
+    private Flags ()
+    {
+    }
 
-   /**
-    * Use debug statements in performance critical code?
-    */
-   public static final boolean DEBUG = false;
+    /**
+     * Use debug statements in performance critical code?
+     */
+    public static final boolean DEBUG = false;
 
-   /**
-    * Use in profiling statements in performance critical code?
-    */
-   public static final boolean PROFILE = true;
+    /**
+     * Use in profiling statements in performance critical code?
+     */
+    public static final boolean PROFILE = true;
 
 }
 

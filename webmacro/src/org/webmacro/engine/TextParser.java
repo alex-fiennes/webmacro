@@ -23,31 +23,36 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-
 import org.webmacro.Broker;
+
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * This parser returns all the input as is
  */
-public class TextParser implements Parser {
+public class TextParser implements Parser
+{
 
-   public TextParser(Broker broker) {
-   }
+    public TextParser (Broker broker)
+    {
+    }
 
-   public BlockBuilder parseBlock(String name, Reader in)
-         throws ParseException, IOException {
-      BlockBuilder bb = new BlockBuilder();
-      char buf[] = new char[512];
-      StringBuffer sb = new StringBuffer(512);
-      int num;
-      while ((num = in.read(buf)) != -1) {
-         sb.append(buf, 0, num);
-      }
-      bb.addElement(sb.toString());
-      in.close();
-      return bb;
-   }
+    public BlockBuilder parseBlock (String name, Reader in)
+            throws ParseException, IOException
+    {
+        BlockBuilder bb = new BlockBuilder();
+        char buf[] = new char[512];
+        StringBuffer sb = new StringBuffer(512);
+        int num;
+        while ((num = in.read(buf)) != -1)
+        {
+            sb.append(buf, 0, num);
+        }
+        bb.addElement(sb.toString());
+        in.close();
+        return bb;
+    }
 }
 
 

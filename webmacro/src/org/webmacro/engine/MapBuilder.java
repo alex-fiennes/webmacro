@@ -21,15 +21,15 @@
  */
 package org.webmacro.engine;
 
-import org.webmacro.Macro;
-import org.webmacro.FastWriter;
 import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
 import org.webmacro.PropertyException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * MapBuilder is used during the parsing/building phase of a template to create
@@ -43,11 +43,14 @@ import java.io.IOException;
  * @author e_ridge
  * @since May 13, 2003
  */
-public class MapBuilder extends HashMap implements Builder {
-    public Object build(BuildContext pc) throws BuildException {
-        Map ret = new HashMap (size());
+public class MapBuilder extends HashMap implements Builder
+{
+    public Object build (BuildContext pc) throws BuildException
+    {
+        Map ret = new HashMap(size());
         boolean isMacro = false;
-        for (Iterator itr = entrySet().iterator(); itr.hasNext();) {
+        for (Iterator itr = entrySet().iterator(); itr.hasNext();)
+        {
             Map.Entry entry = (Map.Entry) itr.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -60,34 +63,40 @@ public class MapBuilder extends HashMap implements Builder {
             if (!isMacro)
                 isMacro = key instanceof Macro || value instanceof Macro;
 
-            ret.put (key, value);
+            ret.put(key, value);
         }
 
         if (isMacro)
-            return new MapMacro (ret);
+            return new MapMacro(ret);
         else
             return ret;
     }
 }
 
-class MapMacro implements Macro {
+class MapMacro implements Macro
+{
     private final Map _map;
 
-    MapMacro (Map map) {
+    MapMacro (Map map)
+    {
         _map = map;
     }
 
-    public void write(FastWriter out, Context context) throws PropertyException, IOException {
-        out.write (evaluate(context).toString());
+    public void write (FastWriter out, Context context) throws PropertyException, IOException
+    {
+        out.write(evaluate(context).toString());
     }
 
-    public String toString() {
+    public String toString ()
+    {
         return _map.toString();
     }
 
-    public Object evaluate(Context context) throws PropertyException {
-        Map ret = new HashMap (_map.size());
-        for (Iterator itr =_map.entrySet().iterator(); itr.hasNext();) {
+    public Object evaluate (Context context) throws PropertyException
+    {
+        Map ret = new HashMap(_map.size());
+        for (Iterator itr = _map.entrySet().iterator(); itr.hasNext();)
+        {
             Map.Entry entry = (Map.Entry) itr.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -96,7 +105,7 @@ class MapMacro implements Macro {
                 key = ((Macro) key).evaluate(context);
             if (value instanceof Macro)
                 value = ((Macro) value).evaluate(context);
-            ret.put (key, value);
+            ret.put(key, value);
         }
 
         return ret;

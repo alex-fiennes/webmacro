@@ -29,7 +29,8 @@ package org.webmacro;
  * @since 0.96
  */
 
-public interface Visitable {
+public interface Visitable
+{
 
-   public void accept(TemplateVisitor v);
+    public void accept (TemplateVisitor v);
 }

@@ -25,11 +25,12 @@ package org.webmacro.util;
 /**
  * Interface for classes, that can create SimpleMap instances
  **/
-public interface SimpleMapFactory {
+public interface SimpleMapFactory
+{
 
-   /**
-    * Create a SimpleMap
-    * @return SimpleMap
-    **/
-   public abstract SimpleMap createSimpleMap();
+    /**
+     * Create a SimpleMap
+     * @return SimpleMap
+     **/
+    public abstract SimpleMap createSimpleMap ();
 }

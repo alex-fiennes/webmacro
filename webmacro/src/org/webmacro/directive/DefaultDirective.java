@@ -22,84 +22,96 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-public class DefaultDirective extends Directive {
+import java.io.IOException;
 
-   private static final int DEFAULT_TARGET = 1;
-   private static final int DEFAULT_TO = 2;
-   private static final int DEFAULT_RESULT = 3;
+public class DefaultDirective extends Directive
+{
 
-   private Variable target;
-   private Object result;
+    private static final int DEFAULT_TARGET = 1;
+    private static final int DEFAULT_TO = 2;
+    private static final int DEFAULT_RESULT = 3;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(DEFAULT_TARGET),
-            new OptionalGroup(2),
-            //new KeywordArg(DEFAULT_TO, "to"),
-            new AssignmentArg(),
-            new RValueArg(DEFAULT_RESULT)
-         };
+    private Variable target;
+    private Object result;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("default", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(DEFAULT_TARGET),
+                new OptionalGroup(2),
+                //new KeywordArg(DEFAULT_TO, "to"),
+                new AssignmentArg(),
+                new RValueArg(DEFAULT_RESULT)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("default", null, myArgs, null);
 
-   public DefaultDirective() {
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      try {
-         target = (Variable) builder.getArg(DEFAULT_TARGET, bc);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      if (!target.isSimpleName()) {
-         throw new NotSimpleVariableBuildException(myDescr.name);
-      }
-      //Object oeq = builder.getArg(DEFAULT_AS, bc);
-      result = builder.getArg(DEFAULT_RESULT, bc);
-      if (result == null) result = "";
-      return this;
-   }
+    public DefaultDirective ()
+    {
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        try
+        {
+            target = (Variable) builder.getArg(DEFAULT_TARGET, bc);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        if (!target.isSimpleName())
+        {
+            throw new NotSimpleVariableBuildException(myDescr.name);
+        }
+        //Object oeq = builder.getArg(DEFAULT_AS, bc);
+        result = builder.getArg(DEFAULT_RESULT, bc);
+        if (result == null) result = "";
+        return this;
+    }
 
-      try {
-         // check if target in context already
-         if (context.containsKey(target.getName())) return;  // already defined, do nothing
-         if (result instanceof Macro)
-            target.setValue(context, ((Macro) result).evaluate(context));
-         else
-            target.setValue(context, result);
-      }
-      catch (PropertyException e) {
-         throw e;
-      }
-      catch (Exception e) {
-         String errorText = "#default: Unable to set default value for " + target;
-         writeWarning(errorText, context, out);
-      }
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      v.visitDirectiveArg("DefaultTarget", target);
-      v.visitDirectiveArg("DefaultValue", result);
-      v.endDirective();
-   }
+        try
+        {
+            // check if target in context already
+            if (context.containsKey(target.getName())) return;  // already defined, do nothing
+            if (result instanceof Macro)
+                target.setValue(context, ((Macro) result).evaluate(context));
+            else
+                target.setValue(context, result);
+        }
+        catch (PropertyException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            String errorText = "#default: Unable to set default value for " + target;
+            writeWarning(errorText, context, out);
+        }
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        v.visitDirectiveArg("DefaultTarget", target);
+        v.visitDirectiveArg("DefaultValue", result);
+        v.endDirective();
+    }
 
 }

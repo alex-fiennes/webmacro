@@ -23,7 +23,8 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * A parser turns an input stream into a BlockBuilder, using any
@@ -53,14 +54,15 @@ import java.io.*;
  * executed manyt imes. Thus, do not optimize your parser in ways that
  * make it difficult to optimize the resulting execution tree.
  */
-public interface Parser {
+public interface Parser
+{
 
-   /**
-    * Parse the input in ParseTool as far as the grammar for
-    * this parser allows, but no farther.
-    */
-   abstract public BlockBuilder parseBlock(String name, Reader in)
-         throws ParseException, IOException;
+    /**
+     * Parse the input in ParseTool as far as the grammar for
+     * this parser allows, but no farther.
+     */
+    abstract public BlockBuilder parseBlock (String name, Reader in)
+            throws ParseException, IOException;
 
 
 }

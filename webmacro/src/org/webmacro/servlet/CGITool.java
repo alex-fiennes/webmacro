@@ -31,21 +31,26 @@ import org.webmacro.PropertyException;
  * Provide Template variables that implement the CGI standard for
  * script variable names.
  */
-public class CGITool implements ContextTool {
+public class CGITool implements ContextTool
+{
 
-   public Object init(Context context)
-         throws PropertyException {
-      try {
-         WebContext wc = (WebContext) context;
-         CGI_Impersonator cgi = new CGI_Impersonator(wc);
-         return cgi;
-      }
-      catch (ClassCastException ce) {
-         throw new PropertyException(
-               "CGITool only works with WebContext", ce);
-      }
-   }
+    public Object init (Context context)
+            throws PropertyException
+    {
+        try
+        {
+            WebContext wc = (WebContext) context;
+            CGI_Impersonator cgi = new CGI_Impersonator(wc);
+            return cgi;
+        }
+        catch (ClassCastException ce)
+        {
+            throw new PropertyException(
+                    "CGITool only works with WebContext", ce);
+        }
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

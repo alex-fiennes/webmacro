@@ -32,24 +32,30 @@ package org.webmacro.util;
  * This class uses SimpleIdentityMap as its implementation. See
  * description of SimpleIdentity for behaviour of this map.
  */
-final public class ScalableIdentityMap extends AbstractScalableMap {
+final public class ScalableIdentityMap extends AbstractScalableMap
+{
 
-   public final static int DEFAULT_SIZE = 1001;
+    public final static int DEFAULT_SIZE = 1001;
 
-   public ScalableIdentityMap(final int factor, final int size) {
-      super(factor,
-            new SimpleMapFactory() {
-               public SimpleMap createSimpleMap() {
-                  return new SimpleIdentityMap(size);
-               }
-            });
-   }
+    public ScalableIdentityMap (final int factor, final int size)
+    {
+        super(factor,
+                new SimpleMapFactory()
+                {
+                    public SimpleMap createSimpleMap ()
+                    {
+                        return new SimpleIdentityMap(size);
+                    }
+                });
+    }
 
-   public ScalableIdentityMap(int size) {
-      this(DEFAULT_FACTOR, size);
-   }
+    public ScalableIdentityMap (int size)
+    {
+        this(DEFAULT_FACTOR, size);
+    }
 
-   public ScalableIdentityMap() {
-      this(DEFAULT_FACTOR, DEFAULT_SIZE);
-   }
+    public ScalableIdentityMap ()
+    {
+        this(DEFAULT_FACTOR, DEFAULT_SIZE);
+    }
 }

@@ -27,27 +27,31 @@ package org.webmacro;
  * Exception raised on discovery of a parsing error. To facilitate error
  * recovery, you can extract the parseTool from this error.
  */
-public class TemplateException extends WebMacroException {
+public class TemplateException extends WebMacroException
+{
 
-   public TemplateException() {
-      super();
-   }
+    public TemplateException ()
+    {
+        super();
+    }
 
-   /**
-    * Create a new exception
-    * @param reason what went wrong
-    */
-   public TemplateException(String reason) {
-      super(reason);
-   }
+    /**
+     * Create a new exception
+     * @param reason what went wrong
+     */
+    public TemplateException (String reason)
+    {
+        super(reason);
+    }
 
-   /**
-    * Create a new exception, wrapping another exception
-    * @param reason what went wrong
-    * @param e The exception that caused us to raise this exception
-    */
-   public TemplateException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    /**
+     * Create a new exception, wrapping another exception
+     * @param reason what went wrong
+     * @param e The exception that caused us to raise this exception
+     */
+    public TemplateException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 
 }

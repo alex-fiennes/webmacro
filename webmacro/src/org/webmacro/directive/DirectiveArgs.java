@@ -32,16 +32,17 @@ import org.webmacro.engine.BuildException;
  * @see DirectiveBuilder
  */
 
-public interface DirectiveArgs {
+public interface DirectiveArgs
+{
 
-   public int getArgCount() throws BuildException;
+    public int getArgCount () throws BuildException;
 
-   public Object getExactArg(int idx) throws BuildException;
+    public Object getExactArg (int idx) throws BuildException;
 
-   public Object getArg(int id) throws BuildException;
+    public Object getArg (int id) throws BuildException;
 
-   public Object getArg(int id, BuildContext bc) throws BuildException;
+    public Object getArg (int id, BuildContext bc) throws BuildException;
 
-   public void setArg(int id, Object o) throws BuildException;
+    public void setArg (int id, Object o) throws BuildException;
 
 }

@@ -22,74 +22,81 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.*;
 import org.webmacro.engine.Block;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
-public class ProfileDirective extends Directive {
+import java.io.IOException;
 
-   private static final int PROFILE_NAME = 1;
-   private static final int PROFILE_BLOCK = 2;
+public class ProfileDirective extends Directive
+{
 
-   /**
-    * This is the block for which we are generating timing statistics
-    */
-   private Block myBlock;
+    private static final int PROFILE_NAME = 1;
+    private static final int PROFILE_BLOCK = 2;
 
-   /**
-    * This is the name associated with the timing statistics
-    */
-   private String myName;
+    /**
+     * This is the block for which we are generating timing statistics
+     */
+    private Block myBlock;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new QuotedStringArg(PROFILE_NAME),
-            new BlockArg(PROFILE_BLOCK)
-         };
+    /**
+     * This is the name associated with the timing statistics
+     */
+    private String myName;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("profile", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new QuotedStringArg(PROFILE_NAME),
+                new BlockArg(PROFILE_BLOCK)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("profile", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      // If profiling is not enabled just return the profiled block
-      if (!Flags.PROFILE) {
-         return builder.getArg(PROFILE_BLOCK, bc);
-      }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-      Object name = builder.getArg(PROFILE_NAME, bc);
-      if (name instanceof Macro) {
-         throw new BuildException(
-               "Profile name must be a static string, not a dynamic macro");
-      }
-      myName = name.toString();
-      myBlock = (Block) builder.getArg(PROFILE_BLOCK, bc);
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        // If profiling is not enabled just return the profiled block
+        if (!Flags.PROFILE)
+        {
+            return builder.getArg(PROFILE_BLOCK, bc);
+        }
 
-      return this;
-   }
+        Object name = builder.getArg(PROFILE_NAME, bc);
+        if (name instanceof Macro)
+        {
+            throw new BuildException(
+                    "Profile name must be a static string, not a dynamic macro");
+        }
+        myName = name.toString();
+        myBlock = (Block) builder.getArg(PROFILE_BLOCK, bc);
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
+        return this;
+    }
 
-      boolean timing = context.isTiming();
-      if (timing) context.startTiming(myName);
-      myBlock.write(out, context);
-      if (timing) context.stopTiming();
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      v.visitDirectiveArg("ProfileName", myName);
-      v.visitDirectiveArg("ProfileBlock", myBlock);
-      v.endDirective();
-   }
+        boolean timing = context.isTiming();
+        if (timing) context.startTiming(myName);
+        myBlock.write(out, context);
+        if (timing) context.stopTiming();
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        v.visitDirectiveArg("ProfileName", myName);
+        v.visitDirectiveArg("ProfileBlock", myBlock);
+        v.endDirective();
+    }
 
 }

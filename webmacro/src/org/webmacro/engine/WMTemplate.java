@@ -23,10 +23,11 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-import java.util.*;
-
 import org.webmacro.*;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Map;
 
 /**
  * Template objects represent the user defined layout into which the
@@ -48,281 +49,320 @@ import org.webmacro.*;
  * performs no synchronization itself but instead relies on the
  * TemplateProvider/Broker to synchronize access.
  */
-abstract public class WMTemplate implements Template {
+abstract public class WMTemplate implements Template
+{
 
-   /**
-    * The resource broker used to resolve things in this template
-    */
-   final protected Broker _broker;
+    /**
+     * The resource broker used to resolve things in this template
+     */
+    final protected Broker _broker;
 
-   /**
-    * Where we log our errors
-    */
-   final protected Log _log;
+    /**
+     * Where we log our errors
+     */
+    final protected Log _log;
 
-   /**
-    * Whether template has already been parsed.
-    */
-   private boolean _parsed;
+    /**
+     * Whether template has already been parsed.
+     */
+    private boolean _parsed;
 
-   /**
-    * What this template contains is a top level block
-    */
-   protected Block _content;
+    /**
+     * What this template contains is a top level block
+     */
+    protected Block _content;
 
-   /**
-    * Which parser (grammar) is used to parse this template,
-    * typically "wm"
-    */
-   private String _parserName;
+    /**
+     * Which parser (grammar) is used to parse this template,
+     * typically "wm"
+     */
+    private String _parserName;
 
-   /**
-    * Template parameters
-    */
-   private Map _parameters;
+    /**
+     * Template parameters
+     */
+    private Map _parameters;
 
-   /**
-    * Template Macros
-    */
-   private Map _macros;
+    /**
+     * Template Macros
+     */
+    private Map _macros;
 
 
-   /**
-    * Create a new Template. Constructors must supply a broker.
-    */
-   protected WMTemplate(Broker broker) {
-      this("wm", broker);
-   }
+    /**
+     * Create a new Template. Constructors must supply a broker.
+     */
+    protected WMTemplate (Broker broker)
+    {
+        this("wm", broker);
+    }
 
-   /**
-    * Create a new Template specifying both the broker and the
-    * parsing language.
-    */
-   protected WMTemplate(String parserName, Broker broker) {
-      _broker = broker;
-      _parserName = parserName;
-      _log = broker.getLog("template", "template lifecycle");
-   }
+    /**
+     * Create a new Template specifying both the broker and the
+     * parsing language.
+     */
+    protected WMTemplate (String parserName, Broker broker)
+    {
+        _broker = broker;
+        _parserName = parserName;
+        _log = broker.getLog("template", "template lifecycle");
+    }
 
-   /**
-    * Get the stream the template should be read from. Parse will
-    * call this method in order to locate a stream.
-    * @exception IOException if unable to read template
-    */
-   protected abstract Reader getReader() throws IOException;
+    /**
+     * Get the stream the template should be read from. Parse will
+     * call this method in order to locate a stream.
+     * @exception IOException if unable to read template
+     */
+    protected abstract Reader getReader () throws IOException;
 
-   /**
-    * Return a name for this template. For example, if the template reads
-    * from a file you might want to mention which it is--will be used to
-    * produce error messages describing which template had a problem.
-    */
-   public abstract String toString();
+    /**
+     * Return a name for this template. For example, if the template reads
+     * from a file you might want to mention which it is--will be used to
+     * produce error messages describing which template had a problem.
+     */
+    public abstract String toString ();
 
-   /**
-    * Return a name for this template. If not overridden, uses toString()
-    */
-   public String getName() {
-      return toString();
-   }
+    /**
+     * Return a name for this template. If not overridden, uses toString()
+     */
+    public String getName ()
+    {
+        return toString();
+    }
 
-   /**
-    * Set the name for this template.  Default implementation does nothing.
-    */
-   public void setName(String name) {
-   }
+    /**
+     * Set the name for this template.  Default implementation does nothing.
+     */
+    public void setName (String name)
+    {
+    }
 
-   /**
-    * Subclasses can override this if they wish to invoke a parser
-    * other than the WM parser, or choose the parser on some more
-    * complicated condition. This method will be called by parse();
-    */
-   protected Parser getParser() throws TemplateException {
-      try {
-         return (Parser) _broker.get("parser", "wm");
-      }
-      catch (Exception e) {
-         throw new TemplateException("Could not load parser type " +
-                                     _parserName, e);
-      }
-   }
+    /**
+     * Subclasses can override this if they wish to invoke a parser
+     * other than the WM parser, or choose the parser on some more
+     * complicated condition. This method will be called by parse();
+     */
+    protected Parser getParser () throws TemplateException
+    {
+        try
+        {
+            return (Parser) _broker.get("parser", "wm");
+        }
+        catch (Exception e)
+        {
+            throw new TemplateException("Could not load parser type " +
+                    _parserName, e);
+        }
+    }
 
-   /**
-    * Template API
-    */
-   public void parse() throws IOException, TemplateException {
-      if (!_parsed) {
-         Block newContent = null;
-         Map newParameters = null;
-         Map newMacros = null;
-         Reader in = null;
-         BuildContext bc = null;
-         try {
-            Parser parser = getParser();
-            in = getReader();
-            BlockBuilder bb = parser.parseBlock(getName(), in);
-            in.close();
+    /**
+     * Template API
+     */
+    public void parse () throws IOException, TemplateException
+    {
+        if (!_parsed)
+        {
+            Block newContent = null;
+            Map newParameters = null;
+            Map newMacros = null;
+            Reader in = null;
+            BuildContext bc = null;
+            try
+            {
+                Parser parser = getParser();
+                in = getReader();
+                BlockBuilder bb = parser.parseBlock(getName(), in);
+                in.close();
 
-            bc = new BuildContext(_broker);
-            newParameters = bc.getMap();
-            newMacros = bc.getMacros();
-            newContent = (Block) bb.build(bc);
-         }
-         catch (BuildException be) {
-            if (bc != null)
-                be.setContextLocation(bc.getCurrentLocation());
-            newContent = null;
-            _log.error("Template contained invalid data", be);
-            throw be;
-         }
-         catch (IOException e) {
-            newContent = null; // don't let the old one survive
-            _log.error("Template: Could not read template: " + this);
+                bc = new BuildContext(_broker);
+                newParameters = bc.getMap();
+                newMacros = bc.getMacros();
+                newContent = (Block) bb.build(bc);
+            }
+            catch (BuildException be)
+            {
+                if (bc != null)
+                    be.setContextLocation(bc.getCurrentLocation());
+                newContent = null;
+                _log.error("Template contained invalid data", be);
+                throw be;
+            }
+            catch (IOException e)
+            {
+                newContent = null; // don't let the old one survive
+                _log.error("Template: Could not read template: " + this);
+                throw e;
+            }
+            catch (Exception e)
+            {
+                _log.error("Error parsing template: " + this, e);
+                BuildException be = new BuildException("Error parsing template: " + this, e);
+                if (bc != null)
+                    be.setContextLocation(bc.getCurrentLocation());
+                throw be;
+            }
+            finally
+            {
+                try
+                {
+                    if (in != null)
+                        in.close();
+                }
+                catch (Exception e)
+                {
+                }
+                _parameters = newParameters;
+                _content = newContent;
+                _macros = newMacros;
+                _parsed = true;
+            }
+        }
+        else
+        {
+            _log.debug("Ignoring parse request on already parsed template " + this);
+        }
+    }
+
+    /**
+     * Get the #macros' defined for this template.
+     *
+     * @return the #macro's defined for this template, or null if this template has
+     * not yet beed <code>parse()'d</code>.
+     */
+    public Map getMacros ()
+    {
+        return _macros;
+    }
+
+    /**
+     * Parse the Template against the supplied context data and
+     * return it as a string. If the operation fails for some reason,
+     * such as unable to read template or unable to introspect the context
+     * then this method will return a null string.
+     */
+    public final Object evaluate (Context data) throws PropertyException
+    {
+        try
+        {
+            FastWriter fw = FastWriter.getInstance(_broker);
+            write(fw, data);
+            String ret = fw.toString();
+            fw.close();
+            return ret;
+        }
+        catch (IOException e)
+        {
+            _log.error("Template: Could not write to ByteArrayOutputStream!", e);
+            return null;
+        }
+    }
+
+    /**
+     * A macro has a write method which takes a context and applies
+     * it to the macro to create a resulting String value, which is
+     * then written to the supplied stream. Something will always be
+     * written to the stream, even if the operation is not really
+     * successful because of a parse error (an error message will
+     * be written to the stream in that case.)
+     * <p>
+     * @exception IOException if there is a problem writing to the Writer
+     */
+    public final void write (FastWriter out, Context data)
+            throws IOException, PropertyException
+    {
+        try
+        {
+            if (!_parsed)
+            {
+                parse();
+            }
+        }
+        catch (TemplateException e)
+        {
+            _log.error("Template: Unable to parse template: " + this, e);
+            out.write(data.getEvaluationExceptionHandler()
+                    .errorString("Template failed to parse. Reason: \n"
+                    + e.toString()));
+        }
+
+        try
+        {
+            _content.write(out, data);
+        }
+        catch (PropertyException e)
+        {
+            e.setContextLocation(data.getCurrentLocation());
             throw e;
-         }
-         catch (Exception e) {
-            _log.error("Error parsing template: " + this, e);
-            BuildException be = new BuildException("Error parsing template: " + this, e);
-            if (bc != null)
-                be.setContextLocation(bc.getCurrentLocation());
-            throw be;
-         }
-         finally {
-            try {
-               if (in != null)
-                  in.close();
-            }
-            catch (Exception e) {
-            }
-            _parameters = newParameters;
-            _content = newContent;
-            _macros = newMacros;
-            _parsed = true;
-         }
-      }
-      else {
-         _log.debug("Ignoring parse request on already parsed template " + this);
-      }
-   }
+        }
+        catch (IOException ioe)
+        {
+            throw ioe;
+        }
+        catch (Exception e)
+        {
+            String warning =
+                    "Template: Exception evaluating template " + this;
+            _log.warning(warning, e);
 
-   /**
-    * Get the #macros' defined for this template.
-    *
-    * @return the #macro's defined for this template, or null if this template has
-    * not yet beed <code>parse()'d</code>.
-    */
-   public Map getMacros() {
-      return _macros;
-   }
+            out.write(data.getEvaluationExceptionHandler()
+                    .warningString("Could not interpret template. Reason: \n"
+                    + warning + "\n" + e.toString()));
+        }
+    }
 
-   /**
-    * Parse the Template against the supplied context data and
-    * return it as a string. If the operation fails for some reason,
-    * such as unable to read template or unable to introspect the context
-    * then this method will return a null string.
-    */
-   public final Object evaluate(Context data) throws PropertyException {
-      try {
-         FastWriter fw = FastWriter.getInstance(_broker);
-         write(fw, data);
-         String ret = fw.toString();
-         fw.close();
-         return ret;
-      }
-      catch (IOException e) {
-         _log.error("Template: Could not write to ByteArrayOutputStream!", e);
-         return null;
-      }
-   }
+    public void accept (TemplateVisitor v)
+    {
+        _content.accept(v);
+    }
 
-   /**
-    * A macro has a write method which takes a context and applies
-    * it to the macro to create a resulting String value, which is
-    * then written to the supplied stream. Something will always be
-    * written to the stream, even if the operation is not really
-    * successful because of a parse error (an error message will
-    * be written to the stream in that case.)
-    * <p>
-    * @exception IOException if there is a problem writing to the Writer
-    */
-   public final void write(FastWriter out, Context data)
-         throws IOException, PropertyException {
-      try {
-         if (!_parsed) {
+
+    /**
+     * return the default encoding either from the WebMacro config
+     * or the JVM settings
+     *
+     * Note for Unix users: you may need to set the environmental variable
+     * LC_ALL=[locale] to get the default one set up.
+     */
+
+    protected final String getDefaultEncoding ()
+    {
+        try
+        {
+            return (String) _broker.get("config", WMConstants.TEMPLATE_INPUT_ENCODING);
+        }
+        catch (Exception e)
+        {
+            return System.getProperty("file.encoding");
+        }
+    }
+
+
+    /**
+     * Template API
+     */
+    public Object getParam (String key)
+            throws IOException, TemplateException
+    {
+        try
+        {
+            return _parameters.get(key);
+        }
+        catch (NullPointerException e)
+        {
             parse();
-         }
-      }
-      catch (TemplateException e) {
-         _log.error("Template: Unable to parse template: " + this, e);
-         out.write(data.getEvaluationExceptionHandler()
-                   .errorString("Template failed to parse. Reason: \n"
-                                + e.toString()));
-      }
+            return _parameters.get(key);
+        }
+    }
 
-      try {
-         _content.write(out, data);
-      }
-      catch (PropertyException e) {
-         e.setContextLocation(data.getCurrentLocation());
-         throw e;
-      }
-      catch (IOException ioe) {
-         throw ioe;
-      }
-      catch (Exception e) {
-         String warning =
-               "Template: Exception evaluating template " + this;
-         _log.warning(warning, e);
+    public Map getParameters ()
+    {
+        return _parameters;
+    }
 
-         out.write(data.getEvaluationExceptionHandler()
-                   .warningString("Could not interpret template. Reason: \n"
-                                  + warning + "\n" + e.toString()));
-      }
-   }
-
-   public void accept(TemplateVisitor v) {
-      _content.accept(v);
-   }
-
-
-   /**
-    * return the default encoding either from the WebMacro config
-    * or the JVM settings
-    *
-    * Note for Unix users: you may need to set the environmental variable
-    * LC_ALL=[locale] to get the default one set up.
-    */
-
-   protected final String getDefaultEncoding() {
-      try {
-         return (String) _broker.get("config", WMConstants.TEMPLATE_INPUT_ENCODING);
-      }
-      catch (Exception e) {
-         return System.getProperty("file.encoding");
-      }
-   }
-
-
-   /**
-    * Template API
-    */
-   public Object getParam(String key)
-         throws IOException, TemplateException {
-      try {
-         return _parameters.get(key);
-      }
-      catch (NullPointerException e) {
-         parse();
-         return _parameters.get(key);
-      }
-   }
-
-   public Map getParameters() {
-      return _parameters;
-   }
-
-   public void setParam(String key, Object value) {
-      _parameters.put(key, value);
-   }
+    public void setParam (String key, Object value)
+    {
+        _parameters.put(key, value);
+    }
 
 
 }

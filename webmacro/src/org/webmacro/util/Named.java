@@ -23,8 +23,9 @@
 
 package org.webmacro.util;
 
-public interface Named {
+public interface Named
+{
 
-   public String getName();
+    public String getName ();
 }
 

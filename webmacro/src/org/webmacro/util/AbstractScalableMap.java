@@ -32,56 +32,67 @@ package org.webmacro.util;
  * This is a generic implementation that uses instances of SimpleMap
  * as real maps.
  */
-public class AbstractScalableMap implements SimpleMap {
+public class AbstractScalableMap implements SimpleMap
+{
 
-   public static final int DEFAULT_FACTOR = 5;
+    public static final int DEFAULT_FACTOR = 5;
 
-   private final int factor;
-   private final SimpleMap[] _maps;
-   private int pos = 0;
+    private final int factor;
+    private final SimpleMap[] _maps;
+    private int pos = 0;
 
-   /**
-    * Create a new scalable map, that uses
-    * factor SimpleMaps. SimpleMap object are
-    * created by mapFactory.
-    * @param factor number of SimpleMaps to create
-    * @param mapFactory object to create SimpleMap objects
-    **/
-   public AbstractScalableMap(int factor, SimpleMapFactory mapFactory) {
-      super();
-      this.factor = factor;
-      _maps = new SimpleMap[factor];
-      for (int i = 0; i < factor; i++) {
-         _maps[i] = mapFactory.createSimpleMap();
-      }
-   }
+    /**
+     * Create a new scalable map, that uses
+     * factor SimpleMaps. SimpleMap object are
+     * created by mapFactory.
+     * @param factor number of SimpleMaps to create
+     * @param mapFactory object to create SimpleMap objects
+     **/
+    public AbstractScalableMap (int factor, SimpleMapFactory mapFactory)
+    {
+        super();
+        this.factor = factor;
+        _maps = new SimpleMap[factor];
+        for (int i = 0; i < factor; i++)
+        {
+            _maps[i] = mapFactory.createSimpleMap();
+        }
+    }
 
-   public AbstractScalableMap(SimpleMapFactory mapFactory) {
-      this(DEFAULT_FACTOR, mapFactory);
-   }
+    public AbstractScalableMap (SimpleMapFactory mapFactory)
+    {
+        this(DEFAULT_FACTOR, mapFactory);
+    }
 
-   public void put(final Object key, final Object value) {
-      for (int i = 0; i < factor; i++) {
-         _maps[i].put(key, value);
-      }
-   }
+    public void put (final Object key, final Object value)
+    {
+        for (int i = 0; i < factor; i++)
+        {
+            _maps[i].put(key, value);
+        }
+    }
 
-   public Object get(final Object key) {
-      pos = (pos + 1) % factor;
-      return _maps[pos].get(key);
-   }
+    public Object get (final Object key)
+    {
+        pos = (pos + 1) % factor;
+        return _maps[pos].get(key);
+    }
 
-   public Object remove(final Object key) {
-      Object o = null;
-      for (int i = 0; i < _maps.length; i++) {
-         o = _maps[i].remove(key);
-      }
-      return o;
-   }
+    public Object remove (final Object key)
+    {
+        Object o = null;
+        for (int i = 0; i < _maps.length; i++)
+        {
+            o = _maps[i].remove(key);
+        }
+        return o;
+    }
 
-   public void clear() {
-      for (int i = 0; i < _maps.length; i++) {
-         _maps[i].clear();
-      }
-   }
+    public void clear ()
+    {
+        for (int i = 0; i < _maps.length; i++)
+        {
+            _maps[i].clear();
+        }
+    }
 }

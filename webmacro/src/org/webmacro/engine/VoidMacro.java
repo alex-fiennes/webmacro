@@ -6,12 +6,12 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.Macro;
 import org.webmacro.PropertyException;
+
+import java.io.IOException;
 
 /**
  * VoidMacro doesn't output data to the output stream, but will log a
@@ -27,22 +27,25 @@ import org.webmacro.PropertyException;
  * @author  e_ridge
  * @since 0.96
  */
-public final class VoidMacro implements Macro {
+public final class VoidMacro implements Macro
+{
 
-   public static final VoidMacro instance = new VoidMacro();
+    public static final VoidMacro instance = new VoidMacro();
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-      // Don't do anything.
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+        // Don't do anything.
+    }
 
-   /**
-    * Always throws a new <code>PropertyException.VoidValueException</code>
-    */
-   public Object evaluate(Context context)
-         throws PropertyException {
-      // We throw VoidValueException
-      throw new PropertyException.VoidValueException();
-   }
+    /**
+     * Always throws a new <code>PropertyException.VoidValueException</code>
+     */
+    public Object evaluate (Context context)
+            throws PropertyException
+    {
+        // We throw VoidValueException
+        throw new PropertyException.VoidValueException();
+    }
 
 }

@@ -32,16 +32,18 @@ package org.webmacro.resource;
  * @since 0.96
  */
 
-public abstract class CacheReloadContext {
+public abstract class CacheReloadContext
+{
 
-   /**
-    * The CacheManager calls shouldReload to ask the reference whether
-    * it has changed since we loaded it.  Subclasses should define an
-    * implementation if this if it makes sense to.  Otherwise, the default
-    * returns false, which means the item is replaced when it expires from
-    * the cache.
-    */
-   public boolean shouldReload() {
-      return false;
-   }
+    /**
+     * The CacheManager calls shouldReload to ask the reference whether
+     * it has changed since we loaded it.  Subclasses should define an
+     * implementation if this if it makes sense to.  Otherwise, the default
+     * returns false, which means the item is replaced when it expires from
+     * the cache.
+     */
+    public boolean shouldReload ()
+    {
+        return false;
+    }
 }

@@ -31,25 +31,31 @@ package org.webmacro.util;
  * <br>
  * This implementation uses SimpleHashMaps as its map implementation.
  */
-final public class ScalableMap extends AbstractScalableMap {
+final public class ScalableMap extends AbstractScalableMap
+{
 
-   public final static int DEFAULT_SIZE = 1001;
+    public final static int DEFAULT_SIZE = 1001;
 
-   public ScalableMap(final int factor, final int size) {
-      super(factor,
-            new SimpleMapFactory() {
-               public SimpleMap createSimpleMap() {
-                  return new SimpleHashMap(size);
-               }
-            });
-   }
+    public ScalableMap (final int factor, final int size)
+    {
+        super(factor,
+                new SimpleMapFactory()
+                {
+                    public SimpleMap createSimpleMap ()
+                    {
+                        return new SimpleHashMap(size);
+                    }
+                });
+    }
 
 
-   public ScalableMap(int size) {
-      this(DEFAULT_FACTOR, size);
-   }
+    public ScalableMap (int size)
+    {
+        this(DEFAULT_FACTOR, size);
+    }
 
-   public ScalableMap() {
-      this(DEFAULT_FACTOR, DEFAULT_SIZE);
-   }
+    public ScalableMap ()
+    {
+        this(DEFAULT_FACTOR, DEFAULT_SIZE);
+    }
 }

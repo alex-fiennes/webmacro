@@ -21,11 +21,9 @@
  */
 
 
-
 package org.webmacro.engine;
 
-import org.webmacro.util.*;
-import org.webmacro.*;
+import org.webmacro.Macro;
 
 /**
  * Builder for standalone function calls $a($foo)
@@ -36,23 +34,27 @@ import org.webmacro.*;
 public class FunctionCallBuilder implements Builder
 {
 
-   String _name;
-   ListBuilder _args;
+    String _name;
+    ListBuilder _args;
 
-   public FunctionCallBuilder(String name, ListBuilder args) {
-      _name = name;
-      _args = args;
-   }
+    public FunctionCallBuilder (String name, ListBuilder args)
+    {
+        _name = name;
+        _args = args;
+    }
 
-   public Object build(BuildContext bc) throws BuildException
-   {
-      Object args = _args.build(bc);
-      if (args instanceof Macro) {
-         return new FunctionCall(_name, (Macro) args);
-      } else {
-         return new FunctionCall(_name, (Object[]) args);
-      }
-   }
+    public Object build (BuildContext bc) throws BuildException
+    {
+        Object args = _args.build(bc);
+        if (args instanceof Macro)
+        {
+            return new FunctionCall(_name, (Macro) args);
+        }
+        else
+        {
+            return new FunctionCall(_name, (Object[]) args);
+        }
+    }
 
 
 }

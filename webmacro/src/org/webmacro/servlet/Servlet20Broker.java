@@ -23,15 +23,16 @@
 
 package org.webmacro.servlet;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import javax.servlet.*;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
 import org.webmacro.util.LogSystem;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * An implementation of Broker tailored for Servlet 2.0/2.1
@@ -41,93 +42,105 @@ import org.webmacro.util.LogSystem;
  * @since 0.96
  */
 
-public class Servlet20Broker extends ServletBroker {
+public class Servlet20Broker extends ServletBroker
+{
 
-   protected ClassLoader _servletClassLoader;
+    protected ClassLoader _servletClassLoader;
 
-   private Servlet20Broker(ServletContext sc,
-                           ClassLoader cl,
-                           Properties additionalProperties) throws InitException {
-      super(sc);
-      _servletClassLoader = cl;
+    private Servlet20Broker (ServletContext sc,
+                             ClassLoader cl,
+                             Properties additionalProperties) throws InitException
+    {
+        super(sc);
+        _servletClassLoader = cl;
 
-      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
-      loadDefaultSettings();
-      loadSettings(WEBMACRO_PROPERTIES, true);
-      if (additionalProperties != null && additionalProperties.keySet().size() > 0) {
-         propertySource += ", (additional Properties)";
-         loadSettings(additionalProperties);
-      }
-      propertySource += ", (System Properties)";
-      loadSystemSettings();
-      initLog(_config);
+        String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES;
+        loadDefaultSettings();
+        loadSettings(WEBMACRO_PROPERTIES, true);
+        if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+        {
+            propertySource += ", (additional Properties)";
+            loadSettings(additionalProperties);
+        }
+        propertySource += ", (System Properties)";
+        loadSystemSettings();
+        initLog(_config);
 
-      _log.notice("Loaded settings from " + propertySource);
-      init();
-   }
+        _log.notice("Loaded settings from " + propertySource);
+        init();
+    }
 
-   public static Broker getBroker(Servlet s, Properties additionalProperties) throws InitException {
-      ServletContext sc = s.getServletConfig().getServletContext();
-      ClassLoader cl = s.getClass().getClassLoader();
-      try {
-         Object key = cl;
-         if (additionalProperties != null && additionalProperties.keySet().size() > 0)
-            key = new PropertiesPair(cl, additionalProperties);
+    public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
+    {
+        ServletContext sc = s.getServletConfig().getServletContext();
+        ClassLoader cl = s.getClass().getClassLoader();
+        try
+        {
+            Object key = cl;
+            if (additionalProperties != null && additionalProperties.keySet().size() > 0)
+                key = new PropertiesPair(cl, additionalProperties);
 
-         Broker b = findBroker(key);
-         if (b == null) {
-            b = new Servlet20Broker(sc, cl, additionalProperties);
-            register(key, b);
-         }
-         else
-            b.getLog("broker").notice("Servlet " + s.getClass().getName()
-                                      + " joining Broker " + b.getName());
-         return b;
-      }
-      catch (InitException e) {
-         Log log = LogSystem.getSystemLog("wm");
-         log.error("Failed to initialized WebMacro from servlet context"
-                   + sc.toString());
-         throw e;
-      }
-   }
+            Broker b = findBroker(key);
+            if (b == null)
+            {
+                b = new Servlet20Broker(sc, cl, additionalProperties);
+                register(key, b);
+            }
+            else
+                b.getLog("broker").notice("Servlet " + s.getClass().getName()
+                        + " joining Broker " + b.getName());
+            return b;
+        }
+        catch (InitException e)
+        {
+            Log log = LogSystem.getSystemLog("wm");
+            log.error("Failed to initialized WebMacro from servlet context"
+                    + sc.toString());
+            throw e;
+        }
+    }
 
-   /**
-    * Get a resource (file) from the the Broker's class loader */
-   public URL getResource(String name) {
-      URL u = _servletClassLoader.getResource(name);
-      if (u == null)
-         u = super.getResource(name);
-      return u;
-   }
+    /**
+     * Get a resource (file) from the the Broker's class loader */
+    public URL getResource (String name)
+    {
+        URL u = _servletClassLoader.getResource(name);
+        if (u == null)
+            u = super.getResource(name);
+        return u;
+    }
 
-   /**
-    * Get a resource (file) from the Broker's class loader
-    */
-   public InputStream getResourceAsStream(String name) {
-      InputStream is = _servletClassLoader.getResourceAsStream(name);
-      if (is == null)
-         is = super.getResourceAsStream(name);
-      return is;
-   }
+    /**
+     * Get a resource (file) from the Broker's class loader
+     */
+    public InputStream getResourceAsStream (String name)
+    {
+        InputStream is = _servletClassLoader.getResourceAsStream(name);
+        if (is == null)
+            is = super.getResourceAsStream(name);
+        return is;
+    }
 
-   /**
-    * Loads a class by name. Uses the servlet classloader to load the
-    * class. If the class is not found uses the Broker classForName
-    * implementation.  */
+    /**
+     * Loads a class by name. Uses the servlet classloader to load the
+     * class. If the class is not found uses the Broker classForName
+     * implementation.  */
 
-   public Class classForName(String name) throws ClassNotFoundException {
-      Class cls = null;
-      try {
-         cls = _servletClassLoader.loadClass(name);
-      }
-      catch (ClassNotFoundException e) {
-      }
+    public Class classForName (String name) throws ClassNotFoundException
+    {
+        Class cls = null;
+        try
+        {
+            cls = _servletClassLoader.loadClass(name);
+        }
+        catch (ClassNotFoundException e)
+        {
+        }
 
-      if (cls == null)
-         cls = super.classForName(name);
+        if (cls == null)
+            cls = super.classForName(name);
 
-      return cls;
-   }
+        return cls;
+    }
 
 }

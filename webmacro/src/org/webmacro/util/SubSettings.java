@@ -23,58 +23,65 @@
 
 package org.webmacro.util;
 
-import java.util.*;
+import java.util.ArrayList;
 
-public class SubSettings extends Settings {
+public class SubSettings extends Settings
+{
 
-   private final Settings _settings;
-   private final String _prefix;
+    private final Settings _settings;
+    private final String _prefix;
 
-   /**
-    * Get a subset of the settings in this Settings. The
-    * returned Settings object will be just those settings
-    * beginning with the supplied prefix, with the
-    * prefix chopped off. So if the Settings had
-    * a setting "LogLevel.foo" then the settings file
-    * returned by getSubSettings("LogLevel") would contain
-    * the key "foo".
-    */
-   public SubSettings(Settings settings, String prefix) {
-      super();
-      _settings = settings;
-      _prefix = (prefix == null) ? "" : prefix + ".";
-   }
+    /**
+     * Get a subset of the settings in this Settings. The
+     * returned Settings object will be just those settings
+     * beginning with the supplied prefix, with the
+     * prefix chopped off. So if the Settings had
+     * a setting "LogLevel.foo" then the settings file
+     * returned by getSubSettings("LogLevel") would contain
+     * the key "foo".
+     */
+    public SubSettings (Settings settings, String prefix)
+    {
+        super();
+        _settings = settings;
+        _prefix = (prefix == null) ? "" : prefix + ".";
+    }
 
-   public String[] getKeys() {
-      String[] underlyingKeys = _settings.getKeys();
-      ArrayList al = new ArrayList(underlyingKeys.length);
-      for (int i = 0; i < underlyingKeys.length; i++) {
-         String key = underlyingKeys[i];
-         if (key.startsWith(_prefix))
-            al.add(key.substring(_prefix.length()));
-      }
-      return (String[]) al.toArray(stringArray);
-   }
+    public String[] getKeys ()
+    {
+        String[] underlyingKeys = _settings.getKeys();
+        ArrayList al = new ArrayList(underlyingKeys.length);
+        for (int i = 0; i < underlyingKeys.length; i++)
+        {
+            String key = underlyingKeys[i];
+            if (key.startsWith(_prefix))
+                al.add(key.substring(_prefix.length()));
+        }
+        return (String[]) al.toArray(stringArray);
+    }
 
-   /**
-    * Prefix the key for use with the underlying Settings
-    */
-   private String prefix(String key) {
-      return _prefix + key;
-   }
+    /**
+     * Prefix the key for use with the underlying Settings
+     */
+    private String prefix (String key)
+    {
+        return _prefix + key;
+    }
 
-   /**
-    * Find out if a setting is defined
-    */
-   public boolean containsKey(String key) {
-      return _settings.containsKey(prefix(key));
-   }
+    /**
+     * Find out if a setting is defined
+     */
+    public boolean containsKey (String key)
+    {
+        return _settings.containsKey(prefix(key));
+    }
 
-   /**
-    * Get a setting
-    */
-   public String getSetting(String key) {
-      return _settings.getSetting(prefix(key));
-   }
+    /**
+     * Get a setting
+     */
+    public String getSetting (String key)
+    {
+        return _settings.getSetting(prefix(key));
+    }
 }
 

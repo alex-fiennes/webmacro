@@ -24,9 +24,11 @@
 package org.webmacro.engine;
 
 
-final public class NullBuilder implements Builder {
+final public class NullBuilder implements Builder
+{
 
-   final public Object build(BuildContext pc) {
-      return null;
-   }
+    final public Object build (BuildContext pc)
+    {
+        return null;
+    }
 }

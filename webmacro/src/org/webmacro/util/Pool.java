@@ -28,16 +28,17 @@ package org.webmacro.util;
  * objects from. It is useful for recycling objects rather than
  * re-creating them. See ScalablePool and UPool.
  */
-public interface Pool {
+public interface Pool
+{
 
-   /**
-    * Add an item to the pool for later re-use
-    */
-   public void put(final Object o);
+    /**
+     * Add an item to the pool for later re-use
+     */
+    public void put (final Object o);
 
-   /**
-    * Get an item from the pool
-    */
-   public Object get();
+    /**
+     * Get an item from the pool
+     */
+    public Object get ();
 
 }

@@ -11,15 +11,20 @@ package org.webmacro.util;
 import junit.framework.TestCase;
 import org.webmacro.servlet.MathTool;
 
-public class TestMathTool extends TestCase {
-    public TestMathTool(String s) {
+public class TestMathTool extends TestCase
+{
+    public TestMathTool (String s)
+    {
         super(s);
     }
 
-    public void testRandom () {
-        for (int x=0; x<1000000; x++) {
+
+    public void testRandom ()
+    {
+        for (int x = 0; x < 1000000; x++)
+        {
             int rnd = MathTool.random(3, 5);
-            assertTrue (""+rnd, rnd >= 3 && rnd <=5);
+            assertTrue("" + rnd, rnd >= 3 && rnd <= 5);
         }
     }
 }

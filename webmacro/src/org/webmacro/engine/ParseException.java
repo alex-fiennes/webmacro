@@ -28,28 +28,32 @@ import org.webmacro.TemplateException;
 /**
  * Exception raised on discovery of a parsing error.
  */
-public class ParseException extends TemplateException {
+public class ParseException extends TemplateException
+{
 
-   public ParseException() {
-      super();
-   }
+    public ParseException ()
+    {
+        super();
+    }
 
-   /**
-    * Create a new exception
-    * @param reason what went wrong
-    */
-   public ParseException(String reason) {
-      super(reason);
-   }
+    /**
+     * Create a new exception
+     * @param reason what went wrong
+     */
+    public ParseException (String reason)
+    {
+        super(reason);
+    }
 
-   /**
-    * Create a new exception, wrapping another exception
-    * @param reason what went wrong
-    * @param e The exception that caused us to raise this exception
-    */
-   public ParseException(String reason, Exception e) {
-      super(reason, e);
-   }
+    /**
+     * Create a new exception, wrapping another exception
+     * @param reason what went wrong
+     * @param e The exception that caused us to raise this exception
+     */
+    public ParseException (String reason, Exception e)
+    {
+        super(reason, e);
+    }
 
 
 }

@@ -49,106 +49,121 @@ import org.webmacro.directive.Directive.Subdirective;
  * @author Brian Goetz
  */
 
-public final class DirectiveDescriptor {
+public final class DirectiveDescriptor
+{
 
-   public String name;
-   public Class dirClass;
-   public ArgDescriptor[] args;
-   public Subdirective[] subdirectives;
+    public String name;
+    public Class dirClass;
+    public ArgDescriptor[] args;
+    public Subdirective[] subdirectives;
 
-   public boolean valid = false,
-   hasBreakingSubdirectives = false;
+    public boolean valid = false,
+    hasBreakingSubdirectives = false;
 
-   public DirectiveDescriptor(String name,
-                              Class dirClass,
-                              ArgDescriptor[] args,
-                              Subdirective[] subdirectives) {
-      this.name = name;
-      this.dirClass = dirClass;
-      this.args = args;
-      this.subdirectives = subdirectives;
+    public DirectiveDescriptor (String name,
+                                Class dirClass,
+                                ArgDescriptor[] args,
+                                Subdirective[] subdirectives)
+    {
+        this.name = name;
+        this.dirClass = dirClass;
+        this.args = args;
+        this.subdirectives = subdirectives;
 
-      completeArgs(this.args);
-      valid = validateArgs(this.args);
+        completeArgs(this.args);
+        valid = validateArgs(this.args);
 
-      if (subdirectives != null) {
-         for (int i = 0; i < this.subdirectives.length; i++) {
-            completeArgs(this.subdirectives[i].args);
-            valid &= validateArgs(this.subdirectives[i].args);
-            if (this.subdirectives[i].isBreaking)
-               hasBreakingSubdirectives = true;
-         }
-      }
-   }
-
-   /**
-    * Determines the index of the next argument following a given argument.
-    * May return an index > args.length.
-    */
-   private static int nextArg(ArgDescriptor[] args, int i) {
-      if (args[i].type == Directive.ArgType_GROUP
-            || args[i].type == Directive.ArgType_CHOICE) {
-         int k = i + 1;
-         for (int j = 0; j < args[i].subordinateArgs; j++)
-            k = nextArg(args, k);
-         return k;
-      }
-      else
-         return i + 1;
-   }
-
-   /**
-    * Set the nextArg, children[] fields as necessary
-    */
-   private static void completeArgs(ArgDescriptor[] args) {
-      int j, k;
-
-      for (int i = 0; i < args.length; i++)
-         args[i].nextArg = nextArg(args, i);
-
-      for (int i = 0; i < args.length; i++) {
-         switch (args[i].type) {
-            case Directive.ArgType_GROUP:
-            case Directive.ArgType_CHOICE:
-               args[i].children = new int[args[i].subordinateArgs];
-               for (j = 0, k = i + 1; j < args[i].subordinateArgs; j++) {
-                  args[i].children[j] = k;
-                  k = args[k].nextArg;
-               }
-               break;
-
-            default:
-               break;
-         }
-      }
-   }
-
-   /**
-    * Make sure that the structure of the arguments list is valid.
-    * This means that
-    *   GROUP arguments begin with a keyword, not optional
-    *   Each of the children of a CHOICE argument is an OPTIONAL GROUP
-    */
-   private static boolean validateArgs(ArgDescriptor[] args) {
-      boolean valid = true;
-      for (int i = 0; i < args.length; i++) {
-         if (args[i].type == Directive.ArgType_GROUP) {
-            if (args[i].subordinateArgs == 0)
-               valid = false;
-            else if ((args[args[i].children[0]].type != Directive.ArgType_KEYWORD
-                  && args[args[i].children[0]].type != Directive.ArgType_ASSIGN)
-                  || args[args[i].children[0]].optional)
-               valid = false;
-         }
-         else if (args[i].type == Directive.ArgType_CHOICE) {
-            for (int j = 0; j < args[i].subordinateArgs; j++) {
-               if (args[args[i].children[j]].type != Directive.ArgType_GROUP
-                     || !args[args[i].children[j]].optional)
-                  valid = false;
+        if (subdirectives != null)
+        {
+            for (int i = 0; i < this.subdirectives.length; i++)
+            {
+                completeArgs(this.subdirectives[i].args);
+                valid &= validateArgs(this.subdirectives[i].args);
+                if (this.subdirectives[i].isBreaking)
+                    hasBreakingSubdirectives = true;
             }
-         }
-      }
+        }
+    }
 
-      return valid;
-   }
+    /**
+     * Determines the index of the next argument following a given argument.
+     * May return an index > args.length.
+     */
+    private static int nextArg (ArgDescriptor[] args, int i)
+    {
+        if (args[i].type == Directive.ArgType_GROUP
+                || args[i].type == Directive.ArgType_CHOICE)
+        {
+            int k = i + 1;
+            for (int j = 0; j < args[i].subordinateArgs; j++)
+                k = nextArg(args, k);
+            return k;
+        }
+        else
+            return i + 1;
+    }
+
+    /**
+     * Set the nextArg, children[] fields as necessary
+     */
+    private static void completeArgs (ArgDescriptor[] args)
+    {
+        int j, k;
+
+        for (int i = 0; i < args.length; i++)
+            args[i].nextArg = nextArg(args, i);
+
+        for (int i = 0; i < args.length; i++)
+        {
+            switch (args[i].type)
+            {
+                case Directive.ArgType_GROUP:
+                case Directive.ArgType_CHOICE:
+                    args[i].children = new int[args[i].subordinateArgs];
+                    for (j = 0, k = i + 1; j < args[i].subordinateArgs; j++)
+                    {
+                        args[i].children[j] = k;
+                        k = args[k].nextArg;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Make sure that the structure of the arguments list is valid.
+     * This means that
+     *   GROUP arguments begin with a keyword, not optional
+     *   Each of the children of a CHOICE argument is an OPTIONAL GROUP
+     */
+    private static boolean validateArgs (ArgDescriptor[] args)
+    {
+        boolean valid = true;
+        for (int i = 0; i < args.length; i++)
+        {
+            if (args[i].type == Directive.ArgType_GROUP)
+            {
+                if (args[i].subordinateArgs == 0)
+                    valid = false;
+                else if ((args[args[i].children[0]].type != Directive.ArgType_KEYWORD
+                        && args[args[i].children[0]].type != Directive.ArgType_ASSIGN)
+                        || args[args[i].children[0]].optional)
+                    valid = false;
+            }
+            else if (args[i].type == Directive.ArgType_CHOICE)
+            {
+                for (int j = 0; j < args[i].subordinateArgs; j++)
+                {
+                    if (args[args[i].children[j]].type != Directive.ArgType_GROUP
+                            || !args[args[i].children[j]].optional)
+                        valid = false;
+                }
+            }
+        }
+
+        return valid;
+    }
 }

@@ -29,19 +29,22 @@ import org.webmacro.WebMacroException;
  * This is an exception which a Handler can throw to indicate that it does
  * not want to process a connection request.
  */
-public class HandlerException extends WebMacroException {
+public class HandlerException extends WebMacroException
+{
 
-   /**
-    * Declare a handler exception with a reason
-    * @param reason why the handler failed
-    */
-   public HandlerException(String reason) {
-      super(reason);
-   }
+    /**
+     * Declare a handler exception with a reason
+     * @param reason why the handler failed
+     */
+    public HandlerException (String reason)
+    {
+        super(reason);
+    }
 
-   public HandlerException(String reason, Exception e) {
-      super(reason, e);
-   }
+    public HandlerException (String reason, Exception e)
+    {
+        super(reason, e);
+    }
 }
 
 

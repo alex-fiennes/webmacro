@@ -25,14 +25,17 @@ package org.webmacro.engine;
 
 import org.webmacro.TemplateException;
 
-public class BuildException extends TemplateException {
+public class BuildException extends TemplateException
+{
 
-   public BuildException(String message) {
-      super(message);
-   }
+    public BuildException (String message)
+    {
+        super(message);
+    }
 
-   public BuildException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    public BuildException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 
 }

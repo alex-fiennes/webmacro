@@ -26,71 +26,82 @@
 
 package org.webmacro.parser;
 
-import java.io.*;
-
 import org.webmacro.Broker;
 import org.webmacro.engine.BlockBuilder;
 import org.webmacro.engine.Parser;
 import org.webmacro.util.ScalablePool;
 
-public class WMParser implements Parser {
+import java.io.IOException;
+import java.io.Reader;
 
-   private final Broker _broker;
-   private final ScalablePool _parserCache = new ScalablePool();
+public class WMParser implements Parser
+{
 
-   public WMParser(Broker b) {
-      _broker = b;
-      _broker.getLog("parser").info("parser created");
-   }
+    private final Broker _broker;
+    private final ScalablePool _parserCache = new ScalablePool();
+
+    public WMParser (Broker b)
+    {
+        _broker = b;
+        _broker.getLog("parser").info("parser created");
+    }
 
 
-   // Parser Interface
+    // Parser Interface
 
-   /**
-    * Return a short name that identifies this parser. This name could,
-    * for example, be used as the extension for files which contain
-    * syntax parsable by this parser.
-    */
-   public final String getParserName() {
-      return "wm";
-   }
+    /**
+     * Return a short name that identifies this parser. This name could,
+     * for example, be used as the extension for files which contain
+     * syntax parsable by this parser.
+     */
+    public final String getParserName ()
+    {
+        return "wm";
+    }
 
-   /**
-    * Parse a block that appears on the supplied input Reader. The
-    * name supplied is used in error messages to identify the source
-    * being parsed.
-    */
-   public BlockBuilder parseBlock(String name, Reader in)
-         throws org.webmacro.engine.ParseException, IOException {
-      BlockBuilder bb;
-      WMParser_impl parser = null;
-      try {
-         parser = (WMParser_impl) _parserCache.get();
-         if (parser != null)
-            parser.ReInit(name, in);
-         else
-            parser = new WMParser_impl(_broker, name, in);
+    /**
+     * Parse a block that appears on the supplied input Reader. The
+     * name supplied is used in error messages to identify the source
+     * being parsed.
+     */
+    public BlockBuilder parseBlock (String name, Reader in)
+            throws org.webmacro.engine.ParseException, IOException
+    {
+        BlockBuilder bb;
+        WMParser_impl parser = null;
+        try
+        {
+            parser = (WMParser_impl) _parserCache.get();
+            if (parser != null)
+                parser.ReInit(name, in);
+            else
+                parser = new WMParser_impl(_broker, name, in);
 
-         try {
-            bb = parser.WMDocument();
-         }
-         catch (TokenMgrError e) {
-            throw new ParseException("Lexical error: " + e.toString());
-         }
-      }
-      catch (ParseException e) {
-         throw new org.webmacro.engine.ParseException("Parser Exception", e);
-      }
-      catch (ParserRuntimeException e) {
-         throw new org.webmacro.engine.ParseException("Parse Exception", e);
-      }
-      finally {
-         if (parser != null)
-            _parserCache.put(parser);
-      }
+            try
+            {
+                bb = parser.WMDocument();
+            }
+            catch (TokenMgrError e)
+            {
+                throw new ParseException("Lexical error: " + e.toString());
+            }
+        }
+        catch (ParseException e)
+        {
+            throw new org.webmacro.engine.ParseException("Parser Exception", e);
+        }
+        catch (ParserRuntimeException e)
+        {
+            throw new org.webmacro.engine.ParseException("Parse Exception", e);
+        }
+        finally
+        {
+            if (parser != null)
+                _parserCache.put(parser);
+        }
 
-      return bb;
-   }
+        return bb;
+    }
 
 }
 

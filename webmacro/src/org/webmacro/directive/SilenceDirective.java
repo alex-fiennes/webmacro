@@ -22,8 +22,6 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.PropertyException;
@@ -32,41 +30,49 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.SilenceFilter;
 import org.webmacro.engine.Variable;
 
-public class SilenceDirective extends Directive {
+import java.io.IOException;
 
-   private static final int SILENCE_TARGET = 1;
+public class SilenceDirective extends Directive
+{
 
-   private static final SilenceFilter silenceFilter = new SilenceFilter();
+    private static final int SILENCE_TARGET = 1;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new LValueArg(SILENCE_TARGET),
-         };
+    private static final SilenceFilter silenceFilter = new SilenceFilter();
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("silence", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new LValueArg(SILENCE_TARGET),
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("silence", null, myArgs, null);
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      Variable target = null;
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-      try {
-         target = (Variable) builder.getArg(SILENCE_TARGET, bc);
-         bc.addFilter(target, silenceFilter);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      return null;
-   }
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        Variable target = null;
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
-   }
+        try
+        {
+            target = (Variable) builder.getArg(SILENCE_TARGET, bc);
+            bc.addFilter(target, silenceFilter);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        return null;
+    }
+
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
+    }
 
 }

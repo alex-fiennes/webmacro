@@ -30,16 +30,18 @@ import org.webmacro.WebMacroException;
  * This is an exception, which Config may throw if something is wrong with
  * the config file eg default variables cannot be located
  */
-public class ConfigException extends WebMacroException {
+public class ConfigException extends WebMacroException
+{
 
-   /**
-    * Constructor only requires a reason
-    * <p>
-    * @param reason explains what went wrong
-    */
-   public ConfigException(String reason) {
-      super(reason);
-   }
+    /**
+     * Constructor only requires a reason
+     * <p>
+     * @param reason explains what went wrong
+     */
+    public ConfigException (String reason)
+    {
+        super(reason);
+    }
 
 }
 

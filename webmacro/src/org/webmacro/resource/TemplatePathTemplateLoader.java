@@ -22,13 +22,13 @@
 
 package org.webmacro.resource;
 
-import java.io.*;
-import java.util.*;
-
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 import org.webmacro.util.Settings;
+
+import java.io.File;
+import java.util.StringTokenizer;
 
 /**
  * Implementation of TemplateLoader that loads templates from a list of
@@ -37,36 +37,43 @@ import org.webmacro.util.Settings;
  * still use a TemplatePath setting.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class TemplatePathTemplateLoader extends AbstractTemplateLoader {
+public class TemplatePathTemplateLoader extends AbstractTemplateLoader
+{
 
-   private TemplateLoader[] loaders;
+    private TemplateLoader[] loaders;
 
-   public void setConfig(String config) throws InitException {
-      // ignore parameter
-      Settings settings = broker.getSettings();
-      String templatePath = settings.getSetting("TemplatePath", "");
-      log.info("Using legacy template path " + templatePath);
-      if (templatePath.length() != 0) {
-         StringTokenizer st = new StringTokenizer(templatePath, File.pathSeparator);
-         loaders = new TemplateLoader[st.countTokens()];
-         for (int i = 0; i < loaders.length; i++) {
-            TemplateLoader loader = new FileTemplateLoader();
-            loader.init(broker, settings);
-            loader.setConfig(st.nextToken());
-            loaders[i] = loader;
-         }
-      }
-   }
+    public void setConfig (String config) throws InitException
+    {
+        // ignore parameter
+        Settings settings = broker.getSettings();
+        String templatePath = settings.getSetting("TemplatePath", "");
+        log.info("Using legacy template path " + templatePath);
+        if (templatePath.length() != 0)
+        {
+            StringTokenizer st = new StringTokenizer(templatePath, File.pathSeparator);
+            loaders = new TemplateLoader[st.countTokens()];
+            for (int i = 0; i < loaders.length; i++)
+            {
+                TemplateLoader loader = new FileTemplateLoader();
+                loader.init(broker, settings);
+                loader.setConfig(st.nextToken());
+                loaders[i] = loader;
+            }
+        }
+    }
 
-   public final Template load(String query, CacheElement ce) throws ResourceException {
-      if (loaders != null) {
-         for (int i = 0; i < loaders.length; i++) {
-            Template t = loaders[i].load(query, ce);
-            if (t != null)
-               return t;
-         }
-      }
-      return null;
-   }
+    public final Template load (String query, CacheElement ce) throws ResourceException
+    {
+        if (loaders != null)
+        {
+            for (int i = 0; i < loaders.length; i++)
+            {
+                Template t = loaders[i].load(query, ce);
+                if (t != null)
+                    return t;
+            }
+        }
+        return null;
+    }
 
 }

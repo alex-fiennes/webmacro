@@ -23,22 +23,26 @@
 
 package org.webmacro.engine;
 
-import java.io.*;
-
 import org.webmacro.Broker;
+
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * This parser eats all of the input and returns nothing.
  */
-public class NullParser implements Parser {
+public class NullParser implements Parser
+{
 
-   public NullParser(Broker broker) {
-   }
+    public NullParser (Broker broker)
+    {
+    }
 
-   public BlockBuilder parseBlock(String name, Reader in)
-         throws ParseException, IOException {
-      return new BlockBuilder();
-   }
+    public BlockBuilder parseBlock (String name, Reader in)
+            throws ParseException, IOException
+    {
+        return new BlockBuilder();
+    }
 }
 
 

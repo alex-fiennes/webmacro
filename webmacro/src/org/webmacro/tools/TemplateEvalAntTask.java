@@ -1,13 +1,16 @@
 package org.webmacro.tools;
 
-public class TemplateEvalAntTask extends WMTemplateAntTask {
+public class TemplateEvalAntTask extends WMTemplateAntTask
+{
 
-   public TemplateEvalAntTask() {
-      super();
-   }
+    public TemplateEvalAntTask ()
+    {
+        super();
+    }
 
-   protected String getMainClass() {
-      return "org.webmacro.tools.EvalTemplates";
-   }
+    protected String getMainClass ()
+    {
+        return "org.webmacro.tools.EvalTemplates";
+    }
 
 }

@@ -26,13 +26,16 @@ package org.webmacro;
 /**
  * You asked for something that is not currently available.
  */
-public class NotFoundException extends ResourceException {
+public class NotFoundException extends ResourceException
+{
 
-   public NotFoundException(String reason, Exception e) {
-      super(reason, e);
-   }
+    public NotFoundException (String reason, Exception e)
+    {
+        super(reason, e);
+    }
 
-   public NotFoundException(String reason) {
-      super(reason);
-   }
+    public NotFoundException (String reason)
+    {
+        super(reason);
+    }
 }

@@ -33,14 +33,17 @@ import org.webmacro.ContextTool;
  * @since Apr. 2001
  * @see org.webmacro.util.CastUtil
  */
-public class TypeTool implements ContextTool {
+public class TypeTool implements ContextTool
+{
 
-   public Object init(Context context) {
-      return org.webmacro.util.CastUtil.getInstance();
-   }
+    public Object init (Context context)
+    {
+        return org.webmacro.util.CastUtil.getInstance();
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }
 
 

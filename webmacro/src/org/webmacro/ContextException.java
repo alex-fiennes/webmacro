@@ -28,18 +28,22 @@ package org.webmacro;
  * the macro required in order to write or evaluate itself, or there
  * was some problem with the way the Context was used.
  */
-public class ContextException extends WebMacroException {
+public class ContextException extends WebMacroException
+{
 
-   public ContextException() {
-      super();
-   }
+    public ContextException ()
+    {
+        super();
+    }
 
-   public ContextException(String reason) {
-      super(reason);
-   }
+    public ContextException (String reason)
+    {
+        super(reason);
+    }
 
-   public ContextException(String reason, Throwable e) {
-      super(reason, e);
-   }
+    public ContextException (String reason, Throwable e)
+    {
+        super(reason, e);
+    }
 
 }

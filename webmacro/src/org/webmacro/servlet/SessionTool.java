@@ -23,31 +23,36 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.http.*;
-
 import org.webmacro.Context;
 import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * Provide Template with access to the HttpSession associated
  * with the current request.
  */
-public class SessionTool implements ContextTool {
+public class SessionTool implements ContextTool
+{
 
-   public Object init(Context context)
-         throws PropertyException {
-      try {
-         WebContext wc = (WebContext) context;
-         HttpSession s = wc.getRequest().getSession(true);
-         return s;
-      }
-      catch (ClassCastException ce) {
-         throw new PropertyException(
-               "SessionTool only works with WebContext", ce);
-      }
-   }
+    public Object init (Context context)
+            throws PropertyException
+    {
+        try
+        {
+            WebContext wc = (WebContext) context;
+            HttpSession s = wc.getRequest().getSession(true);
+            return s;
+        }
+        catch (ClassCastException ce)
+        {
+            throw new PropertyException(
+                    "SessionTool only works with WebContext", ce);
+        }
+    }
 
-   public void destroy(Object o) {
-   }
+    public void destroy (Object o)
+    {
+    }
 }

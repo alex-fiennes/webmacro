@@ -31,8 +31,10 @@ package org.webmacro.resource;
  * @since 0.96
  */
 
-public abstract class CacheElement {
+public abstract class CacheElement
+{
 
-   public void setReloadContext(CacheReloadContext rc) {
-   }
+    public void setReloadContext (CacheReloadContext rc)
+    {
+    }
 }

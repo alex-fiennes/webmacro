@@ -22,85 +22,97 @@
 
 package org.webmacro.directive;
 
-import java.io.*;
-
 import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-public class SetblockDirective extends Directive {
+import java.io.IOException;
 
-   private static final int SETBLOCK_AS = 1;
-   private static final int SETBLOCK_MACRO = 2;
-   private static final int SETBLOCK_TARGET = 3;
-   private static final int SETBLOCK_RESULT = 4;
+public class SetblockDirective extends Directive
+{
 
-   private Variable target;
-   private Object result;
-   private boolean asMacro = false;
+    private static final int SETBLOCK_AS = 1;
+    private static final int SETBLOCK_MACRO = 2;
+    private static final int SETBLOCK_TARGET = 3;
+    private static final int SETBLOCK_RESULT = 4;
 
-   private static final ArgDescriptor[]
-         myArgs = new ArgDescriptor[]{
-            new OptionalGroup(2),
-            new KeywordArg(SETBLOCK_AS, "as"),
-            new KeywordArg(SETBLOCK_MACRO, "macro"),
-            new LValueArg(SETBLOCK_TARGET),
-            new BlockArg(SETBLOCK_RESULT)
-         };
+    private Variable target;
+    private Object result;
+    private boolean asMacro = false;
 
-   private static final DirectiveDescriptor
-         myDescr = new DirectiveDescriptor("setblock", null, myArgs, null);
+    private static final ArgDescriptor[]
+            myArgs = new ArgDescriptor[]{
+                new OptionalGroup(2),
+                new KeywordArg(SETBLOCK_AS, "as"),
+                new KeywordArg(SETBLOCK_MACRO, "macro"),
+                new LValueArg(SETBLOCK_TARGET),
+                new BlockArg(SETBLOCK_RESULT)
+            };
 
-   public static DirectiveDescriptor getDescriptor() {
-      return myDescr;
-   }
+    private static final DirectiveDescriptor
+            myDescr = new DirectiveDescriptor("setblock", null, myArgs, null);
 
-   public SetblockDirective() {
-   }
+    public static DirectiveDescriptor getDescriptor ()
+    {
+        return myDescr;
+    }
 
-   public Object build(DirectiveBuilder builder,
-                       BuildContext bc)
-         throws BuildException {
-      try {
-         target = (Variable) builder.getArg(SETBLOCK_TARGET, bc);
-      }
-      catch (ClassCastException e) {
-         throw new NotVariableBuildException(myDescr.name, e);
-      }
-      Object macroKeyword = builder.getArg(SETBLOCK_MACRO, bc);
-      asMacro = (macroKeyword != null);
-      result = builder.getArg(SETBLOCK_RESULT, bc);
-      return this;
-   }
+    public SetblockDirective ()
+    {
+    }
 
-   public void write(FastWriter out, Context context)
-         throws PropertyException, IOException {
+    public Object build (DirectiveBuilder builder,
+                         BuildContext bc)
+            throws BuildException
+    {
+        try
+        {
+            target = (Variable) builder.getArg(SETBLOCK_TARGET, bc);
+        }
+        catch (ClassCastException e)
+        {
+            throw new NotVariableBuildException(myDescr.name, e);
+        }
+        Object macroKeyword = builder.getArg(SETBLOCK_MACRO, bc);
+        asMacro = (macroKeyword != null);
+        result = builder.getArg(SETBLOCK_RESULT, bc);
+        return this;
+    }
 
-      try {
-         if (result instanceof Macro && !asMacro)
-            target.setValue(context, ((Macro) result).evaluate(context));
-         else
-            target.setValue(context, result);
-      }
-      catch (PropertyException e) {
-         throw e;
-      }
-      catch (Exception e) {
-         String errorText = "#setblock: Unable to set " + target;
-         writeWarning(errorText, context, out);
-      }
-   }
+    public void write (FastWriter out, Context context)
+            throws PropertyException, IOException
+    {
 
-   public void accept(TemplateVisitor v) {
-      v.beginDirective(myDescr.name);
-      if (asMacro){
-         v.visitDirectiveArg("SetblockKeyword", "as");
-         v.visitDirectiveArg("SetblockKeyword", "macro");
-      }
-      v.visitDirectiveArg("SetblockTarget", target);
-      v.visitDirectiveArg("SetblockValue", result);
-      v.endDirective();
-   }
+        try
+        {
+            if (result instanceof Macro && !asMacro)
+                target.setValue(context, ((Macro) result).evaluate(context));
+            else
+                target.setValue(context, result);
+        }
+        catch (PropertyException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            String errorText = "#setblock: Unable to set " + target;
+            writeWarning(errorText, context, out);
+        }
+    }
+
+    public void accept (TemplateVisitor v)
+    {
+        v.beginDirective(myDescr.name);
+        if (asMacro)
+        {
+            v.visitDirectiveArg("SetblockKeyword", "as");
+            v.visitDirectiveArg("SetblockKeyword", "macro");
+        }
+        v.visitDirectiveArg("SetblockTarget", target);
+        v.visitDirectiveArg("SetblockValue", result);
+        v.endDirective();
+    }
 
 }

@@ -21,14 +21,14 @@
  */
 package org.webmacro.servlet;
 
-import java.text.MessageFormat;
-import java.util.*;
-import javax.servlet.*;
-
 import org.webmacro.util.AbstractLogFile;
 import org.webmacro.util.Clock;
 import org.webmacro.util.LogSystem;
 import org.webmacro.util.Settings;
+
+import javax.servlet.ServletContext;
+import java.text.MessageFormat;
+import java.util.Date;
 
 /**
  *
@@ -37,39 +37,44 @@ import org.webmacro.util.Settings;
  * @since 0.96
  * @author Brian Goetz
  */
-public class ServletLog extends AbstractLogFile {
+public class ServletLog extends AbstractLogFile
+{
 
-   private static String servletDefaultFormat = "WebMacro:{1}\t{2}\t{3}";
-   private ServletContext _servletContext;
+    private static String servletDefaultFormat = "WebMacro:{1}\t{2}\t{3}";
+    private ServletContext _servletContext;
 
-   public ServletLog(ServletContext sc, Settings s) {
-      super(s);
-      if (_formatString == _defaultFormatString)
-         _mf = new MessageFormat(servletDefaultFormat);
-      _servletContext = sc;
-      _name = sc.toString();
-      if (_defaultLevel <= LogSystem.NOTICE)
-         log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---",
-             null);
-   }
+    public ServletLog (ServletContext sc, Settings s)
+    {
+        super(s);
+        if (_formatString == _defaultFormatString)
+            _mf = new MessageFormat(servletDefaultFormat);
+        _servletContext = sc;
+        _name = sc.toString();
+        if (_defaultLevel <= LogSystem.NOTICE)
+            log(Clock.getDate(), "LogFile", "NOTICE", "--- Log Started ---",
+                    null);
+    }
 
-   private Object[] _args = new Object[4];
+    private Object[] _args = new Object[4];
 
-   public void log(Date date, String name, String level, String message, Throwable e) {
-      synchronized (_args) {
-         _args[0] = date;
-         _args[1] = name;
-         _args[2] = level;
-         _args[3] = message;
-         if (e == null)
-            _servletContext.log(_mf.format(_args));
-         else
-            _servletContext.log(_mf.format(_args), e);
-      }
-   }
+    public void log (Date date, String name, String level, String message, Throwable e)
+    {
+        synchronized (_args)
+        {
+            _args[0] = date;
+            _args[1] = name;
+            _args[2] = level;
+            _args[3] = message;
+            if (e == null)
+                _servletContext.log(_mf.format(_args));
+            else
+                _servletContext.log(_mf.format(_args), e);
+        }
+    }
 
-   public void flush() {
-   }
+    public void flush ()
+    {
+    }
 
 }
 

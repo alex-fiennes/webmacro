@@ -38,53 +38,54 @@ import org.webmacro.util.Settings;
  * @since 0.96
  */
 
-public interface CacheManager {
+public interface CacheManager
+{
 
-   /**
-    * Same as defined in Provider, except with an additional type
-    * parameter so it knows what type of resource it is caching
-    */
-   public void init(Broker b, Settings config, String resourceType)
-         throws InitException;
+    /**
+     * Same as defined in Provider, except with an additional type
+     * parameter so it knows what type of resource it is caching
+     */
+    public void init (Broker b, Settings config, String resourceType)
+            throws InitException;
 
-   /**
-    * Same as defined in Provider
-    */
-   public void flush();
+    /**
+     * Same as defined in Provider
+     */
+    public void flush ();
 
-   /**
-    * Same as defined in Provider
-    */
-   public void destroy();
+    /**
+     * Same as defined in Provider
+     */
+    public void destroy ();
 
-   /**
-    * Called to get a resource from the cache.  The helper object is used
-    * to load the resource if the resource was not in the cache.
-    */
-   public Object get(final Object query, ResourceLoader helper)
-         throws ResourceException;
+    /**
+     * Called to get a resource from the cache.  The helper object is used
+     * to load the resource if the resource was not in the cache.
+     */
+    public Object get (final Object query, ResourceLoader helper)
+            throws ResourceException;
 
-   /**
-    * Called to get a resource from the cache.  Returns null if not present.
-    */
-   public Object get(final Object query);
+    /**
+     * Called to get a resource from the cache.  Returns null if not present.
+     */
+    public Object get (final Object query);
 
-   /**
-    * Called to put a resource into the cache.
-    */
-   public void put(final Object query, Object resource);
+    /**
+     * Called to put a resource into the cache.
+     */
+    public void put (final Object query, Object resource);
 
-   /**
-    * Invalidates an entry in the cache. Depending on the
-    * the implementation, the actual removal from the cache
-    * may or may not be immediate.
-    */
-   public void invalidate(final Object query);
+    /**
+     * Invalidates an entry in the cache. Depending on the
+     * the implementation, the actual removal from the cache
+     * may or may not be immediate.
+     */
+    public void invalidate (final Object query);
 
-   /**
-    * Does this cache manager support reloading of resources if the
-    * underlying resource has changed?
-    */
-   public boolean supportsReload();
+    /**
+     * Does this cache manager support reloading of resources if the
+     * underlying resource has changed?
+     */
+    public boolean supportsReload ();
 
 }

@@ -38,48 +38,59 @@ import org.webmacro.InitException;
  * option to this object.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
-public class DefaultTemplateLoaderFactory implements TemplateLoaderFactory {
+public class DefaultTemplateLoaderFactory implements TemplateLoaderFactory
+{
 
-   public TemplateLoader getTemplateLoader(Broker b, String config) throws InitException {
-      String protocol;
-      String options;
-      int pos = config.indexOf(":");
-      if (pos == -1) {
-         protocol = "default";
-         options = config;
-      }
-      else {
-         protocol = config.substring(0, pos);
-         if (pos + 1 < config.length()) {
-            options = config.substring(pos + 1);
-         }
-         else {
-            options = "";
-         }
-      }
+    public TemplateLoader getTemplateLoader (Broker b, String config) throws InitException
+    {
+        String protocol;
+        String options;
+        int pos = config.indexOf(":");
+        if (pos == -1)
+        {
+            protocol = "default";
+            options = config;
+        }
+        else
+        {
+            protocol = config.substring(0, pos);
+            if (pos + 1 < config.length())
+            {
+                options = config.substring(pos + 1);
+            }
+            else
+            {
+                options = "";
+            }
+        }
 
-      String classname = b.getSetting("TemplateLoader.".concat(protocol));
-      if (classname == null || classname.length() == 0)
-         throw new InitException("No class found for template loader protocol " + protocol);
+        String classname = b.getSetting("TemplateLoader.".concat(protocol));
+        if (classname == null || classname.length() == 0)
+            throw new InitException("No class found for template loader protocol " + protocol);
 
-      try {
-         TemplateLoader loader = (TemplateLoader) b.classForName(classname).newInstance();
-         loader.init(b, b.getSettings());
-         loader.setConfig(options);
-         return loader;
-      }
-      catch (ClassNotFoundException e) {
-         throw new InitException("Class " + classname + " for template loader " + protocol + " not found", e);
-      }
-      catch (InstantiationException e) {
-         throw new InitException("Could not instantiate class " + classname + " for template loader " + protocol, e);
-      }
-      catch (IllegalAccessException e) {
-         throw new InitException("Could not instantiate class " + classname + " for template loader " + protocol, e);
-      }
-      catch (ClassCastException e) {
-         throw new InitException("Class " + classname + " for template loader" + protocol + " does not implement " +
-                                 "interface org.webmacro.resource.TemplateLoader", e);
-      }
-   }
+        try
+        {
+            TemplateLoader loader = (TemplateLoader) b.classForName(classname).newInstance();
+            loader.init(b, b.getSettings());
+            loader.setConfig(options);
+            return loader;
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new InitException("Class " + classname + " for template loader " + protocol + " not found", e);
+        }
+        catch (InstantiationException e)
+        {
+            throw new InitException("Could not instantiate class " + classname + " for template loader " + protocol, e);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new InitException("Could not instantiate class " + classname + " for template loader " + protocol, e);
+        }
+        catch (ClassCastException e)
+        {
+            throw new InitException("Class " + classname + " for template loader" + protocol + " does not implement " +
+                    "interface org.webmacro.resource.TemplateLoader", e);
+        }
+    }
 }
