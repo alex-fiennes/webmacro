@@ -15,7 +15,7 @@ import java.util.*;
  * When a provider requests to decorate a reload context it looks up
  * the delay for this protocol and eventually creates a suitable
  * TimedReloadContext.
- * @author Sebastian Kanthak
+ * @author Sebastian Kanthak <sebastian.kanthak@muehlheim.de>
  */
 public class ReloadDelayDecorator {
     /** maps protocol types to Long objects */
@@ -33,17 +33,19 @@ public class ReloadDelayDecorator {
      */
     public void init(Broker b,Settings config) throws InitException {
         defaultDelay = 0; // no delay
-        config.processListSetting("CheckForReloadDelay",
-                                  new Settings.ListSettingHandler() {
-                                          public void processSetting(String key,String value) {
-                                              if (key == null || key.length() == 0) {
-                                                  // default reloadDelay
-                                                  defaultDelay = Long.parseLong(value);
-                                              } else {
-                                                  reloadDelays.put(key,Long.valueOf(value));
+        synchronized (reloadDelays) {
+            config.processListSetting("CheckForReloadDelay",
+                                      new Settings.ListSettingHandler() {
+                                              public void processSetting(String key,String value) {
+                                                  if (key == null || key.length() == 0) {
+                                                      // default reloadDelay
+                                                      defaultDelay = Long.parseLong(value);
+                                                  } else {
+                                                      reloadDelays.put(key,Long.valueOf(value));
+                                                  }
                                               }
-                                          }
-                                      });
+                                          });
+        }
         log = b.getLog("resource","ReloadDelayDecorator");
     }
 
@@ -64,10 +66,14 @@ public class ReloadDelayDecorator {
         }
         delay = (l != null) ? l.longValue() : defaultDelay;
         if (delay > 0) {
-            log.debug("Returning timed reload context with delay "+delay);
+            if (log.loggingDebug()) {
+                log.debug("Returning timed reload context with delay "+delay);
+            }
             return new TimedReloadContext(reloadContext,delay);
         } else {
-            log.debug("Returning unmodified reload context");
+            if (log.loggingDebug()) {
+                log.debug("Returning unmodified reload context");
+            }
             return reloadContext;
         }
     }
