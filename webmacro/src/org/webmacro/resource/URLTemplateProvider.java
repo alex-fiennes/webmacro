@@ -74,8 +74,9 @@ final public class URLTemplateProvider extends CachingProvider
     /** The default separator for TemplathPath
      */
     private static String _pathSeparator = ";";
-/**
- */
+    
+    /**
+     */
     private String[] _templateDirectory = null;
 
     /**
@@ -125,11 +126,13 @@ final public class URLTemplateProvider extends CachingProvider
      * <li> [path] - Equivalent to file:[path]</li>
      * </ol>
      */
+     
     private String _templatePath;
 
     /**
      * Where we write our log messages
      */
+     
     private Log _log;
 
     /**
@@ -137,6 +140,7 @@ final public class URLTemplateProvider extends CachingProvider
      * default TemplateProvider
      * @return the template type.  Always the String "template"
      */
+     
     final public String getType() {
         return _TYPE;
     }
@@ -150,6 +154,7 @@ final public class URLTemplateProvider extends CachingProvider
     * @param config Settings from the webmacro initialization file
     * @exception InitException thrown when the provider fails to initialize
     */
+
     public void init(Broker b, Settings config) throws InitException
     {
         super.init(b,config);
@@ -192,7 +197,6 @@ final public class URLTemplateProvider extends CachingProvider
     {
         return load(name,_baseURL);
     }
-
 
     /**
      * Find the specified template in the directory managed by this
@@ -261,6 +265,32 @@ final public class URLTemplateProvider extends CachingProvider
         URLTemplate tmpl = (URLTemplate) templateNameCache.get(name);
         return (tmpl == null) ?  false : tmpl.shouldReload();
     }
+    
+    private final boolean exists(URL url) {
+        InputStream _is = null;
+        try
+        {
+            _is = url.openStream();
+            System.out.println(url +" exists");
+            return true;
+        }
+        catch (IOException e) 
+        {
+            System.out.println(url +" does not exist");
+            return false;
+        }
+        finally
+        {
+            if (_is != null) 
+            {
+                try {
+                    _is.close();
+                }
+                catch (Exception ignore) {}
+            }
+        }
+    }
+
     /**
       * load a template relative to the base.
       * @param path the relative or absolute URL-path of the template
@@ -300,23 +330,11 @@ final public class URLTemplateProvider extends CachingProvider
             }
             _log.debug("URLTemplateProvider: loading " + url+
                 "("+path+","+urlPath+")");
-            /*
-             * Seems a bit wasteful to check the URL here but t.parse()
-             * generates "spurious" errors if the template doesn't exist
-             */
-            InputStream _is = null;
-            try
-            {
-                _is = url.openStream();
-                t = new URLTemplate(_broker,url);
-                _log.debug("**PARSING "+url);
-                t.parse();
-                return t;
-            }
-            finally
-            {
-                if (_is != null) _is.close();
-            }
+
+            t = new URLTemplate(_broker,url);
+            _log.debug("**PARSING "+url);
+            t.parse();
+            return t;
         }
         catch (IOException e)
         {
@@ -351,11 +369,9 @@ final public class URLTemplateProvider extends CachingProvider
         return null;
     }
 
-
     /**
      * Get the URL for a specified template
      */
-
 
     private Template getTemplate(String path)
     throws IOException
@@ -373,7 +389,6 @@ final public class URLTemplateProvider extends CachingProvider
                 if (url == null) {
                     throw new FileNotFoundException("Unable to locate "+path+" on classpath");
                 }
-                return getTemplate(url);
             }
             else if (tPart.startsWith(CONTEXT_PREFIX))
             {
@@ -385,18 +400,21 @@ final public class URLTemplateProvider extends CachingProvider
             else if (tPart.startsWith(IGNORE_PREFIX))
             {
                 url = new URL(path);
-                return getTemplate(url);
             }
             else
             {
+                String s = join(tPart,path);
                 try
                 {
-                    url = new URL(tPart);
+                    url = new URL(s);
                 }
                 catch (MalformedURLException e)
                 {
-                    url = new URL("file",null,tPart);
+                    url = new URL("file",null,s);
                 }
+            }
+            if (exists(url))
+            {
                 return getTemplate(url);
             }
         }
@@ -408,6 +426,7 @@ final public class URLTemplateProvider extends CachingProvider
     /**
      * The URL path separator.  Used by join()
      */
+
     private static final String _SEP = "/";
 
     /**
