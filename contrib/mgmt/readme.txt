@@ -15,7 +15,11 @@ Services are added by implementing the management interface,
 org.webmacro.mgmt.ManagementService.
 
 A second file, org.webmacro.mgmt.ManagementSupport is a singleton
-which acts a gateway to all "registered" management services.
+which acts as a gateway instance to all "registered" management services.
+
+Since all services implement the ManagementService interface and since
+this interface has "self-describing" string methods, it is straight-forward
+how to "present" the services at the presentation layer.
 
 General Development Status
 ----------------------------

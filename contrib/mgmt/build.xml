@@ -14,11 +14,15 @@
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
+  <property name="test.root" value="test"/>
+  <property name="unit.reports" value="${test.root}/unit-reports"/>
+  <property name="unit.src" value="${test.root}/unit"/>
 
   <path id="class.path">
     <!-- the following gets the standard jar files which mgmt depends on -->
     <fileset dir="../lib">
       <include name="webmacro-0.97a.jar" />
+      <include name="servlet-2.2.jar" />
     </fileset>
     <pathelement location="${classes}" />
     <pathelement path="${java.class.path}" />
@@ -64,17 +68,40 @@
          includes="src/**,build.xml"/>
   </target>
 
-  <target name="dist" depends="prepare,compile,jar,javadoc">
+  <target name="dist" depends="prepare,compile,jar,javadoc,test">
     <mkdir dir="${dist}/api" />
     <copy todir="${dist}/api">
       <fileset dir="${javadoc}"/>
     </copy>
     <copy todir="${dist}" file="${src.jar}"/>
     <copy todir="${dist}" file="${jar}"/>
+    <copy todir="${dist}" file="readme.txt"/>
   </target>
 
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
 
+  <!-- the unit test targets for mgmt -->
+
+  <target name="unit-prepare" depends="compile">
+    <mkdir  dir="${unit.reports}"/>
+  </target>
+
+  <target name="unit-compile" depends="unit-prepare">
+    <javac srcdir="${unit.src}" destdir="${classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath refid="class.path"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="unit-compile">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="class.path"/>
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="${unit.reports}">
+        <fileset dir="${unit.src}" includes="**/Test*.java" />
+      </batchtest>
+    </junit>
+  </target>
 
 </project>
 
