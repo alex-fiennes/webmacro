@@ -21,7 +21,7 @@ final class LocalVariable extends Variable
      * and return it
      * @exception ContextException If the property does not exist
      */
-   final Object getValue(Context context) 
+   public final Object getValue(Context context) 
       throws ContextException
    {
       try {
@@ -38,7 +38,7 @@ final class LocalVariable extends Variable
      * using introspection, and set it to the supplied value.
      * @exception ContextException If the property does not exist
      */
-   final void setValue(Context context, Object newValue)
+   public final void setValue(Context context, Object newValue)
       throws ContextException
    {
 

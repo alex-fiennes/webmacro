@@ -25,7 +25,7 @@ import org.webmacro.util.*;
 import org.webmacro.*;
 
 
-final class QuotedStringBuilder extends Vector implements Builder
+public final class QuotedStringBuilder extends Vector implements Builder
 {
 
    final public Object build(BuildContext bc) throws BuildException 

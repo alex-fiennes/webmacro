@@ -69,7 +69,7 @@ import org.webmacro.*;
   * methods, and getFoo() over get("Foo").
   *
   */
-abstract class Variable implements Macro
+public abstract class Variable implements Macro
 {
 
 
@@ -180,13 +180,13 @@ abstract class Variable implements Macro
      * The code to get the value represented by the variable from the 
      * supplied context.
      */
-   abstract Object getValue(Context context) throws ContextException;
+   public abstract Object getValue(Context context) throws ContextException;
 
    /**
      * The code to set the value represented by the variable in the 
      * supplied context.
      */
-   abstract void setValue(Context c, Object v) throws ContextException;
+   public abstract void setValue(Context c, Object v) throws ContextException;
 
    /**
      * Return the String name of the variable prefixed with a string

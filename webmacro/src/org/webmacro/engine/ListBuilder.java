@@ -27,7 +27,7 @@ import java.lang.reflect.*;
 import org.webmacro.*;
 
 
-final class ListBuilder extends Vector implements Builder
+public final class ListBuilder extends Vector implements Builder
 {
    public final Object build(BuildContext bc) throws BuildException
    {
