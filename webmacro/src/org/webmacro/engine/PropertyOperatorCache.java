@@ -896,8 +896,8 @@ final class PropertyOperator {
             throw (PropertyException) e.getTargetException();
          throw new PropertyException(
                "Attempt to invoke method " + meth + " on object "
-               + instance + " of " + instance.getClass() +
-               " raised an exception: " + e.getTargetException(),
+               + instance.getClass().getName() +
+               " raised an exception: " + e.getTargetException().getClass().getName(),
                e.getTargetException());
       }
       catch (NullPointerException e) {
