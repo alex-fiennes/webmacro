@@ -144,6 +144,13 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         
         try
         {
+            if (_log.loggingDebug()){
+                java.net.URL url = getBroker().getResource(Broker.WEBMACRO_PROPERTIES);
+                if (url != null)
+                   _log.debug("Using properties from " + url.toExternalForm());
+                else
+                   _log.debug("No WebMacro.properties file was found.");
+            }
             start ();
             _problem = null;
         } catch (ServletException e)
