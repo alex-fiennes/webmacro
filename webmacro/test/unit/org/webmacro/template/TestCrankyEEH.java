@@ -4,6 +4,8 @@ import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.StringTemplate;
 import org.webmacro.engine.CrankyEvaluationExceptionHandler;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 import junit.framework.*;
 
@@ -24,6 +26,8 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
 
       context.put ("TestObject", new TestObject());
       context.put ("NullTestObject", new NullTestObject());
+      context.put("enum",new ThrowingEnumeration());
+
    }
 
    public void testGoodVariable () throws Exception {
@@ -125,4 +129,36 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       assertStringTemplateEquals ("#set $foo=$NullTestObject", "");
       assertBooleanExpr("$foo == $NullTestObject", true);
    }
-}
+   
+   /*
+    * test cases designed to check that the caught exception is recorded
+    */
+   public void testThrowsWithCaught () throws Exception {
+      assertStringTemplateThrowsWithCaught ("$enum.nextElement()", 
+                                   java.util.NoSuchElementException.class);
+   }
+
+   public void testThrowsWithCaughtInForeach () throws Exception {
+      assertStringTemplateThrowsWithCaught ("#foreach $a in $enum #begin #end", 
+                                   java.util.NoSuchElementException.class);
+   }
+  
+  /*
+   * this is clearly a silly class, bit it is designed to prove that WebMacro
+   * properly fills in the caught exception at all times
+   * 
+   * in WM 0.97, an exception that occured when the nextElement() in a #foreach
+   * loop was called.  ie when the object was constructed instead of 
+   * accessed, causes a PropertyException to be Thrown without filling in the 
+   * caught exception.
+   */
+  
+  public class ThrowingEnumeration implements Enumeration {
+      public boolean hasMoreElements() {
+          return true;
+      }
+      public Object nextElement() throws NoSuchElementException {
+          throw new NoSuchElementException();
+      }
+  }
+ }

@@ -190,6 +190,42 @@ public abstract class TemplateTestCase extends TestCase {
     }
   }
 
+
+  public void assertStringTemplateThrowsWithCaught(String templateText, 
+                                         Class exceptionClass) {
+    String result = null;
+    Throwable caught = null;
+
+    try {
+      result = executeStringTemplate(templateText);
+    }
+    catch (Exception e) {
+      caught = e;
+      if (!(caught instanceof PropertyException)) {
+        System.err.println("Execution of /" + templateText + "/" 
+                               + " yielded /" + caught.getClass()  
+                               + "/, expecting throw PropertyException");
+        assert(false);
+      } else {
+        caught = ((PropertyException)e).getCaught();
+      }
+    }
+    if (caught == null) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " yielded /" + result + "/, expecting throw "
+                         + "PropertyException with caught exception "
+                         + exceptionClass);
+      assert(false);
+    }
+    else if (!exceptionClass.isAssignableFrom(caught.getClass())) {
+      System.err.println("Execution of /" + templateText + "/" 
+                         + " threw " + caught.getClass() + ", expecting throw "
+                         + "PropertyException with caught exception "
+                         + exceptionClass);
+      assert(false);
+    }
+  }
+  
   /** Asserts that the specified expression is considered true or false
    * depending on the value of 'yesno' */
   public void assertExpr(String expr, boolean yesno) {
