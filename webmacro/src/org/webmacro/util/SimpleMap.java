@@ -123,6 +123,15 @@ final public class SimpleMap
       }
    }
 
+   public void clear() {
+      for (int i = 0; i < _map.length; i++) {
+         synchronized(_locks[i]) {
+            _map[i] = null;
+         }
+      }
+   }
+   
+
    /**
      * Returns an iterator that will walk along a snapshot of the keys of 
      * this SimpleMap. If the Map changes during the creation of this 

@@ -35,4 +35,10 @@ final public class ScalableMap {
          _maps[i].remove(key);
       }
    }
+
+   public void clear() {
+      for (int i = 0; i < _maps.length; i++) {
+         _maps[i].clear();
+      }
+   }
 }
