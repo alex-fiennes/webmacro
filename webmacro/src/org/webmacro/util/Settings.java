@@ -30,6 +30,18 @@ public class Settings {
    }
 
    /**
+     * Search for the named settingsFile on the classpath 
+     * and instantiate a Settings object based on its values.
+     * Use supplied classloader
+     */
+   public Settings(String settingsFile, ClassLoader classloader) 
+      throws InitException, IOException
+   {
+      this();
+      load(settingsFile, classloader);
+   }
+
+   /**
      * Search for the named settingsFile from the supplied URL
      * and instantiate a Settings object based on its values
      */
@@ -81,8 +93,16 @@ public class Settings {
      * the file along the classpath.
      */
    public void load(String fileName) throws InitException, IOException 
+   { 
+      load(fileName,this.getClass().getClassLoader());
+   }
+   
+   /**
+     * Load settings from the supplied fileName, searching for 
+     * the file along the classpath, using external classloader
+     */
+   public void load(String fileName, ClassLoader cl) throws InitException, IOException 
    {  
-      ClassLoader cl = this.getClass().getClassLoader();
       URL u = cl.getResource(fileName);
       if (u == null) {
          u = ClassLoader.getSystemResource(fileName);
