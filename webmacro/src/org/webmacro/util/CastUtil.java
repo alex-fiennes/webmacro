@@ -26,15 +26,35 @@ public class CastUtil extends java.lang.Object {
         return Boolean.valueOf(o.toString());
     }
     
-    public static Character toChar(java.lang.Object o) {
+    public static Character toChar(Object o) throws org.webmacro.PropertyException {
         Character c = null;
+        if (o == null || o == "") return null;
         if (o instanceof Character) return (Character)o;
-        try {
-            int i = Integer.parseInt(o.toString());
-            c = new Character((char)i);
+        if (o instanceof Number){
+            try {        
+                c = new Character((char)((Number)o).intValue());
+            }
+            catch (Exception e){
+                throw new IllegalArgumentException("Not a valid char: " + o);
+            }
         }
-        catch (Exception e){
-            throw new IllegalArgumentException("Not a valid char: " + o);
+        else if (o instanceof String){
+            String s = (String)o;
+            if (s.startsWith("\\u") && s.length()==6){
+                // unicode char
+                int i = Integer.parseInt(s.substring(2), 16);
+                c = new Character((char)i);
+            }
+            else { // use the first character of the string
+                char ch = (char)((String)o).charAt(0);
+                c = new Character(ch);
+            }
+        }
+        else { // throw exception
+            throw new org.webmacro.PropertyException(
+            "$Type.toChar() is unable to convert the supplied value to a Character.  The argument"
+            + " must be a number or a String.  The supplied argument was " 
+            + o + ((o==null) ? "." : " of type " + o.getClass().getName()));
         }
         return c;
     }
