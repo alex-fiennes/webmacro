@@ -1,5 +1,8 @@
-<html><head><title>GuestBook Example</title></head>
-#set $Response.Header.Content-Type = "text/html"
+<html>
+<head>
+<title>GuestBook Example</title>
+</head>
+#set $Response.ContentType = "text/html"
 
 <body bgcolor="white">
 <h1><font color="green">GuestBook Example</font></h1>
@@ -14,28 +17,37 @@ the form data and return the information in a table.
 	</CENTER><P>
 }
 
-<FORM METHOD="POST" ACTION="GuestBook">
+<FORM METHOD="POST">
 <TABLE ALIGN="CENTER" width="600">
+<TR><TD font color="red">Your Name:</TD>
+<TD font color="green">
 
 #if ($name) {
-	<TR><TD font color="red">Your Name:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="name" VALUE="$name"></TD></TR>
+	<INPUT TYPE="TEXT" NAME="name" VALUE="$name">
 } #else {
-	<TR><TD font color="red">Your Name:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="name"></TD></TR>
+	<INPUT TYPE="TEXT" NAME="name">
 }
+
+</TD></TR>
 <TR><TD font color="red">e-Mail:</TD><TD font color="green">
 <INPUT TYPE="TEXT" NAME="email" VALUE=""></TD></TR>
 <TR><TD font color="red">Comment:</TD><TD font color="green">
-<TEXTAREA NAME="comment" COLS="60" ROWS="25" WRAP="HARD">
+
 #if ($comment) {
+<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD">
 $comment
-} 
-</TEXTAREA></TD></TR> 
-<TR><TD ALIGN="CENTER" COLSPAN="2"><INPUT TYPE="SUBMIT" NAME="action" VALUE="SUBMIT"></TD></TR>
-</TABLE>
+</TEXTAREA>
+} #else {
+<TEXTAREA NAME="comment" COLS="60" ROWS="15" WRAP="HARD">
+</TEXTAREA>
+}
+
+</TD></TR> 
+<TR><TD ALIGN="CENTER" COLSPAN="2">
+<INPUT TYPE="SUBMIT" NAME="action" VALUE="SUBMIT">
+</TD></TR></TABLE>
 </FORM>
 
-[ <a href="GuestBook?action=allguest">
-See Guests</a> ]
-
+[ <a href="?action=allguest">See Guests</a> ]
 
 </body></html>

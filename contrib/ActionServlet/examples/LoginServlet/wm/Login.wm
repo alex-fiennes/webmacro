@@ -6,10 +6,12 @@
 		Try again.</FONT><P>
 	}
 
-	<FORM ACTION="LoginServlet" METHOD="POST">
+	<FORM METHOD="POST">
 		User name: <INPUT TYPE="Text" NAME="userName"><BR>
-		Password:  <INPUT TYPE="Password" NAME="password">
+		Password : <INPUT TYPE="Password" NAME="password"><BR>
 		<INPUT TYPE="Submit" NAME="action" VALUE="Login">
 	</FORM>
+
+	<P>[Hint: <EM>correct user name is 'John' with password '18x79Z' </EM>]
 </BODY>
 </HTML>

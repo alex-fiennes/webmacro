@@ -1,0 +1,30 @@
+*****************************************************
+*    Easy mapping of HTTP requests to methods of    *
+*                  Java components                  *
+*                                                   *
+*                 ActionServlet 0.53                *
+*        Copyright (c) 1999-2001 Petr Toman         *
+*                                                   *
+*     http://dione.zcu.cz/~toman40/ActionServlet    *
+*                                                   *
+*****************************************************
+*                                                   *
+* - Opensource extension of the WebMacro servlet    *
+*   framework (see http://www.webmacro.org).        *
+*                                                   *
+* - Simple and highly configurable servlet setup    *
+*   enables mapping of HTTP requests (user actions) *
+*   to methods of Java components.                  *
+*                                                   *
+* - Automatic conversion of HTTP parameters to      *
+*   values of Java types (including primitive       *
+*   and custom types, String and arrays) supported. *
+*                                                   *
+* - Multiple parameters may be composed into the    *
+*   value of a single type (like java.util.Date).   *
+*                                                   *
+* - Customizable error and exception handling.      *
+*                                                   *
+* - Examples, docs and full source code available.  *
+*                                                   *
+*****************************************************

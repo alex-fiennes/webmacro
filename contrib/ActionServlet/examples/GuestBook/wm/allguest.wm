@@ -1,4 +1,9 @@
-<html><head><title>View GuestBook!</title></head>
+<html>
+<head>
+<title>View GuestBook!</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+</head>
 #set $Response.ContentType = "text/html"
 
 <body bgcolor="white">
@@ -18,13 +23,11 @@
       <TD align="center">$guest.Email</TD>
       <TD align="center">$guest.Comment</TD>
    </TR>
-} 
+}
 </TABLE><P>
 
-[ <a href="GuestBook?action=form">
-Back to form</a> ]
+[ <a href="?action=form">Back to form</a> ]
 
-[ <a href="GuestBook?action=allguest">
-See Guests</a> ]
+[ <a href="?action=allguest">See Guests</a> ]
 
 </body></html>

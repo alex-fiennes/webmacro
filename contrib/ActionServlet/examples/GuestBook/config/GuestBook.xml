@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
+
+<application>
+   <templates>
+      <template name="form.wm" is-new-session="true"/>
+   </templates>
+
+   <type-handlers>
+      <type-handler type="Email" class="EmailHandler"/>
+   </type-handlers>
+
+   <components>
+      <component class="GuestBook" persistence="application">
+         <action name="form" method="showEmptyForm()"/>
+
+         <action name="SUBMIT" 
+                 method="verify(String name, Email email, String comment)"/>
+
+         <action name="allguest" method="showAllGuests()"/>
+      </component>
+   </components>
+</application>

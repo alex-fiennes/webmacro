@@ -1,0 +1,26 @@
+Changes from 0.52 to 0.53
+8-Jul-2001
+-------------------------
+- this version requires WebMacro 0.95p1 or 0.97a1 or 0.97 or 0.98
+- org.webmacro.broker.ResourceUnavailableException -> org.webmacro.ResourceException
+- org.webmacro.engine.Template -> org.webmacro.Template
+- org.webmacro.util.InitException -> org.webmacro.InitException
+- org.webmacro.util.Log -> org.webmacro.Log
+- log.error(s) + log.exception(ex) calls -> log.error(s,ex)
+- internal OutputVariable class uses WMParser instead of ParseTool
+- adjusted WebMacro.properties files of the examples
+
+
+Changes from 0.5 to 0.52
+8-Jul-2001
+------------------------
+- this version requires WebMacro 0.89.1
+- added doc\whatsnew.txt file
+- ActionServlet_0_5.dtd copied to 'src' directory
+- src\Makefile renamed to src\Makefile.win and fixed
+- ActionServlet.getComponent() method throws IllegalStateException if called
+  from a non-session thread (only for components with "session" persistence)
+- removed "Pragma" and "Expires" tags from most templates of the examples
+- small clarifications to LoginServlet tutorial
+- added OutputVars example
+- "component" attribute is optional also for <template> element

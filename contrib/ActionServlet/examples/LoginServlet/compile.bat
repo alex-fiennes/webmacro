@@ -1,2 +1,2 @@
 @call ..\env.bat
-%JAVA_HOME%\javac -d classes src\LoginServlet.java
+%JAVA_HOME%\bin\javac -d classes src\Authenticator.java

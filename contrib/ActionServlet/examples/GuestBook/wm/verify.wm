@@ -1,4 +1,7 @@
-<html><head><title>Verify!</title></head>
+<html>
+<head>
+<title>Verify!</title>
+</head>
 #set $Response.ContentType = "text/html"
 
 <body bgcolor="white">
@@ -11,10 +14,8 @@
    <tr><td>Comment:</td><td>"$Form.comment"</td></tr>
 </table><p>
 
-[ <a href="GuestBook?action=form">
-Back to form</a> ]
+[ <a href="?action=form">Back to form</a> ]
 
-[ <a href="GuestBook?action=allguest">
-See Guests</a> ]
+[ <a href="?action=allguest">See Guests</a> ]
 
 </body></html>

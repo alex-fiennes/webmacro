@@ -1,0 +1,36 @@
+
+#############################################################################
+#
+# Makefile for ActionServlet
+# 
+#############################################################################
+
+# Java compiler
+JAVAC = javac
+
+# flags for Java compiler
+JFLAGS = -classpath c:\progra~1\webmacro\webmacro.jar;c:\progra~1\jsdk2.0\lib\jsdk.jar;..\lib\jaxp.jar;..\lib\parser.jar
+
+# destination directory of classes
+DEST_DIR = ..\lib
+
+# Java documentation generator
+JAVADOC = javadoc
+
+# Javadoc flags
+JDOCFLAGS = -windowtitle "ActionServlet 0.53 API" -nodeprecated \
+            -classpath c:\progra~1\webmacro\webmacro.jar;c:\progra~1\jsdk2.0\lib\jsdk.jar;.
+
+# destination directory of API documentation
+API_DIR = ..\doc\api
+
+##############################################################################
+
+all: 
+	del $(DEST_DIR)\ActionServlet.jar
+	$(JAVAC) -d $(DEST_DIR) $(JFLAGS) org\webmacro\as\*.java
+	jar cMf $(DEST_DIR)\ActionServlet.jar -C $(DEST_DIR) org ActionServlet_0_5.dtd
+	deltree /y $(DEST_DIR)\org
+
+doc:
+	$(JAVADOC) -d $(API_DIR) $(JDOCFLAGS) org.webmacro.as

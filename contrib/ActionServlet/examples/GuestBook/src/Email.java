@@ -1,4 +1,4 @@
-import org.webmacro.servlet.ConversionException;
+import org.webmacro.as.ConversionException;
 
 /**
  * Represents e-mail address.
