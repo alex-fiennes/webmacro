@@ -18,6 +18,7 @@ public class TestGetSet extends TemplateTestCase {
     public static long longField;
     private Map map = new HashMap ();
     private Object obj = null;
+    private Object[] objArray = new Object[] { "one", "two" };
 
     private static int intValue;
     public static void setInt(int i) { intValue = i; }
@@ -37,6 +38,10 @@ public class TestGetSet extends TemplateTestCase {
  
     public void setObjectValue (Object value) {  
        this.obj = value;
+    }
+
+    public Object[] getArray () {
+       return objArray;
     }
   }
 
@@ -100,15 +105,21 @@ public class TestGetSet extends TemplateTestCase {
    }
 
    /** pass a null as a parameter to a method */
-   public void test3 () throws Exception {
+   public void testPassANull1 () throws Exception {
       String tmpl = "$TestObject2.setObjectValue(null)";
       assertStringTemplateEquals (tmpl, "");
    }
 
    /** same as test3, but use the null via a variable reference */
-   public void test4 () throws Exception {
+   public void testPassANull2 () throws Exception {
       String tmpl = "#set $foo = null\n"
                   + "$TestObject2.setObjectValue($foo)";
       assertStringTemplateEquals (tmpl, "");
+   }
+
+   /** call the ".length" field of an array */
+   public void testDotLengthOnArray () {
+      String tmpl = "$TestObject.getArray().length";
+      assertStringTemplateEquals (tmpl, "2");
    }
 }
