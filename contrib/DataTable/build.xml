@@ -10,7 +10,7 @@
   <property name="dist"           value="dist"/>
   <property name="classes"        value="${app.name}/WEB-INF/classes"/>
   <property name="lib"            value="${app.name}/WEB-INF/lib"/>
-  <property name="javadoc"        value="javadoc"/>
+  <property name="javadoc"        value="${app.name}/api"/>
   <property name="jar"            value="${app.name}.jar"/>
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property name="doc.jar"        value="${app.name}-doc.jar"/>
@@ -96,9 +96,11 @@
 
   <target name="dist" depends="prepare,compile,jar,javadoc,docjar">
     <mkdir dir="${app.name}/api" />
+<!--
     <copy todir="${app.name}/api">
       <fileset dir="${javadoc}"/>
     </copy>
+-->
     <copy todir="${dist}" file="${src.jar}"/>
     <copy todir="${dist}" file="${jar}"/>
     <copy todir="${dist}" file="${doc.jar}"/>
