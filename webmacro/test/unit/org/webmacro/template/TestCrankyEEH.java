@@ -66,7 +66,7 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
 
    public void testNullMethod () throws Exception {
       assertStringTemplateThrows ("$TestObject.nullMethod()", 
-                                   PropertyException.NullVariableException.class);
+                                   PropertyException.NullValueException.class);
    }
 
    public void testThrowsMethod() throws Exception {

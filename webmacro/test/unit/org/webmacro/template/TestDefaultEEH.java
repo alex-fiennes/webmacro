@@ -67,12 +67,9 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
                                    org.webmacro.PropertyException.class);
    }
 
-   /** A variable in the context who's .toString() method returns null 
-       This test currently failes under DEEH.  Need to determine correct
-       behavior.
-    */
+  // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
      assertStringTemplateMatches ("$NullObject", 
-          "^<!--.*null .*\\$NullObject.*-->$");
+          "^<!--.*nonexistent variable.*\\$NullObject.*-->$");
    }
 }

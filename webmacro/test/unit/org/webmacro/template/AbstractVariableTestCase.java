@@ -22,12 +22,10 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
    public abstract void testGoodMethod () throws Exception;
    public abstract void testGoodProperty () throws Exception;
 
-
    public abstract void testNoSuchVariable () throws Exception;
    public abstract void testNoSuchMethod () throws Exception;
    public abstract void testNoSuchProperty () throws Exception;
 
-   
    public abstract void testVoidMethod () throws Exception;
    public abstract void testNullMethod () throws Exception;
    public abstract void testThrowsMethod() throws Exception;

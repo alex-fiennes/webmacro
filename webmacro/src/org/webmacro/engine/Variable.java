@@ -157,7 +157,7 @@ public abstract class Variable implements Macro, Visitable
          // May throw
          context.getEvaluationExceptionHandler()
            .evaluate(this, context, 
-                     new PropertyException.NullVariableException(_vname));
+                     new PropertyException.NullValueException(_vname));
          context.getLog("engine")
            .warning("Variable: $" + _vname + " does not exist");
          return null;
@@ -204,7 +204,7 @@ public abstract class Variable implements Macro, Visitable
                else {
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
-                                   new PropertyException.NullVariableException(_vname)));
+                                   new PropertyException.NullValueException(_vname)));
                   context.getLog("engine")
                      .warning("Variable: $" + _vname + " evaluated to null");
                }
@@ -225,7 +225,7 @@ public abstract class Variable implements Macro, Visitable
                   // user accessed a valid property who's value is null
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
-                                    new PropertyException.NullVariableException(_vname)));
+                                    new PropertyException.NullValueException(_vname)));
                   context.getLog("engine")
                      .warning("Variable: $" + _vname + " evaluated to null");
                }

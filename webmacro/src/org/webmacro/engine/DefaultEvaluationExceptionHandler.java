@@ -48,7 +48,7 @@ public class DefaultEvaluationExceptionHandler
    throws PropertyException {
       if (problem instanceof PropertyException.NoSuchVariableException) 
          return;
-      else if (problem instanceof PropertyException.NullVariableException) 
+      else if (problem instanceof PropertyException.NullValueException) 
          return;
       else if (problem instanceof PropertyException)
          throw (PropertyException) problem;
@@ -66,8 +66,8 @@ public class DefaultEvaluationExceptionHandler
          return errorString("Attempt to access nonexistent variable $" 
                             + variable.getVariableName());
       }
-      else if (problem instanceof PropertyException.NullVariableException) {
-         return errorString("Attempt to access null variable $" 
+      else if (problem instanceof PropertyException.NullValueException) {
+         return errorString("Attempt to dereference null value $" 
                             + variable.getVariableName());
       }
       else if (problem instanceof PropertyException)

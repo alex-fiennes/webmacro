@@ -62,15 +62,15 @@ public class PropertyException extends ContextException
 
 
    /**
-    * NullVariableException indicates that a variable or property
+    * NullValueException indicates that a variable or property
     * exists, but evaluated to null in the context against which it
     * was being evaluated.  
     */
-   public static class NullVariableException extends PropertyException {
+   public static class NullValueException extends PropertyException {
      public String variableName;
 
-     public NullVariableException(String variableName) {
-       super("Attempt to evaluate null variable $" + variableName);
+     public NullValueException(String variableName) {
+       super("Attempt to dereference null value $" + variableName);
        this.variableName = variableName;
      }
    }
