@@ -18,6 +18,8 @@ public class TestBroker extends TestCase {
 
   protected void setUp() {
      try {
+       if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
+         System.getProperties().setProperty("org.webmacro.LogLevel", "ERROR");
        _wm = new WM ();
      } catch (Exception e) {
        System.err.println ("Could not initialize WebMacro!");
