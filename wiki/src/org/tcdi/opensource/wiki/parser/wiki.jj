@@ -1,0 +1,158 @@
+options { STATIC = false; USER_CHAR_STREAM = false; }
+
+PARSER_BEGIN(WikiParser)
+/**
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ *
+ * The Original Code is Wiki.
+ *
+ * The Initial Developer of the Original Code is Technology Concepts
+ * and Design, Inc.
+ * Copyright (C) 2000 Technology Concepts and Design, Inc.  All
+ * Rights Reserved.
+ *
+ * Contributor(s): Lane Sharman (OpenDoors Software)
+ *                 Justin Wells (Semiotek Inc.)
+ *                 Eric B. Ridge (Technology Concepts and Design, Inc.)
+ *
+ * Alternatively, the contents of this file may be used under the
+ * terms of the GNU General Public License Version 2 or later (the
+ * "GPL"), in which case the provisions of the GPL are applicable
+ * instead of those above.  If you wish to allow use of your
+ * version of this file only under the terms of the GPL and not to
+ * allow others to use your version of this file under the MPL,
+ * indicate your decision by deleting the provisions above and
+ * replace them with the notice and other provisions required by
+ * the GPL.  If you do not delete the provisions above, a recipient
+ * may use your version of this file under either the MPL or the
+ * GPL.
+ *
+ *
+ * This product includes sofware developed by OpenDoors Software.
+ *
+ * This product includes software developed by Justin Wells and Semiotek Inc.
+ * for use in the WebMacro ServletFramework (http://www.webmacro.org).
+ */
+package org.tcdi.opensource.wiki.parser;
+
+import java.io.*;
+import org.tcdi.opensource.wiki.*;
+import org.tcdi.opensource.wiki.builder.*;
+
+public class WikiParser {
+   private String _headerName = null;
+   private String _colorName = null;
+}
+PARSER_END(WikiParser)
+
+<*> TOKEN :
+{
+     < #NL: "\n" | "\r\n" >  
+   | < #SPACE: " " >
+   | < #TAB: "\t" >
+   | < #ALPHANUM: ["a"-"z", "A"-"Z", "0"-"9"] >
+   | < #URLCHARS: <ALPHANUM> | ["/", ".", "?", "&", "%", "~", ":", "_", "-", "@" ] >
+   | < #UCASE_ALPHANUM: ["A"-"Z", "0"-"9"] >
+   | < #LCASE_ALPHANUM: ["a"-"z", "0"-"9"] >
+   | < #NON_ALPHANUM: ~["a"-"z", "A"-"Z", "0"-"9"] >
+}
+
+
+<DEFAULT> TOKEN :
+{
+   < QUOTED_BLOCK:  "[[" ((~["]"])+ | ( "]" (~["]"])+ ) )+  "]]" >
+ | < BOLD: "*" >
+ | < UNDERLINE: "_" >
+ | < ITALIC: "~" >
+ | < LT: "<" >
+ | < GT: ">" >
+ | < COLOR: "^" (<ALPHANUM>)+ >
+ | < HEADER: "^@" (<ALPHANUM>)* >
+ | < COLOR_HEADER_TERMINATE: "^" >
+ | < RULE: "-----" >
+ | < EMAIL: (<ALPHANUM>)+ "@" ((<ALPHANUM>)+ "." (<ALPHANUM>)+)+ >
+ | < URL: ((<ALPHANUM>)+ ":") ((<URLCHARS>)+ | ((<URLCHARS>)+  (   "("  (~[")", "\r", "\n"])+  ")"  ))) >
+ | < WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ >
+ | < SHORT_WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ "`" >
+ | < WORD: (<ALPHANUM>)+ > 
+ | < NEW_PARAGRAPH: <NL> <NL> >
+ | < LINE_BREAK: <NL> >
+ | < INDENT: <SPACE> <SPACE> >
+ | < WHITESPACE:  <SPACE> | <TAB> >
+ | < ASTERISK: "**" >
+ | < UNDERSCORE: "__" >
+ | < CARET: "^^" >
+ | < DOUBLE_LBRACKET: "[[[[" >
+ | < DELIMITERS: <NON_ALPHANUM> >
+}
+
+WikiPage parse (WikiPageBuilder builder) : { Token t;}
+{
+ (
+    t = <LT>            { builder.lt(); }
+  | t = <GT>            { builder.gt(); }  
+  | t = <BOLD>          { builder.bold(); }
+  | t = <UNDERLINE>     { builder.underline(); }
+  | t = <ITALIC>        { builder.italic(); }
+  | t = <COLOR>         {
+        if (_headerName != null || _colorName != null) {
+            builder.endColorOrHeader();
+            String word = t.image.substring(1);
+            if (builder.getWikiSystem().isWikiPageReference (word))
+                builder.wikiTerm (word);
+            else
+                builder.word (word);
+
+            _colorName = null;
+            _headerName = null;
+        } else {
+            _colorName = t.image.substring(1);
+            builder.color (_colorName); 
+        }
+    }
+  | t = <HEADER>        { 
+        _headerName = t.image.substring(2); 
+        builder.header (_headerName);
+    }
+  | t = <COLOR_HEADER_TERMINATE> { 
+        if (_headerName == null && _colorName == null) 
+            builder.word ("^");
+        else {
+            builder.endColorOrHeader ();
+            _headerName = null;
+        }
+    }
+
+  | t = <RULE>          { builder.ruler(); }
+  | t = <EMAIL>         { builder.email(t.image); }
+  | t = <WIKI_TERM>     { 
+        if (builder.getWikiSystem().isWikiPageReference (t.image))
+            builder.wikiTerm (t.image);
+        else
+            builder.word (t.image);
+    }
+  | t = <SHORT_WIKI_TERM> { builder.wikiTerm (t.image.substring(0, t.image.length()-1)); }
+  | t = <WORD>          { builder.word (t.image); }
+  | t = <NEW_PARAGRAPH> { builder.paragraph (); }
+  | t = <LINE_BREAK>    { builder.newline(); }
+  | t = <INDENT>        { builder.indent(2); }
+  | t = <WHITESPACE>    { builder.space(); }
+  | t = <ASTERISK>      { builder.word ("*"); }
+  | t = <UNDERSCORE>    { builder.word ("_"); }
+  | t = <CARET>         { builder.word ("^"); }
+  | t = <DOUBLE_LBRACKET> { builder.word ("[["); }
+  | t = <DELIMITERS>    { builder.word (t.image); }
+  | t = <URL>           { builder.url (t.image); }
+  | t = <QUOTED_BLOCK>  { builder.quotedBlock (t.image.substring(2, t.image.length()-2)); }
+ )* {
+        return builder.getPage ();
+    }
+}

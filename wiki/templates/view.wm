@@ -1,0 +1,24 @@
+#parse "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#parse "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top>
+      #if ($Page) {
+         $Renderer.render($Page)
+      } #else {
+         You have requested a page that doesn't exist.
+         #if ($User) {
+            But that's okay!<p>
+            You can create the page by <a href="ControllerPage?define=$WikiUtil.formatAsWikiTitle($PageName)">clicking here</a>.
+         }            
+      }
+</tr>
+</table>
+
+#parse "footer.wm"
