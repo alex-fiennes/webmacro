@@ -11,7 +11,7 @@ release find it to be very stable, despite the "alpha" label.
 Potential Pitfalls While Ugrading
 ---------------------------------
 
-0) WebMacro no longer requires a "WebMacro.properties" file (it is
+1) WebMacro no longer requires a "WebMacro.properties" file (it is
 completely optional).  WebMacro now has a "WebMacro.defaults" file that
 is included in the .jar file.  This file is used as a base for WM's
 configuration.  If you find you need to change values, simply create a 
@@ -36,7 +36,12 @@ However, if you don't like WM doing this for you, you can simply add a
 "TemplatePath: /path/to/templates" in your custom WebMacro.properties file.
 
 
-1) If you are using WebMacro in standalone mode (ie, not subclassing
+2) This release of WebMacro uses Lane Sharman's Very Fast Cache (VFC) for
+caching templates and other things used in the innards of WebMacro.  Make
+sure to include "vfc.jar" in your classpath alongside "webmacro.jar"
+
+
+3) If you are using WebMacro in standalone mode (ie, not subclassing
 WMServlet), you are most likely using a FastWriter.  The signatures for
 FastWriter's constructors have changed to include a Broker:
    public FastWriter(Broker broker, OutputStream out, String encoding)
@@ -46,7 +51,7 @@ from the getBroker() method of your WebMacro instance:
    FastWriter fw = new FastWriter (_wm.getBroker(), System.out, "UTF8");
     
     
-2) If you are sublcassing WMServlet, your handle() method most likely
+4) If you are sublcassing WMServlet, your handle() method most likely
 contains something like this at the end:
       ...
    Template t;
@@ -63,7 +68,7 @@ of a NotFoundException.  Simply change your catch block to catch the
 ResourceException and you'll be just fine.
 
 
-3) org.webmacro.Context now implements java.util.Map.  This change, although
+5) org.webmacro.Context now implements java.util.Map.  This change, although
 it won't adversly affect how you use the Context object, will *require*
 you to recompile all your classes that use org.webmacro.Context.  Sorry
 for the inconvienence.
