@@ -88,7 +88,6 @@ public class SetblockDirective extends Directive {
       }
       catch (Exception e) {
          String errorText = "#setblock: Unable to set " + target;
-         context.getBroker().getLog("engine").error(errorText);
          writeWarning(errorText, context, out);
       }
    }

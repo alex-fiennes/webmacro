@@ -251,7 +251,6 @@ public class BeanDirective extends Directive {
       }
       catch (Exception e) {
          String errorText = "BeanDirective: Unable to load bean " + target + " of type " + _className;
-         _log.error(errorText, e);
          writeWarning(errorText, context, out);
       }
       if (isNew && onNewBlock != null)

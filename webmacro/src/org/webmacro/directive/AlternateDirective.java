@@ -112,7 +112,6 @@ public class AlternateDirective extends Directive {
       }
       catch (Exception e) {
          String warning = "#alternate: list argument is not a list: " + l;
-         context.getLog("engine").warning(warning + "; " + e);
          writeWarning(warning, context, out);
          return;
       }

@@ -40,7 +40,7 @@ public class CountDirective extends org.webmacro.directive.Directive {
         new Directive.BlockArg(COUNT_BODY),
     };
 
-    private static final DirectiveDescriptor _desc = new DirectiveDescriptor("for", null, _args, null);
+    private static final DirectiveDescriptor _desc = new DirectiveDescriptor("count", null, _args, null);
 
     public static DirectiveDescriptor getDescriptor() {
         return _desc;
@@ -108,8 +108,10 @@ public class CountDirective extends org.webmacro.directive.Directive {
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 start = Integer.parseInt(tmp.toString());
-            else
-                throw new PropertyException ("Starting value cannot be null");
+            else {
+                writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
+                return;
+            }
         }
 
         if ( (tmp = _objEnd) != null) {
@@ -117,8 +119,10 @@ public class CountDirective extends org.webmacro.directive.Directive {
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 end = Integer.parseInt(tmp.toString());
-            else
-                throw new PropertyException ("Ending value cannot be null");
+            else {
+                writeWarning("#count: Ending value cannot be null.  Not counting", context, out);
+                return;
+            }
         }
 
         if ( (tmp = _objStep) != null) {
@@ -126,14 +130,24 @@ public class CountDirective extends org.webmacro.directive.Directive {
                 tmp = ((Macro) tmp).evaluate(context);
             if (tmp != null)
                 step = Integer.parseInt(tmp.toString());
-            else
-                throw new PropertyException ("Step value cannot be null");
+            else {
+                writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
+                return;
+            }
         }
 
-        // just do it
-        for (; start<=end; start+=step) {
-            _iterator.setValue(context, new Integer(start));
-            _body.write(out, context);
+        if (step > 0) {
+            for (; start<=end; start+=step) {
+                _iterator.setValue(context, new Integer(start));
+                _body.write(out, context);
+            }
+        } else if (step < 0) {
+            for (; start>=end; start+=step) {
+                _iterator.setValue(context, new Integer(start));
+                _body.write(out, context);
+            }
+        } else {
+            writeWarning("#count: step cannot be 0.  Not counting", context, out);
         }
     }
 }

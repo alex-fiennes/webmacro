@@ -104,20 +104,20 @@ public abstract class Directive implements Macro, Visitable {
    protected static String getWarningText(String warning, Context context)
          throws IOException, PropertyException {
       return context.getEvaluationExceptionHandler()
-            .warningString("WARNING: " + warning);
+            .warningString("WARNING: " + warning + " at " + context.getCurrentLocation());
    }
 
    /**
     * Convenience method for directives to write HTML warnings into the output
     * stream.  Eventually this will be parameterizable so that HTML is not
-    * assumed to be the only underlying language.
+    * assumed to be the only underlying language.<p>
+    *
+    * This method also outputs the same warning message to a log named "directive"
     */
-
-   protected static void writeWarning(String warning,
-                                      Context context,
-                                      FastWriter writer)
-         throws IOException, PropertyException {
-      writer.write(getWarningText(warning, context));
+   protected static void writeWarning(String warning, Context context, FastWriter writer) throws IOException, PropertyException {
+       warning = getWarningText(warning, context);
+       context.getLog("directive").warning(warning);
+       writer.write(getWarningText(warning, context));
    }
 
    public void accept(TemplateVisitor v) {

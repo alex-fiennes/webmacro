@@ -112,7 +112,6 @@ public class ForeachDirective extends Directive {
             loopLimit = (int) Expression.numberValue(limit);
          else {
             String warning = "#foreach: Cannot evaluate limit";
-            context.getLog("engine").warning(warning);
             writeWarning(warning, context, out);
          }
       }
@@ -125,7 +124,6 @@ public class ForeachDirective extends Directive {
             loopStart = (int) Expression.numberValue(from);
          else {
             String warning = "#foreach: Cannot evaluate loop start";
-            context.getLog("engine").warning(warning);
             writeWarning(warning, context, out);
          }
       }
@@ -140,8 +138,7 @@ public class ForeachDirective extends Directive {
          else
             warning += list;
 
-         warning += ": " + e.getMessage() + " at " + context.getCurrentLocation();
-         context.getLog("engine").warning(warning);
+         warning += ": " + e.getMessage();
          writeWarning(warning, context, out);
          return;
       }
@@ -155,7 +152,6 @@ public class ForeachDirective extends Directive {
          }
          catch (PropertyException e) {
             String errorText = "#foreach: Unable to set list index";
-            context.getBroker().getLog("engine").error(errorText);
             writeWarning(errorText, context, out);
          }
          catch (Exception e) {

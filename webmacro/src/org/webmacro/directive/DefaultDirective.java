@@ -91,7 +91,6 @@ public class DefaultDirective extends Directive {
       }
       catch (Exception e) {
          String errorText = "#default: Unable to set default value for " + target;
-         context.getBroker().getLog("engine").error(errorText);
          writeWarning(errorText, context, out);
       }
    }
