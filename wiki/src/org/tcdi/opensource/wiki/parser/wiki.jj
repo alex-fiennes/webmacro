@@ -55,7 +55,7 @@ PARSER_END(WikiParser)
 
 <*> TOKEN :
 {
-     < #NL: "\n" | "\r\n" >  
+     < #NL: "\n" | "\r\n" >
    | < #SPACE: " " >
    | < #TAB: "\t" >
    | < #ALPHANUM: ["a"-"z", "A"-"Z", "0"-"9"] >
@@ -82,7 +82,7 @@ PARSER_END(WikiParser)
  | < URL: ((<ALPHANUM>)+ ":") ((<URLCHARS>)+ | ((<URLCHARS>)+  (   "("  (~[")", "\r", "\n"])+  ")"  ))) >
  | < WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ >
  | < SHORT_WIKI_TERM: ((<UCASE_ALPHANUM>)+ (<LCASE_ALPHANUM>)+ (<UCASE_ALPHANUM>)*)+ "`" >
- | < WORD: (<ALPHANUM>)+ > 
+ | < WORD: (<ALPHANUM>)+ >
  | < NEW_PARAGRAPH: <NL> <NL> >
  | < LINE_BREAK: <NL> >
  | < INDENT: <SPACE> <SPACE> >
@@ -98,7 +98,7 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
 {
  (
     t = <LT>            { builder.lt(); }
-  | t = <GT>            { builder.gt(); }  
+  | t = <GT>            { builder.gt(); }
   | t = <BOLD>          { builder.bold(); }
   | t = <UNDERLINE>     { builder.underline(); }
   | t = <ITALIC>        { builder.italic(); }
@@ -115,33 +115,34 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
             _headerName = null;
         } else {
             _colorName = t.image.substring(1);
-            builder.color (_colorName); 
+            builder.color (_colorName);
         }
     }
-  | t = <HEADER>        { 
-        _headerName = t.image.substring(2); 
+  | t = <HEADER>        {
+        _headerName = t.image.substring(2);
         builder.header (_headerName);
     }
-  | t = <COLOR_HEADER_TERMINATE> { 
-        if (_headerName == null && _colorName == null) 
+  | t = <COLOR_HEADER_TERMINATE> {
+        if (_headerName == null && _colorName == null)
             builder.word ("^");
         else {
             builder.endColorOrHeader ();
             _headerName = null;
+            _colorName = null;
         }
     }
 
   | t = <RULE>          { builder.ruler(); }
   | t = <EMAIL>         { builder.email(t.image); }
-  | t = <WIKI_TERM>     { 
+  | t = <WIKI_TERM>     {
         if (builder.isWikiTermReference (t.image))
             builder.wikiTerm (t.image);
         else
             builder.word (t.image);
     }
-  | t = <SHORT_WIKI_TERM> { 
+  | t = <SHORT_WIKI_TERM> {
          if (builder.isWikiTermReference (t.image))
-            builder.wikiTerm (t.image.substring(0, t.image.length()-1)); 
+            builder.wikiTerm (t.image.substring(0, t.image.length()-1));
          else
             builder.word (t.image);
     }

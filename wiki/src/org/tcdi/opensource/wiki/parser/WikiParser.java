@@ -134,6 +134,7 @@ public class WikiParser implements WikiParserConstants {
         else {
             builder.endColorOrHeader ();
             _headerName = null;
+            _colorName = null;
         }
         break;
       case RULE:

@@ -209,7 +209,7 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderColorEnd() {
-        return "</color>";
+        return "</font>";
     }
     
     protected String renderSpace() {
