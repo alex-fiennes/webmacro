@@ -237,6 +237,15 @@ public class Context implements Map, Cloneable
    }
 
    /**
+    * Convenience method for putting static classes into the context, wraps the 
+    * class instance in a wrapper
+    */
+   final public Object put(Object name, Class c) 
+   {
+      return _variables.put(name,new org.webmacro.engine.StaticClassWrapper(c));
+   }
+   
+   /**
      * Add an object to the context returning the object that was
      * there previously under the same name, if any.
      */
