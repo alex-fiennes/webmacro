@@ -49,7 +49,11 @@ public class TrivialCacheManager implements CacheManager {
 
    public Object get(final String query, CachingProviderMethods helper) 
    throws ResourceException  {
-
-      return helper.load(query)._resource;
+      return helper.load(query, null);
    }
+
+   public boolean supportsReload() {
+      return false;
+   }
+
 }

@@ -33,6 +33,7 @@ import java.lang.ref.Reference;
  * implementing the methods in CachingProviderMethods, a provider can
  * automatically support caching using any CacheManager.  CachingProvider
  * looks in the properties file to find the desired cache manager. 
+ * @since 0.96
  */
 
 abstract public class CachingProvider implements Provider, 
@@ -40,6 +41,7 @@ abstract public class CachingProvider implements Provider,
 {
    private CacheManager _cache; 
    private Log _log;
+   protected boolean _cacheSupportsReload;
 
    public CachingProvider() { 
    }
@@ -70,6 +72,7 @@ abstract public class CachingProvider implements Provider,
          }
       }
       _cache.init(b, config, getType());
+      _cacheSupportsReload = _cache.supportsReload();
    }
 
    /**

@@ -31,19 +31,14 @@ import  java.io.*;
 import  java.net.*;
 
 /**
-  * The TemplateProvider is the WebMacro class responsible for 
-  * loading templates. You could replace it with your own version
-  * in the configuration file. This implementation caches templates
-  * using soft references for a maximum amount of time specified
-  * in the configuration. Templates are loaded from the filesystem,
-  * relative to the TemplatePath specified in teh configuration.
-  * <p>
-  * Ordinarily you would not accses this class directly, but 
-  * instead you would call the Broker and it would look up and
-  * use the TemplateProvider for you.
+  * This class does the actual work of retrieving templates using the
+  * Broker.  It is called by both BrokerTemplateProvider and
+  * TemplateProvider.
   * @see Provider
+  * @see TemplateProvider
+  * @see BrokerTemplateProvider
   * @author Brian Goetz
-  * @since 0.96
+  * @since 0.96 
   */
 final public class BrokerTemplateProviderHelper 
   implements CachingProviderMethods
@@ -54,6 +49,22 @@ final public class BrokerTemplateProviderHelper
    private Broker _broker;
    private int _cacheDuration;
    private Log _log;
+   private boolean _cacheSupportsReload = true;
+
+
+   private static class UrlReloadContext extends CacheReloadContext { 
+      private long lastModified;
+      private URL url;
+
+      public UrlReloadContext(URL url, long lastModified) {
+         this.url = url;
+         this.lastModified = lastModified;
+      }
+
+      public boolean shouldReload() {
+         return (lastModified != UrlProvider.getUrlLastModified(url));
+      }
+   }
 
    /**
      * Create a new TemplateProvider that uses the specified directory
@@ -71,11 +82,11 @@ final public class BrokerTemplateProviderHelper
    /**
      * Grab a template based on its name.
      */
-   final public CacheableElement load(String name) throws ResourceException 
-   {
+   final public Object load(String name, CacheElement ce) 
+   throws ResourceException {
       Template t = null;
       URL tUrl;
-      CacheableElement ret = null;
+      Object ret = null;
 
       tUrl = findTemplate(name);
       try {
@@ -85,7 +96,9 @@ final public class BrokerTemplateProviderHelper
                                 new InputStreamReader(
                                   UrlProvider.getUrlInputStream(tUrl)));
          t.parse ();
-         ret = new UrlTemplateCacheableElement(t, tUrl, lastMod);
+         ret = t;
+         if (_cacheSupportsReload) 
+            ce.setReloadContext(new UrlReloadContext(tUrl, lastMod));
       }
       catch (NullPointerException npe) {
          _log.warning ("BrokerTemplateProvider: Template not found: " + name);
@@ -107,6 +120,10 @@ final public class BrokerTemplateProviderHelper
       return ret;
    }
 
+
+   public void setReload(boolean reload) {
+      _cacheSupportsReload = reload;
+   }
 
    // IMPLEMENTATION
 

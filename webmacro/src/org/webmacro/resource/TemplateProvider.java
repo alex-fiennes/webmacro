@@ -31,9 +31,7 @@ import  java.io.*;
 /**
   * The TemplateProvider is the WebMacro class responsible for 
   * loading templates. You could replace it with your own version
-  * in the configuration file. This implementation caches templates
-  * using soft references for a maximum amount of time specified
-  * in the configuration. Templates are loaded from the filesystem,
+  * in the configuration file. Templates are loaded from the filesystem,
   * relative to the TemplatePath specified in teh configuration.
   * <p>
   * Ordinarily you would not accses this class directly, but 
@@ -61,6 +59,25 @@ final public class TemplateProvider extends CachingProvider
       }
    }
 
+   /** 
+    * ReloadContext for file templates.  Uses last-modified to determine
+    * if resource should be reloaded.
+    */
+   private static class FTReloadContext extends CacheReloadContext {
+      private File file;
+      private long lastModified;
+
+      public FTReloadContext(File f, long lastModified) {
+         this.file = f;
+         this.lastModified = lastModified;
+      }
+
+      public boolean shouldReload() {
+        return (lastModified != file.lastModified());
+      }
+   }
+
+         
    /**
      * Create a new TemplateProvider that uses the specified directory
      * as the source for Template objects that it will return
@@ -87,6 +104,7 @@ final public class TemplateProvider extends CachingProvider
          }
          _btpHelper = new BrokerTemplateProviderHelper();
          _btpHelper.init(b, config);
+         _btpHelper.setReload(_cacheSupportsReload);
       } catch(Exception e) {
          throw new InitException("Could not initialize", e);
       }
@@ -102,9 +120,9 @@ final public class TemplateProvider extends CachingProvider
    /**
      * Grab a template based on its name.
      */
-   final public CacheableElement load(String name)
+   final public Object load(String name, CacheElement ce)
    throws ResourceException  {
-      CacheableElement ret = null;
+      Object ret = null;
 
       if (_log.loggingInfo())
          _log.info("Loading template: " + name);
@@ -112,13 +130,15 @@ final public class TemplateProvider extends CachingProvider
       File tFile = findFileTemplate(name);
       if (tFile != null) {
          try {
-            Template t = new FileTemplate (_broker, tFile);
-            ret = new FileTemplateCacheableElement(t, tFile, 
-                                                   tFile.lastModified());
+            Template t = new FileTemplate(_broker, tFile);
+            ret = t;
+            if (_cacheSupportsReload)
+               ce.setReloadContext(
+                  new FTReloadContext(tFile, tFile.lastModified()));
          }
          catch (NullPointerException npe) {
-            _log.warning ("TemplateProvider: Template not found: " + name, 
-                          npe);
+            _log.warning("TemplateProvider: Template not found: " + name, 
+                         npe);
          }
          catch (Exception e) {  
             // Parse error
@@ -130,7 +150,7 @@ final public class TemplateProvider extends CachingProvider
       }
       else {
          // Let the BrokerTemplateProvider have a crack at it 
-         ret = _btpHelper.load(name);
+         ret = _btpHelper.load(name, ce);
       }
 
       if (ret == null) {

@@ -60,4 +60,11 @@ public interface CacheManager {
      */
    public Object get(final String query, CachingProviderMethods helper) 
      throws ResourceException; 
+
+   /**
+     * Does this cache manager support reloading of resources if the
+     * underlying resource has changed? 
+     */
+   public boolean supportsReload();
+
 }

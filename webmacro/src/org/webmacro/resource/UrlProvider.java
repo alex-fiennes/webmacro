@@ -60,9 +60,8 @@ final public class UrlProvider extends CachingProvider
      * and files from the filesystem, will be cached for AVG_TIMEOUT
      * milliseconds.
      */
-   final public CacheableElement load(String name) 
-      throws ResourceException
-   {
+   final public Object load(String name, CacheElement ce) 
+   throws ResourceException {
 
       try {
          URL u;
@@ -103,7 +102,7 @@ final public class UrlProvider extends CachingProvider
             sw.write(buf, 0, num);
          }
          in.close();
-         return new CacheableElement(sw.toString());
+         return sw.toString();
       } catch (Exception e) {
          throw new ResourceException(this + " unable to load " + name, e);
       }

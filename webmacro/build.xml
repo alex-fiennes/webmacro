@@ -56,6 +56,7 @@
 
 
   <target name="jar" depends="prepare,compile">
+    <copy todir="${classes}" file="WebMacro.defaults" />
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
          includes="src/**,webroot/**,build.xml"/>

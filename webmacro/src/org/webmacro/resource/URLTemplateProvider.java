@@ -213,11 +213,11 @@ final public class URLTemplateProvider extends CachingProvider
     * @param name The name of the  template to load
     * @throws NotFoundException if no matching template can be found
     * @throws ResourceException if template cannot be loaded
-    * @return A CacheableElement
+    * @return the requested resource
     */
 
-    final public CacheableElement load(String name) throws ResourceException
-    {
+    final public Object load(String name, CacheElement ce) 
+    throws ResourceException {
         return load(name, _baseURL);
     }
 
@@ -230,7 +230,7 @@ final public class URLTemplateProvider extends CachingProvider
      * @return a template matching that name, or null if one cannot be found
      */
 
-    final public CacheableElement load(String name, URL base)
+    final public Object load(String name, URL base)
     throws ResourceException
     {
         _log.debug("Load URLTemplate: ("+base+","+name+")");
@@ -251,7 +251,7 @@ final public class URLTemplateProvider extends CachingProvider
                 this + " could not locate " + name + " on path " + _templatePath);
             }
             templateNameCache.put(name, _tmpl);
-            return new UrlTemplateCacheableElement(_tmpl, base, 0);
+            return _tmpl;
         }
         catch (IOException e) {
             _log.debug(e.getClass().getName()+" "+e.getMessage());
