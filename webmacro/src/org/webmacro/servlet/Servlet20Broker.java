@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted under the terms of either of the following
+ * Open Source licenses:
+ *
+ * The GNU General Public License, version 2, or any later version, as
+ * published by the Free Software Foundation
+ * (http://www.fsf.org/copyleft/gpl.html);
+ *
+ *  or 
+ *
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ *
+ * This software is provided "as is", with NO WARRANTY, not even the 
+ * implied warranties of fitness to purpose, or merchantability. You
+ * assume all risks and liabilities associated with its use.
+ *
+ * See www.webmacro.org for more information on the WebMacro project.  
+ */
+
+
 package org.webmacro.servlet;
 
 import org.webmacro.*;
@@ -6,6 +29,14 @@ import org.webmacro.util.*;
 import java.net.*;
 import java.io.*;
 import javax.servlet.*;
+
+/**
+ * An implementation of Broker tailored for Servlet 2.0/2.1
+ * environments.  Loads templates and other resources from the class
+ * path, writes log messages to the servlet log.
+ * @author Brian Goetz
+ * @since 0.96
+ */
 
 public class Servlet20Broker extends ServletBroker {
    protected ClassLoader _servletClassLoader;
@@ -50,8 +81,7 @@ public class Servlet20Broker extends ServletBroker {
    }
 
    /** 
-    * Get a resource (file) from the the Broker's class loader
-    */
+    * Get a resource (file) from the the Broker's class loader */
    public URL getResource(String name) {
       URL u = _servletClassLoader.getResource(name);
       if (u == null) 

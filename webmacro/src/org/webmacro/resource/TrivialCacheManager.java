@@ -21,6 +21,11 @@
  */
 
 
+/**
+ * A trivial implementation of CacheManager which does no caching at
+ * all.
+ * @since 0.96
+ */
 package org.webmacro.resource;
 
 import org.webmacro.*;

@@ -26,6 +26,17 @@ package org.webmacro.engine;
 import org.webmacro.PropertyException;
 import org.webmacro.Context;
 
+/**
+ * CrankyEvaluationExceptionHandler
+ *
+ * An implementation of EvaluationExceptionHandler which throws an exception
+ * whenever it is called.  This will generally cause the exception to be
+ * displayed to the user -- useful for debugging.
+ *
+ * @author Brian Goetz
+ * @since 0.96
+ */
+
 public class CrankyEvaluationExceptionHandler 
   implements EvaluationExceptionHandler {
 

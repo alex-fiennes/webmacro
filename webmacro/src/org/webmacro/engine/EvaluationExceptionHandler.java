@@ -21,6 +21,20 @@
  */
 
 
+/**
+ * EvaluationExceptionHandler
+ *
+ * An interface for specifying how certain classes of errors will be
+ * handled.  The handle method is called when an exception is thrown
+ * when trying to expand a variable or property reference.  The error
+ * and warning methods are called from directives and context tools to
+ * generate output warnings.  Any of these routines may throw exceptions,
+ * in which case the enclosing servlet will catch it and generate an error
+ * which the user sees (useful for debugging.)  
+ *
+ * @author Brian Goetz
+ * @since 0.96 */
+
 package org.webmacro.engine;
 
 import org.webmacro.Context;

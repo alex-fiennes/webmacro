@@ -38,6 +38,9 @@ package org.webmacro;
  * debugging information.  The PrintStackTrace routine will print the
  * stack trace for both the original exception and the point at which
  * the exception was rethrown.  
+ *
+ * @author Brian Goetz (Quiotix Corp) 
+ * @since 0.96
  */
 public class RethrowableException extends Exception {
   private Throwable caught;

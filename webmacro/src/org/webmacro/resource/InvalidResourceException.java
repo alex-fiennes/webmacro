@@ -21,6 +21,12 @@
  */
 
 
+/**
+ * Thrown when a resource was found but could not be loaded, for example
+ * if a template doesn't parse.
+ * @since 0.96
+ */
+
 package org.webmacro.resource;
 
 import org.webmacro.*;

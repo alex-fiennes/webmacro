@@ -36,6 +36,8 @@ import  java.net.*;
   * configuration.  Templates might be loaded from a file, from a WAR,
   * from a JAR, etc.  It just passes the requests on to a
   * BrokerTemplateProviderHelper object.
+  * @author Brian Goetz
+  * @since 0.96
   * @see Provider 
   * @see BrokerTemplateProviderHelper 
   */

@@ -238,10 +238,10 @@ final public class FastWriter extends Writer
    {
       final int len = s.length();
       try{
-      	s.getChars(0,len,_cbuf,0);
+         s.getChars(0,len,_cbuf,0);
       } catch (IndexOutOfBoundsException e) {
-        _cbuf = new char[len + (len - _cbuf.length)]; 
-      	s.getChars(0,len,_cbuf,0);
+         _cbuf = new char[len + (len - _cbuf.length)]; 
+         s.getChars(0,len,_cbuf,0);
       }
 
       try {
@@ -267,10 +267,10 @@ final public class FastWriter extends Writer
    public void write(final String s, final int off, final int len) 
    {
       try{
-      	s.getChars(off,off + len,_cbuf,0);
+         s.getChars(off,off + len,_cbuf,0);
       } catch (IndexOutOfBoundsException e) {
-        _cbuf = new char[len + (len - _cbuf.length)]; 
-      	s.getChars(off,off + len,_cbuf,0);
+         _cbuf = new char[len + (len - _cbuf.length)]; 
+         s.getChars(off,off + len,_cbuf,0);
       }
 
       try {

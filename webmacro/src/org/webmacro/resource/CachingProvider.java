@@ -27,6 +27,14 @@ import org.webmacro.*;
 import org.webmacro.util.*;
 import java.lang.ref.Reference;
 
+/**
+ * CacheManager is an abstract base class for providers which wish to 
+ * implement caching functionality.  By extending CachingProvider and
+ * implementing the methods in CachingProviderMethods, a provider can
+ * automatically support caching using any CacheManager.  CachingProvider
+ * looks in the properties file to find the desired cache manager. 
+ */
+
 abstract public class CachingProvider implements Provider, 
                                                  CachingProviderMethods
 {

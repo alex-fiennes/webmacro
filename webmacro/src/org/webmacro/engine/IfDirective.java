@@ -144,15 +144,15 @@ final class IfDirective implements Directive, Visitable
 
       if (myCondition.test(context)) 
       {
-	 if (myIfBlock != null) {
+         if (myIfBlock != null) {
             myIfBlock.write(out, context);
          } else {
-	    context.getLog("engine").warning("If: Block for an #if directive was null");
-	 }
+            context.getLog("engine").warning("If: Block for an #if directive was null");
+         }
       } else { 
-	 if (myElseBlock != null) {
+         if (myElseBlock != null) {
             myElseBlock.write(out, context);
-	 }
+         }
       } 
    }
 

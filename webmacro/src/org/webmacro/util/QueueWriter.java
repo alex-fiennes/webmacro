@@ -211,8 +211,8 @@ final public class QueueWriter extends Writer
    {
       char[] b;
       for (int i = 0; i <= count; i++) {
-   		b = (buffer[i] == null) ? local : buffer[i];
-   		out.write(b,offset[i],length[i]);
+         b = (buffer[i] == null) ? local : buffer[i];
+         out.write(b,offset[i],length[i]);
       }
    }
 
@@ -228,12 +228,12 @@ final public class QueueWriter extends Writer
      */
    public void reset() {
       for (int i = 0; i <= count; i++) {
-   		buffer[i] = null;
-   		offset[i] = 0;
-   		length[i] = 0;
-   		localPos = 0;
-   		count = -1;
-   		size = 0;
+         buffer[i] = null;
+         offset[i] = 0;
+         length[i] = 0;
+         localPos = 0;
+         count = -1;
+         size = 0;
       }
       
    }

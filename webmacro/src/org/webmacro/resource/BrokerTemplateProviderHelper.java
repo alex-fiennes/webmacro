@@ -42,6 +42,8 @@ import  java.net.*;
   * instead you would call the Broker and it would look up and
   * use the TemplateProvider for you.
   * @see Provider
+  * @author Brian Goetz
+  * @since 0.96
   */
 final public class BrokerTemplateProviderHelper 
   implements CachingProviderMethods

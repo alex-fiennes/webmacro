@@ -21,6 +21,14 @@
  */
 
 
+/**
+ *
+ * Implementation of AbstractLogFile which directs log information to
+ * the servlet log.
+ * @since 0.96
+ * @author Brian Goetz
+ */
+
 package org.webmacro.servlet;
 
 import org.webmacro.util.*;

@@ -32,23 +32,23 @@ import org.webmacro.PropertyException;
 
 public class VariableTool implements ContextTool {
 
-	Context context;
+   Context context;
 
-	public VariableTool() {
-    }
+   public VariableTool() {
+   }
 
-	public VariableTool(Context newContext) {
-		context = newContext;
-    }
+   public VariableTool(Context newContext) {
+      context = newContext;
+   }
 
-    public Object init(Context c) throws PropertyException {
-		return new VariableTool(c);
-    }
+   public Object init(Context c) throws PropertyException {
+      return new VariableTool(c);
+   }
 
-    public void destroy(Object o) {
-    }
+   public void destroy(Object o) {
+   }
 
-	public boolean isDefined(Object name) {
-		return context.containsKey(name);
-	}
+   public boolean isDefined(Object name) {
+      return context.containsKey(name);
+   }
 }

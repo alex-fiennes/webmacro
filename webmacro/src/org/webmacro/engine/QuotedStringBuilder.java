@@ -116,18 +116,18 @@ final class QuotedString extends Vector implements Macro
       Object o;
       StringBuffer str = new StringBuffer(96); 
       for (int i=0; i<elementCount; i++) {
-	 o = elementData[i];
-	 if (! (o instanceof Macro)) {
-	    str.append(o.toString());
-	 } else {    // should only contain Variables and Strings 
+         o = elementData[i];
+         if (! (o instanceof Macro)) {
+            str.append(o.toString());
+         } else {    // should only contain Variables and Strings 
             try {
-	       str.append(((Macro) o).evaluate(data));
+               str.append(((Macro) o).evaluate(data));
             } catch (ClassCastException e) {
                throw new PropertyException(
-                     "QuotedString: Expected macro or string, got: " + o);
+                          "QuotedString: Expected macro or string, got: " + o);
             }
-	 }
-      }
+         }
+     }
       return str.toString(); // never null, we created it above
    }
 
@@ -142,7 +142,7 @@ final class QuotedString extends Vector implements Macro
      * @exception IOException if could not write to output stream
      */
    final public void write(FastWriter out, Context data) 
-	throws PropertyException, IOException
+      throws PropertyException, IOException
    {
       out.write(evaluate(data).toString()); // evaluate never returns null
    }

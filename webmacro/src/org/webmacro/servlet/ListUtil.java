@@ -242,121 +242,118 @@ public class ListUtil {
    * @param padValue Value that will be used for padding.
    * @return List of list parts.
    */
-  public static List split(List arg, int colCount, boolean pad,
-      Object padValue) {
+   public static List split(List arg, int colCount, boolean pad,
+                            Object padValue) {
 
-	int size = arg.size();
-    List rows = new ArrayList(size / colCount + 1);
-	int start = 0;
-	int end = colCount;
-    while (start < size) {
-      List row;
-      // check is this last and uncomplete row
-      if (end > size) {
-		// using sublist directly can cause synchronization problems
-        row = new ArrayList(arg.subList(start, size));
-        if (pad) {
-          for (int i = size; i < end; ++i) {
-            row.add(padValue);
-          }
-        }
-      } else {
-        row = new ArrayList(arg.subList(start, end));
+      int size = arg.size();
+      List rows = new ArrayList(size / colCount + 1);
+      int start = 0;
+      int end = colCount;
+      while (start < size) {
+         List row;
+         // check is this last and uncomplete row
+         if (end > size) {
+            // using sublist directly can cause synchronization problems
+            row = new ArrayList(arg.subList(start, size));
+            if (pad) {
+               for (int i = size; i < end; ++i) {
+                  row.add(padValue);
+               }
+            }
+         } else {
+            row = new ArrayList(arg.subList(start, end));
+         }
+         rows.add(row);
+         start = end;
+         end += colCount;
       }
-      rows.add(row);
-      start = end;
-      end += colCount;
-    }
-	return rows;
-  }
+      return rows;
+   }
 
   /**
-   * Splits array into multiple arrays of equal size. If list size cannot be divided
-   * by column count, last part is padded with nulls.
+   * Splits array into multiple arrays of equal size. If list size
+   * cannot be divided by column count, last part is padded with
+   * nulls.
    * @param arg array to be splitted.
    * @param colCount Number of elements in each split.
-   * @return array of list parts.
-   */
+   * @return array of list parts.  */
   public static Object[] split(Object[] arg, int colCount) {
 
     return split(arg, colCount, true, null);
   }
 
   /**
-   * Splits array into multiple arrays of equal size. If list size cannot be divided
-   * by column count, fill parameter determines should it be padded with nulls
-   * or not.
+   * Splits array into multiple arrays of equal size. If list size
+   * cannot be divided by column count, fill parameter determines
+   * should it be padded with nulls or not.
    * @param arg array to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
-   * @return array of list parts.
-   */
+   * @return array of list parts.  */
   public static Object[] split(Object[] arg, int colCount, boolean pad) {
 
     return split(arg, colCount, pad, null);
   }
 
   /**
-   * Splits array into multiple arrays of equal size. If list size cannot be divided
-   * by column count, it's padded with pad value.
+   * Splits array into multiple arrays of equal size. If list size
+   * cannot be divided by column count, it's padded with pad value.
    * @param arg Object[] to be splitted.
    * @param colCount Number of elements in each split.
    * @param padValue Value that will be used for padding.
-   * @return Object[] of list parts.
-   */
+   * @return Object[] of list parts.  */
   public static Object[] split(Object[] arg, int colCount, Object padValue) {
 
     return split(arg, colCount, true, padValue);
   }
 
   /**
-   * Splits array into multiple arrays of equal size. If array size cannot be divided
-   * by column count, fill parameter determines should it be padded with nulls
-   * or not.
+   * Splits array into multiple arrays of equal size. If array size
+   * cannot be divided by column count, fill parameter determines
+   * should it be padded with nulls or not.
    * @param arg Array to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
    * @param padValue Value that will be used for padding.
-   * @return Array of array parts.
-   */
-  public static Object[][] split(Object[] arg, int colCount, boolean pad,
-      Object padValue) {
+   * @return Array of array parts.  */
+   public static Object[][] split(Object[] arg, int colCount, boolean pad,
+                                  Object padValue) {
 
-	int size = arg.length;
-	int rowCount = size / colCount;
-	if ((size % colCount) != 0) {
-      ++rowCount;
-	}
-    Object[][] rows = new Object[rowCount][];
-	int start = 0;
-	int end = colCount;
-    for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
-      Object[] row;
-      // check is this last and uncomplete row
-      if (end > size) {
-		int tail = size - start;
-        if (pad) {
-		  row = new Object[colCount];
-          System.arraycopy(arg, start, row, 0, tail);
-		  if (padValue != null) {
-            for (int i = tail; i < end; ++i) {
-              row[i] = padValue;
-            }
-		  }
-        } else {
-	      row = new Object[tail];
-          System.arraycopy(arg, start, row, 0, tail);
-        }
-      } else {
-	    row = new Object[colCount];
-		System.arraycopy(arg, start, row, 0, colCount);
+      int size = arg.length;
+      int rowCount = size / colCount;
+      if ((size % colCount) != 0) {
+         ++rowCount;
       }
-      rows[rowNo] = row;
-      start = end;
-      end += colCount;
-    }
-	return rows;
-  }
+      Object[][] rows = new Object[rowCount][];
+      int start = 0;
+      int end = colCount;
+      for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
+         Object[] row;
+         // check is this last and uncomplete row
+         if (end > size) {
+            int tail = size - start;
+            if (pad) {
+               row = new Object[colCount];
+               System.arraycopy(arg, start, row, 0, tail);
+               if (padValue != null) {
+                  for (int i = tail; i < end; ++i) {
+                     row[i] = padValue;
+                  }
+               }
+            } else {
+               row = new Object[tail];
+               System.arraycopy(arg, start, row, 0, tail);
+            }
+         } else {
+	    row = new Object[colCount];
+            System.arraycopy(arg, start, row, 0, colCount);
+         }
+         rows[rowNo] = row;
+         start = end;
+         end += colCount;
+      }
+      return rows;
+   }
 
   /**
    * Transposes and splits array into multiple arrays of equal size. If array
@@ -371,14 +368,13 @@ public class ListUtil {
   }
 
   /**
-   * Transposes and splits array into multiple arrays of equal size. If array
-   * size cannot be divided by column count, fill parameter determines should it
-   * be padded with nulls or not.
+   * Transposes and splits array into multiple arrays of equal
+   * size. If array size cannot be divided by column count, fill
+   * parameter determines should it be padded with nulls or not.
    * @param arg Array to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
-   * @return Array of array parts.
-   */
+   * @return Array of array parts.  */
   public static Object[][] transposeSplit(Object[] arg, int colCount,
       boolean pad) {
 
@@ -401,52 +397,51 @@ public class ListUtil {
   }
 
   /**
-   * Transposes and splits array into multiple arrays of equal size. If array
-   * size cannot be divided by column count, fill parameter determines should it
-   * be padded with padValue or not.
+   * Transposes and splits array into multiple arrays of equal
+   * size. If array size cannot be divided by column count, fill
+   * parameter determines should it be padded with padValue or not.
    * @param arg Array to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
    * @param padValue Value that will be used for padding.
-   * @return Array of array parts.
-   */
-  public static Object[][] transposeSplit(Object[] arg, int colCount,
-      boolean pad, Object padValue) {
+   * @return Array of array parts.  */
+   public static Object[][] transposeSplit(Object[] arg, int colCount,
+                                           boolean pad, Object padValue) {
 
-	int size = arg.length;
-	int rowCount = size / colCount;
-	Object[][] rows;
-	int tail = size % colCount;
-	if (tail != 0) {
-      ++rowCount;
-	}
-	if (tail != 0 && !pad) {
-      rows = new Object[rowCount][];
-      for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
-        if (rowNo < tail) {
-          rows[rowNo] = new Object[colCount];
-        } else {
-          rows[rowNo] = new Object[colCount - 1];
-        }
+      int size = arg.length;
+      int rowCount = size / colCount;
+      Object[][] rows;
+      int tail = size % colCount;
+      if (tail != 0) {
+         ++rowCount;
       }
-	} else {
-		rows = new Object[rowCount][colCount];
-	}
+      if (tail != 0 && !pad) {
+         rows = new Object[rowCount][];
+         for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
+            if (rowNo < tail) {
+               rows[rowNo] = new Object[colCount];
+            } else {
+               rows[rowNo] = new Object[colCount - 1];
+            }
+         }
+      } else {
+         rows = new Object[rowCount][colCount];
+      }
 
-	int pos = 0;
-	for (int colNo = 0; colNo < colCount; ++colNo) {
-		for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
-		    if (pos < size) {
-				rows[rowNo][colNo] = arg[pos++];
-		    } else if (pad) {
-			    rows[rowNo][colNo] = padValue;
-		    } else {
-				break;
-		    }
-		}
-	}
-	return rows;
-  }
+      int pos = 0;
+      for (int colNo = 0; colNo < colCount; ++colNo) {
+         for (int rowNo = 0; rowNo < rowCount; ++rowNo) {
+            if (pos < size) {
+               rows[rowNo][colNo] = arg[pos++];
+            } else if (pad) {
+               rows[rowNo][colNo] = padValue;
+            } else {
+               break;
+            }
+         }
+      }
+      return rows;
+   }
 
   /**
    * Transposes and splits list into multiple lists of equal size. If list
@@ -461,14 +456,13 @@ public class ListUtil {
   }
 
   /**
-   * Transposes and splits list into multiple lists of equal size. If list
-   * size cannot be divided by column count, fill parameter determines should it
-   * be padded with nulls or not.
+   * Transposes and splits list into multiple lists of equal size. If
+   * list size cannot be divided by column count, fill parameter
+   * determines should it be padded with nulls or not.
    * @param arg List to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
-   * @return List of list parts.
-   */
+   * @return List of list parts.  */
   public static List transposeSplit(List arg, int colCount,
       boolean pad) {
 
@@ -491,15 +485,14 @@ public class ListUtil {
   }
 
   /**
-   * Transposes and splits list into multiple lists of equal size. If list
-   * size cannot be divided by column count, fill parameter determines should it
-   * be padded with padValue or not.
+   * Transposes and splits list into multiple lists of equal size. If
+   * list size cannot be divided by column count, fill parameter
+   * determines should it be padded with padValue or not.
    * @param arg List to be splitted.
    * @param colCount Number of elements in each split.
    * @param pad Last split should be null padded?
    * @param padValue Value that will be used for padding.
-   * @return List of list parts.
-   */
+   * @return List of list parts.  */
   public static List transposeSplit(List arg, int colCount,
       boolean pad, Object padValue) {
 
@@ -593,21 +586,21 @@ public class ListUtil {
 	out.println("Array split");
 	Object[] splitArray1 = split(arr, 3, true);
 	for (int i = 0; i < splitArray1.length; ++i) {
-		out.print("-: ");
-		Object[] part = (Object[]) splitArray1[i];
-		for (int j = 0; j < part.length; ++j) {
-			out.print(part[j] + ", ");
-		}
-		out.println("*");
+           out.print("-: ");
+           Object[] part = (Object[]) splitArray1[i];
+           for (int j = 0; j < part.length; ++j) {
+              out.print(part[j] + ", ");
+           }
+           out.println("*");
 	}
 	out.println("Array transposeSplit");
 	Object[][] splitArray3 = transposeSplit(arr, 3, true, "-");
 	for (int i = 0; i < splitArray3.length; ++i) {
-		out.print("-: ");
-		for (int j = 0; j < splitArray3[i].length; ++j) {
-			out.print(splitArray3[i][j] + ", ");
-		}
-		out.println("*");
+           out.print("-: ");
+           for (int j = 0; j < splitArray3[i].length; ++j) {
+              out.print(splitArray3[i][j] + ", ");
+           }
+           out.println("*");
 	}
   }
 }

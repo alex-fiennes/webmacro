@@ -26,6 +26,16 @@ package org.webmacro.resource;
 import org.webmacro.*;
 import org.webmacro.util.*;
 
+/**
+ * The CacheManager sits between the template provider and WM.  This
+ * interface specifies all the functions of the cache manager, allowing
+ * a complete separation of the fetching of resources from how they are
+ * cached.  CachingProvider looks in the properties file to figure out
+ * what cache manager to load.
+ * @author Brian Goetz
+ * @since 0.96
+ */
+
 public interface CacheManager {
    /**
      * Same as defined in Provider, except with an additional type

@@ -22,6 +22,13 @@
 
 package org.webmacro;
 
+/**
+ * Visitable
+ * Interface implemented by Macros so that Visitors can traverse them. 
+ * 
+ * @since 0.96
+ */
+
 public interface Visitable {
   public void accept(TemplateVisitor v);
 }

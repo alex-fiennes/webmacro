@@ -21,6 +21,19 @@
  */
 
 
+/**
+ * DefaultEvaluationExceptionHandler
+ *
+ * An implementation of EvaluationExceptionHandler which simply writes
+ * an HTML comment to the output.  Users who are generating non-HTML output
+ * should replace the ExceptionHandler in their context with one that
+ * generates the appropriate comments.  This should be the only place
+ * in WM where HTML comments are generated into the output. 
+ *
+ * @author Brian Goetz
+ * @since 0.96
+ */
+
 package org.webmacro.engine;
 
 import org.webmacro.PropertyException;

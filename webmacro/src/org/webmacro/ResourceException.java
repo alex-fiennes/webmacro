@@ -25,6 +25,7 @@ package org.webmacro;
 
 /**
   * Resource could not be loaded for some reason
+  * @since 0.96
   */
 public class ResourceException extends WebMacroException {
    public ResourceException(String reason, Exception e) {
