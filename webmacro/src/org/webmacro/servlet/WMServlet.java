@@ -242,6 +242,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         if (t != null) {
           execute(t,context);
         }
+
+			// marcelh start
+			post();
+			_log.setSevereError();
+			// marcelh end
+
         destroyContext(context);
         context.clear();
       } catch (HandlerException e) {
@@ -473,6 +479,17 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    protected void stop() { }
 
 
+	// marcelh start
+   /**
+     * Override this method to implement any post-handle code you require.
+     * This is called when the servlet environment finished the 
+     * handle() method of the servlet.
+     * The default implementation does nothing.
+     */
+   protected void post() { }
+   // marcelh end
+
+	
    /**
      * This method returns the WebMacro object which will be used to load,
      * access, and manage the Broker. The default implementation is to 

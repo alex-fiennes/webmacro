@@ -147,6 +147,13 @@ final public class Log
       = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 
 
+   // marcelh start
+   /**
+     * If there has been a severe loggin action
+     */
+   static private String strSevereError = "";
+ 	// marcelh end
+
    // STATIC METHODS
 
 
@@ -398,6 +405,9 @@ final public class Log
      */
    final  public void warning(Object logMessage) {
       if (myLevel >= WARNING.getOrder()) { 
+         // marcelh start
+         strSevereError += logMessage + "\r\n";
+         // marcelh end
          writeln("WARN", logType, logMessage);
       }
    }
@@ -423,9 +433,11 @@ final public class Log
       if (myLevel < EXCEPTION.getOrder()) {
          return;
       } 
-
       if (iTraceExceptions && logMessage instanceof Exception) {
          Exception e = (Exception) logMessage;
+         // marcelh start
+         strSevereError += "" + e + "\r\n";
+         // marcelh end
          write("EXCPT", logType, "");
          e.printStackTrace(myTarget); 
          myTarget.flush();
@@ -454,8 +466,22 @@ final public class Log
    }
 
 
-   // TEST HARNESS
+   // marcelh start
+   /**
+     * give severe error back.
+     */
+   public static String getSevereError()
+	{
+		return strSevereError;
+   }
 
+   public static void setSevereError()
+   {
+		strSevereError = "";
+   }
+   // marcelh end
+
+   // TEST HARNESS
 
    /**
      * Test harness: opens "log" in the current directory
