@@ -5,6 +5,10 @@ public class TestTemplate extends AbstractTemplateEvaluator {
     
     public void stuffContext (Context c) throws Exception
     {
+        int[] ints = new int[] { -2, -1, 0, 1, 2 };
+        long[] longs = new long[] { -2, -1, 0, 1, 2 };
+        short[] shorts = new short[] { -2, -1, 0, 1, 2 };
+    
         // fill up the context with our data
         c.put("intn2", new Integer(-2));
         c.put("intn1", new Integer(-1));
