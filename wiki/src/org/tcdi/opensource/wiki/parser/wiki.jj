@@ -1,4 +1,4 @@
-options { STATIC = false; USER_CHAR_STREAM = false; }
+options { STATIC = false; USER_CHAR_STREAM = false; UNICODE_INPUT = true; }
 
 PARSER_BEGIN(WikiParser)
 /**

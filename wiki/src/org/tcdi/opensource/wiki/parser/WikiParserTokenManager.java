@@ -291,6 +291,9 @@ private final void jjCheckNAddStates(int start)
    jjCheckNAdd(jjnextStates[start + 1]);
 }
 static final long[] jjbitVec0 = {
+   0xfffffffffffffffeL, 0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL
+};
+static final long[] jjbitVec2 = {
    0x0L, 0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL
 };
 private final int jjMoveNfa_0(int startState, int curPos)
@@ -749,6 +752,9 @@ private final int jjMoveNfa_0(int startState, int curPos)
       }
       else
       {
+         int hiByte = (int)(curChar >> 8);
+         int i1 = hiByte >> 6;
+         long l1 = 1L << (hiByte & 077);
          int i2 = (curChar & 0xff) >> 6;
          long l2 = 1L << (curChar & 077);
          MatchLoop: do
@@ -756,28 +762,28 @@ private final int jjMoveNfa_0(int startState, int curPos)
             switch(jjstateSet[--i])
             {
                case 7:
-                  if ((jjbitVec0[i2] & l2) != 0L && kind > 32)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2) && kind > 32)
                      kind = 32;
                   break;
                case 49:
                case 1:
-                  if ((jjbitVec0[i2] & l2) != 0L)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                      jjCheckNAddStates(11, 13);
                   break;
                case 48:
-                  if ((jjbitVec0[i2] & l2) != 0L)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                      jjCheckNAddStates(11, 13);
                   break;
                case 3:
-                  if ((jjbitVec0[i2] & l2) != 0L)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                      jjCheckNAddStates(14, 16);
                   break;
                case 6:
-                  if ((jjbitVec0[i2] & l2) != 0L)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                      jjCheckNAddStates(17, 20);
                   break;
                case 30:
-                  if ((jjbitVec0[i2] & l2) != 0L)
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                      jjAddStates(37, 38);
                   break;
                default : break;
@@ -802,6 +808,18 @@ static final int[] jjnextStates = {
    6, 1, 2, 5, 6, 20, 21, 23, 27, 28, 29, 34, 35, 36, 38, 39, 
    40, 37, 38, 39, 40, 30, 31, 
 };
+private static final boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, long l2)
+{
+   switch(hiByte)
+   {
+      case 0:
+         return ((jjbitVec2[i2] & l2) != 0L);
+      default : 
+         if ((jjbitVec0[i1] & l1) != 0L)
+            return true;
+         return false;
+   }
+}
 public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, null, "\52", "\137", 
 "\176", "\74", "\76", null, null, "\136", "\55\55\55\55\55", null, null, null, null, 
