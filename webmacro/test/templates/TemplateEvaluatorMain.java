@@ -23,17 +23,15 @@ import AbstractTemplateEvaluator;
  */
 public class TemplateEvaluatorMain 
 {
-    private static final String USAGE = "Usage:\n" + 
-                                        "\tTemplateTesterMain <YourTemplateTester> template1.wm ... templateN.wm";
+    private static final String USAGE = "Usage:\n\tTemplateTesterMain <YourTemplateTester> template1.wm ... templateN.wm";
     
     /**
      * main method<p>
      *
-     * Make sure that <code>AbstractTemplateTester</code> and <code>YourTemplateTester</code>
-     * and the templates specified on the command line are <b>in your classpath</b>!
+     * Make sure that <code>AbstractTemplateTester</code> and      * <code>YourTemplateTester</code> and the templates specified on the      * command line are <b>in your classpath</b>!
      *
      * <pre>
-     *    Usage:  java TemplateTesterMain <YourTemplateTester> template1.wm ... templateN.wm
+     * Usage:       *   java TemplateTesterMain <YourTemplateTester> template1.wm ... templateN.wm
      * </pre>
      *
      * @param args command line arguments.  a list of template filenames to run through
@@ -54,11 +52,22 @@ public class TemplateEvaluatorMain
         try
         {
             // dynamically create the tester 
-            AbstractTemplateEvaluator tester = (AbstractTemplateEvaluator) Class.forName (className).newInstance ();
+            AbstractTemplateEvaluator tester =                      (AbstractTemplateEvaluator) Class.forName (className)                                                      .newInstance ();
 
-            // initialize and test
-            tester.init (templateFilenames);
-            tester.test ();
+            // initialize tester
+            tester.init ();                        // and evaluate/test each template
+            // each template is sent to System.out
+            // and other information (execution time for each template, 
+            // possible exceptions, etc) are sent to System.err            for (int x=0; x<templateFilenames.length; x++)            {
+               System.err.println ("----- start: " + templateFilenames[x] + " -----");
+               try
+               {                  tester.evaluate (templateFilenames[x], System.out);               }               catch (Exception e)               {
+                  System.err.println (templateFilenames[x] + 
+                                      " failed with the following exception:");                  e.printStackTrace (System.err);
+               }
+               System.err.println ("----- end: " + templateFilenames[x]   +
+                                   " (" + tester.getEvaluationTime (1000) +                                    " seconds) -----");
+            }
         }
         catch (Exception e)
         {
@@ -69,13 +78,13 @@ public class TemplateEvaluatorMain
         System.exit (0);
     }
     
-    /* soemthing went wrong, so let user know and exit the JVM */
+    /* something went wrong, so let user know and exit the JVM */
     public static final void die (String message)
     {
         die (null, message);
     }
     
-    /* soemthing went way wrong, so let user know, print a stack trace and exit the JVM */
+    /* something went way wrong, so let user know, print a stack trace and exit the JVM */
     public static final void die (Exception e, String message)
     {
         if (message != null)

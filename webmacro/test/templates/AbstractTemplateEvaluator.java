@@ -3,7 +3,7 @@
  *
  * Created on March 25, 2001, 6:11 PM
  */
-
+import java.io.OutputStream;
 import org.webmacro.WM;
 import org.webmacro.WebMacro;
 import org.webmacro.Context;
@@ -11,109 +11,89 @@ import org.webmacro.Template;
 import org.webmacro.FastWriter;
 
 /**
- * Abstract class that all specific template test cases should extend.<p>
+ * Abstract class to easily allow evaluation of a template.<p>
  *
- * Provides common functionality of creating WebMacro, a Context, and evaluating
- * an arbitrary number of templates against the Context.<p>
+ * Provides common functionality of creating WebMacro, a Context, and  * evaluating a template.<p>
  *
- * Allows subclasses ability to stuff the context with custom variables.
+ * Allows subclasses ability to stuff the context with custom variables. * Subclasses can also override the <code>createWebMacro(...)</code> method * if they wish to create a WebMacro instance in a way other than: * <pre> *       return new WM (); * </pre>
  *
  * @author  e_ridge
  * @version 
  */
 public abstract class AbstractTemplateEvaluator
 {
-    /** array of test templates */
-    private String[] _templateFilenames;
-    
-    /** our WebMacro instance */
-    private WebMacro _wm;
-    
-    /** context to use for each template */
-    private Context _context;
+   /** our WebMacro instance */
+   protected WebMacro _wm;
+       
+   /** context to use for each template */
+   protected Context _context;
+      /** template evaluation time in milliseconds */
+   protected long _evalTime = -1;
+   
+   /**
+    * initialize this TemplateTester by creating a WebMacro instance
+    * and a default Context.
+    */
+   public void init () throws Exception
+   {
+      _wm = createWebMacro ();
+      _context = _wm.getContext ();
 
-    
-    /** 
-     * stuff the provided context with custom variables and objects<p>
-     *
-     * @throws Exception if something goes wrong while stuffing context
-     */
-    public abstract void stuffContext (Context context) throws Exception;
-    
-    /**
-     * initialize this TemplateTester by creating a WebMacro instance
-     * and a default Context.
-     *
-     * @param templateFilenames array of template filenames to run through WM
-     * and the Context.
-     */
-    public void init (String[] templateFilenames) throws Exception
-    {
-        _wm = new WM ();
-        _context = _wm.getContext ();
-        _templateFilenames = templateFilenames;
+      // let subclasses stuff the context with custom data
+      stuffContext (_context);
+   }   
+   /**
+    * create a default-configured instance of WebMacro.  Subclasses may 
+    * override if WM needs to be created/configured differently.
+    */   protected WebMacro createWebMacro () throws Exception
+   {
+      return new WM ();
+   }   /** 
+    * stuff the provided context with custom variables and objects<p>
+    *
+    * @throws Exception if something goes wrong while stuffing context
+    */
+   protected abstract void stuffContext (Context context) throws Exception;
+  
+   /**
+    * get the time time it took to evaluate the template in
+    * <code>(double)time/units</code>.
+    */   public final double getEvaluationTime (long units)
+   {
+      return ((double) _evalTime)/units;
+   }   
+   /**
+    * Evaluate and write specified template to a specified output stream.  
+    * Output is always encoded in UTF8.<p>
+    *
+    * <code>evaluate()</code> also does some simple timing of the template     * evaluation.  Calling <code>getExecutionTime(perUnitsOfMilliseconds)</code>    * will return the time to evaluate the template.  Note that the    * evaluation time does not include the time to parse the template.<p>
+    * 
+    * @throws Exception if a template could not be found, or if some other
+    * error occured during template evaluation
+    */
+   public void evaluate (String templateName, OutputStream out) throws Exception
+   {
+      long start, stop;
+      double seconds;
+      String banner;
+      // get a fast writer instance that sends to System.out
+      FastWriter fw = FastWriter.getInstance (out, "UTF8");
 
-        // let subclasses stuff the context with custom data
-        stuffContext (_context);
-    }
-    
-    /**
-     * run the list of templates provided during initialization
-     * through WM using the same Context for each one.<p>
-     *
-     * Output is sent to <code>System.out</code>, encoded in UTF8 format.<p>
-     *
-     * <code>test()</code> also does some simple timing of the template evaluation
-     * and outputs this information, along with the template filename, to <b><code>System.err</code></b>,
-     * immediately following the output of the template.  This timing information 
-     * is sent to System.err so that it can be redirected separately by an automated
-     * shell script.
-     *
-     * @throws Exception if a template could not be found, or if some other
-     * error occured during template evaluation
-     */
-    public void test () throws Exception
-    {
-        long start, stop;
-        double seconds;
-        String banner = null;
-        
-        FastWriter fw = FastWriter.getInstance (System.out, "UTF8");
-        for (int x=0; x<_templateFilenames.length; x++)
-        {
-            // get the next template from WM
-            Template template = _wm.getTemplate (_templateFilenames[x]);
-            
-            start = System.currentTimeMillis ();
-            // write the template to the fast writer using our context
-            // Notice that all templates use the same context
-            template.write (fw, _context);
-            stop = System.currentTimeMillis ();
+      // get the template from WM
+      Template template = _wm.getTemplate (templateName);
+                        
+      // write the template to the fast writer using our context
+      // Notice that all templates use the same context
+      start = System.currentTimeMillis ();
+      template.write (fw, _context);
+      stop = System.currentTimeMillis ();
 
-            // make sure to flush the fast writer.
-            // but don't close it, otherwise we'll close System.out, and that
-            // would suck
-            fw.flush ();
+      // make sure to flush the fast writer.
+      // but don't close it, otherwise we'll close System.out, and that
+      // would suck
+      fw.flush ();
 
-            // print a little banner at the end of the output
-            seconds = ( ((double) stop - start) / 1000);
-            banner = "------" + _templateFilenames[x] + " finished in " + seconds + " seconds --------";
-            System.err.println (banner);
-        }
-    }    
-    
-    /**
-     * repeat the character <code>c</code> <code>many</code> times in a row
-     * and return it as a string.  Doesn't java have something like this built in?
-     * I mean, come on, even VisualBasic can do this for you.  Maybe I should be
-     * using ASP's instead of servlets and WebMacro.
-     */
-    private String repeat (char c, int many)
-    {
-        StringBuffer sb = new StringBuffer ();
-        for (int x=0; x<many; x++)
-            sb.append (c);
-        
-        return sb.toString ();
-    }
+      // print a little banner at the end of the output
+      _evalTime = stop - start;
+   }    
 }
