@@ -28,60 +28,16 @@ and then how to evaluate conditions and parse in the correct template.
 <a href=view.tml>view.tml</a> An example of a complete object report showing the "peers" of a logical
 view. In most web apps, views will be linked together as logical pages.
 
+<center>
 <p>
 <hr size=1 width=50%>
-<p>
-
-<a href=View.java>View.java</a> An interface definition which 
-represents the server-side equivalent of a webmacro "skin".
-During template evaluation, an instance implementing this interface provides the core
-lifecylce and state management methods. A convenient and globally unique identifier
-can be passed around as an http get and post parameter. Views are often chained
-together to produce wizards and multi-phased input models. State is always maintained
-inside the View implementation members.
- 
-<p>
-<a href=ViewFactory.java>ViewFactory.java</a> Views are instantiated by factories which return an instance implementing the View interface.
-
-<p>
-<a href=GeneralView.java>GeneralView.java</a> A view factory which supports multiple panels in a view.
-
-<p>
-<a href=GeneralCommitView.java>GeneralCommitView.java</a> A view factory which adds a commit view panel as the last view.
-
-<p>
-<a href=ReferralView.java>ReferralView.java</a> A concrete view containing two panels. The first allows for the panel
-to create and manage a vector of elements. The second panel is for a single element.
-The last panel is for a commit/confirmation of the views. This is an excellent example of how the subclass
-has been relieved of all complexity in the view management. It is focused on the application elements
-of the referred parties and the referring party.
-
-<p>
-<a href=ViewActionHandler.java>ViewActionHandler.java</a> You must add to a view one or more action handlers. The general case.
-
-<p>
-<a href=CommitActionHandler.java>CommitActionHandler.java</a> The base handler for the proverbial "OK. Do something with this input!"
-
-<p>
-<a href=InsertInterimBOHandler.java>InsertInterimBOHandler.java</a> A commit handler which
-assembles the view elements and creates a persistent business object, an InterimBusinessObject. These
-objects are persisted as elements in a <a href=http://engineering.acctiva.org>Very Large Hashtable</a>.
-
-<p>
-
-<hr size=1 width=50%>
-<p>
-
-These are specimens contributed by Lane Sharman. Others are more than welcome to add to this file
-which is maintained as index.html in cvs under the examples directory.
-<p>
 The examples are best viewed with a text editor, not a browser.
 <p>
 
 <hr size=1 width=50%>
 <p>
 Other example resources:
-
+</center>
 <p>
 <a href=http://wiki.webmacro.org/WebMacroScriptLanguage>Scripting</a> tutorial
 under development by Keats Kirsch.
@@ -96,9 +52,9 @@ distribution. Check these out for ideas on how to solve a particular
 problem using WebMacro.
 
 <p>
-<a href=http://engineering.acctiva.org/jldap>jldap</a> 
-Practice at Open Doors Software for creating a java language for data acquistion and presentment for
-web applications we write.
+<a href=http://www.wangjammers.com/ignition>Ignition</a> 
+For a comprehensive web builder based on WebMacro.
+
 
 
 </html>

@@ -17,7 +17,9 @@ Common targets:
     clean
         Remove all temporary files created during build process
     compile
-        Compile all source files
+        Compile all principal source files
+    compile-optional
+        Compiles all optional source files
     jar
         Create "webmacro.jar"
     javadoc
@@ -40,7 +42,8 @@ Administrative targets:
     ]]></echo>
     </target>
 
-    <property name="version"        value="1.1final" />
+    <property name="version"        value="2.0b1" />
+    <property name="wm-style"       value="classic" /> <!-- can be .minimal to get webmacro.defaults.minimal -->
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
     <property name="classes"        value="classes"/>
@@ -122,16 +125,27 @@ Administrative targets:
 
         <copy todir="${classes}">
             <fileset dir="${tmpdir}" includes="**/*.properties" />
-            <fileset dir="." includes="WebMacro.defaults"/>
+            <fileset dir="." includes="WebMacro.defaults.${wm-type}"/>
         </copy>
         <touch file="${classes}/WM-VERSION-${version}" />
+    </target>
+
+    <target name="compile-optional" depends="compile">
+        <filter token="VERSION" value="${version}" />
+        <filter token="BUILD_DATE" value="${TODAY}" />
+                <copy todir="${tmpdir}" filtering="true">
+            <fileset dir="src-optional" />
+        </copy>
+        <javac srcdir="${tmpdir}" destdir="${classes}"
+            debug="on" optimize="off" deprecation="off">
+            <classpath refid="class.path" />
+        </javac>
     </target>
 
     <target name="compile-examples" depends="compile">
         <filter token="VERSION" value="${version}" />
         <filter token="BUILD_DATE" value="${TODAY}" />
         <javac srcdir="${examples}" destdir="${examples}/WEB-INF/classes"
-            excludes="**/advanced/*.java"
             debug="on" optimize="off" deprecation="off">
             <classpath refid="class.path" />
         </javac>
