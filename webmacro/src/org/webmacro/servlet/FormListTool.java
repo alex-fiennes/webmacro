@@ -30,7 +30,7 @@ import org.webmacro.PropertyException;
 /**
  * Provide Template with access to form data.
  */
-public class FormListTool implements ContextTool
+public class FormListTool extends ContextTool
 {
 
     public Object init (Context context)

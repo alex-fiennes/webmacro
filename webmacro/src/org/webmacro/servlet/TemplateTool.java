@@ -9,6 +9,7 @@ package org.webmacro.servlet;
 import org.webmacro.Context;
 import org.webmacro.PropertyException;
 import org.webmacro.Template;
+import org.webmacro.ContextTool;
 import org.webmacro.engine.StringTemplate;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  * @author Keats Kirsch
  * @version 0.2
  */
-public class TemplateTool implements org.webmacro.ContextTool
+public class TemplateTool extends ContextTool
 {
 
     private Context _context = null;

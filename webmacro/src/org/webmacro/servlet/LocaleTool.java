@@ -39,7 +39,7 @@ import java.util.StringTokenizer;
  * Provide Template with access to Locales.  Also gives access to the static
  * fields e.g., Locale.US
  */
-public class LocaleTool implements ContextTool, Bag
+public class LocaleTool extends ContextTool implements Bag
 {
 
     public static final String RCS = "$Id$";

@@ -33,7 +33,7 @@ import org.webmacro.ContextTool;
  * @since Apr. 2001
  * @see org.webmacro.util.CastUtil
  */
-public class TypeTool implements ContextTool
+public class TypeTool extends ContextTool
 {
 
     public Object init (Context context)

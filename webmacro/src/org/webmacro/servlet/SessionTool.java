@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
  * Provide Template with access to the HttpSession associated
  * with the current request.
  */
-public class SessionTool implements ContextTool
+public class SessionTool extends ContextTool
 {
 
     public Object init (Context context)

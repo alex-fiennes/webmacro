@@ -21,11 +21,12 @@ package org.webmacro;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import org.webmacro.broker.ContextAutoLoader;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.IntrospectionUtils;
@@ -37,7 +38,6 @@ import org.webmacro.util.LogTarget;
 import org.webmacro.util.LogTargetFactory;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Broker is responsible for loading and initializing almost everything
@@ -88,8 +88,8 @@ public class Broker
     /** a local map for "global functions" */
     private Map _functionMap = new ConcurrentHashMap();
 
-    /** a local map for context tools */
-    private Map _tools = new ConcurrentHashMap();
+    /** a local map for context tools and other automatic context goodies */
+    private Map _toolLoader = new ConcurrentHashMap();
 
 
     /*
@@ -236,7 +236,6 @@ public class Broker
 
     private class ProviderSettingHandler extends Settings.ListSettingHandler
     {
-
         public void processSetting (String settingKey, String settingValue)
         {
             try
@@ -252,17 +251,19 @@ public class Broker
         }
     }
 
-    private class ToolsSettingHandler extends Settings.ListSettingHandler
+    private class AutoLoaderSettingHandler extends Settings.ListSettingHandler
     {
         public void processSetting (String settingKey, String settingValue)
         {
             try
             {
-                addTool(settingKey, settingValue, "Tool");
+                Class pClass = classForName(settingValue);
+                ContextAutoLoader instance = (ContextAutoLoader) pClass.newInstance();
+                instance.init(Broker.this, settingKey);
             }
             catch (Exception e)
             {
-                _log.error("Tool (" + settingValue + ") failed to load", e);
+                _log.error("ContextAutoLoader (" + settingValue + ") failed to load", e);
             }
         }
     }
@@ -299,9 +300,8 @@ public class Broker
             throw new InitException("No Providers specified in configuration");
         }
 
-        // load tools
-        loadTools("ContextTools");
-        loadTools("WebContextTools");
+        _config.processListSetting("ContextAutoLoaders", new AutoLoaderSettingHandler());
+        // @@@ load autoloaders
 
         eehClass = _config.getSetting("ExceptionHandler");
         if (eehClass != null && !eehClass.equals(""))
@@ -825,106 +825,22 @@ public class Broker
         _functionMap.put(fnName, mw);
     }
 
-    /**
-     * Attempts to instantiate the tool using two different constructors
-     * until one succeeds, in the following order:
-     * <ul>
-     * <li>new MyTool(String key)</li>
-     * <li>new MyTool()</li>
-     * </ul>
-     * The key is generally the unqualified class name of the tool minus the
-     * "Tool" suffix, e.g., "My" in the example above
-     * The settings are any configured settings for this tool, i.e, settings
-     * prefixed with the tool's key.
-     * <br>
-     * NOTE: keats - 25 May 2002, no tools are known to use the settings mechanism.
-     * We should create an example of this and test it, or abolish this capability!
-     * Abolished -- BG
-     */
-    private void addTool(String toolName, String className, String suffix) {
-        Class c;
-        try
-        {
-            c = classForName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            _log.warning("Context: Could not locate class for context tool "
-                         + className);
-            return;
-        }
-        if (toolName == null || toolName.equals(""))
-        {
-            toolName = className;
-            int start = 0;
-            int end = toolName.length();
-            int lastDot = toolName.lastIndexOf('.');
-            if (lastDot != -1)
-            {
-                start = lastDot + 1;
-            }
-            if (toolName.endsWith(suffix))
-            {
-                end -= suffix.length();
-            }
-            toolName = toolName.substring(start, end);
-        }
-
-        Constructor ctor = null;
-        Constructor[] ctors = c.getConstructors();
-        Class[] parmTypes = null;
-        Object instance = null;
-
-        // check for 1 arg (String) constructor
-        for (int i = 0; i < ctors.length; i++)
-        {
-            parmTypes = ctors[i].getParameterTypes();
-            if (parmTypes.length == 1 && parmTypes[0].equals(String.class))
-            {
-                ctor = ctors[i];
-                Object[] args = {toolName};
-                try
-                {
-                    instance = ctor.newInstance(args);
-                }
-                catch (Exception e)
-                {
-                    _log.error("Failed to instantiate tool "
-                               + toolName + " of class " + className + " using constructor "
-                               + ctor.toString(), e);
-                }
-            }
-        }
-        if (instance == null)
-        {
-            // try no-arg constructor
-            try
-            {
-                instance = c.newInstance();
-            }
-            catch (Exception e)
-            {
-                _log.error("Unable to construct tool " + toolName + " of class " + className, e);
-                return;
-            }
-        }
-        _tools.put(toolName, instance);
-        _log.info("Registered ContextTool " + toolName);
-    }
-
     /** Fetch a tool */
-    public ContextTool getTool(Object toolName) {
-        return (ContextTool) _tools.get(toolName);
+    public Object getAutoContextVariable(String variableName, Context context) {
+        ContextAutoLoader loader = (ContextAutoLoader) _toolLoader.get(variableName);
+        try {
+            if (loader == null)
+                return null;
+            else
+                return loader.get(variableName, context);
+        }
+        catch (PropertyException e) {
+            return null;
+        }
     }
 
-    /**
-     * Load the context tools listed in the supplied string. See
-     * the ComponentMap class for a description of the format of
-     * this string.
-     */
-    protected final void loadTools (String keyName)
-    {
-        getSettings().processListSetting(keyName, new ToolsSettingHandler());
+    public void registerAutoContextVariable(String variableName, ContextAutoLoader loader) {
+        _toolLoader.put(variableName, loader);
     }
 
     /**

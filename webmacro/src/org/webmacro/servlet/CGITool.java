@@ -31,9 +31,8 @@ import org.webmacro.PropertyException;
  * Provide Template variables that implement the CGI standard for
  * script variable names.
  */
-public class CGITool implements ContextTool
+public class CGITool extends ContextTool
 {
-
     public Object init (Context context)
             throws PropertyException
     {

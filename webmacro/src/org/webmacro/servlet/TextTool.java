@@ -41,7 +41,7 @@ import java.util.List;
  * @author Eric B. Ridge (mailto:ebr@tcdi.com)
  */
 
-public class TextTool implements ContextTool
+public class TextTool extends ContextTool
 {
 
     /** our lonely singleton */

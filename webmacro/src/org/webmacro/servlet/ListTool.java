@@ -33,7 +33,7 @@ import org.webmacro.ContextTool;
  * @since Oct. 2000
  * @see ListUtil
  */
-public class ListTool implements ContextTool
+public class ListTool extends ContextTool
 {
 
     public Object init (Context context)

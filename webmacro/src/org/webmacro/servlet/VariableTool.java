@@ -34,7 +34,7 @@ import org.webmacro.PropertyException;
  * @author Eric B. Ridge (mailto: ebr@tcdi.com)
  */
 
-public class VariableTool implements ContextTool
+public class VariableTool extends ContextTool
 {
 
     Context context;

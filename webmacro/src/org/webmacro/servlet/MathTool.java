@@ -33,7 +33,7 @@ import org.webmacro.PropertyException;
  * @author Eric B. Ridge (mailto:ebr@tcdi.com)
  */
 
-public class MathTool implements ContextTool
+public class MathTool extends ContextTool
 {
 
     /** our lonely singleton */

@@ -23,11 +23,13 @@
 
 package org.webmacro;
 
+import org.webmacro.broker.ContextObjectFactory;
+
 /**
- * This interface is used to attach utilities to a context to assist
- * with the generation of views.
+ * This class is used as a base class for legacy context tools so they can fit into the ContextObjectFactory
+ * framework.
  */
-public interface ContextTool
+public abstract class ContextTool implements ContextObjectFactory
 {
 
     /**
@@ -37,6 +39,9 @@ public interface ContextTool
      * themselves from this method; others may instantiate new objects
      * to hold the per-request state.
      */
-    public Object init (Context c) throws PropertyException;
+    public abstract Object init (Context c) throws PropertyException;
 
+    public Object get(Context c) throws PropertyException {
+        return init(c);
+    }
 }

@@ -34,7 +34,7 @@ import javax.servlet.http.HttpUtils;
  * Provide Template with access to url handing routines
  * @author Sebastian Kanthak (mailto:skanthak@muehlheim.de)
  */
-public class URLTool implements ContextTool
+public class URLTool extends ContextTool
 {
 
     public class URLToolImpl

@@ -218,53 +218,46 @@ public class Context implements Map, Cloneable
             throws PropertyException
     {
         Object ret = _variables.get(name);
-        if (ret == null && !_variables.containsKey(name))
-        {
-            Object tool = _broker.getTool(name);
-            if (tool != null)
-            {
-                try
-                {
-                    ContextTool ct = (ContextTool) tool;
-                    ret = ct.init(this);
-                    put(name, ret);
-                }
-                catch (PropertyException e)
-                {
-                    _log.error("Unable to initialize ContextTool: " + name, e);
-                }
+        if (ret != null || _variables.containsKey(name))
+            return ret;
+
+        if (name instanceof String) {
+            Object var = _broker.getAutoContextVariable((String) name, this);
+            if (var != null) {
+                put(name, var);
+                return var;
             }
-            else if (name instanceof FunctionCall)
+            else
+                return UNDEF;
+        }
+        else if (name instanceof FunctionCall)
+        {
+            FunctionCall fc = (FunctionCall) name;
+            String fname = fc.getName();
+            MethodWrapper func = null;
+            if (_funcs != null) {
+                func = (MethodWrapper) _funcs.get(fname);
+            }
+            if (func == null)
             {
-                FunctionCall fc = (FunctionCall) name;
-                String fname = fc.getName();
-                MethodWrapper func = null;
-                if (_funcs != null) {
-                    func = (MethodWrapper) _funcs.get(fname);
-                }
-                if (func == null)
-                {
-                    func = _broker.getFunction(fname);
-                }
-                if (func != null)
-                {
-                    Object[] args = fc.getArguments(this);
-                    ret = func.invoke(args);
-                }
-                else
-                {
-                    _log.error("Function " + fname + " was not loaded!");
-                }
+                func = _broker.getFunction(fname);
+            }
+            if (func != null)
+            {
+                Object[] args = fc.getArguments(this);
+                ret = func.invoke(args);
             }
             else
             {
-                // changed by Keats 30-Nov-01
-                return UNDEF;
+                _log.error("Function " + fname + " was not loaded!");
             }
-            //throw new
-            // PropertyException.NoSuchVariableException(name.toString());
+            return ret;
         }
-        return ret;
+        else
+        {
+            // changed by Keats 30-Nov-01
+            return UNDEF;
+        }
     }
 
     /**

@@ -215,6 +215,8 @@ type.Enabled = true
 include.TemplateExtensions: .wm, .wmt, .tml, .tmpl, .wmm
 parse.TemplateExtensions: .wm, .wmt, .tml, .tmpl, .wmm
 
+ContextAutoLoaders.ContextTools: org.webmacro.broker.DefaultContextAutoLoader
+ContextAutoLoaders.WebContextTools: org.webmacro.broker.DefaultContextAutoLoader
 
 # The following are tools which are added to your WebContext. You can
 # customize your WebContext with special tools of your own by adding
