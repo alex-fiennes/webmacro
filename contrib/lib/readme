@@ -1,0 +1,6 @@
+lib/readme
+
+In this directory belongs only versions of WebMacro.jar for
+backward compatibility testing and version testing.
+
+Only libraries common to all wm contributions belong in this directory.
