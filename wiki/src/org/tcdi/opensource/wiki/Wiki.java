@@ -121,17 +121,21 @@ final public class Wiki implements WikiSystem, QueueListener {
     
     public void savePage(WikiPage page, String title) {
         WikiPage oldVersion = (WikiPage) _pageStore.get(title);
+        boolean isnew = false;
         if (oldVersion != null) {
             // backup old version of this page
             oldVersion.setTitle(oldVersion.getTitle() + "." + oldVersion.getVersion());
             _pageStore.put(oldVersion.getTitle() + "." + oldVersion.getVersion(), page);
         } else {
-            // a new page
-            populatePageNames();
-        }
+            // this is a brand new page
+ 	    isnew = true;
+        }	    
         
         // save this page
         _pageStore.put(title, page);
+
+        if (isnew)  
+           populatePageNames ();
         
         try {
             indexPage(page);
