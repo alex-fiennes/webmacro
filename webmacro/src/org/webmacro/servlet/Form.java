@@ -127,5 +127,21 @@ final public class Form implements Bag {
       throw new UnsettableException("Cannot unset a form property");
    }
 
-}
+    /**
+     * Return a String listing all the HTTP request parameter names and their values.
+     */
+    final public String toString() {
+        StringBuffer sb = new StringBuffer ();
+        String eol = java.lang.System.getProperty ("line.separator");
+        for (Enumeration enum = _request.getParameterNames(); enum.hasMoreElements();) {
+            String key = (String) enum.nextElement();
+            String[] value = _request.getParameterValues(key);
 
+            for (int x=0; value != null && x<value.length; x++) {
+                sb.append (key).append("=").append(value[x]).append (eol);
+            }
+        }
+        return sb.toString();
+    }
+
+}

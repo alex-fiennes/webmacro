@@ -741,7 +741,15 @@ public class Context implements Map, Cloneable {
 		}
       _prof.stopEvent();
    }
-   
+
+    /**
+     * Dump the variables (and their values) contained in this Context.  Output is similiar to
+     * <code>java.util.HashMap.toString()</code>
+     */
+    public String toString() {
+        return _variables.toString();
+    }
+
    /* Convenience methods for primitive types */
    
    public final void put(Object o, int i)     { put(o, new Integer(i)); }
