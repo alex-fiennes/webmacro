@@ -73,12 +73,22 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
         PropertyException.NoSuchMethodException.class);
 
    }
+   
+   public void testNoSuchMethodWithArguments () throws Exception {
+      assertStringTemplateThrows ("$TestObject.toString('foo', false, 1)",
+        PropertyException.NoSuchMethodWithArgumentsException.class);
+   }   
   
    public void testEvalNoSuchMethod () throws Exception {
       assertStringTemplateThrows("#set $foo=$TestObject.noSuchMethod()", 
         PropertyException.NoSuchMethodException.class);
    }
 
+   public void testEvalNoSuchMethodWithArguments () throws Exception {
+      assertStringTemplateThrows ("#set $foo=$TestObject.toString('foo', false, 1)",
+        PropertyException.NoSuchMethodWithArgumentsException.class);
+   }   
+   
    public void testNoSuchProperty () throws Exception {
       assertStringTemplateThrows ("$TestObject.noSuchProperty",
         PropertyException.NoSuchPropertyException.class);
@@ -160,5 +170,6 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
       public Object nextElement() throws NoSuchElementException {
           throw new NoSuchElementException();
       }
-  }
+  }  
+   
  }

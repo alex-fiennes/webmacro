@@ -79,6 +79,14 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase {
   public void testEvalNoSuchMethod () throws Exception {
     assert(false);
   }
+  
+  public void testNoSuchMethodWithArguments () throws Exception {
+    assert(false);
+  }   
+
+  public void testEvalNoSuchMethodWithArguments () throws Exception {
+    assert(false);
+  }   
 
   public void testEvalNoSuchProperty () throws Exception {
     assert(false);

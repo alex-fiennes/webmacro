@@ -1,6 +1,7 @@
 package org.webmacro.template;
 
 import java.io.*;
+import java.util.*;
 
 import org.webmacro.*;
 import org.webmacro.engine.StringTemplate;
@@ -239,5 +240,4 @@ public abstract class TemplateTestCase extends TestCase {
     assertStringTemplateEquals("#set $result=(" + expr + ") $result", 
                                result? "true" : "false");
   }
-  
 }
