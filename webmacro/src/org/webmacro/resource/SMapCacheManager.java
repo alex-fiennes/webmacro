@@ -40,10 +40,13 @@ public class SMapCacheManager implements CacheManager {
    private static final String NAME = "SMapCacheManager";
 
    private ScalableMap _cache;
+   private MyCacheElement _protoCacheElement;
    private Object[] _writeLocks = new Object[101];
    private int _cacheDuration;
    private String _resourceType;
    private boolean _reloadOnChange=true, _useSoftReferences=true;
+   private boolean _delayReloadChecks=false;
+   private long _checkForReloadDelay;
 
    private static final TimeLoop _tl;
    private Log _log;
@@ -56,25 +59,38 @@ public class SMapCacheManager implements CacheManager {
       _tl.start();
    }
 
-   private static abstract class MyCacheElement extends CacheElement { 
+   private abstract class MyCacheElement extends CacheElement implements Cloneable { 
       private CacheReloadContext reloadContext = null;
 
       public void setReloadContext(CacheReloadContext rc) { 
-         this.reloadContext = rc;
+          if (_delayReloadChecks && rc != null) {
+              this.reloadContext = new TimedReloadContext(rc,_checkForReloadDelay);
+          } else {
+              this.reloadContext = rc;
+          }
       }
 
       public abstract Object getObject();
       public abstract void setObject(Object o);
+
+      public Object clone() {
+          try {
+              return super.clone();
+          } catch (CloneNotSupportedException e) {
+              // should never happen
+              return null;
+          }
+      }
    }
 
-   private static final class SoftScmCacheElement extends MyCacheElement {
+   private final class SoftScmCacheElement extends MyCacheElement {
       private SoftReference reference; 
 
       public Object getObject() { return reference.get(); }
       public void setObject(Object o) { reference = new SoftReference(o); }
    }
 
-   private static final class DirectScmCacheElement extends MyCacheElement {
+   private final class DirectScmCacheElement extends MyCacheElement {
       private Object object; 
 
       public Object getObject() { return object; }
@@ -121,12 +137,24 @@ public class SMapCacheManager implements CacheManager {
         : ((defaultSettings.containsKey("ReloadOnChange"))
            ? defaultSettings.getBooleanSetting("ReloadOnChange") : true);
       
+      _checkForReloadDelay =
+          (ourSettings.getIntegerSetting("CheckForReloadDelay",
+                                         defaultSettings.getIntegerSetting("CheckForReloadDelay",-1)));
+      _delayReloadChecks = _checkForReloadDelay > 0;
+
+      if (_useSoftReferences) {
+          _protoCacheElement = new SoftScmCacheElement();
+      } else {
+          _protoCacheElement = new DirectScmCacheElement();
+      }
+
       _log.info(NAME+"." + _resourceType + ": " 
                 + "buckets=" + cacheSize 
                 + "; factor=" + cacheFactor
                 + "; expireTime=" + _cacheDuration
                 + "; reload=" + _reloadOnChange
-                + "; softReference=" + _useSoftReferences);
+                + "; softReference=" + _useSoftReferences
+                + "; checkForReloadDelay=" + _checkForReloadDelay);
    }
 
    /**
@@ -188,9 +216,7 @@ public class SMapCacheManager implements CacheManager {
             if (r != null)
                o = r.getObject();
             else 
-               r = (_useSoftReferences
-                    ? (MyCacheElement) new SoftScmCacheElement() 
-                       : (MyCacheElement) new DirectScmCacheElement());
+                r = (MyCacheElement)_protoCacheElement.clone();
             if (o == null || reload) {
                o = helper.load(query, r);
                if (o != null) {
@@ -239,9 +265,7 @@ public class SMapCacheManager implements CacheManager {
    public void put(final Object query, Object resource) {
       int lockIndex = query.hashCode() % _writeLocks.length;
       if (lockIndex < 0) lockIndex = -lockIndex;
-      MyCacheElement r = (_useSoftReferences
-                          ? (MyCacheElement) new SoftScmCacheElement() 
-                             : (MyCacheElement) new DirectScmCacheElement());
+      MyCacheElement r = (MyCacheElement)_protoCacheElement.clone();
       r.setObject(resource);
       synchronized(_writeLocks[lockIndex]) {
          _cache.put(query, r);
