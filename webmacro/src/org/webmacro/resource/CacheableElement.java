@@ -29,6 +29,8 @@ package org.webmacro.resource;
   * from, so that they can efficiently be checked for validity.  
   * Implementations of CachingProviderMethods may want to subclass this 
   * class; see TemplateProvider and CacheableFileTemplate for an example.
+  * @author Brian Goetz
+  * @since 0.96
   */
 
 public class CacheableElement {

@@ -21,6 +21,14 @@
  */
 
 
+/**
+ * SimpleCacheManager
+ *
+ * An implementation of CacheManager which implements the SoftReference-
+ * based caching algorithm which used to live in CachingProvider.
+ * @since 0.96
+ */
+
 package org.webmacro.resource;
 
 import org.webmacro.*;

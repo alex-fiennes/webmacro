@@ -25,6 +25,10 @@ package org.webmacro.engine;
 
 import org.webmacro.*;
 
+/**
+ * Thrown when a user tries to write or evaluate a null variable.  
+ * @since 0.96
+ */
 public class NullVariableException extends PropertyException {
 
    public String variableName;

@@ -21,6 +21,15 @@
  */
 
 
+/**
+ * Subclass of CacheableElement used for caching URLs.  By keeping a copy
+ * of the URL object and the modification date with the template, the
+ * cache manager can check if the resource has changed without having to ask
+ * the template provider to look for it again.
+ * @since 0.96
+ * @author Brian Goetz
+ * @see CacheableElement, TemplateProvider
+ */
 package org.webmacro.resource;
 
 import java.net.*;
