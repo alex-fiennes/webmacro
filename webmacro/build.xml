@@ -47,7 +47,7 @@
   </target>
 
 
-  <target name="precompile" depends="prepare" >
+  <target name="precompile" depends="prepare" if="javacc.present">
     <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
             javacchome="${javacc.home}" />
   </target>
