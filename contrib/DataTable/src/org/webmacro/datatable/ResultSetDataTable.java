@@ -104,6 +104,10 @@ public class ResultSetDataTable extends SimpleDataTable {
                                 sb.append(s);
                             }
                             o = sb.toString();
+                        } else if (_types[i-1].equalsIgnoreCase("BLOB")){
+                            Blob blob = (Blob)o;
+                            byte[] blobBytes = blob.getBytes(1l, (int)blob.length());
+                            o = new String(blobBytes);
                         }
                     } catch (Exception e){
                         o = _errPrefix
