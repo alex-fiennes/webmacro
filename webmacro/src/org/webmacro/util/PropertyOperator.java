@@ -23,8 +23,9 @@
 package org.webmacro.util;
 import java.util.*;
 import java.lang.reflect.*;
-import org.webmacro.*;
 
+import org.webmacro.*;
+import org.webmacro.PropertyException;
 
 /**
   * This class knows how to extract properties from objects efficiently.
@@ -73,11 +74,11 @@ final public class PropertyOperator
      * @exception PropertyException the property we'd like to look at
      * @exception SecurityExeption you are not permitted to try
      */
-   static final public Object getProperty(
-         final Context context, final Object instance, 
-         final Object[] names, int start) 
-      throws PropertyException, SecurityException
-   {
+   static final public Object getProperty(final Context context, 
+                                          final Object instance, 
+                                          final Object[] names, 
+                                          int start) 
+   throws PropertyException, SecurityException {
       if (instance == null) {
          return null;
       } else {
@@ -89,10 +90,10 @@ final public class PropertyOperator
    /**
      * Calls getProperty(context, instance, names, 0)
      */
-   static final public Object getProperty(
-         final Context context, final Object instance, final Object[] names) 
-      throws PropertyException, SecurityException
-   {
+   static final public Object getProperty(final Context context, 
+                                          final Object instance, 
+                                          final Object[] names) 
+   throws PropertyException, SecurityException {
       return getProperty(context, instance, names, 0);
    }
 
@@ -106,29 +107,35 @@ final public class PropertyOperator
      * @exception PropertyException not possible to set the property
      * @exception SecurityException you are not permitted to try
      */
-   static final public boolean setProperty(
-         final Context context, Object instance, 
-         final Object[] names, int start, final Object value) 
-      throws PropertyException, SecurityException
-   {
+   static final public boolean setProperty(final Context context, 
+                                           Object instance, 
+                                           final Object[] names, 
+                                           int start, 
+                                           final Object value) 
+   throws PropertyException, SecurityException {
       try {
          if (instance == null) {
             return false;
          }
-         return getOperator(instance.getClass()).setProperty(context,instance,names,value,start);
-      } catch (NoSuchMethodException e) {
+         return getOperator(instance.getClass())
+            .setProperty(context,instance,names,value,start);
+      }
+      catch (PropertyException e) {
+         throw e;
+      }
+      catch (NoSuchMethodException e) {
          throw new PropertyException("No method to access property: " + e, e);
       }
    }
-
+   
    /**
      * Calls setProperty(context, names, 0, value)
      */
-   static final public boolean setProperty(
-         final Context context, final Object instance, 
-         final Object[] names, final Object value) 
-      throws PropertyException, SecurityException
-   { 
+   static final public boolean setProperty(final Context context, 
+                                           final Object instance, 
+                                           final Object[] names, 
+                                           final Object value) 
+   throws PropertyException, SecurityException { 
       return setProperty(context,instance,names,0,value);
    }
  
@@ -140,16 +147,15 @@ final public class PropertyOperator
      * @exception PropertyException could not extract iterator from instance
      */
    static final public Iterator getIterator(Object instance)
-      throws PropertyException
-   {
+   throws PropertyException {
      if (instance instanceof Object[]) 
-       return new ArrayIterator((Object[])instance);
+       return new ArrayIterator((Object[]) instance);
      else if (instance.getClass().isArray()) 
        return new PrimitiveArrayIterator(instance);
      else if (instance instanceof Iterator) 
        return (Iterator) instance;
      else if (instance instanceof Enumeration) 
-       return new EnumIterator((Enumeration)instance);
+       return new EnumIterator((Enumeration) instance);
      else 
        return getOperator(instance.getClass()).findIterator(instance);
    }
@@ -165,8 +171,7 @@ final public class PropertyOperator
      * Find the PropertyOperator that knows about this type of object
      */
    static private PropertyOperator getOperator(final Class type)
-      throws PropertyException
-   {
+   throws PropertyException {
       PropertyOperator o = (PropertyOperator) _operators.get(type);
       if (o == null) {
          synchronized (_operators) {
@@ -466,9 +471,10 @@ final public class PropertyOperator
      * @return the property requested
      *
      */
-   private Object getProperty(
-         final Context context, final Object instance, final Object[] names, 
-            int start, int end) 
+   private Object getProperty(final Context context, 
+                              final Object instance, 
+                              final Object[] names, 
+                              int start, int end) 
       throws PropertyException
    {
       String prop;
@@ -483,17 +489,19 @@ final public class PropertyOperator
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
          if (acc == null) {
-            throw new PropertyException("No public method " + pm + " on $" 
-                                        + fillInName(names, start) 
-                                        + " of " + instance.getClass());
+            throw new PropertyException.NoSuchMethodException(
+                        pm.toString(), 
+                        fillInName(names, start), 
+                        instance.getClass().getName());
          }
          try {
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new PropertyException("No public method " + pm + " on $" 
-                                        + fillInName(names, start)
-                                        + " of " + instance.getClass());
+            throw new PropertyException.NoSuchMethodException(
+                        pm.toString(), 
+                        fillInName(names, start), 
+                        instance.getClass().getName());
          }
 
       } else {
@@ -549,9 +557,9 @@ final public class PropertyOperator
       if (acc == null) {
          // user tried to access a property of a property that doesn't exist
          // ex:  $TestObject.FirstName.NotThere
-         throw new PropertyException("No public method " + names[start] + 
-                   " in variable $" + fillInName (names, start) +
-                   " of " + instance.getClass());
+         throw new PropertyException.NoSuchPropertyException(
+                     prop, fillInName(names, start), 
+                     instance.getClass().getName());
       }
 
       if (start <= end) {
@@ -600,8 +608,11 @@ final public class PropertyOperator
      * @param pos   we could set names[pos] from here
      * @return true if we succeeded in setting, false otherwise
      */
-   private boolean setProperty(
-         Context context, Object instance, Object[] names, Object value, int pos) 
+   private boolean setProperty(Context context, 
+                               Object instance, 
+                               Object[] names, 
+                               Object value, 
+                               int pos) 
       throws PropertyException, NoSuchMethodException
    {
       // names[pos] is what we could set from here
@@ -611,7 +622,8 @@ final public class PropertyOperator
 
       // if we're not yet at the binary-settable parent, go there
       if (pos < binPos) {
-         Object grandparent = getProperty(context,instance,names,pos,binPos - 1);
+         Object grandparent = getProperty(context, instance, names, 
+                                          pos, binPos - 1);
          PropertyOperator po = getOperator(grandparent.getClass());
          return po.setProperty(context,grandparent,names,value,binPos);
       } 
