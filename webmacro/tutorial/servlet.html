@@ -1,0 +1,82 @@
+<html><head><title>Java Servlets</title></head>
+<body bgcolor="white" text="black">
+
+<table width="95%">
+<tr><td width="70%"><h1>Java Servlets<hr></h1></td>
+     <td align="right"><a href="mvc.html">BACK</a> |
+                       <a href="index.html">UP</a> |
+                       <a href="webmacro.html">NEXT</a></td></tr>
+<tr><td>
+
+A Java serlet is a web-based Java program. You can think of a Java
+servlet as being similar to a CGI program, or a module plugged into
+a webserver. 
+<p>
+The Java Servlet API is a standard interface which defines how 
+servlets are created, and what information they have access to. 
+An implementation of the Java Servlet API is called a servlet 
+engine, or servlet runner.
+<ul>
+  <li>A "servlet engine" is a webserver, or part of a webserver,
+      capable of running Java Servlets. Examples include 
+      Resin, Orion, Tomcat, ServletExec, and JRun. 
+      <p>
+  <li>Servlet engines can work as standalone webservers, or can
+      be integrated into a standard webserver like Apache, IIS,
+      or Netscape.
+</ul>
+<p>
+Here are the key features of the Java servlet API:
+<ul>
+   <li>Threaded. Each instance of a servlet handles multiple 
+       requests simultaneously. Servlets do not "exit". When a
+       request comes in the service() method of your servlet 
+       will be invoked, and handed copies of the Request and
+       Response APIs.
+       <p>
+   <li>Servlet Request API: HttpServletRequest contains incoming
+       form variables, information about the browser, submitted
+       cookies, everythign else known about the incoming request.
+       <p>
+   <li>Servlet Response API: HttpServletResposne contains all of
+       the information that is to be returned to the user: what
+       data stream to write to, an API for setting cookies, a 
+       means of setting response headers, etc.
+       <p>
+</ul>
+
+Writing a Java servlet means implementing the service() method and
+handling the request. You do that by examining the HttpServletRequest
+and filling in the HttpServlet response. 
+<p>
+Here is what the servlet API does <i>not</i> do for you:
+<ul>
+  <li><b>Data management.</b> You need to use JavaBeans, Java DataBase 
+      Connectivity API (JDBC), or some other API to manage your 
+      back-end data.
+      <p>
+  <li><b>Page generation.</b> The servlet API gives you a stream to write
+      to. How you generate the data you write to that stream is 
+      up to you. WebMacro is an example of a page generation tool.
+      <p>
+  <li><b>Advanced control.</b> The servlet API does a lot of tracking and
+      reporting already, but a sophisticated site will want to 
+      extend the form handling, session management, and other 
+      services provided by the API.
+</ul>
+
+Typically you would provide a back-end set of general Java objects
+as your model, likely interfacing with a database such as JDBC. You 
+will write a controlling servlet which instantiates and uses WebMacro
+templates to return a view. You will supply a set of templates along
+with that view, as well as potentially a set of WebMacro ContextTools
+to allow for page-driven development.
+
+
+</td></tr>
+<tr><td><hr></h1></td>
+     <td align="right"><a href="mvc.html">BACK</a> |
+                       <a href="index.html">UP</a> |
+                       <a href="webmacro.html">NEXT</a></td></tr>
+</table>
+</body></html>
