@@ -67,7 +67,7 @@ PARSER_END(WikiParser)
    | < #TAB: "\t" >
    | < #ALPHANUM: ["a"-"z", "A"-"Z", "0"-"9"] >
    | < #MAILCHARS: <ALPHANUM> | [".", "_", "-"] >
-   | < #URLCHARS: <ALPHANUM> | ["/", ".", "?", "&", "%", "~", ":", "_", "-", "@", "=" ] >
+   | < #URLCHARS: <ALPHANUM> | ["/", ".", "?", "&", "%", "~", ":", "_", "-", "@", "=", "+", "*" ] >
    | < #UCASE_ALPHANUM: ["A"-"Z", "0"-"9"] >
    | < #LCASE_ALPHANUM: ["a"-"z", "0"-"9"] >
    | < #NON_ALPHANUM: ~["a"-"z", "A"-"Z", "0"-"9"] >

@@ -15,7 +15,11 @@ import org.tcdi.opensource.wiki.*;
 public class HTMLURLRenderer implements WikiURLRenderer {
     
     private final WikiSystem _wiki;
-    
+
+    public HTMLURLRenderer () {
+        this (null);
+    }
+
     public HTMLURLRenderer(WikiSystem wiki) {
         _wiki = wiki;
     }
@@ -54,7 +58,7 @@ public class HTMLURLRenderer implements WikiURLRenderer {
             .append("\">")
             .append(label)
             .append("</a>");
-        } else if (protocol.equalsIgnoreCase("javadoc")) {
+        } else if (_wiki != null && protocol.equalsIgnoreCase("javadoc")) {
             sb.append("<a target=javadoc href=\"")
             .append(_wiki.getProperties().getProperty("JavaDocRoot"))
             .append(location.replace('.', '/'))
