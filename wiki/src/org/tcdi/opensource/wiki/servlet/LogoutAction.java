@@ -65,7 +65,7 @@ public class LogoutAction implements PageAction {
      * we redirect to the start page of the specified wiki, after
      * removing any cookie associed with this request
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         String cookieName = wiki.getProperties().getProperty ("CookieName");
         try {
             // create and add a null, expired cookie
@@ -76,10 +76,10 @@ public class LogoutAction implements PageAction {
             wc.getResponse().addCookie(c);
         } catch (Exception e) {
             // should never happen
-            throw new PageActionException (e.toString());
+            throw new PageAction.PageActionException (e.toString());
         }
         
-        throw new RedirectException (wiki.getStartPage ());
+        throw new PageAction.RedirectException (wiki.getStartPage ());
     }
     
     /**

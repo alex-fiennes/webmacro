@@ -69,9 +69,9 @@ public class EditPageAction implements PageAction {
      * If the user is trying to edit a moderated page and the user is not
      * a moderator, we throw an exception.
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         if (page != null && page.getIsModerated() && !user.getIsModerator())
-            throw new PageActionException ("This page can only be edited by moderators");
+            throw new PageAction.PageActionException ("This page can only be edited by moderators");
         
         wc.put ("PageName", wc.getForm ("edit"));
     }

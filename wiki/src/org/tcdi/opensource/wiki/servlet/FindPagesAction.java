@@ -68,7 +68,7 @@ public class FindPagesAction implements PageAction {
      * WebContext with an array of <code>WikiPageFinder.FindResult</code>
      * objects as $Results
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         String query = wc.getForm ("find");
         if (query.trim().length() > 0) {
             WikiPageFinder finder = new LuceneFinder ();

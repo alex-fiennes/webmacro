@@ -109,7 +109,7 @@ public interface PageAction {
     /**
      * do whatever this action is supposed to do to the specified page
      */
-    public void perform (WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException;
+    public void perform (WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException;
     
     /**
      * which WebMacro template does this action use?

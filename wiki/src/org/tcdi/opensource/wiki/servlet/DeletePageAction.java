@@ -65,7 +65,7 @@ public class DeletePageAction implements PageAction {
      * if the request type is GET, display the DeletePageAction.Template.  If
      * it's POST and the "?ACTION" parameter equals "Yes", delete the page
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         if (page != null && !user.getIsModerator())
             throw new PageActionException ("Only moderators can delete pages");
         
@@ -76,9 +76,9 @@ public class DeletePageAction implements PageAction {
         if (method.equalsIgnoreCase ("POST")) {
             if (action != null && action.equals ("Yes")) {
                 wiki.deletePage (pageName);
-                throw new RedirectException (wiki.getStartPage());
+                throw new PageAction.RedirectException (wiki.getStartPage());
             } else {
-                throw new RedirectException (pageName);
+                throw new PageAction.RedirectException (pageName);
             }
         }
         

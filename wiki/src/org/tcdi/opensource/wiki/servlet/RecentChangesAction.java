@@ -66,7 +66,7 @@ public class RecentChangesAction implements PageAction {
      * a POST request, do process the login request, set the cookie, and
      * redirect to the start page.
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         List pages = new ArrayList ();
         String[] pageNames = wiki.getCurrentPageNames();
         double days = 7D;

@@ -81,7 +81,7 @@ public class ViewPageAction implements PageAction {
     /**
      * do whatever this action is supposed to do to the specified page
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         wc.put ("Page", page);
     }
     
@@ -94,13 +94,13 @@ public class ViewPageAction implements PageAction {
      */
     public String getTemplateName(WikiSystem wiki, WikiPage page) {
         Properties props = wiki.getProperties();
-	String template = props.getProperty ("ViewPageAction.Template");
+        String template = props.getProperty ("ViewPageAction.Template");
         if (page != null) {
             if (props.getProperty (page.getTitle()) != null)
                template = props.getProperty (page.getTitle());
         } 
 
-	return template;
+        return template;
     }
     
     /**

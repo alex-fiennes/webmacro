@@ -68,7 +68,7 @@ public class RegisterNewUserAction implements PageAction {
      * smart enough to detect $User, and if so, display some kind of "thank you"
      * message.
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         String method = wc.getRequest().getMethod();
         if (method.equalsIgnoreCase ("GET")) {
             return;
@@ -82,10 +82,10 @@ public class RegisterNewUserAction implements PageAction {
                 LoginAction.loginUser(wiki, wc);
                 
             } catch (Exception e) {
-                throw new PageActionException (e.getMessage());
+                throw new PageAction.PageActionException (e.getMessage());
             }
         } else {
-            throw new PageActionException ("Unknown method: " + method);
+            throw new PageAction.PageActionException ("Unknown method: " + method);
         }
     }
     

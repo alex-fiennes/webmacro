@@ -66,17 +66,17 @@ public class LoginAction implements PageAction {
      * a POST request, do process the login request, set the cookie, and
      * redirect to the start page.
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         String method = wc.getRequest().getMethod();
         if (method.equalsIgnoreCase ("GET")) {
             return;
         } else if (method.equalsIgnoreCase ("POST")) {
             if (!loginUser (wiki, wc))
-                throw new PageActionException ("Authentication failed");
+                throw new PageAction.PageActionException ("Authentication failed");
             else    // redirect to wiki start page
-                throw new RedirectException (wiki.getStartPage ());
+                throw new PageAction.RedirectException (wiki.getStartPage ());
         } else {
-            throw new PageActionException ("Unknown method: " + method);
+            throw new PageAction.PageActionException ("Unknown method: " + method);
         }
     }
     

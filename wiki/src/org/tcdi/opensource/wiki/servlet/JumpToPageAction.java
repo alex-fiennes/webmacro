@@ -63,11 +63,11 @@ public class JumpToPageAction implements PageAction {
      * we redirect to the page that most closely matches whatever the
      * user typed
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         String pageName = wc.getForm ("jump");
         pageName = WikiUtil.guessWikiTitle(pageName, wiki);
         
-        throw new RedirectException (pageName);
+        throw new PageAction.RedirectException (pageName);
     }
     
     /**

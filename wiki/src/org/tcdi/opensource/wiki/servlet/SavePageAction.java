@@ -70,7 +70,7 @@ public class SavePageAction implements PageAction {
      * do the saving of the page.  When we're done, we redirect to the page
      * so the user can view his changes.
      */
-    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageActionException {
+    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
         if (page != null && page.getIsModerated() && !user.getIsModerator())
             throw new PageActionException ("This page can only be saved by moderators");
         
@@ -81,10 +81,10 @@ public class SavePageAction implements PageAction {
                 modifyExistingPage (wiki, wc, user, page);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new PageActionException (e.toString());
+            throw new PageAction.PageActionException (e.toString());
         }
         
-        throw new RedirectException (page.getTitle());
+        throw new PageAction.RedirectException (page.getTitle());
     }
     
     protected WikiPage createNewPage (WikiSystem wiki, WebContext wc, WikiUser user) throws Exception {
