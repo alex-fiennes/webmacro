@@ -443,16 +443,15 @@ final public class URLTemplateProvider extends CachingProvider
     private final URL searchClasspath(String resource)
     {
         _log.debug("Searching classpath for "+resource);
-        ClassLoader cl = this.getClass().getClassLoader();
-        URL url = cl.getResource(resource);
-        if (url == null)
-        {
-            url = ClassLoader.getSystemResource(resource);
-        }
+        URL url = _broker.getResource(resource);
+
         if (url != null)
         {
             return url;
         }
+        /*
+         * look for locale specific resources AAAA{_xxxx_yyyyy_....}BBBBB
+         */
         String[] parts = parseLocalePath(resource);
         if (parts != null)
         {
