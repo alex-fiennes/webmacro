@@ -1,3 +1,8 @@
+<!--
+  In order to compile WebMacro, you may need to set these environment variables
+    JAVACC_HOME: your JavaCC installation
+ -->
+
 <project name="WebMacro" default="compile" basedir=".">
 
   <property name="app.name"       value="webmacro"/>
@@ -6,10 +11,11 @@
   <property name="javadoc"        value="javadoc"/>
   <property name="jar"            value="${app.name}.jar"/>
   <property name="src.jar"        value="${app.name}-src.jar"/>
+  <property environment="ENV" />
+  <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
 
-  <property name="javacc.home"    value="/usr/local/java_tools/javacc" />
   <taskdef name="javacc" 
-   classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
+           classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
 
   <path id="class.path">
     <fileset dir="lib">
@@ -24,10 +30,12 @@
     <mkdir  dir="${classes}"/>
     <mkdir  dir="${javadoc}"/>
     <mkdir  dir="${dist}"/>
+    <available property="javacc.present" classname="COM.sun.labs.javacc.Main"
+               classpath="${javacc.home}/JavaCC.zip" />
   </target>
 
 
-  <target name="clean">
+  <target name="clean" depends="test-clean">
     <delete dir="${classes}"/>
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
@@ -36,10 +44,12 @@
   </target>
 
 
-  <target name="compile" depends="prepare">
+  <target name="precompile" depends="prepare" if="javacc.present">
     <javacc target="src/org/webmacro/parser/WMParser_impl.jj"
             javacchome="${javacc.home}" />
+  </target>
 
+  <target name="compile" depends="prepare, precompile">
     <javac srcdir="src" destdir="${classes}"
            debug="on" optimize="off" deprecation="off">
       <classpath refid="class.path" />
@@ -107,7 +117,7 @@
     </ant>
   </target>
 
-  <target name="test-clean" depends="compile" >
+  <target name="test-clean" >
     <ant antfile="test/build.xml" target="clean">
       <property name="java.class.path" value="${classpath.resolved}"/>
     </ant>
