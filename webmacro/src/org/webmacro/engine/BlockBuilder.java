@@ -26,6 +26,7 @@ package org.webmacro.engine;
 import java.util.*;
 
 import org.webmacro.Macro;
+import org.webmacro.Context;
 
 /**
  * A block represents the text between two {}'s in a template, or else
@@ -97,6 +98,7 @@ public class BlockBuilder implements Builder {
       int[] cn = new int[elements.size()];
       Stack iterStack = new Stack();
       StringBuffer s = new StringBuffer();
+      Context.TemplateEvaluationContext tec = bc.getTemplateEvaluationContext();
 
       // flatten everything and view the content as being:
       //        string (macro string)* string
@@ -104,8 +106,15 @@ public class BlockBuilder implements Builder {
       // Macro objects and create a block.
 
       BlockIterator iter = new BBIterator();
+      tec._templateName = name;
       while (iter.hasNext()) {
          Object o = iter.next();
+
+         // track line/column numbers in the build context
+         // so that bc.getCurrentLocation() stays current
+         tec._lineNo = iter.getLineNo();
+         tec._columnNo = iter.getColNo();
+
          if (o instanceof Builder)
             o = ((Builder) o).build(bc);
 

@@ -158,7 +158,7 @@ public class WMParser_impl {
 
   // Warning routines
   private void warnDeprecated(String feature, int line, int col) {
-    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + line + "." + col);
+    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + templateName + ":" + line + "." + col);
   }
 }
 

@@ -36,6 +36,7 @@ public class WMParser_impl implements WMParser_implConstants {
     this.stream = stream;
     this.broker = broker;
     this.templateName = templateName;
+
   }
 
   public WMParser_impl(Broker broker,
@@ -155,7 +156,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   // Warning routines
   private void warnDeprecated(String feature, int line, int col) {
-    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + line + "." + col);
+    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + templateName + ":" + line + "." + col);
   }
 
   Subdirective lookahead_subdirective(Subdirective[] subdirectives) throws ParseException {

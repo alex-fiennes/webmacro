@@ -93,8 +93,10 @@ public class TestLineNumbers extends AbstractVariableTestCase {
       assertStringTemplateMatches ("$NullObject", LINECOL_REGEX);
    }
 
+    public void testEvaluationOfNullReturnValue() throws Exception {
+    }
 
-   public void testEvalNullMethod () throws Exception {
+    public void testEvalNullMethod () throws Exception {
    }
 
    public void testGoodVariable () throws Exception {

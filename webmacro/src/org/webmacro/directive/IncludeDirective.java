@@ -264,9 +264,8 @@ public class IncludeDirective extends Directive {
       Object o = builder.getArg(PARSE_FILENAME, bc);
       if (o instanceof Macro) {
          if (_type == TYPE_TEXT || _type == TYPE_MACRO) {
-            broker.getLog("IncludeDirective")
-                  .warning("Included a 'static' file type using a dynamic filename."
-                           + "File will be included, but any included #macro's will not.");
+            _log.warning("Included a 'static' file type using a dynamic filename. "
+                       + "File will be included, but any included #macro's will not at " + bc.getCurrentLocation());
          }
          _macFilename = (Macro) o;
       }

@@ -29,6 +29,8 @@ package org.webmacro;
  */
 public class WebMacroException extends RethrowableException {
 
+   private String _contextLocation;
+
    public WebMacroException() {
       super();
    }
@@ -40,5 +42,55 @@ public class WebMacroException extends RethrowableException {
    public WebMacroException(String reason, Throwable e) {
       super(reason, e);
    }
+
+
+    /**
+	 * Overloaded to return the <code>reason</code> specified during construction
+	 * <b>plus</b> the context location, if any.
+	 */
+	public String getMessage() {
+		String msg = super.getMessage();
+		if ( _contextLocation != null && msg != null ) {
+			msg += " at " + _contextLocation;
+		}
+
+		return msg;
+	}
+
+
+    /**
+	 * Record the line and column info from the template that
+	 * caused this ProeprtyException to be thrown.
+	 */
+	public void setContextLocation( String location ) {
+		_contextLocation = location;
+		Throwable cause = getCause();
+		if ( cause instanceof PropertyException ) {
+			PropertyException pe = ( PropertyException ) cause;
+			if ( pe.getContextLocation() == null ) {
+				pe.setContextLocation( location );
+			}
+		}
+		cause = getRootCause();
+		if ( cause instanceof PropertyException ) {
+			PropertyException pe = ( PropertyException ) cause;
+			if ( pe.getContextLocation() == null ) {
+				pe.setContextLocation( location );
+			}
+		}
+
+	}
+
+	/**
+	 * @return location (line/column) from the template that caused
+	 *         this PropertyException to be thrown.  Can be null
+	 *         if this exception instance wasn't previously handled
+	 *         by a core EvaluationExceptionHandler.
+	 */
+	public String getContextLocation() {
+		return _contextLocation;
+	}
+
+
 }
 

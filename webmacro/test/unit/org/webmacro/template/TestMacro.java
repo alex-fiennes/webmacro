@@ -5,6 +5,7 @@ import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.StringTemplate;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
+import org.webmacro.engine.BuildException;
 
 import junit.framework.*;
 
@@ -18,6 +19,11 @@ public class TestMacro extends TemplateTestCase {
      context.put ("int", 3);
      context.put ("string", "Foo!");
    }
+
+    public void testUndefinedMacro() throws Exception {
+        assertStringTemplateThrows ("#foo()", BuildException.class, "#foo: no such [M,m]acro or [D,d]irective at \\w+:\\d+\\.\\d+");
+        assertStringTemplateThrows ("#foo", BuildException.class, "#foo: no such [M,m]acro or [D,d]irective at \\w+:\\d+\\.\\d+");
+    }
 
   public void testNoArgs() throws Exception {
     assertStringTemplateEquals("#macro foo {1} #foo", "1");

@@ -79,109 +79,123 @@ final public class Block implements Macro, Visitable {
          throws PropertyException, IOException {
       final byte[][] bcontent = out.getEncoder().encode(_block);
       byte[] b;
-      Context.TemplateEvaluationContext teC
-            = context.getTemplateEvaluationContext();
-      Block wasBlock = teC._curBlock;
-      int wasIndex = teC._curIndex;
+      Context.TemplateEvaluationContext teC = context.getTemplateEvaluationContext();
+      String oldName = teC._templateName;
 
+      teC._templateName = _name;
       int i = 0;
-      teC._curBlock = this;
-      teC._curIndex = i;
-
       switch (_remainder) {
          case 1:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 2:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 3:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 4:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 5:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 6:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 7:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 8:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
          case 9:
             b = bcontent[i];
             out.write(b, 0, b.length);
+            teC._lineNo = this.getLineNo(i);
+            teC._columnNo = this.getColNo(i);
             _macros[i++].write(out, context);
-            teC._curIndex = i;
       }
 
       while (i < _length) {
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
          b = bcontent[i];
          out.write(b, 0, b.length);
+         teC._lineNo = this.getLineNo(i);
+         teC._columnNo = this.getColNo(i);
          _macros[i++].write(out, context);
-         teC._curIndex = i;
       }
       b = bcontent[_length];
       out.write(b, 0, b.length);
-      teC._curBlock = wasBlock;
-      teC._curIndex = wasIndex;
+      teC._templateName = oldName;
    }
 
    public String getTemplateName() {
@@ -193,11 +207,11 @@ final public class Block implements Macro, Visitable {
    }
 
    public int getLineNo(int i) {
-      return (_lineNos != null && _lineNos.length >= i) ? _lineNos[i] : 0;
+      return (_lineNos != null && i>=0 && _lineNos.length > i) ? _lineNos[i] : 0;
    }
 
    public int getColNo(int i) {
-      return (_colNos != null && _colNos.length >= i) ? _colNos[i] : 0;
+      return (_colNos != null && i>=0 && _colNos.length > i) ? _colNos[i] : 0;
    }
 
    private static class BlockIterator implements BlockBuilder.BlockIterator {

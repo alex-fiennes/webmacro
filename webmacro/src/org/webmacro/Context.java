@@ -93,8 +93,11 @@ public class Context implements Map, Cloneable {
    }
    
    public final static class TemplateEvaluationContext {
-      public Block _curBlock;
-      public int _curIndex;
+//      public Block _curBlock;
+//      public int _curIndex;
+       public String _templateName;
+       public int _lineNo;
+       public int _columnNo;
    }
    
    private class SettingHandler extends Settings.ListSettingHandler {
@@ -192,15 +195,10 @@ public class Context implements Map, Cloneable {
    }
    
    public final String getCurrentLocation() {
-      Block b = _teContext._curBlock;
-      if (b == null) {
-         return "(unknown)";
-		}
-      else {
-         return b.getTemplateName() + ":"
-         + Integer.toString(b.getLineNo(_teContext._curIndex))
-         + "." + Integer.toString(b.getColNo(_teContext._curIndex));
-		}
+       StringBuffer loc = new StringBuffer();
+       loc.append(_teContext._templateName == null ? "(unknown)" : _teContext._templateName);
+       loc.append(":").append(_teContext._lineNo).append(".").append(_teContext._columnNo);
+       return loc.toString();
    }
    
    /**

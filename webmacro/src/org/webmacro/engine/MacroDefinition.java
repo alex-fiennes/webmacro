@@ -62,7 +62,7 @@ public class MacroDefinition {
    public Object expand(Object[] args, BuildContext bc)
          throws BuildException {
       if (args.length != argNames.length)
-         throw new BuildException("Macro #" + name + " invoked with "
+         throw new BuildException("#" + name + ": invoked with "
                                   + args.length + " arguments, expecting "
                                   + argNames.length + " arguments");
       if (macroBody instanceof Builder) {

@@ -54,7 +54,7 @@ public class MacroBuilder implements Builder {
    public Object build(BuildContext bc) throws BuildException {
       MacroDefinition md = bc.getMacro(name);
       if (md == null)
-         throw new BuildException("No such macro " + name);
+         throw new BuildException ("#" + name + ": no such Macro or Directive");
       Object[] args = argsBuilder.buildAsArray(bc);
       return md.expand(args, bc);
    }

@@ -208,7 +208,7 @@ public abstract class TemplateTestCase extends TestCase {
       RE re = new RE(messageMatchText);
       if (!re.match(caught.getMessage())) {
         System.err.println("Exception " + caught.getMessage()
-                           + "does not match /"
+                           + " does not match /"
                            + messageMatchText + "/");
         assert(false);
       }

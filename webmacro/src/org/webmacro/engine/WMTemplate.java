@@ -155,17 +155,21 @@ abstract public class WMTemplate implements Template {
          Map newParameters = null;
          Map newMacros = null;
          Reader in = null;
+         BuildContext bc = null;
          try {
             Parser parser = getParser();
             in = getReader();
             BlockBuilder bb = parser.parseBlock(getName(), in);
             in.close();
-            BuildContext bc = new BuildContext(_broker);
+
+            bc = new BuildContext(_broker);
             newParameters = bc.getMap();
             newMacros = bc.getMacros();
             newContent = (Block) bb.build(bc);
          }
          catch (BuildException be) {
+            if (bc != null)
+                be.setContextLocation(bc.getCurrentLocation());
             newContent = null;
             _log.error("Template contained invalid data", be);
             throw be;
