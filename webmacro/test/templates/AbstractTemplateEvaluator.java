@@ -88,8 +88,8 @@ public abstract class AbstractTemplateEvaluator
     * @throws Exception if a template could not be found, or if some other
     * error occured during template evaluation
     */
-   public void evaluate (String templateName, OutputStream out) throws Exception
-   {
+   public void evaluate (String templateName, OutputStream out) 
+   throws Exception {
       long start, stop;
       double seconds;
       String banner;

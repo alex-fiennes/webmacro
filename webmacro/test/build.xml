@@ -68,7 +68,7 @@
       <classpath refid="unit.class.path"/>
       <formatter type="plain" />
       <batchtest fork="yes" todir="${unit.reports}">
-        <fileset dir="${unit.root}" includes="**/*Test*.java" />
+        <fileset dir="${unit.root}" includes="**/Test*.java" />
       </batchtest>
     </junit>
   </target>
