@@ -1,4 +1,7 @@
 
+# All the cleverness is in the TARGETS definition, gmake is cool :-)
+# - justin
+
 JAVABIN=$(JAVA_HOME)/bin
 UNIXBIN=/usr/bin
 
