@@ -319,7 +319,7 @@ public class Broker
         }
 
         // load tools
-        loadTools("Tools");
+        loadTools("ContextTools");
         loadTools("WebContextTools");
 
         eehClass = _config.getSetting("ExceptionHandler");
