@@ -5,6 +5,7 @@ PARSER_BEGIN(WMParser_impl)
 package org.webmacro.parser;
 
 import java.util.*;
+import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 import org.webmacro.directive.*;
@@ -25,8 +26,13 @@ public class WMParser_impl {
   public static void main(String[] args) throws Exception {
     WM wm = new WM();
     Broker broker = wm.getBroker();
+    WMParser_impl parser;
 
-    WMParser_impl parser = new WMParser_impl(System.in);
+    if (args.length >= 1) 
+      parser = new WMParser_impl(new FileInputStream(args[0]));
+    else 
+      parser = new WMParser_impl(System.in);
+
     parser.setBroker(broker);
     Builder bb = parser.WMDocument();
     Context context = null;
@@ -37,8 +43,8 @@ public class WMParser_impl {
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
        Block b = (Block) bb.build(new BuildContext(broker,encoding));
-       //Dumper d = new Dumper();
-       //b.accept(d);
+       // TemplateDumper d = new TemplateDumper();
+       // b.accept(d);
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();
@@ -280,6 +286,9 @@ Object parse_arg(ArgDescriptor arg) {
   case Directive.ArgType_RVALUE:
     return RValue();
 
+  case Directive.ArgType_QUOTEDSTRING:
+    return QuotedString();
+
   case Directive.ArgType_PUNCT:
     switch (arg.punctId) {
     case Directive.Punct_COMMA:  Punct_COMMA();  return ",";
@@ -296,9 +305,10 @@ Object parse_arg(ArgDescriptor arg) {
       Keyword(arg.keyword);
       return arg.keyword;
     }
-  };
 
-  return null;
+  default:
+    throw new ParseException("ParseDirectiveArg: Unknown argument type " + arg.type);
+  };
 }
 
 // parse_arg_group -- parses a group of arguments.  If the group is optional, 

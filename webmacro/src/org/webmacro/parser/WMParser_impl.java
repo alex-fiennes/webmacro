@@ -2,6 +2,7 @@
 package org.webmacro.parser;
 
 import java.util.*;
+import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 import org.webmacro.directive.*;
@@ -22,8 +23,13 @@ public class WMParser_impl implements WMParser_implConstants {
   public static void main(String[] args) throws Exception {
     WM wm = new WM();
     Broker broker = wm.getBroker();
+    WMParser_impl parser;
 
-    WMParser_impl parser = new WMParser_impl(System.in);
+    if (args.length >= 1)
+      parser = new WMParser_impl(new FileInputStream(args[0]));
+    else
+      parser = new WMParser_impl(System.in);
+
     parser.setBroker(broker);
     Builder bb = parser.WMDocument();
     Context context = null;
@@ -34,8 +40,8 @@ public class WMParser_impl implements WMParser_implConstants {
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
        Block b = (Block) bb.build(new BuildContext(broker,encoding));
-       //Dumper d = new Dumper();
-       //b.accept(d);
+       // TemplateDumper d = new TemplateDumper();
+       // b.accept(d);
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();
@@ -116,6 +122,9 @@ public class WMParser_impl implements WMParser_implConstants {
   case Directive.ArgType_RVALUE:
     return RValue();
 
+  case Directive.ArgType_QUOTEDSTRING:
+    return QuotedString();
+
   case Directive.ArgType_PUNCT:
     switch (arg.punctId) {
     case Directive.Punct_COMMA:  Punct_COMMA();  return ",";
@@ -132,9 +141,10 @@ public class WMParser_impl implements WMParser_implConstants {
       Keyword(arg.keyword);
       return arg.keyword;
     }
-  };
 
-  return null;
+  default:
+    throw new ParseException("ParseDirectiveArg: Unknown argument type " + arg.type);
+  };
   }
 
   boolean parse_arg_group(ArgDescriptor[] args, int i,
@@ -1480,43 +1490,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
-  final private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_9()) jj_scanpos = xsp;
-    else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    xsp = jj_scanpos;
-    if (jj_3R_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_11()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) jj_scanpos = xsp;
-    else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_3R_13()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_36() {
-    if (jj_scan_token(OP_LT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_13() {
-    if (jj_3R_30()) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_24() {
-    if (jj_scan_token(OP_AND)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3R_46() {
     if (jj_scan_token(OP_MINUS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1887,6 +1860,43 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3_10() {
     if (jj_scan_token(LBRACE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_9()) jj_scanpos = xsp;
+    else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    xsp = jj_scanpos;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    } else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) jj_scanpos = xsp;
+    else if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_3R_13()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_36() {
+    if (jj_scan_token(OP_LT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    if (jj_3R_30()) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_24() {
+    if (jj_scan_token(OP_AND)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
