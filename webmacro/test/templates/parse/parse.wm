@@ -1,0 +1,6 @@
+You should see the following:
+	template 1
+	template 2
+	template 3
+
+#parse "template1.wmt"
