@@ -69,29 +69,25 @@ abstract public class WMTemplate implements Template
    private Map _parameters;
 
    /**
-     * Template filters
+     * My encoding
      */
-   private Map _filters;
-
-   /**
-     * Template macros
-     */
-   private Map _macros;
+   private String _encoding;
 
    /**
      * Create a new Template. Constructors must supply a broker.
      */
-   protected WMTemplate(Broker broker) {
-      this(broker,"wm");
+   protected WMTemplate(Broker broker, String encoding) {
+      this(broker,"wm",encoding);
    }
 
    /**
      * Create a new Template specifying both the broker and the 
      * parsing language.
      */
-   protected WMTemplate(Broker broker, String parserName) {
+   protected WMTemplate(Broker broker, String parserName, String encoding) {
       _broker = broker;
       _parserName = parserName;
+      _encoding = encoding;
    }
 
    /**
@@ -152,7 +148,7 @@ abstract public class WMTemplate implements Template
          in = getReader();
          BlockBuilder bb = parser.parseBlock(toString(),in);
          in.close();
-         BuildContext bc = new BuildContext(_broker);
+         BuildContext bc = new BuildContext(_broker, _encoding);
          newParameters = bc.getGlobalVariables();
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
@@ -183,10 +179,10 @@ abstract public class WMTemplate implements Template
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(512); 
-         FastWriter fw = new FastWriter(os, data.getEncoding());
+         FastWriter fw = new FastWriter(os, _encoding);
          write(fw,data);
 	 fw.flush();
-   	 return os.toString(data.getEncoding());
+   	 return os.toString(_encoding);
       } catch (IOException e) {
          _log.exception(e);
          _log.error("Template: Could not write to ByteArrayOutputStream!");

@@ -18,8 +18,8 @@ import java.io.IOException;
  * like $a.b, $a.b.c and so on.
  * @author skanthak@muehlheim.de
  **/
-public abstract class HTMLEscapeDirective implements Directive {
-    static final Filter _filter = new HTMLEscapeFilter();
+public abstract class EscapeDirective implements Directive {
+    static final Filter _filter = new EscapeFilter();
     
     /**
      * Build this directive.
@@ -37,7 +37,7 @@ public abstract class HTMLEscapeDirective implements Directive {
             v = (Variable) subject;
         } catch (ClassCastException e) {
             throw new BuildException(
-                                     "HTMLEscape directive takes a variable as its argument");
+                                     "Escape directive takes a variable as its argument");
         }
         bc.addFilter(v,_filter);
         return null;
@@ -47,7 +47,7 @@ public abstract class HTMLEscapeDirective implements Directive {
      * Filter factory, that defines recursive behaviour
      * and provides filter macro.
      **/
-    static class HTMLEscapeFilter implements Filter {
+    static class EscapeFilter implements Filter {
         /**
          * Return this to indicate that we will recursively
          * filter sub-properties.
@@ -66,7 +66,7 @@ public abstract class HTMLEscapeDirective implements Directive {
          * @return filter macro for source
          **/
         public Macro getMacro(Macro source) {
-            return new HTMLEscapeFilterMacro(source);
+            return new EscapeFilterMacro(source);
         }
     }
 
@@ -78,14 +78,14 @@ public abstract class HTMLEscapeDirective implements Directive {
      * the source macro, call toString() on the
      * resulting object and return the escaped string.
      **/
-    static class HTMLEscapeFilterMacro implements Macro {
+    static class EscapeFilterMacro implements Macro {
         final private Macro _m;
 
         /**
          * Create a new filter macro filtering m
          * @param m source macro to filter
          **/
-        public HTMLEscapeFilterMacro(Macro m) {
+        public EscapeFilterMacro(Macro m) {
             _m = m;
         }
 

@@ -1,3 +1,9 @@
+-- renamed #silent to #silence, #htmlescape to #escape
+-- removed setEncoding()/getEncoding() from context and added it to 
+   the constructor for a template
+-- added means to pass encoding in to TemplateProvider, via 
+   the :encoding:/filename "url". If you leave off the encoding
+   you get some default (currently UTF8)
 -- Keats fixed Context bug (for real this time) related to using setBean
 -- Sebastian added HTMLEscape directive
 -- Brian uploaded new parser

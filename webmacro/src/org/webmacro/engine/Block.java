@@ -66,10 +66,10 @@ final public class Block implements Macro
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(_content.length * 16 + 256);
-         FastWriter fw = new FastWriter(os, context.getEncoding());
+         FastWriter fw = new FastWriter(os, "UTF8");
          write(fw,context);
          fw.flush();
-         return os.toString(context.getEncoding());
+         return os.toString("UTF8");
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error("StringWriter through an IOException!");

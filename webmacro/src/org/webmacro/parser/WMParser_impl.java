@@ -28,11 +28,13 @@ public class WMParser_impl implements WMParser_implConstants {
     Builder bb = parser.WMDocument();
     Context context = null;
 
+    String encoding = "UTF8";
+
     try {
        context = wm.getContext();
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
-       Block b = (Block) bb.build(new BuildContext(broker));
+       Block b = (Block) bb.build(new BuildContext(broker, encoding));
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();

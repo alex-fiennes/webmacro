@@ -119,10 +119,10 @@ final class IfDirective implements Directive
    {
       try {
          ByteArrayOutputStream os = new ByteArrayOutputStream(256);
-         FastWriter fw = new FastWriter(os, context.getEncoding());
+         FastWriter fw = new FastWriter(os, "UTF8");
          write(fw,context);
          fw.flush();
-         return os.toString(context.getEncoding());
+         return os.toString("UTF8");
       } catch (IOException e) {
          Engine.log.exception(e);
          Engine.log.error(

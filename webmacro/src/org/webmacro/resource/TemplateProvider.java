@@ -163,7 +163,15 @@ final public class TemplateProvider implements ResourceProvider
    final public void resourceRequest(RequestResourceEvent request)
       throws NotFoundException, InterruptedException
    {
-      Template t = get(request.getName());
+      String name = request.getName();
+      String encoding = "UTF8";
+      if (name.charAt(0) == ':') {
+         int fstart = name.indexOf(':', 1);
+         encoding = name.substring(1,fstart);
+         name = name.substring(fstart + 1);
+      }
+
+      Template t = get(name,encoding);
       if (t == null) {
          return; // maybe someone else has it
       }
@@ -216,7 +224,7 @@ final public class TemplateProvider implements ResourceProvider
      * @param fileName relative to the current directory fo the store
      * @returns a template matching that name, or null if one cannot be found
      */
-   final public Template get(String fileName) {
+   final public Template get(String fileName, String encoding) {
       for (int i=0; i < templateDirectory_.length; i++) {
          Template t;
          String dir = templateDirectory_[i];
@@ -229,7 +237,7 @@ final public class TemplateProvider implements ResourceProvider
                if (_debug) {
                   _log.debug("TemplateProvider: loading " + tFile);
                }
-               t = new FileTemplate(_broker,tFile);
+               t = new FileTemplate(_broker,tFile,encoding);
                t.parse();
                return t;
             } catch (Exception e) {

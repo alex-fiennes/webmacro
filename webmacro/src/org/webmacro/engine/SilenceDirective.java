@@ -4,9 +4,9 @@ package org.webmacro.engine;
 import org.webmacro.*;
 import java.io.IOException;
 
-public abstract class SilentDirective implements Directive
+public abstract class SilenceDirective implements Directive
 {
-   static final SilentFilter _sf = new SilentFilter();
+   static final SilenceFilter _sf = new SilenceFilter();
 
    public static Object build(BuildContext bc, Object subject) 
       throws BuildException
@@ -16,14 +16,14 @@ public abstract class SilentDirective implements Directive
          v = (Variable) subject;
       } catch (ClassCastException e) {
          throw new BuildException(
-            "Silent directive takes a variable as its argument");
+            "Silence directive takes a variable as its argument");
       }
       bc.addFilter(v,_sf);
       return null;
    }
 }
 
-class SilentFilter implements Filter {
+class SilenceFilter implements Filter {
 
 
    public Filter getFilter(String name) { return this; }

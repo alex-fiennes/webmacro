@@ -44,9 +44,9 @@ public class StreamTemplate extends WMTemplate
    /**
      * Instantiate a template based on the specified stream
      */
-   public StreamTemplate(Broker broker, Reader inStream)
+   public StreamTemplate(Broker broker, Reader inStream, String encoding)
    {
-      super(broker);
+      super(broker, encoding);
       _in = inStream;
    }
 
@@ -125,10 +125,10 @@ public class StreamTemplate extends WMTemplate
          System.out.println("- - - - - - - - - - - - - - - - - - - -");
 
          Template t1 = new StreamTemplate(wm.getBroker(), 
-               new InputStreamReader(System.in));
+               new InputStreamReader(System.in), "UTF8");
          t1.parse();
 
-         FastWriter w = new FastWriter(System.out, context.getEncoding());
+         FastWriter w = new FastWriter(System.out, "UTF8");
 
          System.out.println("*** RESULT ***");
          t1.write(w,context);

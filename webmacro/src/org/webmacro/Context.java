@@ -46,7 +46,6 @@ public class Context implements Cloneable {
    private HashMap _globals = null; // local variables
 
    private Locale _locale = Locale.getDefault();
-   private String _encoding = "UTF8";
 
    /**
      * Log configuration errors, context errors, etc.
@@ -419,21 +418,6 @@ public class Context implements Cloneable {
      */
    final public Locale getLocale() {
       return _locale;
-   }
-
-   /**
-     * Get the encoding for this request. This will return null if
-     * no encoding has been set for the request.
-     */
-   final public String getEncoding() {
-      return _encoding;
-   }
-
-   /**
-     * Set the encoding for this request
-     */
-   final public void setEncoding(String encoding) {
-      _encoding = encoding;
    }
 
 }
