@@ -15,6 +15,11 @@ public class Context implements Cloneable {
    private Object _bean;
 
    /**
+     * Log configuration errors, context errors, etc.
+     */
+   private final static Log _log = new Log("context","Context Messages");
+
+   /**
      * Create an empty context--no bean, no tools, just local variables
      * and a broker.
      */
@@ -111,7 +116,7 @@ public class Context implements Cloneable {
      * Subclasses can use this method to register new ContextTools
      * into a prototypical context.
      */
-   final protected void addTool(String name, Macro tool) 
+   final protected void addTool(String name, ContextTool tool) 
       throws InvalidContextException
    {
       if (_toolbox == null) {
@@ -119,6 +124,56 @@ public class Context implements Cloneable {
       }
       _tools.put(name,tool);
    }
+
+   /**
+     * Find the name of a tool given the name of a class
+     */
+   private String getToolName(String cname)
+   {
+      int start = cname.lastIndexOf('.') + 1;
+      int end = (cname.endsWith("Tool")) ? 
+         (cname.length() - 4) : cname.length();
+      String ret = cname.substring(start,end);
+      return ret;
+   }
+ 
+   /**
+     * Add the tools specified in the StringTokenized list of tools
+     * passed as an argument. The list of tools passed should be a list
+     * of class names which can be loaded and introspected. 
+     */
+   final protected void addTools(String tools) {
+      Enumeration tenum = new StringTokenizer(tools);
+      while (tenum.hasMoreElements()) {
+         String toolName = (String) tenum.nextElement();
+         try {
+            Class toolType = Class.forName(toolName);
+            String varName = getToolName(toolName);
+            ContextTool tool = (ContextTool) toolType.newInstance(); 
+            addTool(varName,tool);
+         } catch (ClassCastException cce) {
+            _log.exception(cce);
+            _log.error("Tool class " + toolName 
+                  + " newInstance returns invalid type.");
+         } catch (ClassNotFoundException ce) {
+            _log.exception(ce);
+            _log.error("Tool class " + toolName + " not found: " + ce);
+         } catch (IllegalAccessException ia) {
+            _log.exception(ia);
+            _log.error("Tool class and methods must be public for "
+                  + toolName + ": " + ia);
+         } catch (InvalidContextException e) {
+            _log.exception(e);
+            _log.error("InvalidContextException thrown while registering "
+                  + "Tool: " + toolName);
+         } catch (InstantiationException ie) {
+            _log.exception(ie);
+            _log.error("Tool class " + toolName + " must have a public zero "
+                  + "argument or default constructor: " + ie);
+         }
+      }
+   }
+
 
    /**
      * Return the tool corresponding to the specified tool name, or 
