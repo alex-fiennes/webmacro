@@ -28,10 +28,12 @@ import java.util.*;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.PropertyOperatorCache;
+import org.webmacro.engine.IntrospectionUtils;
 import org.webmacro.profile.Profile;
 import org.webmacro.profile.ProfileCategory;
 import org.webmacro.profile.ProfileSystem;
 import org.webmacro.util.*;
+import org.webmacro.engine.MethodWrapper;
 
 /**
  * The Broker is responsible for loading and initializing almost everything
@@ -74,6 +76,9 @@ public class Broker {
 
    /** a local map for one to dump stuff into, specific to this Broker */
    private Map _brokerLocal = Collections.synchronizedMap(new HashMap());
+   
+   /** a local map for "global functions" */
+   private Map _functionMap = Collections.synchronizedMap(new HashMap());
 
    /** Reference count to detect unused brokers */
    private int count;
@@ -265,6 +270,74 @@ public class Broker {
          _eeHandler = new DefaultEvaluationExceptionHandler();
 
       _eeHandler.init(this, _config);
+      
+      // Initialize function map
+      SubSettings fnSettings = new SubSettings(_config, "Functions");
+      String[] fns = fnSettings.getKeys();
+      for (int i=0; fns != null && i<fns.length; i++){
+         String fn = fns[i];
+         String fnSetting = fnSettings.getSetting(fn);
+         int lastDot = fnSetting.lastIndexOf('.');
+         if (lastDot == -1)
+             throw new IllegalArgumentException("Bad function declaration for "
+             + fn + ": " + fnSetting 
+             + ".  This setting must include full class name followed by a '.' and method name");
+         String fnClassName = fnSetting.substring(0, lastDot);
+         String fnMethName = fnSetting.substring(lastDot + 1);
+         // function type may be static, instance, or factory.  Default is static
+         String fnType = _config.getSetting("Function." + fn + ".type", "static");
+         Object[] args = null;
+         if ("factory".equals(fnType)){
+            //TODO: implement this!!!
+            // get function from a factory method 
+            // declared class/method is the factory class/instance method
+            // get the factory class method name
+            //String factoryMeth = _config.getSetting("Function." + fn + ".factory.method");
+         }
+         if (!"static".equals(fnType)){
+            // get arg string
+            String argString = _config.getSetting("Function." + fn + ".args");
+            if (argString != null){
+               if (!argString.startsWith("[")) argString = "[" + argString + "]";
+               org.webmacro.engine.StringTemplate tmpl = 
+                  new org.webmacro.engine.StringTemplate(this, "#set $args=" + argString);
+               Context argContext = new Context(this);
+               try {
+                  tmpl.evaluate(argContext);
+               }
+               catch (Exception e){
+                  _log.error("Unable to evaluate arguments to function " + fn 
+                  + ".  The specified string was " + argString + ".", e);
+               }
+               args = (Object[])argContext.get("args");
+               _log.debug("Args for function " + fn + ": " + Arrays.asList(args));
+            }
+         }
+          
+         Class c = null;
+         try {
+             c = Class.forName(fnClassName);
+         }
+         catch (Exception e){
+            _log.error("Unable to load class " + fnClassName + " for function " + fn, e);
+         }
+         
+         Object o = c;
+         try {
+            if (c != null){
+               if ("instance".equals(fnType)){
+                  // instantiate the class
+                  o = IntrospectionUtils.instantiate(c, args);
+               }
+            }
+            MethodWrapper mw = new MethodWrapper(o, fnMethName);
+            _functionMap.put(fn, mw);
+         }
+         catch (Exception e){
+            _log.error("Unable to instantiate the function " + fn 
+            + " using the supplied configuration.", e);
+         }
+      }
    }
 
    /* Factory methods -- the supported way of getting a Broker */
@@ -587,6 +660,16 @@ public class Broker {
       return _brokerLocal.get(key);
    }
 
+   /** fetch a "global function" */
+   public MethodWrapper getFunction(String fnName){
+      return (MethodWrapper)_functionMap.get(fnName);
+   }
+   
+   /** store a "global function" */
+   public void putFunction(String fnName, MethodWrapper mw){
+       _functionMap.put(fnName, mw);
+   }
+   
    /**
     * Backwards compatible, calls get(String,String)
     * @deprecated call get(String,String) instead

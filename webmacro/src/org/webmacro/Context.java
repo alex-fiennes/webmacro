@@ -23,17 +23,13 @@
 
 package org.webmacro;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
-
-import org.webmacro.engine.Block;
-import org.webmacro.engine.EvaluationExceptionHandler;
-import org.webmacro.util.Pool;
-import org.webmacro.util.Settings;
-import org.webmacro.util.SubSettings;
+import java.lang.reflect.*;
+import org.webmacro.util.*;
+import org.webmacro.profile.*;
+import org.webmacro.engine.*;
 
 /**
-<<<<<<< Context.java
  * A Context contains state. The idea is to put all of the data you
  * wish to render into the Context and then merge it with a Template
  * via the Template.write() or Template.evaluate() methods. Actually
@@ -53,28 +49,6 @@ import org.webmacro.util.SubSettings;
  * evaluate() and write() method of any Template or other Macro.
  */
 public class Context implements Map, Cloneable {
-=======
- * A Context contains state. The idea is to put all of the data you
- * wish to render into the Context and then merge it with a Template
- * via the Template.write() or Template.evaluate() methods. Actually
- * you can render any Macro object by passing a Context to its
- * write() or evaluat() method, not just templates.
- * <p>
- * A Context is a per-thread data structure. It should not be shared
- * between threads since it is not thread safe. The idea is to put all
- * of the state for a single request into the context and then execute
- * it, with each request having its own separate context. In this
- * thread-per-request worldview there is no reason to synchronzie
- * the Context objects as they are not shared bewteen threads.
- * <p>
- * Ordinarily you acquire a Context object from the WebMacro
- * interface, use it for awhile, and then recycle() it. But you
- * can implement your own Context objects and pass it to the
- * evaluate() and write() method of any Template or other Macro.
- */
-public class Context implements Map, Cloneable {
-
->>>>>>> 1.51
    private Broker _broker;
    private HashMap _tools = new HashMap();
    private HashMap _funcs = new HashMap();
@@ -87,52 +61,33 @@ public class Context implements Map, Cloneable {
    private Pool _contextPool = null;
    
    private TemplateEvaluationContext _teContext
-<<<<<<< Context.java
    = new TemplateEvaluationContext();
    
-=======
-         = new TemplateEvaluationContext();
-
->>>>>>> 1.51
    final static private org.webmacro.engine.UndefinedMacro UNDEF
-<<<<<<< Context.java
    = org.webmacro.engine.UndefinedMacro.getInstance();
-=======
-         = org.webmacro.engine.UndefinedMacro.getInstance();
-
->>>>>>> 1.51
    /**
     * Create a new Context relative to the supplied broker
     */
    public Context(Broker broker) {
       _prof = broker.newProfile();
-      if (_prof != null) {
-         startTiming("Context life");
-      }
-      if (_prof != null) {
-         startTiming("Context init");
-      }
+      if (_prof != null) { startTiming("Context life"); }
+      if (_prof != null) { startTiming("Context init"); }
       _broker = broker;
       _log = broker.getLog("context", "property and evaluation errors");
       loadTools("ContextTools");
-      if (_prof != null) {
-         stopTiming();
-      }
+      if (_prof != null) { stopTiming(); }
    }
    
    public static final class TemplateEvaluationContext {
-
       public Block _curBlock;
       public int _curIndex;
    }
    
    private class SettingHandler extends Settings.ListSettingHandler {
-
       public void processSetting(String settingKey, String settingValue) {
          try {
             addTool(settingKey, settingValue, "Tool");
-         }
-         catch (Exception e) {
+         } catch (Exception e) {
             _log.error("Provider (" + settingValue + ") failed to load", e);
          }
       }
@@ -160,7 +115,6 @@ public class Context implements Map, Cloneable {
     * be copied and the local variables reset.
     */
    public Context cloneContext() {
-<<<<<<< Context.java
       if (_prof != null) { startTiming("cloneContext"); }
       Context c;
       try {
@@ -179,32 +133,6 @@ public class Context implements Map, Cloneable {
          c._variables = new HashMap(_variables);
       }
       if (_prof != null) { stopTiming(); }
-=======
-      if (_prof != null) {
-         startTiming("cloneContext");
-      }
-      Context c;
-      try {
-         c = (Context) super.clone();
-      }
-      catch (CloneNotSupportedException e) {
-         e.printStackTrace();
-         return null; // never going to happen
-      }
-      c._prof = _broker.newProfile();
-      c.startTiming("Context life"); // stops in clear()
-      c._initializedTools = (HashMap) _initializedTools.clone();
-      c._teContext = new TemplateEvaluationContext();
-      if (_variables instanceof HashMap) {
-         c._variables = (Map) ((HashMap) _variables).clone();
-      }
-      else {
-         c._variables = new HashMap(_variables);
-      }
-      if (_prof != null) {
-         stopTiming();
-      }
->>>>>>> 1.51
       return c;
    }
    
@@ -252,13 +180,8 @@ public class Context implements Map, Cloneable {
          return "(unknown)";
       else
          return b.getTemplateName() + ":"
-<<<<<<< Context.java
          + Integer.toString(b.getLineNo(_teContext._curIndex))
          + "." + Integer.toString(b.getColNo(_teContext._curIndex));
-=======
-               + Integer.toString(b.getLineNo(_teContext._curIndex))
-               + "." + Integer.toString(b.getColNo(_teContext._curIndex));
->>>>>>> 1.51
    }
    
    /**
@@ -304,18 +227,17 @@ public class Context implements Map, Cloneable {
     * If there's no such variable, it throws.
     */
    protected Object internalGet(Object name)
-         throws PropertyException {
+   throws PropertyException {
       Object ret = _variables.get(name);
       if (ret == null && !_variables.containsKey(name)) {
          Object tool = _tools.get(name);
-         if (tool != null) {
+         if(tool != null) {
             try {
                ContextTool ct = (ContextTool) tool;
                ret = ct.init(this);
-               put(name, ret);
-               _initializedTools.put(ct, ret);
-            }
-            catch (PropertyException e) {
+               put(name,ret);
+               _initializedTools.put(ct,ret);
+            } catch (PropertyException e) {
                _log.error("Unable to initialize ContextTool: " + name, e);
             }
          }
@@ -349,17 +271,10 @@ public class Context implements Map, Cloneable {
    final public Object get(Object name) {
       try {
          //return internalGet(name);
-<<<<<<< Context.java
          Object o =  internalGet(name);
          if (o == UNDEF)
             return null;
          return o;
-=======
-         Object o = internalGet(name);
-         if (o == UNDEF)
-            return null;
-         return o;
->>>>>>> 1.51
       }
       catch (PropertyException e) {
          // NOTE: I don't think we get here anymore!  -Keats
@@ -375,7 +290,6 @@ public class Context implements Map, Cloneable {
       if (c == null)
          return _variables.put(name, null);
       else
-<<<<<<< Context.java
          return _variables.put(name,new org.webmacro.engine.StaticClassWrapper(c));
    }
    
@@ -411,26 +325,15 @@ public class Context implements Map, Cloneable {
          + methodName + " of class " + className);
       }
       return func;
-=======
-         return _variables.put(name, new org.webmacro.engine.StaticClassWrapper(c));
->>>>>>> 1.51
    }
    
    
    /**
-<<<<<<< Context.java
     * Add an object to the context returning the object that was
     * there previously under the same name, if any.
     */
    final public Object put(Object name, Object value) {
       return _variables.put(name,value);
-=======
-    * Add an object to the context returning the object that was
-    * there previously under the same name, if any.
-    */
-   final public Object put(Object name, Object value) {
-      return _variables.put(name, value);
->>>>>>> 1.51
    }
    
    /**
@@ -440,71 +343,43 @@ public class Context implements Map, Cloneable {
     * that object which will be searched using introspection.
     */
    protected Object internalGet(Object[] names)
-<<<<<<< Context.java
    throws PropertyException {
-=======
-         throws PropertyException {
->>>>>>> 1.51
       Object instance;
       try {
          instance = internalGet(names[0]);
-      }
-      catch (ArrayIndexOutOfBoundsException e) {
+      } catch (ArrayIndexOutOfBoundsException e) {
          throw new PropertyException(
-<<<<<<< Context.java
          "Attempt to access property with a zero length name array");
-=======
-               "Attempt to access property with a zero length name array");
->>>>>>> 1.51
       }
       if (names.length == 1)
          return instance;
       else if (instance == null)
          throw new PropertyException.NullValueException(names[0].toString());
       else
-         return _broker._propertyOperators.getProperty(this, instance, names, 1);
+         return _broker._propertyOperators.getProperty(this,instance,names,1);
    }
    
    /**
-<<<<<<< Context.java
     * Set the named property in the Context. The first name is
     * the name of an object in the context. The subsequent names
     * are properties of that object which will be searched using
     * introspection.
     * @returns whether or not the set was successful
     */
-=======
-    * Set the named property in the Context. The first name is
-    * the name of an object in the context. The subsequent names
-    * are properties of that object which will be searched using
-    * introspection.
-    * @return whether or not the set was successful
-    */
->>>>>>> 1.51
    final public boolean set(Object names[], Object value)
-<<<<<<< Context.java
    throws PropertyException {
-=======
-         throws PropertyException {
->>>>>>> 1.51
       if (names.length == 1) {
          put(names[0], value);
          return true;
-      }
-      else {
+      } else {
          Object instance;
          try {
             instance = internalGet(names[0]);
-         }
-         catch (ArrayIndexOutOfBoundsException e) {
+         } catch (ArrayIndexOutOfBoundsException e) {
             return false;
          }
          return _broker._propertyOperators
-<<<<<<< Context.java
          .setProperty(this,instance,names,1,value);
-=======
-               .setProperty(this, instance, names, 1, value);
->>>>>>> 1.51
       }
    }
    
@@ -521,13 +396,8 @@ public class Context implements Map, Cloneable {
     * something different
     */
    public boolean setProperty(Object name, Object value)
-<<<<<<< Context.java
    throws PropertyException {
       put(name,value);
-=======
-         throws PropertyException {
-      put(name, value);
->>>>>>> 1.51
       return true;
    }
    
@@ -540,7 +410,6 @@ public class Context implements Map, Cloneable {
    }
    
    /**
-<<<<<<< Context.java
     * Same as set(Object names[], Object value) but can be overridden
     * by subclasses to behave differently
     * @returns whether or not the set was successful
@@ -548,28 +417,14 @@ public class Context implements Map, Cloneable {
    public boolean setProperty(Object names[],Object value)
    throws PropertyException {
       return set(names,value);
-=======
-    * Same as set(Object names[], Object value) but can be overridden
-    * by subclasses to behave differently
-    * @return whether or not the set was successful
-    */
-   public boolean setProperty(Object names[], Object value)
-         throws PropertyException {
-      return set(names, value);
->>>>>>> 1.51
    }
-<<<<<<< Context.java
    
    static private String makeName(Object[] names) {
-=======
-
-   static protected String makeName(Object[] names) {
->>>>>>> 1.51
       StringBuffer buf = new StringBuffer();
       buf.append("$(");
       for (int i = 0; i < names.length; i++) {
          if (i != 0) buf.append(".");
-         buf.append((names[i] != null) ? names[i] : "NULL");
+         buf.append( (names[i] != null) ? names[i] : "NULL");
       }
       buf.append(")");
       return buf.toString();
@@ -582,15 +437,9 @@ public class Context implements Map, Cloneable {
    final public void setPool(Pool contextPool) {
       _contextPool = contextPool;
    }
-<<<<<<< Context.java
    
    final public Pool getPool(){
       return _contextPool;
-=======
-
-   final public Pool getPool() {
-      return _contextPool;
->>>>>>> 1.51
    }
    
    /**
@@ -688,7 +537,6 @@ public class Context implements Map, Cloneable {
       java.lang.String.class,
       org.webmacro.util.Settings.class
    };
-<<<<<<< Context.java
    private static final Class[] _ctorArgs2 = { java.lang.String.class };
    
    /**
@@ -707,17 +555,12 @@ public class Context implements Map, Cloneable {
     * NOTE: keats - 25 May 2002, no tools are known to use the settings mechanism.
     * We should create an example of this and test it, or abolish this capability!
     */
-=======
-   private static final Class[] _ctorArgs2 = {java.lang.String.class};
-
->>>>>>> 1.51
    private void addTool(String key, String className, String suffix) {
       
       Class c;
       try {
          c = _broker.classForName(className);
-      }
-      catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException e) {
          _log.warning("Context: Could not locate class for context tool "
          + className);
          return;
@@ -744,8 +587,7 @@ public class Context implements Map, Cloneable {
          args[0] = key;
          args[1] = new SubSettings(_broker.getSettings(), key);
          instance = ctor.newInstance(args);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
          log = new StringBuffer();
          log.append("Error loading component key=");
          log.append(key);
@@ -763,10 +605,7 @@ public class Context implements Map, Cloneable {
             Object[] args = new Object[1];
             args[0] = key;
             instance = ctor.newInstance(args);
-         }
-         catch (Exception e) {
-            if (log != null)
-               log = new StringBuffer();
+         } catch (Exception e) {
             log.append("Trying 1-argument constructor: ");
             log.append(e.toString());
             log.append("\n");
@@ -776,10 +615,7 @@ public class Context implements Map, Cloneable {
       if (instance == null) {
          try {
             instance = c.newInstance();
-         }
-         catch (Exception e) {
-            if (log != null)
-               log = new StringBuffer();
+         } catch (Exception e) {
             log.append("Trying 0-argument constructor: ");
             log.append(e.toString());
             log.append("\n");
@@ -833,40 +669,22 @@ public class Context implements Map, Cloneable {
       if (_prof == null) return;
       _prof.startEvent(name1 + "(" + arg1 + ", " + arg2 + ")");
    }
-<<<<<<< Context.java
    
    /**
     * Same as startTiming(name1 + "(" + arg + ")") but the
     * concatenation of strings and the call to toString() occurs only
     * if profiling is enabled.
     */
-=======
-
-   /**
-    * Same as startTiming(name1 + "(" + arg + ")") but the
-    * concatenation of strings and the call to toString() occurs only
-    * if profiling is enabled.
-    */
->>>>>>> 1.51
    final public void startTiming(String name, int arg) {
       if (_prof == null) return;
       _prof.startEvent(name + "(" + arg + ")");
    }
-<<<<<<< Context.java
    
    /**
     * Same as startTiming(name1 + "(" + arg + ")") but the
     * concatenation of strings and the call to toString() occurs only
     * if profiling is enabled.
     */
-=======
-
-   /**
-    * Same as startTiming(name1 + "(" + arg + ")") but the
-    * concatenation of strings and the call to toString() occurs only
-    * if profiling is enabled.
-    */
->>>>>>> 1.51
    final public void startTiming(String name, boolean arg) {
       if (_prof == null) return;
       _prof.startEvent(name + "(" + arg + ")");
@@ -881,7 +699,6 @@ public class Context implements Map, Cloneable {
       if (_prof == null) return;
       _prof.stopEvent();
    }
-<<<<<<< Context.java
    
    /* Convenience methods for primitive types */
    
@@ -893,40 +710,4 @@ public class Context implements Map, Cloneable {
    final public void put(Object o, float f)   { put(o, new Float(f)); }
    final public void put(Object o, double d)  { put(o, new Double(d)); }
    final public void put(Object o, boolean b) { put(o, new Boolean(b)); }
-=======
-
-   /* Convenience methods for primitive types */
-
-   final public void put(Object o, int i) {
-      put(o, new Integer(i));
-   }
-
-   final public void put(Object o, byte b) {
-      put(o, new Byte(b));
-   }
-
-   final public void put(Object o, short s) {
-      put(o, new Short(s));
-   }
-
-   final public void put(Object o, long l) {
-      put(o, new Long(l));
-   }
-
-   final public void put(Object o, char c) {
-      put(o, new Character(c));
-   }
-
-   final public void put(Object o, float f) {
-      put(o, new Float(f));
-   }
-
-   final public void put(Object o, double d) {
-      put(o, new Double(d));
-   }
-
-   final public void put(Object o, boolean b) {
-      put(o, new Boolean(b));
-   }
->>>>>>> 1.51
 }
