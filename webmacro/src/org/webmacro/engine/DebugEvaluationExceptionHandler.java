@@ -48,9 +48,17 @@
  * @author Marcel Huijkman (Thanks to Brian Goetz & Keats Kirsch)
  *
  *	@since	03-12-2001
- *	@version	15-07-2002
+ *	@version	17-07-2002
+ *
  */
 
+/*
+	ChangeLog:
+
+	17-07-2002
+	could not compile;
+
+*/
 package org.webmacro.engine;
 
 import java.util.*;
@@ -90,11 +98,12 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 
       ArrayList arlErrors = null;
       PropertyException propEx = null;
-      if (problem instanceof PropertyException)
+		if ( problem instanceof PropertyException ) {
          propEx = (PropertyException) problem;
-      else
-         propEx = new PropertyException(
-               "Error expanding $" + variable.getVariableName());
+		}
+		else {
+			propEx = new PropertyException("Error expanding $" + variable.getVariableName() );
+		}
       propEx.setContextLocation(context.getCurrentLocation());
       strError = propEx.getMessage();
 
@@ -124,12 +133,12 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 
 
    public String warningString(String strText) throws PropertyException {
-      throw new PropertyException("Evaluation warning: " + strText)
+      throw new PropertyException("Evaluation warning: " + strText);
    }
 
 
    public String errorString(String strText) throws PropertyException {
-      throw new PropertyException("Evaluation error: " + strText)
+      throw new PropertyException("Evaluation error: " + strText);
    }
 }
 
