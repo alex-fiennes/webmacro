@@ -8,31 +8,31 @@ import org.webmacro.util.*;
 import org.webmacro.profile.*;
 
 /**
-  * A Context contains all of the data you wish to display in a WebMacro 
+  * A Context contains all of the data you wish to display in a WebMacro
   * template. Ordinarily you just use the get() and set() methods to load
   * the Context with all of your data, as if it were a hashtable, and then
   * pass it to a Template for execution.
   * <p>
   * You should create a new Context for every request, usually by cloning
   * a prototype object. The Context is not thread-safe and expects to
-  * operate in a thread-per-request environment. Because all of the 
-  * request-specific state is contained within the Context, Templates 
-  * and other objects can be safely shared between multiple threads. 
+  * operate in a thread-per-request environment. Because all of the
+  * request-specific state is contained within the Context, Templates
+  * and other objects can be safely shared between multiple threads.
   * <p>
   * A Context also contains other things that may be useful to the template
-  * processing system: a copy of the Broker that is currently in effect, 
-  * which can be used to load other objects; a set of ContextTools which 
+  * processing system: a copy of the Broker that is currently in effect,
+  * which can be used to load other objects; a set of ContextTools which
   * add additional functionality to templates; and potentially an instance
-  * of a Java Bean which should be used as the root of introspection. If 
+  * of a Java Bean which should be used as the root of introspection. If
   * the bean is null then the Context itself is the root of introspection.
   * <p>
-  * You may wish to make use of the ContextTool objects directly within 
-  * your application. 
+  * You may wish to make use of the ContextTool objects directly within
+  * your application.
   * <p>
-  * A Context is cloneable so that you can efficiently create a new 
+  * A Context is cloneable so that you can efficiently create a new
   * context from an existing one. Instantiating a brand new context object
-  * using the constructor is expensive. The cloned context will not share 
-  * local variables with its sibling, but will share the same tools 
+  * using the constructor is expensive. The cloned context will not share
+  * local variables with its sibling, but will share the same tools
   * (including tool instances), and the same broker.
   */
 public class Context implements Cloneable {
@@ -51,8 +51,8 @@ public class Context implements Cloneable {
    private SimpleStack _contextCache = null;
 
    /**
-     * This method expects to get a THREAD LOCAL pool in which to 
-     * deposit objects. The Stack is therefore an unsynchronized 
+     * This method expects to get a THREAD LOCAL pool in which to
+     * deposit objects. The Stack is therefore an unsynchronized
      * pool. You must externally arrange that no two contexts try
      * and access the same pool at the same time.
      */
@@ -64,7 +64,7 @@ public class Context implements Cloneable {
      * Log configuration errors, context errors, etc.
      */
    private final Log _log;
-   
+
    private org.webmacro.profile.Profile _prof = null;
 
 
@@ -76,11 +76,11 @@ public class Context implements Cloneable {
      * <p>
      * Ordinarily you don't call this method: you create a prototype
      * Context and then use newInstance. Creating the initial Context
-     * object is fairly expensive. Use the WebMacro.getContext() 
+     * object is fairly expensive. Use the WebMacro.getContext()
      * method instead.
      */
    protected Context(final Broker broker) {
-      _broker = broker; 
+      _broker = broker;
       _log = _broker.getLog("context");
       _prof = _broker.newProfile();
       _bean = null;
@@ -94,10 +94,10 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Create a new context working from the specified broker with the 
-     * tools available in the supplied toolbox Map. If a bean 
+     * Create a new context working from the specified broker with the
+     * tools available in the supplied toolbox Map. If a bean
      * is specified (bean != null) then it will be used for property
-     * introspection, otherwise property introspection will work with 
+     * introspection, otherwise property introspection will work with
      * the local variables stored in this context.
      */
    protected Context(final Broker broker, final Map toolbox, final Object bean)
@@ -112,8 +112,8 @@ public class Context implements Cloneable {
 
 
    /**
-     * Create a new context based on this one, but using the specified 
-     * bean instead of this one. The clone will share tools and the broker 
+     * Create a new context based on this one, but using the specified
+     * bean instead of this one. The clone will share tools and the broker
      * with its parent. It will have a null property bean.
      */
    protected Object clone() {
@@ -170,9 +170,9 @@ public class Context implements Cloneable {
      * ordinarily then clone the configured context.
      * <p>
      * Subclasses can use this method to register new ContextTools
-     * during construction or initialization of the Context. 
+     * during construction or initialization of the Context.
      */
-   final protected void registerTool(String name, ContextTool tool) 
+   final protected void registerTool(String name, ContextTool tool)
    {
       _toolbox.put(name,tool);
    }
@@ -183,12 +183,12 @@ public class Context implements Cloneable {
    private String findToolName(String cname)
    {
       int start = cname.lastIndexOf('.') + 1;
-      int end = (cname.endsWith("Tool")) ? 
+      int end = (cname.endsWith("Tool")) ?
          (cname.length() - 4) : cname.length();
       String ret = cname.substring(start,end);
       return ret;
    }
- 
+
    /**
      * Add the tools specified in the StringTokenized list of tools
      * passed as an argument. The list of tools passed should be a list
@@ -202,10 +202,10 @@ public class Context implements Cloneable {
          try {
             Class toolType = Class.forName(toolName);
             String varName = findToolName(toolName);
-            ContextTool tool = (ContextTool) toolType.newInstance(); 
+            ContextTool tool = (ContextTool) toolType.newInstance();
             registerTool(varName,tool);
          } catch (ClassCastException cce) {
-            _log.error("Tool class " + toolName 
+            _log.error("Tool class " + toolName
                   + " newInstance returns invalid type.", cce);
          } catch (ClassNotFoundException ce) {
             _log.error("Tool class " + toolName + " not found: ", ce);
@@ -254,8 +254,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the concatenation 
-     * of strings and the call to arg.toString() occurs only if profiling 
+     * Same as startTiming(name1 + "(" + arg + ")") but the concatenation
+     * of strings and the call to arg.toString() occurs only if profiling
      * is enabled.
      */
    final public void startTiming(String name1, Object arg) {
@@ -264,8 +264,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Same as startTiming(name1 + "(" + arg1 + "," + arg2 + ")") but the 
-     * concatenation of strings and the call to arg.toString() occurs only 
+     * Same as startTiming(name1 + "(" + arg1 + "," + arg2 + ")") but the
+     * concatenation of strings and the call to arg.toString() occurs only
      * if profiling * is enabled.
      */
    final public void startTiming(String name1, Object arg1, Object arg2) {
@@ -274,8 +274,8 @@ public class Context implements Cloneable {
    }
 
     /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the 
-     * concatenation of strings and the call to toString() occurs only 
+     * Same as startTiming(name1 + "(" + arg + ")") but the
+     * concatenation of strings and the call to toString() occurs only
      * if profiling is enabled.
      */
    final public void startTiming(String name, int arg) {
@@ -284,8 +284,8 @@ public class Context implements Cloneable {
    }
 
     /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the 
-     * concatenation of strings and the call to toString() occurs only 
+     * Same as startTiming(name1 + "(" + arg + ")") but the
+     * concatenation of strings and the call to toString() occurs only
      * if profiling is enabled.
      */
    final public void startTiming(String name, boolean arg) {
@@ -319,7 +319,7 @@ public class Context implements Cloneable {
     *
     * One should probably use this method like this:<br>
     * <code>context.setGlobalVariables ( (Map) _myDefaultMap.clone());</code>
-    * @author Eric B. Ridge 
+    * @author Eric B. Ridge
     * @date Oct 16, 2000
     *
     * @param globalMap the HashMap to use as the global variabls for this Context
@@ -330,8 +330,8 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Return the root of introspection, the top level bean for this 
-     * context which properties reference into. If this returns null, 
+     * Return the root of introspection, the top level bean for this
+     * context which properties reference into. If this returns null,
      * then properties reference local variables.
      */
    final public Object getBean() {
@@ -346,14 +346,14 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Get the named property via introspection. If there is no bean 
+     * Get the named property via introspection. If there is no bean
      * in this context, then try accessing the value as a local variable.
      * If there is no bean, and no local variable, try it as a tool. This
      * fallback to local and tool is to make property variable access
      * backward compatible with older WebMacro implementations for the
      * top level template, where there is no bean.
      */
-   public final Object getProperty(final Object[] names) 
+   public final Object getProperty(final Object[] names)
       throws PropertyException
    {
       Object root;
@@ -371,7 +371,7 @@ public class Context implements Cloneable {
             root = getTool(name);
          }
          if (root == null) {
-            throw new PropertyException("Could not access $" + names[0] 
+            throw new PropertyException("Could not access $" + names[0]
                + " since there is no such property in the Context"
                + " and no matching ContextTool has been registered.",null);
          }
@@ -382,7 +382,7 @@ public class Context implements Cloneable {
          }
       } else {
          // bean: tool wins over bean property (avoid exception)
-         root = getTool(name); 
+         root = getTool(name);
          if ((root != null) && (names.length == 1)) {
             return root;
          }
@@ -392,15 +392,15 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Set the named property via introspection 
+     * Set the named property via introspection
      */
-   final public boolean setProperty(final Object[] names, final Object value) 
+   final public boolean setProperty(final Object[] names, final Object value)
       throws PropertyException
    {
       if (_bean == null) {
-         return setGlobal(names, value) || setTool(names, value);  
+         return setGlobal(names, value) || setTool(names, value);
       } else {
-         return setTool(names,value) || 
+         return setTool(names,value) ||
                PropertyOperator.setProperty(this,_bean,names,value);
       }
    }
@@ -409,7 +409,7 @@ public class Context implements Cloneable {
    // LOCAL VARIABLE API
 
    /**
-     * Retrieve a local value from this Context. 
+     * Retrieve a local value from this Context.
      */
    final public Object get(Object name) {
       return _globals.get(name);
@@ -423,10 +423,10 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Get the named local variable via introspection. This is 
+     * Get the named local variable via introspection. This is
      * an advanced-use method.
      */
-   public final Object getGlobal(final Object[] names) 
+   public final Object getGlobal(final Object[] names)
       throws PropertyException
    {
       Object root;
@@ -435,17 +435,17 @@ public class Context implements Cloneable {
       } catch (ArrayIndexOutOfBoundsException e) {
          throw new PropertyException("Illegal property name: zero length",e);
       }
-      if ((root == null) || (names.length == 1)) { 
-         return root; 
+      if ((root == null) || (names.length == 1)) {
+         return root;
       }
          return PropertyOperator.getProperty(this,root,names,1);
    }
 
    /**
-     * Set the named local variable via introspection. This is 
+     * Set the named local variable via introspection. This is
      * an advanced-use method.
      */
-   final public boolean setGlobal(final Object[] names, final Object value) 
+   final public boolean setGlobal(final Object[] names, final Object value)
       throws PropertyException
    {
       if (names.length == 1) {
@@ -463,17 +463,17 @@ public class Context implements Cloneable {
             return false;
          }
          return PropertyOperator.setProperty(this,root,names,1,value);
-      } 
+      }
    }
 
 
    // TOOL API
 
    /**
-     * Return the tool corresponding to the specified tool name, or 
+     * Return the tool corresponding to the specified tool name, or
      * null if there isn't one. This is an advanced-use method.
      */
-   final public Object getTool(Object name) 
+   final public Object getTool(Object name)
       throws PropertyException
    {
       Object ret = _tools.get(name);
@@ -486,16 +486,16 @@ public class Context implements Cloneable {
          }
          return ret;
       } catch (ClassCastException ce) {
-         throw new PropertyException("Tool" + name  
+         throw new PropertyException("Tool" + name
                + " does not implement the ContextTool interface!",null);
       }
    }
 
    /**
-     * Get the named tool variable via introspection. This is an 
+     * Get the named tool variable via introspection. This is an
      * advanced-use method.
      */
-   public final Object getTool(final Object[] names) 
+   public final Object getTool(final Object[] names)
       throws PropertyException
    {
       Object root;
@@ -506,20 +506,20 @@ public class Context implements Cloneable {
       }
       if (names.length == 1) {
          return root;
-      } 
+      }
       return PropertyOperator.getProperty(this,root,names,1);
    }
 
    /**
-     * Set the named tool variable via introspection. This is an 
+     * Set the named tool variable via introspection. This is an
      * advanced-use method.
      */
-   final public boolean setTool(final Object[] names, final Object value) 
+   final public boolean setTool(final Object[] names, final Object value)
       throws PropertyException
    {
       Object root;
       try {
-        root = getTool(names[0]);   
+        root = getTool(names[0]);
       }  catch (ArrayIndexOutOfBoundsException e) {
          throw new PropertyException("Illegal tool name: zero length",e);
       }
@@ -537,7 +537,7 @@ public class Context implements Cloneable {
    }
 
    /**
-     * Get the locale for this request. This will return null if no 
+     * Get the locale for this request. This will return null if no
      * Locale has been set for the current request.
      */
    final public Locale getLocale() {
@@ -552,5 +552,9 @@ public class Context implements Cloneable {
          buf.append(name[i]);
       }
       return buf.toString();
+   }
+
+   public boolean containsKey(Object name) {
+      return _globals.containsKey(name);
    }
 }
