@@ -48,7 +48,7 @@ public class PropertyException extends ContextException {
 
    public PropertyException(String reason, Throwable e, String contextLocation) {
       super(reason, e);
-      _contextLocation = contextLocation;
+      setContextLocation(contextLocation);
    }
 
    /**
@@ -57,6 +57,19 @@ public class PropertyException extends ContextException {
     */
    public void setContextLocation(String location) {
       _contextLocation = location;
+       Throwable cause = getCause();
+       if (cause instanceof PropertyException) {
+           PropertyException pe = (PropertyException) cause;
+           if (pe.getContextLocation() == null)
+            pe.setContextLocation(location);
+       }
+       cause = getRootCause();
+       if (cause instanceof PropertyException) {
+           PropertyException pe = (PropertyException) cause;
+           if (pe.getContextLocation() == null)
+            pe.setContextLocation(location);
+       }
+
    }
 
    /**
