@@ -21,12 +21,16 @@
 package org.webmacro.servlet;
 import javax.servlet.http.*;
 import javax.servlet.*;
-import org.webmacro.servlet.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
 
 /**
-  * A servlet to render WM templates. Plain and simple.
+  * A servlet to locate and then evaluate a WM templates
+  * using the encapsulator, WMEval. Explicit support
+  * provided for a global context evaluated during initialization
+  * of the servlet.
+  * <p>
+  * TODO: Improve configuration options of the servlet.
   */
 public class TemplateServlet extends HttpServlet {
   
@@ -34,22 +38,29 @@ public class TemplateServlet extends HttpServlet {
   protected Context globalContext;
   protected String globalName;
   protected String globalTemplate;
+  protected Context requestContext;
+  protected String requestName;
+  protected String requestTemplate;
   private static final String[] welcomeList = {"home.html", "index.html"};
 
   /**
-   * Performs all application template initialization.
+   * Looks for a global template to evaluate (defined in WebMacro.properties).
+   * If defined, the global context is made available to every request as a var
+   * specified in WebMacro.properties.
    */
   public void init(ServletConfig conf) throws ServletException {
   	super.init (conf);
     // run the application template, Application.tml.
     try {
       wm = new WMEval(this);
-			log("TemplateServlet initialized.");
       Settings settings = wm.getSettings();
       log("Settings: " + settings.getAsProperties());
       globalName = settings.getSetting("GlobalTemplate.ContextName", null);
       globalTemplate = settings.getSetting("GlobalTemplate.Resource", null);
+      requestName = settings.getSetting("RequestTemplate.ContextName", null);
+      requestTemplate = settings.getSetting("RequestTemplate.Resource", null);
       refreshGlobalContext();
+      log("TemplateServlet initialized.");
     }
     catch (Exception e) {
       wm.error("Unable to initialize", e);
@@ -71,7 +82,7 @@ public class TemplateServlet extends HttpServlet {
        doResponse(req, resp);
      }
      catch (Exception e) {
-			 e.printStackTrace(System.err);
+       e.printStackTrace(System.err);
        throw new ServletException(e.toString());
      }
    }
@@ -105,7 +116,7 @@ public class TemplateServlet extends HttpServlet {
   protected String doResponse(HttpServletRequest request, 
             HttpServletResponse response) throws ServletException 
   {
-		String templateName = locateTemplate(request);
+	String templateName = locateTemplate(request);
     WebContext context = wm.getNewContext(request, response);
     loadGlobalContext(context);
     populateContext(context, templateName, request, response);
@@ -134,15 +145,26 @@ public class TemplateServlet extends HttpServlet {
   }
   
   /**
-   * Default implementation
-   * for populating the context.
+   * Implementation for populating the context: handles
+   * a default per request context.
    * <p>
    * Override as required.
    */
   protected void populateContext(WebContext context, String template, 
                  HttpServletRequest request, 
-                 HttpServletResponse resp) 
+                 HttpServletResponse resp) throws ServletException
   {
+    if (requestName == null) return;
+    try {
+      Context c = wm.getNewContext();
+      wm.eval(c, requestTemplate, null);
+      context.put(this.requestName, c);
+    }
+    catch (Exception e)
+    {
+      this.log("Unable to evaluate request template " + requestName, e);
+      throw new ServletException(e.toString());
+    }
   }
   
   /**
