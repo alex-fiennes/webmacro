@@ -25,7 +25,7 @@ package org.webmacro.util;
 import org.webmacro.InitException;
 import java.util.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 
 public class Settings {
 
@@ -100,15 +100,20 @@ public class Settings {
 
    /**
      * Load settings from the supplied fileName, searching for 
-     * the file along the classpath.
+     * the file along the classpath, and then search for the settings
+     * file as a file: URL.
      */
    public void load(String fileName) throws InitException, IOException 
    {  
       ClassLoader cl = this.getClass().getClassLoader();
       URL u = cl.getResource(fileName);
-      if (u == null) {
+      if (u == null) 
          u = ClassLoader.getSystemResource(fileName);
-      }
+      if (u == null) 
+        try {
+          u = new URL("file:" + fileName);
+        } catch (MalformedURLException e) { };
+
       if (u == null) {
          StringBuffer error = new StringBuffer();
          error.append("Unable to locate the configuration file: ");

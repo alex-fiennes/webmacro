@@ -75,6 +75,10 @@ final public class TemplateProvider extends CachingProvider
       try {
          _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
          _templatePath = config.getSetting("TemplatePath");
+         if (_templatePath == null) {
+           _log.error("TemplatePath not specified in properties");
+           _templatePath = "";
+         }
          StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
          _templateDirectory = new String[ st.countTokens() ];
@@ -150,7 +154,7 @@ final public class TemplateProvider extends CachingProvider
          return t;
       }
       catch (NullPointerException npe) {
-         _log.warning ("TemplateProvider: Template not found: " + fileName, npe);
+         _log.warning ("TemplateProvider: Template not found: " + fileName);
       }
       catch (Exception e) {  
          // this probably occured b/c of a parsing error.
