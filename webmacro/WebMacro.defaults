@@ -209,16 +209,24 @@ Parsers.wm:  org.webmacro.parser.WMParser
 # Template caching
 #
 
-CachingProvider.template.CacheManager: org.webmacro.resource.SimpleCacheManager
-CachingProvider.url.CacheManager:      org.webmacro.resource.SimpleCacheManager
+#CachingProvider.template.CacheManager: org.webmacro.resource.SimpleCacheManager
+#CachingProvider.url.CacheManager:      org.webmacro.resource.SimpleCacheManager
+CachingProvider.template.CacheManager=org.opendoors.cache.VfcCacheManager
+CachingProvider.url.CacheManager=org.opendoors.cache.VfcCacheManager
+
+#
+# set the refresh rate to 1 second
+VfcCacheManager.*.RefreshRate=1000
+
+
 
 
 #
 # Encoding caching
 #
 
-Encoder.*.CacheManager: org.webmacro.resource.StaticCacheManager
-
+#Encoder.*.CacheManager: org.webmacro.resource.StaticCacheManager
+Encoder.*.CacheManager: org.opendoors.cache.VfcCacheManager
 
 # SimpleCacheManager caches templates for efficiency and expires them 
 # after a certain period of time to save memory.
@@ -228,8 +236,8 @@ Encoder.*.CacheManager: org.webmacro.resource.StaticCacheManager
 #    - A negative ExpireTime means WebMacro will only recompile templates 
 #        when they change.
 
-SimpleCacheManager.*.ExpireTime: 30000
-SimpleCacheManager.*.ReloadOnChange: true
+#SimpleCacheManager.*.ExpireTime: 30000
+#SimpleCacheManager.*.ReloadOnChange: true
 
 # Advanced properties: 
 # SimpleCacheManager.*.CacheBuckets: 1001
