@@ -13,6 +13,95 @@ between versions. These notes will always mention it,
 and include advice on what to do.
 <p>
 <hr>
+<h3>Current Snapshot</h3>
+
+The current snapshot changes a LOT. I haven't have time to document it 
+all properly yet--this will be done before it's labelled a release. Here
+is a brief overview of what you can expect:
+<ul>
+
+<li>Many components of WebMacro are added via the WebMacro.properties 
+    file now. YOU SHOULD CHECK THIS FILE since any new features added
+    to WebMacro now likely require a corresponding addition in your 
+    .properties file. You should make sure you have everything! Things
+    that used to be compiled into WebMacro are now loaded this way.  <p>
+
+<li>There's a whole set of top level interfaces present now, which you
+    will find in org.webmacro. You need to include only these to use 
+    WebMacro, and org.webmacro.servlet.* as well if you are running
+    under a servlet engine rather than stand-alone. These interfaces
+    assist with stand-alone use of WebMacro.  <p>
+
+<li>A key new interface is the Context: WebMacro used to pass around 
+    an arbitrary object as the context. Now it has this interface with
+    a lot of information contained it. There is still an abitrary 
+    class in there, accessed via getBean() and setBean().  <p>
+
+<li>There are things called ContextTools which you can register with
+    a Context. Under WMServlet you just register them in your 
+    WebMacro.properties file. These give you a way to create 
+    useful tools that can be accessed from any context, without
+    having to be specially added to the contexts individually. 
+    Many existing services provided by WebContext have now been 
+    re-implemented as tools. Thus you can de-register them if you 
+    don't like them, or re-implment your own versions.  <p>
+
+<li>WebMacro script blocks can be delimited with either {}'s as 
+    in older versions, or with #begin and #end statements. It is 
+    possible to disable the interpretation of {}'s and use ONLY
+    the #begin and #end syntax via a setting in the WebMacro.properties
+    file. This makes life easier if you have a lot of JavaScript 
+    in your templates.  <p>
+
+<li>Returning a "null" from the handle method in WMServlet now 
+    means "do nothing", rather than result in a NullPointerException.
+    This is actually a useful feature, since you can use it to 
+    disable WebMacro's processing of the template--say you already
+    processed it yourself.  <p>
+
+<li>The semantics of the #use directive has changed: it no longer 
+    takes an "until" paramter!!  <p>
+
+<li>We now use the Sun collection tools under JDK 1.1, which means 
+    you need the collections.jar containing them. We're allowed to 
+    include that, so we did. Under Java2 you do NOT want to use 
+    these classes, since the same collections are available in the 
+    standard API. You need to remove the imports for the classes
+    in com.sun.java.util.collections.* under Java2. Because this is
+    extra work we will provide Java1 and Java2 versions of WebMacro
+    for the next release.  <p>
+
+<li>Whitespace rules have been significantly improved since the release.  <p>
+
+<li>Advanced Use: Filtering: There is a mechanism for filtering a
+    variable through a macro. This is a very powerful technique
+    and can be used for everything from HTML escaping your output,
+    to writing sub-templates which know how to intelligently display
+    certain types of objects.  See the #filter directive.  <p>
+
+<li>Advanced use: There are now directives called #local, #tool, 
+    and #property to specify whether a variable is a property 
+    introspection on the bean, a local variable, or a reference
+    to a tool. THESE ARE NOT NEEDED in ordinary use, but they are
+    very helpful when you start using filters.  <p>
+
+<li>Advanced use: The whole parsing engine has been rewritten. You
+    can now plug in your own parser: see the Parser interface. You
+    could also subclass WMTemplate and override the getParser() method
+    to use your parser rather than the default WebMacro parser. This
+    changes the syntax of the templates, but it does *not* affect the
+    availability of the WebMacro directives you are familiar with. The
+    parser can create those using the DirectiveBuilder API, independent
+    of the syntax in the template.  <p>
+
+<li>A *lot* of bugs have been fixed since the last release. Too 
+    numerous to list them all here.
+
+
+</ul>
+
+<hr>
+
 <h3>Release 0.89.1</h3>
 May 3rd, 1999
 <p>

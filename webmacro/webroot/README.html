@@ -73,18 +73,21 @@ answers to your problems as well.
 
 WebMacro can be used for free under the GPL, or you can acquire a
 commercial license for non-GPL use. WebMacro is copyright (c)
-1998, 1999 by Semiotek Inc.
-<p>
-For details on the various licensing options, including free
-use under the GPL, see the <a href="docs/License.html">License.html</a>
-file included in the documentation with this release.
+1998, 1999, 2000 by Semiotek Inc.
 
 <a name="Anatomy"><h2>Anatomy of this Release</h2></a>
 
 <ul>
 <li> webmacro.jar contains all the core classes, and needs to be added
-     to your classpath.
+     to your classpath for Java 1.1 use. If you want to use WebMacro 
+     under Java2 you should recompile it WITHOUT the collections 
+     classes. This will require replacing "com.sun.java.util.collections"
+     with "java.util.collections" in the source code (this is the 
+     only change you should need to make).
      <p>
+<li>collections.jar contains the Sun JDK 1.1 collection classes, which
+     WebMacro uses. You will need these under Java 1.1
+    <p>
 <li> src.zip contains all the .java source code for WebMacro, you only
      need it if you intend to modify the source
      <p>
@@ -373,14 +376,6 @@ Some notes:
      object--including templates, config information, and other
      objects. You can even register your own providers--replacing
      the default ones, or adding entirely new services.
-
-<li> Variable lookup in the templates depend heavily on introspection 
-     in the Property class. We're working on getting more informative errors
-     out of that class--in the meantime if you really don't understand why
-     some data has not been located in your Template, you might find it 
-     helpful to edit com/semiotek/util/Property.java and set "debug" 
-     to TRUE. If you set the log level to Log.DEBUG you will get a huge
-     amount of feedback about what is going on (way too much actually.)
 </ul>
 
 
@@ -394,78 +389,11 @@ had with the previous systems.
 Yuen-Ping Leung, a close friend and sometimes co-worker of mine, 
 contributed a great deal to the project in its early days--and 
 continues to help out on a regular basis. 
-<p?
-Finally, there are many others whose helpful suggestions, insights, 
-criticisms, bug reviews, bug reports, comments, and advice have
-helped make WebMacro what it is--Unfortunately so many people have
-contributed so much on the mailing list that I am losing track! So
-please forgive me, I am bound to forget a few important people:
 <p>
-<dl>
-  <dt><b>Simon Arthur</b>
-  <dd>Model-View-Controller!! Simon noticed that this is what WebMacro
-      is really all about.
-      <p>
-
-  <dt><b>Frank Carver</b>
-  <dd>Shot down a lot of my bad ideas, and provided excellent critiques 
-      of proposed features. 
-      <p>
-
-  <dt><b>Dirk-Willem van Gulik</b>
-  <dd>Credit Dirk with the list initializer syntax--great idea!
-      <p>
-
-  <dt><b>Tom Goring</b>
-  <dd>Bug finding! Plus lots of useful commentary on the list.
-      <p>
-
-  <dt><b>Ari Halberstadt</b>
-  <dd>Tons of bugfixes. Lots of useful critiques, several features. Ari
-      has been contributing useful stuff since the minute he subscribed.
-      Literally.
-      <p>
-
-  <dt><b>Yuen-Ping Leung</b>
-  <dd>I owe a lot to YP. She wrote a good chunk of the code in the early
-      days. Unfortunately she's too busy with her real job to contribute
-      much these days, but she says she wants to come back soon, let's
-      hope she does!
-      <p>
-
-  <dt><b>Tom May</b>
-  <dd>Code reviews! Lots of them, and always excellent! I never knew how
-      much I hated "Chaper 17" before. 
-      <p>
-
-  <dt><b>Claudio Mio</b>
-  <dd>Lots of good ideas on the list. Keep it up!
-      <p>
-
-  <dt><b>Cristi Opris</b>
-  <dd>Cristi took the other side of the debate with David over SSI in
-      WebMacro. The result was the comprimise involving WMServlet and
-      the #param directive--a huge increase in WebMacro's capabilities.
-
-  <dt><b>David Poon</b>
-  <dd>A huge amount of excellent comments on the list. I am saving your  
-      mail about the benefits of MVC for future reference. Also a good
-      overview of WebMacro installation issues for NT--now in the FAQ!
-      <p>
-
-  <dt><b>Klaasjan Tukker</b>
-  <dd>Tons and tons of bug finding. All of them valuable--and for quite
-      some time now! 
-      <p>
-</dl>
-
-Lots of other people have reported a bug or two. I don't have time to 
-go back and find everyone's name anymore, though I wish I could. WebMacro's
-stability is largely due to the great participation of everyone on the list.
-<p>
-In general, I rely heavily on the list to keep me out of trouble, find my
-bugs, and point me in the right direction. So far everyone is doing a 
-great job of that!
+Of course there are all the people on the WebMacro mailing lists 
+who have helped out in supporting WebMacro. I used to list you 
+all here, but now you are too numerous!! But WebMacro wouldn't 
+be what it is today without all the help from the list.
 <p>
 I encourage everyone to subscribe to the list and gripe about whatever 
 bothers them, help me find flaws, suggest features, and periodically

@@ -8,7 +8,7 @@ TARGETS = 	webmacro/webmacro.jar \
 		webmacro/examples \
 		webmacro/docs \
 		webmacro/IMPORTANT \
-		webmacro/RELEASE.html \
+		webmacro/RELEASE-NOTES.html \
 		webmacro/collections.jar \
 		webmacro/README.html 
 
@@ -38,7 +38,7 @@ EXAMPLES =	org/webmacro/examples/*.wm \
 		org/webmacro/examples/*.properties
 
 dist: version $(TARGETS) 
-	flip -m webmacro/RELEASE.html
+	flip -m webmacro/RELEASE-NOTES.html
 	flip -m webmacro/README.html
 	flip -m webmacro/examples/*.wm
 	flip -m webmacro/examples/*.properties
@@ -47,7 +47,7 @@ dist: version $(TARGETS)
 	flip -m webmacro/docs/COPYING
 	flip -m webmacro/IMPORTANT
 	zip -r webmacro.`cat version`.zip webmacro
-	flip -u webmacro/RELEASE.html
+	flip -u webmacro/RELEASE-NOTES.html
 	flip -u webmacro/README.html
 	flip -u webmacro/examples/*.wm
 	flip -u webmacro/examples/*.properties
@@ -77,8 +77,8 @@ webmacro/examples:	webmacro
 webmacro/README.html: webmacro
 	cp org/webmacro/webroot/README.html webmacro
 
-webmacro/RELEASE.html: webmacro
-	cp org/webmacro/webroot/RELEASE.html webmacro
+webmacro/RELEASE-NOTES.html: webmacro
+	cp org/webmacro/webroot/RELEASE-NOTES.html webmacro
 
 webmacro/License.html: webmacro
 	cp org/webmacro/webroot/License.html webmacro
