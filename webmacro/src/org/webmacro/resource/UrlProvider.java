@@ -151,7 +151,7 @@ final public class UrlProvider extends CachingProvider
          String source = u.getFile();
          int lastIndex = source.lastIndexOf("!");
          if (lastIndex > 0) 
-            source = source.substring(lastIndex);
+            source = source.substring(0, lastIndex);
          try {
             return getUrlLastModified(new URL(source));
          } 
