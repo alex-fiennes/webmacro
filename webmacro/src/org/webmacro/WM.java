@@ -83,6 +83,7 @@ public class WM implements WebMacro
       _alive = true;
    }
 
+
    /**
      * Call this method when you are finished with WebMacro. If you don't call this 
      * method, the Broker and all of WebMacro's caches may not be properly 

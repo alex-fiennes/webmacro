@@ -1,4 +1,10 @@
 
+-- use directive no longer uses the getMarker() mechanism; the expectation
+   now is that it takes a complete block delimited by either { .. } or 
+   by #begin .. #end. 
+-- getVerb() mechanism replaced by getArgumentNames(), and directives 
+   now build with an Argument[] array rather than a single predicate.
+-- block stores char[] rather than String for body text
 -- added a webcontext.clear() to WMServlet to help out the GC
 -- added FilterDirective, and $() and ${} notation to variable
 -- WMServlet calls stop() from destroy() now (was always supposed to!)
