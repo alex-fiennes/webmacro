@@ -162,8 +162,15 @@ public abstract class Variable implements Macro, Visitable
       } 
       catch (PropertyException e) {
          // May throw
-         if (e instanceof PropertyException.UndefinedVariableException)
-             ((PropertyException.UndefinedVariableException)e).setVariableName(_vname);
+         if (e instanceof PropertyException.UndefinedVariableException){
+             PropertyException.UndefinedVariableException uve = (PropertyException.UndefinedVariableException)e;
+             if (_names.length > 1)
+                 uve.setMessage(
+                 "Attempted to reference a property or method of an undefined variable: $" + _names[0]);
+             else
+                 uve.setMessage(
+                 "Attempted to evaluate an undefined variable: $" + _names[0]);
+         }
          context.getEvaluationExceptionHandler()
            .evaluate(this, context, e);
          return null;
@@ -219,8 +226,15 @@ public abstract class Variable implements Macro, Visitable
          }
       } 
       catch (PropertyException e) {
-         if (e instanceof PropertyException.UndefinedVariableException)
-             ((PropertyException.UndefinedVariableException)e).setVariableName(_vname);
+         if (e instanceof PropertyException.UndefinedVariableException){
+             PropertyException.UndefinedVariableException uve = (PropertyException.UndefinedVariableException)e;
+             if (_names.length > 1)
+                 uve.setMessage(
+                 "Attempted to write a property or method value of an undefined variable: $" + _names[0]);
+             else
+                 uve.setMessage(
+                 "Attempted to write an undefined variable: $" + _names[0]);
+         }
          out.write(context.getEvaluationExceptionHandler()
                    .expand(this, context, e));
       }
