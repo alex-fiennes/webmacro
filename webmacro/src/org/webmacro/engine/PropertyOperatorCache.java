@@ -916,9 +916,8 @@ final class LengthAccessor extends Accessor
    final Object get(final Object instance)
       throws PropertyException
    {
-      Object[] array = (Object[]) instance;
       try {
-         return new Integer(java.lang.reflect.Array.getLength(array));
+         return new Integer(java.lang.reflect.Array.getLength(instance));
       } catch (Exception e) {
          throw new PropertyException("Unable to fetch length of object " 
                                      + instance + " of " + instance.getClass(),
