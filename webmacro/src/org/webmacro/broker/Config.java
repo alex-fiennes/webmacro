@@ -183,13 +183,10 @@ public class Config implements ResourceProvider
      */
    static final public String lineSeparator;
    static {
-      String tempSep;
-      try {
-         tempSep = System.getProperty("line.separator");
-      } catch (Exception e) {
-         log.error("Config: could not determine lineSeparator");
+      String tempSep = System.getProperty("line.separator");
+      if (tempSep == null) {
          tempSep = "\n";
-      } 
+      }
       lineSeparator = tempSep;
    }
 
