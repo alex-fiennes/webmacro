@@ -175,6 +175,21 @@ public class WM implements WebMacro
    }
 
    /**
+    * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+    * A FastWriter is used when writing templates to an output stream
+    *
+    * @param out The output stream the FastWriter should write to.  Typically
+    *           this will be your ServletOutputStream
+    * @param enctype the Encoding type to use
+    */
+   final public FastWriter getFastWriter (OutputStream out, String enctype)
+                                          throws UnsupportedEncodingException {
+       return FastWriter.getInstance (_broker, out, enctype);
+   }
+   
+   
+   
+   /**
      * Instantiate a new context from a pool. This method is more 
      * efficient, in terms of object creation, than creating a 
      * Context directly. The Context will return to the pool 
@@ -266,6 +281,4 @@ public class WM implements WebMacro
    final public Log getLog(String type) {
       return _broker.getLog(type,type);
    }
-
 }
-
