@@ -5,5 +5,3 @@ evaluate to true:
    NullMethod call: #if($TestObject.returnNull()) { fail } #else { pass }
     BadMethod call: #if($TestObject.badMethod()) { fail } #else { pass }
              false: #if(false) { fail } #else { pass }
-   
-   
