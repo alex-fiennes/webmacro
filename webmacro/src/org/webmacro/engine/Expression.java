@@ -50,10 +50,7 @@ public abstract class Expression {
   }
 
   public static boolean isNumber(Object o) {
-    return ((o instanceof Integer) 
-            || o instanceof Long
-            || o instanceof Short
-            || o instanceof Byte);
+    return (o instanceof Number);
   }
 
   public static Object numberObject(long result, Object op1, Object op2) {
@@ -307,7 +304,7 @@ public abstract class Expression {
     public String getName() { return "CompareNe"; }
 
     public Boolean compare(Object l, Object r) {
-      return (l.equals(r)) ? TRUE : FALSE;
+      return (!l.equals(r)) ? TRUE : FALSE;
     }
 
     public Boolean compare(String l, String r) {
