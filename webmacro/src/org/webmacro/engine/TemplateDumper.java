@@ -22,6 +22,8 @@
 
 package org.webmacro.engine;
 
+import java.io.*;
+
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
@@ -103,5 +105,17 @@ public class TemplateDumper extends TemplateVisitor {
 
   public void visitUnknownMacro(String macroType, Macro m) {
     print("[Unknown macro type " + macroType + "]");
+  }
+
+  public static void main(String args[]) throws Exception { 
+    WM wm = new WM();
+    Context context = wm.getContext();
+    WMTemplate t = new StreamTemplate(wm.getBroker(), 
+                                      new InputStreamReader(System.in));
+    t.parse();
+    System.out.println("--------");
+    TemplateDumper td = new TemplateDumper();
+    t.accept(td);
+    System.out.println("--------");
   }
 }
