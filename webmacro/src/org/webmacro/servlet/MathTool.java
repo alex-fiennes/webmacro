@@ -140,7 +140,21 @@ public class MathTool implements ContextTool {
       return a % b;
    }
 
-
+   /**
+    * Converts args to doubles and multiplies them together.
+    * @return <code>a * b</code>
+    */
+   public static final double multiply(Number a, Number b){
+      return a.doubleValue() * b.doubleValue();
+   }
+   
+   /**
+    * Converts args to doubles and divides the first by the second.
+    * @return <code>a / b</code>
+    */
+   public static final double divide(Number a, Number b){
+      return a.doubleValue() / b.doubleValue();
+   }
 
 
    //
