@@ -45,7 +45,7 @@ class OutputVariable {
     /**
      * Creates an output-variable.
      */
-    OutputVariable(ActionServlet servlet, ComponentData componentData, 
+    OutputVariable(ActionServlet servlet, ComponentData componentData,
                    String name, String definition, String condition)
     throws ParseException {
         this.servlet = servlet;
@@ -107,7 +107,7 @@ class OutputVariable {
     /**
      * Evaluates &lt;output-variable&gt;.
      */
-    void evaluate(WebContext context) {
+    void evaluate(WebContext context) throws ActionException {
         if (!evalCondition(context)) {
             servlet.log.debug("<output-variable> $" + name + " not evaluated - 'if' condition is false");
             return;
@@ -117,17 +117,16 @@ class OutputVariable {
 
         if (value != null) val = value;
         else {
-            if (componentData != null)
-                context.put(TMP_VAR_NAME, servlet.getComponent(componentData.componentName, true));
-
             try {
+                if (componentData != null)
+                    context.put(TMP_VAR_NAME, servlet.getComponent(componentData.componentName, true));
+
                 val = variable.getValue(context);
             } catch(Exception e) {
-                servlet.log.error("Error while evaluating <output-variable> $" + name, e);
+                throw new ActionException("Error while evaluating <output-variable> $" + name, e);
+            } finally {
+                if (componentData != null) context.remove(TMP_VAR_NAME);
             }
-
-            if (componentData != null)
-                context.remove(TMP_VAR_NAME);
         }
 
         context.put(name, val);
@@ -137,15 +136,14 @@ class OutputVariable {
     /**
      * Evaluates 'if' attribute.
      */
-    private boolean evalCondition(WebContext context) {
+    private boolean evalCondition(WebContext context) throws ActionException {
        if (condition == null) return true;
 
        if (condition instanceof Directive)
            try {
                return !"".equals(((Directive) condition).evaluate(context));
            } catch(PropertyException e) {
-               servlet.log.debug("Error while evaluating <output-variable> $" + name, e);
-               return false;
+               throw new ActionException("Error while evaluating 'if' condition of <output-variable> $" + name, e);
            }
 
        return !(condition instanceof String);

@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd">
+
+<application>
+   <properties>
+      <property component="show" name="initial.target" value="goods.inc"/>
+      <property component="goods" name="page.size" value="8"/>
+      <property component="goods" name="sql.select" value="select * from goods"/>
+      <property component="goods" name="sql.orderby" value="item"/>
+      <property component="accounts" name="sql.select" value="select * from accounts"/>
+      <property component="accounts" name="sql.orderby" value="username"/>
+      <property component="AdminOrders" name="sql.select" value="select * from orders"/>
+      <property component="AdminOrders" name="sql.orderby" value="date"/>
+
+      <property name="db.directory" value="@as.home@/examples/Shop/db"/>
+   </properties>
+
+   <templates>
+      <template name="en/main.wm" is-new-session="true">
+         <output-variable name="target" component="show" value="target" if="!$target"/>
+         <output-variable name="lang" component="show" value="getLocale().getLanguage()"/>
+         <output-variable name="goods" component="goods" value="getTable()" if="$target == &quot;goods.inc&quot;"/>
+         <output-variable name="accounts" component="accounts" value="getTable()" if="$target == &quot;accounts.inc&quot;"/>
+         <output-variable name="cart" component="cart" value="getTable()" if="$target == &quot;ShoppingCart.inc&quot;"/>
+         <output-variable name="totalPrice" component="cart" value="getTotalPrice()" if="$target == &quot;ShoppingCart.inc&quot;"/>
+         <output-variable name="orders" component="orders" value="getTable()" if="$target == &quot;orders.inc&quot;"/>
+         <output-variable name="orders" component="AdminOrders" value="getTable()" if="$target == &quot;AdminOrders.inc&quot;"/>
+         <output-variable name="loggedInUser" component="authenticator" value="getUser()"/>
+         <output-variable name="isAdmin" component="authenticator" value="isAdmin()"/>
+         <output-variable name="error" component="show" value="getString($error)" if="$error"/>
+         <output-variable name="message" component="show" value="getString($message)" if="$message"/>
+      </template>
+      <template name="cs/main.wm">
+         <output-variable name="target" component="show" value="target" if="!$target"/>
+         <output-variable name="lang" component="show" value="getLocale().getLanguage()"/>
+         <output-variable name="goods" component="goods" value="getTable()" if="$target == &quot;goods.inc&quot;"/>
+         <output-variable name="accounts" component="accounts" value="getTable()" if="$target == &quot;accounts.inc&quot;"/>
+         <output-variable name="cart" component="cart" value="getTable()" if="$target == &quot;ShoppingCart.inc&quot;"/>
+         <output-variable name="totalPrice" component="cart" value="getTotalPrice()" if="$target == &quot;ShoppingCart.inc&quot;"/>
+         <output-variable name="orders" component="orders" value="getTable()" if="$target == &quot;orders.inc&quot;"/>
+         <output-variable name="orders" component="AdminOrders" value="getTable()" if="$target == &quot;AdminOrders.inc&quot;"/>
+         <output-variable name="loggedInUser" component="authenticator" value="getUser()"/>
+         <output-variable name="isAdmin" component="authenticator" value="isAdmin()"/>
+         <output-variable name="error" component="show" value="getString($error)" if="$error"/>
+         <output-variable name="message" component="show" value="getString($message)" if="$message"/>
+      </template>
+   </templates>
+
+   <type-handlers>
+      <type-handler type="shop.types.User" class="shop.typehandlers.UserHandler"/>
+      <type-handler type="shop.types.Item" class="shop.typehandlers.ItemHandler"/>
+   </type-handlers>
+
+   <components>
+      <component name="jdbc" class="shop.components.ConnectionManager" persistence="application"/>
+
+      <component name="show" class="shop.components.Show" persistence="session">
+         <action name="show" method="show(String target)"/>
+         <action name="show2" method="show(WebContext context, String target, String[] paramName, String[] paramValue)"/>
+         <action name="show3" method="show(String target, String lang)"/>
+         <on-return value="void" show-template="main.wm"/>
+      </component>
+
+      <component name="authenticator" class="shop.components.Authenticator" persistence="session">
+         <action name="Login" method="login(String userName, String password)"/>
+         <action name="Logoff" method="logoff()">
+            <output-variable name="target" value="ShopLogin.inc"/>
+         </action>
+
+         <on-return value="void" show-template="main.wm"/>
+         <on-return value="OK" show-template="main.wm">
+            <output-variable name="target" value="goods.inc"/>
+            <output-variable name="loginOK" value="true"/>
+         </on-return>
+         <on-return value="BAD_USERNAME_OR_PASSWORD" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="loginOK" value="false"/>
+         </on-return>
+      </component>
+
+      <component name="goods" class="shop.components.Goods" persistence="session">
+         <action form="goods" name="first" method="first()"/>
+         <action form="goods" name="prev" method="prev()"/>
+         <action form="goods" name="next" method="next()"/>
+         <action form="goods" name="last" method="last()"/>
+         <action form="goods" name="orderBy" method="setOrderBy(String attr)"/>
+
+         <action form="item" name="addAmount" method="addAmount(String item, int count)"/>
+         <action form="item" name="removeAmount" method="removeAmount(String item, int count)"/>
+         <action form="item" name="setPrice" method="setPrice(String item, double price)"/>
+         <action form="item" name="newItem" method="addNewItem(shop.types.Item item)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="goods.inc"/>
+               <output-variable name="message" value="NEW_ITEM"/>
+            </on-return>
+         </action>
+         <action form="item" name="removeItem" method="removeItem(String item)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="goods.inc"/>
+               <output-variable name="message" value="ITEM_REMOVED"/>
+            </on-return>
+         </action>
+
+         <on-return value="void" show-template="main.wm">
+            <output-variable name="target" value="goods.inc"/>
+         </on-return>
+         <on-return value="OK" show-template="main.wm">
+            <output-variable name="target" value="EditItem.inc"/>
+            <output-variable name="item" component="goods" value="item.name"/>
+            <output-variable name="amount" component="goods" value="item.count"/>
+            <output-variable name="price" component="goods" value="item.price"/>
+         </on-return>
+         <on-return value="ITEM_EXISTS" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="ITEM_EXISTS"/>
+         </on-return>
+         <on-return value="NO_SUCH_ITEM" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NO_SUCH_ITEM"/>
+         </on-return>
+         <on-return value="NOT_ADMIN" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="error" value="You must be admin to perform this operation."/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+         <on-return value="NOT_SO_MANY_ITEMS_IN_GOODS" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NOT_SO_MANY_ITEMS_IN_GOODS"/>
+         </on-return>
+      </component>
+
+      <component name="cart" class="shop.components.Cart" persistence="session">
+         <action form="cart" name="first" method="first()"/>
+         <action form="cart" name="prev" method="prev()"/>
+         <action form="cart" name="next" method="next()"/>
+         <action form="cart" name="last" method="last()"/>
+         <action form="cart" name="orderBy" method="setOrderBy(String attr)"/>
+
+         <action form="cart" name="addItem" method="addItem(String item, int count)">
+            <output-variable name="addedItem" component="cart" value="addedItem"/>
+            <output-variable name="target" value="goods.inc"/>
+         </action>
+         <action form="cart" name="removeItem" method="removeItem(String item, int count)"/>
+
+         <on-return value="void" show-template="main.wm">
+            <output-variable name="target" value="ShoppingCart.inc"/>
+         </on-return>
+         <on-return value="OK" show-template="main.wm"/>
+         <on-return value="ZERO_OR_NEGATIVE_COUNT_ERR" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="ZERO_OR_NEGATIVE_COUNT"/>
+         </on-return>
+         <on-return value="NOT_AVAILABLE" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NOT_AVAILABLE"/>
+         </on-return>
+         <on-return value="NO_SUCH_ITEM" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NO_SUCH_ITEM"/>
+         </on-return>
+         <on-return value="NOT_SO_MANY_ITEMS_IN_CART" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NOT_SO_MANY_ITEMS_IN_CART"/>
+         </on-return>
+      </component>
+
+      <component name="accounts" class="shop.components.Accounts" persistence="session">
+         <action form="accounts" name="first" method="first()"/>
+         <action form="accounts" name="prev" method="prev()"/>
+         <action form="accounts" name="next" method="next()"/>
+         <action form="accounts" name="last" method="last()"/>
+         <action form="accounts" name="orderBy" method="setOrderBy(String attr)"/>
+
+         <action form="accounts" name="newAccount" method="createNewAccount(shop.types.User user, String password, String confirm)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="ShopLogin.inc"/>
+               <output-variable name="accountAdded" value="true"/>
+               <output-variable name="userName" component="accounts" value="user.userName"/>
+            </on-return>
+         </action>
+         <action form="accounts" name="newAccount2" method="createNewAccount(shop.types.User user, String password, String confirm)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="accounts.inc"/>
+               <output-variable name="message" value="New account created."/>
+            </on-return>
+         </action>
+         <action form="accounts" name="removeAccount" method="removeAccount(String user)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="accounts.inc"/>
+               <output-variable name="message" value="Account removed."/>
+            </on-return>
+         </action>
+         <action form="accounts" name="showAccount" method="showAccount()">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="EditAccount.inc"/>
+               <output-variable name="user" component="accounts" value="user"/>
+            </on-return>
+         </action>
+         <action form="accounts" name="showAccount2" method="showAccount(String userName)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="EditAccount.inc"/>
+               <output-variable name="user" component="accounts" value="user"/>
+            </on-return>
+         </action>
+         <action form="accounts" name="editAccount" method="editAccount(shop.types.User user)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="EditAccount.inc"/>
+               <output-variable name="accountEdited" value="true"/>
+               <output-variable name="user" component="accounts" value="user"/>
+            </on-return>
+            <on-return value="FIELDS_NOT_FILLED" show-template="main.wm">
+               <output-variable name="target" value="EditAccount.inc"/>
+               <output-variable name="error" value="FIELDS_NOT_FILLED"/>
+               <output-variable name="user" component="accounts" value="user"/>
+            </on-return>
+         </action>
+         <action form="accounts" name="setPassword" method="setPassword(String oldPassword, String newPassword, String confirm)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="SetPassword.inc"/>
+               <output-variable name="passwordChanged" value="true"/>
+            </on-return>
+            <on-return value="FIELDS_NOT_FILLED" show-template="main.wm">
+               <output-variable name="target" value="SetPassword.inc"/>
+               <output-variable name="error" value="FIELDS_NOT_FILLED"/>
+               <output-variable name="user" component="accounts" value="user"/>
+            </on-return>
+            <on-return value="BAD_PASSWORD_CONFIRM" show-template="main.wm">
+               <output-variable name="target" value="SetPassword.inc"/>
+               <output-variable name="error" value="BAD_PASSWORD_CONFIRM"/>
+            </on-return>
+         </action>
+         <action form="accounts" name="setPassword2" method="setPassword(String userName, String oldPassword, String newPassword, String confirm)">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="accounts.inc"/>
+               <output-variable name="userName" component="accounts" value="userName"/>
+               <output-variable name="message" value="PASSWORD_CHANGED"/>
+            </on-return>
+            <on-return value="FIELDS_NOT_FILLED" show-template="main.wm">
+               <output-variable name="adminEdit" value="true"/>
+               <output-variable name="userName" component="accounts" value="userName"/>
+               <output-variable name="target" value="SetPassword.inc"/>
+               <output-variable name="error" value="FIELDS_NOT_FILLED"/>
+            </on-return>
+            <on-return value="BAD_PASSWORD_CONFIRM" show-template="main.wm">
+               <output-variable name="adminEdit" value="true"/>
+               <output-variable name="userName" component="accounts" value="userName"/>
+               <output-variable name="target" value="SetPassword.inc"/>
+               <output-variable name="error" value="BAD_PASSWORD_CONFIRM"/>
+            </on-return>
+         </action>
+
+         <on-return value="void" show-template="main.wm">
+            <output-variable name="target" value="accounts.inc"/>
+         </on-return>
+         <on-return value="ACCOUNT_EXISTS" show-template="main.wm">
+            <output-variable name="target" value="NewAccount.inc"/>
+            <output-variable name="error" value="ACCOUNT_EXISTS"/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+         <on-return value="ACCOUNT_DOES_NOT_EXIST" show-template="main.wm">
+            <output-variable name="target" value="EditAccount.inc"/>
+            <output-variable name="error" value="ACCOUNT_DOES_NOT_EXIST"/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+         <on-return value="NOT_LOGGED_IN" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="error" value="NOT_LOGGED_IN"/>
+         </on-return>
+         <on-return value="FIELDS_NOT_FILLED" show-template="main.wm">
+            <output-variable name="target" value="NewAccount.inc"/>
+            <output-variable name="error" value="FIELDS_NOT_FILLED"/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+         <on-return value="BAD_PASSWORD_CONFIRM" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="error" value="BAD_PASSWORD_CONFIRM"/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+         <on-return value="BAD_OLD_PASSWORD" show-template="main.wm">
+            <output-variable name="target" value="SetPassword.inc"/>
+            <output-variable name="error" value="BAD_OLD_PASSWORD"/>
+         </on-return>
+         <on-return value="NOT_ADMIN" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="error" value="NOT_ADMIN"/>
+            <output-variable name="user" component="accounts" value="user"/>
+         </on-return>
+      </component>
+
+      <component name="orders" class="shop.components.Orders" persistence="session">
+         <action form="orders" name="first" method="first()"/>
+         <action form="orders" name="prev" method="prev()"/>
+         <action form="orders" name="next" method="next()"/>
+         <action form="orders" name="last" method="last()"/>
+         <action form="orders" name="orderBy" method="setOrderBy(String attr)"/>
+
+         <action form="cart" name="order" method="order()">
+            <on-return value="OK" show-template="main.wm">
+               <output-variable name="target" value="ShoppingCart.inc"/>
+               <output-variable name="message" value="ITEMS_ORDERED"/>
+            </on-return>
+            <on-return value="SHOPPING_CART_EMPY" show-template="main.wm">
+               <output-variable name="target" value="error.wm"/>
+               <output-variable name="error" value="SHOPPING_CART_EMPY"/>
+            </on-return>
+            <on-return value="NOT_LOGGED_IN" show-template="main.wm">
+               <output-variable name="target" value="ShopLogin.inc"/>
+               <output-variable name="error" value="NOT_LOGGED_IN"/>
+            </on-return>
+         </action>
+
+         <on-return value="void" show-template="main.wm">
+            <output-variable name="target" value="orders.inc"/>
+         </on-return>
+      </component>
+
+      <component name="AdminOrders" class="shop.components.AdminOrders" persistence="session">
+         <action form="AdminOrders" name="first" method="first()"/>
+         <action form="AdminOrders" name="prev" method="prev()"/>
+         <action form="AdminOrders" name="next" method="next()"/>
+         <action form="AdminOrders" name="last" method="last()"/>
+         <action form="AdminOrders" name="orderBy" method="setOrderBy(String attr)"/>
+
+         <action form="AdminOrders" name="expede" method="expede(String id)"/>
+         <action form="AdminOrders" name="reject" method="reject(String id)"/>
+
+         <on-return value="void" show-template="main.wm">
+            <output-variable name="target" value="AdminOrders.inc"/>
+         </on-return>
+         <on-return value="OK" show-template="main.wm">
+            <output-variable name="target" value="AdminOrders.inc"/>
+            <output-variable name="message" value="ORDER_STATUS_UPDATED"/>
+         </on-return>
+         <on-return value="NOT_ADMIN" show-template="main.wm">
+            <output-variable name="target" value="ShopLogin.inc"/>
+            <output-variable name="error" value="NOT_ADMIN"/>
+         </on-return>
+         <on-return value="CANNOT_CHANGE_STATUS" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="CANNOT_CHANGE_STATUS"/>
+         </on-return>
+         <on-return value="NO_SUCH_ID" show-template="main.wm">
+            <output-variable name="target" value="error.wm"/>
+            <output-variable name="error" value="NO_SUCH_ID"/>
+         </on-return>
+      </component>
+   </components>
+</application>

@@ -17,7 +17,7 @@ the form data and return the information in a table.
    </CENTER><P>
 }
 
-<FORM>
+<FORM ACTION="$SERVLET">
 <TABLE ALIGN="CENTER" width="600">
 <TR><TD>Your Name:</TD>
 <TD>
@@ -45,6 +45,6 @@ the form data and return the information in a table.
 </TD></TR></TABLE>
 </FORM>
 
-[ <a href="GuestBook?action=allguest">See Guests</a> ]
+[ <a href="$SERVLET?action=show&target=allguest.wm">See Guests</a> ]
 
 </body></html>

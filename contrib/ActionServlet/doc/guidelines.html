@@ -45,7 +45,7 @@ H3 {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -163,8 +163,8 @@ public DbComponent {
 public <B>DbComponent</B> {
    private int maxDbConnections;
    
-   public DbComponent (ActionServlet servlet) {
-      maxDbConnections = Integer.parseInt(servlet.getProperty("<B>max.db.connections</B>"));
+   public DbComponent (ActionServlet servlet, Strig name) {
+      maxDbConnections = Integer.parseInt(servlet.getProperty(name, "<B>max.db.connections</B>"));
       <EM>// ...</EM>
    }
 }</PRE>

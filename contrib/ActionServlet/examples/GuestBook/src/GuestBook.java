@@ -18,33 +18,22 @@ public class GuestBook {
     public GuestBook(ActionServlet as) {}
    
     /**
-     * Handles 'form' action.
+     * Handles 'show' action.
      */
-    public String showEmptyForm() {
-        return "form.wm";
+    public String show(String target) {
+        return target;
     }
 
     /**
      * Handles 'SUBMIT' action.
      */
-    public String verify(Email email) {
-        return "verify.wm";
-    }
+    public void verify(Email email) {}
 
     /**
      * Handles 'PROCEED' action.
      */
-    public String proceed(String name, Email email, String comment) {
+    public void proceed(String name, Email email, String comment) {
         book.addElement(new GuestEntry(name, email, comment));
-      
-        return "allguest.wm";
-    }
-
-    /**
-     * Handles 'allguest' action.
-     */
-    public String showAllGuests() {
-        return "allguest.wm";
     }
 
     /**

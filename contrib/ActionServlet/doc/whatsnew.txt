@@ -1,15 +1,47 @@
+Changes from 0.7 to 0.8
+9-Dec-2001
+-----------------------
+- ActionServlet new methods: getActionMethod(), getSessionId(), destroySession()
+- ActionServlet.start() throws ServletException if startup fails
+- ActionServlet.handle() and ActionServlet.getComponent() are no longer final
+- ActionException and ConversionException are now extended from ASException
+- invocation of non-internal type handlers is now logged (DEBUG level)
+- $SERVLET variable is always set for each template (=servlet path)
+- <on-return> can be nested also in <action> element -> ActionServlet_0_8.dtd
+- ActionServlet_0_7.dtd and ActionServlet_0_6.dtd are also recognized
+- build.xml improved, properties moved to build.properties
+- LoginServlet Tutorial improved
+- added new "Why use ActionServlet?" document
+- added more license documents is doc\licenses directory
+- added new "Related projects" section in index.html
+- servlet.jar is now included in ActionServlet\lib
+- minor exception logging refinements
+- bugfix: session reaper now works properly in Tomcat 4.0
+- bugfix: afterInvoke() may return null value (ok for void methods)
+- bugfix: it is possible to invalidate() session in afterInvoke()
+- bugfix: all exceptions thrown by Destroyed.destroy() are caught
+- bugfix: runtime ex. thrown by type handlers are passed to conversionError()
+- bugfix: ActionServlet.onException() is called also for runtime exceptions
+          and also if output variable (or its 'if' condition) evaluation fails
+- changes in examples: 
+  - added new Chat and Shop example
+  - fine changes in Calculator, Calculators, GuestBook and DbDemo 
+  - all examples use $SERVLET variable
+  - global LogLevel set to NOTICE in WebMacro.properties
+
+
 Changes from 0.7 to 0.61.1
 8-Nov-2001
 --------------------------
 - <output-variable> can be nested also in <on-return> element
 - <output-variable>s are evaluated in the order: <action>,<on-return>,<template>
-- <output-variable> can be also assigned booleam, number or String val. directly
+- <output-variable> can be also assigned boolean, number or String val. directly
 - <output-variable> may have optional 'if' attribute
 - ActionServlet_0_6.dtd -> ActionServlet_0_7.dtd
-- minor debug fixes
-- examples improvements: 
+- minor logging fixes
+- examples improvements:
   - OutputVars example was enhanced to demonstrate new features
-  - run.bat-s finally use your default browser :-)
+  - run.bat-s finally use the default browser :-)
 
 
 Changes from 0.61 to 0.61.1
@@ -37,7 +69,7 @@ Changes from 0.6 to 0.61
 Changes from 0.54 to 0.6
 14-Oct-2001
 ------------------------
-- this version is compiled for WebMacro 1.0rc1 but should work with WM 0.97+
+- this version requires for WebMacro 1.0rc1+
 - ActionConfig has a new elements <properties>, <property> and <on-return>
 - <component> element has new mandatory attribute "name"
 - ActionServlet has new methods getProperty(), onReturn() and onException()

@@ -15,7 +15,7 @@
    <tr><td>Comment:</td><td>"$Form.comment"</td></tr>
 </table><p>
 
-<FORM>
+<FORM ACTION="$SERVLET">
 <INPUT TYPE="Hidden" NAME="name" VALUE="$Form.name">
 <INPUT TYPE="Hidden" NAME="email" VALUE="$Form.email">
 <INPUT TYPE="Hidden" NAME="comment" VALUE="$Form.comment">
@@ -23,6 +23,6 @@
 </FORM>
 </center>
 
-[ <a href="GuestBook?action=form">Back to form</a> ]
+[ <a href="$SERVLET?action=show&target=form.wm">Back to form</a> ]
 
 </body></html>

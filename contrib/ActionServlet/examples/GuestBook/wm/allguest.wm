@@ -26,8 +26,8 @@
 }
 </TABLE><P>
 
-[ <a href="GuestBook?action=form">Back to form</a> ]
+[ <a href="$SERVLET?action=show&target=form.wm">Back to form</a> ]
 
-[ <a href="GuestBook?action=allguest">See Guests</a> ]
+[ <a href="$SERVLET?action=show&target=allguest.wm">See Guests</a> ]
 
 </body></html>

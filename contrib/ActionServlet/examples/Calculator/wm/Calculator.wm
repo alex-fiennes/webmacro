@@ -1,7 +1,7 @@
 <HTML>
 #set $Response.ContentType = "text/html"
 <BODY>
-	<FORM METHOD="POST">
+   <FORM METHOD="POST" ACTION="$SERVLET">
 
    <TABLE BORDER="1" BGCOLOR="silver" BORDER="0" CELLPADDING="4" CELLSPACING="0">
    <TR><TH COLSPAN="4">

@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -61,7 +61,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 #set $Response.ContentType = "text/html"
 &lt;BODY&gt;
 
-   <B>&lt;FORM METHOD="POST"&gt;</B>
+   <B>&lt;FORM METHOD="POST" ACTION="$SERVLET"&gt;</B>
       User name: <B>&lt;INPUT TYPE="Text" NAME="<FONT COLOR="red">userName</FONT>"&gt;</B>
       Password : <B>&lt;INPUT TYPE="Password" NAME="<FONT COLOR="red">password</FONT>"&gt;</B>
       <B>&lt;INPUT TYPE="Submit" NAME="<FONT COLOR="green">action</FONT>" VALUE="<FONT COLOR="green">Login</FONT>"&gt;</B>
@@ -78,7 +78,8 @@ to be invoked (<FONT COLOR="green"><TT><B>Login</B></TT></FONT>).
 
 <HR WIDTH="100%">
 
-Note: It is mandatory to define <TT>action</TT> when using <EM>ActionServlet</EM>.
+Note 1: It is mandatory to define <TT>action</TT> when using <EM>ActionServlet</EM>.<BR>
+Note 2: <TT>$SERVLET</TT> variable is always evaluated to the actual servlet path.
 </TD></TR></TABLE>
 
 <P><CENTER>

@@ -16,86 +16,83 @@ public class Calculator2 extends Calculator {
     /**
      * Handles sin(x).
      *
-     * @return OK
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int sin() {
+    public void sin() {
         try {
             operationJustExecuted = true;
             point = false;
             display = number = String.valueOf(Math.sin(new Double(number).doubleValue() * Math.PI / 180));
-            return OK;
         } catch (NumberFormatException e) {
             display = "ERR";
-            return ERROR;
+            throw e;
         }
     }
 
     /**
      * Handles cos(x).
      *
-     * @return OK
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int cos() {
+    public void cos() {
         try {
             operationJustExecuted = true;
             point = false;
             display = number = String.valueOf(Math.cos(new Double(number).doubleValue() * Math.PI / 180));
-            return OK;
         } catch (NumberFormatException e) {
             display = "ERR";
-            return ERROR;
+            throw e;
         }
     }
 
     /**
      * Handles sqrt(x).
      *
-     * @return OK
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int sqrt() {
+    public void sqrt() {
         try {
             operationJustExecuted = true;
             point = false;
             display = number = String.valueOf(Math.sqrt(new Double(number).doubleValue()));
-            return OK;
         } catch (NumberFormatException e) {
             display = "ERR";
-            return ERROR;
+            throw e;
         }
     }
 
     /**
      * Handles pow(x,y) = x ^ y.
      *
-     * @return OK
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int pow() throws ActionException {
-        return operation('^');
+    public void pow() throws ActionException {
+        operation('^');
     }
 
     /**
      * Overrides operation() in order to support pow(x,y).
+     *
+     * @param nextOperation may have values ("+", "-", "*", "/", "^")
+     * @exception ActionException on bad operation code
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int operation(char nextOperation) throws ActionException {
-        if (operation == '^')
+    public void operation(char nextOperation) throws ActionException {
+        if (operation == '^') {
             try {
                 result = Math.pow(result, new Double(number).doubleValue());
 
                 number = String.valueOf(result);
                 display = number;
-
-                return OK;
             } catch (NumberFormatException e) {
                 display = "ERR";
-                return ERROR;
+                throw e;
             } catch (StringIndexOutOfBoundsException e) {
                 throw new ActionException("Invalid numeric operation '" + nextOperation + "'");
             } finally {
                 operationJustExecuted = true;
                 point = false;
             }
-
-        return super.operation(nextOperation);
-
+        } else super.operation(nextOperation);
     }
 }

@@ -21,7 +21,7 @@
 <LI>\$third = $third <EM>(not evaluated - value of <TT>if</TT> attribute is false)</EM>
 </UL>
 
-<FORM METHOD="POST">
+<FORM METHOD="POST" ACTION="$SERVLET">
 <INPUT TYPE="Hidden" NAME="form" VALUE="form1">
 <INPUT TYPE="Submit" NAME="action" VALUE=" Continue... "><P>
 </FORM>

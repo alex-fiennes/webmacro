@@ -6,7 +6,7 @@ values from multiple input fields can be composed to a value of a single
 Java type:
 <P>
 
-   <FORM METHOD="POST">
+   <FORM METHOD="POST" ACTION="$SERVLET">
    <INPUT TYPE="HIDDEN" NAME="date" VALUE="day,month,year">
 
    <TABLE>

@@ -9,20 +9,27 @@
       <tr>
         <td>$actor.FIRSTNAME</td>
         <td>$actor.SURNAME</td>
-        <td><a href="DbDemo?form=movies&action=select&sql=select+*+from+movies+where+FIRSTNAME%3D%27$actor.FIRSTNAME%27+and+SURNAME%3D%27$actor.SURNAME%27+order+by+TITLE">show movies</a></td>
+        <form method="post" action="$SERVLET">
+        <td>
+            <input type="Hidden" name="form" value="movies">
+            <input type="Hidden" name="action" value="select">
+            <input type="Hidden" name="sql" value="select * from movies where FIRSTNAME='$actor.FIRSTNAME' and SURNAME='$actor.SURNAME' order by TITLE">
+            <input type="Submit" value="Show movies">
+        </td>
+        </form>
       </tr>
     }
 
     <tr><!-- navigation -->
       <td colspan=3 align="center">
           #if ($actors.getSkipRows() > 0) {
-             [ <A HREF="DbDemo?form=actors&action=first"><TT>&lt;&lt;</TT></A> ]
-             [ <A HREF="DbDemo?form=actors&action=prev"><TT>&lt;</TT></A> ]
+             [ <A HREF="$SERVLET?form=actors&action=first"><TT>&lt;&lt;</TT></A> ]
+             [ <A HREF="$SERVLET?form=actors&action=prev"><TT>&lt;</TT></A> ]
           }
 
           #if ($actors.hasMore()) {
-             [ <A HREF="DbDemo?form=actors&action=next"><TT>&gt;</TT></A> ]
-             [ <A HREF="DbDemo?form=actors&action=last"><TT>&gt;&gt;</TT></A> ]          
+             [ <A HREF="$SERVLET?form=actors&action=next"><TT>&gt;</TT></A> ]
+             [ <A HREF="$SERVLET?form=actors&action=last"><TT>&gt;&gt;</TT></A> ]          
           }
       </td>
     </tr>

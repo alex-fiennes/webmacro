@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -58,14 +58,17 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 <P><TABLE BORDER="0" BGCOLOR="#EEEEEE"><TR><TD>
 <PRE>
 <B>public class Authenticator</B> {
+   public static final int <B>OK</B> = 1;
+   public static final int <B>BAD_USERNAME_OR_PASSWORD</B> = 2;
+
    public Authenticator(org.webmacro.as.ActionServlet as) {}
 
    <B>public String <FONT COLOR="green">login</FONT>(String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)</B> {
       <I>// verify user name and password - here: only John may log in</I>
       if ("John".equals(userName) && "18x79Z".equals(password))
-         return "SuccessfulLogin.html";
+         return <B>OK</B>;
       else 
-         return "BadUserNameOrPassword.html";
+         return <B>BAD_USERNAME_OR_PASSWORD</B>;
    <B>}</B>
 }
 </PRE>

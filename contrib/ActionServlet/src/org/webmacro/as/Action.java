@@ -88,6 +88,18 @@ final class Action {
     private Vector outputVariables;
 
     /**
+     * Table of &lt;on-return&gt; elements for this action:
+     * key = field value, value = template name (of template to be displayed)
+     */
+    private final Hashtable onReturns;
+
+    /**
+     * Table of output variables of this action's &lt;on-return&gt; elements:
+     * key = field value, value = vector of OutputVariables
+     */
+    private final Hashtable onReturnsOutputVars;
+
+    /**
      * Creates a new action (note: all actions are statically created at startup).
      *
      * @param servlet parent servlet
@@ -106,7 +118,9 @@ final class Action {
            ComponentData componentData,
            Hashtable typeHandlers,
            final String methodDecl,
-           Vector outputVariables)
+           Vector outputVariables,
+           Hashtable onReturns,
+           Hashtable onReturnsOutputVars)
     throws InitException {
         this.servlet = servlet;
         this.formName = formName;
@@ -114,15 +128,12 @@ final class Action {
         this.componentData = componentData;
         this.methodDecl = methodDecl;
         this.outputVariables = outputVariables;
+        this.onReturns = onReturns;
+        this.onReturnsOutputVars = onReturnsOutputVars;
 
         final Vector paramTypes = new Vector();
         final Vector isParamArray = new Vector();
         final Vector paramNames = new Vector();
-
-        // 1st parameter must be of typeWebContext
-/*        paramTypes.addElement(WebContext.class);
-        isParamArray.addElement(Boolean.FALSE);
-        paramNames.addElement("context");*/
 
         /**
          * Method definition parser.
@@ -274,8 +285,8 @@ final class Action {
         } catch (ParseException e) {
             throw new InitException("Error while parsing definition: " + e.getMessage(), e);
         } catch (Exception e) {
-            servlet.log.error(e.toString(), e);
-            throw new InitException(e.getMessage(), e);
+            servlet.log.error("Error while parsing method definition", e);
+            throw new InitException("Error while parsing method definition", e);
         }
 
         Class sc = servlet.getClass();
@@ -356,7 +367,7 @@ final class Action {
                 Class[] types = methods[i].getParameterTypes();
 
                 // check parameter types
-                if (paramTypes.length < types.length) continue Out;
+                if (paramTypes.length != types.length) continue Out;
 
                 for (int j=0; j < types.length; j++)
                     if (isParamArray[j]) {
@@ -433,7 +444,7 @@ final class Action {
         Template view = reinvoke(context, componentName, component, convertedParams);
 
         // handle components with "request" persistence
-        String id = context.getSession().getId();
+        String id = servlet.getSessionId();
         LastActionData la = (LastActionData) servlet.lastActions.get(id);
         if (la != null &&
             la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
@@ -460,6 +471,10 @@ final class Action {
                                          Class paramType,
                                          SimpleTypeHandler handler)
     throws ConversionException {
+        String thClassName = handler.getClass().getName();
+        if (!thClassName.startsWith(ActionServlet.CLASS_NAME))
+            servlet.log.debug("Invoking type handler '" + thClassName + "'");
+
         String paramValue = null;
 
         try {
@@ -493,6 +508,12 @@ final class Action {
             e.setParameterValue(paramValue);
             e.setWasThrownInComposite(false);
             throw e;
+        } catch (Exception ex) {
+            ConversionException e = new ConversionException("Unexpected exception" , ex);
+            e.setExceptionOrigin(handler);
+            e.setParameterValue(paramValue);
+            e.setWasThrownInComposite(false);
+            throw e;
         }
     }
 
@@ -508,6 +529,10 @@ final class Action {
                                             String compositeDefinition,
                                             CompositeTypeHandler handler)
     throws ConversionException {
+        String thClassName = handler.getClass().getName();
+        if (!thClassName.startsWith(ActionServlet.CLASS_NAME))
+            servlet.log.debug("Invoking type handler '" + thClassName + "'");
+
         try {
             StringTokenizer st = new StringTokenizer(compositeDefinition, " \t,[]", true);
             int numTokens = st.countTokens();
@@ -553,6 +578,12 @@ final class Action {
             e.setWasThrownInComposite(true);
             e.setParameterValue(compositeDefinition);
             throw e;
+        } catch (Exception ex) {
+            ConversionException e = new ConversionException("Unexpected exception" , ex);
+            e.setExceptionOrigin(handler);
+            e.setWasThrownInComposite(true);
+            e.setParameterValue(compositeDefinition);
+            throw e;
         }
     }
 
@@ -576,12 +607,16 @@ final class Action {
                 servlet.log.debug("Invoking 'beforeInvoke()' method of action '" + (formName==null?"":
                                   formName+"'.'") + actionName + "'");
 
-                if ((retValue = servlet.beforeInvoke(context, formName, actionName, convertedParams)) != null) {
-                    servlet.log.debug("Method 'beforeInvoke()' returns a non null value -> action '" +
-                                      (formName==null?"": formName+"'.'") + actionName +
-                                      (callAfterInvoke?"' and 'afterInvoke()' ": "'") +
-                                      " won't be invoked");
-                }
+                if ((retValue = servlet.beforeInvoke(context, formName, actionName, convertedParams)) != null)
+                    try {
+                        servlet.log.debug("Method 'beforeInvoke()' returns a non null value -> action '" +
+                                          (formName==null?"": formName+"'.'") + actionName +
+                                          (callAfterInvoke?"' and 'afterInvoke()' ": "'") +
+                                          " won't be invoked");
+                    } catch (Exception e) {
+                        throw new ActionException("Exception thrown by 'beforeInvoke()'" + " of action '" +
+                                                  (formName==null?"": formName+"'.'") + actionName + "'", e);
+                    }
             }
 
             if (retValue == null) {
@@ -599,8 +634,12 @@ final class Action {
                     servlet.log.debug("Invoking 'afterInvoke()' method of action '" + (formName==null?"":
                                       formName+"'.'") + actionName + "'");
 
-                    if ((retValue = servlet.afterInvoke(retValue, context, formName, actionName, convertedParams)) == null)
-                        throw new ActionException("Method 'afterInvoke()' returns null");
+                    try {
+                        retValue = servlet.afterInvoke(retValue, context, formName, actionName, convertedParams);
+                    } catch (Exception e) {
+                        throw new ActionException("Exception thrown by 'afterInvoke()'" + " of action '" +
+                                                  (formName==null?"": formName+"'.'") + actionName + "'", e);
+                    }
                 }
 
                 if (!retTypeIsVoid && retValue == null)
@@ -610,10 +649,18 @@ final class Action {
             }
 
             Template template;
+            String templateName = null;
+            boolean overridenOnReturn = false;
 
             // process <on-return>
-            ComponentData componentData = (ComponentData) servlet.componentClasses.get(componentName);
-            String templateName = (String) componentData.onReturns.get(retTypeIsVoid?"void":retValue);
+            if (onReturns != null)
+                templateName = (String) onReturns.get(retTypeIsVoid?"void":retValue);
+
+            if (templateName == null) {
+                ComponentData componentData = (ComponentData) servlet.componentClasses.get(componentName);
+                templateName = (String) componentData.onReturns.get(retTypeIsVoid?"void":retValue);
+            } else overridenOnReturn = true;
+
             if (templateName == null) template = servlet.onReturn(context, formName, actionName, retValue);
             else {
                template = servlet.getWMTemplate(templateName);
@@ -628,13 +675,22 @@ final class Action {
                 ((OutputVariable) e.nextElement()).evaluate(context);
 
             // set <output-variable>s of <on-return>
-            Vector onReturnsOutputVars = (Vector) componentData.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
+            Vector onReturnsOutputVars;
+
+            if (overridenOnReturn)
+                onReturnsOutputVars = this.onReturnsOutputVars == null? null: (Vector) this.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
+            else onReturnsOutputVars = (Vector) componentData.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
+
             if (onReturnsOutputVars != null)
                 for (Enumeration e = onReturnsOutputVars.elements(); e.hasMoreElements(); )
                     ((OutputVariable) e.nextElement()).evaluate(context);
 
+            // check template is loaded by getWMTemplate()
+            if ((templateName = (String) servlet.templatesNames.get(template)) == null)
+                throw new ActionException("Template '" + template.getName() + "' was not loaded by 'ActionServlet.getWMTemplate()'");
+
             // set <output-variable>s of template
-            Vector templateOutputVariables = (Vector) servlet.templateOutputVariables.get(servlet.templatesNames.get(template));
+            Vector templateOutputVariables = (Vector) servlet.templateOutputVariables.get(templateName);
 
             if (templateOutputVariables != null)
                 for (Enumeration e = templateOutputVariables.elements(); e.hasMoreElements(); )
@@ -648,15 +704,16 @@ final class Action {
                 servlet.log.error("Exception thrown by method '" + method.getName() +
                                   "()' implementing action '" +
                                   (formName==null?"": formName+"'.'") +
-                                  actionName + "': " + target.getMessage(), (Exception)target);
+                                  actionName + "'", (Exception)target);
+            else if (target instanceof Error) throw (Error) target;
 
             throw new ActionException("Exception thrown by method '" + method.getName() +
                                       "()' implementing action '" +
                                       (formName==null?"": formName+"'.'") +
-                                      actionName + "': " + target.getMessage(), target);
+                                      actionName + "'", target);
         } catch (IllegalAccessException e) {
-            servlet.log.error(e.toString(), e);
-            throw new ActionException(e.getMessage());
+            servlet.log.error("Cannot access action method", e);
+            throw new ActionException(e.getMessage(), e);
         }
     }
 }

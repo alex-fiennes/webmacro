@@ -3,7 +3,7 @@ import org.webmacro.Template;
 import org.webmacro.servlet.WebContext;
 
 /**
- * Modified GuestBook example from the original WebMacro 0.89.1 distribution.
+ * Modified GuestBook example from the original WebMacro distribution.
  *
  * @author Petr Toman
  */
@@ -13,12 +13,12 @@ public class GuestBookServlet extends ActionServlet {
      * error message and restores other input fields.
      */
     protected Template conversionError(WebContext context,
-                                       String formName,
-                                       String actionName, 
+                                       String form,
+                                       String action, 
                                        ConversionException e) {
-        context.put("badEmail", Boolean.TRUE);
-        context.put("name", context.getRequest().getParameter("name"));
-        context.put("comment", context.getRequest().getParameter("comment"));
+        context.put("badEmail", true);
+        context.put("name", context.getForm("name"));
+        context.put("comment", context.getForm("comment"));
 
         return getWMTemplate("form.wm");
     }

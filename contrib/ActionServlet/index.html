@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -76,6 +76,7 @@ With these wizards you can easily create the basic structure of your web applica
 	<LI><EM>ActionServlet</EM>
 	<UL>
 	<LI><A HREF="doc/advertisment.txt">Advertisment</A>
+	<LI><A HREF="doc/whyuseas.html">Why use ActionServlet?</A>
 	<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet Tutorial</A>
 	<LI>ActionServlet <A HREF="doc/specification.html">Specification</A>
 	<LI>ActionServlet <A HREF="doc/guidelines.html">Design Guidelines</A>
@@ -98,19 +99,7 @@ With these wizards you can easily create the basic structure of your web applica
 <TD>ActionServlet...<BR><SMALL>(sources &amp; docs included)</SMALL></TD>
 <TD COLSPAN=2>...requires also</TD>
 <TD>...has examples<BR>configured for</TD>
-</TR><TR><TD>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_52_1.zip">ActionServlet_0_52_1.zip</A>
-</TD><TD ROWSPAN=2>
-<A HREF="http://www.javasoft.com/jdk">JDK 1.1</A>+
-</TD><TD>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/webmacro.0.89.1.zip">WebMacro 0.89.1</A>
-</TD><TD ROWSPAN=2>
-<A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>
-</TD></TR><TR><TD>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_53.zip">ActionServlet_0_53.zip</A>
-</TD><TD>
-<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.95</A>+
-</TD></TR><TR><TD ROWSPAN=2>
+<TR><TD ROWSPAN=2>
 <A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_54.zip">ActionServlet_0_54.zip</A>
 </TD><TD>
 <A HREF="http://java.sun.com/j2se">JDK 1.2</A>+
@@ -122,7 +111,7 @@ With these wizards you can easily create the basic structure of your web applica
 </TD></TR><TR><TD>
 <A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+
 </TD></TR><TR><TD ROWSPAN=2>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_7.zip">ActionServlet_0_7.zip</A>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_8.zip">ActionServlet_0_8.zip</A>
 </TD><TD>
 <A HREF="http://java.sun.com/j2se">JDK 1.2</A>+
 </TD><TD ROWSPAN=2>
@@ -144,10 +133,10 @@ With these wizards you can easily create the basic structure of your web applica
 <TD>...has example<BR>configured for</TD>
 </TR><TR>
 <TD><A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ASWizards_JB_1_0.zip">ASWizards_JB_1_0.zip</A></TD>
-<TD>ActionServlet 0.53 or 0.54,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
+<TD>ActionServlet 0.54,<BR><A HREF="http://www.borland.com/jbuilder">JBuilder 4</A>+</TD>
 <TD><A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2</A><SUP><FONT COLOR="red">*</FONT></SUP></TD>
 </TR><TR>
-<TD COLSPAN=3 ALIGN=CENTER><EM>ASWizards for ActionServlet 0.7 will be comming soon!</EM></TD>
+<TD COLSPAN=3 ALIGN=CENTER><EM>ASWizards for ActionServlet 0.8 will be comming soon!</EM></TD>
 </TR></TABLE>
 </TD></TR><TR><TD>
 <SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2/2.3</EM></SMALL>
@@ -181,8 +170,9 @@ With these wizards you can easily create the basic structure of your web applica
         24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: Servlet 2.2+ containers support</TD></TR><TR><TD>
 	17.9. 2001: <EM>ASWizards 1.0 for JBuilder</EM> released</TD></TR></TD></TR><TR><TD>
 	14.10. 2001: <B>version 0.6</B>: ActionConfig improvements, new Guidelines document, ...</TD></TR></TD></TR><TR><TD>
-	29.10. 2001: <B>version 0.61</B>: new <TT>&lt;property&gt;</TT> element in ActionConfig, DbDemo</TD></TR></TD></TR><TR><TD>
-	8.11. 2001: <B>version 0.7</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR>
+	29.10. 2001: <B>version 0.61</B>: new <TT>&lt;property&gt;</TT> element in ActionConfig, new DbDemo</TD></TR></TD></TR><TR><TD>
+	8.11. 2001: <B>version 0.7</B>: Usage of <TT>&lt;ouput-variable&gt;</TT>s enhanced </TD></TR></TD></TR><TR><TD>
+	9.12. 2001: <B>version 0.8</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR>
 	</TABLE>
 
 <P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>
@@ -193,7 +183,19 @@ With these wizards you can easily create the basic structure of your web applica
 <IMG SRC="doc\images\r750.gif" BORDER="0">
 </A>
 </TD></TR></TABLE>
-<LI><H3 CLASS="main">References</H3>
+
+<P><LI><H3 CLASS="main">Related projects</H3>
+<UL TYPE="disc">
+<LI><A HREF="http://bishop.sourceforge.net">Bishop</A>
+<LI><A HREF="http://www.hyperqbs.org">HyperQbs</A>
+<LI><A HREF="http://jpublish.sourceforge.net">JPublish</A>
+<LI><A HREF="http://mav.sourceforge.net">Maverick</A>
+<LI><A HREF="http://www.niggle.org">Niggle</A>
+<LI><A HREF="http://jakarta.apache.org/turbine">Turbine</A>
+<LI><A HREF="http://sourceforge.net/projects/webwork">WebWork</A>
+</UL>
+
+<P><LI><H3 CLASS="main">References</H3>
 	<DL>
 	<DT>[1] Bloch, C.: <B>Java Tutorial: <A HREF="http://dione.zcu.cz/java/docs/tutorial/servlets">Servlets</A></B>
 	<DT>[2] Wells, J.: <B><A HREF="http://www.webmacro.org">WebMacro</A> documentation</B>

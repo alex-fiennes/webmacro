@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd">
 
 <application>
    <templates>
@@ -16,10 +16,13 @@
 
    <components>
       <component name="GuestBook" class="GuestBook" persistence="application">
-         <action name="form" method="showEmptyForm()"/>
-         <action name="SUBMIT" method="verify(Email email)"/>
-         <action name="PROCEED" method="proceed(String name, Email email, String comment)"/>
-         <action name="allguest" method="showAllGuests()"/>
+         <action name="show" method="show(String target)"/>
+         <action name="SUBMIT" method="verify(Email email)">
+            <on-return value="void" show-template="verify.wm"/>
+         </action>
+         <action name="PROCEED" method="proceed(String name, Email email, String comment)">
+            <on-return value="void" show-template="allguest.wm"/>
+         </action>
       </component>
    </components>
 </application>

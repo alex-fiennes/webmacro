@@ -2,7 +2,7 @@
 #set $Response.ContentType = "text/html"
 <BODY>
 <TABLE BORDER=0 CELLPADDING=20><TR><TD>
-   <FORM METHOD="POST">
+   <FORM METHOD="POST" ACTION="$SERVLET">
    <INPUT TYPE="Hidden" NAME="form" VALUE="1ST">
         #parse "calc1.inc"
    </FORM>

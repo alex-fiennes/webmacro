@@ -104,6 +104,34 @@
    </servlet>
 
    <!-- ************************************************** -->
+   <!-- *********************** Chat ********************* -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>Chat</servlet-name>
+      <servlet-class>chat.ChatServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>Chat.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
+   <!-- *********************** Shop ********************* -->
+   <!-- ************************************************** -->
+
+   <servlet>
+      <servlet-name>Shop</servlet-name>
+      <servlet-class>shop.ShopServlet</servlet-class>
+
+      <init-param>
+         <param-name>ActionConfig</param-name>
+         <param-value>Shop.xml</param-value>
+      </init-param>
+   </servlet>
+
+   <!-- ************************************************** -->
    <!-- ********************* TwoForms ******************* -->
    <!-- ************************************************** -->
 
@@ -149,6 +177,16 @@
    <servlet-mapping>
       <servlet-name>DbDemo</servlet-name>
       <url-pattern>/DbDemo</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>Chat</servlet-name>
+      <url-pattern>/Chat</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+      <servlet-name>Shop</servlet-name>
+      <url-pattern>/Shop</url-pattern>
    </servlet-mapping>
 
    <servlet-mapping>

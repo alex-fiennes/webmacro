@@ -1,14 +1,33 @@
 List of examples 
 ----------------
 
+	* Educational examples
+
 	- LoginServlet - authenticates user - START HERE!
-	- Calculator   - simple calculator
-	- Calculators  - demo using basic and enhanced calculator
 	- DateHandler  - demonstrates CompositeTypeHandler usage
-	- GuestBook    - modified example from WebMacro 0.89.1 distribution
-	- DbDemo       - shows how to use simple JDBC component
 	- TwoForms     - demonstrates 'form' parameter usage
 	- OutputVars   - demonstrates <output-variable> element usage
+	- Calculator   - a simple calculator
+	- Calculators  - demo using basic and enhanced calculator
+	- DbDemo       - shows how to use a simple JDBC component
+	- GuestBook    - modified example from the WebMacro distribution
+
+	* Sample applications
+
+	- Chat         - demo of a simple WWW chat with multiple rooms
+	- Shop         - demo of a simple multilingual WWW shop (uses JDBC)
+
+
+Notes
+-----
+
+	- You need Ant 1.3 or higer (see http://jakarta.apache.org/ant)
+	  to setup examples with minimum effort (files in 'config' and 
+          'db' directories will be reinitialized using '.orig')
+
+	- By default, DbDemo, Chat and Shop examples expect the database 
+	  files stored in their 'db' directory (this is set by 'db.directory'
+	  <property> in their particular ActionConfigs)
 
 
 Examples installation instructions
@@ -17,7 +36,7 @@ for use with JSDK 2.0 servletrunner
 
 	1) Change directory to ActionServlet root
 
-	2) Set correct values of properties in build.xml
+	2) Set correct values of properties in build.properties
 
 	3) Run "ant examples"
 
@@ -27,11 +46,11 @@ for use with JSDK 2.0 servletrunner
 Examples installation instructions
 for use with Tomcat 3.x/4.0 servlet container
 (see http://jakarta.apache.org/tomcat)
--------------------------------------------
+---------------------------------------------
 
 	1) Change directory to ActionServlet root
 
-	2) Set correct values of properties in build.xml
+	2) Set correct values of properties in build.properties
 
 	3) Run "ant examples_war"
 
@@ -44,12 +63,12 @@ for use with Tomcat 3.x/4.0 servlet container
 
 
 Examples installation instructions
-for use with other "Servlet 2.2+" containers
---------------------------------------------
+for use with other "Servlet 2.2/2.3" containers
+-----------------------------------------------
 
 	1) Change directory to ActionServlet root
 
-	2) Set correct values of properties in build.xml
+	2) Set correct values of properties in build.properties
 
 	3) Run "ant examples_war"
 

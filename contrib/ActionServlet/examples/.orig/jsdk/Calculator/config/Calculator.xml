@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd">
 
 <application repository="@as.home@/examples/Calculator/classes">
    <templates>
@@ -33,8 +33,7 @@
          <action name="CE" method="ce()"/>
          <action name="C" method="c()"/>
 
-         <on-return value="OK" show-template="Calculator.wm"/>
-         <on-return value="ERROR" show-template="Calculator.wm"/>
+         <on-return value="void" show-template="Calculator.wm"/>
       </component>
    </components>
 </application>

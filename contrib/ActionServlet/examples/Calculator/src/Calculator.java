@@ -6,16 +6,6 @@ import org.webmacro.as.*;
  * @author Petr Toman
  */
 public class Calculator {
-    /**
-     * Return code.
-     */
-    public static final int OK = 0;
-
-    /**
-     * Return code.
-     */
-    public static final int ERROR = 1;
-
     ///////////////////////// Calculator variables  ////////////////////////
 
     /**
@@ -59,9 +49,8 @@ public class Calculator {
      * Handles entering digits of number.
      *
      * @param digit typed digit "0"..."9"
-     * @return OK
      */
-    public int digit(int digit) {
+    public void digit(int digit) {
         if (operationJustExecuted) {
             operationJustExecuted = false;
             number = "0";
@@ -71,15 +60,12 @@ public class Calculator {
             else number += digit;
 
         display = number;
-        return OK;
     }
 
     /**
      * Handles pressing decimal point.
-     *
-     * @return OK
      */
-    public int point() {
+    public void point() {
         if (operationJustExecuted) {
             operationJustExecuted = false;
             number = "0";
@@ -89,20 +75,16 @@ public class Calculator {
         point = true;
 
         display = number;
-        return OK;
     }
 
     /**
      * Handles '+/-' button.
-     *
-     * @return OK
      */
-    public int plusminus() {
+    public void plusminus() {
         if (number.charAt(0) == '-') number = number.substring(1);
             else if (Character.isDigit(number.charAt(0))) number = "-" + number;
 
         display = number;
-        return OK;
     }
 
     /**
@@ -110,10 +92,10 @@ public class Calculator {
      *
      * @param nextOperation may have values ("+", "-", "*", "/")
      * @exception ActionException on bad operation code
-     * @return OK or ERROR
+     * @exception NumberFormatException on bad number format (should not occurr)
      */
-    public int operation(char nextOperation)
-    throws ActionException {
+    public void operation(char nextOperation)
+    throws ActionException, NumberFormatException {
         try {
             switch (operation) {
                 case '+': result += new Double(number).doubleValue(); break;
@@ -128,7 +110,7 @@ public class Calculator {
             operation = nextOperation;
         } catch (NumberFormatException e) {
             display = "ERR";
-            return ERROR;
+            throw e;
         } catch (StringIndexOutOfBoundsException e) {
             throw new ActionException("Invalid numeric operation '" + nextOperation + "'");
         } finally {
@@ -138,34 +120,26 @@ public class Calculator {
 
         number = String.valueOf(result);
         display = number;
-
-        return OK;
     }
 
     /**
      * Handles pressing 'CE'.
-     *
-     * @return OK
      */
-    public int ce() {
+    public void ce() {
         number = "0";
         point = false;
         display = number;
-
-        return OK;
     }
 
     /**
      * Handles pressing 'C'.
-     *
-     * @return OK
      */
-    public int c() {
+    public void c() {
         operation = '=';
         result = 0;
         operationJustExecuted = true;
 
-        return ce();
+        ce();
     }
 
     /**

@@ -6,13 +6,13 @@
       Try again.</FONT><P>
    }
 
-   <FORM METHOD="POST">
+   <FORM METHOD="POST" ACTION="$SERVLET">
       User name: <INPUT TYPE="Text" NAME="userName"><BR>
       Password : <INPUT TYPE="Password" NAME="password"><BR>
       <INPUT TYPE="Submit" NAME="action" VALUE="Login">
    </FORM>
 
    <P>[Hint: <EM>correct user name is 'John' with password '18x79Z' </EM>]
-   <P>Alternative: <A HREF="LoginServlet?action=Login&userName=John&password=18x79Z">Login as John</A>
+   <P>Alternative: <A HREF="$SERVLET?action=Login&userName=John&password=18x79Z">Login as John</A>
 </BODY>
 </HTML>

@@ -26,7 +26,7 @@
 <LI>\$lengthOfThird = $lengthOfThird
 </UL>
 
-<FORM METHOD="POST">
+<FORM METHOD="POST" ACTION="$SERVLET">
 <INPUT TYPE="Hidden" NAME="form" VALUE="form2">
 <INPUT TYPE="Submit" NAME="action" VALUE=" Continue... "><P>
 </FORM>

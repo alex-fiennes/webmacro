@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -65,6 +65,9 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
    &lt;components&gt;
       <B>&lt;component name="Authenticator" class="Authenticator" persistence="session"&gt;
          &lt;action name="<FONT COLOR="green">Login</FONT>" method="<FONT COLOR="green">login</FONT>(String <FONT COLOR="red">userName</FONT>, String <FONT COLOR="red">password</FONT>)"/&gt;
+
+         &lt;on-return value="OK" show-template="SuccessfulLogin.wm"/&gt;
+         &lt;on-return value="BAD_USERNAME_OR_PASSWORD" show-template="Login.wm"/&gt;
       &lt;/component&gt;</B>
    &lt;/components&gt;
 &lt;/application&gt;
@@ -73,7 +76,10 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 
 ActionConfig has a simple XML format. Each component has defined <TT>name</TT>, <TT>class</TT> and persistence
 (one of: <TT>application</TT>/<TT>session</TT>/<TT>request</TT>) and zero or more <TT>&lt;action&gt;</TT> subelements. Here is bound <FONT COLOR="green"><TT><B>Login</B></TT></FONT>
-action to <TT>Authenticator.login(String userName, String password)</TT> method.<P>
+action to <TT>Authenticator.login(String userName, String password)</TT> method.
+Return values OK and BAD_USERNAME_OR_PASSWORD are mapped to templates names by
+<TT>&lt;on-return&gt;</TT> elements.<P>
+
 The template with an <TT>is-new-session</TT> attribute set to <TT>true</TT> is shown upon a new session (when the user
 first visits the servlet's page).
 

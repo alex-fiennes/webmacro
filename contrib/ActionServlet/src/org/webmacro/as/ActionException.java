@@ -1,5 +1,5 @@
 /*
- *    Action Servlet is an extension of the WebMacro servlet framework, which 
+ *    Action Servlet is an extension of the WebMacro servlet framework, which
  *    provides an easy mapping of HTTP requests to methods of Java components.
  *
  *    Copyright (C) 1999-2001  Petr Toman
@@ -15,44 +15,26 @@
  *    Library General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with this library.  If not, write to the Free Software Foundation, 
+ *    along with this library.  If not, write to the Free Software Foundation,
  *    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package org.webmacro.as;
 
-import org.webmacro.servlet.HandlerException;
-
 /**
- * Exception thrown by {@link org.webmacro.as.ActionServlet ActionServlet} 
- * and action methods.
+ * Exception used by {@link org.webmacro.as.ActionServlet ActionServlet}.
  */
-public class ActionException extends HandlerException {
-    /** Nested exception or null. */
-    public final Throwable detail;
-
-    /** 
-     * Creates an exception with the specified message. 
+public class ActionException extends ASException {
+    /**
+     * Creates an exception with the specified message.
      */
     public ActionException(String reason) {
         super(reason);
-        this.detail = null;
     }
 
-    /** 
-     * Creates an exception with the specified message and nested exception. 
+    /**
+     * Creates an exception with the specified message and nested exception.
      */
     public ActionException(String reason, Throwable detail) {
-        super(reason);
-        this.detail = detail;
-    }
-    
-    /**
-     * Returns exception message.
-     */
-    public String getMessage() {
-        if (detail == null) return super.getMessage();
-            return super.getMessage() + "; nested exception is: " + 
-                   detail.getClass().getName() + ": " + 
-                   detail.getMessage();
+        super(reason, detail);
     }
 }

@@ -24,6 +24,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.lang.reflect.*;
 import java.util.*;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.*;
@@ -41,8 +42,6 @@ import org.webmacro.util.*;
  * Note: Because ActionServlet is no longer abstract class, subclassing is not necessary
  * unless you need to modify some of its functionality. This means the application can
  * be build only by components and as a main servlet is use directly ActionServlet.
- *
- * @see TypeHandler
  */
 public class ActionServlet extends WMServlet {
     /**
@@ -127,6 +126,11 @@ public class ActionServlet extends WMServlet {
     private Object[] _this = new Object[] {this};
 
     /**
+     * ActionServlet class name.
+     */
+    final static String CLASS_NAME = ActionServlet.class.getName();
+
+    /**
      * Sleeping period of session data reaper in miliseconds (default: 1 minute)
      */
     protected int sessionReaperTimeout = 60*1000;
@@ -143,62 +147,101 @@ public class ActionServlet extends WMServlet {
         /** Flag telling sessionReaper to stop. */
         private boolean finish;
 
+        /**
+         * Calls destroy() methods of component.
+         *
+         * @param id session id
+         */
+        private void destroyLastActionDataComponent(String id) {
+            LastActionData la = (LastActionData)lastActions.get(id);
+
+            if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
+                la.component instanceof Destroyed) {
+                log.debug("Destroying component '" + la.action.componentData.componentName + "'");
+
+                try {
+                    ((Destroyed)la.component).destroy();
+                } catch (Exception e) {
+                    log.error("Error while destroying component '" +
+                              la.action.componentData.componentName + "'", e);
+                }
+            }
+
+            lastActions.remove(id);
+            log.debug("Removed lastActionData of invalid session '" + id + "'");
+        }
+
+        /**
+         * Calls destroy() methods of components.
+         *
+         * @param id session id
+         */
+        private synchronized void destroySessionComponents(String id) {
+            Hashtable components = (Hashtable) sessionComponents.get(id);
+
+            // there will be no concurrent modifications, so we can iterate
+            for (Enumeration en = components.keys(); en.hasMoreElements(); ) {
+                String componentName = (String) en.nextElement();
+                Object component = components.get(componentName);
+
+                if (component instanceof Destroyed) {
+                    log.debug("Destroying component '" + componentName + "'");
+                    try {
+                        ((Destroyed)component).destroy();
+                    } catch (Exception e) {
+                        log.error("Error while destroying component '" + componentName + "'", e);
+                    }
+                }
+
+                components.remove(componentName);
+            }
+
+            sessionComponents.remove(id);
+            log.debug("Removed session components of invalid session '" + id + "'");
+        }
+
         public void run() {
             Enumeration keys1, keys2;
             String id = null;
 
             finish = false;
 
-            for (keys1 = lastActions.keys(), keys2 = sessionComponents.keys(); !finish; ) {
-                // clean last action data
-                try {
-                    id = (String) keys1.nextElement();
-                    ((HttpSession) sessions.get(id)).getId();
-                } catch(NullPointerException e) {
-                    LastActionData la = (LastActionData)lastActions.get(id);
-                    if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
-                        la.component instanceof Destroyed) ((Destroyed)la.component).destroy();
-
-                    lastActions.remove(id);
-                    log.debug("Removed lastActionData of invalid session");
-                } catch(IllegalStateException e) {
-                    LastActionData la = (LastActionData)lastActions.get(id);
-                    if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
-                        la.component instanceof Destroyed) ((Destroyed)la.component).destroy();
-
-                    lastActions.remove(id);
-                    log.debug("Removed lastActionData of invalid session");
-                } catch(NoSuchElementException e) {
-                    keys1 = lastActions.keys();
-                }
-
-                // clean session components
-                try {
-                    id = (String) keys2.nextElement();
-                    ((HttpSession) sessions.get(id)).getId();
-                } catch(NullPointerException e) {
-                    for (Enumeration en = ((Hashtable) sessionComponents.get(id)).elements(); en.hasMoreElements(); ) {
-                        Object component = en.nextElement();
-                        if (component instanceof Destroyed) ((Destroyed)component).destroy();
+            try {
+                for (keys1 = lastActions.keys(), keys2 = sessionComponents.keys(); !finish; ) {
+                    // clean last action data
+                    try {
+                        id = (String) keys1.nextElement();
+                        if (((HttpSession) sessions.get(id)).getId() == null)
+                            destroyLastActionDataComponent(id);
+                    } catch(NullPointerException e) {
+                        destroyLastActionDataComponent(id);
+                    } catch(IllegalStateException e) {
+                        destroyLastActionDataComponent(id);
+                    } catch(NoSuchElementException e) {
+                        keys1 = lastActions.keys();
                     }
+                    if (id != null) sessions.remove(id);
 
-                    sessionComponents.remove(id);
-                    log.debug("Removed session component of invalid session");
-                } catch(IllegalStateException e) {
-                    for (Enumeration en = ((Hashtable) sessionComponents.get(id)).elements(); en.hasMoreElements(); ) {
-                        Object component = en.nextElement();
-                        if (component instanceof Destroyed) ((Destroyed)component).destroy();
+                    // clean session components
+                    try {
+                        id = (String) keys2.nextElement();
+                        if (((HttpSession) sessions.get(id)).getId() == null)
+                            destroySessionComponents(id);
+                    } catch(NullPointerException e) {
+                        destroySessionComponents(id);
+                    } catch(IllegalStateException e) {
+                        destroySessionComponents(id);
+                    } catch(NoSuchElementException e) {
+                        keys2 = sessionComponents.keys();
                     }
+                    if (id != null) sessions.remove(id);
 
-                    sessionComponents.remove(id);
-                    log.debug("Removed session component of invalid session");
-                } catch(NoSuchElementException e) {
-                    keys2 = sessionComponents.keys();
+                    try {
+                        sleep(sessionReaperTimeout);
+                    } catch (InterruptedException e) {}
                 }
-
-                try {
-                    sleep(sessionReaperTimeout);
-                } catch (InterruptedException e) {}
+            } catch (Exception e) {
+                log.error("Unexpected error in session reaper", e);
             }
         }
     };
@@ -281,30 +324,33 @@ public class ActionServlet extends WMServlet {
      * Type handlers of String and primitive types.
      */
     {
-        typeHandlers.put("java.lang.String", new SimpleTypeHandler() {
+        class StringHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 return parameterValue;
             }
-        });
+        }
+        typeHandlers.put("java.lang.String", new StringHandler());
 
-        typeHandlers.put("org.webmacro.servlet.WebContext", new SimpleTypeHandler() {
+        class WebContextHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 return context;     // ignores parameterValue!!!
             }
-        });
+        }
+        typeHandlers.put("org.webmacro.servlet.WebContext", new WebContextHandler());
 
-        typeHandlers.put("boolean", new SimpleTypeHandler() {
+        class BooleanHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 if ("true".equals(parameterValue.trim())) return new Boolean(true);
                 if ("false".equals(parameterValue.trim())) return new Boolean(false);
                 throw new ConversionException("Cannot convert '" + parameterValue + "' to boolean");
             }
-        });
+        }
+        typeHandlers.put("boolean", new BooleanHandler());
 
-        typeHandlers.put("byte", new SimpleTypeHandler() {
+        class ByteHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -313,9 +359,10 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to byte", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("byte", new ByteHandler());
 
-        typeHandlers.put("double", new SimpleTypeHandler() {
+        class DoubleHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -324,9 +371,10 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to double", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("double", new DoubleHandler());
 
-        typeHandlers.put("float", new SimpleTypeHandler() {
+        class FloatHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -335,9 +383,10 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to float", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("float", new FloatHandler());
 
-        typeHandlers.put("int", new SimpleTypeHandler() {
+        class IntegerHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -346,9 +395,10 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to int", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("int", new IntegerHandler());
 
-        typeHandlers.put("long", new SimpleTypeHandler() {
+        class LongHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -357,9 +407,10 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to long", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("long", new LongHandler());
 
-        typeHandlers.put("short", new SimpleTypeHandler() {
+        class ShortHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 try {
@@ -368,23 +419,27 @@ public class ActionServlet extends WMServlet {
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to short", e);
                 }
             }
-        });
+        }
+        typeHandlers.put("short", new ShortHandler());
 
-        typeHandlers.put("char", new SimpleTypeHandler() {
+        class CharHandler implements SimpleTypeHandler {
             public Object convert(WebContext context, String parameterValue)
             throws ConversionException {
                 if (parameterValue.trim().length() != 1)
                     throw new ConversionException("Cannot convert '" + parameterValue + "' to char");
                 return new Character(parameterValue.trim().charAt(0));
             }
-        });
+        }
+        typeHandlers.put("char", new CharHandler());
     }
 
     /**
      * Initialization of ActionServlet. Must be called as <TT>super.start()</TT>,
      * if overriden.
+     *
+     * @exception ServletException if startup fails
      */
-    public void start() {
+    public void start() throws ServletException {
         log = getLog("ActionServlet");
         log.info("ActionServlet initialization startup");
 
@@ -404,16 +459,27 @@ public class ActionServlet extends WMServlet {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             docBuilder.setEntityResolver(new EntityResolver() {
-                private String DTD = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd";
+                private String PATH = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/";
+                private String DTD6 = "ActionServlet_0_6.dtd";
+                private String DTD7 = "ActionServlet_0_7.dtd";
+                private String DTD8 = "ActionServlet_0_8.dtd";
 
                 public InputSource resolveEntity (String publicId, String systemId) {
+                    String DTD = DTD8;
+
+                    if ((PATH + DTD6).equals(systemId)) DTD = DTD6;
+                        else if ((PATH + DTD7).equals(systemId)) DTD = DTD7;
+
                     try {
-                        if (DTD.equals(systemId)) {
-                            InputStream is = getClass().getResourceAsStream("/ActionServlet_0_7.dtd");
+                        if (systemId == null || (PATH + DTD).equals(systemId)) {
+                            InputStream is = getClass().getResourceAsStream("/" + DTD);
                             return new InputSource(new InputStreamReader(is));
-                        } else log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + DTD + "\"");
+                        }
+
+                        if (!DTD.equals(DTD8) || !(PATH + DTD).equals(systemId))
+                            log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + PATH + DTD8 + "\"");
                     } catch (Exception e) {
-                        log.warning("Error while loading 'ActionServlet_0_7.dtd'" + ": " + e.getMessage());
+                        log.error("Error while loading '" + DTD + "'" + ": " + e.getMessage(), e);
                     }
                     return null;
                 }
@@ -477,7 +543,7 @@ public class ActionServlet extends WMServlet {
 
                     for(int j=0; j < componentList.getLength(); j++) {
                         node = componentList.item(j);
-                        if (node.getNodeType() == Node.ELEMENT_NODE)    // <component>
+                        if ("component".equals(node.getNodeName()))
                             parseComponent((Element)node);
                     }
                 }
@@ -492,7 +558,7 @@ public class ActionServlet extends WMServlet {
 
                     for(int j=0; j < list2.getLength(); j++) {
                         node = list2.item(j);
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {   // <property>
+                        if ("property".equals(node.getNodeName())) {
                             String name = ((Element)node).getAttribute("name");
                             String value = ((Element)node).getAttribute("value");
                             String component = ((Element)node).getAttribute("component");
@@ -515,7 +581,7 @@ public class ActionServlet extends WMServlet {
 
                     for(int j=0; j < list2.getLength(); j++) {
                         node = list2.item(j);
-                        if (node.getNodeType() == Node.ELEMENT_NODE)    // <type-handler>
+                        if ("type-handler".equals(node.getNodeName()))
                             parseTypeHandler((Element)node);
                     }
                 } else if (node.getNodeName().equals("templates")) {
@@ -524,7 +590,7 @@ public class ActionServlet extends WMServlet {
                     for(int j=0; j < list2.getLength(); j++) {
                         node = list2.item(j);
 
-                        if (node.getNodeType() == Node.ELEMENT_NODE) {  // <template>
+                        if ("template".equals(node.getNodeName())) {
                             Template t = parseTemplate((Element)node);
 
                             // new session template (1)
@@ -564,7 +630,8 @@ public class ActionServlet extends WMServlet {
                     String componentName = ((Element)node).getAttribute("name");
                     ComponentData componentData = (ComponentData)componentClasses.get(componentName);
                     parseActions(componentName, componentData, node.getChildNodes());
-                    parseOnReturns(componentData, node.getChildNodes());
+                    parseOnReturns(componentData, componentData.onReturns,
+                                   componentData.onReturnsOutputVars, node.getChildNodes());
                 }
             }
 
@@ -603,7 +670,7 @@ public class ActionServlet extends WMServlet {
                         else _problem += s;
             }
 
-            log.error(e.toString(), e);
+            log.error(_problem, e);
         } catch (ParserConfigurationException e) {
             _problem = "XML parser exception: " + e.getMessage();
             log.error(_problem, e);
@@ -611,6 +678,8 @@ public class ActionServlet extends WMServlet {
             _problem = "Unexpected initialization error: " + e.getMessage();
             log.error(_problem, e);
         }
+
+        if (_problem != null) throw new ServletException(_problem);
     }
 
     /**
@@ -718,6 +787,13 @@ public class ActionServlet extends WMServlet {
             }
         }
 
+        try {
+            componentClass.getMethod("destroy", null);
+            if (!Destroyed.class.isAssignableFrom(componentClass))
+                log.warning("Component class '" + componentClassName + "' has destroy() method, " +
+                            "but does not implement org.webmacro.as.Destroyed interface");
+        } catch (NoSuchMethodException e) {}
+
         if (persistenceStr.equals("application")) persistence = ComponentData.PERSISTENCE_APPLICATION;
             else if (persistenceStr.equals("session")) persistence = ComponentData.PERSISTENCE_SESSION;
                else persistence = ComponentData.PERSISTENCE_REQUEST;
@@ -749,11 +825,11 @@ public class ActionServlet extends WMServlet {
                 Vector outputVariables = new Vector();
                 NodeList list2 = node.getChildNodes();
 
-                // <output-variable>s
+                // <output-variable>s of the action
                 for(int j=0; j < list2.getLength(); j++) {
                     node = list2.item(j);
 
-                    if (node.getNodeType() == Node.ELEMENT_NODE)
+                    if ("output-variable".equals(node.getNodeName()))
                         parseOutputVariable(outputVariables, (Element)node);
                 }
 
@@ -768,8 +844,15 @@ public class ActionServlet extends WMServlet {
 
                 if ("".equals(form)) form = null;
 
+                Hashtable onReturns = new Hashtable();
+                Hashtable onReturnsOutputVars = new Hashtable();
+
+                parseOnReturns(componentData, onReturns, onReturnsOutputVars, list2);
+
                 actions.put(action, new Action(this, form, action, componentData,
-                                               typeHandlers, method, outputVariables));
+                                               typeHandlers, method, outputVariables,
+                                               onReturns.isEmpty()?null:onReturns,
+                                               onReturnsOutputVars.isEmpty()?null:onReturnsOutputVars));
 
                 log.info("Action '" + (form == null?"": (form + "'.'")) + action +
                          "' bound to method '" + method + "' of '" +
@@ -781,7 +864,9 @@ public class ActionServlet extends WMServlet {
     /**
      * Parses &lt;on-return&gt;s node list.
      */
-    private void parseOnReturns(ComponentData componentData, NodeList list) throws InitException {
+    private void parseOnReturns(ComponentData componentData,
+                                Hashtable onReturns, Hashtable onReturnsOutputVars,
+                                NodeList list) throws InitException {
         String value, showTemplate;
 
         for(int i=0; i < list.getLength(); i++) {
@@ -792,7 +877,7 @@ public class ActionServlet extends WMServlet {
                 value = ((Element)node).getAttribute("value");
                 showTemplate = ((Element)node).getAttribute("show-template");
 
-                if (componentData.onReturns.containsKey(value))
+                if (onReturns.containsKey(value))
                    throw new InitException("Attribute 'value' must be unique among <on-return> " +
                                            "elements of a single component");
 
@@ -801,17 +886,17 @@ public class ActionServlet extends WMServlet {
 
                 // <output-variable>s
                 for(int j=0; j < list2.getLength(); j++) {
-                    node = list2.item(j);
+                    Node node2 = list2.item(j);
 
-                    if (node.getNodeType() == Node.ELEMENT_NODE)
-                        parseOutputVariable(outputVariables, (Element)node);
+                    if ("output-variable".equals(node2.getNodeName()))
+                        parseOutputVariable(outputVariables, (Element)node2);
                 }
 
                 if ("void".equals(value)) {
-                    componentData.onReturns.put("void", showTemplate);
+                    onReturns.put("void", showTemplate);
 
                     if (!outputVariables.isEmpty())
-                        componentData.onReturnsOutputVars.put("void", outputVariables);
+                        onReturnsOutputVars.put("void", outputVariables);
                 } else try {
                     Field f = componentData.componentClass.getField(value);
                     if (!Modifier.isPublic(f.getModifiers()) ||
@@ -819,10 +904,10 @@ public class ActionServlet extends WMServlet {
                         !Modifier.isFinal(f.getModifiers()))
                         throw new NoSuchFieldException();
 
-                    componentData.onReturns.put(f.get(null), showTemplate);
+                    onReturns.put(f.get(null), showTemplate);
 
                     if (!outputVariables.isEmpty())
-                        componentData.onReturnsOutputVars.put(f.get(null), outputVariables);
+                        onReturnsOutputVars.put(f.get(null), outputVariables);
                 } catch(NoSuchFieldException e) {
                     throw new InitException("No \"public static final\" field of name '" + value + "' found in component " +
                     "class '" + componentData.componentClass.getName() + "' (error while parsing <on-return> element)");
@@ -863,29 +948,35 @@ public class ActionServlet extends WMServlet {
      * if overriden.
      */
     protected void stop() {
+        // stop session reaper
         sessionReaper.finish = true;
+        sessionReaper.interrupt();
+        try {
+            sessionReaper.join();
+        } catch (InterruptedException e) {}
 
         // destroy components with "request" persistance
-        for (Enumeration e = lastActions.elements() ; e.hasMoreElements() ;) {
-            LastActionData la = (LastActionData)e.nextElement();
-            if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
-                la.component instanceof Destroyed) ((Destroyed)la.component).destroy();
-        }
-        lastActions.clear();
+        Object[] ids = lastActions.keySet().toArray();
+        for (int i=0; i < ids.length; i++)
+            sessionReaper.destroyLastActionDataComponent((String) ids[i]);
 
         // destroy components with "session" persistance
-        for (Enumeration e = sessionComponents.elements(); e.hasMoreElements(); )
-            for (Enumeration en = ((Hashtable) e.nextElement()).elements(); en.hasMoreElements(); ) {
-                Object component = en.nextElement();
-                if (component instanceof Destroyed) ((Destroyed)component).destroy();
-            }
-
-        sessionComponents.clear();
+        ids = sessionComponents.keySet().toArray();
+        for (int i=0; i < ids.length; i++)
+            sessionReaper.destroySessionComponents((String) ids[i]);
 
         // destroy components with "application" persistance
         for (Enumeration e = applicationComponents.elements() ; e.hasMoreElements() ;) {
             Object component = e.nextElement();
-            if (component instanceof Destroyed) ((Destroyed)component).destroy();
+
+            if (component instanceof Destroyed) {
+                log.debug("Destroying component of class '" + component.getClass().getName() + "'");
+                try {
+                    ((Destroyed)component).destroy();
+                } catch (Exception ex) {
+                    log.error("Error while destroying component of class '" + component.getClass().getName() + "'", ex);
+                }
+            }
         }
         applicationComponents.clear();
     }
@@ -909,30 +1000,32 @@ public class ActionServlet extends WMServlet {
      *
      * <LI> If the value of 'action' parameter is not assigned to any action method,
      * {@link #unassignedAction(WebContext, String, String) unassignedAction()} is called.
+     *
+     * <LI> If exception occurrs, {@link #onException(WebContext, String, String, ActionException)
+     * onException()} is called.
      * </OL>
      *
      * @return template to be displayed
-     * @exception ActionException on error of action method
-     * @exception HandlerException on other error
      * @see TypeHandler
      */
-    public final Template handle(WebContext context) throws HandlerException {
+    public Template handle(WebContext context) throws HandlerException {
         if (_problem != null) return error(context, _problem);
         HttpSession session = context.getSession();
 
         sessions.put(session.getId(), session);
         threadSessions.put(new Integer(System.identityHashCode(Thread.currentThread())), session.getId());
 
-        try {
-            // get actions hashtable from 'forms'
-            String formName = context.getForm("form");
-            Hashtable actions = (Hashtable) forms.get(formName == null? "": formName.trim());
+        // get actions hashtable from 'forms'
+        String formName = context.getForm("form");
+        Hashtable actions = (Hashtable) forms.get(formName == null? "": formName.trim());
 
-            String actionName;
+        String actionName = context.getForm("action");
+
+        try {
             Action action;
 
             // assign action
-            if ((actionName = context.getForm("action")) == null) {
+            if (actionName == null) {
                 // 'action' parameter not defined
 
                 // new session -> show default page
@@ -978,13 +1071,37 @@ public class ActionServlet extends WMServlet {
                 return action.invoke(context, action.componentData.componentName, component, params);
             } catch (ConversionException e) {
                 return evalOutputVars(conversionError(context, formName, actionName, e), context);
-            } catch (ActionException e) {
-                log.error(e.getMessage(), e);
-                return evalOutputVars(onException(context, formName, actionName, e), context);
+            }
+        } catch (Exception e) {
+            if (!(e instanceof ActionException))
+                e = new ActionException("Unexpected exception", e);
+
+            Template t = onException(context, formName, actionName, (ActionException)e);
+            try {
+                return evalOutputVars(t, context);
+            } catch (ActionException ex) {
+                log.error("Exception after invoking 'ActionServlet.onException()'", ex);
+                return t;
             }
         } finally {
+            context.put("SERVLET", context.getRequest().getRequestURI());
             threadSessions.remove(new Integer(System.identityHashCode(Thread.currentThread())));
         }
+    }
+
+    /**
+     * Returns action method assigned to the given <TT>form</TT> and <TTaction</TT>.
+     *
+     * @return null if not assigned
+     */
+    protected Method getActionMethod(String form, String action) {
+        Hashtable actions = (Hashtable) forms.get(form == null? "": form.trim());
+        if (actions == null) return null;
+
+        Action _action = (Action) actions.get(action == null? "": action.trim());
+        if (_action == null) return null;
+
+        return _action.method;
     }
 
     /**
@@ -1040,15 +1157,48 @@ public class ActionServlet extends WMServlet {
     }
 
     /**
-     * Returns component of a given class.
+     * Returns session of this thread.
+     *
+     * @return session id - even if the session has been invalidated
+     * @exception IllegalStateException if the method is called from a non-session thread
+     */
+    public String getSessionId() throws IllegalStateException {
+        String id = (String) threadSessions.get(new Integer(System.identityHashCode(Thread.currentThread())));
+
+        if (id == null)
+            throw new IllegalStateException("Cannot call 'ActionServlet.getSessionId()'" +
+                                            " from a non-session thread");
+
+        return id;
+    }
+
+    /**
+     * Invalidates this thread's session and forces {@link Destroyed#destroy() destroy()}-ing
+     * of components with "session" persistence (does nothing if called from a non-session thread).
+     */
+    public void destroySession() {
+        try {
+            String id = getSessionId();
+            HttpSession session = (HttpSession) sessions.get(id);
+            try {
+                session.invalidate();
+            } catch(IllegalStateException e) {}
+            sessionReaper.destroySessionComponents(id);
+        } catch(IllegalStateException e) {
+            log.warning("Calling 'ActionServlet.destroySession()' from a non-session thread does nothing", e);
+        }
+    }
+
+    /**
+     * Returns component of a given name.
      *
      * @param componentName corresponds to the component <TT>name</TT> attribute from ActionConfig
      * @param create true = the component will be created if doesn't yet exist
-     * @return null if component name is unknown or an instantiation error occurs
+     * @return null if the component name is unknown or an instantiation error occurs
      * @exception IllegalStateException if the method is called from a non-session thread
      *            (only for components with <TT>"session"</TT> persistence)
      */
-    public final Object getComponent(String componentName, boolean create) {
+    public Object getComponent(String componentName, boolean create) throws IllegalStateException {
         ComponentData componentData = (ComponentData) componentClasses.get(componentName);
 
         // wrong component name?
@@ -1078,11 +1228,14 @@ public class ActionServlet extends WMServlet {
                 break;
 
                 case ComponentData.PERSISTENCE_SESSION:
-                    String id = (String) threadSessions.get(new Integer(System.identityHashCode(Thread.currentThread())));
+                    String id = null;
 
-                    if (id == null)
+                    try {
+                        id = getSessionId();
+                    } catch (IllegalStateException e) {
                         throw new IllegalStateException("Cannot call 'ActionServlet.getComponent()'" +
-                              " from a non-session thread");
+                                                        " from a non-session thread");
+                    }
 
                     Hashtable components = (Hashtable) sessionComponents.get(id);
 
@@ -1107,13 +1260,13 @@ public class ActionServlet extends WMServlet {
                         else component = componentData.constructor.newInstance(new Object[] {this, componentData.componentName});
             }
         } catch(InvocationTargetException e) {
-            log.error("Cannot access component '" +
+            log.error("Error while invoking constructor of component '" +
                       componentData.componentName + "'", e);
         } catch(InstantiationException e) {
             log.error("Cannot instantiate component '" +
                       componentData.componentName + "'", e);
         } catch(IllegalAccessException e) {
-            log.error("Cannot invoke constructor of component '" +
+            log.error("Cannot access component '" +
                       componentData.componentName + "'", e);
         }
 
@@ -1122,13 +1275,15 @@ public class ActionServlet extends WMServlet {
 
     /**
      * Evaluates <TT>&lt;output-variables&gt;</TT> for template.
+     *
+     * @throws ActionException if evaluation fails
      */
-    private Template evalOutputVars(Template t, WebContext context) {
+    private Template evalOutputVars(Template t, WebContext context) throws ActionException {
         if (t != null) {
             String name = "error.wm".equals(t.getName()) || t.getName().endsWith(File.separator+"error.wm")?
                           "error.wm": (String) templatesNames.get(t);
 
-            Vector templateOutputVariables = (Vector) this.templateOutputVariables.get(name);
+            Vector templateOutputVariables = name == null? null: (Vector) this.templateOutputVariables.get(name);
 
             // set <output-variable>s of template
             if (templateOutputVariables != null)
@@ -1140,8 +1295,8 @@ public class ActionServlet extends WMServlet {
     }
 
     /**
-     * Method called upon a new session. By default returns a template, which has specified
-     * <A HREF="#el_templates"><TT>new-session</TT></A> attribute.
+     * Method called upon a new session. By default returns a template with
+     * <TT>new-session</TT> attribute set to "true".
      *
      * @return template to be displayed
      */
@@ -1170,9 +1325,9 @@ public class ActionServlet extends WMServlet {
      *                        action method. <B>Note:</B> 'convertedParams[0]' is context
      *                        from {@link #handle(WebContext) handle()} (is of type {@link
      *                        org.webmacro.servlet.WebContext WebContext}).
-     * @return error code or template to be displayed (if not null, the action 'actionName'
+     * @return error code or template to be displayed (if not null, the action 'action'
      *         should be invoked)
-	 * @exception ActionException never (by default)
+     * @exception ActionException never (by default)
      */
     protected Object beforeInvoke(WebContext context,
                                   String form,
@@ -1183,7 +1338,7 @@ public class ActionServlet extends WMServlet {
 
     /**
      * Method called right after each action method invocation. If not overriden - does
-     * nothing and returns the passed 'template'.
+     * nothing and returns the passed 'retValue'.
      *
      * @param context context from {@link #handle(WebContext) handle()} method
      * @param retValue value returned by action method
@@ -1193,8 +1348,8 @@ public class ActionServlet extends WMServlet {
      *                        action method. <B>Note:</B> 'convertedParams[0]' is context
      *                        from {@link #handle(WebContext) handle()} (is of type {@link
      *                        org.webmacro.servlet.WebContext WebContext}).
-     * @return error code or template to be displayed
-	 * @exception ActionException never (by default)
+     * @return error code or template to be displayed (or just retValue)
+     * @exception ActionException never (by default)
      */
     protected Object afterInvoke(Object retValue,
                                  WebContext context,
@@ -1223,7 +1378,7 @@ public class ActionServlet extends WMServlet {
 
     /**
      * Method called on parameter conversion error or when a HTTP parameter is
-     * missing or has a wrong name. Throws new ActionException by default.
+     * missing or has a wrong name. Logs exception and calls error() by default.
      *
      * @param context context from {@link #handle(WebContext) handle()} method
      * @param form form that 'action' belongs to (null if not specified)
@@ -1236,17 +1391,28 @@ public class ActionServlet extends WMServlet {
                                        String form,
                                        String action,
                                        ConversionException e) throws ActionException {
-        return error(context, "Conversion error when handling action '" +
+        log.error("Conversion error occurred when handling action '" +
+                  (form == null?"": (form + "'.'")) + action + 
+                  "' (field: '" + e.getParameterName() + "')", 
+                  e.detail == null || !(e.detail instanceof Exception)? e: (Exception) e.detail);
+
+        return error(context, "Conversion error occurred when handling action '" +
                     (form == null?"": (form + "'.'")) + action +
-                    "': " + e.getMessage());
+                    "' (field: '" + e.getParameterName() + "'): " +
+                    (e.detail == null? e.getMessage(): e.detail.getMessage()));
     }
 
     /**
-     * Method called if action method throws an exception. Calls error() by default.
+     * Method called if {@link #beforeInvoke(WebContext, String, String, Object[])
+     * beforeInvoke()}, action method or {@link #afterInvoke(Object, WebContext,
+     * String, String, Object[]) afterInvoke()} throw an exception.
+     * Logs exception and calls error() by default.
      *
      * @param context context from {@link #handle(WebContext) handle()} method
      * @param form form that 'action' belongs to (null if not specified)
      * @param action action which cannot be called due to the error
+     *        (may be null if error occurrs while evaluating output variable
+     *        and the action is not known)
      * @param e exception which caused the error
      * @return template to be displayed
      */
@@ -1254,7 +1420,14 @@ public class ActionServlet extends WMServlet {
                                    String form,
                                    String action,
                                    ActionException e) {
-        return error(context, e.getMessage());
+        if (action == null)
+            log.error("ActionServlet.onException(): " + e.getMessage(),
+                      e.detail == null || !(e.detail instanceof Exception)? e: (Exception) e.detail);
+        else log.error("ActionServlet.onException(): " + e.getMessage(),
+                       e.detail == null || !(e.detail instanceof Exception)? e: (Exception) e.detail);
+
+        return error(context, e.detail == null? e.getMessage():
+                     e.detail.getClass().getName() + ": " + e.detail.getMessage());
     }
 
     /**

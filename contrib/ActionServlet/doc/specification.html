@@ -45,7 +45,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.7<P>
+version 0.8<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -75,10 +75,10 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
        <DT>1.5.5 <A HREF="#el_components">&lt;components&gt; element</A>
           <DL>
           <DT>1.5.5.1 <A HREF="#el_action">&lt;action&gt; elements</A>
-          <DT>1.5.5.2 <A HREF="#el_onreturn">&lt;on-return&gt; elements</A>
           </DL>
        <DT>1.5.6 <A HREF="#el_outvar">&lt;output-variable&gt; elements</A>
-       <DT>1.5.7 <A HREF="#allinone">All-in-one example</A>
+       <DT>1.5.7 <A HREF="#el_onreturn">&lt;on-return&gt; elements</A>
+       <DT>1.5.8 <A HREF="#allinone">All-in-one example</A>
        </DL>
     <DT>
     </DL>
@@ -157,7 +157,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  <PRE>public int login(String <B>userName</B>, String <B>password</B>)</PRE>
 
  Note: A similar effect can be achieved by GET method - using a link like:<BR>
- <TT>&lt;A&nbsp;HREF="LoginServlet?action=Login&amp;userName=John+password=18x79Z"&gt;login as John&lt;/A&gt;</TT><P>
+ <TT>&lt;A&nbsp;HREF="$SERVLET?action=Login&amp;userName=John+password=18x79Z"&gt;login as John&lt;/A&gt;</TT><P>
 
  <A NAME="tha"></A>
  <H3>1.4 Type handlers</H3>
@@ -176,7 +176,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  <PRE>
  &lt;?xml version="1.0"?&gt;
  &lt;!DOCTYPE application SYSTEM
-  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd"&gt;
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd"&gt;
 
  &lt;application&gt;
     &lt;properties&gt;
@@ -355,9 +355,38 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  </PRE>
  </UL>
 
- <B>1.5.5.2 Zero or more <A NAME="el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements</B><P>
- can be specified inside <TT>&lt;component&gt;</TT> element after <TT>&lt;action&gt;</TT>s.
- Each <TT>&lt;on-return&gt;</TT> has two attributes:
+ <B>1.5.6 Zero or more <A NAME="el_outvar"><TT>&lt;output-variable&gt;</TT></A> elements</B><P>
+ can be specified inside <TT>&lt;template&gt;</TT>, <TT>&lt;action&gt;</TT> and 
+ <A HREF="#el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements. It has four attributes:<P>
+
+ <UL>
+ <LI><TT>name</TT> - determines name of the template $variable,
+ <LI><TT>component</TT> (optional) - reffers to the component's <TT>name</TT> from which the
+     <TT>value</TT> taken (the component is instantiated, if it doesn't yet exist),
+ <LI><TT>value</TT> - operator applied to the <TT>component</TT> (a method call, for example)
+     or to a $variable or it can be directly boolean, int, double or String value.
+ <LI><TT>if</TT> (optional) - specifies a condition which must be true in order to evaluate
+     the $variable.
+ </UL><P>
+
+ Note 1: In a single element, output variables are evaluated in the specified order.<BR>
+ Note 2: First are evaluated output variables of <TT>&lt;action&gt;</TT>, then of 
+         <TT>&lt;on-return&gt;</TT> and at last of <TT>&lt;template&gt;</TT>.
+
+ <P><B>Example:</B>
+
+ <PRE>
+ &lt;output-variable name="user" component="Authenticator" value="getUser()"/&gt;
+ &lt;output-variable name="name" value="$user.Name"/&gt;
+ &lt;output-variable name="number" value="123" if="$name == &amp;quot;admin&amp;quot;"/&gt;</PRE>
+
+ See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
+
+ <B>1.5.7 Zero or more <A NAME="el_onreturn"><TT>&lt;on-return&gt;</TT></A> elements</B><P>
+ can be specified inside <TT>&lt;component&gt;</TT> element after <TT>&lt;action&gt;</TT>s
+ or inside <TT>&lt;action&gt;</TT> after <TT>&lt;output-variable&gt;</TT>s (the latter case 
+ is used to override component's <TT>&lt;on-return&gt;</TT>s). Each <TT>&lt;on-return&gt;</TT> 
+ has two attributes:
 
  <UL>
  <LI><TT>value</TT> - contains the <EM>name</EM>(!) of <TT>public static final</TT> field
@@ -372,51 +401,43 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  <PRE>
  public class MyComponent {
     public static final int <B>OK</B> = 0;
+
+    int firstMethod() {
+        return <B>OK</B>;
+    }
+
+    int secondMethod() {
+        return <B>OK</B>;
+    }
+
+    <B>void</B> thirdMethod() {}
  }
 
  &lt;component class="MyComponent" ...&gt;
-    &lt;action .../&gt;
+    &lt;action name="action1" method="firstMethod()"/&gt;
+    &lt;action name="action2" method="secondMethod()"&gt;
+       &lt;on-return value="<B>OK</B>" show-template="AnotherTemplate.wm"/&gt;
+    &lt;/action&gt;
+    &lt;action name="action3" method="thirdMethod()"/&gt;
+
     &lt;on-return value="<B>OK</B>" show-template="SomeTemplate.wm"/&gt;
-    &lt;on-return value="<B>void</B>" show-template="OtherTemplate.wm"/&gt;
- &lt;/component&gt;
- </PRE>
+    &lt;on-return value="<B>void</B>" show-template="YetAnotherTemplate.wm"/&gt;
+ &lt;/component&gt;</PRE>
 
- <B>1.5.6 Zero or more <A NAME="el_outvar"><TT>&lt;output-variable&gt;</TT></A> elements</B><P>
- can be specified inside <TT>&lt;template&gt;</TT>, <TT>&lt;action&gt;</TT> <TT>&lt;on-return&gt;</TT>
- and elements. It has four attributes:<P>
+ If "action1" is invoked, "SomeTemplate.wm" will be displayed.
+ If "action2" is invoked, "AnotherTemplate.wm" will be displayed.
+ If "action3" is invoked, "YetAnotherTemplate.wm" will be displayed.<P>
 
- <UL>
- <LI><TT>name</TT> - determines name of the template $variable,
- <LI><TT>component</TT> (optional) - reffers to the component's <TT>name</TT> from which the
-     <TT>value</TT> taken (the component is instantiated, if it doesn't yet exist),
- <LI><TT>value</TT> - operator applied to the <TT>component</TT> (a method call, for example)
-     or to a $variable or it can be directly boolean, int, double or String value.
- <LI><TT>if</TT> (optional) - specifies a condition which must be true in order to evaluate
-     the $variable.
- </UL><P>
-
- Note 1: Output variables are evaluated in the specified order.<BR>
- Note 2: First are set output variables of <TT>&lt;action&gt;</TT> and at last of
-         <TT>&lt;template&gt;</TT>.
-
- <P><B>Example:</B>
-
- <PRE>
- &lt;output-variable name="user" component="Authenticator" value="getUser()"/&gt;
- &lt;output-variable name="name" value="$user.Name"/&gt;
- &lt;output-variable name="number" value="123" if="$name == &amp;quot;admin&amp;quot;"/&gt;</PRE>
-
-See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
 
  <A NAME="allinone"></A>
- <B>1.5.7 All-in-one example</B><P>
+ <B>1.5.8 All-in-one example</B><P>
 
  An example of ActionConfig may look like this:
 
  <PRE>
  &lt;?xml version="1.0"?&gt;
  &lt;!DOCTYPE application SYSTEM
-  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd"&gt;
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd"&gt;
 
  &lt;application&gt;
     &lt;properties&gt;
@@ -492,26 +513,30 @@ See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
      ActionServlet is called.
  <LI>HTTP parameter values are converted to the values of Java types via type handlers.
  <LI>If overriden, <A HREF="api/org/webmacro/as/ActionServlet.html#beforeInvoke(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object[])"><CODE>beforeInvoke()</CODE></A> method is called.
- <LI>Appropriate action method is invoked (determined by <TT>&lt;action&gt;</TT> element).
- <LI>If overriden, <A HREF="api/org/webmacro/as/ActionServlet.html#afterInvoke(java.lang.Object, org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object[])"><CODE>afterInvoke()</CODE></A> method is called.
- <LI>If the return value of action method does not match any value of
+ <LI>Appropriate action method is invoked - determined by <TT>&lt;action&gt;</TT> element.
+ <LI>If overriden, <A HREF="api/org/webmacro/as/ActionServlet.html#afterInvoke(java.lang.Object, org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object[])"><CODE>afterInvoke()</CODE></A> method is called (may alter return value from action method).
+ <LI>If the return value  does not match any value of
  public static final field of the component, then <A HREF="api/org/webmacro/as/ActionServlet.html#onReturn(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, java.lang.Object)"><CODE>onReturn()</CODE></A>
  method is called (otherwise <TT>&lt;on-return&gt;</TT> elements apply).
- <LI>All <TT>&lt;output-variable&gt;</TT>s for the action and to-be-shown template are set.
+ <LI>All <TT>&lt;output-variable&gt;</TT>s for the action, on-return and to-be-shown template are evaluated.
+ <LI><TT>$SERVLET</TT> variable is set to servlet path (for any returned template).
  </OL>
 
- <P>Exceptions to this schema happen if:<P>
+ <P>Exceptions to this schema happen:<P>
 
  <UL>
- <LI>conversion error occurrs - then <A HREF="api/org/webmacro/as/ActionServlet.html#conversionError(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ConversionException)"><CODE>conversionError()</CODE></A>
+ <LI>if <CODE>beforeInvoke()</CODE> was called and returned a non-null value - then steps 6 and 7 are skipped,
+
+ <LI>if conversion error occurrs - then <A HREF="api/org/webmacro/as/ActionServlet.html#conversionError(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ConversionException)"><CODE>conversionError()</CODE></A>
      method is called,
- <LI>'action' parameter is not defined in the HTTP request or is not defined for
+ <LI>if 'action' parameter is not defined in the HTTP request or is not defined for
      specified 'form' - then <A HREF="api/org/webmacro/as/ActionServlet.html#unassignedAction(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String)"><CODE>unassignedAction()</CODE></A> is called,
- <LI>an exception is thrown by action method - then <A HREF="api/org/webmacro/as/ActionServlet.html#onException(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ActionException)"><CODE>onException()</CODE></A>
+ <LI>if an exception is thrown by <TT>beforeInvoke()</TT>, action method or <TT>afterInvoke()</TT> or exception occurrs while evaluating
+     an <TT>&lt;output-variable&gt;</TT> or its '<TT>if</TT>' condition - then <A HREF="api/org/webmacro/as/ActionServlet.html#onException(org.webmacro.servlet.WebContext, java.lang.String, java.lang.String, org.webmacro.as.ActionException)"><CODE>onException()</CODE></A>
      method is called.
  </UL><P>
 
- Note: ActionServlet informs components when they are no longer used - see <A HREF="api/org/webmacro/as/Destroyed.html"><CODE>Destroyed</CODE></A> interface.
+ Note: ActionServlet notifies components when they are no longer used - see <A HREF="api/org/webmacro/as/Destroyed.html"><CODE>Destroyed</CODE></A> interface.
 
  <P><A NAME="usage"></A>
  <FONT FACE="Arial" COLOR="green"><H2>3. Development using ActionServlet (roles)</H2></FONT>
