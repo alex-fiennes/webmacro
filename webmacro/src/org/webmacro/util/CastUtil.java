@@ -52,7 +52,7 @@ public class CastUtil extends java.lang.Object {
             c = new Character((char) ((Number) o).intValue());
          }
          catch (Exception e) {
-            throw new IllegalArgumentException("Not a valid char: " + o);
+             throw new IllegalArgumentException("Not a valid char: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
          }
       }
       else if (o instanceof String) {
@@ -84,7 +84,7 @@ public class CastUtil extends java.lang.Object {
          v = new Byte((byte) i);
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid byte: " + o);
+          throw new IllegalArgumentException("Not a valid byte: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return v;
    }
@@ -97,7 +97,7 @@ public class CastUtil extends java.lang.Object {
          v = new Short((short) i);
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid short: " + o);
+          throw new IllegalArgumentException("Not a valid short: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return v;
    }
@@ -109,7 +109,7 @@ public class CastUtil extends java.lang.Object {
          i = new Integer(o.toString());
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid int: " + o);
+          throw new IllegalArgumentException("Not a valid int: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return i;
    }
@@ -121,7 +121,7 @@ public class CastUtil extends java.lang.Object {
          l = new Long(o.toString());
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid long: " + o);
+         throw new IllegalArgumentException("Not a valid long: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return l;
    }
@@ -133,7 +133,7 @@ public class CastUtil extends java.lang.Object {
          f = new Float(o.toString());
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid float: " + o);
+          throw new IllegalArgumentException("Not a valid float: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return f;
    }
@@ -145,7 +145,7 @@ public class CastUtil extends java.lang.Object {
          d = new Double(o.toString());
       }
       catch (Exception e) {
-         throw new IllegalArgumentException("Not a valid double: " + o);
+          throw new IllegalArgumentException("Not a valid double: " + ((o==null) ? "null" : (o.toString() + "; type=" + o.getClass().getName()))  );
       }
       return d;
    }
