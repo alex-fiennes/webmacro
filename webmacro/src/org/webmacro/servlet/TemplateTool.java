@@ -98,7 +98,7 @@ public class TemplateTool implements org.webmacro.ContextTool
         /** Creates a MacroTemplate from a file reference with a
          * new context.
          * @param fileRef a reference to the template file
-         * @throws ResourceException if the file cannot be found or parsed
+         * @throws org.webmacro.ResourceException if the file cannot be found or parsed
          * @return a new MacroTemplate
          */
         public MacroTemplate fromFile (String fileRef)
@@ -174,7 +174,7 @@ public class TemplateTool implements org.webmacro.ContextTool
         {
             synchronized (_context)
             {
-                return _template.evaluate(_context);
+                return _template.getString(_context);
             }
         }
 

@@ -72,7 +72,6 @@ public class WMEval
     private Template rule;
     private OutputStream out = System.out;
     private Context context;
-    private boolean useWebContext = false;
     /**
      * If an output file is not specified as an argument, it
      * must be found in the context under this key.
@@ -218,11 +217,8 @@ public class WMEval
      */
     public void eval (Context context, Template rule, OutputStream out, String encoding) throws Exception
     {
-        FastWriter w;
-        w = context.getBroker().getFastWriter(out, encoding);
-        context.put("FastWriter", w); // allow template writers to access the output stream!
-        rule.write(w, context);
-        w.flush();
+        // context.put("FastWriter", w); // allow template writers to access the output stream!
+        rule.write(out, encoding, context);
     }
 
     /**
@@ -230,13 +226,13 @@ public class WMEval
      * and returns the value. If an output file is specified, the value
      * is written out as well.
      * @param templateName The name of the template.
-     * @param output An optional output.
+     * @param out An optional output stream.
      * @return The output from the evaluated template
      */
     public String eval (String templateName, OutputStream out) throws Exception
     {
         Template t = wm.getTemplate(templateName);
-        String val = t.evaluate(context).toString();
+        String val = t.getString(context);
         if (out != null)
         {
             out.write(val.getBytes());
@@ -265,8 +261,7 @@ public class WMEval
      * <b>Note:</b> This method places "FastWriter" in the context
      * so you can write out to the stream.
      * @param templateName The name of the template.
-     * @param response The servlet response object and its output stream
-     * @return The output from the evaluated template
+     * @param resp The servlet response object and its output stream
      */
     public void eval (String templateName, HttpServletRequest req,
                       HttpServletResponse resp) throws ServletException
@@ -274,18 +269,14 @@ public class WMEval
         try
         {
             context = wm.getWebContext(req, resp);
-            String encoding = (String) wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            String encoding = wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
             if (encoding == null)
             {
                 encoding = resp.getCharacterEncoding();
             }
-            FastWriter w = context.getBroker().getFastWriter(out, encoding);
             Template t = wm.getTemplate(templateName);
-            context.put("FastWriter", w); // allow template writers to access the output stream!
-            t.write(w, context);
-            resp.setContentLength(w.size());
-            w.writeTo(resp.getOutputStream());
-            w.flush();
+            // context.put("FastWriter", w); // allow template writers to access the output stream!
+            t.write(resp.getOutputStream(), encoding, context);
         }
         catch (Exception e)
         {
@@ -300,7 +291,7 @@ public class WMEval
      */
     public String eval (Context context, Template rule) throws Exception
     {
-        return rule.evaluate(context).toString();
+        return rule.getString(context);
     }
 
     /**
@@ -317,7 +308,7 @@ public class WMEval
                         String outputFileName, boolean append, String encoding) throws Exception
     {
         Template rule = wm.getTemplate(templateResourceFile);
-        String value = rule.evaluate(context).toString();
+        String value = rule.getString(context);
         // output the file
         if (outputFileName == null)
             outputFileName = (String) context.get(outputContextKey);

@@ -23,10 +23,10 @@
 
 package org.webmacro;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
-public interface Template extends Macro, Visitable
+public interface Template extends Visitable
 {
 
     /**
@@ -91,5 +91,17 @@ public interface Template extends Macro, Visitable
      * @return
      */
     public Map getMacros ();
+
+    public void write (OutputStream out, Context context)
+            throws PropertyException, IOException;
+
+    public void write (OutputStream out, String encoding, Context context)
+            throws PropertyException, IOException;
+
+    public String getString(Context context)
+            throws PropertyException;
+
+    public byte[] getBytes(String encoding, Context context)
+            throws PropertyException;
 }
 

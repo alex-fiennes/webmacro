@@ -249,6 +249,7 @@ public class WM implements WebMacro
      *           this will be your ServletOutputStream.  It can be null if
      *           only want the fast writer to buffer the output.
      * @param enctype the Encoding type to use
+     * @deprecated
      */
     final public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException
@@ -419,9 +420,7 @@ public class WM implements WebMacro
             encoding = getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
 
         Template tmpl = getTemplate(templateName);
-        FastWriter fw = getFastWriter(out, encoding);
-        tmpl.write(fw, context);
-        fw.close();
+        tmpl.write(out, encoding, context);
     }
 
     /**

@@ -365,7 +365,7 @@ public class Broker
                     Context argContext = new Context(this);
                     try
                     {
-                        tmpl.evaluate(argContext);
+                        tmpl.getString(argContext);
                     }
                     catch (Exception e)
                     {
@@ -678,6 +678,7 @@ public class Broker
      *           this will be your ServletOutputStream.  It can be null if
      *           only want the fast writer to buffer the output.
      * @param enctype the Encoding type to use
+     * @deprecated
      */
     public final FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException

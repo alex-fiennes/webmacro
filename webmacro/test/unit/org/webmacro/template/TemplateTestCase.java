@@ -93,7 +93,7 @@ public abstract class TemplateTestCase extends TestCase
      * Evaluates a template and returns its value. */
     public String executeTemplate (Template template) throws Exception
     {
-        return template.evaluate(_context).toString();
+        return template.getString(_context);
     }
 
 
@@ -112,10 +112,7 @@ public abstract class TemplateTestCase extends TestCase
     {
         Template template = new StringTemplate(_wm.getBroker(), templateText);
         template.parse();
-        FastWriter fw = FastWriter.getInstance(_wm.getBroker(), null, "UTF8");
-        template.write(fw, _context);
-        String output = fw.toString();
-        fw.close();
+        String output = template.getString(_context);
         return output;
     }
 

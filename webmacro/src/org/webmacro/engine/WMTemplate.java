@@ -25,8 +25,7 @@ package org.webmacro.engine;
 
 import org.webmacro.*;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -240,12 +239,12 @@ abstract public class WMTemplate implements Template
      * such as unable to read template or unable to introspect the context
      * then this method will return a null string.
      */
-    public final Object evaluate (Context data) throws PropertyException
+    public final String getString (Context context) throws PropertyException
     {
         try
         {
             FastWriter fw = FastWriter.getInstance(_broker);
-            write(fw, data);
+            write(fw, context);
             String ret = fw.toString();
             fw.close();
             return ret;
@@ -258,16 +257,45 @@ abstract public class WMTemplate implements Template
     }
 
     /**
-     * A macro has a write method which takes a context and applies
-     * it to the macro to create a resulting String value, which is
-     * then written to the supplied stream. Something will always be
-     * written to the stream, even if the operation is not really
-     * successful because of a parse error (an error message will
-     * be written to the stream in that case.)
-     * <p>
-     * @exception IOException if there is a problem writing to the Writer
+     * Parse the Template against the supplied context data and
+     * return it as a byte array. If the operation fails for some reason,
+     * such as unable to read template or unable to introspect the context
+     * then this method will return a null string.
      */
-    public final void write (FastWriter out, Context data)
+    public final byte[] getBytes (String encoding, Context context) throws PropertyException
+    {
+        try
+        {
+            FastWriter fw = FastWriter.getInstance(_broker, encoding);
+            write(fw, context);
+            byte[] ret = fw.toByteArray();
+            fw.close();
+            return ret;
+        }
+        catch (IOException e)
+        {
+            _log.error("Template: Could not write to ByteArrayOutputStream!", e);
+            return null;
+        }
+    }
+
+    public void write(OutputStream out, Context context)
+            throws PropertyException, IOException {
+        FastWriter fw = FastWriter.getInstance(_broker, out);
+        write(fw, context);
+        fw.flush();
+        fw.close();
+    }
+
+    public void write(OutputStream out, String encoding, Context context)
+            throws PropertyException, IOException {
+        FastWriter fw = FastWriter.getInstance(_broker, out, encoding);
+        write(fw, context);
+        fw.flush();
+        fw.close();
+    }
+
+    public final void write (FastWriter out, Context context)
             throws IOException, PropertyException
     {
         try
@@ -280,18 +308,18 @@ abstract public class WMTemplate implements Template
         catch (TemplateException e)
         {
             _log.error("Template: Unable to parse template: " + this, e);
-            out.write(data.getEvaluationExceptionHandler()
+            out.write(context.getEvaluationExceptionHandler()
                     .errorString("Template failed to parse. Reason: \n"
                     + e.toString()));
         }
 
         try
         {
-            _content.write(out, data);
+            _content.write(out, context);
         }
         catch (PropertyException e)
         {
-            e.setContextLocation(data.getCurrentLocation());
+            e.setContextLocation(context.getCurrentLocation());
             throw e;
         }
         catch (IOException ioe)
@@ -304,7 +332,7 @@ abstract public class WMTemplate implements Template
                     "Template: Exception evaluating template " + this;
             _log.warning(warning, e);
 
-            out.write(data.getEvaluationExceptionHandler()
+            out.write(context.getEvaluationExceptionHandler()
                     .warningString("Could not interpret template. Reason: \n"
                     + warning + "\n" + e.toString()));
         }

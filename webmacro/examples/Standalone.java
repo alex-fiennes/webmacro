@@ -138,23 +138,12 @@ public class Standalone extends HttpServlet
             // get the template we intend to execute
             Template t = _wm.getTemplate("standalone.wm");
 
-            // Create FastWriter for fast output encoding
-            FastWriter fw = _wm.getFastWriter(resp.getOutputStream(),
-                                           resp.getCharacterEncoding());
             // write the template to the output, using our context
-            t.write(fw, c);
-            fw.close();
+            t.write(resp.getOutputStream(), resp.getCharacterEncoding(), c);
          } catch (org.webmacro.ResourceException e) {
-             FastWriter out = _wm.getFastWriter(resp.getOutputStream(),
-                                             resp.getCharacterEncoding());
-             
-             out.write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");
-             out.close();
+             resp.getWriter().write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");
          } catch (org.webmacro.ContextException e) {
-             FastWriter out = _wm.getFastWriter(resp.getOutputStream(),
-                                             resp.getCharacterEncoding());
-             out.write("ERROR!  Could not locate required data in the Context.");
-             out.close();
+             resp.getWriter().write("ERROR!  Could not locate required data in the Context.");
          }
       } catch (java.io.IOException e) {
           // what else can we do?

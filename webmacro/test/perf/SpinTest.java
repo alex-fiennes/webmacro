@@ -1,10 +1,9 @@
 
+import java.io.*;
+
 import org.webmacro.Context;
-import org.webmacro.FastWriter;
 import org.webmacro.Template;
 import org.webmacro.WM;
-
-import java.io.FileOutputStream;
 
 public class SpinTest
 {
@@ -31,10 +30,7 @@ public class SpinTest
 
             Template t = wm.getTemplate(template);
 
-            FastWriter fw = new FastWriter(wm.getBroker(), new FileOutputStream("/dev/null"), "US-ASCII");
-
-            t.write(fw, c);
-            fw.close();
+            t.write(new FileOutputStream("/dev/null"), "US-ASCII", c);
         }
 
         loopEnd = System.currentTimeMillis();

@@ -192,15 +192,10 @@ public class StreamTemplate extends WMTemplate
                     new InputStreamReader(System.in));
             t1.parse();
 
-            FastWriter w = FastWriter.getInstance(wm.getBroker(), encoding);
-
-            t1.write(w, context);
             System.out.println("*** RESULT ***");
-            w.writeTo(System.out);
-            w.close();
-            context.clear();
+            t1.write(System.out, encoding, context);
             System.out.println("*** DONE ***");
-            //System.out.println(result);
+            context.clear();
 
         }
         catch (Exception e)

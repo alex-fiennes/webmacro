@@ -31,9 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
@@ -248,8 +246,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 try
                 {
                     resp.setContentType("text/html");
-                    FastWriter out = getFastWriter(resp.getOutputStream(),
-                            resp.getCharacterEncoding());
+                    Writer out = resp.getWriter();
 
                     out.write("<html><head><title>WebMacro Error</title></head>");
                     out.write("<body><h1><font color=\"red\">WebMacro Error: ");
@@ -538,9 +535,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             encoding = getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
 
         Template tmpl = getTemplate(templateName);
-        FastWriter fw = getFastWriter(out, encoding);
-        tmpl.write(fw, context);
-        fw.close();
+        tmpl.write(out, encoding, context);
     }
    
    
@@ -582,16 +577,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 if (_log.loggingDebug())
                     _log.debug("Using output encoding " + encoding);
             
-                // get a fastwriter with no output stream, forcing
-                // fastwriter to buffer the output internally.
+                // get the bytes before calling getOutputStream
                 // this is necessary to be compatible with JSDK 2.3
                 // where you can't call setContentType() after getOutputStream(),
                 // which could be happening during the template evaluation
-                fw = FastWriter.getInstance(_broker, encoding);
-                tmpl.write(fw, c);
+                byte[] bytes = tmpl.getBytes(encoding, c);
             
                 // now write the FW buffer to the response output stream
-                writeFastWriter(resp, fw);
+                writeResponseBytes(resp, bytes, encoding);
             }
             finally
             {
@@ -637,12 +630,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                         + "TemplatePath in your webmacro.properties file."))
                         + "\n<pre>" + e + "</pre>\n");
 
-                if (fw == null)
-                    fw = FastWriter.getInstance(_broker);
-                fw.reset(fw.getOutputStream());
-                errorTemplate.write(fw, c);
-                // now write the FW buffer to the response output stream
-                writeFastWriter(c.getResponse(), fw);
+                String err = errorTemplate.getString(c);
+                c.getResponse().getWriter().write(err);
             }
             catch (Exception errExcept)
             {
@@ -673,9 +662,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * the response's OutputStream first and if this fails, fall back
      * to its Writer.
      * @param response where to write fast writer to
-     * @param fw FastWriter, that has response buffered
+     * @param bytes the bytes to write
      */
-    private void writeFastWriter (HttpServletResponse response, FastWriter fw)
+    private void writeResponseBytes (HttpServletResponse response, byte[] bytes, String encoding)
             throws IOException
     {
         OutputStream out;
@@ -697,14 +686,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             out = null;
             _log.debug("Using Writer instead of OutputStream");
         }
-        response.setContentLength(fw.size());
+        response.setContentLength(bytes.length);
         if (out != null)
         {
-            fw.writeTo(out);
+            out.write(bytes);
         }
         else
         {
-            response.getWriter().write(fw.toString());
+            response.getWriter().write(new String(bytes, encoding));
         }
     }
    
@@ -832,6 +821,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * @param out The output stream the FastWriter should write to.  Typically
      *           this will be your ServletOutputStream
      * @param enctype the Encoding type to use
+     * @deprecated
      */
     public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException

@@ -115,10 +115,7 @@ public class TestMultipleInstances extends TestCase
     {
         Broker b = wm.getBroker();
         Template template = new StringTemplate(b, templateText);
-        FastWriter fw = FastWriter.getInstance(b, null, "UTF8");
-        template.write(fw, context);
-        String output = fw.toString();
-        fw.close();
+        String output = template.getString(context);
         return output;
     }
 }

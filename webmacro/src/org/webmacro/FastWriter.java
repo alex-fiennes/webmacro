@@ -412,7 +412,7 @@ public class FastWriter extends Writer
         _bstream.write(rawBytes, offset, len);
     }
 
-    public void bflush ()
+    private void bflush ()
     {
         try
         {
@@ -542,6 +542,16 @@ public class FastWriter extends Writer
             }
         }
         return new FastWriter(broker, out, encoding);
+    }
+
+    /**
+     * Get a new FastWriter. You must then call writeTo(..) before
+     * attempting to write to the FastWriter.
+     */
+    public static FastWriter getInstance (Broker broker, OutputStream out)
+            throws UnsupportedEncodingException
+    {
+        return getInstance(broker, out, SAFE_UNICODE_ENCODING);
     }
 
     /**

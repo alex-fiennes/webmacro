@@ -145,7 +145,7 @@ public abstract class EncodingTestCase extends TestCase
         assertEquals("Input Encoding is not " + encoding,
                 wm.getConfig("TemplateEncoding"), encoding);
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
-        String evaluated = t.evaluate(getContext(wm)).toString();
+        String evaluated = t.getString(getContext(wm));
         assertEquals("Template evaluated to \"" + evaluated + "\" instead of \"" + expected + "\"",
                 evaluated, expected);
     }
@@ -157,10 +157,7 @@ public abstract class EncodingTestCase extends TestCase
                 wm.getConfig("TemplateEncoding"), encoding);
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        FastWriter fw = wm.getFastWriter(bos, encoding);
-        t.write(fw, getContext(wm));
-        fw.flush();
-        fw.close();
+        t.write(bos, encoding, getContext(wm));
         assertByteArrayEquals(bos.toByteArray(), expected.getBytes(encoding));
     }
 
@@ -171,10 +168,7 @@ public abstract class EncodingTestCase extends TestCase
                 wm.getConfig("TemplateEncoding"), encoding);
         Template t = wm.getTemplate(TEMPLATE_FILENAME);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        FastWriter fw = wm.getFastWriter(bos, "UTF8");
-        t.write(fw, getContext(wm));
-        fw.flush();
-        fw.close();
+        t.write(bos, "UTF8", getContext(wm));
         assertByteArrayEquals(bos.toByteArray(), expected.getBytes("UTF8"));
     }
 
@@ -184,7 +178,7 @@ public abstract class EncodingTestCase extends TestCase
         assertEquals("InputEncoding is not UFT8",
                 wmUTF8.getConfig("TemplateEncoding"), "UTF8");
         Template t = wmUTF8.getTemplate(TEMPLATE_FILENAME_UTF8);
-        String evaluated = t.evaluate(getContext(wmUTF8)).toString();
+        String evaluated = t.getString(getContext(wmUTF8));
         assertEquals("Template evaluated to \"" + evaluated + "\" instead of \"" + expected + "\"",
                 expected, evaluated);
     }
