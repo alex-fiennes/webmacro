@@ -1,11 +1,20 @@
 <?xml version="1.0"?>
+<!--
+    Ant build file
+    
+    $Id$
+-->
 <project name="WebMacro" default="main" basedir="../../">
-	<!--property name="ant.home" value="/home/orbis/fgallagh/cvswork/jakarta-ant/"/-->
+
 	<property name="build.compiler" value="modern"/>
 	<property name="dest" value="ant-build"/>
 	<property name="dest.classes" value="${dest}"/>
 
 	<target name="prepare">
+        <available property="xalan.present" 
+           classname="org.apache.xalan.xslt.XSLTProcessorFactory" />
+        <available property="jasper.present" 
+           classname="org.apache.jasper.runtime.JspRuntimeLibrary" />
 		<mkdir dir="${dest}"/>
 		<mkdir dir="${dest.classes}"/>
 	</target>
@@ -27,6 +36,53 @@
   		/>
   	</target>
 
+    <!--
+        ActionServlet broken - skip
+    -->
+    <target name="actionservlet" if="false">
+        <javac 
+            srcdir="contrib/ActionServlet/src"
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+        />
+    </target>
+
+    <!--
+        DataTable contrib
+    -->
+
+    <target name="datatable">
+        <javac 
+            srcdir="contrib/DataTable"
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+            includes="org/**/*.java"
+        />
+    </target>
+
+
+    <!-- 
+        BeanTool
+        
+        Currently requires Apache Jasper (part of Tomcat).
+        
+        The sample files require Xalan XSLT too.  Remove this requirement
+        if BeanTool becomes live.
+    -->
+
+    <target name="_beantool" if="xalan.present">
+        <javac 
+            srcdir="contrib/BeanTool/src"
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+        />
+    </target>
+    <target name="beantool" depends="_beantool" if="jasper.present"/>
+
+    <target name="contrib" depends="main,beantool,actionservlet,datatable"/>
 
 	<target name="clean">
 		<delete dir="${dest}"/>
