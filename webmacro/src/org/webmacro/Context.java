@@ -251,8 +251,12 @@ public class Context implements Cloneable {
       if (_bean == null) {
          ret = getGlobal(names);
       } else {
-         //return PropertyOperator.getProperty(this,_bean,names);
-        ret = PropertyOperator.getProperty(this,_bean,names);
+        // 13-Oct-00 - re-added by keats: consume the first PropertyException to allow tools to be checked
+        try {
+          ret = PropertyOperator.getProperty(this,_bean,names);
+        } catch (PropertyException pe){
+          // consume this exception and try again below, will get thrown again if appropriate
+        }
       }
       if (ret == null){
         ret = getTool(names);
