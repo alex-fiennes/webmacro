@@ -108,18 +108,18 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
    }
 
    public void testEvalThrowsMethod() throws Exception {
-      assertStringTemplateThrows ("$set $foo=$TestObject.throwException()", 
+      assertStringTemplateThrows ("#set $foo=$TestObject.throwException()", 
                                    org.webmacro.PropertyException.class);
    }
 
   // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
-     assertStringTemplateMatches ("$NullObject", 
-          "^<!--.*nonexistent variable.*\\$NullObject.*-->$");
+     assertStringTemplateMatches ("$NullTestObject", 
+          "^<!--.*null value.*\\$NullTestObject.*-->$");
    }
 
    public void testEvalNullVariable () throws Exception {
-      assertStringTemplateMatches ("$set $foo=$NullObject", "");
-      assertBooleanExpr("$foo == null", true);
+      assertStringTemplateMatches ("#set $foo=$NullTestObject", "");
+      assertBooleanExpr("$foo == $NullTestObject", true);
    }
 }

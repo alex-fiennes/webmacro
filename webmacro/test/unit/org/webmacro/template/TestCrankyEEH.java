@@ -115,16 +115,14 @@ public class TestCrankyEEH extends AbstractVariableTestCase {
    }
 
    /** A variable in the context who's .toString() method returns null 
-	Currently, Cranky throws a NosuchVariableException here.  Should
-        probably be throwing a "NullValueException" instead
     */
    public void testNullVariable () throws Exception {
-      assertStringTemplateThrows ("$NullObject", 
-         PropertyException.NoSuchVariableException.class);
+      assertStringTemplateThrows ("$NullTestObject", 
+         PropertyException.NullValueException.class);
    }
 
    public void testEvalNullVariable () throws Exception {
-      assertStringTemplateEquals ("#set $foo=$NullObject", "");
-      assertBooleanExpr("$foo == $NullObject", true);
+      assertStringTemplateEquals ("#set $foo=$NullTestObject", "");
+      assertBooleanExpr("$foo == $NullTestObject", true);
    }
 }

@@ -47,7 +47,7 @@ import org.webmacro.engine.EvaluationExceptionHandler;
   * can implement your own Context objects and pass it to the 
   * evaluate() and write() method of any Template or other Macro.
   */
-public class Context implements Map, Cloneable
+public class Context implements Cloneable
 {
    final private Broker _broker;
    final private ComponentMap _tools;
@@ -196,18 +196,23 @@ public class Context implements Map, Cloneable
      * Object will be instantiated and managed by the tool.
      */
    final public Object get(Object name) 
-   {
+   throws PropertyException {
       Object ret = _variables.get(name);
       if (ret == null) {
-         Object tool = _tools.get(name);
-         if(tool != null) {
-            try {
-               ContextTool ct = (ContextTool) tool;
-               ret = ct.init(this);
-               put(name,ret);
-               _initializedTools.put(ct,ret);
-            } catch (PropertyException e) {
-               _log.error("Unable to initialize ContextTool: " + name, e);
+         if (!_variables.containsKey(name))
+            throw new 
+               PropertyException.NoSuchVariableException(name.toString());
+         else {
+            Object tool = _tools.get(name);
+            if(tool != null) {
+               try {
+                  ContextTool ct = (ContextTool) tool;
+                  ret = ct.init(this);
+                  put(name,ret);
+                  _initializedTools.put(ct,ret);
+               } catch (PropertyException e) {
+                  _log.error("Unable to initialize ContextTool: " + name, e);
+               }
             }
          }
       }
@@ -239,14 +244,12 @@ public class Context implements Map, Cloneable
          throw new PropertyException(
             "Attempt to access property with a zero length name array");
       }
-      if (names.length == 1) {
+      if (names.length == 1) 
          return instance;
-      } else if (instance == null) {
-         throw new PropertyException("Failed to get property $"
-            + names[0] + "." + names[1] + ": there is no such variable $("
-            + names[0] + ") in the context, or it is set to null.");
-      }
-      return PropertyOperator.getProperty(this,instance,names,1);
+      else if (instance == null)
+         throw new PropertyException.NullValueException(names[0].toString());
+      else 
+         return PropertyOperator.getProperty(this,instance,names,1);
    }
 
    /**

@@ -231,7 +231,15 @@ public abstract class Variable implements Macro, Visitable
                }
             }
          }
-      } catch (Exception e) {
+      } 
+      catch (PropertyException e) {
+         out.write(context.getEvaluationExceptionHandler()
+                   .expand(this, context, e));
+         String message = "Variable: PropertyException exception evaluating " 
+            + _vname + ":\n" + e; 
+         context.getLog("engine").warning(message, e);
+      }
+      catch (Exception e) {
           // something we weren't expecting happened!
           // I wonder if we would ever get here?  --eric
          out.write(context.getEvaluationExceptionHandler()
