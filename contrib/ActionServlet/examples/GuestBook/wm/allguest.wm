@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>View GuestBook!</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+</head>
+#set $Response.ContentType = "text/html"
+
+<body bgcolor="white">
+<h1><font color="green">View GuestBook</font></h1>
+<p>Guest List</p>
+
+<TABLE ALIGN="CENTER" width="600" border="1">
+<TR>
+   <TD font color="red" align="center">NAME</TD>
+   <TD font color="red" align="center">E-MAIL</TD>
+   <TD font color="red" align="center">COMMENT</TD>
+</TR>
+
+#foreach $guest in $registry {
+   <TR>
+      <TD align="center">$guest.Name</TD>
+      <TD align="center">$guest.Email</TD>
+      <TD align="center">$guest.Comment</TD>
+   </TR>
+}
+</TABLE><P>
+
+[ <a href="?action=form">Back to form</a> ]
+
+[ <a href="?action=allguest">See Guests</a> ]
+
+</body></html>
