@@ -13,7 +13,7 @@
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-  <property name="version"        value="0.96a2" />
+  <property name="version"        value="0.97a1" />
 
   <taskdef name="javacc" 
            classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
