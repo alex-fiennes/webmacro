@@ -200,14 +200,14 @@ public class LogSource implements Log {
    }
 
    /**
-     * A shortform for debug(msg,null)
+     * A shortform for warning(msg,null)
      */
    public void warning(String msg) {
       log(LogSystem.WARNING,msg,null);
    }
 
    /**
-     * A shortform for debug(msg,null)
+     * A shortform for error(msg,null)
      */
    public void error(String msg) {
       log(LogSystem.ERROR,msg,null);

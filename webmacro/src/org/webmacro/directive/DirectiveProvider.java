@@ -34,6 +34,8 @@ import org.webmacro.resource.*;
 public final class DirectiveProvider implements Provider
 {
 
+   public static final String DIRECTIVE_KEY = "directive";
+
    // BULDER CLASS MANAGEMENT
 
    private final Hashtable _descriptors  = new Hashtable();
@@ -45,7 +47,7 @@ public final class DirectiveProvider implements Provider
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */
-   public final void register(String dirClassName) 
+   private final void register(String dirClassName, String dirName) 
       throws IntrospectionException, InitException
    {
       Class directive = null;
@@ -68,15 +70,16 @@ public final class DirectiveProvider implements Provider
           throw new IntrospectionException("Class " + dirClassName 
             + " does not have a getDescriptor() method", e);
         }
-        oldDesc = (DirectiveDescriptor) 
-          _descriptors.get(descriptor.name);
+        String name = (dirName != null && !dirName.equals(""))
+                    ? dirName : descriptor.name;
+        oldDesc = (DirectiveDescriptor) _descriptors.get(name);
         if (oldDesc == null) {
-          _descriptors.put(descriptor.name, descriptor);
-          _log.info("Registered directive: " + descriptor.name);
+          _descriptors.put(name, descriptor);
+          _log.info("Registered directive: " + name);
         } else if (descriptor.dirClass != oldDesc.dirClass) {
           throw new InitException("Attempt to register directive " + directive
              + " failed because " + oldDesc.dirClass.getName() 
-             + " is already registered for type " + descriptor.name);
+             + " is already registered for type " + name);
         }
       }
    }
@@ -101,28 +104,27 @@ public final class DirectiveProvider implements Provider
    // RESOURCE PROVIDER API
 
    public String getType() {
-      return "org.webmacro.directive.Directive";
+      return DIRECTIVE_KEY;
+   }
+
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            register(settingValue, settingKey);
+         } catch (Exception ce) {
+            _log.warning("Exception loading directive " + settingValue, ce);
+         }
+      }
    }
 
    public void init(Broker broker, Settings config) throws InitException
    {
       _log = broker.getLog("directive");
       try {
-         String directives = config.getSetting("Directives");
-         Enumeration denum = new StringTokenizer(directives);
-         while (denum.hasMoreElements()) {
-            String dir = (String) denum.nextElement();
-            try {
-               register(dir);
-            } catch (Exception ce) {
-              System.out.println(ce.toString());
-              //@@@Engine.log.exception(ce);
-              //@@@Engine.log.error("Could not load directive: " + dir);    
-            }
-         }
+         config.processListSetting("Directives", new SettingHandler());
       } catch (Exception e) {
-         //@@@Engine.log.exception(e);
-        throw new InitException("Could not init DirectiveProvider", e);
+         _log.warning("Error initializing DirectiveProvider", e);
+        throw new InitException("Could not initialize DirectiveProvider", e);
       }
    }
 

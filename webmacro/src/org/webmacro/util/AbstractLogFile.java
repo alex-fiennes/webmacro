@@ -59,7 +59,6 @@ abstract public class AbstractLogFile implements LogTarget {
       if (format != null) 
          _formatString = format;
       _mf = new MessageFormat(_formatString);
-      System.out.println("Format string is " + _formatString);
       Settings levels = new SubSettings(s, "LogLevel");
       String[] keys = levels.getKeys();
       for (int i = 0; i < keys.length; i++) 

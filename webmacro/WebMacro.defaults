@@ -131,33 +131,44 @@ LoadSystemProperties: TRUE
 # to add new modules to WebMacro, or replace existing modules. 
 # They are all implementations of org.webmacro.broker.ResourceProvider
 
-Providers:  org.webmacro.resource.TemplateProvider \
-            org.webmacro.resource.UrlProvider \
-            org.webmacro.resource.ConfigProvider \
-            org.webmacro.directive.DirectiveProvider \
-            org.webmacro.engine.ParserProvider
+Providers.template:  org.webmacro.resource.TemplateProvider 
+Providers.url:       org.webmacro.resource.UrlProvider 
+Providers.config:    org.webmacro.resource.ConfigProvider 
+Providers.directive: org.webmacro.directive.DirectiveProvider 
+Providers.parser:    org.webmacro.engine.ParserProvider
 
-# The DirectiveProvider uses this list to serve up directives to 
-# parsers. You can control what script directives WebMacro uses 
-# by changing this list--you could even add your own. They are 
-# all implementations of org.webmacro.engine.Directive
+Providers: 
 
-Directives:  org.webmacro.directive.IncludeDirective \
-             org.webmacro.directive.ParseDirective \
-             org.webmacro.directive.SetDirective \
-             org.webmacro.directive.IfDirective \
-             org.webmacro.directive.TextDirective \
-             org.webmacro.directive.CommentDirective \
-             org.webmacro.directive.ForeachDirective \
-             org.webmacro.directive.AlternateDirective \
-             org.webmacro.directive.EncodeDirective \
-             org.webmacro.directive.EscapeDirective \
-             org.webmacro.directive.SilenceDirective \
-             org.webmacro.directive.PropertyDirective \
-             org.webmacro.directive.GlobalDirective \
-             org.webmacro.directive.ParamDirective \
-             org.webmacro.directive.AttributeDirective 
 
+#
+# Directives
+#
+# The DirectiveProvider uses these entries to load directives for the parser.
+# If you want to remove any of these, simply override the value of 
+# Directive.xxx in your .properties file with an empty value.
+# You can add new directives by creating Directives.xxx values in your
+# Properties file, and you can also override the Directives property to 
+# specify a list of directive classes. 
+# Directives implement org.webmacro.directive.Directive
+#
+
+Directives: 
+
+Directives.include:    org.webmacro.directive.IncludeDirective
+Directives.parse:      org.webmacro.directive.ParseDirective
+Directives.set:        org.webmacro.directive.SetDirective
+Directives.if:         org.webmacro.directive.IfDirective
+Directives.text:       org.webmacro.directive.TextDirective
+Directives.comment:    org.webmacro.directive.CommentDirective
+Directives.foreach:    org.webmacro.directive.ForeachDirective
+Directives.alternate:  org.webmacro.directive.AlternateDirective
+Directives.encode:     org.webmacro.directive.EncodeDirective
+Directives.escape:     org.webmacro.directive.EscapeDirective
+Directives.silence:    org.webmacro.directive.SilenceDirective
+Directives.property:   org.webmacro.directive.PropertyDirective
+Directives.global:     org.webmacro.directive.GlobalDirective
+Directives.param:      org.webmacro.directive.ParamDirective
+Directives.attribute:  org.webmacro.directive.AttributeDirective
 
 # The following are tools which are added to your WebContext. You can 
 # customize your WebContext with special tools of your own by adding 
@@ -201,5 +212,7 @@ ContextTools:
 # invoke a different parser by way of the #use directive, if it has
 # been included. These parsers all impoement org.webmacro.engine.Parser
 
-Parsers:  org.webmacro.parser.WMParser 
+Parsers:
+
+Parsers.wm:  org.webmacro.parser.WMParser 
 

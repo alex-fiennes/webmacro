@@ -7,6 +7,7 @@ import org.webmacro.*;
 import org.webmacro.engine.*;
 import org.webmacro.directive.*;
 import org.webmacro.directive.Directive;
+import org.webmacro.directive.DirectiveProvider;
 import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
 import org.webmacro.directive.Directive.Subdirective;
@@ -214,7 +215,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   try {
     descriptor =
-      (DirectiveDescriptor) broker.get("org.webmacro.directive.Directive",
+      (DirectiveDescriptor) broker.get(DirectiveProvider.DIRECTIVE_KEY,
                                        directive);
     if (!descriptor.valid)
       throw new ParseException("Descriptor for directive " + directive

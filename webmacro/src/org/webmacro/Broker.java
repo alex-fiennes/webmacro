@@ -142,11 +142,29 @@ public class Broker
       }
    }
 
+   private class SettingHandler extends Settings.ListSettingHandler {
+      public void processSetting(String settingKey, String settingValue) {
+         try {
+            Class pClass = Class.forName(settingValue);
+            Provider instance = (Provider) pClass.newInstance();
+            addProvider(instance, settingKey);
+         } catch (Exception e) {
+            _log.error("Provider (" + settingValue + ") failed to load", e);
+         }
+      }
+   }
+
    /** 
     * Constructors should call this after they've set up the properties
     * to set up common things like profiling, providers, etc. 
     */
    protected void init() throws InitException {
+
+      // Write out our properties as debug records
+      String[] properties = _config.getKeys();
+      for (int i=0; i<properties.length; i++) 
+         _log.debug("Property " + properties[i] + ": " 
+                    + _config.getSetting(properties[i]));
 
       // set up profiling
       ProfileSystem ps = ProfileSystem.getInstance();
@@ -168,25 +186,10 @@ public class Broker
       }
 
       // set up providers
-      String providers = _config.getSetting("Providers");
-      if (providers == null) {
-         _log.error("configuration exists but has no Providers listed");
-         throw new InitException("No providers in configuration");
-      }
-
-      Enumeration pen = new StringTokenizer(providers);
-      Class pClass;
-      Provider instance;
-
-      while (pen.hasMoreElements()) {
-         String className = (String) pen.nextElement();
-         try {
-            pClass = Class.forName(className);
-            instance = (Provider) pClass.newInstance();
-            addProvider(instance);
-         } catch (Exception e) {
-            _log.error("Provider (" + className + ") failed to load", e);
-         }
+      _config.processListSetting("Providers", new SettingHandler());
+      if (_providers.size() == 0) {
+         _log.error("No Providers specified");
+         throw new InitException("No Providers specified in configuration");
       }
    }
 
@@ -324,11 +327,17 @@ public class Broker
      * Register a new provider, calling its getType() method to find
      * out what type of requests it wants to serve.
      */
-   public void addProvider(Provider p) throws InitException
+   public void addProvider(Provider p, String pType) throws InitException
    {
-      p.init(this,_config);
-      _providers.put(p.getType(),p);
+      String name = pType;
+      if (pType == null || pType.equals(""))
+         pType = p.getType();
+      p.init(this, _config);
+      _providers.put(pType, p);
       _log.info("Loaded provider " + p);
+      if (!pType.equals(p.getType()))
+         _log.info("Provider name remapped from " + p.getType() 
+                   + " to " + pType);
    }
 
    /**

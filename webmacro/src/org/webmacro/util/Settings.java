@@ -29,6 +29,11 @@ import java.net.URL;
 
 public class Settings {
 
+   abstract public static class ListSettingHandler {
+      abstract public void processSetting(String settingKey, 
+                                          String settingValue);
+   } 
+
    protected static final String[] stringArray = new String[0];
 
    private Properties _props;
@@ -244,6 +249,37 @@ public class Settings {
    public String[] getKeys() {
       return (String[]) _props.keySet().toArray(stringArray);
    }
+
+   /** 
+    * Iterate through a list of settings.  If the settingName is
+    * "foo", then the SettingHandler will be called once for each
+    * element of the space-separated list setting "foo", plus once
+    * for each setting of the form "foo.x".  In the case of "foo.x", 
+    * settingName will be passed as "x"; when processing the list setting,
+    * settingName will be passed as "".
+    * This is designed to support settings of the form
+    *   Directives.a: ADirective
+    *   Directives.b: BDirective
+    *   Directives:   CDirective DDirective
+    */
+   public void processListSetting(String settingName, ListSettingHandler h) {
+      // First, the list setting, if any
+      String listNames = getSetting(settingName);
+      if (listNames != null) {
+         Enumeration denum = new StringTokenizer(listNames);
+         while (denum.hasMoreElements()) 
+            h.processSetting("", ((String) denum.nextElement()));
+      }
+
+      Settings s = new SubSettings(this, settingName);
+      String[] keys = s.getKeys();
+      for (int i=0; i<keys.length; i++) {
+        String value = s.getSetting(keys[i]).trim();
+        if (value.equals(""))
+          continue;
+        h.processSetting(keys[i], value);
+      }
+   }      
 
 
    /**
