@@ -355,3 +355,7 @@ RestrictedClasses=java.lang.Class
 # Methods of the Class class that are allowed in templates
 RestrictedClasses.AllowedMethods.java.lang.Class=\
 getName,isArray,isPrimitive,isAssignableFrom,isInstance
+
+# Where does the servlet broker look for templates?  Default is the servlet
+# root, but you could put WEB-INF/templates here.
+Servlet22Broker.TemplateLocation=

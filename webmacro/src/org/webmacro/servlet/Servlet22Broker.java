@@ -42,6 +42,7 @@ import javax.servlet.*;
 
 public class Servlet22Broker extends ServletBroker {
    protected final ClassLoader _servletClassLoader;
+   protected String _templatePrefix;
 
    /**
     * Creates the broker looking in WEB-INF first
@@ -52,11 +53,16 @@ public class Servlet22Broker extends ServletBroker {
                              ClassLoader cl) throws InitException {
       super(sc);
       _servletClassLoader = cl;
-      String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
-        + ", (WAR file)" +  ", " + "(System Properties)";
+      String propertySource = WEBMACRO_DEFAULTS;
       loadDefaultSettings();
-      if (! loadSettings("WEB-INF/" + WEBMACRO_PROPERTIES, true) )
+      boolean loaded = loadSettings("WEB-INF/" + WEBMACRO_PROPERTIES, true);
+      if (loaded) 
+        propertySource += ", " + "WEB-INF/" + WEBMACRO_PROPERTIES;
+      else {
         loadSettings(WEBMACRO_PROPERTIES, true);
+        propertySource += ", " + WEBMACRO_PROPERTIES;
+      }
+      propertySource += ", (WAR file)" +  ", " + "(System Properties)";
       loadServletSettings(Broker.SETTINGS_PREFIX);
       loadSystemSettings();
       initLog(_config);
@@ -82,6 +88,16 @@ public class Servlet22Broker extends ServletBroker {
       }
       _config.load(p, prefix);
    }
+
+   protected void init() throws InitException {
+     super.init();
+     String s = getSetting("Servlet22Broker.TemplateLocation");
+     if (s == null || s.trim().equals(""))
+       _templatePrefix = null;
+     else 
+       _templatePrefix = (s.endsWith("/")) ? s : s + "/";
+   }
+
 
    public static Broker getBroker(Servlet s) throws InitException {
       ServletContext sc = s.getServletConfig().getServletContext();
@@ -140,6 +156,19 @@ public class Servlet22Broker extends ServletBroker {
       if (is == null) 
          is = super.getResourceAsStream(name);
       return is;
+   }
+
+   /** 
+    * Get a template; kind of like getting a resource, but might come
+    * from a different place
+    */
+   public URL getTemplate(String name) {
+     if (_templatePrefix == null)
+       return getTemplate(name);
+     else {
+       URL u = getResource(_templatePrefix + name);
+       return (u != null) ? u : getResource(name);
+     }
    }
 
    /**

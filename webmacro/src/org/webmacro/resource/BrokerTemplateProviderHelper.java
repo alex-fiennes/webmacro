@@ -153,10 +153,11 @@ final public class BrokerTemplateProviderHelper
    {
       if (_log.loggingDebug())
          _log.debug("Looking for template in class path: " + fileName);
-      URL u = _broker.getResource(fileName);
+      URL u = _broker.getTemplate(fileName);
       if (u != null) 
          if (_log.loggingDebug())
-            _log.debug("BrokerTemplateProvider: Found " + fileName);
+            _log.debug("BrokerTemplateProvider: Found " + fileName 
+                       + " at " + u.toString());
       return u;
    }
 }

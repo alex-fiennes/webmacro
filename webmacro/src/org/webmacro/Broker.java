@@ -508,6 +508,15 @@ public class Broker
       return is;
    }
 
+   /** 
+    * Get a template from the Broker.  By default, this just calls
+    * getResource, but allows brokers to substitute their own idea
+    * of where templates should come from.
+    */
+   public URL getTemplate(String name) {
+     return getResource(name);
+   }
+
 
    /**
     * Load a class through the broker's class loader.  Subclasses can 
