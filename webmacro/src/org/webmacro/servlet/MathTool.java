@@ -98,7 +98,7 @@ public class MathTool implements ContextTool {
     * and <code>end</code>, inclusive
     */
    public static final int random(int start, int end) {
-      return start + ((int) (1000000.0 * java.lang.Math.random()) % end);
+      return start + (int) (end *java.lang.Math.random()/(Integer.MAX_VALUE+1.0));
    }
 
    /**
