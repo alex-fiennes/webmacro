@@ -34,15 +34,18 @@ import java.lang.reflect.Field;
 public class LocaleTool implements ContextTool, Bag
 {
     public static final String RCS = "$Id$";
+    
+    private static HashMap cache = new HashMap();
+        
     public Object init(Context context)
         throws PropertyException
     {
         return this;
     }
 
-   /*
-    * return the default locale for this JVM
-    */
+    /**
+     * return the default locale for this JVM
+     */
 
     final public Locale getDefault()
     {
@@ -51,23 +54,29 @@ public class LocaleTool implements ContextTool, Bag
 
     /**
      * wrappers around the 3 constructors for Locale
-     * 
-     * XXXX: should these be cached?
      */
 
     final public Locale getLocale(String country)
     {
-        return new Locale(country, "", "");
+        return getLocale(country,"","");
     }
 
     final public Locale getLocale(String country, String language)
     {
-        return new Locale(country, language, "");
+        return getLocale(country, language, "");
+
     }
 
     final public Locale getLocale(String country, String language, String variant)
     {
-        return new Locale(country, language, variant);
+        String key = country+"_"+language+"_"+variant; // language.toUpperCase() ?
+        Locale locale = (Locale) cache.get(key);
+        if (locale == null) 
+        {
+            locale=  new Locale(country, language, "");
+            cache.put(country,locale);
+        }
+        return locale;
     }
 
     /**
