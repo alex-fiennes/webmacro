@@ -61,9 +61,6 @@ public class BuildContext extends Context {
       }
    }
 
-
-
-
    /**
     * Find out whether the named variable is a tool, local variable,
     * or property variable.
@@ -167,9 +164,14 @@ public class BuildContext extends Context {
          c[i] = (names[i] instanceof Builder) ?
                ((Builder) names[i]).build(this) : names[i];
       }
-
       String firstName = c[0].toString();
-      Object type = getVariableType(firstName);
+      Object type = null;
+      if (c[0] instanceof FunctionCall){
+         type = FunctionVariable.TYPE;
+      }
+      else {
+         type = getVariableType(firstName);
+      }
       if (type == Variable.PROPERTY_TYPE) {
          if (containsKey(firstName)) {
             Object expansion = get(firstName);
@@ -191,6 +193,9 @@ public class BuildContext extends Context {
       else if (type == Variable.LOCAL_TYPE) {
          v = new GlobalVariable(c);
       }
+      else if (type == FunctionVariable.TYPE) {
+         v = new FunctionVariable(c);
+      }         
       else {
          throw new BuildException("Unrecognized Variable Type: " + type);
       }

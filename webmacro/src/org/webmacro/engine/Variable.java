@@ -133,7 +133,7 @@ public abstract class Variable implements Macro, Visitable {
     * Returns true if the Variable describes a simple name (one with only
     * one element)
     */
-   public final boolean isSimpleName() {
+   public boolean isSimpleName() {
       return (_names.length == 1);
    }
 

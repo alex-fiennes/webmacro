@@ -1,32 +1,16 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ * MethodWrapper.java
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted under the terms of either of the following
- * Open Source licenses:
- *
- * The GNU General Public License, version 2, or any later version, as
- * published by the Free Software Foundation
- * (http://www.fsf.org/copyleft/gpl.html);
- *
- *  or
- *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)
- *
- * This software is provided "as is", with NO WARRANTY, not even the
- * implied warranties of fitness to purpose, or merchantability. You
- * assume all risks and liabilities associated with its use.
- *
- * See www.webmacro.org for more information on the WebMacro project.
+ * Created on May 24, 2002, 12:01 AM
  */
+
 package org.webmacro.engine;
 import java.lang.reflect.Method;
 import org.webmacro.*;
-
+import java.io.IOException;
 /**
  *
  * @author  Keats
- * @since May 24, 2002
  */
 public class MethodWrapper {
    
@@ -75,12 +59,16 @@ public class MethodWrapper {
    throws PropertyException {
       Class[] types = IntrospectionUtils.createTypesFromArgs(args);
       for (int i = 0; i < _methods.length; i++){
-         Method m = _methods[i];
+         Method m = (Method) _methods[i];            
          Class[] sig = m.getParameterTypes();
          if (IntrospectionUtils.matches(sig,types)) {
             try {
-               Object ret = _methods[i].invoke(_instance, args);
-               return ret;
+               Object obj = m.invoke(_instance, args);
+               if (obj == null
+                     && m.getReturnType() == java.lang.Void.TYPE)
+                  return org.webmacro.engine.VoidMacro.instance;
+               else
+                  return obj;
             }
             catch (Exception e){
                String argList = java.util.Arrays.asList(args).toString();
