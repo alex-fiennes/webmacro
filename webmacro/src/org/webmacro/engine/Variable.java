@@ -162,6 +162,8 @@ public abstract class Variable implements Macro, Visitable
       } 
       catch (PropertyException e) {
          // May throw
+         if (e instanceof PropertyException.UndefinedVariableException)
+             ((PropertyException.UndefinedVariableException)e).setVariableName(_vname);
          context.getEvaluationExceptionHandler()
            .evaluate(this, context, e);
          return null;
@@ -186,9 +188,8 @@ public abstract class Variable implements Macro, Visitable
    throws PropertyException, IOException {
       try {
          Object val = getValue(context);
-         if (val instanceof Macro) {
+         if (val instanceof Macro)
             ((Macro) val).write(out, context);
-         } 
          else {
             if (val != null) {
                String v = val.toString();
@@ -218,6 +219,8 @@ public abstract class Variable implements Macro, Visitable
          }
       } 
       catch (PropertyException e) {
+         if (e instanceof PropertyException.UndefinedVariableException)
+             ((PropertyException.UndefinedVariableException)e).setVariableName(_vname);
          out.write(context.getEvaluationExceptionHandler()
                    .expand(this, context, e));
       }
