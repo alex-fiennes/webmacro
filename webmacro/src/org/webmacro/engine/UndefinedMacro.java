@@ -39,7 +39,8 @@ public final class UndefinedMacro implements Macro, Visitable {
    }
 
    public final String toString() {
-      return "--undefined--";
+      throw new UnsupportedOperationException(
+      "Cannot invoke toString() on an undefined variable.");
    }
 
    public void accept(TemplateVisitor v) {
