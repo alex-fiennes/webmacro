@@ -44,7 +44,7 @@ package org.webmacro;
  */
 public class RethrowableException extends Exception {
   
-  private Throwable caught;
+  private Throwable cause;
 
   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
@@ -58,41 +58,63 @@ public class RethrowableException extends Exception {
 
   public RethrowableException(String s, Throwable e) {
     super(s + System.getProperty("line.separator") + e);
-    caught = e;
-    while (caught instanceof RethrowableException) {
-      caught = ((RethrowableException) caught).caught;
-    }
+    cause = e;
   }
 
-  public void printStackTrace() {
+    public void printStackTrace() {
     super.printStackTrace();
-    if (caught != null) {
-      System.err.println(RETHROW_MESSAGE);
-      caught.printStackTrace();
+    if (cause != null) {
+        System.err.println(RETHROW_MESSAGE);
+        cause.printStackTrace();
     }
   }
 
   public void printStackTrace(java.io.PrintStream ps) {
     super.printStackTrace(ps);
-    if (caught != null) {
+    if (cause != null) {
       ps.println(RETHROW_MESSAGE);
-      caught.printStackTrace(ps);
+      cause.printStackTrace(ps);
     }
   }
 
   public void printStackTrace(java.io.PrintWriter pw) {
     super.printStackTrace(pw);
-    if (caught != null) {
+    if (cause != null) {
       pw.println(RETHROW_MESSAGE);
-      caught.printStackTrace(pw);
+      cause.printStackTrace(pw);
     }
   }
     
   /**
    * allow access to underlying exception
+   * @deprecated you should use <code>getCause</code> instead
    */
   public Throwable getCaught() {
-    return caught;
+    return getCause();
   }
-    
+
+    /**
+     * Return the underlying exception provided at construction time
+     * or null if none was provided.
+     * @return underlying cause
+     * @since 1.1
+     */
+    public Throwable getCause() {
+        return cause;
+    }
+
+    /**
+     * Return the original exception cause. This will recursively
+     * extract the cause if cause is a subclass of
+     * <code>RethrowableException</code>.
+     * @return underlying root cause
+     * @since 1.1
+     */
+    public Throwable getRootCause() {
+        Throwable t = cause;
+        while (t != null && t instanceof RethrowableException) {
+            t = ((RethrowableException)t).cause;
+        }
+        return t;
+    }
 }
