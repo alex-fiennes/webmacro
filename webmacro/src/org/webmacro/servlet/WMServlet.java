@@ -639,7 +639,8 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    public WebContext newContext(
    HttpServletRequest req, HttpServletResponse resp)
    throws HandlerException {
-      return _wcPrototype.newInstance(req, resp);
+      return _wm.getWebContext(req, resp);
+      //return _wcPrototype.newInstance(req, resp);
    }
    
    /**
