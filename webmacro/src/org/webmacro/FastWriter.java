@@ -502,21 +502,21 @@ class FWPool implements Pool {
     
     public Object get () {
         Object obj = null;
-        if (_size > 0) {
-            synchronized (_pool) {
-                obj = _pool.remove(0);
-            }
+        synchronized (_pool) {
+          if (_size > 0) {
+            obj = _pool.remove(0);
             _size--;
+          }
         }        
         return obj;
     }
     
     public void put (Object fw) {
-        if (_size < _maxSize) {
+        if (_size < _maxSize) { // not rqrd to be t.s. perfect
             synchronized (_pool) {
                 _pool.add (fw);
+                _size++;
             }
-            _size++;
         }
     }    
 }
