@@ -50,13 +50,10 @@ import org.webmacro.directive.Directive.Subdirective;
  */
 
 public final class DirectiveDescriptor { 
-  public static final int FLAG__IMPLICIT_END = 1;
-
   public String                   name;
   public Class                    dirClass;
   public ArgDescriptor[]          args;
   public Subdirective[]           subdirectives;
-  public int flags = 0;
 
   public boolean                  valid=false;
 
@@ -78,15 +75,6 @@ public final class DirectiveDescriptor {
         valid &= validateArgs(this.subdirectives[i].args);
       }
     }
-  }
-
-  public DirectiveDescriptor(String name, 
-                             Class dirClass, 
-                             ArgDescriptor[] args, 
-                             Subdirective[]  subdirectives, 
-                             int flags) {
-    this(name, dirClass, args, subdirectives);
-    this.flags = flags;
   }
 
   /**
