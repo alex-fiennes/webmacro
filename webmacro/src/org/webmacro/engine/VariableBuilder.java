@@ -41,12 +41,7 @@ public class VariableBuilder implements Builder
          throw new BuildException("Unrecognized Variable Type: " + type);
       }
 
-      if (filtered) {
-         // XXX: Filter me
-         return null;
-      } else {
-         return v;
-      }
+      return filtered ? bc.getFilter(v) : v;
    }
 
    public final Object build(BuildContext bc) throws BuildException

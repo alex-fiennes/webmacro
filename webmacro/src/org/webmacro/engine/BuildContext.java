@@ -20,6 +20,8 @@ public final class BuildContext extends Context
 
    private final Map _types = new HashMap();
 
+   private final FilterManager _filters = new FilterManager();
+
    public BuildContext(Broker b) {
       super(b);
    }
@@ -59,5 +61,32 @@ public final class BuildContext extends Context
       }
    }
 
+   /**
+     * Register a new filter, adding it to the chain for the supplied name.
+     * The name is either a top level property name or * to mean "all".
+     * @param name the top level property name that is being filtered
+     * @param ft the FilterTool which will handle this property
+     */
+   public void addFilter(String name, FilterTool ft) {
+      _filters.addFilter(name,ft);   
+   }
+
+   /**
+     * Clear all the filtered for the supplied name. Cleaing * clears
+     * only global filters, leaving filters for specific properties.
+     */
+   public void clearFilters(String name) {
+      _filters.clearFilters(name);
+   }
+
+   /**
+     * Get the filter that applies to a specific variable. Returning
+     * null from this method means that the entire variable should
+     * be dropped from the output since it's been filtered to null.
+     * @return the Macro to be used to filter it, or null
+     */
+   public Macro getFilter(Variable v) {
+      return _filters.getFilter(v);
+   }
 }
 

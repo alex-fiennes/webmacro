@@ -242,7 +242,7 @@ public class WMParser implements Parser
 
             case '$': // variable
                str.append(ws.toString()); // preserve whitespace before var
-               child = parseVariable(in);
+               child = parseVariable(in,true);
                break; 
 
             default: // error, we should have handled everything
@@ -467,7 +467,7 @@ e.printStackTrace();
      * @exception IOException on failure to read from parseTool
      * @return a Variable object 
      */
-   static public Object parseVariable(ParseTool in)
+   static public Object parseVariable(ParseTool in, boolean filtered)
       throws ParseException, IOException
    {
       // check that we were called correctly 
@@ -479,13 +479,9 @@ e.printStackTrace();
       // check what kind of variable this is
 
       char closeChar = 0;
-      boolean filtered = false;
 
       if (in.parseChar('(') ) {
          closeChar = ')';
-      }  else if (in.parseChar('{')) {
-         closeChar = '}';
-         filtered = true;          
       } else if (! in.isNameStartChar()) {
          return (isParam) ? "$$" : "$";
       }
@@ -544,7 +540,7 @@ e.printStackTrace();
 
       switch(in.getChar()) {
          case '$': // variable
-            term = parseVariable(in); 
+            term = parseVariable(in,false); 
             if (term instanceof String) {
                throw new ParseException(in, 
                      "Unexpected character after " + term + ": " 
@@ -606,7 +602,7 @@ e.printStackTrace();
       int c = in.nextChar();
       while ((c != quoteChar) && (c != in.EOF)) {
          if ((c == '$') && !in.isEscaped()) {
-            Object child = parseVariable(in); // may return a string 
+            Object child = parseVariable(in,true); // may return a string 
             c = in.getChar();
 
             if (child instanceof String) {
