@@ -27,9 +27,6 @@ public class TestList extends TemplateTestCase {
    }
 
    public void stuffContext (Context context) throws Exception {
-      context.setEvaluationExceptionHandler (
-                new DefaultEvaluationExceptionHandler ());
-
       context.put ("d", d);
    }
 
