@@ -50,7 +50,7 @@ import org.webmacro.util.*;
   * encoding it was created with. 
   */
 
-final public class FastWriter extends Writer
+public class FastWriter extends Writer
 {
 
    /**
