@@ -71,8 +71,7 @@ final public class Block implements Macro
          fw.flush();
          return os.toString("UTF8");
       } catch (IOException e) {
-         Engine.log.exception(e);
-         Engine.log.error("StringWriter through an IOException!");
+         context.getBroker().getLog("engine").error("StringWriter threw an IOException!",e);
          return null;
       }
    }

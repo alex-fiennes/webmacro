@@ -1,7 +1,7 @@
 
 package org.webmacro;
 
-import org.webmacro.util.Log;
+import org.webmacro.util.LogManager;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -49,8 +49,8 @@ final public class Broker
    private Hashtable _providers = new Hashtable();
    private Properties _config;
    private String _name;
-
-   final Log _log = new Log("BROKER", "WebMacro's object loader");
+   private LogManager _lm;
+   private Log _log;
 
    /**
      * Equivalent to Broker("WebMacro.properties")
@@ -87,8 +87,8 @@ final public class Broker
       error.append("WebMacro was unable to locate the configuration file: ");
       error.append(fileName);
       error.append("\n");
-      error.append("This means that WebMacro could not be started. The ");
-      error.append("following list may help you figure out where to put it:");
+      error.append("This means that WebMacro could not be started. The \n");
+      error.append("following list may help you figure out where to put it:\n");
       error.append("\n");
       error.append("MY CLASSPATH:\n");
       try {
@@ -98,9 +98,9 @@ final public class Broker
       try {
          buildPath(error, fileName, ClassLoader.getSystemResources("."));
       } catch (Exception e) { }
-      error.append("Alternately you can modify your servlet to request a ");
-      error.append("specific location or supply the properties yourself. ");
-      error.append("See the classes WebMacro, WM, and Broker in the ");
+      error.append("Alternately you can modify your servlet to request a\n");
+      error.append("specific location or supply the properties yourself.\n");
+      error.append("See the classes WebMacro, WM, and Broker in the\n");
       error.append("org.webmacro package.");
       throw new InitException(error.toString());
    }
@@ -150,9 +150,14 @@ final public class Broker
    public Broker(Properties config, String name)
       throws InitException
    {
+      _lm = new LogManager(config);
+      _log = _lm.getLog("broker");
+      _log.notice("start: " + name);
+
       _name = name;
 
       if (config == null) {
+         _log.error("no configuration: perhaps some config file is missing? ");
          throw new InitException("No configuration supplied: " +
               "perhaps some configuration file could not be located?");
       }
@@ -160,6 +165,7 @@ final public class Broker
 
       String providers = config.getProperty("Providers");
       if (providers == null) {
+         _log.error("configuration exists but has no Providers listed");
          throw new InitException("No providers in configuration");
       }
 
@@ -175,8 +181,7 @@ final public class Broker
             addProvider(instance);
             _log.info("Loaded provider: " + className);
          } catch (Exception e) {
-            _log.exception(e);
-            _log.error("Provider (" + className + ") failed to load: " + e);
+            _log.error("Provider (" + className + ") failed to load", e);
          }
       }
    }
@@ -202,6 +207,23 @@ final public class Broker
             + ": perhaps WebMacro couldn't load its configuration?");
       }
       return p;
+   }
+
+   /**
+     * Get a log: the behavior of this log depends on the configuration
+     * of the broker. If your system loads from a WebMacro.properties 
+     * file then look in there for details about setting up and 
+     * controlling the Log. 
+     * <p>
+     * You should try and hang on to the Log you get back from this
+     * method since creating new Log objects can be expensive. You
+     * also likely pay for IO when you use a log object.
+     * <p>
+     * The name you supply will be associated with your log messages
+     * in the log file.
+     */
+   public Log getLog(String name) {
+      return _lm.getLog(name);
    }
 
    /**

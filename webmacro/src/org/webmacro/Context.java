@@ -50,7 +50,7 @@ public class Context implements Cloneable {
    /**
      * Log configuration errors, context errors, etc.
      */
-   private final static Log _log = new Log("context","Context Messages");
+   private final Log _log;
 
 
 
@@ -67,16 +67,15 @@ public class Context implements Cloneable {
      */
    protected Context(final Broker broker) {
       _broker = broker; 
+      _log = _broker.getLog("context");
       _bean = null;
       _toolbox = null;
       try {
          String tools = (String) broker.get("config","ContextTools");
          registerTools(tools);
       } catch (NotFoundException ne) {
-         _log.exception(ne);
-         _log.warning("could not load ContextTools from config: " + ne);
+         _log.warning("could not load ContextTools from config", ne);
       }
- 
    }
 
    /**
@@ -89,6 +88,7 @@ public class Context implements Cloneable {
    protected Context(final Broker broker, final Map toolbox, final Object bean)
    {
       _broker = broker;
+      _log = broker.getLog("context");
       _bean = bean;
       _toolbox = toolbox;
    }
@@ -172,24 +172,19 @@ public class Context implements Cloneable {
             ContextTool tool = (ContextTool) toolType.newInstance(); 
             registerTool(varName,tool);
          } catch (ClassCastException cce) {
-            _log.exception(cce);
             _log.error("Tool class " + toolName 
-                  + " newInstance returns invalid type.");
+                  + " newInstance returns invalid type.", cce);
          } catch (ClassNotFoundException ce) {
-            _log.exception(ce);
-            _log.error("Tool class " + toolName + " not found: " + ce);
+            _log.error("Tool class " + toolName + " not found: ", ce);
          } catch (IllegalAccessException ia) {
-            _log.exception(ia);
             _log.error("Tool class and methods must be public for "
-                  + toolName + ": " + ia);
+                  + toolName, ia);
          } catch (ContextException e) {
-            _log.exception(e);
             _log.error("ContextException thrown while registering "
-                  + "Tool: " + toolName);
+                  + "Tool: " + toolName, e);
          } catch (InstantiationException ie) {
-            _log.exception(ie);
             _log.error("Tool class " + toolName + " must have a public zero "
-                  + "argument or default constructor: " + ie);
+                  + "argument or default constructor", ie);
          }
       }
    }
@@ -202,6 +197,13 @@ public class Context implements Cloneable {
      */
    final public Broker getBroker() {
       return _broker;
+   }
+
+   /**
+     * Convenience method equivalent to getBroker().getLog(name)
+     */
+   final public Log getLog(String name) {
+      return _broker.getLog(name);
    }
 
 

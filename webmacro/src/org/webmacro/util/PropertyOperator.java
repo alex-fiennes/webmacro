@@ -58,11 +58,6 @@ import org.webmacro.*;
 final public class PropertyOperator
 {
 
-   // debugging
-
-   static final boolean _debug = Log.debug && false;
-   static final Log _log = new Log("prop","Property Introspection");
-
    // static public interface
 
    /**
@@ -90,8 +85,7 @@ final public class PropertyOperator
                context,instance,names,start,names.length - 1);
          }
       } catch (NoSuchMethodException e) {
-         _log.exception(e);
-         throw new PropertyException("No method to access property: " + e,e);
+         throw new PropertyException("No method to access property: " + e.getMessage(),e);
       }
    }
 
@@ -354,10 +348,6 @@ final public class PropertyOperator
       throws SecurityException, PropertyException
    {
 
-      if (_debug) {
-         _log.debug("new PropertyOperator(" + target + ")");
-      }
-      
       Accessor acc;
 
       // introspect fields first
@@ -365,14 +355,9 @@ final public class PropertyOperator
       Field[] fields = target.getFields();
       for (int i = 0; i < fields.length; i++) {
          if (Modifier.isPublic(fields[i].getModifiers())) {
-            if (_debug) {
-               _log.debug("Adding field: " + fields[i]);
-            }
             acc = new FieldAccessor(fields[i]);
             _unaryAccessors.put(acc.getName(),acc);
-         } else if (_debug) {
-            _log.debug("Skipped non-public field: " + fields[i]);
-         }
+         } 
       }
 
       // introspect methods second
@@ -415,17 +400,9 @@ final public class PropertyOperator
                acc = (Accessor) _unaryAccessors.get(propName);
                if (acc != null) {
                   if (acc instanceof MethodAccessor) {
-                     if (_debug) {
-                        _log.debug("Updating existing accessor: " + meth);
-                     }
                      ((MethodAccessor) acc).addMethod(meth,params);
-                  } else if (_debug) {
-                     _log.debug("Superceded by a field: " + meth);
-                  }
+                  } 
                } else {
-                  if (_debug) {
-                     _log.debug("Adding new accessor: " + meth);
-                  }
                   acc = new UnaryMethodAccessor(propName,meth,params);
                   _unaryAccessors.put(propName,acc);
                }
@@ -436,14 +413,8 @@ final public class PropertyOperator
             {
                // hashtable get/put
                if (_hashAccessor != null) {
-                  if (_debug) {
-                     _log.debug("Updating hash accessor: " + meth);
-                  }
                   _hashAccessor.addMethod(meth,params);
                } else {
-                  if (_debug) {
-                     _log.debug("Creating a new hash accessor: " + meth);
-                  }
                   _hashAccessor = new BinaryMethodAccessor(propName,meth,params);
                }
             } else if ((plength > 0) && (params[0].isInstance("string")) &&
@@ -453,14 +424,8 @@ final public class PropertyOperator
                // binary get/set method
                acc = (Accessor) _binaryAccessors.get(propName);
                if (acc != null) {
-                  if (_debug) {
-                     _log.debug("Updating binary accessor: " + meth);
-                  }
                   ((MethodAccessor) acc).addMethod(meth,params);
                } else {
-                  if (_debug) {
-                     _log.debug("Creating a new binary accessor: " + meth);
-                  }
                   acc = new BinaryMethodAccessor(propName,meth,params);
                   _binaryAccessors.put(propName,acc);
                }
@@ -483,9 +448,6 @@ final public class PropertyOperator
                      Object[].class.isAssignableFrom(returnType) ||
                        Enumeration.class.isAssignableFrom(returnType)))
                {
-                  if (_debug) {
-                     _log.debug("Setting iterator method: " + meth);
-                  }
                   iteratorMethod = meth;
                }
 
@@ -513,12 +475,6 @@ final public class PropertyOperator
             int start, int end) 
       throws PropertyException, NoSuchMethodException, ContextException
    {
-
-      if (_debug) {
-         _log.debug("getProperty(" + instance + "," + names[start] + "..."
-               + names[end] + "," + start + "," + end + ")");
-      }
-
       String prop;
       Object nextProp = null;
       Accessor acc = null;
@@ -546,18 +502,10 @@ final public class PropertyOperator
       if (acc == null) {
          acc = (Accessor) _unaryAccessors.get(prop);
          if (acc != null) {
-
-            if (_debug) {
-               _log.debug("Trying unary accesor: " + acc);
-            }
-
             try {
                nextProp = acc.get(instance);
                start++;
             } catch (NoSuchMethodException e) { 
-               if (_debug) {
-                  _log.debug("No suitable unary get in " + acc);
-               }
                acc = null;
             }
          }
@@ -567,16 +515,10 @@ final public class PropertyOperator
       if (acc == null) {
          acc = (Accessor) _binaryAccessors.get(prop);
          if ((acc != null) && ( (start+1) <= end) ) {
-            if (_debug) {
-               _log.debug("Trying binary accesor: " + acc);
-            }
             try {
                nextProp = acc.get(instance, (String) names[start + 1]);
                start += 2; 
             } catch (NoSuchMethodException e) {
-               if (_debug) {
-                  _log.debug("No suitable binary get in " + acc);
-               }
                acc = null;
             } catch (ClassCastException e) {
                // names[start + 1] was not a String, just move on
@@ -594,20 +536,10 @@ final public class PropertyOperator
          acc = _hashAccessor;
          try {
             if (acc != null) {
-               if (_debug) {
-                  _log.debug("Trying hash accessor=" + acc +
-                        " with prop=" + prop);
-               }
                nextProp = acc.get(instance,prop);
                start++;
-               if (_debug) {
-                  _log.debug("Got: " + nextProp);
-               }
             }
          } catch (NoSuchMethodException e) {
-            if (_debug) {
-               _log.debug("No suitable hash get in " + acc);
-            }
             acc = null;
          }
       } 
@@ -618,9 +550,6 @@ final public class PropertyOperator
                " for property " + names[start] + "--is this the right class?");
       }
 
-      if (_debug) {
-         _log.debug("Using accessor: " + acc);
-      }
       if (start <= end) {
          try {
            return getOperator(nextProp.getClass()).getProperty(context,nextProp,names,start,end);
@@ -651,11 +580,6 @@ final public class PropertyOperator
          Context context, Object instance, Object[] names, Object value, int pos) 
       throws PropertyException, NoSuchMethodException, ContextException
    {
-      if (_debug) {
-         _log.debug("setProperty(" + instance + "," + names[pos] + "..."
-               + "," + value + "," + pos + ")");
-      }
-
       // names[pos] is what we could set from here
 
       int parentPos = names.length - 1;
@@ -664,20 +588,12 @@ final public class PropertyOperator
       // if we're not yet at the binary-settable parent, go there
       if (pos < binPos) {
          Object grandparent = getProperty(context,instance,names,pos,binPos - 1);
-         if (_debug) {
-            _log.debug("Advanced to " + names[binPos] + "=" + grandparent);
-         }
          PropertyOperator po = getOperator(grandparent.getClass());
          return po.setProperty(context,grandparent,names,value,binPos);
       } 
 
       // if we're at the binary-settable parent, try direct first
       if (pos == binPos) {
-
-         if (_debug) {
-            _log.debug("I am " + names[pos] + "(" + instance + ")" +
-                  " could be binary, but first recurse to try unary access for " + names[pos]);
-         }
 
          // try direct -- move to direct parent and try from there
          Object parent = null;
@@ -694,42 +610,21 @@ final public class PropertyOperator
          }
 
          // if direct failed, try binary
-         if (_debug) {
-            _log.debug("I am " + names[pos] + "(" + instance + ")" +
-                   "direct failed, try bin for " + names[pos] + "." + names[pos + 1]);
-         }
          Accessor binOp = (Accessor) _binaryAccessors.get(names[pos]);
          if (binOp != null) {
-            if (_debug) {
-               _log.debug("Found binOp accessor: " + binOp);
-            }
             try {
                return binOp.set(instance,(String) names[pos+1],value);
             } catch (ClassCastException e) {
-               if (_debug) {
-                  _log.debug("Binary Failed because " + names[pos + 1] + " was not a string; it is " + names[pos + 1].getClass());
-               }
                // names[pos+1] was not a string, just move on
                return false;
             } catch (NoSuchMethodException e) {
-               if (_debug) {
-                  _log.debug("Binary Failed: " + e);
-               }
                return false;
-            }
-         } else {
-            if (_debug) {
-               _log.debug("No binary accessor for " + names[pos]);
             }
          }
          return false;
       }
 
       // we're the direct parent, use unaryOp or hash method
-      if (_debug) {
-         _log.debug("I am " + names[pos] + "(" + instance + ")"
-               + "trying direct");
-      }
       Accessor unaryOp = (Accessor) _unaryAccessors.get(names[pos]);
       try {
          if ((unaryOp != null) && unaryOp.set(instance,value)) {
@@ -979,10 +874,6 @@ final class DirectAccessor extends Accessor
                   {
                       continue;
                   }
-               }
-               if ( PropertyOperator._debug) 
-               {
-                  PropertyOperator._log.debug("method " + this + " failed to match because " + sig[i] + " required but got " + args[i]);
                }
                return false;
             }

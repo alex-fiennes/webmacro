@@ -95,9 +95,8 @@ class ParseDirective implements Directive
          fw.flush();
          return os.toString("UTF8");
       } catch(IOException e) {
-         Engine.log.exception(e);
-         Engine.log.warning(
-              "Include: evaluate got IO exception on write to StringWriter");
+         context.getLog("engine").error(
+            "Include: evaluate got IO exception on write to StringWriter",e);
          return "";
       }
    }  
@@ -116,31 +115,25 @@ class ParseDirective implements Directive
    {
 
       if (_fileName == null) {
-         Engine.log.error("Include: attempt to write with null filename");
+         context.getLog("engine").error(
+            "Include: attempt to write with null filename");
          return;
       }
 
       // evaluate or toString to find the actual filename to use
       String fname = ((Macro) _fileName).evaluate(context).toString();
-      if (Log.debug) {
-         Engine.log.debug("Include fname: " + fname);
-      }
-
       try {
          Template tmpl = (Template) context.getBroker().get("template", fname);
          tmpl.write(out,context);
      } catch (IOException e) {
-         Engine.log.exception(e);
          String warning = "Error reading file " + fname;
-         Engine.log.warning(warning);
+         context.getLog("engine").warning(warning,e);
          out.write("<!--\nWARNING: " + warning + " \n-->");
      } catch (Exception e) {
-         Engine.log.exception(e);
          String warning = "Template not found: " + fname;
-         Engine.log.warning(warning);
+         context.getLog("engine").warning(warning,e);
          out.write("<!--\nWARNING: " + warning + " \n-->");
      }
- 
    }
 
 }

@@ -57,12 +57,6 @@ public class WM implements WebMacro
    private Provider _urlProvider;
    private Provider _configProvider;
 
-   /**
-     * Log object used to write out messages
-     */
-   final static Log _log = new Log("WM", "WebMacro Manager");
-
-   
    public WM() throws InitException
    {
       this(null);
@@ -94,13 +88,12 @@ public class WM implements WebMacro
       try {
          _tmplProvider = _broker.getProvider("template");
          _urlProvider = _broker.getProvider("url");
-         _configProvider = _broker.getProvider("config");
       } catch (NotFoundException nfe) {
-         throw new InitException("Could not locate provider: " + nfe + "\n"
-            + "This implies that WebMacro is badly misconfigured, you "
-            + "should double check that all configuration files and "
-            + "options are set up correctly. In a default install of "
-            + "WebMacro this likely means your WebMacro.properties file "
+         throw new InitException("Could not locate provider:\n  " + nfe 
+            + "\nThis implies that WebMacro is badly misconfigured, you\n"
+            + "should double check that all configuration files and\n"
+            + "options are set up correctly. In a default install of\n"
+            + "WebMacro this likely means your WebMacro.properties file\n"
             + "was not found on your CLASSPATH.");
       }
    }
@@ -205,9 +198,17 @@ public class WM implements WebMacro
    final public String getConfig(String key) 
       throws NotFoundException
    {
-      return (String) _configProvider.get(key);
+      return (String) _broker.get("config", key);
    }
 
+   /**
+     * Get a log to write information to. Log names should be lower
+     * case and short. The name you supply corresponds to the name
+     * associated with the messages in the resulting log file.
+     */
+   final public Log getLog(String name) {
+      return _broker.getLog(name);
+   }
 }
 
 
@@ -236,12 +237,10 @@ final class BrokerOwner {
          } catch (InitException e) {
             _broker = null;
             _brokerUsers = 0; 
-            WM._log.exception(e);
             throw e; // rethrow
          } catch (Throwable t) {
             _broker = null;
             _brokerUsers = 0;
-            WM._log.exception(t);
             throw new InitException(
 "An unexpected exception was raised during initialization. This is bad,\n" +
 "there is either a bug in WebMacro, or your configuration is messed up:\n" +

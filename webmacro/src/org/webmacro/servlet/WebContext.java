@@ -61,7 +61,7 @@ public class WebContext extends Context
    /**
      * Log configuration errors, context errors, etc.
      */
-   private final static Log _log = new Log("webcon","WebContext Messages");
+   private Log _log;
 
    /**
      * The request for this http connect
@@ -82,12 +82,12 @@ public class WebContext extends Context
    public WebContext(final Broker broker) 
    {
       super(broker);
+      _log = broker.getLog("webcon");
       try {
          String tools = (String) broker.get("config","WebContextTools");
          registerTools(tools);
       } catch (NotFoundException ne) {
-         _log.exception(ne);
-         _log.warning("could not load WebContextTools from config: " + ne);
+         _log.warning("could not load WebContextTools from config", ne);
       }
    }
 
@@ -158,8 +158,7 @@ public class WebContext extends Context
          Bag ct = (Bag) getTool("Form");
          return (String) ct.get(field);
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load Form tool");
+         _log.error("Could not load Form tool",e);
          return null;
       }
    }
@@ -169,8 +168,7 @@ public class WebContext extends Context
           Bag ct = (Bag) getTool("FormList");
          return (String[]) ct.get(field);
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load FormList tool");
+         _log.error("Could not load FormList tool",e);
          return null;
       }
    }
@@ -179,8 +177,7 @@ public class WebContext extends Context
       try {
          return (CGI_Impersonator) getTool("CGI");
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load CGI tool");
+         _log.error("Could not load CGI tool",e);
          return null;
       }
    }
@@ -190,8 +187,7 @@ public class WebContext extends Context
          CookieJar cj = (CookieJar) getTool("Cookie");
          return (Cookie) cj.get(name);
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load Cookie tool");
+         _log.error("Could not load Cookie tool",e);
          return null;
       }
    }
@@ -201,8 +197,7 @@ public class WebContext extends Context
          CookieJar cj = (CookieJar) getTool("Cookie");
          cj.set(name, value);
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load Cookie tool");
+         _log.error("Could not load Cookie tool",e);
       }
    }
 
@@ -210,8 +205,7 @@ public class WebContext extends Context
       try {
          return (HttpSession) getTool("Session");
       } catch (Exception e) {
-         _log.exception(e);
-         _log.error("Could not load Session tool");
+         _log.error("Could not load Session tool",e);
          return null;
       }
    }

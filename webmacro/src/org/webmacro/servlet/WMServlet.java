@@ -73,7 +73,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    /**
      * Log object used to write out messages
      */
-   final static private Log _log = new Log("WMServlet", "WebMacro Abstract Servlet");
+   private Log _log;
 
    /**
      * null means all OK
@@ -114,23 +114,24 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             _wm = initWebMacro();
             _broker = _wm.getBroker();
          } catch (InitException e) {
-            _log.exception(e);
-            _log.error("Could not initialize the broker!\n"
+            _problem = "Could not initialize the broker!\n"
                   + "*** Check that WebMacro.properties was in your servlet\n"
                   + "*** classpath, in a similar place to webmacro.jar \n"
-                  + "*** and that all values were set correctly.\n");
-            _problem = e.getMessage(); 
+                  + "*** and that all values were set correctly.\n"
+                  + e.getMessage();
+            System.err.println(_problem);
+            e.printStackTrace(System.err);
             return;
          }
       }
+      _log = _broker.getLog("servlet");
 
       // set up WebContext
       try {
          _wcPrototype = initWebContext();
       } catch (InitException e) {
-         _log.exception(e);
          _log.error("Failed to initialize a WebContext, the initWebContext\n"
-               + "method returned an exception: " + e);
+               + "method returned an exception", e);
          _problem = e.getMessage();
          return;
       }
@@ -139,12 +140,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          start();
          _problem = null; 
       } catch (ServletException e) {
-         _log.exception(e);
          _problem = "WebMacro application code failed to initialize: \n"
             + e + "\n" + "This error is the result of a failure in the\n"
                 + "code supplied by the application programmer.\n";
+         _log.error(_problem,e);
       }
-
+      _log.notice("started: " + this);
       _started = true;
 
    }
@@ -157,6 +158,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    final public synchronized void destroy() {
       stop();
+      _log.notice("stopped: " + this);
       _wm.destroy();
       _wm = null;
       _started = false;
@@ -232,7 +234,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                out.flush();
                out.close();
             } catch (Exception e) {
-               _log.error(_problem); 
+               _log.error(_problem,e); 
             }
             return;
          }
@@ -249,7 +251,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (context == null) {
             context = _wcPrototype.newInstance(req,resp);
          }
-         _log.exception(e);
+         _log.error("Your handler failed to handle the request:" + this, e);
          Template tmpl = error(context,
             "Your handler was unable to process the request successfully " +
             "for some reason. Here are the details:<p>" + e);
@@ -258,7 +260,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (context == null) {
             context = _wcPrototype.newInstance(req,resp);
          }
-         _log.exception(e);
+         _log.error("Your handler failed to handle the request:" + this, e);
          Template tmpl = error(context,
             "The handler WebMacro used to handle this request failed for " +
             "some reason. This is likely a bug in the handler written " +
@@ -287,9 +289,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          context.put(getConfig(ERROR_VARIABLE), error);
          tmpl = hand.accept(context);
       } catch(NotFoundException e2) {
-         _log.error("Could not find error variable in Config: " + e2);
+         _log.error("Could not find error variable in Config", e2);
       } catch(Exception e2) {
-         _log.error("Unable to use ErrorHandler: " + e2);
+         _log.error("Unable to use ErrorHandler", e2);
       }
       return tmpl;
    }
@@ -310,6 +312,16 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       // complaining that it has been shut down, or they'll get a null here.
       return _broker;
    }
+
+   /**
+     * Get a Log object which can be used to write to the log file. 
+     * Messages to the logfile will be associated with the supplied
+     * name. 
+     */
+   final public Log getLog(String name) {
+      return _broker.getLog(name);
+   }
+
 
    /**
      * Retrieve a template from the "template" provider. Equivalent to 
@@ -389,13 +401,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       } catch (IOException e) {
          // ignore disconnect
       } catch (Exception e) {
-         _log.exception(e);
          String error =
             "WebMacro encountered an error while executing a  template:\n"
             + ((tmpl != null) ?  (tmpl  + ": " + e + "\n") :
                 ("The template failed to load; double check the "
                  + "TemplatePath in your webmacro.properties file."));
-         _log.warning(error);
+         _log.warning(error,e);
          try { out.write(error); } catch (Exception ignore) { }
       } finally {
          try {

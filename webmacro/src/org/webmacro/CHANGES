@@ -1,3 +1,8 @@
+-- Radical change: the logging API has been completely redone. Now 
+   a Log is associated with a particular instance of a Broker, 
+   rather than static. This is important for co-branded sites. 
+   It looks pretty much the same to an outsider. The one difference
+   is that you can now get a log from a Context.
 -- Radical change: org.webmacro.broker is GONE, replaced by a much 
    simpler and more efficient version of the broker
 

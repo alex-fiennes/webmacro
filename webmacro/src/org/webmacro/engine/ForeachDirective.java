@@ -135,8 +135,8 @@ final class ForeachDirective implements Directive
             }
          }
       } catch (ContextException e) {
-         Engine.log.exception(e);
-         Engine.log.error("unable to set a list item of list: " + _list); 
+         context.getBroker().getLog("engine").error(
+            "unable to set a list item of list: " + _list); 
          out.write("<!--\n Unable to resolve list " + _list + " \n-->");
       }
    }
@@ -157,8 +157,8 @@ final class ForeachDirective implements Directive
          fw.flush();
          return os.toString("UTF8");
       } catch (IOException e) {
-         Engine.log.exception(e);
-         Engine.log.error("evaluate got IO exception on write to StringWriter");
+         context.getBroker().getLog("engine").error(
+            "evaluate got IO exception on write to StringWriter");
          return "";
       }
    }  

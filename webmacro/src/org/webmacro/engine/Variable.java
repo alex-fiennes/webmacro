@@ -131,13 +131,11 @@ public abstract class Variable implements Macro
          } 
          return val;
       } catch (NullPointerException e) {
-         Engine.log.exception(e);
-         Engine.log.warning("Variable: " + _vname + " does not exist");
+         context.getLog("engine").warning("Variable: " + _vname + " does not exist",e);
          return "<!--\n unable to access variable " 
             + _vname + ": not found in " + context + "\n -->";
       } catch (Exception e) {
-         Engine.log.exception(e);
-         Engine.log.warning("Variable: " + _vname + " does not exist");
+         context.getLog("engine").warning("Variable: " + _vname + " does not exist",e);
          return "<!--\n unable to access variable " 
             + _vname + ": " + e + " \n-->";
       }
@@ -155,8 +153,7 @@ public abstract class Variable implements Macro
       try {
          out.write(evaluate(context).toString());
       } catch (Exception e) {
-         Engine.log.exception(e);
-         Engine.log.warning("Variable: " + _vname + " is undefined");
+         context.getLog("engine").warning("Variable: " + _vname + " is undefined",e);
          out.write("<!--\n warning: attempt to write out undefined variable " 
             + _vname + ": " + e + " \n-->");
       } 

@@ -1,0 +1,135 @@
+
+package org.webmacro.engine;
+
+import org.webmacro.engine.*;
+import java.util.*;
+import java.lang.reflect.*;
+import org.webmacro.*;
+import org.webmacro.util.*;
+import org.webmacro.resource.*;
+
+/**
+  * Utility class to assist in the creation of directives.
+  */
+public final class DirectiveProvider implements Provider
+{
+
+   private Log _log;
+
+   // BULDER CLASS MANAGEMENT
+
+   private final Hashtable _prototypes  = new Hashtable();
+
+   /**
+     * Register a new directive class, so that a builder
+     * of this type can be retrieved later.
+     * @exception IntrospectionException something wrong with the class
+     * @exception InitException duplicate registration
+     */
+   public final void register(String dirClassName) 
+      throws IntrospectionException, InitException
+   {
+
+      String dirName = extractName(dirClassName);
+      Class directive = null;
+      try {
+         directive = Class.forName(dirClassName);
+      } catch (Exception e) {
+         throw new IntrospectionException("No class " + dirClassName);
+      }
+      DirectiveBuilder b = (DirectiveBuilder) _prototypes.get(dirName);
+      if (b == null) {
+         b = new DirectiveBuilder(dirName, directive);
+         _prototypes.put(dirName, b);
+         _log.info("Registered directive: " + dirName);
+      } else if (! directive.equals(b.getDirectiveClass())) {
+         throw new InitException(
+               "Attempt to register directive " + directive
+               + " failed because " + b.getDirectiveClass() 
+               + " is already registered for type " + dirName);
+      }
+   }
+
+   private static String extractName(String dir) 
+      throws IntrospectionException
+   {
+      if (! dir.endsWith("Directive") ) {
+         throw new IntrospectionException(
+            "Malformed classname, must end with Directive");
+      }
+      int end = dir.length() - 9;
+      int start = dir.lastIndexOf('.',end) + 1;
+      String dirName = dir.substring(start,end);
+      if (dir.startsWith("org.webmacro.")) {
+         dirName = dirName.toLowerCase();
+      }
+      return dirName;
+   }
+
+
+   /**
+     * Create a builder for the named directive
+     */
+   public final DirectiveBuilder getBuilder(String directiveName)
+      throws ClassNotFoundException
+   {
+      DirectiveBuilder proto = 
+         (DirectiveBuilder) _prototypes.get(directiveName);
+      if (null == proto) {
+        throw new ClassNotFoundException(
+               "No directive matched the name " + directiveName);
+      }
+      try {
+         return (DirectiveBuilder) proto.clone();
+      } catch(Exception ignore) {
+         return null;
+      }
+   }
+
+
+
+   // RESOURCE PROVIDER API
+
+   public String getType() {
+      return "directive";
+   }
+
+   public void init(Broker broker, Properties config) throws InitException
+   {
+      try {
+         _log = broker.getLog("engine"); 
+         String directives = config.getProperty("Directives");
+         Enumeration denum = new StringTokenizer(directives);
+         while (denum.hasMoreElements()) {
+            String dir = (String) denum.nextElement();
+            try {
+               register(dir);
+            } catch (Exception ce) {
+               _log.warning("Could not load directive: " + dir,ce);    
+            }
+         }
+      } catch (Exception e) {
+         _log.error("Could not init DirectiveProvider", e);
+      }
+   }
+
+   public void destroy() 
+   {
+      _prototypes.clear();
+   }
+
+   public Object get(String name) 
+      throws NotFoundException
+   {
+      try {
+         return getBuilder(name);
+      } catch (Exception e) {
+         throw new NotFoundException("No such directive: " + name
+               + ":" + e.getMessage());
+      }
+   }
+
+   public void flush() { }
+}
+
+

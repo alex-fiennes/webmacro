@@ -46,7 +46,6 @@ public class GuestBook extends WMServlet
    String comment;
    GuestEntry myGuestEntry;
 
-   static private Log log = new Log("guestbk", "GuestBook example");
    final static private boolean debug = false;
    
    public Template handle(WebContext context) 
@@ -56,37 +55,27 @@ public class GuestBook extends WMServlet
       String templateName;
 
       // get the form variables
-      try {
-         output = (String) context.getForm("loadFile");
-         name = (String) context.getForm("name"); 
-         email = (String) context.getForm("email"); 
-         comment = (String) context.getForm("comment"); 
-      } catch (Exception e) {
-         log.exception(e);
-         if (debug) log.debug("caught a null pointer exception when accessing form");
-      }
+      output = (String) context.getForm("loadFile");
+      name = (String) context.getForm("name"); 
+      email = (String) context.getForm("email"); 
+      comment = (String) context.getForm("comment"); 
 
       if (output == null) {
          output = "form.wm";
          templateName = "form.wm";
       }
       if (name == null) {
-         if (debug) log.warning("<!-- form variable 'name' not defined -->");
          name = "<!-- form variable 'name' not defined -->";
       }
       if (email == null) {
-         if (debug) log.warning("<!-- form variable 'email' not defined -->");
          email = "<!-- form variable 'email' not defined -->";
       }
       if (comment == null) {
-         if (debug) log.warning("<!-- form variable 'comment' not defined -->");
          comment = "<!-- form variable 'comment' not defined -->";
       }
 
       // verifying for submissions
       if (output.equals("verify")) {
-         if (debug) log.debug("GuestBook: verify... got data");
-
          myGuestEntry = new GuestEntry(name, email, comment);
          book.addElement(myGuestEntry); 
          context.put("registry", book);
@@ -95,7 +84,6 @@ public class GuestBook extends WMServlet
 
       // for guest book view
       } else if (output.equals("allguest")) {
-         if (debug) log.debug("GuestBook: allguest");
          context.put("registry",book);
          templateName = "allguest.wm";
 

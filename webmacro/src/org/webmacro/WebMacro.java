@@ -93,6 +93,16 @@ public interface WebMacro
    public Context getContext();
 
    /**
+     * Get a log to write information to. The log messages will 
+     * be output to one or more pre-configured log files. The 
+     * name you specify will be printed in the log next to 
+     * any message you log. See the WebMacro.properties (or other
+     * configuration) for information on how to set up and 
+     * control logging.
+     */
+   public Log getLog(String name);
+
+   /**
      * Create a new WebContext object. This returns a Context object 
      * with special knowledge of servlets (request and response) 
      * thereby enabling some extra functionality. If you are using 

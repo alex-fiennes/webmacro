@@ -124,9 +124,8 @@ final class IfDirective implements Directive
          fw.flush();
          return os.toString("UTF8");
       } catch (IOException e) {
-         Engine.log.exception(e);
-         Engine.log.error(
-               "If: evaluate got IO exception on write to StringWriter");
+         context.getBroker().getLog("engine").error(
+               "If: evaluate got IO exception on write to StringWriter",e);
          return "";
       }
    }  
@@ -141,23 +140,15 @@ final class IfDirective implements Directive
       throws ContextException, IOException
    {
 
-      if (Log.debug) {
-         Engine.log.debug("If: evaluating #if condition:" + myCondition);
-      }
-
       if (myCondition.test(context)) 
       {
-         if (Log.debug) {
-            Engine.log.debug("If: writing myIfBlock");
-         }
 	 if (myIfBlock != null) {
             myIfBlock.write(out, context);
          } else {
-	    Engine.log.warning("If: Block for an #if directive was null");
+	    context.getLog("engine").warning("If: Block for an #if directive was null");
 	 }
       } else { 
 	 if (myElseBlock != null) {
-            if (Log.debug) Engine.log.debug("If: writing myElseBlock: " + myCondition);
             myElseBlock.write(out, context);
 	 }
       } 

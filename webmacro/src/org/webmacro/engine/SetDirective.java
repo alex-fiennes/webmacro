@@ -101,8 +101,7 @@ final class SetDirective implements Directive
             myVariable.setValue(context, myValue);
          }
       } catch (ContextException e) {
-         Engine.log.exception(e);
-         Engine.log.error("Set: Unable to set value: " + myVariable);
+         context.getLog("engine").warning("Set: Unable to set value: " + myVariable);
          return ("<!--\n Unable to set value: " + myVariable + " \n-->");
       } 
       return null;

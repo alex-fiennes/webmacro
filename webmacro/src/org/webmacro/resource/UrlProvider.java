@@ -37,10 +37,6 @@ import org.webmacro.*;
 final public class UrlProvider extends CachingProvider
 {
 
-   // STATIC DATA 
-
-   final private static Log _log = new Log("url", "URL Provider");
-
    /**
      * We serve up "url" type resources
      */
@@ -98,8 +94,7 @@ final public class UrlProvider extends CachingProvider
          in.close();
          return new TimedReference(sw.toString(), timeout);
       } catch (Exception e) {
-         _log.exception(e);
-         throw new NotFoundException(this + " unable to load " + name);
+         throw new NotFoundException(this + " unable to load " + name + ": " + e.getMessage());
       }
    }
 

@@ -8,6 +8,4 @@ public interface Builder {
    public Object build(BuildContext pc)
       throws BuildException;
 
-
-   static final Log log = new Log("build", "Template Builder");
 }

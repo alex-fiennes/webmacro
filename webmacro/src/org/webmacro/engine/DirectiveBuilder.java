@@ -345,7 +345,6 @@ final class DirectiveBuilder implements Cloneable, Builder
          if (t instanceof BuildException) {
             throw (BuildException) t;
          } else {
-            Engine.log.exception(t);
             throw new BuildException("failure during build: " + t);
          }
       } catch (Exception e) {

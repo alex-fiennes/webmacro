@@ -27,8 +27,8 @@ final class GlobalVariable extends Variable
       try {
          return context.getGlobal(_names);
       } catch (Exception e) {
-         Engine.log.exception(e);
          String warning = "Variable: unable to access " + this + ";";
+         context.getBroker().getLog("engine").warning(warning,e);
          throw new ContextException(warning);
       }
    }
@@ -50,9 +50,9 @@ final class GlobalVariable extends Variable
                + " in supplied context (" + context.getClass() + ")");
          }
       } catch (Exception e) {
-         Engine.log.exception(e);
          String warning = "Variable.setValue: unable to access " + this + 
             " (is it a public method/field?)";
+         context.getBroker().getLog("engine").warning(warning, e);
          throw new ContextException(warning);
       }
    }

@@ -27,7 +27,6 @@ final class ToolVariable extends Variable
       try {
          return context.getTool(_names);
       } catch (Exception e) {
-         Engine.log.exception(e);
          String warning = "Variable: unable to access " + this + ";";
          throw new ContextException(warning);
       }
@@ -50,7 +49,6 @@ final class ToolVariable extends Variable
                + " in supplied context (" + context.getClass() + ")");
          }
       } catch (Exception e) {
-         Engine.log.exception(e);
          String warning = "Variable.setValue: unable to access " + this + 
             " (is it a public method/field?)";
          throw new ContextException(warning);

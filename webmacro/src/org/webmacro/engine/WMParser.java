@@ -35,8 +35,6 @@ import org.webmacro.*;
 public class WMParser implements Parser
 {
 
-   static private final Log _log = new Log("parse", "WebMacro parser");
-
    private final Broker _broker;
    private Hashtable _tools;
 
@@ -141,15 +139,7 @@ public class WMParser implements Parser
       ParseTool pin = new ParseTool(name, in);
       BlockBuilder bb = new BlockBuilder();
       do {
-         try {
-            bb.addElement(parseBlockImpl(pin)); 
-         } catch (ParseToolException e) {
-            _log.exception(e);
-            if (! pin.isAtEOF()) {
-               int c = pin.nextChar(); // skip a char before continuing
-               bb.addElement(new Character((char) c).toString());
-             }
-         }
+         bb.addElement(parseBlockImpl(pin)); 
       } while (! pin.isAtEOF()); 
       return bb;
    }
@@ -283,6 +273,8 @@ public class WMParser implements Parser
    {
       try {
          return (DirectiveBuilder) _broker.get("directive",name);      
+      } catch (NotFoundException e) {
+         throw e;
       } catch (Exception e) {
          throw new NotFoundException("Could not load directive " 
                + name + ": " + e);
@@ -331,7 +323,6 @@ public class WMParser implements Parser
             if (dirName == null) {
                if (in.getChar() == '#') {
                   // comment
-                  if (Log.debug) _log.debug("Parsing comment");
                   in.skipToEOL(); 
                   return new NullBuilder();
                } else {
@@ -365,8 +356,6 @@ public class WMParser implements Parser
          } finally {
             in.clearMark(mark);
          }
-
-         if (Log.debug) _log.debug("Parsing #" + dirName);
 
          // if we're still here it is a directive
 
@@ -442,11 +431,9 @@ public class WMParser implements Parser
          dirB.check();
          child = dirB;
       } catch (BuildException be) {
-         _log.exception(be);
          throw new ParseToolException(in, "Error parsing directive: " 
                + be.getMessage());
       } catch (NotFoundException e) {
-         _log.exception(e);
 e.printStackTrace();
          throw new ParseToolException(in, "Unrecognized directive: " 
                + dirName);
@@ -513,12 +500,8 @@ e.printStackTrace();
       }
 
       if (isParam) {
-         if (Log.debug) 
-            _log.debug("Parsed param:" + Variable.makeName(oname));
          return new ParamBuilder(oname); 
       } else {
-         if (Log.debug) 
-            _log.debug("Parsed var:" + Variable.makeName(oname));
          return new VariableBuilder(oname, filtered);
       }
    }
@@ -567,8 +550,6 @@ e.printStackTrace();
             } 
             break;
       }
-      if (Log.debug) 
-         _log.debug("Parsed term:" + term);
       return term;
    }
 

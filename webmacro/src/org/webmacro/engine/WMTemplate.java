@@ -49,6 +49,11 @@ abstract public class WMTemplate implements Template
    private Broker _broker;
 
    /**
+     * Where we log our errors
+     */
+   private Log _log;
+
+   /**
      * What this template contains is a top level block
      */
    private Block _content; 
@@ -57,11 +62,6 @@ abstract public class WMTemplate implements Template
      *
      */
    private String _parserName;
-
-   /**
-     * Log
-     */
-   private static Log _log = new Log("tmpl", "Template Processing");
 
    /**
      * Template parameters
@@ -88,6 +88,7 @@ abstract public class WMTemplate implements Template
       _broker = broker;
       _parserName = parserName;
       _encoding = encoding;
+      _log = broker.getLog("template");
    }
 
    /**
@@ -114,7 +115,6 @@ abstract public class WMTemplate implements Template
       try {
          return (Parser) _broker.get("parser","wm"); 
       } catch (Exception e) {
-         Engine.log.exception(e);
          throw new TemplateException("Could not load parser type \"" + 
                _parserName + "\": " + e);
       }
@@ -153,7 +153,7 @@ abstract public class WMTemplate implements Template
          newContent = (Block) bb.build(bc);
       } catch (BuildException be) {
          newContent = null;
-         _log.error("Template contained invalid data: " + be);
+         _log.error("Template contained invalid data", be);
          throw be;
       } catch (IOException e) {
          newContent = null; // don't let the old one survive
@@ -184,8 +184,7 @@ abstract public class WMTemplate implements Template
 	 fw.flush();
    	 return os.toString(_encoding);
       } catch (IOException e) {
-         _log.exception(e);
-         _log.error("Template: Could not write to ByteArrayOutputStream!");
+         _log.error("Template: Could not write to ByteArrayOutputStream!",e);
          return null;
       }
    }
@@ -232,8 +231,7 @@ abstract public class WMTemplate implements Template
                content = _content;
             }
          } catch (Exception e) {
-            _log.exception(e);
-            _log.error("Template: Unable to read template: " + this);
+            _log.error("Template: Unable to read template: " + this, e);
             out.write("<!--\n Template failed to read. Reason: ");
             out.write(e.toString());
             out.write(" \n-->");
@@ -243,10 +241,9 @@ abstract public class WMTemplate implements Template
       try {
          content.write(out,data);
       } catch (ContextException e) {
-         _log.exception(e);
          String warning = 
             "Template: Missing data in Map passed to template " + this;
-         _log.warning(warning);
+         _log.warning(warning,e);
          
          out.write("<!--\n Could not interpret template. Reason: ");
          out.write(warning);

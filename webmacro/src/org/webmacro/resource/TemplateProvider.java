@@ -65,6 +65,7 @@ final public class TemplateProvider extends CachingProvider
    public void init(Broker b, Properties config) throws InitException
    {
       _broker = b;
+      _log = b.getLog("resource");
 
       try {
          try {
@@ -81,28 +82,18 @@ final public class TemplateProvider extends CachingProvider
          for (i=0; i < _templateDirectory.length; i++) 
          {
             String dir = st.nextToken(); 
-            if (_debug) {
-               _log.debug("template dir = " + dir);
-            }
             _templateDirectory[i] = dir;
          }
 
       } catch(Exception e) {
-         _log.exception(e);
          throw new InitException("Could not initialize: " + e);
       }
    }
 
    /**
-     * Enable/disable debugging statements
-     */
-   static private final boolean _debug = false && Log.debug;
-
-   /**
      * Where we write our log messages 
      */
-   static public final Log _log = 
-      new Log("template","Template storage resource");
+   private Log _log;
 
    /**
      * Supports the "template" type
@@ -151,26 +142,16 @@ final public class TemplateProvider extends CachingProvider
       for (int i=0; i < _templateDirectory.length; i++) {
          Template t;
          String dir = _templateDirectory[i];
-         if (_debug) {
-            _log.debug("TemplateProvider: searching directory " + dir);
-         }
          File tFile  = new File(dir,fileName);
          if (tFile.canRead()) {
             try {
-               if (_debug) {
-                  _log.debug("TemplateProvider: loading " + tFile);
-               }
                t = new FileTemplate(_broker,tFile,encoding);
                t.parse();
                return t;
             } catch (Exception e) {
-               _log.exception(e);
                _log.warning("TemplateProvider: Could not load template: " 
-                     + tFile);
+                     + tFile, e);
             } 
-            if (_debug) {
-               _log.debug("TemplateProvider: " + fileName + " not found.");
-            }
          }
       }
       return null;

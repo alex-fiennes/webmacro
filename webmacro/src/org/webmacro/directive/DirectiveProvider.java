@@ -15,7 +15,7 @@ public final class DirectiveProvider implements Provider
    // BULDER CLASS MANAGEMENT
 
    private final Hashtable _descriptors  = new Hashtable();
-   private final static Log _log = new Log("dir", "Directive Provider");
+   private Log _log;
 
    /**
      * Register a new directive class, so that a builder
@@ -79,6 +79,7 @@ public final class DirectiveProvider implements Provider
 
    public void init(Broker broker, Properties config) throws InitException
    {
+      _log = broker.getLog("directive");
       try {
          String directives = config.getProperty("NewDirectives");
          Enumeration denum = new StringTokenizer(directives);

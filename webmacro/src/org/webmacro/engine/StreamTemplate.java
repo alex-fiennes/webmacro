@@ -80,14 +80,6 @@ public class StreamTemplate extends WMTemplate
    public static void main(String arg[]) 
    {
 
-      Log.traceExceptions(true);
-      Log.setLevel(Log.ALL);
-      Log.setTarget(System.err);
-      if (arg.length != 0) {
-         System.out.println("Enabling log types");
-         Log.enableTypes(arg);
-      }
-
       // Build a context
       WebMacro wm = null;
       Context context = null;
