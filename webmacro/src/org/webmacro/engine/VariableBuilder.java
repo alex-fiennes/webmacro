@@ -28,17 +28,15 @@ public class VariableBuilder implements Builder
 {
 
     private final Object[] _names;
-    private final boolean _filtered;
 
-    public VariableBuilder (Object names[], boolean filtered)
+    public VariableBuilder (Object names[])
     {
         _names = names;
-        _filtered = filtered;
     }
 
     public final Object build (BuildContext bc) throws BuildException
     {
-        return bc.resolveVariableReference(_names, _filtered);
+        return bc.resolveVariableReference(_names);        
     }
 }
 

@@ -44,7 +44,6 @@ public class BuildContext extends Context
 
     private final Map _types = new HashMap();
     private final Map _macros = new HashMap();
-    private final FilterManager _filters = new FilterManager();
 
     public BuildContext (Broker b)
     {
@@ -99,37 +98,6 @@ public class BuildContext extends Context
     }
 
     /**
-     * Register a new filter, adding it to the chain for the supplied name.
-     * The name is either a top level property name or * to mean "all".
-     * @param var the top level property name that is being filtered
-     * @param ft the Filter which will handle this property
-     */
-    public void addFilter (Variable var, Filter ft)
-    {
-        _filters.addFilter(var, ft);
-    }
-
-    /**
-     * Clear all the filtered for the supplied name. Cleaing * clears
-     * only global filters, leaving filters for specific properties.
-     */
-    public void clearFilters (Variable var)
-    {
-        _filters.clearFilters(var);
-    }
-
-    /**
-     * Get the filter that applies to a specific variable. Returning
-     * null from this method means that the entire variable should
-     * be dropped from the output since it's been filtered to null.
-     * @return the Macro to be used to filter it, or null
-     */
-    public Macro getFilterMacro (Variable v)
-    {
-        return _filters.getMacro(v);
-    }
-
-    /**
      * Add a MacroDefinition to the build context
      */
     public void putMacro (String name, MacroDefinition macro)
@@ -171,7 +139,7 @@ public class BuildContext extends Context
      * Create a variable (or resolve a constant at build time)
      * Used by various build() routines
      */
-    Object resolveVariableReference (Object names[], boolean filtered)
+    Object resolveVariableReference (Object names[])
             throws BuildException
     {
         Object v = null;
@@ -230,9 +198,7 @@ public class BuildContext extends Context
         {
             throw new BuildException("Unrecognized Variable Type: " + type);
         }
-
-        return (filtered && v instanceof Variable)
-                ? getFilterMacro((Variable) v) : v;
+        return v;
     }
 
 }

@@ -978,7 +978,7 @@ public class WMParser_impl implements WMParser_implConstants
         }
         Object[] names = v.toArray();
         {
-            if (true) return new VariableBuilder(names, false);
+            if (true) return new VariableBuilder(names);
         }
         throw new Error("Missing return statement in function");
     }

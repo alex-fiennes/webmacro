@@ -772,7 +772,7 @@ Builder VariableReference() : {
   )
   {
     Object[] names = v.toArray();
-    return new VariableBuilder(names, false);
+    return new VariableBuilder(names);
   }
 }
 
