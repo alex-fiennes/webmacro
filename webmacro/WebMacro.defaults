@@ -162,10 +162,10 @@ Directives.text:       org.webmacro.directive.TextDirective
 Directives.comment:    org.webmacro.directive.CommentDirective
 Directives.foreach:    org.webmacro.directive.ForeachDirective
 Directives.alternate:  org.webmacro.directive.AlternateDirective
-Directives.encode:     org.webmacro.directive.EncodeDirective
-Directives.escape:     org.webmacro.directive.EscapeDirective
-Directives.silence:    org.webmacro.directive.SilenceDirective
 Directives.param:      org.webmacro.directive.ParamDirective
+# Directives.encode:     org.webmacro.directive.EncodeDirective
+# Directives.escape:     org.webmacro.directive.EscapeDirective
+# Directives.silence:    org.webmacro.directive.SilenceDirective
 
 # The following are tools which are added to your WebContext. You can 
 # customize your WebContext with special tools of your own by adding 
@@ -202,6 +202,10 @@ WebContextTools.Cookie: org.webmacro.servlet.CookieTool
 WebContextTools.Response: org.webmacro.servlet.ResponseTool 
 WebContextTools.Request: org.webmacro.servlet.RequestTool 
 WebContextTools.Session: org.webmacro.servlet.SessionTool
+WebContextTools.Math: org.webmacro.servlet.MathTool
+WebContextTools.Text: org.webmacro.servlet.TextTool
+WebContextTools.Type: org.webmacro.servlet.TypeTool
+WebContextTools.Variable: org.webmacro.servlet.VariableTool
 
 ContextTools:
 
@@ -221,8 +225,8 @@ Parsers.wm:  org.webmacro.parser.WMParser
 
 CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
 CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
-#CachingProvider.template.CacheManager=org.webmacro.resource.GenerationalCacheManager
-#CachingProvider.url.CacheManager=org.webmacro.resource.GenerationalCacheManager
+#CachingProvider.template.CacheManager: org.webmacro.resource.GenerationalCacheManager
+#CachingProvider.url.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
 #
 # Encoding caching
