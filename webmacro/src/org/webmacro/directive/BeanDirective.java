@@ -51,6 +51,8 @@ public class BeanDirective extends Directive {
     private static final int BEAN_ON_NEW = 11;
     private static final int BEAN_ON_NEW_BLOCK = 12;
     
+    private static final UndefinedMacro UNDEF = UndefinedMacro.getInstance();
+    
     private static int[] BEAN_SCOPES = {
         BEAN_SCOPE_GLOBAL, BEAN_SCOPE_APPLICATION,
         BEAN_SCOPE_SESSION, BEAN_SCOPE_PAGE
@@ -76,6 +78,8 @@ public class BeanDirective extends Directive {
         new LValueArg(BEAN_TARGET),
         new AssignmentArg(),
         new QuotedStringArg(BEAN_CLASS_NAME),
+        new OptionalGroup(1),
+        new KeywordArg(BEAN_SCOPE, "scope"),
         new SingleOptionChoice(5),
         new OptionalGroup(1),
         new KeywordArg(BEAN_SCOPE_GLOBAL, "global"),
@@ -151,7 +155,7 @@ public class BeanDirective extends Directive {
         boolean isNew = false;
         
         try {
-            while (initArgObj instanceof Macro) 
+            while (initArgObj instanceof Macro && initArgObj != UNDEF) 
                 initArgObj = ((Macro) initArgObj).evaluate(context);
             
             // store init args in array
