@@ -406,14 +406,17 @@ public class WMParser implements Parser
             dirB.setTarget(term);
 
             if (dirB.hasPredicate()) {
-               String verb = dirB.getVerb(); 
+
                in.skipSpaces();
-               if (in.parseString(verb)) {
+               String verb;
+               Object obj;
+
+               String[] verbs = dirB.getVerbs();
+               while ((verb = in.parseStrings(verbs)) != null) 
+               {
                   in.skipSpaces();
-                  Object predicate = parseTerm(in); 
-                  dirB.setPredicate(predicate);
-               } else {
-                  dirB.setPredicate(null);
+                  obj = parseTerm(in); 
+                  dirB.addPredicate(new Predicate(verb,obj));
                }
             }
          } 

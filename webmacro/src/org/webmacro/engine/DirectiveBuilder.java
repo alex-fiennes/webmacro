@@ -17,7 +17,7 @@ final class DirectiveBuilder implements Cloneable, Builder
 
    // PROTOTYPE PROPERTIES
 
-   private String  _verb = null;
+   private String[]  _verbs = null;
    private String[]  _dependents = null;
    private boolean _isContainer = false;
    private boolean _hasCondition = false;
@@ -29,6 +29,7 @@ final class DirectiveBuilder implements Cloneable, Builder
    private int _buildArgs = 0;
    private final String _name;
    private Class _directiveClass;
+   private Vector _predicates;
 
    /**
      * Construct a new DirectiveBuilder prototype
@@ -37,7 +38,6 @@ final class DirectiveBuilder implements Cloneable, Builder
       throws IntrospectionException
    {
 
-      boolean hasPredicate = false;
       boolean isMulti = false;
 
       _name = name;
@@ -90,9 +90,9 @@ final class DirectiveBuilder implements Cloneable, Builder
       } else if (params[arg] == Object.class) {
          arg++;
          _hasTarget = true;
-         if ((arg < params.length) && (params[arg] == Object.class)) {
+         if ((arg < params.length) && (params[arg] == Predicate[].class)) {
             arg++;
-            hasPredicate = true;
+            _predicates = new Vector();
          }
       }
 
@@ -124,18 +124,18 @@ final class DirectiveBuilder implements Cloneable, Builder
 
       // extract additional values
 
-      if (hasPredicate) {
+      if (_predicates != null) {
          // extract verb
          try {
-            Method m = directive.getMethod("getVerb",_nullSig);
-            _verb = (String) m.invoke(null,_nullArg);
+            Method m = directive.getMethod("getVerbs",_nullSig);
+            _verbs = (String[]) m.invoke(null,_nullArg);
          } catch (Exception e) {
             throw new IntrospectionException("Directive " + directive +
-                  " build() requires a source object, but the getVerb " +
+                  " build() requires a source object, but the getVerbs " +
                   " method failed: " + e);
          }
-         if (_verb == null) {
-            throw new IntrospectionException("getVerb returned a null.");
+         if (_verbs == null) {
+            throw new IntrospectionException("getVerbs returned a null.");
          }
       }
 
@@ -165,11 +165,11 @@ final class DirectiveBuilder implements Cloneable, Builder
    }
 
    public final Class getDirectiveClass() { return _directiveClass; }
-   public final String  getVerb() { return _verb; }
+   public final String[] getVerbs() { return _verbs; }
    public final String[] getSubDirectives() { return _dependents; }
    public final boolean hasCondition() { return _hasCondition; }
    public final boolean hasTarget() { return _hasTarget; }
-   public final boolean hasPredicate() { return (_verb != null); }
+   public final boolean hasPredicate() { return (_predicates != null); }
    public final boolean isContainer() { return _isContainer; }
    public final boolean isParser() { return _isParser; }
    public final boolean isMulti() { return (_dependents != null); }
@@ -235,13 +235,21 @@ final class DirectiveBuilder implements Cloneable, Builder
       _dependent = dep;
    }
 
-   public final void setPredicate(Object term) 
+   public final void addPredicate(Predicate p) 
       throws IllegalStateException
    {
-      if (! hasPredicate() ) {
-         throw new IllegalStateException("Directive should not have a predicate");
+      boolean match = false;
+      String verb = p.getVerb();
+      for (int i = 0; i < _verbs.length; i++) {
+         if (_verbs[i].equals(verb)) {
+            match = true;
+         }
       }
-      _predicate = term;
+      if (!match) {
+         throw new IllegalStateException(verb 
+               + " is not recognized in " + toString());
+      }
+      _predicates.addElement(p);
    }
 
    public final void setContents(Builder contents)
@@ -308,8 +316,11 @@ final class DirectiveBuilder implements Cloneable, Builder
          }
 
          if ( hasPredicate() ) {
-            args[i++] = _predicate;
+            Predicate[] p = new Predicate[ _predicates.size() ];
+            _predicates.copyInto(p);
+            args[i++] = p;
          }
+
          if ( isContainer() ) {
             args[i++] = _contents;
          } 
@@ -349,10 +360,22 @@ final class DirectiveBuilder implements Cloneable, Builder
    }
 
    public final String toString() {
+
+     
+      StringBuffer predicate = null;
+      if (hasPredicate()) {
+         predicate = new StringBuffer();
+         for (int i = 0; i < _predicates.size(); i++) {
+            predicate.append(" ");
+            predicate.append( _predicates.elementAt(i) );
+            predicate.append(" TERM");
+         }
+      }
+
       String base = "#" + _name + " "
          + (hasCondition() ? "(CONDITION) " : "")
          + (hasTarget() ? "TARGET " : "")
-         + (hasPredicate() ? (getVerb() + " SOURCE ") :"")
+         + (hasPredicate() ? predicate.toString() : "")
          + (isContainer() ? "{ ... } " : "");
       if (isMulti()) {
          StringBuffer buf = new StringBuffer();

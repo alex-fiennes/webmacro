@@ -18,53 +18,59 @@ import org.webmacro.*;
   * The signature must have the form: <pre>
   *    public static Object build(
   *         BuildContext rc,
-  *         [ Condition cond | ( Object target, [ Object source, ] ]
-  *         [ Macro block | String text ],
-  *         [ Object subordinate ]
+  *         ( Condition cond | (Subject (Predicate[])? )?,
+  *         ( Macro block | String text )?,
+  *         ( Object subordinate )?
   *       );
   * </pre>
   * <p>
-  * In other words, all directives have a BuildContext, followed 
-  * by an optional Condition or a Target, and a Target may optionally
-  * be followed by a Source, a directive may also have a Macro (a 
-  * block in particular) or a text (an unparsed block), and it may
-  * have a subordinate directive.  <p>
+  * The build() method is the initializer for a directive, and it must
+  * return a newly created object. It may also return a String, or a 
+  * null if the object should not be included in the output stream. 
   * <p>
-  * If a directive has a text, then it is responsible for parsing the 
-  * contents of the text itself. In this case, it must also provide a 
-  * static method with the following signature:<pre>
-  *    public String getMarker(Object target, Object source)
-  * </pre>The marker will be used to determine where the block ends. 
-  * Both the target and source passed to getMarker() may be null.
-  * <b>NOTE: the target and source that the getMarker() method sees are
+  * The arguments to the build method are:
+  * <ul>
+  * <li>A condition, or a subject. If a subject is present then there 
+  * may optionally also be a Predicate array.
+  * <li>An optional block of text. This is either a Macro (ie: a parsed
+  * block of text), or a String (ie: an unparsed block of text). 
+  * <li>An optional  subordinate directive. It is of type Object, since 
+  * when it resolves itself it may actually return a String or a null, 
+  * however this value represents the result of building a subordinate
+  * directive.
+  * </ul>
+  * <p>
+  * The other methods required for the Directive depend on the signature
+  * of the build method as follows:
+  * <ul>
+  * <li>If the build method has a String text argument, then there must 
+  * be a "public String getMarker(Object subject, Object object)" method
+  * which can be used to retrieve an end-of-block marker for parsing. 
+  * Both the subject and object passed to getMarker() may be null.
+  * <p>
+  * <b>NOTE: the subject and object that the getMarker() method sees are
   * pre-build phase. Thus, if they contain any variable references or
   * other complex strings, they may show up as objects of type Build. 
   * You can only extract information out of these if the arguments to 
   * your method are simple terms, or quoted strings with no internal 
   * variables.</b>
   * <p>
-  * For example, an IfDirective has a build signature like this"
   * <pre>public static Object 
   * build(BuildContext c, Condition cond, Macro ifBlock, Object else)</pre>
   * The subordinate, if present, may be passed as a null--indicating that it
   * did not exist in the input. 
   * <p>
-  * If a directive has a source, it must have a String getVerb() method 
-  * returning the name of that source. If it has a subordinate, it 
-  * must have a String[] getSubordinateNames() method which returns its name. 
-  * In both cases the return value must be a String.
+  * <li>If a directive has an Predicate array, it must have a 
+  * "String[] getVerb()" method which can be used to find the names of 
+  * the predicates that are possible. 
+  * <li>If a directive has a subordinate, it 
+  * must have a String[] getSubordinateNames() method which returns the 
+  * names of the subordinate directives which may follow this one. These
+  * will be loaded and introspected seperately by the DirectiveBuilder, and
+  * may then appear as subordinate directives to this one.
+  * </ul>
   * <p>
-  * In the case of the if-directive, the name of the subordinate 
-  * would be "else".
-  * <p>
-  * When analyzing build arguments, the analyzer is greedy--thus 
-  * the signature build(Object,Object) is target and source, not
-  * target and subordinate; and the signature build(Object) similarly
-  * means target. This implies that you cannot have a directive with
-  * a target and a subordinate without also having either a block or a 
-  * source--otherwise the second Object will be considered a source.
-  * <p>
-  * The build method should throw a BuildException if something
+  * The build method may throw a BuildException if something
   * goes wrong.
   */
 public interface Directive extends Macro

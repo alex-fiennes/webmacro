@@ -600,6 +600,63 @@ final class ParseTool
       }
    }
 
+   /**
+     * Parse a string from the supplied set and return it. If none of 
+     * the strings match, return null.
+     */
+   public final String parseStrings(String[] str) 
+      throws ParseException
+   {
+   
+      String match = null;
+      int mark = DUMMY_MARK;
+
+      boolean done[] = new boolean[str.length];
+
+      boolean keepGoing = true;
+      int pos = 0;
+
+      while (keepGoing) {
+         keepGoing = false;
+         if (_escaped) {
+            break;
+         }
+
+         // we have matched everything up to, but not including, this char
+         if (mark == DUMMY_MARK) {
+            mark = mark();
+         }
+
+         for (int i = 0; i < str.length; i++) {
+            if (!done[i] && (pos < str[i].length())) {
+               if (_cur != str[i].charAt(pos)) {
+                  done[i] = true;
+               } else {
+                  keepGoing = true;
+                  if ((pos + 1) == str[i].length()) {
+                     match = str[i]; // longest so far
+                     clearMark(mark);
+                     mark = DUMMY_MARK;
+                     done[i] = true;
+                  }
+               }
+            }
+         }
+
+         if (keepGoing) {
+            // since we still have more to check, advance the stream
+            pos++;
+            read();
+         }
+      }
+
+      // roll back to the last character we actually matched
+      rewind(mark);
+      
+      // return the longest match
+      return match;
+   }
+
 
    /**
      * Parse everything on the stream up until the supplied character is
