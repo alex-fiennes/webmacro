@@ -9,7 +9,7 @@ public class Settings {
 
    Properties _props;
    String _prefix;
-   private final boolean debugClassLoaders = true;
+   private final boolean debugClassLoaders = false;
 
    /**
      * Create an empty Settings object
