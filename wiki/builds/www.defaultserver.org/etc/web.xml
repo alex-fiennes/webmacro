@@ -1,0 +1,6 @@
+<web-app>
+   <servlet-mapping url-regexp='^[^\.]+$' servlet-name='WikiServlet' />
+   <servlet servlet-name='WikiServlet' servlet-class='org.tcdi.opensource.wiki.servlet.WikiServlet'>
+      <init-param properties='@INSTALL_DIR@/deploy/WEB-INF/Wiki.properties' />
+   </servlet>
+</web-app>
