@@ -415,7 +415,7 @@ public class Broker
      * Look up query against a provider using its integer type handle.
      */
    public Object get(String type, final String query) 
-      throws NotFoundException
+      throws ResourceException
    {
       return getProvider(type).get(query);
    }
@@ -425,7 +425,7 @@ public class Broker
      * @deprecated call get(String,String) instead
      */
    final public Object getValue(String type, String query) 
-      throws NotFoundException
+      throws ResourceException
    {
       return get(type,query);
    }

@@ -58,6 +58,9 @@ public class ParseDirective extends Directive {
       } catch (NotFoundException ne) {
         throw new BuildException("#parse: Template " + o + " not found: ", 
                                  ne); 
+      } catch (ResourceException ne) {
+        throw new BuildException("#parse: Template " + o 
+                                 + " could not be loaded: ", ne); 
       }
   }
 

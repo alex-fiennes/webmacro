@@ -1,3 +1,20 @@
+-- Feb-2000 brian: Servlet 2.2 integration; substantial refactoring of
+   Broker.  Created a BrokerTemplateProvider to load templates through
+   Broker.getResource(); modified TemplateProvider to use it as a last
+   resort.  Created Servlet22Broker and Servlet20Broker to find resources
+   in the obvious way; now we can put templates in WAR files, and they
+   can also be loaded through the servlet zone areas in JServ.  Added
+   WM(Servlet) constructor which does the right thing in all cases.  
+   Do logging through Servlet API if possible.  Be able to load config
+   settings through system properties, and also through web.xml in WAR
+   file on 2.2.  
+
+-- Feb-2000 brian: Streamlined how Providers, et al, are speicifed in the
+   settings file, to make it easier to override individual providers,
+   directives, context tools, etc.
+
+-- Feb-2000 brian: Refactored CachingProvider, significant optimizations. 
+
 -- Feb-2000 brian: Integrated Keat's PropertyOperator changes so we can
    put arrays of primitives into the context and iterate on them; add 
    convenience methods so we can add primitives to the context too. 

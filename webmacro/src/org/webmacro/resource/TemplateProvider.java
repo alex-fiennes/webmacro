@@ -104,7 +104,7 @@ final public class TemplateProvider extends CachingProvider
    /**
      * Grab a template based on its name.
      */
-   final public TimedReference load(String name) throws NotFoundException 
+   final public TimedReference load(String name) throws ResourceException 
    {
       TimedReference ret = null;
 
@@ -126,7 +126,8 @@ final public class TemplateProvider extends CachingProvider
             // Parse error
             _log.warning ("TemplateProvider: Error occured while parsing " 
                           + name, e);
-            throw new NotFoundException("Error parsing template " + name, e);
+            throw new InvalidResourceException("Error parsing template " 
+                                               + name, e);
          }
       }
       else {

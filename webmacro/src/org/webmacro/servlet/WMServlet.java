@@ -356,9 +356,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * Retrieve a template from the "template" provider. Equivalent to 
      * getBroker().get(TemplateProvider.TYPE,key)
      * @exception NotFoundException if the template was not found
+     * @exception ResourceException if the template coult not be loaded
      */
    final public Template getTemplate(String key) 
-      throws NotFoundException
+      throws ResourceException
    {
       return _wm.getTemplate(key);
    }
@@ -370,7 +371,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * The content will be returned as an Object.
      */
    final public String getURL(String url)
-      throws NotFoundException
+      throws ResourceException
    {
       return _wm.getURL(url);
    }

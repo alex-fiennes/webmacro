@@ -61,7 +61,7 @@ final public class UrlProvider extends CachingProvider
      * milliseconds.
      */
    final public TimedReference load(String name) 
-      throws NotFoundException
+      throws ResourceException
    {
 
       try {
@@ -105,7 +105,7 @@ final public class UrlProvider extends CachingProvider
          in.close();
          return new TimedReference(sw.toString(), timeout);
       } catch (Exception e) {
-         throw new NotFoundException(this + " unable to load " + name, e);
+         throw new ResourceException(this + " unable to load " + name, e);
       }
    }
 	

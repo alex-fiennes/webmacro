@@ -61,7 +61,7 @@ public class WebContext extends Context
    /**
      * Log configuration errors, context errors, etc.
      */
-   final private Log _log;
+   private Log _log;
 
    /**
      * The request for this http connect
@@ -86,7 +86,7 @@ public class WebContext extends Context
       try {
          String tools = (String) broker.get("config","WebContextTools");
          loadTools(tools);
-      } catch (NotFoundException ne) {
+      } catch (ResourceException ne) {
          _log.warning("could not load WebContextTools from config", ne);
       }
    }
@@ -122,15 +122,6 @@ public class WebContext extends Context
       _request = null;
       _response = null;
       super.clear();
-   }
-
-   /**
-     * Reinitalized a WebContext for a new request
-     */
-   public void reinitialize(HttpServletRequest req, HttpServletResponse resp) {
-     clear();
-     _request = req;
-     _response = resp;
    }
 
    /**

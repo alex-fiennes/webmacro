@@ -21,16 +21,19 @@
  */
 
 
-package org.webmacro;
+package org.webmacro.resource;
+
+import org.webmacro.*;
 
 /**
-  * You asked for something that is not currently available.
+  * Resource exists but could not be loaded for some reason
   */
-public class NotFoundException extends ResourceException {
-   public NotFoundException(String reason, Exception e) {
+public class InvalidResourceException extends ResourceException {
+   public InvalidResourceException(String reason, Exception e) {
       super(reason,e);
    }
-   public NotFoundException(String reason) {
+   public InvalidResourceException(String reason) {
       super(reason);
    }
 }
+

@@ -26,7 +26,6 @@ import java.util.*;
 import org.webmacro.engine.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
-import org.webmacro.resource.*;
 
 /**
   * Utility class to assist in the creation of directives.

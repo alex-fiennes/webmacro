@@ -74,9 +74,14 @@ class ParseDirective implements Directive
       } else {
          try {
             return rc.getBroker().get("template",target.toString());
-         } catch (NotFoundException ne) {
+         } 
+         catch (NotFoundException ne) {
             return new BuildException("Template " + target + " not found: " 
                   + ne);
+         }
+         catch (ResourceException ne) {
+            return new BuildException("Template " + target 
+                                      + " could not be loaded: " + ne);
          }
       }
    }

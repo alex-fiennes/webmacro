@@ -211,10 +211,11 @@ public class WM implements WebMacro
 
    /**
      * Retrieve a template from the "template" provider.
-     * @exception NotFoundException if the template was not found
+     * @exception NotFoundException  if the template could not be found
+     * @exception ResourceException  if the template could not be loaded
      */
    final public Template getTemplate(String key) 
-      throws NotFoundException
+      throws ResourceException
    {
       return (Template) _tmplProvider.get(key); 
    }
@@ -222,10 +223,11 @@ public class WM implements WebMacro
    /**
      * Retrieve a URL from the "url" provider. Equivalent to 
      * getBroker().getValue("url",url)
-     * @exception NotFoundException if the template was not found
+     * @exception NotFoundException  if the template could not be found
+     * @exception ResourceException  if the template could not be loaded
      */
    final public String getURL(String url) 
-      throws NotFoundException
+      throws ResourceException
    {
       return (String) _urlProvider.get(url);
    }
@@ -238,7 +240,13 @@ public class WM implements WebMacro
    final public String getConfig(String key) 
       throws NotFoundException
    {
-      return (String) _broker.get("config", key);
+      try {
+         return (String) _broker.get("config", key);
+      }
+      catch (NotFoundException e) { throw e; }
+      catch (ResourceException e) { 
+        throw new NotFoundException(e.toString(), e); 
+      }
    }
 
    /**

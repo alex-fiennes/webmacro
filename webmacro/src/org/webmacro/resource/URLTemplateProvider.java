@@ -223,10 +223,11 @@ final public class URLTemplateProvider extends CachingProvider
     * contain it if we found it.
     * @param name The name of the  template to load
     * @throws NotFoundException if no matching template can be found
+    * @throws ResourceException if template cannot be loaded
     * @return A TimedReference
     */
 
-    final public TimedReference load(String name) throws NotFoundException
+    final public TimedReference load(String name) throws ResourceException
     {
         return load(name,_baseURL);
     }
@@ -241,7 +242,7 @@ final public class URLTemplateProvider extends CachingProvider
      */
 
     final public TimedReference load(String name, URL base)
-    throws NotFoundException
+    throws ResourceException
     {
         _log.debug("Load URLTemplate: ("+base+","+name+") duration="+_cacheDuration);
         try {
@@ -265,7 +266,7 @@ final public class URLTemplateProvider extends CachingProvider
         }
         catch (IOException e) {
             _log.debug(e.getClass().getName()+" "+e.getMessage());
-            throw new NotFoundException(e.getMessage());
+            throw new ResourceException(e.getMessage());
         }
     }
 

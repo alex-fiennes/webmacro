@@ -51,7 +51,13 @@ public final class BuildContext extends Context
    public final Parser getParser(String pname) 
       throws NotFoundException
    {
-      return (Parser) getBroker().get("parser", pname);
+      try {
+         return (Parser) getBroker().get("parser", pname);
+      }
+      catch (NotFoundException e) { throw e; }
+      catch (ResourceException e) { 
+        throw new NotFoundException(e.toString(), e); 
+      }
    }
 
    /**

@@ -69,7 +69,7 @@ final public class BrokerTemplateProviderHelper
    /**
      * Grab a template based on its name.
      */
-   final public TimedReference load(String name) throws NotFoundException 
+   final public TimedReference load(String name) throws ResourceException 
    {
       Template t = null;
       URL tUrl;
@@ -93,7 +93,8 @@ final public class BrokerTemplateProviderHelper
          // Parse error
          _log.warning ("BrokerTemplateProvider: Error occured while parsing " 
                        + name, e);
-         throw new NotFoundException("Error parsing template " + name, e);
+         throw new InvalidResourceException("Error parsing template " + name, 
+                                            e);
       }
       if (ret == null) 
          throw new NotFoundException(this + " could not locate " + name);

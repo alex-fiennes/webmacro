@@ -81,7 +81,7 @@ abstract public class CachingProvider implements Provider,
      * trying to look it up in a cache. If it's not there, then
      * call load(String) to load it into the cache.
      */
-   public Object get(final String query) throws NotFoundException
+   public Object get(final String query) throws ResourceException
    {
       TimedReference r;
       Object o = null;
@@ -94,7 +94,7 @@ abstract public class CachingProvider implements Provider,
          if (r != null) 
             o = r.get();
       } catch (NullPointerException e) {
-         throw new NotFoundException(this + " is not initialized", e);
+         throw new ResourceException(this + " is not initialized", e);
       }
       // should the template be reloaded, regardless of cached status?
       if (o != null) 

@@ -71,15 +71,16 @@ public interface WebMacro
      * Retrieve a template from the "template" provider. Equivalent to 
      * getBroker().get(TemplateProvider.getType(),key)
      * @exception NotFoundException if the template was not found
+     * @exception ResourceException if the template could not be loaded
      */
-   public Template getTemplate(String key) throws NotFoundException;
+   public Template getTemplate(String key) throws ResourceException;
 
    /**
      * Retrieve the contents of a URL as a String. The only advantage of
      * using this instead of a regular URL object is that the result may 
      * be cached for repeated use. 
      */
-   public String getURL(String url) throws NotFoundException;
+   public String getURL(String url) throws ResourceException;
 
    /**
      * Retrieve configuration information from the "config" provider.

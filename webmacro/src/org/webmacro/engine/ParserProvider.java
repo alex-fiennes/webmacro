@@ -151,7 +151,7 @@ public final class ParserProvider implements Provider
       try {
          return getParser(name);
       } catch (Exception e) {
-        throw new NotFoundException("No such directive: " + name, e);
+        throw new NotFoundException("No such parser: " + name, e);
       }
    }
 

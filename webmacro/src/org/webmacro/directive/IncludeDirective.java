@@ -25,6 +25,7 @@ package org.webmacro.directive;
 import java.io.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
+import org.webmacro.resource.*;
 
 public class IncludeDirective extends Directive {
 
@@ -98,8 +99,13 @@ public class IncludeDirective extends Directive {
       result = c.getBroker().get("url", fileName).toString();
     } catch (NotFoundException ne) {
       error = "Cannot include " + fileName + ": NOT FOUND";
-    }  catch (NullPointerException ne) {
+    } catch (NullPointerException ne) {
       error = "Could not load target " + name + ": NULL VALUE";
+    } catch (InvalidResourceException re) {
+      error = "Cannot include " + fileName + ": INVALID RESOURCE";
+    } catch (ResourceException re) {
+      error = "Cannot include " + fileName + ": RESOURCE EXCEPTION: "
+        + re;
     }
     if (error != null) {
       throw new IOException("#include failed: " + error);

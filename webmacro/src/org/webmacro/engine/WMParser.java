@@ -436,7 +436,7 @@ public class WMParser implements Parser
          throw new ParseToolException(in, "Error parsing directive: " 
                + be.getMessage());
       } catch (NotFoundException e) {
-e.printStackTrace();
+         // e.printStackTrace();
          throw new ParseToolException(in, "Unrecognized directive: " 
                + dirName);
       }

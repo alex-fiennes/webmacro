@@ -24,13 +24,14 @@
 package org.webmacro;
 
 /**
-  * You asked for something that is not currently available.
+  * Resource could not be loaded for some reason
   */
-public class NotFoundException extends ResourceException {
-   public NotFoundException(String reason, Exception e) {
+public class ResourceException extends WebMacroException {
+   public ResourceException(String reason, Exception e) {
       super(reason,e);
    }
-   public NotFoundException(String reason) {
+   public ResourceException(String reason) {
       super(reason);
    }
 }
+
