@@ -73,6 +73,37 @@ final public class Broker
    }
 
    /**
+     * Load a resource
+     */
+
+   public InputStream getResourceAsStream(String resource) {
+      InputStream is = null;
+      try {
+          URL u = getResource(resource);
+          is = u.openStream();
+      }
+      catch (IOException e) {}
+      return is;
+   }
+   
+   public URL getResource(String resource) {
+      URL u = null;
+      if (_classloader != null) {
+         u = _classloader.getResource(resource);
+      }
+      if (u == null) {
+         ClassLoader _cl = Broker.class.getClassLoader();
+         if (_cl != null) {
+            u = _cl.getResource(resource);
+         }
+      }
+      if (u == null) {
+         u = ClassLoader.getSystemResource(resource);
+      }
+      return u;
+   }
+
+   /**
      * Access to the settings in WebMacro.properties
      */
    public Settings getSettings() { return _config; }
