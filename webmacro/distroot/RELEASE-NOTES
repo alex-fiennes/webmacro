@@ -1,14 +1,27 @@
-WebMacro 1.0rc1
-------------
+WebMacro 1.0rc2
+---------------
                     
-This is the first 1.0 release candidate.  We've worked hard to get here, and
+This is the second 1.0 release candidate.  We've worked hard to get here, and
 we hope WebMacro will (continue to) work hard for you.
 
 Should you encounter problems with this release, please submit a bug report
 to http://www.webmacro.org/bugzilla/.
 
+
+
 Changes in this Release
 -----------------------
+
+- More encoding tests.  TestWindows1251Encoding and TestISO88591Encoding
+
+- Better error output for NoSuchMethod exceptions
+
+- CGI/Form helper methods in WebContext are no longer @deprecated
+
+
+
+Recent Changes up to this Release
+---------------------------------
 
 - Numerous fixes to how WebMacro handles input/output encoding.  Your DBCS
 templates should work now! (sebastian)
@@ -28,10 +41,6 @@ for details. (keats)
 
 - Pluggable LogTargets.  You can (finally) plug in your own org.webmacro.util.LogTarget.
 By default, WebMacro logs to stderr. (eric)
-
-
-Recent Changes up to this Release
----------------------------------
 
 - Improved #include directive.  #parse has been deprecated.  #include directive
 can now do everything #parse did along with what #include has always done.  See 
