@@ -117,6 +117,7 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
         // we just want to return an error message for these exceptions
         //
         if (problem instanceof PropertyException.NoSuchVariableException
+         || problem instanceof PropertyException.UndefinedVariableException
          || problem instanceof PropertyException.NullValueException
          || problem instanceof PropertyException.NullToStringException) {
 

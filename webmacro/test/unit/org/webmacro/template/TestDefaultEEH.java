@@ -53,8 +53,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
 
 
    public void testNoSuchVariable () throws Exception {
-      assertStringTemplateThrows ("$NotInContext",
-        PropertyException.UndefinedVariableException.class);
+      assertStringTemplateMatches ("$NotInContext", "Attempted to write an undefined variable");
    }
 
    public void testEvalNoSuchVariable () throws Exception {
