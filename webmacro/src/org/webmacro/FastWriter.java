@@ -31,7 +31,7 @@ import org.webmacro.util.*;
 final public class FastWriter extends Writer
 {
    final private String _encoding;      // what encoding we use
-   final private BufferedWriter _bwriter;
+   final private Writer _bwriter;
    final private ByteBufferOutputStream _bstream;
    final private EncodingCache _cache;
    
@@ -53,7 +53,7 @@ final public class FastWriter extends Writer
    {
       _encoding = encoding;
       _bstream = new ByteBufferOutputStream(4096);
-      _bwriter = new BufferedWriter(new OutputStreamWriter(_bstream, encoding));
+      _bwriter = new OutputStreamWriter(_bstream, encoding);
       _cache = EncodingCache.getInstance(encoding);
 
       _encodeProperly = true;
@@ -199,15 +199,11 @@ final public class FastWriter extends Writer
      */
    public void writeStatic(String s) 
    {
-      try {
-         if (_encodeProperly) {
-            bflush();
-            _bstream.write(_cache.getEncoding(s));
-         } else {
-            write(s,0,s.length());
-         }
-      } catch (IOException e) {
-         e.printStackTrace(); // never happens
+      if (_encodeProperly) {
+         bflush();
+         _bstream.write(_cache.getEncoding(s));
+      } else {
+         write(s,0,s.length());
       }
    }
 
@@ -250,7 +246,7 @@ final public class FastWriter extends Writer
    public byte[] toByteArray() 
    {
       bflush();
-      return _bstream.toByteArray();
+      return _bstream.getBytes();
    }
 
    /**
