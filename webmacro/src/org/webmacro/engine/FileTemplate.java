@@ -74,7 +74,7 @@ public class FileTemplate extends WMTemplate
       try {
          return (String) b.get("config", "TemplateEncoding");
       } catch (Exception e) {
-         return "UTF-8";
+         return System.getProperty("file.encoding");
       }
 
    }

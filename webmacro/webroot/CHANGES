@@ -1,3 +1,4 @@
+-- Fergus: changed default encoding from UTF-8 to JVM default
 -- Fergus: fixed bug in LogFile.java which prevented overriding of 
    LogLevel settings.  
 -- Eric: added option of -1 to TemplateExpireTime.  This tells CachingProvider
