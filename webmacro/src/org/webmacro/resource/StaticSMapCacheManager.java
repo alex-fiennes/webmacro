@@ -107,6 +107,21 @@ public class StaticSMapCacheManager implements CacheManager {
    }
 
    /**
+     * Get the object associated with the specific query,  
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+   public Object get(final Object query) {
+      return _cache.get(query);
+   }
+
+   /**
+     * Put an object in the cache
+     */
+   public void put(final Object query, Object resource) {
+      _cache.put(query, resource);
+   }
+
+   /**
     * This method throws an exception because this kind of a cache
     * does not support individual element invalidation.
     */

@@ -61,6 +61,9 @@ public class Broker
    final protected Settings _config = new Settings();
    final protected String _name;
    final protected LogSystem _ls;
+   final public PropertyOperatorCache _propertyOperators
+     = new PropertyOperatorCache();
+
    protected Log _log;
    protected ProfileCategory _prof;
    private EvaluationExceptionHandler _eeHandler;
@@ -168,6 +171,9 @@ public class Broker
     */
    protected void init() throws InitException {
       String eehClass;
+
+      // Initialize the property operator cache
+      _propertyOperators.init(this, _config);
 
       // Write out our properties as debug records
       if (_log.loggingDebug()) {

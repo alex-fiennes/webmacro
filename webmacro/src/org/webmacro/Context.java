@@ -261,7 +261,7 @@ public class Context implements Map, Cloneable
       else if (instance == null)
          throw new PropertyException.NullValueException(names[0].toString());
       else 
-         return PropertyOperator.getProperty(this,instance,names,1);
+         return _broker._propertyOperators.getProperty(this,instance,names,1);
    }
 
    /**
@@ -284,7 +284,8 @@ public class Context implements Map, Cloneable
          } catch (ArrayIndexOutOfBoundsException e) {
             return false;
          }
-         return PropertyOperator.setProperty(this,instance,names,1,value);
+         return _broker._propertyOperators
+           .setProperty(this,instance,names,1,value);
       }
    }
 

@@ -127,7 +127,7 @@ final class ForeachDirective implements Directive, Visitable
          } else {
             Iterator iter;
             try {
-               iter = PropertyOperator.getIterator(list);
+               iter = context.getBroker()._propertyOperators.getIterator(list);
             } catch (Exception e) {
                throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + list, e);
             }

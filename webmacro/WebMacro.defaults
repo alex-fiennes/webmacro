@@ -232,6 +232,9 @@ CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
 Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
 #Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
+PropertyOperator.CacheManager: org.webmacro.resource.StaticSMapCacheManager
+# Larger bucket size for the PropertyOperator cache seems to speed test runs
+StaticSMapCacheManager.PropertyOperator.CacheBuckets: 10001
 
 # SMapCacheManager properties (if used)
 #    - An ExpireTime of 0 (zero) means WebMacro will never cache the resource

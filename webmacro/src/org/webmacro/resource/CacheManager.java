@@ -62,6 +62,16 @@ public interface CacheManager {
      throws ResourceException;
 
    /**
+     * Called to get a resource from the cache.  Returns null if not present.
+     */
+   public Object get(final Object query);
+
+   /**
+     * Called to put a resource into the cache.
+     */
+   public void put(final Object query, Object resource);
+
+   /**
      * Invalidates an entry in the cache. Depending on the
      * the implementation, the actual removal from the cache
      * may or may not be immediate.

@@ -98,12 +98,30 @@ public class HMapCacheManager implements CacheManager {
       return o;
    }
 
+   /**
+     * Get the object associated with the specific query,  
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+   public Object get(final Object query) {
+      return _cache.get(query);
+   }
+
+   /**
+     * Put an object in the cache
+     */
+   public void put(final Object query, Object resource) {
+      synchronized (_cache) {
+         _cache.put(query, resource);
+      }
+   }
+
   /**
-   * Throws an exception because this implementation
-   * does not support element invalidation.
+   * Remove an element
    */
   public void invalidate(final Object query) {
-    throw new IllegalStateException("HMap does not support invalidation");
+      synchronized (_cache) {
+         _cache.remove(query);
+      }
   }
 
    public String toString() {

@@ -545,12 +545,12 @@ public class WMParser_impl implements WMParser_implConstants {
 /* Productions used in WM variable references.  State: WM.  */
 
 // Used by VariableReference; shouldn't be used outside it
-  final public void VariableReferenceGuts(Vector v) throws ParseException {
+  final public void VariableReferenceGuts(ArrayList v) throws ParseException {
   Token t;
   Object element;
   ListBuilder argList;
     t = jj_consume_token(WORD);
-             v.addElement(t.image);
+             v.add(t.image);
     label_1:
     while (true) {
       if (jj_2_1(2147483647)) {
@@ -572,12 +572,12 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_la1[23] = jj_gen;
         ;
       }
-      v.addElement(element);
+      v.add(element);
     }
   }
 
   final public Builder VariableReference() throws ParseException {
-  Vector v = new Vector();
+  ArrayList v = new ArrayList();
     jj_consume_token(DOLLAR);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case DOLLAR:
@@ -611,8 +611,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    Object[] names = new Object[v.size()];
-    v.copyInto(names);
+    Object[] names = v.toArray();
     {if (true) return new VariableBuilder(names, false);}
     throw new Error("Missing return statement in function");
   }
@@ -1132,12 +1131,12 @@ public class WMParser_impl implements WMParser_implConstants {
     SetState(WM);
     if (jj_2_9(2147483647)) {
       o = VariableReference();
-                              v.addElement(o);
+                              v.add(o);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case DOLLAR:
         jj_consume_token(DOLLAR);
-                 v.addElement("$");
+                 v.add("$");
         break;
       default:
         jj_la1[52] = jj_gen;
@@ -1733,16 +1732,16 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_scan_token(DOT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(WORD)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_28() {
+    if (jj_scan_token(WS)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

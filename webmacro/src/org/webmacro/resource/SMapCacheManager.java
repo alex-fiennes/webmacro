@@ -197,15 +197,47 @@ public class SMapCacheManager implements CacheManager {
       return o;
    }
 
-  /** Removes a specific entry from the cache. */
-  public void invalidate(final Object query) {
-    int lockIndex = query.hashCode() % _writeLocks.length;
-    if (lockIndex < 0) lockIndex = -lockIndex;
-    synchronized(_writeLocks[lockIndex]) {
-      _cache.remove(query);
-    }
-  }
+   /**
+     * Get the object associated with the specific query,  
+     * trying to look it up in a cache. If it's not there, return null.
+     */
+   public Object get(final Object query) {
+      return _cache.get(query);
+   }
 
+   /**
+    * Put an object in the cache
+    */
+   public void put(final Object query, Object resource) {
+      int lockIndex = query.hashCode() % _writeLocks.length;
+      if (lockIndex < 0) lockIndex = -lockIndex;
+      ScmCacheElement r = new ScmCacheElement();
+      r.reference = new SoftReference(resource);
+      synchronized(_writeLocks[lockIndex]) {
+         _cache.put(query, r);
+      }
+      if (_cacheDuration >= 0) {   
+         if (_log.loggingDebug())
+            _log.debug("cached: " + query + " for " + _cacheDuration);
+         _tl.scheduleTime(new Runnable() { 
+               public void run() { 
+                  _cache.remove(query); 
+                  if (_log.loggingDebug())
+                     _log.debug("cache expired: " + query);
+               } 
+            }, _cacheDuration);
+      }
+   }
+
+   /** Removes a specific entry from the cache. */
+   public void invalidate(final Object query) {
+      int lockIndex = query.hashCode() % _writeLocks.length;
+      if (lockIndex < 0) lockIndex = -lockIndex;
+      synchronized(_writeLocks[lockIndex]) {
+         _cache.remove(query);
+      }
+   }
+   
    public String toString() {
       return NAME + "(type = " + _resourceType + ")";
    }

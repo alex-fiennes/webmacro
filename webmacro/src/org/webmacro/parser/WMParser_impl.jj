@@ -566,23 +566,23 @@ Object Conditional() : {
 /* Productions used in WM variable references.  State: WM.  */
 
 // Used by VariableReference; shouldn't be used outside it
-void VariableReferenceGuts(Vector v) : {
+void VariableReferenceGuts(ArrayList v) : {
   Token t;
   Object element;
   ListBuilder argList;
 }
 {
-  t=<WORD> { v.addElement(t.image); }
+  t=<WORD> { v.add(t.image); }
   ( LOOKAHEAD(<DOT><WORD>) <DOT> t=<WORD> { element = t.image; } 
     [ <LPAREN> argList=ArgList() <RPAREN> 
       { element = new PropertyMethodBuilder((String) element, argList); }
     ]  
-    { v.addElement(element); }
+    { v.add(element); }
   )*  
 }
 
 Builder VariableReference() : {
-  Vector v = new Vector();
+  ArrayList v = new ArrayList();
 }
 {
   <DOLLAR> 
@@ -592,8 +592,7 @@ Builder VariableReference() : {
     | <LPAREN> VariableReferenceGuts(v) <RPAREN>
   )
   { 
-    Object[] names = new Object[v.size()];
-    v.copyInto(names);
+    Object[] names = v.toArray();
     return new VariableBuilder(names, false);
   }
 }
@@ -837,8 +836,8 @@ void DollarReference(Vector v) : {
 {
   { SetState(WM); }
   ( LOOKAHEAD(<DOLLAR> [ <DOLLAR> ] [ <LPAREN> ] <WORD>)
-      o=VariableReference() { v.addElement(o); }
-    | <DOLLAR> { v.addElement("$"); }
+      o=VariableReference() { v.add(o); }
+    | <DOLLAR> { v.add("$"); }
   )
   { SetState(entryState); }
 }

@@ -151,7 +151,3 @@ public class TestArithmetic extends TemplateTestCase {
     }
   }
 }
-
-
-
-

@@ -41,8 +41,6 @@
   */
 package org.webmacro.resource;
 
-import java.lang.ref.SoftReference;
-
 import org.opendoors.cache.UpdateableCache;
 import org.opendoors.cache.immutable.*;
 
@@ -56,6 +54,8 @@ import org.webmacro.util.*;
  * provided by Open Doors Software and incorporated into WM.
  */
 public class GenerationalCacheManager implements CacheManager {
+
+  private static final String NAME = "GenerationalCacheManager";
 
   private UpdateableCache cache;
   private Log log;
@@ -81,6 +81,8 @@ public class GenerationalCacheManager implements CacheManager {
     this.cache = cacheFactory.initialize(null);
     this.log = b.getLog("resource");
     this.resourceType = resourceType;
+
+    log.info(NAME + "." + resourceType + ": " + "Reload=" + reloadOnChange); 
   }
 
   public void flush() {
@@ -104,7 +106,32 @@ public class GenerationalCacheManager implements CacheManager {
       return getUnreloadable(query, helper);
   }
 
-  public Object getUnreloadable(final Object query, ResourceLoader helper)
+   /**
+    * Get the object associated with the specific query,  
+    * trying to look it up in a cache. If it's not there, return null.
+    */
+   public Object get(final Object query) {
+      Object o = cache.get(query);
+      if (o != null && reloadOnChange) 
+         return ((ScmCacheElement) o).value;
+      else
+         return o;
+   }
+
+   /**
+    * Put an object in the cache
+    */
+   public void put(final Object query, Object resource) {
+      if (reloadOnChange) {
+         ScmCacheElement r = new ScmCacheElement();
+         r.value = resource;
+         cache.put(query, r);
+      }
+      else
+         cache.put(query, resource);
+   }
+
+  private Object getUnreloadable(final Object query, ResourceLoader helper)
                   throws ResourceException  {
     Object o = cache.get(query);
     if (o == null) {
@@ -116,12 +143,12 @@ public class GenerationalCacheManager implements CacheManager {
   }
 
 
-  public Object getReloadable(final Object query, ResourceLoader helper)
+  private Object getReloadable(final Object query, ResourceLoader helper)
                     throws ResourceException  {
     Object o = null;
     ScmCacheElement r = (ScmCacheElement) cache.get(query);
     if (r != null)
-      o = r.value;  // if you're using soft refs
+      o = r.value;  
     boolean reload = false;
     if (o != null && r.reloadContext != null && reloadOnChange)
       reload = r.reloadContext.shouldReload();

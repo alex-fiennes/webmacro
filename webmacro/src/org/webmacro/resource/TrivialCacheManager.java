@@ -52,6 +52,13 @@ public class TrivialCacheManager implements CacheManager {
       return helper.load(query, null);
    }
 
+   public Object get(final Object query) {
+      return null;
+   }
+
+   public void put(final Object query, Object resource) {
+   }
+
    public boolean supportsReload() {
       return false;
    }
