@@ -589,7 +589,43 @@ public class ListUtil {
     }
     return Arrays.asList(ia);
   }
-
+  
+  /** create a new ArrayList */
+  public static ArrayList create(){
+      return new ArrayList();
+  }
+  
+  /** create a new ArrayList with the specified capacity */
+  public static ArrayList create(int capacity){
+      return new ArrayList(capacity);
+  }
+  
+  /** append one list to the end of another and return the expanded list.  
+   * If the first list is not expandable, return a new expandable list 
+   * with the elements of each list appended
+   */
+  public static List append(Object o1, Object o2){
+      List l1 = toList(o1);
+      List l2 = toList(o2);
+      try {
+        l1.addAll(l2);
+        return l1;
+      } catch (Exception e){}
+      
+      // create a new list
+      List l = new ArrayList(((l1.size() + l2.size()) * 2) + 10);
+      l.addAll(l1);
+      l.addAll(l2);
+      return l;
+  }
+  
+  /** create a new list (ArrayList) with all the elements in the supplied list */
+  public static List copy(Object o){
+      List l = toList(o);
+      if (l.isEmpty()) return new ArrayList(10);
+      return new ArrayList(l);
+  }
+  
    /** test harness */
   public static void main(String[] args){
       java.io.PrintWriter out =
@@ -691,5 +727,9 @@ public class ListUtil {
     out.println("toList=" + toList(chars));
     float[] f = new float[]{ 1.1f, 2.2f, 3.3f };
     out.println("getItem(floats, 0)=" + getItem(f, 0));
+    List appendList = append(f, chars);
+    out.println("append(f, chars)=" + appendList);
+    append(appendList, "another thing");
+    out.println("append(appendList, \"another thing\")=" + appendList);
   }
 }
