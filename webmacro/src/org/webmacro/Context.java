@@ -83,12 +83,17 @@ public class Context implements Map, Cloneable {
     * Create a new Context relative to the supplied broker
     */
    public Context(Broker broker) {
+       this (broker, true);
+   }
+
+   protected Context(Broker broker, boolean loadTools) {
       _prof = broker.newProfile();
       if (_prof != null) { startTiming("Context life"); }
       if (_prof != null) { startTiming("Context init"); }
       _broker = broker;
       _log = broker.getLog("context", "property and evaluation errors");
-      loadTools("ContextTools");
+      if (loadTools)
+         loadTools("ContextTools");
       if (_prof != null) { stopTiming(); }
    }
    

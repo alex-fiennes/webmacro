@@ -45,7 +45,7 @@ public class BuildContext extends Context {
    private final FilterManager _filters = new FilterManager();
 
    public BuildContext(Broker b) {
-      super(b);
+      super(b, false);
    }
 
    public final Parser getParser(String pname)
