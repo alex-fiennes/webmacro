@@ -10,7 +10,6 @@ import java.net.*;
 
 /**
  *
- * <H2>URLTemplateProvider<H2>
  *
  * This is a "drop-in" replacement for the standard TemplateProvider in the
  * WebMacro distribution.  The primary benefit is to allow template to be loaded
@@ -21,7 +20,7 @@ import java.net.*;
  *
  *     <i>TemplatePath=path1[;path2;....]</i>
  * <p>
- * Each path should be a full URL specification or one of the special cases 
+ * Each path should be a full URL specification or one of the special cases
  * listed below.  If the path cannot be interpreted, it will be tried as file:path
  *
  * <h3>Special cases</h3>
@@ -34,19 +33,19 @@ import java.net.*;
  *     <li><i>TemplatePath=ignore:</i>
  * Don't use the template path. All templates will be referenced
  * explicitly as full URL's.  A common case would be to generate a base URL
- * at runtime (e.g., from ServletContext.getResource("/") in JSDK 2.2+) and to 
+ * at runtime (e.g., from ServletContext.getResource("/") in JSDK 2.2+) and to
  * prepend this to the template path.
- *          
+ *
  *     <li><i>TemplatePath=context:</i>
  *         reserved for future use (specifically for finding templates with a
  *        servlet context)
  * </ul>
- * 
+ *
  * <h3>Locale support</h3>
  *
  * There is a limited locale based implemention here.  Template paths can contain
- * a string of the form {_aaa_bbb....} which will usually correspond to a 
- * locale such as en_GB. 
+ * a string of the form {_aaa_bbb....} which will usually correspond to a
+ * locale such as en_GB.
  * Thus <i>load("template{_en_GB}.wm")</i> will look for
  * <ul>
  *  <li>template_en_GB.wm</li>
@@ -56,31 +55,37 @@ import java.net.*;
  *
  * in that order, returning the first one that exists.  This is implemented so that
  * requests for template_en_GB.wm & template_en_US.wm will both return the same template
- * template_en.wm assuming only the latter exists.  In other words, the template is 
+ * template_en.wm assuming only the latter exists.  In other words, the template is
  * only parsed once.
- * 
- * @see CachingProvider
- * @see TemplateProvider
+ *
+ * @see org.webmacro.resource.CachingProvider
+ * @see org.webmacro.resource.TemplateProvider
  */
 final public class URLTemplateProvider extends CachingProvider
 {
+    /** CVS Revision tag
+     */
     public static final String RCS = "@(#) $Id$";
 
     // INITIALIZATION
 
     private Broker _broker = null;
 
+    /** The default separator for TemplathPath
+     */
     private static String _pathSeparator = ";";
+/**
+ */
     private String[] _templateDirectory = null;
 
     /**
      * URLs can contain strings like "{_AAA_BBB...}" to mimic
-     * locale handling in ResourceBundles.   
-     * I think this can be improved upon - one idea would be to 
+     * locale handling in ResourceBundles.
+     * I think this can be improved upon - one idea would be to
      * fix the wm extension and then ask for (resource)+(locale_string).wm
-     * We still have the problem of how to pass in the locale info, just as to 
+     * We still have the problem of how to pass in the locale info, just as to
      * pass in the encoding.
-     * 
+     *
      */
 
     private static final String _OPEN = "{";
@@ -99,6 +104,9 @@ final public class URLTemplateProvider extends CachingProvider
      */
     private URL _baseURL = null;
 
+    private final HashMap templateNameCache = new HashMap();
+
+
     /**
      * How long to keep templates cached for (in milliseconds)
      */
@@ -109,9 +117,10 @@ final public class URLTemplateProvider extends CachingProvider
      * This is a semicolon separated string with individual values like
      * <ol>
      * <li> ignore: - ignore completely.  All request will be given by a full URL</li>
-     * <li> classpath:[path].  Look for values on the system classpath, optionally 
+     * <li> classpath:[path].  Look for values on the system classpath, optionally
      * with some relative path. E.g., classpath:/templates/</li>
-     * <li> *TODO* context:[path] load relative to some </li>
+     * <li> *TODO* context:[path] load relative to some path in the current context
+     * (typically a ServletContext) </li>
      * <li> [url] - look for templates relative to this location</li>
      * <li> [path] - Equivalent to file:[path]</li>
      * </ol>
@@ -119,13 +128,14 @@ final public class URLTemplateProvider extends CachingProvider
     private String _templatePath;
 
     /**
-      * Where we write our log messages 
-      */
+     * Where we write our log messages
+     */
     private Log _log;
 
     /**
      * Supports the "template" type.  This is a straight replacement for the
      * default TemplateProvider
+     * @return the template type.  Always the String "template"
      */
     final public String getType() {
         return _TYPE;
@@ -135,7 +145,7 @@ final public class URLTemplateProvider extends CachingProvider
    /**
     * Create a new TemplateProvider that uses the specified directory
     * as the source for Template objects that it will return
-    * 
+    *
     * @param b A broker
     * @param config Settings from the webmacro initialization file
     * @exception InitException thrown when the provider fails to initialize
@@ -145,7 +155,7 @@ final public class URLTemplateProvider extends CachingProvider
         super.init(b,config);
         _broker = b;
         _log = b.getLog("resource", "general object loading");
-        
+
         try {
             try {
                 String cacheStr = config.getSetting("TemplateExpireTime");
@@ -154,16 +164,16 @@ final public class URLTemplateProvider extends CachingProvider
                 // use default
             }
             _templatePath = config.getSetting("TemplatePath");
-            StringTokenizer st = 
+            StringTokenizer st =
             new StringTokenizer(_templatePath, _pathSeparator);
             _templateDirectory = new String[ st.countTokens() ];
             int i;
-            for (i=0; i < _templateDirectory.length; i++) 
+            for (i=0; i < _templateDirectory.length; i++)
             {
-                String dir = st.nextToken(); 
+                String dir = st.nextToken();
                 _templateDirectory[i] = dir;
             }
-            
+
         } catch(Exception e) {
             throw new InitException("Could not initialize: " + e);
         }
@@ -171,38 +181,17 @@ final public class URLTemplateProvider extends CachingProvider
 
 
    /**
-     * Grab a template based on its name, setting the request event to 
-     * contain it if we found it.
-     */
+    * Grab a template based on its name, setting the request event to
+    * contain it if we found it.
+    * @param name The name of the  template to load
+    * @throws NotFoundException if no matching template can be found
+    * @return A TimedReference
+    */
 
-    final public TimedReference load(String name) throws NotFoundException 
+    final public TimedReference load(String name) throws NotFoundException
     {
-        _log.debug("Load URLTemplate: "+name+ " duration="+_cacheDuration);
-        try {
-            Template t = loadTemplate(name,_baseURL);
-            if (t == null) {
-                throw new NotFoundException(
-                this + " could not locate " + name + " on path " + _templatePath);
-            }
-            return new TimedReference(t, _cacheDuration);   
-        }
-        catch (IOException e) {
-            _log.debug(e.getClass().getName()+" "+e.getMessage());
-            throw new NotFoundException(e.getMessage());
-        }
+        return load(name,_baseURL);
     }
-	 
-    /**
-      * Always return false.  It is not possible to decide if an object
-      * fetched from a URL should be reloaded or not.  Returning false
-      * will cause the CachingProvider to load() only when it's cache
-      * has expired.
-      */
-    final public boolean shouldReload (String name) {
-    	return false;
-    }
-
-    // IMPLEMENTATION
 
 
     /**
@@ -214,54 +203,88 @@ final public class URLTemplateProvider extends CachingProvider
      * @return a template matching that name, or null if one cannot be found
      */
 
-    final private Template loadTemplate(String path, URL base) throws IOException
+    final public TimedReference load(String name, URL base)
+    throws NotFoundException
     {
-        _log.debug("loadTemplate");
-        Template _tmpl = null;
-        Object _key = null;
+        _log.debug("Load URLTemplate: ("+base+","+name+") duration="+_cacheDuration);
+        try {
+            Template _tmpl = null;
 
-        String encoding = System.getProperty("file.encoding");
-        if (path.charAt(0) == ':') {
-            int fstart = path.indexOf(':', 1);
-            encoding = path.substring(1,fstart);
-            path = path.substring(fstart + 1);
-        }
+            if (base == null)
+            {
+                _tmpl = getTemplate(name);
+            }
+            else
+            {
+                _tmpl = getTemplate(new URL(base,name));
+            }
 
-        if (base == null)
-        {
-            _key = path;
-            _tmpl = getTemplate(path,encoding);
+            if (_tmpl == null) {
+                throw new NotFoundException(
+                this + " could not locate " + name + " on path " + _templatePath);
+            }
+            templateNameCache.put(name, _tmpl);
+            return new TimedReference(_tmpl, _cacheDuration);
         }
-        else
-        {
-            _key = new URL(base,path);
-            _tmpl = getTemplate(path,base,encoding);
+        catch (IOException e) {
+            _log.debug(e.getClass().getName()+" "+e.getMessage());
+            throw new NotFoundException(e.getMessage());
         }
-
-        return _tmpl;
     }
 
     /**
-     * load a template relative to the base.
-     * @param path the relative or absolute URL-path of the template
-     * @param base URL to load path relative to
-     * @param encoding the character encoding to use
+     * Always return false.  It is not possible to decide if an object
+     * fetched from a URL should be reloaded or not.  Returning false
+     * will cause the CachingProvider to load() only when it's cache
+     * has expired.
+     * @param name The name of the template to test
+     * @return always returns false.
+     *
+     * ** TO DO **
+     * Can do better than this for file: and jar: URLs
+     *
+     * jar urls are of the form
+     *     jar:<url-of-jar>!<path-within-jar>
+     * e.g.,
+     *    jar:file:/path/my.jar!/templates/test.wm
+     *
+     * However, this might be an expensive operation.
      */
 
-    final private Template getTemplate(String path, URL base, String encoding)
+    // IMPLEMENTATION
+
+    /**
+      *
+      */
+
+    final public boolean shouldReload (String name) {
+        URLTemplate tmpl = (URLTemplate) templateNameCache.get(name);
+        return (tmpl == null) ?  false : tmpl.shouldReload();
+    }
+    /**
+      * load a template relative to the base.
+      * @param path the relative or absolute URL-path of the template
+      * @param base URL to load path relative to
+      * @param encoding the character encoding to use
+      */
+
+    final private Template getTemplate(URL path)
     {
-        _log.debug("get:"+path+"@"+base);
+        _log.debug("get:"+path);
         URLTemplate t;
         String pre = null;
         String mid = null;
         String post = null;
+        String pathStr = path.toExternalForm();
         try
         {
-            String[] parts = parseLocalePath(path);
+            String[] parts = parseLocalePath(pathStr);
+
             String urlPath = null;
+            URL url = path;
             if (parts == null)
             {
-                urlPath = path;
+                urlPath = pathStr;
             }
             else
             {
@@ -269,12 +292,14 @@ final public class URLTemplateProvider extends CachingProvider
                 mid = parts[1];
                 post = parts[2];
                 urlPath = pre+((mid == null) ? "" : mid)+post;
+                url = new URL(urlPath);
             }
-            // try to parse as-is, or relative to the base URL
-            // N.B. URL() accepts a null first argument
-            URL url = new URL(base,urlPath);
 
-            _log.debug("URLTemplateProvider: loading " + url);
+            if (urlPath.length() > 512) {
+                throw new IllegalArgumentException("URL path too long: "+urlPath);
+            }
+            _log.debug("URLTemplateProvider: loading " + url+
+                "("+path+","+urlPath+")");
             /*
              * Seems a bit wasteful to check the URL here but t.parse()
              * generates "spurious" errors if the template doesn't exist
@@ -283,7 +308,7 @@ final public class URLTemplateProvider extends CachingProvider
             try
             {
                 _is = url.openStream();
-                t = new URLTemplate(_broker,url,encoding);
+                t = new URLTemplate(_broker,url);
                 _log.debug("**PARSING "+url);
                 t.parse();
                 return t;
@@ -296,16 +321,14 @@ final public class URLTemplateProvider extends CachingProvider
         catch (IOException e)
         {
             _log.debug(e.getClass().getName()+" "+e.getMessage());
-            // try the next locale 
+            // try the next locale
             if (mid != null)
             {
                 try
                 {
                     String p = buildPath(pre,mid,post);
-                    if (base != null) {
-                        return (Template) _broker.get(
-                            _TYPE,
-                            join(base.toString(),p));
+                    if (path != null) {
+                        return (Template) _broker.get(_TYPE,p);
                     }
                     else
                     {
@@ -315,7 +338,7 @@ final public class URLTemplateProvider extends CachingProvider
                 catch (Exception ex)
                 {
                     _log.debug(ex.getClass().getName()+" "+ex.getMessage());
-                	// ignore
+                    // ignore
                 }
             }
             _log.error("URLTemplateProvider(1): Could not load template: "+ path,e);
@@ -328,71 +351,73 @@ final public class URLTemplateProvider extends CachingProvider
         return null;
     }
 
-	/**
-	 * load a template based on one of the prefixes in TemplatePath
-	 *
-	 */
 
-    private Template getTemplate(String path, String encoding) throws IOException
+    /**
+     * Get the URL for a specified template
+     */
+
+
+    private Template getTemplate(String path)
+    throws IOException
     {
-        _log.debug("getTemplate:"+path);
-        // System.out.println("getTemplate:"+path);
+        _log.debug("getTemplate: "+path);
         for (int i=0; i< _templateDirectory.length; i++)
         {
-            String base = _templateDirectory[i];
+            String tPart = _templateDirectory[i];
             URL url = null;
-            if (base.startsWith(CLASSPATH_PREFIX))
+            if (tPart.startsWith(CLASSPATH_PREFIX))
             {
-                base = base.substring(CLASSPATH_PREFIX.length());
-                url = searchClasspath(join(base,path));
+                tPart = tPart.substring(CLASSPATH_PREFIX.length());
+                url = searchClasspath(join(tPart,path));
 
                 if (url == null) {
                     throw new FileNotFoundException("Unable to locate "+path+" on classpath");
                 }
+                return getTemplate(url);
             }
-            else if (base.startsWith(CONTEXT_PREFIX))
+            else if (tPart.startsWith(CONTEXT_PREFIX))
             {
-                base = base.substring(CONTEXT_PREFIX.length());
+                tPart = tPart.substring(CONTEXT_PREFIX.length());
                 // no way to get hold of the servletcontext yet
-                // url = servletContext.getResource(base+"/"+urlPath);
+                // url = servletContext.getResource(tPart+"/"+urlPath);
                 throw new IllegalArgumentException("Can't deal with "+CONTEXT_PREFIX+" yet");
             }
-            else if (base.startsWith(IGNORE_PREFIX))
+            else if (tPart.startsWith(IGNORE_PREFIX))
             {
-                url = null;
+                url = new URL(path);
+                return getTemplate(url);
             }
             else
             {
                 try
                 {
-                    url = new URL(base);
+                    url = new URL(tPart);
                 }
                 catch (MalformedURLException e)
                 {
-                    url = new URL("file",null,base);
+                    url = new URL("file",null,tPart);
                 }
+                return getTemplate(url);
             }
-
-            Template _tmpl =  getTemplate(path,url, encoding);
-            if (_tmpl != null) return _tmpl;
         }
         return null;
     }
 
     // Utility Methods
 
-	/**
-	 * The URL path separator.  Used by join()
-	 */
-	private static final String _SEP = "/";
-	
     /**
-     * Join two parts of a URL string together, without duplicating 
+     * The URL path separator.  Used by join()
+     */
+    private static final String _SEP = "/";
+
+    /**
+     * Join two parts of a URL string together, without duplicating
      * any "/" between them;
      */
-     
-    private static final String join(String pre, String post)
+
+    private final String join(String pre, String post)
     {
+        _log.debug("Joining <"+pre+"> + <"+post+">");
         if ((pre == null) || (pre.length()==0)) return post;
         if ((post == null) || (post.length()==0)) return pre;
         boolean first = pre.endsWith(_SEP);
@@ -409,20 +434,35 @@ final public class URLTemplateProvider extends CachingProvider
      * <p>
      * Ideally would like to be able to search the application
      * classpath, which is not necessarily the same (e.g., in servlet 2.2+)
-     * so could pass in the application classloader.  But we have the same 
-     * problem as in other places where there is no easy way to pass extra 
+     * so could pass in the application classloader.  But we have the same
+     * problem as in other places where there is no easy way to pass extra
      * information with the request.
+     *
      */
 
     private final URL searchClasspath(String resource)
     {
+        _log.debug("Searching classpath for "+resource);
         ClassLoader cl = this.getClass().getClassLoader();
         URL url = cl.getResource(resource);
-        if (url == null) {
+        if (url == null)
+        {
             url = ClassLoader.getSystemResource(resource);
         }
-        // System.out.println("Found "+resource+" at "+null);
-        return url;
+        if (url != null)
+        {
+            return url;
+        }
+        String[] parts = parseLocalePath(resource);
+        if (parts != null)
+        {
+            if (parts[1] != null)
+            {
+                resource = buildPath(parts[0],parts[1], parts[2]);
+                return searchClasspath(resource);
+            }
+        }
+        return null;
     }
 
     /**
@@ -485,6 +525,4 @@ final public class URLTemplateProvider extends CachingProvider
         String post = path.substring(p2+1);
         return new String[] {pre,mid,post};
     }
-
-
 }

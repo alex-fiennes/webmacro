@@ -1,3 +1,11 @@
+-- Jan-2000 fergus: big changes to URLTemplate & URLTemplateProvider.
+    a) URLTemplate now looks for a file WebMacro.local in the same directory
+    as the template.  This is a local properties file and the key TemplateEncoding
+    is used to determine the template encoding of a per directory basis
+    b) changes to file: and jar: URLs can be detected via the shouldReload() call
+    c) significant code refactoring as a partial consequence of the above
+    d) also updated tests in contrib/Tests/URLTemplateProvider
+
 -- Jan-2000 fergus: added NativeAsciiReader.java for use with URLTemplate.  
    Any files read with the pseudo encoding "native_ascii" are read as if they
    were converted to unicode escape syntax with the JDK utility 
