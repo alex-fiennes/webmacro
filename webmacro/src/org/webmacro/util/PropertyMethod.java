@@ -42,7 +42,7 @@ import org.webmacro.PropertyException;
  * against a context. The introspection process will supply the
  * context and resolve these references at execution time.
  */
-final public class PropertyMethod implements Named {
+public class PropertyMethod implements Named {
 
    private Object _args;
    private String _name;
