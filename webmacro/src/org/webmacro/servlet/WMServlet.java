@@ -50,7 +50,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    private Broker _broker = null;
    private WebContext _wcPrototype;
    private boolean _started = false;
-   private Profiler _prof = null;
 
    /**
      * The name of the config entry we look for to find out what to 
@@ -112,7 +111,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          try {
             _wm = initWebMacro();
             _broker = _wm.getBroker();
-            _prof = _broker.getProfiler("wmservlet");
          } catch (InitException e) {
             _problem = "Could not initialize the broker!\n"
                   + "*** Check that WebMacro.properties was in your servlet\n"
@@ -214,77 +212,57 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException
    {
-      Object prof = null;
-      if (Flags.PROFILE && (_prof != null)) 
-         prof = _prof.start(this.toString()); 
-      try {
 
-         WebContext context = null;
+      WebContext context = null;
 
+      if (_problem != null) {
+         init();
          if (_problem != null) {
-            init();
-            if (_problem != null) {
-               try { 
-                  resp.setContentType("text/html");
-                  FastWriter out = new FastWriter(resp.getOutputStream(),
-                                                  resp.getCharacterEncoding());
-                  out.write("<html><head><title>WebMacro Error</title></head>");
-                  out.write("<body><h1><font color=\"red\">WebMacro Error: ");
-                  out.write("</font></h1><pre>");
-                  out.write(_problem); 
-                  out.write("</pre>");
-                  out.write("Please contat the server administrator");
-                  out.flush();
-                  out.close();
-               } catch (Exception e) {
-                  _log.error(_problem,e); 
-               }
-               return;
+            try { 
+               resp.setContentType("text/html");
+               FastWriter out = new FastWriter(resp.getOutputStream(),
+                                               resp.getCharacterEncoding());
+               out.write("<html><head><title>WebMacro Error</title></head>");
+               out.write("<body><h1><font color=\"red\">WebMacro Error: ");
+               out.write("</font></h1><pre>");
+               out.write(_problem); 
+               out.write("</pre>");
+               out.write("Please contat the server administrator");
+               out.flush();
+               out.close();
+            } catch (Exception e) {
+               _log.error(_problem,e); 
             }
+            return;
          }
-         try {
-           context = newContext(req,resp);
-           Object subProf = null;
-           if ((Flags.PROFILE) && (_prof != null)) {
-              subProf = _prof.start(this.toString(),"handle"); 
-           }
-           Template t = handle(context);
-           if ((Flags.PROFILE) && (_prof != null)) {
-              _prof.stop(subProf); 
-           }
-           if (t != null) {
-             execute(t,context); // does its own profiling
-           }
-           if ((Flags.PROFILE) && (_prof != null)) {
-              subProf = _prof.start(this.toString(),"destroyContext"); 
-           }
-           destroyContext(context);
-           context.clear();
-           if ((Flags.PROFILE) && (_prof != null)) {
-              _prof.stop(subProf); 
-           }
-         } catch (HandlerException e) {
-            if (context == null) {
-               context = _wcPrototype.newInstance(req,resp);
-            }
-            _log.error("Your handler failed to handle the request:" + this, e);
-            Template tmpl = error(context,
-               "Your handler was unable to process the request successfully " +
-               "for some reason. Here are the details:<p>" + e);
-            execute(tmpl,context);  
-         } catch (Exception e) {
-            if (context == null) {
-               context = _wcPrototype.newInstance(req,resp);
-            }
-            _log.error("Your handler failed to handle the request:" + this, e);
-            Template tmpl = error(context,
-               "The handler WebMacro used to handle this request failed for " +
-               "some reason. This is likely a bug in the handler written " +
-               "for this application. Here are the details:<p>" + e);
-            execute(tmpl,_wcPrototype.newInstance(req,resp));  
+      }
+      try {
+        context = newContext(req,resp);
+        Template t = handle(context);
+        if (t != null) {
+          execute(t,context);
+        }
+        destroyContext(context);
+        context.clear();
+      } catch (HandlerException e) {
+         if (context == null) {
+            context = _wcPrototype.newInstance(req,resp);
          }
-      } finally {
-         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
+         _log.error("Your handler failed to handle the request:" + this, e);
+         Template tmpl = error(context,
+            "Your handler was unable to process the request successfully " +
+            "for some reason. Here are the details:<p>" + e);
+         execute(tmpl,context);  
+      } catch (Exception e) {
+         if (context == null) {
+            context = _wcPrototype.newInstance(req,resp);
+         }
+         _log.error("Your handler failed to handle the request:" + this, e);
+         Template tmpl = error(context,
+            "The handler WebMacro used to handle this request failed for " +
+            "some reason. This is likely a bug in the handler written " +
+            "for this application. Here are the details:<p>" + e);
+         execute(tmpl,_wcPrototype.newInstance(req,resp));  
       }
    }
 
@@ -403,20 +381,12 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    final protected void execute(Template tmpl, WebContext c)
    {
-      Object prof = null;
+      Writer out = null;
       try {
-         if (Flags.PROFILE && (_prof != null)) {
-            prof = _prof.start("execute", "write");
-         }
          HttpServletResponse resp= c.getResponse();
          FastWriter fw = FastWriter.getInstance(
                resp.getOutputStream(), resp.getCharacterEncoding());
          tmpl.write(fw, c);
-         if (Flags.PROFILE && (_prof != null)) {
-            _prof.stop(prof);
-            prof = _prof.start("execute", "write");
-         }
-
          fw.close();
       } catch (IOException e) {
          // ignore disconnect
@@ -427,13 +397,17 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 ("The template failed to load; double check the "
                  + "TemplatePath in your webmacro.properties file."));
          _log.warning(error,e);
-
-         try { 
-            Writer out = c.getResponse().getWriter();
-            out.write(error); 
-            out.flush();
-         } catch (Exception ignore) { }
-      } 
+         try { out.write(error); } catch (Exception ignore) { }
+      } finally {
+         try {
+            if (out != null) {
+               out.flush();
+               out.close();
+            }
+         } catch (Exception e3) {
+            // ignore disconnect
+         }
+      }
    }
 
 

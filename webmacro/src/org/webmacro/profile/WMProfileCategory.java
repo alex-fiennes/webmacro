@@ -5,9 +5,9 @@ import org.webmacro.util.SimpleStack;
 import java.util.*;
 
 /**
-  * A ProfileCategory manages Profiler objects for a category. 
+  * A ProfileCategory manages Profile objects for a category. 
   */
-public class WMProfileCategory implements ProfileCategory {
+final public class WMProfileCategory implements ProfileCategory {
 
    private final SimpleStack _pool = new SimpleStack();
 
@@ -21,17 +21,24 @@ public class WMProfileCategory implements ProfileCategory {
    private final int _samplingRate;
    private int _sampleCount = 0;
 
+   private final String _name;
+
    /**
      * Record time is how long we are to record profiles. After the
      * specified amount of record time we will discard old profiles.
      */
-   protected WMProfileCategory(int recordTime, int samplingRate) {
+   protected WMProfileCategory(String name, int recordTime, int samplingRate) 
+   {
+      _name = name;
       _recordTime = recordTime;
       _samplingRate = samplingRate;
    }
 
+   public String getName() { return _name; } 
+
+
    /**
-     * Instantiate a new Profiler. If a null object is returned then 
+     * Instantiate a new Profile. If a null object is returned then 
      * no profiling is to be done. The returned object will be the 
      * root of a Profile stack trace. Call its start() and stop() 
      * methods to record timing data. 
@@ -39,16 +46,16 @@ public class WMProfileCategory implements ProfileCategory {
      * Concurrency: this method is thread-safe. You may call it from
      * multiple threads. 
      */
-   synchronized public Profiler newProfiler() {
+   synchronized public Profile newProfile() {
 
       if ((_samplingRate == 0) || (++_sampleCount < _samplingRate)) {
          return null;
       }
       _sampleCount = 0;
 
-      WMProfiler p = (WMProfiler) _pool.pop();
+      WMProfile p = (WMProfile) _pool.pop();
       if (p == null) {
-         p = new WMProfiler(this);
+         p = new WMProfile(this);
       }
       p.timestamp = System.currentTimeMillis();
       return p;
@@ -58,7 +65,7 @@ public class WMProfileCategory implements ProfileCategory {
      * Add the profiler to the record queue, and clean out any 
      * profilers that have been hanging around for too long.
      */
-   synchronized protected void record(WMProfiler p) {
+   synchronized protected void record(WMProfile p) {
       _profiles.add(p);
       cleanup();
    }
@@ -66,11 +73,11 @@ public class WMProfileCategory implements ProfileCategory {
    /**
      * Get the current Profiles
      */
-   synchronized public Profiler[] getProfiles()
+   synchronized public Profile[] getProfiles()
    {
       _sharedTimestamp = System.currentTimeMillis(); 
       cleanup();
-      return (Profiler[]) _profiles.toArray(new Profiler[0]);
+      return (Profile[]) _profiles.toArray(new Profile[0]);
    }
 
    /**
@@ -85,7 +92,7 @@ public class WMProfileCategory implements ProfileCategory {
          while (_timestamp < cutoff) {
             Object o = _profiles.removeFirst();
             if (_timestamp > _sharedTimestamp) _pool.push(o);
-            WMProfiler wmp = (WMProfiler) _profiles.getFirst();
+            WMProfile wmp = (WMProfile) _profiles.getFirst();
             _timestamp = wmp.timestamp;
          }
       } catch (NoSuchElementException e) {

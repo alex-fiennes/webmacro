@@ -114,14 +114,14 @@ final public class EncodingCache {
          byte[] prefix = getPrefix(arg[0]);
          System.out.println("Prefix for " + arg[0] + " is " + prefix.length + " bytes long");
       */
-         EncodingCache ec = new EncodingCache("UTF16-LE", 11, 3);
+         EncodingCache ec = new EncodingCache("UTF-16LE", 11, 3);
          BufferedReader in = new 
                   BufferedReader(new InputStreamReader(System.in));
          String s;
          while ((s = in.readLine()) != null) {
             String s1 = s.intern();
             byte b[] = ec.getEncoding(s1);
-            String s2 = new String(b, "UTF16-LE");
+            String s2 = new String(b, "UTF-16LE");
             System.out.print("Encoding string: " + s1 + " --> [");
             System.out.print( s2 );
             System.out.println("]");

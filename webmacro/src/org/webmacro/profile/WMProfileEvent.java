@@ -12,6 +12,7 @@ final public class WMProfileEvent
    long start;
    long stop;
    String name;
+   int depth;
 
    /**
      * Milliseconds since Jan 1, 1970 that the event began
@@ -28,5 +29,9 @@ final public class WMProfileEvent
      */
    public String getName() { return name; }
 
+   /**
+     * How many levels of nesting are we at? 
+     */
+   public int getDepth() { return depth; }
 }
 

@@ -23,5 +23,10 @@ public interface ProfileEvent {
      */
    public long getStopTime();
 
+   /**
+     * Depth into the tree: how many levels deep is this?
+     */
+   public int getDepth();
+
 }
 

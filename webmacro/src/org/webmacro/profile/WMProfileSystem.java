@@ -17,7 +17,7 @@ public class WMProfileSystem {
      */
    ProfileCategory getProfileCategory(String name) {
       WMProfileCategory child = 
-         new WMProfileCategory(_recordTime,_samplingRate);
+         new WMProfileCategory(name, _recordTime,_samplingRate);
       _children.add(child);
       return child;
    }
@@ -46,7 +46,7 @@ public class WMProfileSystem {
      * keeps profiling data for the last one minute. This determines
      * how much memory is consumed by the profiling system.
      * <p>
-     * In addition to the above global settings a Profiler may support
+     * In addition to the above global settings a Profile may support
      * category specific settings:
      * <P>
      * Profile.NAME.rate: 0, 1, ... N

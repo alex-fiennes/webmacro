@@ -29,7 +29,7 @@ public interface ProfileSystem {
      * profiling off altogether. Setting it to 1 samples every request.
      * Setting it to 5, for example, would profile every 5th request.
      * <p>
-     * In addition to the above global settings a Profiler must support
+     * In addition to the above global settings a Profile must support
      * category specific settings:
      * <P>
      * Profile.NAME.enabled: true|false

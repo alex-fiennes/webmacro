@@ -3,7 +3,7 @@ package org.webmacro.profile;
 
 import java.util.*;
 
-final public class WMProfiler implements Profiler
+final public class WMProfile implements Profile
 {
 
    /** this is a queue of all the events that have happened */
@@ -20,18 +20,18 @@ final public class WMProfiler implements Profiler
    WMProfileCategory _owner;
 
 
-   /** WMProfilerCategory uses this to manage us */
+   /** WMProfileCategory uses this to manage us */
    protected long timestamp = 0;
 
    /** only our ProfileCategory should create new instances */
-   protected WMProfiler(WMProfileCategory owner) {
+   protected WMProfile(WMProfileCategory owner) {
       _owner = owner;
    }
 
    /**
      * Retrieve a list of the events in this profile. The returned
      * iterator will cycle through the ProfileEvent objects that 
-     * were generated during the execution of this Profiler.
+     * were generated during the execution of this Profile.
      */
    public Iterator getEvents() {
       final int end = _qPtr;
@@ -57,7 +57,7 @@ final public class WMProfiler implements Profiler
    }
 
    /**
-     * This method resets the data structures for this Profiler
+     * This method resets the data structures for this Profile
      * so it can be re-used. Ordinarily only our controlling 
      * category will call this method.
      */
@@ -92,6 +92,7 @@ final public class WMProfiler implements Profiler
          _stack = tmp;
          _stack[_stackPtr] = _qPtr;
       }
+      evt.depth = _stackPtr;
       _qPtr++;
       _stackPtr++;
       evt.start = System.currentTimeMillis();
@@ -115,9 +116,9 @@ final public class WMProfiler implements Profiler
 
    /**
      * Terminate profiling, releasing any resources allocated to 
-     * this Profiler and forwarding any collected statistics back
+     * this Profile and forwarding any collected statistics back
      * to the ProfileSystem. It is expected that implementations 
-     * will use this method to recycle the Profiler objects 
+     * will use this method to recycle the Profile objects 
      * themselves for efficiency.
      */
    public void destroy() {

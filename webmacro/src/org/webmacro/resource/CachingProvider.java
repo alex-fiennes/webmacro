@@ -18,7 +18,6 @@ abstract public class CachingProvider implements Provider
 
    private static final TimeLoop _tl;
    private Log _log;
-   private Profiler _prof; 
 
    private static final long DURATION = 1000;
    private static int PERIODS = 600; 
@@ -42,20 +41,19 @@ abstract public class CachingProvider implements Provider
       throws NotFoundException; 
 
 
-	/**
-	  * should object be loaded again?  or is the cache value valid?<p>
-	  *
-	  * regardless of return value, CachingProvider will still reload
-	  * the object if CachingProvider's cache is invalid
-	  */
-	abstract public boolean shouldReload(String query);
+   /**
+     * should object be loaded again?  or is the cache value valid?<p>
+     *
+     * regardless of return value, CachingProvider will still reload
+     * the object if CachingProvider's cache is invalid
+     */
+   abstract public boolean shouldReload(String query);
 
    /**
      * If you over-ride this method be sure and call super.init(...)
      */
    public void init(Broker b, Properties config) throws InitException
    {
-      _prof = b.getProfiler("provider:" + getType());
       _log = b.getLog("resource");
       _cache = new ScalableMap(1001);
    }
@@ -83,61 +81,59 @@ abstract public class CachingProvider implements Provider
      */
    public Object get(final String query) throws NotFoundException
    {
-      Object prof = null;
-      if (Flags.PROFILE && (_prof != null)) prof = _prof.start(query);
+      // should the template be reloaded, regardless of cached status?
+      boolean reload = shouldReload (query);   
+      TimedReference r;
       try {
-			boolean reload = shouldReload (query);	// should the template be reloaded, regardless of cached status?
-         TimedReference r;
-         try {
-            r = (TimedReference) _cache.get(query);
-         } catch (NullPointerException e) {
-            throw new NotFoundException(this + " is not initialized", e);
-         }
-         Object o = null;
-         if (r != null) {
-            o = r.get();
-         }
-         if (o == null || reload) {
-            // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
-            // this looks like double-checked locking but it isn't, we
-            // synchronized on a less expensive lock inside _cache.get()
-            // the following line lets us simultaneously load up to 
-            // writeLocks.length resources.
-            
-            int lockIndex = Math.abs(query.hashCode()) % _writeLocks.length;
-            synchronized(_writeLocks[lockIndex])
-            {
-               r = (TimedReference) _cache.get(query);
-               if (r != null){ 
-                 o = r.get();
-               }
-               if (o == null || reload) {
-                  r = load(query);
-                  if (r != null) {
-                     _cache.put(query,r);
-                  }
-                  o = r.get();
-                  try {
-                     _log.debug("cached: " + query + " for " + r.getTimeout());
-							 if (r.getTimeout() >= 0) {	// if timeout of TimedReference is < 0,then don't schedule a removal from cache
-	                     _tl.scheduleTime( 
-	                        new Runnable() { 
-	                           public void run() { 
-	                              _cache.remove(query); 
-	                              _log.debug("cache expired: " + query);
-	                           } 
-	                        }, r.getTimeout());
-							 }
-                  } catch (Exception e) {
-                     _log.error("CachingProvider caught an exception", e);
-                  }
-               }
-            } 
-         }
-         return o;
-      } finally {
-         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
+         r = (TimedReference) _cache.get(query);
+      } catch (NullPointerException e) {
+         throw new NotFoundException(this + " is not initialized", e);
       }
+      Object o = null;
+      if (r != null) {
+         o = r.get();
+      }
+      if (o == null || reload) {
+
+         // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
+         // this looks like double-checked locking but it isn't, we
+         // synchronized on a less expensive lock inside _cache.get()
+         // the following line lets us simultaneously load up to 
+         // writeLocks.length resources.
+         
+         int lockIndex = Math.abs(query.hashCode()) % _writeLocks.length;
+         synchronized(_writeLocks[lockIndex])
+         {
+            r = (TimedReference) _cache.get(query);
+            if (r != null){ 
+              o = r.get();
+            }
+            if (o == null || reload) {
+               r = load(query);
+               if (r != null) {
+                  _cache.put(query,r);
+               }
+               o = r.get();
+               try {
+                  _log.debug("cached: " + query + " for " + r.getTimeout());
+                  // if timeout of TimedReference is < 0,
+                  // then don't schedule a removal from cache
+                  if (r.getTimeout() >= 0) {   
+                     _tl.scheduleTime( 
+                        new Runnable() { 
+                           public void run() { 
+                              _cache.remove(query); 
+                              _log.debug("cache expired: " + query);
+                           } 
+                        }, r.getTimeout());
+                  }
+               } catch (Exception e) {
+                  _log.error("CachingProvider caught an exception", e);
+               }
+            }
+         } 
+      }
+      return o;
    }
 
    public String toString() {
