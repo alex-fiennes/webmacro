@@ -160,4 +160,13 @@ public class TestArithmetic extends TemplateTestCase {
       }
     }
   }
+
+  public void testWsInParams() {
+    assertExpr("  (\"y\"   ==   \"y\")  ", true);
+    assertExpr("  ( \"y\"   ==   \"y\")  ", true);
+    assertExpr("  (\"y\"   ==   \"y\" )  ", true);
+    assertExpr("  (1   ==   1)  ", true);
+    assertExpr("  ( 1   ==   1)  ", true);
+    assertExpr("  (1   ==   1 )  ", true);
+  }
 }

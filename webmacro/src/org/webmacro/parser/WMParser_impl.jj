@@ -765,7 +765,7 @@ Object Term() : {
 {
   ( 
     e=VariableReference() 
-    | <LPAREN> e=Expression() <RPAREN>
+    | <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN>
     | e=QuotedString()
     | e=BracketList() 
     | <NULL>           { e = null; } 
