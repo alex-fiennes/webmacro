@@ -1,5 +1,4 @@
 package org.webmacro.tools;
-import java.io.FileOutputStream;
 import org.webmacro.Context;
 import org.webmacro.util.WMEval;
 
