@@ -65,18 +65,18 @@ public final class BuildContext extends Context
      * Register a new filter, adding it to the chain for the supplied name.
      * The name is either a top level property name or * to mean "all".
      * @param name the top level property name that is being filtered
-     * @param ft the FilterTool which will handle this property
+     * @param ft the Filter which will handle this property
      */
-   public void addFilter(String name, FilterTool ft) {
-      _filters.addFilter(name,ft);   
+   public void addFilter(Variable var, Filter ft) {
+      _filters.addFilter(var,ft);   
    }
 
    /**
      * Clear all the filtered for the supplied name. Cleaing * clears
      * only global filters, leaving filters for specific properties.
      */
-   public void clearFilters(String name) {
-      _filters.clearFilters(name);
+   public void clearFilters(Variable var) {
+      _filters.clearFilters(var);
    }
 
    /**
@@ -85,8 +85,8 @@ public final class BuildContext extends Context
      * be dropped from the output since it's been filtered to null.
      * @return the Macro to be used to filter it, or null
      */
-   public Macro getFilter(Variable v) {
-      return _filters.getFilter(v);
+   public Macro getFilterMacro(Variable v) {
+      return _filters.getMacro(v);
    }
 }
 

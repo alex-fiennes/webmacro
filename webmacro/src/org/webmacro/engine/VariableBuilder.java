@@ -2,6 +2,7 @@
 package org.webmacro.engine;
 
 import org.webmacro.*;
+
 public class VariableBuilder implements Builder 
 {
 
@@ -41,7 +42,7 @@ public class VariableBuilder implements Builder
          throw new BuildException("Unrecognized Variable Type: " + type);
       }
 
-      return filtered ? bc.getFilter(v) : v;
+      return filtered ? bc.getFilterMacro(v) : v;
    }
 
    public final Object build(BuildContext bc) throws BuildException

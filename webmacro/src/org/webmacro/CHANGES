@@ -1,4 +1,6 @@
 
+-- added EncodeDirective as a demonstration of Filter architecture
+-- added Filter architecture
 -- removed case for enabling/disabling c-style blocks
 -- { and } are not recognized except after a directive, meaning inside
    a #begin or #end block you can write {} without fear

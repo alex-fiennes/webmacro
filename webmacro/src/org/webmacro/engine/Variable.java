@@ -188,6 +188,12 @@ abstract class Variable implements Macro
      */
    abstract void setValue(Context c, Object v) throws ContextException;
 
+   /**
+     * Return the String name of the variable prefixed with a string
+     * representing its type. For example local:a.b.c
+     */
+   public abstract String toString();
+
 }
 
 

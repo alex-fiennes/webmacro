@@ -5,10 +5,10 @@ import org.webmacro.*;
 import java.util.*;
 
 class FilterNode {
-   String name;
-   FilterTool tool;
-   FilterNode(String name, FilterTool tool) {
-      this.name = name;
+   String vname[];
+   Filter tool;
+   FilterNode(String vname[], Filter tool) {
+      this.vname = vname;
       this.tool = tool;
       this.next = null;
    }
@@ -16,37 +16,38 @@ class FilterNode {
 }
 
 /**
-  * This class creates a list of FilterTools each with a corresponding
+  * This class creates a list of Filters each with a corresponding
   * name. You can add to the end of the list, and you can extract a
   * filter for a name. When you get the filter for a name you may
   * actaully get a chain of filters: your macro will be filtered by
   * the first filter, which in turn will be filtered by the second, 
   * and so on--for each filter that matches the supplied name.
   */
-public class FilterManager {
+class FilterManager {
 
    FilterNode _head = new FilterNode(null,null);
    FilterNode _tail = _head;
 
    /**
-     * The registered FilterTool will be used to generate filter
-     * chains for the supplied name from here on.
+     * The registered Filter will be used to generate filter
+     * chains for the supplied variable from here on, and 
+     * potentially for any of its sub-properties as well.
      */
-   public synchronized void addFilter(String name, FilterTool ft) {
-      FilterNode fn = new FilterNode(name,ft);
+   synchronized void addFilter(Variable v, Filter ft) {
+      FilterNode fn = new FilterNode(v.getPropertyNames(),ft);
       _tail.next = fn;
       _tail = fn;
    }
 
    /**
-     * Deregister all the filters for the supplied name. Note that 
-     * clearFilters("ALL") only clears the filters assigned to ALL,
-     * leaving any filters that are assigned to a specific name.
+     * Deregister all the filters for the supplied variable, or for
+     * any sub-property of the supplied variable.
      */
-   public synchronized void clearFilters(String name) {
+   synchronized void clearFilters(Variable var) {
       FilterNode fn = _head;
+      String vname[] = var.getPropertyNames();
       while (fn.next != null) {
-         if (name.equals(fn.name))  // note the order of arguments
+         if (match(vname,fn.vname))  // note the order of arguments
          {
             fn.next = fn.next.next;
             if (fn.next == null) {
@@ -64,22 +65,23 @@ public class FilterManager {
      * getFilter(v).evaluate(c) is v filtered through all of the filters 
      * registered for name.
      */
-   public synchronized Macro getFilter(Variable v) {
-      String name[] = v.getPropertyNames();
+   public synchronized Macro getMacro(Variable v) {
+      String vname[] = v.getPropertyNames();
       Macro last = v;
       FilterNode fn = _head;
       TOOLS: 
       while (fn.next != null) {
          fn = fn.next;
-         if (match(fn.name,name[0]))  // note the order of arguments
+         if (match(fn.vname,vname))  // note the order of arguments
          {
-            FilterTool ft = fn.tool;
-            for (int j = 1; j < name.length; j++) {
+            Filter ft = fn.tool;
+            int start = fn.vname.length + 1;
+            for (int j = start; j < vname.length; j++) {
                if (ft != null) {
-                  ft = ft.getFilterTool(name[j]); 
+                  ft = ft.getFilter(vname[j]);  
                } else continue TOOLS;
             }
-            Macro cur = ft.getFilter(last);
+            Macro cur = ft.getMacro(last);
             if (cur == null) { return v; }
             last = cur;
          }
@@ -88,13 +90,18 @@ public class FilterManager {
    }
 
    /**
-     * Determine whether a filter name matches a property name. If
-     * fname is the string "ALL" return true, else return true iff
-     * the two strings are equal.
+     * Determine whether a filter name matches a property name. The
+     * names match if the second name is the same or the same but
+     * longer than the first. For example local:a.b matches 
+     * local:a.b.c
      * @param fname this is the match expression
      * @param pname this is the name of a property
      */
-   public boolean match(String fname, String pname) {
-      return (fname.equals("ALL") || fname.equals(pname));
+   boolean match(String[] lhs, String[] rhs) {
+      if (lhs.length > rhs.length) return false;
+      for (int i = 0; i < lhs.length; i++) {
+         if (! lhs[i].equals(rhs[i]) ) return false; 
+      }
+      return true;
    }
 }

@@ -18,7 +18,7 @@ import org.webmacro.*;
   * The signature must have the form: <pre>
   *    public static Object build(
   *         BuildContext rc,
-  *         ( Condition cond | (Subject (Argument[])? )?,
+  *         ( Condition cond | (Object subject (, Argument[] args)? )?,
   *         ( Macro block | String text )?,
   *         ( Object subdirective )?
   *       );
