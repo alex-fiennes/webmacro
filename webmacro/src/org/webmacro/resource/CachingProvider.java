@@ -101,7 +101,8 @@ abstract public class CachingProvider implements Provider
          // the following line lets us simultaneously load up to 
          // writeLocks.length resources.
          
-         int lockIndex = Math.abs(query.hashCode()) % _writeLocks.length;
+         int lockIndex = query.hashCode() % _writeLocks.length;
+         if (lockIndex < 0) lockIndex = -lockIndex;
          synchronized(_writeLocks[lockIndex])
          {
             r = (TimedReference) _cache.get(query);

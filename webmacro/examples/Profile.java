@@ -29,7 +29,7 @@ public class Profile extends WMServlet
    public Template handle(WebContext context) throws HandlerException
    {
       try {
-         ProfileSystem ps = WMProfileSystem.getInstance();
+         ProfileSystem ps = ProfileSystem.getInstance();
 
          context.startTiming("getProfileCategories");
          ProfileCategory[] pc = ps.getProfileCategories();

@@ -3,6 +3,7 @@ package org.webmacro.util;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 
 class BucketNode {
    final public String string;
@@ -23,7 +24,7 @@ final public class EncodingCache {
    final private int _size;
    final private int _length;
 
-   final static private HashMap _ecCache = new HashMap();
+   final static private Map _ecCache = new HashMap();
 
    public EncodingCache(String encoding) 
       throws UnsupportedEncodingException
@@ -46,6 +47,8 @@ final public class EncodingCache {
 
       if ((encoding == null) || 
          encoding.equalsIgnoreCase("UNICODE") || 
+         encoding.equalsIgnoreCase("UNICODEBIG") || 
+         encoding.equalsIgnoreCase("UNICODELITTLE") || 
          encoding.equalsIgnoreCase("UTF16")) 
       {
          throw new UnsupportedEncodingException("The encoding you specified is invalid: " + encoding + ". Note that the UNICODE and UTF16 encodings are not supported by WebMacro because they prefix the stream with a market indicating whether the stream is big endian or little endian. Instead choose the byte ordering yourself by using the UTF-16BE or UTF-16LE encodings.");
@@ -62,8 +65,8 @@ final public class EncodingCache {
    public byte[] getEncoding(String s) {
       if (s == null) return null;
       int hash = System.identityHashCode(s);
-      int bucket =  Math.abs(System.identityHashCode(s) % _size);
-      // int bucket =  Math.abs(s.hashCode() % _size);
+      int bucket =  hash % _size;
+      if (bucket < 0) bucket = -bucket;
       BucketNode head = _cache[bucket];
       BucketNode cur = head;
       BucketNode match;

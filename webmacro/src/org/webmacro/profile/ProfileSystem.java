@@ -1,22 +1,40 @@
+
 package org.webmacro.profile;
 
-public interface ProfileSystem {
+import java.util.*;
+
+public class ProfileSystem
+{
+
+   final private static ProfileSystem _instance = new ProfileSystem();
+
+   public static final ProfileSystem getInstance() { 
+      return _instance; 
+   }  
+
+   final private LinkedList _children = new LinkedList();;
 
    /**
      * Return a ProfileCategory for the category 'name'. If a null
      * is returned from this method then no profiling is being 
      * done for the supplied name. 
-     * <p>
-     * @param name the name the category reports as in statistics
-     * @param rate one of every rate events will be sampled, 0 disables
-     * @param time how many milliseconds profiling information is stored
      */
-   ProfileCategory newProfileCategory(String name, int rate, int time);
+   public ProfileCategory newProfileCategory(String name,int rate, int time) {
+      if (_children == null) return null;
+      ProfileCategory child = new ProfileCategory(name, rate, time);
+      _children.add(child);
+      return child;
+   }
 
    /**
-     * Get all profile categories
+     * Return an array of the ProfileCategory objects that are 
+     * being managed. This may return null if there is no 
+     * profiling being done.
      */
-   ProfileCategory[] getProfileCategories();
+   public ProfileCategory[] getProfileCategories() {
+      if (_children == null) return null;
+      return (ProfileCategory[]) _children.toArray(new ProfileCategory[0]);
+   }
 
    /**
      * Shut down the profiling system. This method allows a profiling
@@ -24,7 +42,9 @@ public interface ProfileSystem {
      * called by the application when the application is about to 
      * terminate the module containing the profiling system.
      */
-   public void destroy();
+   public void destroy() {
+      _children.clear();
+   }
 
 }
 

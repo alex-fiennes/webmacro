@@ -1,4 +1,9 @@
 
+-- Nov-2000 justin: Revised the profiling code, removed the interfaces
+   and created final classes. Fixed a bug in FastWriter on some 
+   platforms (which don't support UTF16-le). Sped up EncodingCache
+   a little bit. Cleaned up the exceptions in the Broker/WM classes.
+
 -- Nov-2000 justin: Added ProfileDirective so you can invoke the 
    profiling code from within your template
 

@@ -6,33 +6,44 @@ package org.webmacro.profile;
   * in the system. All that is recorded about the event is its name,
   * when it started, and when it stopped. 
   */
-public interface ProfileEvent {
+final public class ProfileEvent 
+{
 
    /**
-     * Descriptive name of the event
+     * The name of this event
      */
-   public String getName();
+   public String name;
 
    /**
-     * Milliseconds since Jan 1, 1970 that the event began
+     * Milliseconds since Jan 1, 1970 that this event started
      */
-   public long getStartTime();
+   public long start;
 
    /**
-     * Milliseconds, since Jan 1, 1970 that the event ended
+     * Milliseconds that this event lasted for
      */
-   public long getStopTime();
+   public int duration;
 
    /**
-     * Depth into the tree: how many levels deep is this?
+     * How many levels down the "call stack" is this event? In other
+     * words, how many events enclose it.
      */
-   public int getDepth();
+   public int depth;
 
    /**
-     * How long did the event last?
+     *  Create a new profile event with null and 0 values
      */
-   public int getDuration();
+   public ProfileEvent() { this(null,0,0,0); }
 
+   /**
+     * Create a new profile event with the supplied values
+     */
+   public ProfileEvent(String name, int start, int duration, int depth) {
+      this.name = name;
+      this.start = start;
+      this.duration = duration;
+      this.depth = depth;
+   }
 
 }
 

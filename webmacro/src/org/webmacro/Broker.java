@@ -178,7 +178,7 @@ final public class Broker
 
       // set up profiling
 
-      ProfileSystem ps = WMProfileSystem.getInstance();
+      ProfileSystem ps = ProfileSystem.getInstance();
       int pRate = Integer.valueOf(
          config.getProperty("Profile.rate","0")).intValue();
       int pTime = Integer.valueOf(

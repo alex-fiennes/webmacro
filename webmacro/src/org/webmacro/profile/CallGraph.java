@@ -57,8 +57,8 @@ public class CallGraph {
       Iterator i = p.getEvents();
       while (i.hasNext()) {
          ProfileEvent evt = (ProfileEvent) i.next();
-         int evtDepth = evt.getDepth();
-         long evtDuration = evt.getStopTime() - evt.getStartTime();
+         int evtDepth = evt.depth;
+         int evtDuration = evt.duration;
 
          // move to parent
          while (evtDepth <= depth) {
@@ -67,10 +67,10 @@ public class CallGraph {
          }
 
          // find child
-         CallGraph child = (CallGraph) cg.children.get( evt.getName() );
+         CallGraph child = (CallGraph) cg.children.get( evt.name );
          if (child == null) {
-            child = new CallGraph(evt.getName());
-            cg.children.put(evt.getName(), child);
+            child = new CallGraph(evt.name);
+            cg.children.put(evt.name, child);
          }
          cgStack.push(cg); 
          depth++;

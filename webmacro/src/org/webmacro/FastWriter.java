@@ -30,6 +30,26 @@ import org.webmacro.util.*;
 
 final public class FastWriter extends Writer
 {
+
+   /**
+     * This encoding is either UTF16-BE or, if the platform does not
+     * support it, UTF8. It is a Unicode encoding which can have 
+     * encoded strings concatenated together. 
+     */
+   final public static String SAFE_UNICODE_ENCODING;
+
+   // find the safe encoding
+   static {
+      String encoding = "UTF16-BE";
+      try {
+         encoding.getBytes(encoding);
+      } catch(Exception e) {
+         encoding = "UTF8";
+      }
+      SAFE_UNICODE_ENCODING = encoding;
+   }
+
+
    final private String _encoding;      // what encoding we use
    final private Writer _bwriter;
    final private ByteBufferOutputStream _bstream;
@@ -327,7 +347,7 @@ final public class FastWriter extends Writer
    public static FastWriter getInstance() 
    {
       try {
-         return getInstance(null,"UTF-16LE");
+         return getInstance(null, SAFE_UNICODE_ENCODING);
       } catch (UnsupportedEncodingException e) {
          e.printStackTrace(); // never gonna happen
          return null;
@@ -359,9 +379,10 @@ final public class FastWriter extends Writer
 
       System.out.println("----START----");
       try {
-         FastWriter fw = new FastWriter("UTF8");
+         FastWriter fw = FastWriter.getInstance();
          fw.setAsciiHack(false);
          for (int i = 0; i < arg.length; i++) {
+            System.out.println("Writing: " + arg[i]);
             fw.writeStatic("write: ");
             fw.write(arg[i]);
             fw.writeStatic("\n");
@@ -370,8 +391,8 @@ final public class FastWriter extends Writer
             fw.writeStatic(arg[i]);
             fw.writeStatic("\n");
          }
-         fw.flush();
          fw.writeTo(System.out);
+         fw.close();
       } catch (Exception e) {
          e.printStackTrace();
       }
