@@ -50,7 +50,7 @@ final public class BrokerTemplateProviderHelper
    private int _cacheDuration;
    private Log _log;
    private boolean _cacheSupportsReload = true;
-
+    private ReloadDelayDecorator reloadDelay;
 
    private static class UrlReloadContext extends CacheReloadContext { 
       private long lastModified;
@@ -75,8 +75,9 @@ final public class BrokerTemplateProviderHelper
    {
       _broker = b;
       _log = b.getLog("resource", "Object loading and caching");
-
       _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
+      reloadDelay = new ReloadDelayDecorator();
+      reloadDelay.init(b,config);
    }
 
    /**
@@ -99,8 +100,11 @@ final public class BrokerTemplateProviderHelper
          t.setName(name);
          t.parse ();
          ret = t;
-         if (_cacheSupportsReload) 
-            ce.setReloadContext(new UrlReloadContext(tUrl, lastMod));
+         if (_cacheSupportsReload) {
+             CacheReloadContext reloadContext = new UrlReloadContext(tUrl, lastMod);
+             ce.setReloadContext(reloadDelay.decorate(tUrl.getProtocol(),
+                                                      reloadContext));
+         }
       }
       catch (NullPointerException npe) {
          _log.warning ("BrokerTemplateProvider: Template not found: " + name);

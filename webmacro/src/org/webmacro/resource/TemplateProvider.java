@@ -51,6 +51,15 @@ final public class TemplateProvider extends CachingProvider
    private Log _log;
    private BrokerTemplateProviderHelper _btpHelper;
 
+    /**
+     * Responsible for deciding, how often resources
+     * should be checked for modification at max
+     */
+   private ReloadDelayDecorator reloadDelay;
+    
+    private int _checkReloadDelay;
+    
+
    static {
       try {
          _pathSeparator = System.getProperty("path.separator");
@@ -102,6 +111,9 @@ final public class TemplateProvider extends CachingProvider
                _templateDirectory[i] = dir;
             }
          }
+         reloadDelay = new ReloadDelayDecorator();
+         reloadDelay.init(b,config);
+
          _btpHelper = new BrokerTemplateProviderHelper();
          _btpHelper.init(b, config);
          _btpHelper.setReload(_cacheSupportsReload);
@@ -132,9 +144,12 @@ final public class TemplateProvider extends CachingProvider
          try {
             Template t = new FileTemplate(_broker, tFile);
             ret = t;
-            if (_cacheSupportsReload)
-               ce.setReloadContext(
-                  new FTReloadContext(tFile, tFile.lastModified()));
+            if (_cacheSupportsReload) {
+                CacheReloadContext reloadContext = 
+                    new FTReloadContext(tFile, tFile.lastModified());
+                ce.setReloadContext(reloadDelay.decorate("file",
+                                                         reloadContext));
+            }
          }
          catch (NullPointerException npe) {
             _log.warning("TemplateProvider: Template not found: " + name, 
