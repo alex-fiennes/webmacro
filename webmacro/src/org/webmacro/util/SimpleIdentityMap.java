@@ -78,15 +78,15 @@ public final class SimpleIdentityMap implements SimpleMap {
         // reference queue is sychronized, so no need to do it ourself
         Node node;
         while ((node = (Node)queue.poll()) != null) {
+            // search for node to remove it from map
             int hash = (node.hash & 0x7FFFFFFF) % tab.length;
             Node last=null;
             synchronized (locks[hash]) {
                 if (!node.cleaned) {
+                    // search linked list for node
                     Node current = tab[hash];
+
                     while (current != null) {
-                        // clear other expired weak refs, too, to
-                        // prevent the same lock of being taken
-                        // more than once.
                         if (current == node) {
                             if (last == null) {
                                 tab[hash] = current.next;
