@@ -63,34 +63,34 @@ public abstract class TemplateTestCase extends TestCase {
   
 
   /**
-   * Utility method to convert a template file to a string for use in the test suite.
+   * Utility method to convert a template file to a string for use in
+   * the test suite.
    * Note: if the file is not found as an absolute arg, then the
-   * broker is called to use its get resource method.
-   */
+   * broker is called to use its get resource method.  */
   public String templateFileToString(String fileReference) throws Exception {
     InputStream in = null;
     try {
-   	 	in = new FileInputStream(fileReference);
-   	}
-   	catch (FileNotFoundException e) {
-   	  in = _wm.getBroker().getResourceAsStream(fileReference);
-   	  if (in == null) throw new Exception(fileReference + " not found");
-   	}
-	 	byte[] value = new byte[in.available()];
-	 	in.read(value);
-	 	in.close();
-	 	String string = new String(value);
-	 	System.out.println("file content=" + string);
-	 	return string;
-	}
-
-	/**
-	 * Executes a file template.
-	 */
-	public String executeFileTemplate(String fileReference) throws Exception {
-	  return executeStringTemplate(templateFileToString(fileReference));
-	}
-
+      in = new FileInputStream(fileReference);
+    }
+    catch (FileNotFoundException e) {
+      in = _wm.getBroker().getResourceAsStream(fileReference);
+      if (in == null) throw new Exception(fileReference + " not found");
+    }
+    byte[] value = new byte[in.available()];
+    in.read(value);
+    in.close();
+    String string = new String(value);
+    System.out.println("file content=" + string);
+    return string;
+  }
+  
+  /**
+   * Executes a file template.
+   */
+  public String executeFileTemplate(String fileReference) throws Exception {
+    return executeStringTemplate(templateFileToString(fileReference));
+  }
+  
   public String executeStringTemplate(String templateText) throws Exception {
     Template template = new StringTemplate(_wm.getBroker(), templateText);
     FastWriter fw = FastWriter.getInstance(_wm.getBroker(), null, "UTF8");
