@@ -61,6 +61,22 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
                            + " at " + context.getCurrentLocation()
                            + ": No such variable");
             return;
+        } else if (problem instanceof PropertyException.NoSuchMethodException) {
+            PropertyException.NoSuchMethodException ex = (PropertyException.NoSuchMethodException) problem;
+            if (_log != null)
+                _log.warning("Cannot evaluate $" + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": No such method " + ex.methodName);
+            // rethrow this exception
+            throw ex;
+        } else if (problem instanceof PropertyException.NoSuchMethodWithArgumentsException) {
+            PropertyException.NoSuchMethodWithArgumentsException ex = (PropertyException.NoSuchMethodWithArgumentsException) problem;
+            if (_log != null)
+                _log.warning("Cannot evaluate $" + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": No such method " + ex.methodName + "(" + ex.arguments + ")");
+            // rethrow this exception
+            throw ex;
         } else if (problem instanceof PropertyException.NullValueException) {
             if (_log != null)
                 _log.warning("Cannot evaluate $" + variable.getVariableName()
@@ -73,17 +89,17 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
                            + " at " + context.getCurrentLocation()
                            + ": .toSting() returns null");
             return;
-        }
-        else if (problem instanceof PropertyException) {
+        } else if (problem instanceof PropertyException) {
             if (_log != null)
                 _log.warning("Cannot evaluate $" + variable.getVariableName()
                            + " at " + context.getCurrentLocation(), problem);
+            // rethrow this exception
             throw (PropertyException) problem;
-        }
-        else {
+        } else {
             if (_log != null)
                 _log.warning("Error evaluating $" + variable.getVariableName()
                            + " at " + context.getCurrentLocation(), problem);
+            // rethrow problem wrapped in a PropertyExcpetion
             throw new PropertyException("Error evaluating $"
                                       + variable.getVariableName()
                                       + " at " + context.getCurrentLocation(), 
@@ -94,50 +110,60 @@ public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHan
     public String expand(Variable variable, Context context, Exception problem) throws PropertyException {
         
         if (problem instanceof PropertyException.NoSuchVariableException) {
+            String msg = "Cannot expand $"
+                           + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": No such variable";
+            
             if (_log != null)
-                _log.warning("Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": No such variable");
-            return errorString("Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": No such variable");
-        }
-        else if (problem instanceof PropertyException.NullValueException) {
-            if (_log != null)
-                _log.warning("Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": Value is null");
-            return errorString("Cannot expand $"
-                           + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()
-                           + ": Value is null");
-        }
-        else if (problem instanceof PropertyException.NullToStringException) {
+                _log.warning(msg);
+            return errorString(msg);
+            
+        } else if (problem instanceof PropertyException.NoSuchMethodException) {
+            PropertyException.NoSuchMethodException ex = (PropertyException.NoSuchMethodException) problem;
             if (_log != null)
                 _log.warning("Cannot expand $" + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": No such method " + ex.methodName);
+            // rethrow this exception
+            throw ex;            
+        } else if (problem instanceof PropertyException.NoSuchMethodWithArgumentsException) {
+            PropertyException.NoSuchMethodWithArgumentsException ex = (PropertyException.NoSuchMethodWithArgumentsException) problem;
+            if (_log != null) {
+                _log.warning("Cannot expand $" + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": No such method " + ex.methodName + "(" + ex.arguments + ")");
+            }
+            // rethrow this exception            
+            throw ex;
+        } else if (problem instanceof PropertyException.NullValueException) {
+            String msg = "Cannot expand $"
+                           + variable.getVariableName()
+                           + " at " + context.getCurrentLocation()
+                           + ": Value is null";
+            if (_log != null)
+                _log.warning(msg);
+            return errorString(msg);
+        } else if (problem instanceof PropertyException.NullToStringException) {
+            String msg = "Cannot expand $" + variable.getVariableName()
                            + " at " + context.getCurrentLocation()           
-                           + ": .toString() returns null");
-            return errorString("Cannot expand $" + variable.getVariableName()
-                           + " at " + context.getCurrentLocation()           
-                           + ": .toString() returns null");
-        }
-        else if (problem instanceof PropertyException) {
+                           + ": .toString() returns null";
+            if (_log != null)
+                _log.warning(msg);
+            return errorString(msg);
+        } else if (problem instanceof PropertyException) {
             if (_log != null)
                 _log.error("Cannot expand $" + variable.getVariableName()
                          + " at " + context.getCurrentLocation(), problem);
+            // rethrow this exception            
             throw (PropertyException) problem;
-        }
-        else {
+        } else {
+            String msg = "Error expanding $" + variable.getVariableName()
+                           + " at " + context.getCurrentLocation();
             if (_log != null)
-                _log.error("Error expanding" + variable.getVariableName()
-                           + " at " + context.getCurrentLocation(), problem);
-            throw new PropertyException("Error expanding" 
-                                      + variable.getVariableName()
-                                      + " at " + context.getCurrentLocation(), 
-                                      problem);
+                _log.error(msg, problem);
+            // rethrow problem wrapped in a PropertyException            
+            throw new PropertyException(msg, problem);
         }
     }
     

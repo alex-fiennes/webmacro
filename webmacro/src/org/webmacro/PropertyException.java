@@ -98,7 +98,7 @@ public class PropertyException extends ContextException
     * the requested method.  
     */
    public static class NoSuchMethodException extends PropertyException {
-      String methodName, className, variableName;
+      public String methodName, className, variableName;
 
       public NoSuchMethodException(String methodName, 
                                    String variableName, 
@@ -111,7 +111,24 @@ public class PropertyException extends ContextException
       }
    }
 
+   /**
+    * NoSuchMethodException indicates that the variable did not have
+    * the a method with the request name and argument list  
+    */
+   public static class NoSuchMethodWithArgumentsException extends PropertyException {
+      public String methodName, className, arguments;
 
+      public NoSuchMethodWithArgumentsException(String methodName, 
+                                                String className, 
+                                                String arguments) {
+         super("No public method " + methodName + "(" + arguments + ")" 
+             + " in class " + className);
+         this.className = className;
+         this.methodName = methodName;
+         this.arguments = arguments;
+      }
+   }   
+   
    /**
     * NoSuchPropertyException indicates that the variable did not have
     * the requested property.  

@@ -1110,22 +1110,19 @@ final class DirectAccessor extends Accessor
 
       // not found
 
-      StringBuffer msg = new StringBuffer();
-      msg.append("Unable to match the supplied arguments to a method named \"");
-      msg.append(getName());
+      StringBuffer arglist = new StringBuffer();
       Method m = (Method)_methods.firstElement();
-      msg.append("\" in the class ");
-      msg.append(m.getDeclaringClass().getName());
-      msg.append(".  Supplied argument types: (");
       for (int i = 0; i < args.length; i++) {
          if (i > 0) {
-            msg.append(",");
+            arglist.append(", ");
          }
-         msg.append((args[i] == null) ? "null" : args[i].getClass().getName());
+         arglist.append((args[i] == null) ? "null" : args[i].getClass().getName());
       }
-      msg.append("). ");
       
-      throw new PropertyException(msg.toString());
+      throw new PropertyException
+         .NoSuchMethodWithArgumentsException(getName(),
+                                             m.getDeclaringClass().getName(),
+                                             arglist.toString());
    }
    
 }
