@@ -243,37 +243,17 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         }
 
 
-        boolean timing = false;
         context = newWebContext(req, resp);
         try
         {
-            timing = Flags.PROFILE && context.isTiming();
-            if (timing) context.startTiming("WMServlet", req.getRequestURI());
-
             Template t;
-            try
-            {
-                if (timing) context.startTiming("handle");
-                t = handle(context);
-            }
-            finally
-            {
-                if (timing) context.stopTiming();
-            }
+            t = handle(context);
 
             if (t != null)
             {
                 execute(t, context);
             }
-            if (timing) context.startTiming("WMServlet.destroyContext()");
-            try
-            {
-                destroyContext(context);
-            }
-            finally
-            {
-                if (timing) context.stopTiming();
-            }
+            destroyContext(context);
         }
         catch (HandlerException e)
         {
@@ -293,10 +273,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     "for this application. Here are the details:<p>" +
                     "<pre>" + e + "</pre>");
             execute(tmpl, context);
-        }
-        finally
-        {
-            if (timing) context.stopTiming();
         }
     }
    
@@ -517,46 +493,37 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     protected void execute (Template tmpl, WebContext c)
             throws IOException
     {
-        boolean timing = Flags.PROFILE && c.isTiming();
         try
         {
-            if (timing) c.startTiming("Template.write", tmpl);
-            try
+            HttpServletResponse resp = c.getResponse();
+
+            Locale locale = (Locale) tmpl.getParam(
+                    WMConstants.TEMPLATE_LOCALE);
+            if (_log.loggingDebug())
+                _log.debug("TemplateLocale=" + locale);
+            if (locale != null)
             {
-                HttpServletResponse resp = c.getResponse();
-
-                Locale locale = (Locale) tmpl.getParam(
-                        WMConstants.TEMPLATE_LOCALE);
-                if (_log.loggingDebug())
-                    _log.debug("TemplateLocale=" + locale);
-                if (locale != null)
-                {
-                    setLocale(resp, locale);
-                }
-
-                String encoding = (String) tmpl.getParam(
-                        WMConstants.TEMPLATE_OUTPUT_ENCODING);
-                if (encoding == null)
-                {
-                    encoding = resp.getCharacterEncoding();
-                }
-
-                if (_log.loggingDebug())
-                    _log.debug("Using output encoding " + encoding);
-            
-                // get the bytes before calling getOutputStream
-                // this is necessary to be compatible with JSDK 2.3
-                // where you can't call setContentType() after getOutputStream(),
-                // which could be happening during the template evaluation
-                byte[] bytes = tmpl.evaluateAsBytes(encoding, c);
-            
-                // now write the FW buffer to the response output stream
-                writeResponseBytes(resp, bytes, encoding);
+                setLocale(resp, locale);
             }
-            finally
+
+            String encoding = (String) tmpl.getParam(
+                    WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            if (encoding == null)
             {
-                if (timing) c.stopTiming();
+                encoding = resp.getCharacterEncoding();
             }
+
+            if (_log.loggingDebug())
+                _log.debug("Using output encoding " + encoding);
+
+            // get the bytes before calling getOutputStream
+            // this is necessary to be compatible with JSDK 2.3
+            // where you can't call setContentType() after getOutputStream(),
+            // which could be happening during the template evaluation
+            byte[] bytes = tmpl.evaluateAsBytes(encoding, c);
+
+            // now write the FW buffer to the response output stream
+            writeResponseBytes(resp, bytes, encoding);
         }
         catch (UnsupportedEncodingException e)
         {
@@ -758,7 +725,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+     * Get a new FastWriter.
      * A FastWriter is used when writing templates to an output stream
      *
      * @param out The output stream the FastWriter should write to.  Typically

@@ -19,18 +19,24 @@
 
 package org.webmacro;
 
-import org.webmacro.engine.*;
-import org.webmacro.profile.Profile;
-import org.webmacro.profile.ProfileCategory;
-import org.webmacro.profile.ProfileSystem;
-import org.webmacro.util.*;
-
 import java.io.*;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
+import org.webmacro.engine.DefaultEvaluationExceptionHandler;
+import org.webmacro.engine.EvaluationExceptionHandler;
+import org.webmacro.engine.IntrospectionUtils;
+import org.webmacro.engine.MethodWrapper;
+import org.webmacro.engine.PropertyOperatorCache;
+import org.webmacro.util.LogFile;
+import org.webmacro.util.LogSystem;
+import org.webmacro.util.LogTarget;
+import org.webmacro.util.LogTargetFactory;
+import org.webmacro.util.Settings;
+import org.webmacro.util.SubSettings;
 
 /**
  * The Broker is responsible for loading and initializing almost everything
@@ -73,7 +79,6 @@ public class Broker
             = new PropertyOperatorCache();
 
     protected Log _log;
-    protected ProfileCategory _prof;
     private EvaluationExceptionHandler _eeHandler;
 
     /** a local map for one to dump stuff into, specific to this Broker */
@@ -283,31 +288,6 @@ public class Broker
                 _log.debug("Property " + properties[i] + ": "
                         + _config.getSetting(properties[i]));
             }
-        }
-
-        // set up profiling
-        ProfileSystem ps = ProfileSystem.getInstance();
-        int pRate = _config.getIntegerSetting("Profile.rate", 0);
-        int pTime = _config.getIntegerSetting("Profile.time", 60000);
-
-        _log.debug("Profiling rate=" + pRate + " time=" + pTime);
-
-        if ((pRate != 0) && (pTime != 0))
-        {
-            _prof = ps.newProfileCategory(_name, pRate, pTime);
-            _log.debug("ProfileSystem.newProfileCategory: " + _prof);
-        }
-        else
-        {
-            _prof = null;
-        }
-        if (_prof != null)
-        {
-            _log.notice("Profiling started: " + _prof);
-        }
-        else
-        {
-            _log.info("Profiling not started.");
         }
 
         // set up providers
@@ -690,7 +670,7 @@ public class Broker
     }
 
     /**
-     * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+     * Get a new FastWriter
      * A FastWriter is used when writing templates to an output stream
      *
      * @param out The output stream the FastWriter should write to.  Typically
@@ -796,16 +776,6 @@ public class Broker
     public Class classForName (String name) throws ClassNotFoundException
     {
         return Class.forName(name);
-    }
-
-    /**
-     * Get a profile instance that can be used to instrument code.
-     * This instance must not be shared between threads. If profiling
-     * is currently disabled this method will return null.
-     */
-    public Profile newProfile ()
-    {
-        return (_prof == null) ? null : _prof.newProfile();
     }
 
 

@@ -68,8 +68,6 @@ public class Context implements Map, Cloneable
     private static final org.webmacro.engine.UndefinedMacro UNDEF
             = org.webmacro.engine.UndefinedMacro.getInstance();
 
-    private org.webmacro.profile.Profile _prof = null;
-
     /**
      * Create a new Context relative to the default WM instance
      */
@@ -82,21 +80,8 @@ public class Context implements Map, Cloneable
      */
     public Context (Broker broker)
     {
-        _prof = broker.newProfile();
-        if (_prof != null)
-        {
-            startTiming("Context life");
-        }
-        if (_prof != null)
-        {
-            startTiming("Context init");
-        }
         _broker = broker;
         _log = broker.getLog("context", "property and evaluation errors");
-        if (_prof != null)
-        {
-            stopTiming();
-        }
     }
 
     public final static class TemplateEvaluationContext
@@ -123,10 +108,6 @@ public class Context implements Map, Cloneable
      */
     public Context cloneContext ()
     {
-        if (_prof != null)
-        {
-            startTiming("cloneContext");
-        }
         Context c;
         try
         {
@@ -137,8 +118,6 @@ public class Context implements Map, Cloneable
             e.printStackTrace();
             return null; // never going to happen
         }
-        c._prof = _broker.newProfile();
-        c.startTiming("Context life"); // stops in clear()
         c._teContext = new TemplateEvaluationContext();
         if (_variables instanceof HashMap)
         {
@@ -147,10 +126,6 @@ public class Context implements Map, Cloneable
         else
         {
             c._variables = new HashMap(_variables);
-        }
-        if (_prof != null)
-        {
-            stopTiming();
         }
         return c;
     }
@@ -165,11 +140,6 @@ public class Context implements Map, Cloneable
     {
         _variables.clear();
         _eeHandler = null;
-        if (_prof != null)
-        {
-            stopTiming();
-            _prof.destroy();
-        }
     }
 
 
@@ -582,98 +552,6 @@ public class Context implements Map, Cloneable
 
 
     //////////////////////////////////////////////////////////////
-   
-    /**
-     * Return true if the Context contains an active profiler, and
-     * calls to startTiming/stopTiming will be counted.
-     */
-    public final boolean isTiming ()
-    {
-        return (_prof != null);
-    }
-
-    /**
-     * Mark the start of an event for profiling. Note that you MUST
-     * call stop() or the results of profiling will be invalid.
-     */
-    public final void startTiming (String name)
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.startEvent(name);
-    }
-
-    /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the concatenation
-     * of strings and the call to arg.toString() occurs only if profiling
-     * is enabled.
-     */
-    public final void startTiming (String name1, Object arg)
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.startEvent(name1 + "(" + arg + ")");
-    }
-
-    /**
-     * Same as startTiming(name1 + "(" + arg1 + "," + arg2 + ")") but the
-     * concatenation of strings and the call to arg.toString() occurs only
-     * if profiling * is enabled.
-     */
-    public final void startTiming (String name1, Object arg1, Object arg2)
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.startEvent(name1 + "(" + arg1 + ", " + arg2 + ")");
-    }
-
-    /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the
-     * concatenation of strings and the call to toString() occurs only
-     * if profiling is enabled.
-     */
-    public final void startTiming (String name, int arg)
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.startEvent(name + "(" + arg + ")");
-    }
-
-    /**
-     * Same as startTiming(name1 + "(" + arg + ")") but the
-     * concatenation of strings and the call to toString() occurs only
-     * if profiling is enabled.
-     */
-    public final void startTiming (String name, boolean arg)
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.startEvent(name + "(" + arg + ")");
-    }
-
-    /**
-     * Mark the end of an event for profiling. Note that you MUST
-     * HAVE CALLED start() first or the results of profiling will
-     * be invalid.
-     */
-    public final void stopTiming ()
-    {
-        if (_prof == null)
-        {
-            return;
-        }
-        _prof.stopEvent();
-    }
 
     /**
      * Dump the variables (and their values) contained in this Context.  Output is similiar to

@@ -163,7 +163,7 @@ public class WM implements WebMacro
     }
 
     /**
-     * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+     * Get a new FastWriter.
      * A FastWriter is used when writing templates to an output stream
      *
      * @param out The output stream the FastWriter should write to.  Typically

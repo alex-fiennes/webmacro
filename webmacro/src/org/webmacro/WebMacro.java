@@ -60,12 +60,11 @@ public interface WebMacro
 
 
     /**
-     * Retrieve a FastWriter from WebMacro's internal pool of FastWriters.
+     * Get a new FastWriter
      * A FastWriter is used when writing templates to an output stream.<p>
      *
      * If using a FastWriter directly, <b>always</b> make sure to <code>flush()</code>
-     * and <code>close()</code> it when you're finished.  Closing it
-     * automatically returns back to the pool for later reuse.
+     * and <code>close()</code> it when you're finished.  
      *
      * @param out The output stream the FastWriter should write to.  Typically
      *            this will be your ServletOutputStream
