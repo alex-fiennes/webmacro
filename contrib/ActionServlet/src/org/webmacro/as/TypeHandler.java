@@ -47,7 +47,7 @@ package org.webmacro.as;
  * SimpleTypeHandler} or {@link CompositeTypeHandler CompositeTypeHandler}.<P>
  *
  * Bindng between the parameter type and its type handler is done by the 
- * <TT>&lt;type handler&gt;</TT> element in the configuration file:
+ * <TT>&lt;type-handler&gt;</TT> element in the configuration file:
  *
  * <PRE>
  *  &lt;type-handler type="<B>some.package.Type</B>"

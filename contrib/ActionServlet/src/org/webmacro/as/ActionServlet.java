@@ -151,6 +151,9 @@ import org.webmacro.util.*;
  * &lt;/application&gt;
  * </PRE>
  *
+ * XML configuration filename must be passed to ActionServlet via a servlet init parameter named 
+ * <TT>"ActionConfig"</TT>. See examples or consult your servlet runtime documentation how to do it.<P>
+ *
  * <B>1.5.1 The root <TT>&lt;application&gt;</TT> element</B><P> may have optional <TT>repository</TT>
  * attribute, which specifies a directory where servlet components and other classes are stored
  * [TODO: future versions may accept also .jar repositories]. This attribute can be used only if you
@@ -327,10 +330,6 @@ import org.webmacro.util.*;
  * &lt;/application&gt;
  * </PRE>
  *
- * Note: A XML configuration filename must be passed to ActionServlet via a servlet init
- *       parameter named <TT>"ActionConfig"</TT> (consult your servlet runtime
- *       documentation how to do it).
- *
  * <P><FONT FACE="Arial" COLOR="green"><LI><H2>HTTP request processing</H2></FONT>
  *
  * HTTP requests are handled as follows:<P>
@@ -415,7 +414,13 @@ public class ActionServlet extends WMServlet {
 
     /**
      * Table of output-variables of templates.
-     * key = template.toString(), value = vector of output-variables
+     * key = template instance, value = template name
+     */
+    final WeakHashMap templatesNames = new WeakHashMap();
+
+    /**
+     * Table of output-variables of templates.
+     * key = template name from 'templatesNames', value = vector of output-variables
      */
     final Hashtable templateOutputVariables = new Hashtable();
 
@@ -423,7 +428,7 @@ public class ActionServlet extends WMServlet {
      * Table of threads using sessions (uses {@link #getComponent(Class,boolean) getComponent()}.
      * key = thread hashcode, value = http session
      */
-    final Hashtable threadSessions = new Hashtable();
+    private final Hashtable threadSessions = new Hashtable();
 
     /**
      * Used for initialization of components.
@@ -452,7 +457,7 @@ public class ActionServlet extends WMServlet {
      * Used by {@link #handle(WebContext) handle()} and
      * Action.invoke(...) methods.
      */
-    Hashtable lastActions = new Hashtable();
+    final Hashtable lastActions = new Hashtable();
 
     /**
      * Sleeping period of session data reaper in miliseconds (default: 1 minute)
@@ -462,7 +467,7 @@ public class ActionServlet extends WMServlet {
     /**
      * Thread that periodically removes unused session data.
      */
-    private SessionReaper sessionReaper = new SessionReaper();
+    private final SessionReaper sessionReaper = new SessionReaper();
 
     /**
      * Housekeeping thread.
@@ -485,6 +490,13 @@ public class ActionServlet extends WMServlet {
                 try {
                     session = (HttpSession) keys1.nextElement();
                     id = session.getId();
+                } catch(NullPointerException e) {
+                    LastActionData la = (LastActionData)lastActions.get(session);
+                    if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
+                        la.component instanceof Destroyed) ((Destroyed)la.component).destroy();
+
+                    lastActions.remove(session);
+                    log.debug("Removed lastActionData of invalid session '" + id + "'");
                 } catch(IllegalStateException e) {
                     LastActionData la = (LastActionData)lastActions.get(session);
                     if (la.action.componentData.persistence == ComponentData.PERSISTENCE_REQUEST &&
@@ -500,6 +512,12 @@ public class ActionServlet extends WMServlet {
                 try {
                     session = (HttpSession) keys2.nextElement();
                     session.getId();
+                } catch(NullPointerException e) {
+                    Object component = sessionComponents.get(session);
+                    if (component instanceof Destroyed) ((Destroyed)component).destroy();
+
+                    sessionComponents.remove(session);
+                    log.debug("Removed session component of invalid session '" + id + "'");
                 } catch(IllegalStateException e) {
                     Object component = sessionComponents.get(session);
                     if (component instanceof Destroyed) ((Destroyed)component).destroy();
@@ -703,8 +721,8 @@ public class ActionServlet extends WMServlet {
         try {
             // XML config filename is taken from servlet init parameter 'ActionConfig'
             if ((configFilename = getInitParameter("ActionConfig")) == null)
-                throw new InitException("Servlet init parameter 'config' must specify" +
-                                        " fully qualified name to XML configuration file" +
+                throw new InitException("Servlet init parameter 'ActionConfig' must specify" +
+                                        " name of the configuration file " +
                                         " (c:/servlets/MyServlet.xml, for example)");
 
             // parse XML configuration file
@@ -722,7 +740,7 @@ public class ActionServlet extends WMServlet {
                             return new InputSource(new InputStreamReader(is));
                         } else log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + DTD + "\"");
                     } catch (Exception e) {
-                        log.warning("Error while loading 'ActionServlet.dtd'" + ": " + e.getMessage());
+                        log.warning("Error while loading 'ActionServlet_0_5.dtd'" + ": " + e.getMessage());
                     }
                     return null;
                 }
@@ -740,7 +758,21 @@ public class ActionServlet extends WMServlet {
                 public void warning (SAXParseException e) throws SAXParseException {}
             });
 
-            Document doc = docBuilder.parse(new FileInputStream(configFilename));
+
+            InputStream in = null;
+
+            // try to load config from classpath if not found
+            try {
+                in = new FileInputStream(configFilename);
+            } catch (FileNotFoundException e) {
+                in = getClass().getResourceAsStream("/" + configFilename);
+
+                if (in == null)
+                    throw new FileNotFoundException("The configuration file '" + configFilename + "' not found" +
+                                                    " even in classpath");
+            }
+
+            Document doc = docBuilder.parse(in);
 
             // <application>
             Element root = doc.getDocumentElement();
@@ -750,11 +782,8 @@ public class ActionServlet extends WMServlet {
             String rep = root.getAttribute("repository");
 
             if (ActionServlet.class == getClass()) {  // is ActionServlet subclassed?
-                if ("".equals(rep))
-                    throw new InitException("Attribute 'repository' of element"+
-                              " <application> in the configuration file must be"+
-                              " used if ActionServlet is NOT subclassed by your servlet");
-                loader = new ASClassLoader(new File(rep));
+                if ("".equals(rep)) loader = getClass().getClassLoader();
+                    else loader = new ASClassLoader(new File(rep));
             } else {
                 if (!"".equals(rep))
                     throw new InitException("Attribute 'repository' of element"+
@@ -882,7 +911,12 @@ public class ActionServlet extends WMServlet {
      * Parses &lt;template&gt; element.
      */
     private Template parseTemplate(Element element) throws InitException {
-        Template template = getWMTemplate(element.getAttribute("name"));
+        String name = element.getAttribute("name");
+        Template template = getWMTemplate(name);
+
+        if (template == null)
+            throw new InitException("Cannot find template '" + name + "'");
+
         boolean isNewSession = "true".equals(element.getAttribute("is-new-session"));
 
         NodeList list = element.getChildNodes();
@@ -895,11 +929,11 @@ public class ActionServlet extends WMServlet {
         }
 
         if (!outputVariables.isEmpty()) {
-            if (templateOutputVariables.get(template.toString()) != null)
-                throw new InitException("Template of the name '" + template + "' defined more then" +
+            if (templateOutputVariables.get(name) != null)
+                throw new InitException("Template of the name '" + name + "' defined more than" +
                                         " once in the configuration file");
 
-            templateOutputVariables.put(template.toString(), outputVariables);
+            templateOutputVariables.put(name, outputVariables);
         }
 
         if (isNewSession) return template;
@@ -1184,13 +1218,18 @@ public class ActionServlet extends WMServlet {
      * {@link org.webmacro.servlet.WMServlet#getTemplate(String) getTemplate()} method.
      */
     public Template getWMTemplate(String key) {
+        Template t = null;
+
         try {
-            return getTemplate(key);
+            t = getTemplate(key);
         } catch(WebMacroException e) {
             log.error("Template '" + key + "' not found!");
             log.error(e.toString());
             return null;
         }
+
+        if (t != null) templatesNames.put(t, key);
+        return t;
     }
 
     /**
@@ -1271,7 +1310,7 @@ public class ActionServlet extends WMServlet {
      * @return template to be displayed
      */
     protected Template newSession(WebContext context) {
-        Vector templateOutputVariables = (Vector) this.templateOutputVariables.get(newSessionTemplate.toString());
+        Vector templateOutputVariables = (Vector) this.templateOutputVariables.get(templatesNames.get(newSessionTemplate));
 
         // set <output-variable>s of template
         if (templateOutputVariables != null)

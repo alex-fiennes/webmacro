@@ -40,7 +40,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.53<P>
+version 0.54<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -59,39 +59,51 @@ values of Java types.
 <IMG SRC="doc/images/auth.gif" WIDTH="564" HEIGHT="260" BORDER="0">
 </CENTER><P>
 
-<LI><H3 CLASS="main">Requirements</H3>
+<P><LI><H3 CLASS="main">Documentation</H3>
 <UL CLASS="sub">
-<LI><A HREF="http://www.javasoft.com/products/jdk/1.1">JDK 1.1</A> or <A HREF="http://java.sun.com/j2se">Java 2 SDK Standard Edition</A> (or compatible),
-<LI><A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A> (you should be able to run <EM>ActionServlet</EM>
-with any servlet runtime compatible with <EM>Servlet specification 2.x</EM> like <A HREF="http://java.apache.org/jserv">JServ</A> or <A HREF="http://jakarta.apache.org/tomcat">Tomcat</A>, but examples are only pre-configured for use with JSDK 2.0).
+<LI>Quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A>
+<LI>ActionServlet <A HREF="doc/api/org/webmacro/as/ActionServlet.html#start">specification</A>
+<LI>Full <A HREF="doc/api/index.html">API documentation</A>
+<LI><A HREF="examples/install.txt">Examples installation</A>
+<LI>GNU LGPL <A HREF="doc/licenses/ActionServlet_license.txt">license</A>
 </UL>
 
 <P><LI><H3 CLASS="main">Download</H3>
 
-<P><TABLE ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="0" CELLPADDING="7">
-<TR><TD ALIGN=CENTER>
-<TABLE BORDER="1" CELLPADDING=2 CELLSPACING=1>
-<TR ALIGN="center" BGCOLOR="#D0D0D0"><TD>ActionServlet</TD><TD>requires also</TD></TR><TR><TD>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_52.zip">ActionServlet_0_52.zip</A>
+<P>
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING=0 CELLSPACING=0>
+<TR><TD>
+<TABLE ALIGN="CENTER" BGCOLOR="#EEEEEE" BORDER="1" CELLPADDING=3 CELLSPACING=1>
+<TR ALIGN="center" BGCOLOR="#D0D0D0">
+<TD>ActionServlet...</TD>
+<TD COLSPAN=2>...requires also</TD>
+<TD>...has examples<BR>configured for</TD>
+</TR><TR><TD>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_52_1.zip">ActionServlet_0_52_1.zip</A>
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.javasoft.com/jdk">JDK 1.1</A>+
 </TD><TD>
 <A HREF="http://dione.zcu.cz/~toman40/ActionServlet/webmacro.0.89.1.zip">WebMacro 0.89.1</A>
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>
 </TD></TR><TR><TD>
 <A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_53.zip">ActionServlet_0_53.zip</A>
 </TD><TD>
-<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.95p1</A> or<BR>
-WebMacro 0.97a1 or <BR>
-<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.97</A> or<BR>
-<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/webmacro-0.98.zip">WebMacro 0.98</A>
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.95</A>+
+</TD></TR><TR><TD ROWSPAN=2>
+<A HREF="http://dione.zcu.cz/~toman40/ActionServlet/ActionServlet_0_54.zip">ActionServlet_0_54.zip</A>
+</TD><TD>
+<A HREF="http://java.sun.com/j2se">JDK 1.2</A>+
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.webmacro.org/DownloadWebMacro">WebMacro 0.97</A>+
+</TD><TD ROWSPAN=2>
+<A HREF="http://www.javasoft.com/products/servlet/archive.html">JSDK 2.0</A>,<BR>
+<A HREF="http://jakarta.apache.org/tomcat">Tomcat 3.2.1</A><SUP><FONT COLOR="red">*</FONT></SUP>
+</TD></TR><TR><TD>
+<A HREF="http://jakarta.apache.org/ant">Ant 1.3</A>+
 </TD></TR></TABLE>
 </TD></TR><TR><TD>
-<BLOCKQUOTE>
-<UL>
-<LI>Full source code distributed under GNU <A HREF="doc/licenses/ActionServlet_license.txt">LGPL</A>,
-<LI>precompiled ready-to-use examples,
-<LI>quick <A HREF="doc/tutorial/index.html">LoginServlet tutorial</A> and 
-<LI>detailed <A HREF="doc/api/index.html">API documentation</A> is included.
-</UL>
-</BLOCKQUOTE>
+<SUP><FONT COLOR="red">*</FONT></SUP><SMALL>or any servlet container compatible with <EM>Servlet specification 2.2</EM> and higher</SMALL>
 </TD></TR></TABLE>
 
 <P><LI><H3 CLASS="main">Latest news</H3>
@@ -108,7 +120,8 @@ WebMacro 0.97a1 or <BR>
         31.1. 2001: <B>version 0.5 Beta</B>: introduced the concept of components, XML config,
                     easy HTML forms distinguishing <EM>and more!</EM></TD></TR><TR><TD>
         14.6.2001:  <B>version 0.5</B>: few enhancements and changes, new tutorial, bug and doc fixes</TD></TR><TR><TD>
-        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A>
+        8.7.2001:   <B>version 0.52</B> and <B>0.53</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A></TD></TR><TR><TD>
+        24.7.2001:  <B>version 0.52.1</B> (bugfixes only) and <B>0.54</B>: see <A HREF="doc/whatsnew.txt"><TT>doc\whatsnew.txt</TT></A>
 	</TD></TR></TABLE>
 
 <P><TABLE ALIGN=RIGHT><TR><TD ALIGN=CENTER>

@@ -13,5 +13,6 @@
 	</FORM>
 
 	<P>[Hint: <EM>correct user name is 'John' with password '18x79Z' </EM>]
+	<P>Alternative: <A HREF="?action=Login&userName=John&password=18x79Z">Login as John</A>
 </BODY>
 </HTML>

@@ -573,12 +573,14 @@ final class Action {
 
             if (callBeforeInvoke) {
                 // servlet method called before each action
-                servlet.log.debug("Invoking 'beforeInvoke()' method of action '" + actionName + "'");
+                servlet.log.debug("Invoking 'beforeInvoke()' method of action '" + (formName==null?"":
+                                  formName+"'.'") + actionName + "'");
 
                 if ((template = servlet.beforeInvoke(context, formName, actionName, convertedParams)) != null) {
-                    servlet.log.debug("Method 'beforeInvoke()' returns a non null value -> action" +
-                                " '" + actionName + (callAfterInvoke?"' and 'afterInvoke()' ": "'") +
-                                " won't be invoked");
+                    servlet.log.debug("Method 'beforeInvoke()' returns a non null value -> action '" +
+                                      (formName==null?"": formName+"'.'") + actionName +
+                                      (callAfterInvoke?"' and 'afterInvoke()' ": "'") +
+                                      " won't be invoked");
                     return template;   // !!!
                 }
             }
@@ -586,20 +588,21 @@ final class Action {
             // invoke action method
             servlet.log.debug("Invoking method '" + componentData.componentClass.getName() +
                               "." + methodDecl +"' of action '" + (formName==null?"":
-                              formName+"'.'")+ actionName + "'");
+                              formName+"'.'") + actionName + "'");
             template = (Template) method.invoke(component, convertedParams);
 
             if (callAfterInvoke) {
                 // servlet method called after each action
-                servlet.log.debug("Invoking 'afterInvoke()' method of action '" + actionName + "'");
+                servlet.log.debug("Invoking 'afterInvoke()' method of action '" + (formName==null?"":
+                                  formName+"'.'") + actionName + "'");
 
                 if ((template = servlet.afterInvoke(template, context, formName, actionName, convertedParams)) == null)
                     throw new ActionException("Method 'afterInvoke()' returns null");
             }
 
             if (template == null)
-                throw new ActionException("Method '" + method.getName() +
-                                          "' implementing action '" + actionName +
+                throw new ActionException("Method '" + method.getName() + "' implementing action '" +
+                                          (formName==null?"": formName+"'.'") + actionName +
                                           "' returns null");
 
             // set <output-variable>s of action
@@ -607,7 +610,7 @@ final class Action {
                 ((OutputVariable) e.nextElement()).evaluate(context);
 
             // set <output-variable>s of template
-            Vector templateOutputVariables = (Vector) servlet.templateOutputVariables.get(template.toString());
+            Vector templateOutputVariables = (Vector) servlet.templateOutputVariables.get(servlet.templatesNames.get(template));
 
             if (templateOutputVariables != null)
                 for (Enumeration e = templateOutputVariables.elements(); e.hasMoreElements(); )
@@ -623,6 +626,7 @@ final class Action {
             throw new ActionException("Unexpected exception " + target.toString() +
                                       " thrown by method '" + method.getName() +
                                       "()' implementing action '" +
+                                      (formName==null?"": formName+"'.'") +
                                       actionName + "': " + target.getMessage());
         } catch (IllegalAccessException e) {
             servlet.log.error(e.toString());

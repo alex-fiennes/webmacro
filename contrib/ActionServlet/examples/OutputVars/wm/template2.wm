@@ -7,19 +7,21 @@
 
 <PRE>
    &lt;template name="template2.wm"&gt;
-      &lt;output-variable name="third" value="$ second"/&gt;
+      &lt;output-variable name="third" value="\$second"/&gt;
    &lt;/template&gt;
 
-   &lt;action ...&gt;
-      &lt;output-variable name="second" component="MyComponent" value="getSecond()"/&gt;
-      &lt;output-variable name="lengthOfSecond" value="$ second.length()"/&gt;
-   &lt;/action&gt;
+   &lt;component class="MyComponent" ...&gt;
+      &lt;action ...&gt;
+         &lt;output-variable name="second" component="MyComponent" value="getSecond()"/&gt;
+         &lt;output-variable name="lengthOfSecond" value="\$second.length()"/&gt;
+      &lt;/action&gt;
+   &lt;/component&gt;
 </PRE>
 
 <UL>
-<LI>$ second = $second
-<LI>$ lengthOfSecond = $lengthOfSecond
-<LI>$ third = $third
+<LI>\$second = $second
+<LI>\$lengthOfSecond = $lengthOfSecond
+<LI>\$third = $third
 </UL>
 
 </BODY>

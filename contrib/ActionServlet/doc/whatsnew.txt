@@ -1,7 +1,32 @@
+Changes from 0.53 to 0.54
+24-Jul-2001
+-------------------------
+- this version requires JDK 1.2+
+- XML config can be loaded also from classpath
+- src\Makefile.win replaced by src\build.xml (Ant 1.3+ is needed)
+- bugfix: <ouput-variables> works also with stream templates
+- bugfix: "NullPointerException" in session reaper (appearing in Tomcat)
+- bugfix: error messages: 'config' -> 'ActionConfig' and 
+  'ActionServlet.dtd' -> 'ActionServlet_0_5.dtd'
+- bugfix: "repository" attribute is now really optional
+- bugfix: "cannot find template" is reported when parsing XML config
+- bugfix: logging "action" together with "form"
+- examples improvements:
+  - examples configuration for JSDK 2.0 and Servlet 2.2+ containers supported
+  - configuration of examples for Servlet 2.2+ containers requires WebMacro 0.97+
+  - added examples\.orig directory
+  - examples\DateHandler\Form.wm -> DateForm.wm + adjusted DateHandler.xml
+  - examples\OutputVars\template1.wm, template2.wm use "\$var" not "$ var"
+  - examples\Important! -> examples\install.txt
+  - removed compile.bat-s from examples
+  - removed redundant examples\OutputVars\classes\Authenticator.class
+  - removed unused JAVA_HOME variable from examples\env.bat
+
+
 Changes from 0.52 to 0.53
 8-Jul-2001
 -------------------------
-- this version requires WebMacro 0.95p1 or 0.97a1 or 0.97 or 0.98
+- this version requires WebMacro 0.95+
 - org.webmacro.broker.ResourceUnavailableException -> org.webmacro.ResourceException
 - org.webmacro.engine.Template -> org.webmacro.Template
 - org.webmacro.util.InitException -> org.webmacro.InitException

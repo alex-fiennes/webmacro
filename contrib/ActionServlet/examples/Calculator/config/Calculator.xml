@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_5.dtd">
 
-<application repository="c:/progra~1/ActionServlet/examples/Calculator/classes">
+<application repository="C:/Progra~1/ActionServlet/examples/Calculator/classes">
    <templates>
       <template name="Calculator.wm" is-new-session="true"/>
    </templates>

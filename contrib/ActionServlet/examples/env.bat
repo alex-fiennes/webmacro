@@ -1,5 +1,11 @@
 @echo off
 rem
+rem *******************************************************************
+rem ****************** DO NOT CHANGE THIS FILE MANUALLY! **************
+rem *** See "install.txt" for information how to configure examples ***
+rem *******************************************************************
+rem
+rem
 rem Environment setup - called by compile.bat and run.bat files
 rem
 echo *** You may need to adjust the settings below (see env.bat) !!! ***
@@ -8,10 +14,9 @@ echo on
 @rem
 @rem -----------------------------
 @rem
-set JAVA_HOME=c:\progra~1\jdk1.1.8
-set JSDK_HOME=c:\progra~1\jsdk2.0
-set WM_HOME=c:\progra~1\webmacro
-set AS_HOME=c:\progra~1\ActionServlet
+set JSDK_HOME=C:\Progra~1\JSDK2.0
+set WM_HOME=C:\Progra~1\webmacro
+set AS_HOME=C:\Progra~1\ActionServlet
 @rem
 @rem -----------------------------
 @rem
