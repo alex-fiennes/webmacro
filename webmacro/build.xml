@@ -5,15 +5,15 @@
 
 <project name="WebMacro" default="compile" basedir=".">
 
+  <property name="version"        value="0.97"/>
   <property name="app.name"       value="webmacro"/>
   <property name="classes"        value="classes"/>
-  <property name="dist"           value="webmacro"/>
+  <property name="dist"           value="webmacro-${version}"/>
   <property name="javadoc"        value="javadoc"/>
   <property name="jar"            value="${app.name}.jar"/>
   <property name="src.jar"        value="${app.name}-src.jar"/>
   <property environment="ENV" />
   <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
-  <property name="version"        value="0.97" />
 
   <taskdef name="javacc" 
            classname="org.apache.tools.ant.taskdefs.optional.javacc.JavaCC" />
@@ -74,13 +74,13 @@
   <target name="jar" depends="prepare,compile">
     <jar jarfile="${jar}" basedir="${classes}"/>
     <jar jarfile="${src.jar}" basedir="." 
-         includes="src/**,webroot/**,build.xml,test/**,contrib/**"/>
+         includes="src/**,build.xml,test/**,contrib/**"/>
   </target>
 
   <target name="dist" depends="prepare,compile,jar,javadoc">
-    <mkdir dir="${dist}/webroot" />
-    <copy todir="${dist}/webroot">
-      <fileset dir="webroot"/>
+    <mkdir dir="${dist}/tutorial" />
+    <copy todir="${dist}/tutorial">
+      <fileset dir="tutorial"/>
     </copy>
     <mkdir dir="${dist}/api" />
     <copy todir="${dist}/api">
@@ -89,12 +89,15 @@
     <copy todir="${dist}" file="${src.jar}"/>
     <copy todir="${dist}" file="${jar}"/>
     <copy todir="${dist}">
-      <fileset dir="webroot" 
-               includes="LICENSE,CREDITS,README.html"/>
+      <fileset dir="distroot" />
     </copy>
     <mkdir dir="${dist}/examples" />
     <copy todir="${dist}/examples">
-      <fileset dir="contrib"/>
+      <fileset dir="examples" />
+    </copy>
+    <mkdir dir="${dist}/contrib" />
+    <copy todir="${dist}/contrib">
+      <fileset dir="contrib" />
     </copy>
     <touch file="${dist}/WM-VERSION-${version}"/>
   </target>
