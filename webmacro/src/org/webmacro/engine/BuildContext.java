@@ -7,7 +7,7 @@ import org.webmacro.util.java2.*;
 
 /**
   * Contains data structures which are manipulated during the 
-  * builder phase of parsing. It extends Hashtable so that 
+  * builder phase of parsing. It extends HashMap so that 
   * user provided directives can store information in it during
   * the builder phase. Although WebMacro's built in directives
   * make no use of this hashtable (they use the other structures
@@ -18,9 +18,9 @@ import org.webmacro.util.java2.*;
 public final class BuildContext extends Context
 {
 
-   private final Hashtable _filters = new Hashtable();
+   private final HashMap _filters = new HashMap();
 
-   private final Hashtable _types = new Hashtable();
+   private final HashMap _types = new HashMap();
 
    public BuildContext(Broker b) {
       super(b);
@@ -67,7 +67,7 @@ public final class BuildContext extends Context
    }
 
 
-   public Hashtable getFilters() {
+   public HashMap getFilters() {
       return _filters;
    }
 

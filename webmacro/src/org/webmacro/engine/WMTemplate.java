@@ -72,8 +72,12 @@ abstract public class WMTemplate implements Template
    /**
      * Template filters
      */
-   private Hashtable _filters;
+   private HashMap _filters;
 
+   /**
+     * Template macros
+     */
+   private HashMap _macros;
 
    /**
      * Create a new Template. Constructors must supply a broker.
@@ -144,7 +148,7 @@ abstract public class WMTemplate implements Template
       Block newContent = null;
       HashMap newParameters = null;
       Reader source = null;
-      Hashtable newFilters = null;
+      HashMap newFilters = null;
       try {
          Parser parser = getParser();
          Reader in = getReader();
