@@ -10,6 +10,13 @@ System Requirements
 - ANT 1.4 or better (for building) (http://jakarta.apache.org/ant/)
 
 
+Disclaimer
+----------
+These instructions are far from complete, and might be
+completely wrong!  Please feel free to email me (ebr@tcdi.com)
+with suggestions.
+
+
 Building Wiki
 -------------
 
