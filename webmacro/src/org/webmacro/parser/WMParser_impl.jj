@@ -10,6 +10,7 @@ import org.webmacro.*;
 import org.webmacro.engine.*;
 import org.webmacro.directive.*;
 import org.webmacro.directive.Directive;
+import org.webmacro.directive.DirectiveProvider;
 import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
 import org.webmacro.directive.Directive.Subdirective;
@@ -617,10 +618,10 @@ Object Term() : {
     | <FALSE>          { e = Boolean.FALSE; }
     | <OP_NOT> [<WS>] e=Term() { e = new Expression.NotBuilder(e); }
     | t=<NUMBER>           
-      { try { e = new Long(t.image); } 
+      { try { e = new Integer(t.image); } 
         catch (NumberFormatException ex) { e=null; } }
     | <OP_MINUS>t=<NUMBER> 
-      { try { long l = Long.parseLong(t.image); e = new Long(-l); }
+      { try { int i = Integer.parseInt(t.image); e = new Integer(-i); }
         catch (NumberFormatException ex) { e=null; } }
   ) 
   { return e; }

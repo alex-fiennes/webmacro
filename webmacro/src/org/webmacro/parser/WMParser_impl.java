@@ -744,13 +744,13 @@ public class WMParser_impl implements WMParser_implConstants {
       break;
     case NUMBER:
       t = jj_consume_token(NUMBER);
-        try { e = new Long(t.image); }
+        try { e = new Integer(t.image); }
         catch (NumberFormatException ex) { e=null; }
       break;
     case OP_MINUS:
       jj_consume_token(OP_MINUS);
       t = jj_consume_token(NUMBER);
-        try { long l = Long.parseLong(t.image); e = new Long(-l); }
+        try { int i = Integer.parseInt(t.image); e = new Integer(-i); }
         catch (NumberFormatException ex) { e=null; }
       break;
     default:
