@@ -30,7 +30,6 @@ CLASSES =	org/webmacro/servlet/*.class \
 DOCS =		org/webmacro/webroot/*.html \
 		org/webmacro/webroot/api \
 		org/webmacro/webroot/mkdoc \
-		org/webmacro/webroot/LICENSE.* \
 		org/webmacro/CHANGES \
 		org/webmacro/webroot/COPYING
 
@@ -46,7 +45,6 @@ dist: version $(TARGETS)
 	flip -m webmacro/examples/*.properties
 	flip -m webmacro/examples/*.java
 	flip -m webmacro/docs/License.html
-	flip -m webmacro/docs/LICENSE* 
 	flip -m webmacro/docs/COPYING
 	flip -m webmacro/IMPORTANT
 	zip -r webmacro.`cat version`.zip webmacro
@@ -56,7 +54,6 @@ dist: version $(TARGETS)
 	flip -u webmacro/examples/*.properties
 	flip -u webmacro/examples/*.java
 	flip -u webmacro/docs/License.html
-	flip -u webmacro/docs/LICENSE* 
 	flip -u webmacro/docs/COPYING
 	flip -u webmacro/IMPORTANT
 	tar -czf webmacro.`cat version`.tgz webmacro
