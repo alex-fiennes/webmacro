@@ -161,7 +161,12 @@ public class TextTool implements ContextTool
      */
     public static final String URLDecode (String input)
     {
+      try { 
         return input == null ? null : java.net.URLDecoder.decode (input);
+      }
+      catch (Exception e) {
+        return null;
+      }
     }
      
     /**
