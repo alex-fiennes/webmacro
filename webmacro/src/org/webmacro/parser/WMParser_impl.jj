@@ -283,7 +283,7 @@ TOKEN_MGR_DECLS : {
 | <RPAREN:    ")">
 | <LBRACKET:  "[">
 | <RBRACKET:  "]">
-| <ASSOC:     "=>">
+| <COLON:     ":">
 | <DOT:       ".">
 | <OP_LT:     "<">
 | <OP_LE:     "<=">
@@ -715,7 +715,7 @@ Object Conditional() : {
   Object e;
 }
 {
-  <LPAREN> [ <WS> ] e=Expression() [ <WS> ] <RPAREN> { return e; }
+  <LPAREN> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] <RPAREN> { return e; }
 }
 
 
@@ -825,14 +825,16 @@ Builder StringArg() : {
   { return b; }
 }
 
+
+
 MapBuilder MapArgList() : {
     MapBuilder map = new MapBuilder();
     Object key, value;
 }
 {
-    [ [<WS>] key=Expression() [<WS>] <ASSOC> [<WS>] value=Expression() [<WS>] { map.put(key, value); }
+    [ [(<WS>|<NEWLINE>)+] key=Expression() [(<WS>|<NEWLINE>)+] <COLON> [(<WS>|<NEWLINE>)+] value=Expression() [(<WS>|<NEWLINE>)+] { map.put(key, value); }
         (
-            <COMMA> [<WS>] key=Expression() [<WS>] <ASSOC> [<WS>] value=Expression() [<WS>] { map.put(key, value); }
+            <COMMA> [(<WS>|<NEWLINE>)+] key=Expression() [(<WS>|<NEWLINE>)+] <COLON> [(<WS>|<NEWLINE>)+] value=Expression() [(<WS>|<NEWLINE>)+] { map.put(key, value); }
         ) *
     ]
     { return map; }
@@ -851,9 +853,9 @@ ListBuilder ArgList() : {
   Object e;
 }
 {
-  [ [<WS>] e=Expression() [<WS>] { list.addElement(e); }
+  [ [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] { list.addElement(e); }
     (
-      <COMMA> [ <WS> ] e=Expression() [<WS>] { list.addElement(e); }
+      <COMMA> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] { list.addElement(e); }
     ) *
   ]
   { return list; }
@@ -873,9 +875,9 @@ Object[] FormalArgList() : {
 }
 {
   [ <LPAREN>
-    [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
+    [ [(<WS>|<NEWLINE>)+] <DOLLAR> name=<WORD> [(<WS>|<NEWLINE>)+] { list.add(name.image); }
     (
-      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); }
+      <COMMA> [(<WS>|<NEWLINE>)+] <DOLLAR> name=<WORD> [(<WS>|<NEWLINE>)+] { list.add(name.image); }
     ) *
   ]
     <RPAREN>
@@ -899,7 +901,7 @@ Object Term() : {
 {
   (
     e=VariableReference()
-    | <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN>
+    | <LPAREN> [(<WS>|<NEWLINE>)+] e=Expression() [(<WS>|<NEWLINE>)+] <RPAREN>
     | e=QuotedString()
     | e=BracketList()
     | e=CurlyMap()
@@ -979,7 +981,7 @@ Object CExpression() : {
 }
 {
   e1=AExpression()
-  [ LOOKAHEAD(2) [<WS>] op=RelOp() [<WS>] e2=AExpression() ]
+  [ LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] op=RelOp() [(<WS>|<NEWLINE>)+] e2=AExpression() ]
   {
     if (op == null)
       return e1;
@@ -1003,7 +1005,7 @@ Object AndExpression() : {
 {
   e=CExpression()
   (
-    LOOKAHEAD(2) [<WS>] <OP_AND> [<WS>] e2=CExpression()
+    LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] <OP_AND> [(<WS>|<NEWLINE>)+] e2=CExpression()
     {
       e = new Expression.AndBuilder(e, e2);
     }
@@ -1017,7 +1019,7 @@ Object OrExpression() : {
 {
   e=AndExpression()
   (
-    LOOKAHEAD(2) [<WS>] <OP_OR> [<WS>] e2=AndExpression()
+    LOOKAHEAD(4) [(<WS>|<NEWLINE>)+] <OP_OR> [(<WS>|<NEWLINE>)+] e2=AndExpression()
     {
       e = new Expression.OrBuilder(e, e2);
     }

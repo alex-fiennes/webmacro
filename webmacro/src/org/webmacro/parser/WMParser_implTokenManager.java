@@ -684,6 +684,8 @@ private final int jjMoveStringLiteralDfa0_3()
          return jjStopAtPos(0, 37);
       case 47:
          return jjStopAtPos(0, 48);
+      case 58:
+         return jjStopAtPos(0, 36);
       case 59:
          return jjStopAtPos(0, 53);
       case 60:
@@ -691,7 +693,7 @@ private final int jjMoveStringLiteralDfa0_3()
          return jjMoveStringLiteralDfa1_3(0x8000000000L);
       case 61:
          jjmatchedKind = 43;
-         return jjMoveStringLiteralDfa1_3(0x41000000000L);
+         return jjMoveStringLiteralDfa1_3(0x40000000000L);
       case 62:
          jjmatchedKind = 40;
          return jjMoveStringLiteralDfa1_3(0x20000000000L);
@@ -731,10 +733,6 @@ private final int jjMoveStringLiteralDfa1_3(long active0)
             return jjStopAtPos(1, 41);
          else if ((active0 & 0x40000000000L) != 0L)
             return jjStopAtPos(1, 42);
-         break;
-      case 62:
-         if ((active0 & 0x1000000000L) != 0L)
-            return jjStopAtPos(1, 36);
          break;
       case 97:
          return jjMoveStringLiteralDfa2_3(active0, 0x10000000L);
@@ -1363,9 +1361,8 @@ public static final String[] jjstrLiteralImages = {
 "\43\145\156\144", "\43\142\145\147\151\156", "\173", null, "\43\43", null, null, "\44", null, 
 "\134", "\43", "\42", "\47", "\156\165\154\154", "\164\162\165\145", 
 "\146\141\154\163\145", "\165\156\144\145\146\151\156\145\144", null, null, "\50", "\51", "\133", 
-"\135", "\75\76", "\56", "\74", "\74\75", "\76", "\76\75", "\75\75", "\75", null, 
-"\53", "\55", "\52", "\57", null, null, null, "\54", "\73", null, null, null, null, 
-null, };
+"\135", "\72", "\56", "\74", "\74\75", "\76", "\76\75", "\75\75", "\75", null, "\53", 
+"\55", "\52", "\57", null, null, null, "\54", "\73", null, null, null, null, null, };
 public static final String[] lexStateNames = {
    "SQS", 
    "QS", 

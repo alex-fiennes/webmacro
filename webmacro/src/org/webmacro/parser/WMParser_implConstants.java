@@ -38,7 +38,7 @@ public interface WMParser_implConstants {
   int RPAREN = 33;
   int LBRACKET = 34;
   int RBRACKET = 35;
-  int ASSOC = 36;
+  int COLON = 36;
   int DOT = 37;
   int OP_LT = 38;
   int OP_LE = 39;
@@ -105,7 +105,7 @@ public interface WMParser_implConstants {
     "\")\"",
     "\"[\"",
     "\"]\"",
-    "\"=>\"",
+    "\":\"",
     "\".\"",
     "\"<\"",
     "\"<=\"",
