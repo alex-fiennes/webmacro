@@ -3,9 +3,6 @@ Todo list
 
 - User Administration
 
-- Some kind of nice "Page not found, but you can create it" message
-when a user requests a page that doesn't exist
-
 - Better handling of the lucene index.  ability to delete a page from the index
 
 - Administration screens for re-indexing/parsing site
