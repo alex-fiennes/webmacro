@@ -257,12 +257,12 @@ public class IncludeDirective extends Directive
       COMPATIBILITY_NAME = _directiveName + COMPATIBILITY_NAME;
       TEMPLATE_EXTENSIONS_NAME = _directiveName + TEMPLATE_EXTENSIONS_NAME;
 
-      // warn if used as #parse.  eventually, this should be removed.
+/**      // warn if used as #parse.  eventually, this should be removed.
       if (_directiveName.equals ("parse"))
          broker.getLog ("IncludeDirective")
                .warning ("#parse has been deprecated.  "
                     + "Use #include as template \"filename.wm\"");
-                                         
+**/                                         
       
       // determine what type of file we need to deal with
       if (builder.getArg (PARSE_AS_K, bc) != null) {
