@@ -78,7 +78,8 @@ final public class UrlProvider extends CachingProvider
          if (encoding == null) {
             encoding = "UTF-8";
          }
-         Reader in = new InputStreamReader(new BufferedInputStream(uc.getInputStream()),encoding);
+         Reader in = new InputStreamReader(
+                       new BufferedInputStream(uc.getInputStream()),encoding);
 
          int length = uc.getContentLength();
          if (length == -1) {
@@ -118,6 +119,64 @@ final public class UrlProvider extends CachingProvider
 		return false;
 	}
 
+   /**
+    * Utility routine to get the last modification date for a URL.  
+    * The standard implementation of .getLastModified() doesn't work
+    * for file or jar URLs, so we try to be a bit more clever (running
+    * the risk that we'll shoot ourselves in the foot, of course.)
+    * Also used by BrokerTemplateProvider; maybe this should go somewhere
+    * else? 
+    */
+   public static long getUrlLastModified(URL u) {
+      String protocol = u.getProtocol();
+      if (protocol.equals("file")) {
+         // We're going to use the File mechanism instead
+         File f = new File(u.getFile());
+         return f.lastModified();
+      }
+      else if (protocol.equals("jar")) {
+         // We'll extract the jar source and recurse
+         String source = u.getFile();
+         int lastIndex = source.lastIndexOf("!");
+         if (lastIndex > 0) 
+            source = source.substring(lastIndex);
+         try {
+            return getUrlLastModified(new URL(source));
+         } 
+         catch (MalformedURLException e) {
+            return 0;
+         }
+      }
+      else {
+         // Ask the URL, maybe it knows
+         try {
+            URLConnection uc = u.openConnection();
+            uc.connect();
+            return uc.getLastModified();
+         }
+         catch (IOException e) { 
+            return 0;
+         }
+      }
+   }
+
+   /**
+    * Utility routine to get the input stream associated with a URL.  
+    * It special-cases "file" URLs because this way is faster.  If it
+    * doesn't work on some platforms (I could imagine some Windows JVM
+    * breaking) then we can back off to the standard implementation.
+    * Also used by BrokerTemplateProvider; maybe this should go somewhere
+    * else? 
+    */
+  public static InputStream getUrlInputStream(URL u) throws IOException {
+    if (u.getProtocol().equals("file")) {
+       InputStream is = new FileInputStream(new File(u.getFile()));
+       return is;
+    }
+    else
+       return u.openStream();
+  }
+  
 }
 
 
