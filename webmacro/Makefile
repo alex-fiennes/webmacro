@@ -47,6 +47,11 @@ PROJECT_FILES = $(WEBROOT)/README.html $(WEBROOT)/RELEASE-NOTES.html
 # files which are required to build the project
 BUILD_FILES = Makefile $(LEGAL_FILES)
 
+# extra stuff to be copied into a release
+EXTRAS = contrib examples
+
+TEXT_FILES = LICENSE CREDITS *.html */*.html examples/* 
+		
 # general java configuration
 JAVA_HOME = /usr/java/jdk1.3
 JAVAC_FLAGS = -O -g
@@ -55,6 +60,12 @@ JAVADOC_FLAGS = -protected -use -version -author
 #
 # Probably leave the rest of it alone!
 #
+
+VERSION ?= $(shell date +"%d-%m-%Y")
+PROJECT_ZIP = $(PROJECT).$(VERSION).zip
+PROJECT_TGZ = $(PROJECT).$(VERSION).tgz
+
+NEWLINE_FILES = $(foreach file, $(TEXT_FILES), $(PROJECT)/$(file))
 
 SOURCES = $(foreach dir, $(subst .,/,$(PACKAGES)), $(dir)/*.java) 
 
@@ -77,6 +88,12 @@ RMFILE = $(UNIXBIN)/rm -rf
 TOUCH = $(UNIXBIN)/touch
 CP = cp -r
 
+FLIPM = flip -m
+FLIPU = flip -u
+UNCVS = find . -name 'CVS' | xargs rm -rf 
+TGZ = tar -cvzf 
+ZIP = zip -r
+
 JAVABIN = $(JAVA_HOME)/bin
 JAVAC = $(JAVABIN)/javac
 JAR = $(JAVABIN)/jar
@@ -88,6 +105,8 @@ JAVADOC = $(JAVABIN)/javadoc
 all: $(PROJECT)
 
 $(PROJECT): build doc jar web src $(DIST_FILES)
+
+release: $(PROJECT_TGZ) $(PROJECT_ZIP)
 
 build: .build
 .build: $(SOURCEFILES) 
@@ -125,6 +144,18 @@ $(DIST_FILES): $(DIRECTORIES) $(PROJECT_FILES) $(LEGAL_FILES)
 $(DIRECTORIES): 
 	@echo creating build directory: $(PROJECT)
 	@$(MKDIR) $(PROJECT) $(DIRECTORIES)
+
+extras: $(EXTRAS)
+	$(CP) $(EXTRAS) $(PROJECT)
+	cd $(PROJECT); $(UNCVS)
+        
+$(PROJECT_ZIP): all extras
+	$(FLIPM) $(NEWLINE_FILES)
+	$(ZIP) $(PROJECT_ZIP) $(PROJECT)
+
+$(PROJECT_TGZ): all extras
+	$(FLIPU) $(NEWLINE_FILES)
+	$(TGZ) $(PROJECT_TGZ) $(PROJECT)
 
 clean: 
 	-$(RMFILE) $(TARGETS) .build 
