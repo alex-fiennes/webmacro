@@ -20,8 +20,7 @@ public class SetDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("set", SetDirective.class, myArgs, 
-                                      null);
+    myDescr = new DirectiveDescriptor("set", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;
@@ -45,7 +44,7 @@ public class SetDirective extends Directive {
       else
         target.setValue(context, result);
     } catch (ContextException e) {
-      String errorText = "Set: Unable to set value: " + target;
+      String errorText = "#set: Unable to set value: " + target;
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, out);
     }

@@ -16,8 +16,7 @@ public class IncludeDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("include", IncludeDirective.class, 
-                                      myArgs, null);
+    myDescr = new DirectiveDescriptor("include", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;

@@ -39,6 +39,8 @@ public final class DirectiveProvider implements Provider
         try {
           descriptor = (DirectiveDescriptor) 
             directive.getMethod("getDescriptor", null).invoke(null, null);
+          if (descriptor.dirClass == null)
+            descriptor.dirClass = directive;
         } 
         catch (Exception e) {
           throw new IntrospectionException("Class " + dirClassName 

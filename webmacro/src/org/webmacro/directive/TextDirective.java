@@ -16,8 +16,7 @@ public class TextDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("text", TextDirective.class, myArgs, 
-                                      null);
+    myDescr = new DirectiveDescriptor("text", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;

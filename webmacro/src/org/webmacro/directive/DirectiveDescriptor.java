@@ -9,6 +9,9 @@ import org.webmacro.directive.Directive.Subdirective;
  * identifies the directive's name, the class of the underlying concrete
  * directive object, a list of directive argument descriptors, and a list
  * of subdirective descriptors.  
+ * 
+ * If the directive does not specify the class, the directive provider will
+ * fill it in automatically.  
  *
  * The args field is an array of Directive.ArgDescriptor objects.  There
  * are static nested classes within Directive for each type of argument 

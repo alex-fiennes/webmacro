@@ -14,8 +14,7 @@ public class CommentDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("comment", CommentDirective.class, 
-                                      myArgs, null);
+    myDescr = new DirectiveDescriptor("comment", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;

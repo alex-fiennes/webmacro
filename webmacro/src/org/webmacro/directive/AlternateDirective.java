@@ -21,8 +21,7 @@ public class AlternateDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("alternate", AlternateDirective.class, 
-                                      myArgs, null);
+    myDescr = new DirectiveDescriptor("alternate", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;

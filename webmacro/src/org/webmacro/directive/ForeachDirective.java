@@ -47,8 +47,7 @@ public class ForeachDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("foreach", ForeachDirective.class, 
-                                      myArgs, null);
+    myDescr = new DirectiveDescriptor("foreach", null, myArgs, null);
   
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;
@@ -83,7 +82,7 @@ public class ForeachDirective extends Directive {
       if (Expression.isNumber(limit)) 
         loopLimit = Expression.numberValue(limit);
       else
-        throw new ContextException("Foreach: Cannot evaluate limit");
+        throw new ContextException("#foreach: Cannot evaluate limit");
     }
 
     if (index != null && indexFromExpr != null) {
@@ -93,7 +92,7 @@ public class ForeachDirective extends Directive {
       if (Expression.isNumber(from)) 
         loopStart = Expression.numberValue(from);
       else
-        throw new ContextException("Foreach: Cannot evaluate loop start");
+        throw new ContextException("#foreach: Cannot evaluate loop start");
     }
 
     try {
@@ -126,7 +125,7 @@ public class ForeachDirective extends Directive {
         }
       }
     } catch (ContextException e) {
-      String errorText = "Foreach: Unable to set list index";
+      String errorText = "#foreach: Unable to set list index";
       context.getBroker().getLog("engine").error(errorText);
       writeWarning(errorText, out);
     }

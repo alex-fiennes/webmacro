@@ -16,8 +16,7 @@ public class ParseDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    myDescr = new DirectiveDescriptor("parse", ParseDirective.class, 
-                                      myArgs, null);
+    myDescr = new DirectiveDescriptor("parse", null, myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
     return myDescr;
@@ -35,7 +34,8 @@ public class ParseDirective extends Directive {
       try {
         return bc.getBroker().get("template", o.toString());
       } catch (NotFoundException ne) {
-        throw new BuildException("Template " + o + " not found: ", ne); 
+        throw new BuildException("#parse: Template " + o + " not found: ", 
+                                 ne); 
       }
   }
 
@@ -47,11 +47,11 @@ public class ParseDirective extends Directive {
       Template tmpl = (Template) context.getBroker().get("template", fname);
       tmpl.write(out,context);
     } catch (IOException e) {
-      String warning = "Error reading template: " + fname;
+      String warning = "#parse: Error reading template: " + fname;
       context.getLog("engine").warning(warning, e);
       writeWarning(warning, out);
     } catch (Exception e) {
-      String warning = "Template not found: " + fname;
+      String warning = "#parse: Template not found: " + fname;
       context.getLog("engine").warning(warning,e);
       writeWarning(warning, out);
     }
