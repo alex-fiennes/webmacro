@@ -104,12 +104,13 @@ abstract public class CachingProvider implements Provider,
    }
 
    /* 
-    * The cache manager will call this version; the providers implement
-    * the other version; so dispatch 
+    * Delegates to ResourceLoader implementers the load operation
+    * by casting the query as a string and invoking the
+    * implemented method.
     */
    public Object load(Object query, CacheElement ce)
      throws ResourceException {
-     return load((String) query, ce);
+     return ((ResourceLoader) this).load((String) query, ce);
    }
 
    public String toString() {
