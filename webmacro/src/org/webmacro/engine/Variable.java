@@ -180,6 +180,17 @@ public abstract class Variable implements Macro, Visitable
          Object val = getValue(context);
          if (val instanceof Macro) {
             ((Macro) val).write(out,context);
+            
+            if (val instanceof VoidMacro) {
+                // log a notice that the user used a variable
+                // with a void return type
+                // the method actually executes, but since it's return 
+                // value is coerced into a VoidMacro, nothing is written
+                // to the output stream
+                context.getLog("engine")
+                       .notice ("Variable: $" + _vname + 
+                                " has Void return type");
+            }
          } else {
             if (val != null) {
                 // if val.toString() evaluates to null
@@ -189,12 +200,13 @@ public abstract class Variable implements Macro, Visitable
                 // instead of doing the if (val.toString() == null) thing
                 // at this point
                out.write(val.toString());
+               
             } else {
                 if (isSimpleName ()) {
                     // user accessed a variable that isn't in the context
                     //     $ObjectNotInContext
                     context.getLog("engine")
-                           .warning("Variable: " + _vname + 
+                           .warning("Variable: $" + _vname + 
                                     " does not exist in context");
               
                     out.write(context.getEvaluationExceptionHandler()
@@ -202,11 +214,9 @@ public abstract class Variable implements Macro, Visitable
                                      new VariableNotInContextException(_vname)));
                 } else {
                     // user accessed a valid property who's value is null
-                    // this should also happen if the user tries to access
-                    // a void method.
                     
                     context.getLog("engine")
-                           .warning("Variable: " + _vname + 
+                           .warning("Variable: $" + _vname + 
                                     " evaluated to null");
               
                     out.write(context.getEvaluationExceptionHandler()
