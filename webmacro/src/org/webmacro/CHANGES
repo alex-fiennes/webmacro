@@ -1,3 +1,10 @@
+-- Oct-2000 justin: reworked CachingProvider so that it does some 
+   more sensible locking. This is likely to make it a bit slower, 
+   but hopefully it scales well with these changes. 
+
+-- Oct-2000 justin: moved Fergus's URLTemplate/URLTemplateProvider
+   classes into org.webmacro.resource from org.webmacro.engine
+
 -- Oct-2000 brian: New parser, and some new directives checked
    in.  New parser supports more flexible directive argument
    mechanism, and adds arithmetic expressions and comparisons.

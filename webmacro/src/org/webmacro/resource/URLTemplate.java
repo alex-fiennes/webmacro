@@ -1,4 +1,4 @@
-package org.webmacro.engine;
+package org.webmacro.resource;
 
 import java.util.*;
 import java.io.*;

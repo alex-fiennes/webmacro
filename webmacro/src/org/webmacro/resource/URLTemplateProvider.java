@@ -1,4 +1,4 @@
-package org.webmacro.engine;
+package org.webmacro.resource;
 
 import org.webmacro.*;
 import org.webmacro.util.*;
