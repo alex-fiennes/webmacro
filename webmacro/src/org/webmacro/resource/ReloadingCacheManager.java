@@ -96,6 +96,7 @@ public class ReloadingCacheManager implements CacheManager {
         _clockDaemon = new ClockDaemon();
         _clockDaemon.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
+                _log.info("Creating new ClockDaemon thread");
                 Thread t = new Thread(runnable);
                 t.setDaemon(true);
                 return t;
