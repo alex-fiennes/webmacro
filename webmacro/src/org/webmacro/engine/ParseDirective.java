@@ -48,7 +48,6 @@ class ParseDirective implements Directive
      * The filename we want to include--may be a macro
      */
    final private Macro _fileName;
-   final private Broker _broker;
 
    /**
      * Create an include directive. Note that the supplied variable
@@ -57,9 +56,8 @@ class ParseDirective implements Directive
      * given a context).
      * <p>
      */
-   ParseDirective(Broker broker, Macro fileName) {
+   ParseDirective(Macro fileName) {
       _fileName = fileName;
-      _broker = broker;
    }
 
 
@@ -70,7 +68,7 @@ class ParseDirective implements Directive
          return null;
       }
       if (target instanceof Macro) {
-         return new ParseDirective(rc.getBroker(), (Macro) target);
+         return new ParseDirective((Macro) target);
       } else {
          try {
             return rc.getBroker().getValue("template",target.toString());
@@ -130,7 +128,7 @@ class ParseDirective implements Directive
       }
 
       try {
-         Template tmpl = (Template) _broker.getValue("template", fname);
+         Template tmpl = (Template) context.getBroker().getValue("template", fname);
          tmpl.write(out,context);
      } catch (IOException e) {
          Engine.log.exception(e);

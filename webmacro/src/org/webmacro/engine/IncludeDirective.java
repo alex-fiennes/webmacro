@@ -47,7 +47,6 @@ class IncludeDirective implements Directive
      * The filename we want to include--may be a macro
      */
    final private Object _fileName;
-   final private Broker _broker;
 
    /**
      * Create an include directive. Note that the supplied variable
@@ -57,8 +56,7 @@ class IncludeDirective implements Directive
      * <p>
      * @param fileName an object representing the file to read in
      */
-   IncludeDirective(Broker broker, Object fileName) {
-      _broker = broker;
+   IncludeDirective(Object fileName) {
       _fileName = fileName;
    }
 
@@ -66,7 +64,7 @@ class IncludeDirective implements Directive
    public static Object build(BuildContext rc, 
          Object target)
    {
-      IncludeDirective id = new IncludeDirective(rc.getBroker(),target);
+      IncludeDirective id = new IncludeDirective(target);
       if (! (target instanceof Macro)) {
          try {
             return (id.evaluate(null));
@@ -96,7 +94,7 @@ class IncludeDirective implements Directive
             throw new InvalidContextException("Attempt to include " 
                   + _fileName + " which evaluates to null");
          }
-         return _broker.getValue("url",fname.toString());
+         return context.getBroker().getValue("url",fname.toString());
       } catch (NotFoundException e) {
          throw new InvalidContextException("Attempt to include " 
                + _fileName + " which evaluates to the non-existant " + fname 
