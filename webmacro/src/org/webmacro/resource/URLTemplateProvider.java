@@ -140,34 +140,34 @@ final public class URLTemplateProvider extends CachingProvider
     * @param config Settings from the webmacro initialization file
     * @exception InitException thrown when the provider fails to initialize
     */
-   public void init(Broker b, Settings config) throws InitException
-   {
-      super.init(b,config);
-      _broker = b;
-      _log = b.getLog("resource", "general object loading");
-
-      try {
-         try {
-            String cacheStr = config.getSetting("TemplateExpireTime");
-            _cacheDuration = Integer.valueOf(cacheStr).intValue();
-         } catch (Exception ee) {
-            // use default
-         }
-         _templatePath = config.getSetting("TemplatePath");
-         StringTokenizer st = 
+    public void init(Broker b, Settings config) throws InitException
+    {
+        super.init(b,config);
+        _broker = b;
+        _log = b.getLog("resource", "general object loading");
+        
+        try {
+            try {
+                String cacheStr = config.getSetting("TemplateExpireTime");
+                _cacheDuration = Integer.valueOf(cacheStr).intValue();
+            } catch (Exception ee) {
+                // use default
+            }
+            _templatePath = config.getSetting("TemplatePath");
+            StringTokenizer st = 
             new StringTokenizer(_templatePath, _pathSeparator);
-         _templateDirectory = new String[ st.countTokens() ];
-         int i;
-         for (i=0; i < _templateDirectory.length; i++) 
-         {
-            String dir = st.nextToken(); 
-            _templateDirectory[i] = dir;
-         }
-
-      } catch(Exception e) {
-         throw new InitException("Could not initialize: " + e);
-      }
-   }
+            _templateDirectory = new String[ st.countTokens() ];
+            int i;
+            for (i=0; i < _templateDirectory.length; i++) 
+            {
+                String dir = st.nextToken(); 
+                _templateDirectory[i] = dir;
+            }
+            
+        } catch(Exception e) {
+            throw new InitException("Could not initialize: " + e);
+        }
+    }
 
 
    /**
@@ -336,6 +336,7 @@ final public class URLTemplateProvider extends CachingProvider
     private Template getTemplate(String path, String encoding) throws IOException
     {
         _log.debug("getTemplate:"+path);
+        // System.out.println("getTemplate:"+path);
         for (int i=0; i< _templateDirectory.length; i++)
         {
             String base = _templateDirectory[i];
@@ -343,13 +344,9 @@ final public class URLTemplateProvider extends CachingProvider
             if (base.startsWith(CLASSPATH_PREFIX))
             {
                 base = base.substring(CLASSPATH_PREFIX.length());
-                base = searchClasspath(base);
-                if (base != null)
-                {
-                    url = new URL("file",null,join(base,path));
-                }
-                else
-                {
+                url = searchClasspath(join(base,path));
+
+                if (url == null) {
                     throw new FileNotFoundException("Unable to locate "+path+" on classpath");
                 }
             }
@@ -396,6 +393,8 @@ final public class URLTemplateProvider extends CachingProvider
      
     private static final String join(String pre, String post)
     {
+        if ((pre == null) || (pre.length()==0)) return post;
+        if ((post == null) || (post.length()==0)) return pre;
         boolean first = pre.endsWith(_SEP);
         boolean second = post.startsWith(_SEP);
         if (first ^ second) return pre+post;
@@ -415,27 +414,15 @@ final public class URLTemplateProvider extends CachingProvider
      * information with the request.
      */
 
-    private final String searchClasspath(String resource)
+    private final URL searchClasspath(String resource)
     {
-        String classpath = System.getProperty("java.class.path");
-        String pathSep = System.getProperty("path.separator");
-        _log.debug("Searching classpath: "+classpath);
-        StringTokenizer st = new StringTokenizer(classpath, pathSep);
-        while (st.hasMoreTokens())
-        {
-            String entry = st.nextToken();
-            File f = new File(entry);
-
-            if (f.isDirectory())
-            {
-                String path = f.getAbsolutePath();
-                _log.debug("Testing "+path);
-                path = join(path,resource);
-                File _rf = new File(path);
-                if (_rf.exists()) return path;
-            }
+        ClassLoader cl = this.getClass().getClassLoader();
+        URL url = cl.getResource(resource);
+        if (url == null) {
+            url = ClassLoader.getSystemResource(resource);
         }
-        return null;
+        // System.out.println("Found "+resource+" at "+null);
+        return url;
     }
 
     /**
