@@ -74,11 +74,19 @@ public class LocaleTool implements ContextTool, Bag
         if (locale == null) 
         {
             locale=  new Locale(country, language, "");
-            cache.put(country,locale);
+            cache.put(key,locale);
         }
         return locale;
     }
 
+    /**
+     * access method used by $Locale.xxxxx => LocaleTool.get("xxxxx")
+     */
+    final public Object get(String field)
+    {
+        return buildLocale(field);
+    }
+    
     /**
      * access to the static members such as Locale.US, etc
      * 
@@ -93,32 +101,36 @@ public class LocaleTool implements ContextTool, Bag
      * Could argue that typos aren't caught in the latter anyway
      * (surprisingly?)
      */
+    
+    final public static Locale buildLocale(String field) {
 
-    final public Object get(String field)
-    {
-        Object locale = null;
-        try
+        Locale locale = (Locale) cache.get(field);
+        if (locale == null) 
         {
-            Field f = Locale.class.getField(field);
-            locale = f.get(null);
-        }
-        catch (Exception ne)
-        {
-            StringTokenizer st = new StringTokenizer(field,"_");
-            String[] parts =  new String[] {"","",""};
             try
             {
-                for (int i=0; i<3; i++)
-                {
-                    parts[i] = st.nextToken();
-                }
+                    Field f = Locale.class.getField(field);
+                    locale = (Locale) f.get(null);
             }
-            catch (NoSuchElementException e) {}
-//            System.out.println("Creating Locale: "
-//                +parts[0]+"-"+parts[1]+"-"+parts[2]);
-            locale = new Locale(parts[0], parts[1], parts[2]);
+            catch (Exception ne)
+            {
+                StringTokenizer st = new StringTokenizer(field,"_");
+                String[] parts =  new String[] {"","",""};
+                try
+                {
+                    for (int i=0; i<3; i++)
+                    {
+                        parts[i] = st.nextToken();
+                    }
+                }
+                catch (NoSuchElementException e) {}
+//              System.out.println("Creating Locale: "
+//                  +parts[0]+"-"+parts[1]+"-"+parts[2]);
+                locale = new Locale(parts[0], parts[1], parts[2]);
+            }
+//          System.out.println("Returning locale for "+field+" -> "+locale);
+            cache.put(field,locale);
         }
-//        System.out.println("Returning locale for "+field+" -> "+locale);
         return locale;
     }
 
