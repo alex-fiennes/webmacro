@@ -414,7 +414,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
          if (timing) c.startTiming("Template.write", tmpl);
          FastWriter fw;
          try {
-            HttpServletResponse resp= c.getResponse();
+            HttpServletResponse resp= c.getResponse();           
             fw = FastWriter.getInstance(
                   resp.getOutputStream(), resp.getCharacterEncoding());
             tmpl.write(fw, c);
@@ -519,7 +519,15 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
    public WebMacro initWebMacro() throws InitException
    {
-      return new WM(this.getClass().getClassLoader());
+      ClassLoader cl = this.getClass().getClassLoader();
+      System.out.println("WMServlet init: classloader="+cl);
+      if (cl == null) {
+         return new WM();
+      }
+      else {
+          System.out.println("WMServlet init: defaults="+cl.getResource("WebMacro.defaults"));
+         return new WM(cl);
+      }
    }
 
    /**
@@ -533,5 +541,4 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    {
       return new WebContext(_broker);
    }
-
 }
