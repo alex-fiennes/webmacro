@@ -68,10 +68,14 @@ public class BlockBuilder extends Vector implements Builder
             if (o instanceof Builder) 
                o = ((Builder) o).build(bc);
 
-            if (o instanceof Block) {
-              flatten(bc, block, buf, ((Block) o).getContent());
-            }
-            else if (o instanceof Macro) {
+            // BG: There are cases where DirectiveBuilder will return a 
+            // Block.  I'd like to flatten the embedded Block out so that
+            // we can merge leading strings inside the block with trailing
+            // strings outside the block, but this is slightly complicated
+            // as the strings inside the block will already have been wrapped
+            // with StringMacroAdapter and converted to bytes.  Given that,
+            // I don't see a lot of point to unrolling the block at this time.
+            if (o instanceof Macro) {
                if (buf.length() > 0) {
                   block.addElement(new StringMacroAdapter(buf.toString(),
                                                           bc.getEncoding()));
