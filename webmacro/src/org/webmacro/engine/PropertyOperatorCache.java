@@ -62,9 +62,8 @@ final public class PropertyOperatorCache {
       _cache.init(b, config, "PropertyOperator");
    }
 
-
    final public PropertyOperator getOperator(final Class type)
-   throws PropertyException {
+   throws PropertyException {   
       Object o = _cache.get(type);
       if (o == null) {
          PropertyOperator po = new PropertyOperator(type, this);
@@ -73,6 +72,18 @@ final public class PropertyOperatorCache {
       }
       else 
         return (PropertyOperator) o;
+   }
+
+   final public PropertyOperator getOperator(final Object obj)
+   throws PropertyException {
+       Class type = obj.getClass();
+       // added code to handle static classes.  Static classes must be wrapped
+       // in a StaticClassWrapper
+       // 1Jun2001 - Keats
+       if (type == org.webmacro.engine.StaticClassWrapper.class){
+           type = ((org.webmacro.engine.StaticClassWrapper)obj).get();
+       }
+       return getOperator(type);
    }
 
    /**
@@ -94,7 +105,7 @@ final public class PropertyOperatorCache {
       if (instance == null) {
          return null;
       } else {
-         return getOperator(instance.getClass()).getProperty(
+         return getOperator(instance).getProperty(
             context,instance,names,start,names.length - 1);
       }
    }
@@ -129,7 +140,7 @@ final public class PropertyOperatorCache {
          if (instance == null) {
             return false;
          }
-         return getOperator(instance.getClass())
+         return getOperator(instance)
             .setProperty(context,instance,names,value,start);
       }
       catch (PropertyException e) {
@@ -169,7 +180,7 @@ final public class PropertyOperatorCache {
      else if (instance instanceof Enumeration) 
        return new EnumIterator((Enumeration) instance);
      else 
-       return getOperator(instance.getClass()).findIterator(instance);
+       return getOperator(instance).findIterator(instance);
    }
 
 }
@@ -599,7 +610,7 @@ final class PropertyOperator
 
       if (start <= end) {
          try {
-           return _cache.getOperator(nextProp.getClass())
+           return _cache.getOperator(nextProp)
              .getProperty(context,nextProp,names,start,end);
          } catch (NullPointerException e) {
              // will we ever get here? --eric
@@ -659,7 +670,7 @@ final class PropertyOperator
       if (pos < binPos) {
          Object grandparent = getProperty(context, instance, names, 
                                           pos, binPos - 1);
-         PropertyOperator po = _cache.getOperator(grandparent.getClass());
+         PropertyOperator po = _cache.getOperator(grandparent);
          return po.setProperty(context,grandparent,names,value,binPos);
       } 
 
@@ -671,7 +682,7 @@ final class PropertyOperator
          try {
             parent = getProperty(context,instance,names,pos,pos);
             if (parent != null) {
-               PropertyOperator po = _cache.getOperator(parent.getClass());
+               PropertyOperator po = _cache.getOperator(parent);
                if (po.setProperty(context,parent,names,value,pos+1)) {
                   return true;
                }
