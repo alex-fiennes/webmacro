@@ -189,7 +189,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
             String value = executeFileTemplate(fileName);
             // Thread.yield(); // allow other threads time to run as well;
           }
-          catch (Exception e) {fail("Evaluation failed in thread");}
+          catch (Exception e) {fail("Evaluation failed in thread: "+e);}
           it = System.currentTimeMillis() - it;
           if (it < bestCase) bestCase = it;
           if (it > worstCase) worstCase = it;
