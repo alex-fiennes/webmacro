@@ -9,6 +9,7 @@
   <property name="app.name"       value="webmacro" />
   <property name="tmpdir"         value="tmp" />
   <property name="classes"        value="classes"/>
+  <property name="macros"         value="macros"/>
   <property name="dist"           value="webmacro-${version}"/>
   <property name="javadoc"        value="javadoc"/>
   <property name="examples"       value="examples"/>
@@ -25,6 +26,7 @@
       <include name="*.jar" /> <include name="*.zip" />
     </fileset>
     <pathelement location="${classes}" />
+    <pathelement location="${macros}" />
     <pathelement path="${java.class.path}" />
   </path>
   <property name="classpath.resolved" refid="class.path"/>
@@ -121,6 +123,10 @@
     <copy todir="${dist}/examples">
       <fileset dir="examples" />
     </copy>
+    <mkdir dir="${dist}/macros" />
+    <copy todir="${dist}/macros">
+      <fileset dir="${macros}" />
+    </copy>
     <!--   don't put contrib in the distro anymore.
         <mkdir dir="${dist}/contrib" />
         <copy todir="${dist}/contrib">
@@ -164,6 +170,12 @@
 
   <target name="test-tst" depends="compile" >
     <ant antfile="test/build.xml" target="TST" >
+      <property name="java.class.path" value="${classpath.resolved}"/>
+    </ant>
+  </target>
+
+  <target name="test-macro" depends="compile" >
+    <ant antfile="test/build.xml" target="macros" >
       <property name="java.class.path" value="${classpath.resolved}"/>
     </ant>
   </target>

@@ -106,6 +106,12 @@ public abstract class TemplateTestCase extends TestCase {
     fw.close();
     return output;
   }
+  
+  public void store(String fileName, String value) throws Exception {
+    Writer out = new FileWriter(fileName);
+ 		out.write(value);
+		out.close();
+  }
 
 
     public void assertEvalutionEquals (String eval, Object result) throws Exception {

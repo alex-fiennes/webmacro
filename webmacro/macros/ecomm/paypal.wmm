@@ -1,0 +1,93 @@
+#comment {
+  paypal.wmm
+  Macros to support common web actions for a paypal payment action.
+}
+
+## paypalSetup(arg1, arg2, arg3) where:
+## arg1 corresponds to customer properties with names mapped below 
+## arg2 corresponds to transaction properties with names mapped below 
+## arg3 corresponds to application properties with names mapped below 
+## to the field elements required by pay pal.
+#macro paypalSetup($custProps, $tranProps, $appProps) {
+<FORM ACTION="https://www.paypal.com/cgi-bin/webscr" METHOD="POST">
+<INPUT TYPE="hidden" NAME="cmd" VALUE="_ext-enter">
+<INPUT TYPE="hidden" NAME="redirect_cmd" VALUE="_xclick">
+<INPUT TYPE="hidden" NAME="business" VALUE="$tranProps.sellersEmailAccount">
+<INPUT TYPE="hidden" NAME="item_name" VALUE="$tranProps.itemName">
+<INPUT TYPE="hidden" NAME="item_number" VALUE="$tranProps.itemNumber">
+<INPUT TYPE="hidden" NAME="amount" VALUE="$tranProps.amount">
+<INPUT TYPE="hidden" NAME="shipping" VALUE="$custProps.shipping">
+<INPUT TYPE="hidden" NAME="shipping2" VALUE="$custProps.shipping2">
+<INPUT TYPE="hidden" NAME="first_name" VALUE="$custProps.firstName">
+<INPUT TYPE="hidden" NAME="last_name" VALUE="$custProps.lastName">
+<INPUT TYPE="hidden" NAME="address1" VALUE="$custProps.address1">
+<INPUT TYPE="hidden" NAME="address2" VALUE="$custProps.address2">
+<INPUT TYPE="hidden" NAME="city" VALUE="$custProps.city">
+<INPUT TYPE="hidden" NAME="state" VALUE="$custProps.state">
+<INPUT TYPE="hidden" NAME="zip" VALUE="$custProps.zip">
+<INPUT TYPE="hidden" NAME="night_phone_a" VALUE="$custProps.nightPhoneA">
+<INPUT TYPE="hidden" NAME="night_phone_b" VALUE="$custProps.nightPhoneB">
+<INPUT TYPE="hidden" NAME="night_phone_c" VALUE="$custProps.nightPhoneB">
+<INPUT TYPE="hidden" NAME="day_phone_a" VALUE="$custProps.dayPhoneA">
+<INPUT TYPE="hidden" NAME="day_phone_b" VALUE="$custProps.dayPhoneB">
+<INPUT TYPE="hidden" NAME="day_phone_c" VALUE="$custProps.dayPhoneB">
+<input type="hidden" name="return" value="$appProps.returnURL">
+<input type="hidden" name="cancel_return" value="$appProps.cancelURL">
+<input type="hidden" name="cn" value="$tranProps.specialInstructions">
+<input type="hidden" name="currency_code" value="USD">
+<INPUT TYPE="image" SRC="http://images.paypal.com/images/x-click-but01.gif" BORDER="0" NAME="submit" ALT="Make payments with PayPal - it's fast, free and secure!">
+}
+
+## paypalSubscribe()(arg1, arg2, arg3) where:
+## arg1 corresponds to customer properties with names mapped below 
+## arg2 corresponds to transaction properties with names mapped below 
+## arg3 corresponds to application properties with names mapped below 
+## to the field elements required by pay pal.
+#macro paypalSubscribe($custProps, $tranProps, $appProps) {
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<INPUT TYPE="hidden" NAME="business" VALUE="$tranProps.sellersEmailAccount">
+<INPUT TYPE="hidden" NAME="item_name" VALUE="$tranProps.itemName">
+<INPUT TYPE="hidden" NAME="item_number" VALUE="$tranProps.itemNumber">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="image" src="https://www.paypal.com/images/x-click-but20.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+<input type="hidden" name="a1" value="0.00">
+<input type="hidden" name="p1" value="1">
+<input type="hidden" name="t1" value="M">
+<input type="hidden" name="a3" value="$tranProps.amount">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="Y">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="sra" value="1">
+<INPUT TYPE="hidden" NAME="shipping" VALUE="$custProps.shipping">
+<INPUT TYPE="hidden" NAME="shipping2" VALUE="$custProps.shipping2">
+<INPUT TYPE="hidden" NAME="first_name" VALUE="$custProps.firstName">
+<INPUT TYPE="hidden" NAME="last_name" VALUE="$custProps.lastName">
+<INPUT TYPE="hidden" NAME="address1" VALUE="$custProps.address1">
+<INPUT TYPE="hidden" NAME="address2" VALUE="$custProps.address2">
+<INPUT TYPE="hidden" NAME="city" VALUE="$custProps.city">
+<INPUT TYPE="hidden" NAME="state" VALUE="$custProps.state">
+<INPUT TYPE="hidden" NAME="zip" VALUE="$custProps.zip">
+<INPUT TYPE="hidden" NAME="night_phone_a" VALUE="$custProps.nightPhoneA">
+<INPUT TYPE="hidden" NAME="night_phone_b" VALUE="$custProps.nightPhoneB">
+<INPUT TYPE="hidden" NAME="night_phone_c" VALUE="$custProps.nightPhoneB">
+<INPUT TYPE="hidden" NAME="day_phone_a" VALUE="$custProps.dayPhoneA">
+<INPUT TYPE="hidden" NAME="day_phone_b" VALUE="$custProps.dayPhoneB">
+<INPUT TYPE="hidden" NAME="day_phone_c" VALUE="$custProps.dayPhoneB">
+<input type="hidden" name="return" value="$appProps.returnURL">
+<input type="hidden" name="cancel_return" value="$appProps.cancelURL">
+<input type="hidden" name="cn" value="$tranProps.specialInstructions">
+</form>
+}
+
+
+## paypalSubscribe()(arg1, arg2, arg3) where:
+## arg1 corresponds to customer properties with names mapped below 
+## arg2 corresponds to transaction properties with names mapped below 
+## arg3 corresponds to application properties with names mapped below 
+## to the field elements required by pay pal.
+#macro paypalSubscribeEmail($custProps, $tranProps, $appProps) {
+https://www.paypal.com/subscriptions/business=lane%40san.rr.com&item_name=Bongo+Annual+Subscription&item_number=9252-1&no_note=1&currency_code=USD&a1=0.00&p1=1&t1=M&a3=1.00&p3=1&t3=Y&src=1&sra=1
+}
+

@@ -82,6 +82,27 @@ public class TestParseInclude extends TemplateTestCase {
                             + "$a", "\\$a was found");
 
     }
+    
+    public void testBasicMacros() throws Exception {
+        // now execute each one:
+        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+                     + "#hello(\"Brian Goetz & Eric Ridge\")", "Hello, Brian Goetz & Eric Ridge");
+
+        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+                     + "#showVar($nullVar)", "");
+
+        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+                     + "#setVar($foo, \"brian\")\n"
+                     + "#showVar($foo)", "brian");
+    }
+    
+    public void testEcommMacros() throws Exception {
+      // execute the pay pal eCommerce test case and store the output
+      String value = executeFileTemplate("org/webmacro/template/ecomm.wm");
+      store(System.getProperty("user.dir") + "/" + "ecomm.html", value);
+   }
+        
+        
 
     public static void main (String[] args) throws Exception {
         TestParseInclude t = new TestParseInclude("test");

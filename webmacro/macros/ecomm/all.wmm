@@ -1,0 +1,5 @@
+#comment {
+  ecomm/all.wmm 
+  Includes all wm macros in the ecomm directory.
+}
+#include as macro "ecomm/paypal.wmm"

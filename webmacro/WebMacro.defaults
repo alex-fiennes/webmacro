@@ -216,6 +216,7 @@ Directives.count:      org.webmacro.directive.CountDirective
 #    Directives.encode:     org.webmacro.directive.EncodeDirective
 #    Directives.escape:     org.webmacro.directive.EscapeDirective
 #    Directives.silence:    org.webmacro.directive.SilenceDirective
+Directives.bean:    org.webmacro.directive.BeanDirective
 
 
 #
@@ -241,9 +242,9 @@ type.Enabled = true
 # TemplateExtensions - a list of (comma-separated) file extensions
 #                      that are assumed to be templates when
 #                      #include is used without qualifing the
-#                      file type
-include.TemplateExtensions: .wm, .wmt, .tml
-parse.TemplateExtensions: .wm, .wmt, .tml
+#                      file type. By convention wmm is for WM macro library files.
+include.TemplateExtensions: .wm, .wmt, .tml, .wmm
+parse.TemplateExtensions: .wm, .wmt, .tml, .wmm
 
 
 # The following are tools which are added to your WebContext. You can

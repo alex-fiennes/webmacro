@@ -43,6 +43,7 @@
   </target>
 
   <target name="unit" depends="unit-compile">
+    <!- <echo message="${java.class.path}"/> -->
     <junit printsummary="yes" haltonfailure="no" >
       <classpath refid="unit.class.path"/>
       <formatter type="plain" />
@@ -58,6 +59,16 @@
       <formatter type="plain" />
       <batchtest fork="yes" todir="${unit.reports}">
         <fileset dir="${unit.root}" includes="**/TestSyntheticTemplate.java" />
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="macros" depends="unit-compile">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="unit.class.path"/>
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="${unit.reports}">
+        <fileset dir="${unit.root}" includes="**/TestParseInclude.java" />
       </batchtest>
     </junit>
   </target>

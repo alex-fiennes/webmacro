@@ -1,5 +1,5 @@
 ## This template contains #macro's used by the TestParseInclude test
-
+## it also includes the wm macro library
 #macro foo1() {
    foo1
 }
