@@ -49,7 +49,7 @@ JAR_FILES = $(LEGAL_FILS) WebMacro.defaults
 PROJECT_FILES = $(WEBROOT)/README.html $(WEBROOT)/RELEASE-NOTES.html
 
 # files which are required to build the project
-BUILD_FILES = Makefile $(LEGAL_FILES)
+BUILD_FILES = Makefile $(LEGAL_FILES) WebMacro.defaults
 
 # extra stuff to be copied into a release
 EXTRAS = contrib examples

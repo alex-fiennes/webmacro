@@ -11,6 +11,58 @@
 <li><a href="README.html">README</a>
 </ul>
 <hr>
+<h2>WebMacro 06-12-2000: RELEASE NOTES</h2>
+
+This release fixes a couple of bugs: I'm rolling it up mainly to
+make the character encoding fix available to more people.
+
+<ul>
+  <li><b>Character Encoding</b> <br>
+
+To propertly internationalize characters in WebMacro you must:               
+<ol>
+<li>Set the correct encoding on FastWriter when you creaet it.               
+WMServlet defaults to setting it to whatever the                       
+HttpServletRequest object asks for so in WMServlet you                
+may not need to do anything. If you run WM in standalone                 
+mode you must specify the correct encoding when you                      
+create a new FastWriter:<pre> 
+   FastWriter fw = FastWriter.getInstance(out, "Big5");                
+</pre>
+For example.<p> 
+
+<li> If there is internationalized text in your templates then              
+you must also ensure that the templates are read in correctly            
+by WebMacro. You do this by setting                                      <pre>
+   TemplateEncoding: Big5                                  
+</pre>
+or whatever in your WebMacro.properties. If yoru templates               
+can be read as UTF-8 (they're ASCII++) then you don't need           
+to do anything.                                                          
+<p>
+
+<li><b>Profiling</b> <br>
+
+The profiling code has been sped up significantly. Also you can
+now use it to profile standalone code as well, writing output 
+in an ascii format using the CallGraph.format() methods to 
+produce ASCII output.
+<p>
+
+<li><b>General Cleaning</b> <br>
+
+The exception hierarchy has been cleaned some more, particularly 
+exceptions coming from the WM class and the Broker. You should now
+get more relevant information about what went wrong and what 
+you can do about it.
+</ul>
+
+<b>STATUS</b>: Need to fix a few things with Log and this should 
+be getting close to being the fastest, most stable WM yet.
+<p>
+Thanks to you!
+<p>
+
 <h2>WebMacro 01-12-2000: RELEASE NOTES</h2>
 
 This release adds several key improvements and a bunch of house 
