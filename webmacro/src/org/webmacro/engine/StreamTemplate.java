@@ -106,7 +106,9 @@ public class StreamTemplate extends WMTemplate
       String s = null;
       if (_in != null) 
         s = _in.toString();
-      return (s != null) ? "StreamTemplate(" + _in + ")" : "(stream)";
+      return (_name != null) 
+        ? "StreamTemplate:" + _name
+        : (s != null) ? "StreamTemplate(" + _in + ")" : "(stream)";
    }
 
    public String getName() {
