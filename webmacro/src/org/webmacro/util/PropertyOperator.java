@@ -162,8 +162,7 @@ final public class PropertyOperator
    /**
      * Private cache of all the property operators constructed so far
      */
-   static private RefMap _operators = new RefMap();
-
+   static private ScalableMap _operators = new ScalableMap(10001);
 
    /**
      * Find the PropertyOperator that knows about this type of object
