@@ -71,5 +71,25 @@ public class TestBlocks extends TemplateTestCase {
       _context.put ("foo", "foo");
       assertStringTemplateEquals (tmpl, "pass");
    }
-   
+
+
+   public void testNestedIfElseEnd () throws Exception {
+      String tmpl = "#if (true)\n"
+                  + "   #if (false)\n"
+                  + "      should not be here 1\n"
+                  + "   #else\n"
+                  + "      #if (true)\n"
+                  + "         you should see this\n" 
+                  + "      #else\n"
+                  + "         should not be here 2\n"
+                  + "      #end\n"
+                  + "   #end\n"
+//                  + " putting anything other than whitespace here makes it work\n"
+                  + "#else\n"
+                  + "   should not be here 3\n"
+                  + "#end\n";
+
+      String output = executeStringTemplate (tmpl);
+      assert (output.indexOf ("should not be here") == -1);
+   }
 }
