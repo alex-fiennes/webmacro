@@ -81,6 +81,9 @@ public class WM implements WebMacro
             }
          }
          broker = owner.init();
+      } catch (Exception e) {
+         Log sysLog = LogManager.getSystemLog();
+         sysLog.error("Unable to load the broker for config: " + config, e);
       } finally {
          if (broker == null) {
             throw new InitException(
@@ -254,6 +257,7 @@ final class BrokerOwner {
          try {
             _broker = (_config == null) ?  new Broker() : new Broker(_config);
          } catch (InitException e) {
+e.printStackTrace();
             _broker = null;
             _brokerUsers = 0; 
             throw e; // rethrow

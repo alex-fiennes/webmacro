@@ -1,5 +1,11 @@
 
--- Nov-200 justin: Reworked the profiling code and added an example
+-- Nov-2000 justin: Added support for WebMacro.defaults, which must 
+   now exist on your classpath. WebMacro.properties now overrides 
+   whatever is in WebMacro.defaults. The idea is we will ship the 
+   defaults file inside webmacro.jar so people don't have to even
+   set that up.
+
+-- Nov-2000 justin: Reworked the profiling code and added an example
    servlet demonstrating how it works. Actually, you can use the 
    example servlet to monitor the performance of your website!
 

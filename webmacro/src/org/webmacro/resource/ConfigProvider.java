@@ -28,7 +28,7 @@ public class ConfigProvider implements Provider
 
    public Object get(String key) throws NotFoundException 
    {
-      Object o = _config.get(key);
+      Object o = _config.getProperty(key);
       if (o == null) {
          throw new NotFoundException("No config information for: " + key);
       }

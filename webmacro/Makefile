@@ -41,6 +41,9 @@ WEBROOT = webroot
 # files that you want copied with any material from this project
 LEGAL_FILES = $(WEBROOT)/CREDITS $(WEBROOT)/LICENSE 
 
+# file taht you want copied into the jar file in addition to classes
+JAR_FILES = $(LEGAL_FILS) WebMacro.defaults
+
 # files which you want included in the packaged distribution
 PROJECT_FILES = $(WEBROOT)/README.html $(WEBROOT)/RELEASE-NOTES.html
 
@@ -120,11 +123,11 @@ doc:    .doc
 	@$(JAVADOC) $(JAVADOC_FLAGS) -d $(DOC_DIR) $(SOURCEFILES)
 	@$(TOUCH) .doc
 
-jar: build $(JARFILE) 
-$(JARFILE): $(DIRECTORIES) $(LEGAL_FILES) 
+jar: $(JARFILE) 
+$(JARFILE): $(DIRECTORIES) $(JAR_FILES) build
 	@echo building jar file: $(JARFILE)
 	@$(TOUCH) $(JARFILE)
-	@$(JAR) uvf $(JARFILE) $(TARGETS) $(LEGAL_FILES) 
+	@$(JAR) uvf $(JARFILE) $(TARGETS) $(JAR_FILES) 
 
 web: $(WEB_DIR) $(LEGAL_FILES) 
 	@echo copying website

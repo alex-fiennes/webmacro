@@ -33,19 +33,24 @@ import java.io.InputStreamReader;
 final public class Broker
 {
 
-   private static Properties getDefaultProperties() {
-      Properties p = new Properties();
-      p.setProperty("TemplatePath", "/:.");
-      p.setProperty("TemplateExpireTime", "10");
-      p.setProperty("LogLevel", "EXCEPTION");
-      p.setProperty("LogTraceExceptions", "TRUE");
-      p.setProperty("ErrorTemplate", "error.wm");
-      p.setProperty("Providers", "org.webmacro.resource.TemplateProvider org.webmacro.resource.UrlProvider org.webmacro.resource.ConfigProvider org.webmacro.engine.DirectiveProvider org.webmacro.engine.ParserProvider");
-      p.setProperty("Directives", "org.webmacro.engine.IncludeDirective org.webmacro.engine.ParseDirective org.webmacro.engine.SetDirective org.webmacro.engine.IfDirective org.webmacro.engine.ElseDirective org.webmacro.engine.UseDirective org.webmacro.engine.ParamDirective org.webmacro.engine.ForeachDirective org.webmacro.engine.LocalDirective org.webmacro.engine.PropertyDirective org.webmacro.engine.ToolDirective org.webmacro.engine.EscapeDirective org.webmacro.engine.EncodeDirective org.webmacro.engine.SilenceDirective");
-      p.setProperty("ContextTools", "");
-      p.setProperty("WebContextTools", "org.webmacro.servlet.CGITool org.webmacro.servlet.FormTool org.webmacro.servlet.FormListTool org.webmacro.servlet.CookieTool org.webmacro.servlet.ResponseTool org.webmacro.servlet.RequestTool org.webmacro.servlet.SessionTool");
-      p.setProperty("Parsers", "org.webmacro.engine.WMParser org.webmacro.engine.NullParser org.webmacro.engine.TextParser");
-      return p;
+   public static final String DEFAULT_PROPERTIES = "WebMacro.defaults";
+   public static final String WEBMACRO_PROPERTIES = "WebMacro.properties";
+
+
+   private static Properties getDefaultProperties() 
+      throws InitException
+   {
+      URL u = configSearch(DEFAULT_PROPERTIES, Broker.class.getClassLoader());
+      try {
+         InputStream in = new BufferedInputStream(u.openStream());
+         Properties p = new Properties();
+         p.load(in);
+         in.close();
+         return p;   
+      } catch (java.io.IOException e) {
+         throw new InitException("IO Error reading " + 
+                           DEFAULT_PROPERTIES + ":" + u, e);
+      }
    }
 
 
@@ -61,7 +66,7 @@ final public class Broker
      */
    public Broker() throws InitException
    {
-      this("WebMacro.properties");
+      this(WEBMACRO_PROPERTIES);
    }
 
    /**
@@ -138,6 +143,7 @@ final public class Broker
          InputStream in = new BufferedInputStream(url.openStream());
          Properties p = new Properties(getDefaultProperties());
          p.load(in);
+         in.close();
          return p;
       } catch (Exception e) {
          throw new InitException("Failed to read WebMacro configuration "
