@@ -124,8 +124,6 @@ class FilterManager {
     * names match if the second name is the same or the same but
     * longer than the first. For example local:a.b matches
     * local:a.b.c
-    * @param fname this is the match expression
-    * @param pname this is the name of a property
     */
    boolean match(String[] lhs, String[] rhs) {
       if (lhs.length > rhs.length) return false;

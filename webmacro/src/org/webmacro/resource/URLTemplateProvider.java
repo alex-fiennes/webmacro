@@ -26,8 +26,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import javax.servlet.GenericServlet;
-import javax.servlet.ServletContext;
 
 import org.webmacro.*;
 import org.webmacro.util.Settings;
@@ -224,7 +222,7 @@ final public class URLTemplateProvider extends CachingProvider {
     * template store. Any path specified in the filename is relative
     * to the directory managed by the template store.
     * <p>
-    * @param path relative to the current directory fo the store
+    * @param name relative to the current directory fo the store
     * @return a template matching that name, or null if one cannot be found
     */
 
@@ -309,8 +307,6 @@ final public class URLTemplateProvider extends CachingProvider {
    /**
     * load a template relative to the base.
     * @param path the relative or absolute URL-path of the template
-    * @param base URL to load path relative to
-    * @param encoding the character encoding to use
     */
 
    final private Template getTemplate(URL path) {

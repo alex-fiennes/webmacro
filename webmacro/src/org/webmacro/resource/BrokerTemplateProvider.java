@@ -43,6 +43,7 @@ final public class BrokerTemplateProvider extends CachingProvider {
 
    public void init(Broker b, Settings config) throws InitException {
       super.init(b, config);
+      _helper = new BrokerTemplateProviderHelper();
       _helper.init(b, config);
       _helper.setReload(_cacheSupportsReload);
       _log = b.getLog("resource", "Object loading and caching");

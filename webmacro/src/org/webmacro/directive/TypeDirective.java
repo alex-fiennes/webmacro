@@ -119,11 +119,8 @@ public class TypeDirective extends Directive {
     * <code>isAssignableFrom</code> from the classname arg.
     *
     * @return <code>null</code>, always
-    * @throws <code>PropertyException.NoSuchVariableException</code> if the
+    * @throws PropertyException.NoSuchVariableException if the
     *         specified variable arg evaluates to null
-    * @throws <code>TypeDirective.InvalidTypeException</code> if the
-    *         specified Variable's class is not assignable from the
-    *         specified classname arg
     */
    public Object evaluate(Context context) throws PropertyException {
       Object o = _object;

@@ -28,7 +28,6 @@ package org.webmacro.resource;
  * CacheElement is an abstract class which cache managers can subclass.
  * It is used to represent a single resource to be cached by a cache manager.
  * @see CacheManager
- * @see SimpleCacheManager
  * @since 0.96
  */
 

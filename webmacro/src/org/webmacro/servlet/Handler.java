@@ -49,7 +49,6 @@ import org.webmacro.Template;
  * which more or less means your handler should probably not be in any
  * particular package.
  * <p>
- * @see GenericHandler
  */
 public interface Handler {
 

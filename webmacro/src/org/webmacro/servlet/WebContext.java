@@ -23,8 +23,10 @@
 
 package org.webmacro.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.webmacro.Broker;
 import org.webmacro.Context;
@@ -50,8 +52,6 @@ import org.webmacro.util.Bag;
  * to create instances of the prototype in the newInstance method. You
  * should also be sure and implement the clear() method as well.
  * <p>
- * @see org.webmacro.util.Property
- * @see org.webmacro.util.Map
  */
 public class WebContext extends Context {
 
@@ -78,6 +78,7 @@ public class WebContext extends Context {
     */
    public WebContext(final Broker broker) {
       super(broker);
+      _log = broker.getLog("WebContext");
       loadTools("WebContextTools");
    }
 
@@ -131,7 +132,6 @@ public class WebContext extends Context {
     * In particular the form data has already been parsed.
     * <p>
     * @see HttpServletRequest
-    * @see org.webmacro.util.Property
     */
    public final HttpServletRequest getRequest() {
       return _request;
@@ -144,7 +144,6 @@ public class WebContext extends Context {
     * they are built on top of this object.
     * <p>
     * @see HttpServletResponse
-    * @see org.webmacro.util.Property
     */
    public final HttpServletResponse getResponse() {
       return _response;

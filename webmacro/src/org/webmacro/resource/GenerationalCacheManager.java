@@ -211,7 +211,7 @@ public class GenerationalCacheManager implements CacheManager {
     * <p>
     * Use of this routine is normally reserved for performance analysis
     * and depends on recompiling org.opendoors.cache.immutable.CacheImpl
-    * @returns an array of longs with the following def.<br>
+    * @return an array of longs with the following def.<br>
     * <pre>
     * [0] The total number of gets, accesses.
     * [1] The number of accesses which resulted in a hit to the immutable cache.

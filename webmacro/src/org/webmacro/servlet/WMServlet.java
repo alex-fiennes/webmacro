@@ -214,7 +214,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
 
    final private void doRequest(
          HttpServletRequest req, HttpServletResponse resp)
-         throws ServletException, IOException {
+         throws IOException {
 
       WebContext context = null;
 

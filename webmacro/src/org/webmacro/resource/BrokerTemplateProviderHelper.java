@@ -71,7 +71,7 @@ final public class BrokerTemplateProviderHelper
    /**
     * Create a new TemplateProvider that uses the specified directory
     * as the source for Template objects that it will return
-    * @exception ResourceInitException provider failed to initialize
+    * @exception InitException provider failed to initialize
     */
    public void init(Broker b, Settings config) throws InitException {
       _broker = b;

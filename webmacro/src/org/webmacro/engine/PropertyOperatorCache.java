@@ -128,7 +128,7 @@ final public class PropertyOperatorCache {
     * @param names property names, one per array entry
     * @return the property described by the names, inside the instance
     * @exception PropertyException the property we'd like to look at
-    * @exception SecurityExeption you are not permitted to try
+    * @exception SecurityException you are not permitted to try
     */
    final public Object getProperty(final Context context,
                                    final Object instance,
@@ -199,7 +199,7 @@ final public class PropertyOperatorCache {
    /**
     * Evaluate the supplied object and work out a way to return it
     * as an iterator.
-    * @param context an object believed to represent a list
+    * @param instance an object believed to represent a list
     * @return an Iterator that iterates through that list
     * @exception PropertyException could not extract iterator from instance
     */
@@ -596,7 +596,6 @@ final class PropertyOperator {
     * @param start which name to look for first
     * @param end which name to look for lst
     * @exception PropertyException error resolving a name
-    * @exception NoSuchMethodException no method available for name
     * @return the property requested
     *
     */
@@ -839,20 +838,15 @@ final class PropertyOperator {
    public Iterator findIterator(Object instance)
          throws PropertyException {
       if (iteratorMethod != null) {
-         try {
-            Object ret = invoke(iteratorMethod, instance, null);
-            if (ret instanceof Iterator) {
-               return (Iterator) ret;
-            }
-            else if (ret instanceof Enumeration) {
-               return new EnumIterator((Enumeration) ret);
-            }
-            else if (ret instanceof Object[]) {
-               return new ArrayIterator((Object[]) ret);
-            }
+         Object ret = invoke(iteratorMethod, instance, null);
+         if (ret instanceof Iterator) {
+            return (Iterator) ret;
          }
-         catch (NoSuchMethodException e) {
-            throw new PropertyException("Error in PropertyOperator!", e);
+         else if (ret instanceof Enumeration) {
+            return new EnumIterator((Enumeration) ret);
+         }
+         else if (ret instanceof Object[]) {
+            return new ArrayIterator((Object[]) ret);
          }
       }
       throw new PropertyException(instance + " is not a list", null);
@@ -867,7 +861,7 @@ final class PropertyOperator {
     * @return return value of the method
     */
    static Object invoke(Method meth, Object instance, Object[] args)
-         throws PropertyException, NoSuchMethodException {
+         throws PropertyException {
       try {
          Object obj = meth.invoke(instance, args);
 

@@ -58,9 +58,6 @@ final public class TemplateProvider extends CachingProvider {
     */
    private ReloadDelayDecorator reloadDelay;
 
-   private int _checkReloadDelay;
-
-
    static {
       try {
          _pathSeparator = System.getProperty("path.separator");
@@ -93,7 +90,7 @@ final public class TemplateProvider extends CachingProvider {
    /**
     * Create a new TemplateProvider that uses the specified directory
     * as the source for Template objects that it will return
-    * @exception ResourceInitException provider failed to initialize
+    * @exception InitException provider failed to initialize
     */
    public void init(Broker b, Settings config) throws InitException {
       super.init(b, config);
