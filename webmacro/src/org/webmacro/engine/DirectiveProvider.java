@@ -22,7 +22,9 @@ public final class DirectiveProvider implements Provider
 
    /**
      * Register a new directive class, so that a builder
-     * of this type can be retrieved later.
+     * of this type can be retrieved later.  If the specified class is not
+     * an o.w.engine.Directive, it simply skips the directive, so that
+     * both old-style and new-style directives can be specified together. 
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */
@@ -37,16 +39,20 @@ public final class DirectiveProvider implements Provider
       } catch (Exception e) {
          throw new IntrospectionException("No class " + dirClassName);
       }
-      DirectiveBuilder b = (DirectiveBuilder) _prototypes.get(dirName);
-      if (b == null) {
-         b = new DirectiveBuilder(dirName, directive);
-         _prototypes.put(dirName, b);
-         _log.info("Registered directive: " + dirName);
-      } else if (! directive.equals(b.getDirectiveClass())) {
-         throw new InitException(
-               "Attempt to register directive " + directive
-               + " failed because " + b.getDirectiveClass() 
-               + " is already registered for type " + dirName);
+
+      // Make sure this class is an instance of o.w.engine.Directive
+      if (Directive.class.isAssignableFrom(directive)) {
+        DirectiveBuilder b = (DirectiveBuilder) _prototypes.get(dirName);
+        if (b == null) {
+          b = new DirectiveBuilder(dirName, directive);
+          _prototypes.put(dirName, b);
+          _log.info("Registered directive: " + dirName);
+        } else if (! directive.equals(b.getDirectiveClass())) {
+          throw new InitException(
+                 "Attempt to register directive " + directive
+                 + " failed because " + b.getDirectiveClass() 
+                 + " is already registered for type " + dirName);
+        }
       }
    }
 
