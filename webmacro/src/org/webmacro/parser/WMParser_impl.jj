@@ -283,6 +283,7 @@ TOKEN_MGR_DECLS : {
 | <RPAREN:    ")">
 | <LBRACKET:  "[">
 | <RBRACKET:  "]">
+| <ASSOC:     "=>">
 | <DOT:       ".">
 | <OP_LT:     "<">
 | <OP_LE:     "<=">
@@ -824,6 +825,27 @@ Builder StringArg() : {
   { return b; }
 }
 
+MapBuilder MapArgList() : {
+    MapBuilder map = new MapBuilder();
+    Object key, value;
+}
+{
+    [ [<WS>] key=Expression() [<WS>] <ASSOC> [<WS>] value=Expression() [<WS>] { map.put(key, value); }
+        (
+            <COMMA> [<WS>] key=Expression() [<WS>] <ASSOC> [<WS>] value=Expression() [<WS>] { map.put(key, value); }
+        ) *
+    ]
+    { return map; }
+}
+
+MapBuilder CurlyMap() : {
+    MapBuilder map;
+}
+{
+    <LBRACE> map=MapArgList() {SetState(DEFAULT);} <RBRACE> {SetState(WM);}
+    { return map; }
+}
+
 ListBuilder ArgList() : {
   ListBuilder list = new ListBuilder();
   Object e;
@@ -880,6 +902,7 @@ Object Term() : {
     | <LPAREN> [<WS>] e=Expression() [<WS>] <RPAREN>
     | e=QuotedString()
     | e=BracketList()
+    | e=CurlyMap()
     | <NULL>           { e = null; }
     | <TRUE>           { e = Boolean.TRUE; }
     | <FALSE>          { e = Boolean.FALSE; }

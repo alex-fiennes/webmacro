@@ -38,28 +38,29 @@ public interface WMParser_implConstants {
   int RPAREN = 33;
   int LBRACKET = 34;
   int RBRACKET = 35;
-  int DOT = 36;
-  int OP_LT = 37;
-  int OP_LE = 38;
-  int OP_GT = 39;
-  int OP_GE = 40;
-  int OP_EQ = 41;
-  int OP_SET = 42;
-  int OP_NE = 43;
-  int OP_PLUS = 44;
-  int OP_MINUS = 45;
-  int OP_MULT = 46;
-  int OP_DIV = 47;
-  int OP_AND = 48;
-  int OP_OR = 49;
-  int OP_NOT = 50;
-  int COMMA = 51;
-  int SEMI = 52;
-  int WORD = 53;
-  int NUMBER = 54;
-  int OTHER = 55;
-  int QS_TEXT = 56;
-  int SQS_TEXT = 57;
+  int ASSOC = 36;
+  int DOT = 37;
+  int OP_LT = 38;
+  int OP_LE = 39;
+  int OP_GT = 40;
+  int OP_GE = 41;
+  int OP_EQ = 42;
+  int OP_SET = 43;
+  int OP_NE = 44;
+  int OP_PLUS = 45;
+  int OP_MINUS = 46;
+  int OP_MULT = 47;
+  int OP_DIV = 48;
+  int OP_AND = 49;
+  int OP_OR = 50;
+  int OP_NOT = 51;
+  int COMMA = 52;
+  int SEMI = 53;
+  int WORD = 54;
+  int NUMBER = 55;
+  int OTHER = 56;
+  int QS_TEXT = 57;
+  int SQS_TEXT = 58;
 
   int SQS = 0;
   int QS = 1;
@@ -104,6 +105,7 @@ public interface WMParser_implConstants {
     "\")\"",
     "\"[\"",
     "\"]\"",
+    "\"=>\"",
     "\".\"",
     "\"<\"",
     "\"<=\"",
