@@ -1,4 +1,6 @@
 
+-- fixed '==' bug
+
 -- added back support for old legacy methods in WebContext, and then 
    fixed up the example applications so they compile.
 -- WebContext is now an interfaced implemented by servlet.WC
