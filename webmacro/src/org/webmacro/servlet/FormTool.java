@@ -44,4 +44,6 @@ public class FormTool implements ContextTool
                "FormTool only works with WebContext: " + ce);
       }
    }
+
+   public void destroy(Object o) { }
 }

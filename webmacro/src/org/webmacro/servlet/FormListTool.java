@@ -44,4 +44,6 @@ public class FormListTool implements ContextTool
                "This only works with WebContext: " + ce);
       }
    }
+
+   public void destroy(Object o) { }
 }

@@ -239,9 +239,9 @@ final public class FastWriter extends Writer
       bflush();
       if (_out != null) {
          writeTo(_out);
+         _out.flush();
       }
       _bstream.reset();
-      _out.flush();
    }
 
    /**

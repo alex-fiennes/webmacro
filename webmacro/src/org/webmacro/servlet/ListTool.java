@@ -16,4 +16,6 @@ public class ListTool implements ContextTool
   {
     return ListUtil.getInstance();
   }
+
+   public void destroy(Object o) { }
 }

@@ -42,4 +42,6 @@ public class SessionTool implements ContextTool
                "SessionTool only works with WebContext: " + ce);
       }
    }
+
+   public void destroy(Object o) { }
 }

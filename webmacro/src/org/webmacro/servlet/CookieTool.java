@@ -43,5 +43,7 @@ public class CookieTool implements ContextTool
          throw new InvalidContextException(
                "This only works with WebContext: " + ce);
       }
+
    }
+   public void destroy(Object o) { }
 }

@@ -42,4 +42,6 @@ public class CGITool implements ContextTool
                "CGITool only works with WebContext: " + ce);
       }
    }
+
+   public void destroy(Object o) { }
 }

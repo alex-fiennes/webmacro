@@ -42,4 +42,6 @@ public class ResponseTool implements ContextTool
                "This only works with WebContext: " + ce);
       }
    }
+
+   public void destroy(Object o) { }
 }
