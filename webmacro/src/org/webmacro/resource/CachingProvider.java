@@ -84,7 +84,7 @@ abstract public class CachingProvider implements Provider
       if (o == null) {
          // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
          // this looks like double-checked locking but it isn't, we
-         // synchrnoized on a less expensive lock inside r.get().
+         // synchrnoized on a less expensive lock inside _cache.get()
          // the following ilne lets us simultaneously load up to 
          // writeLocks.length resources.
          
