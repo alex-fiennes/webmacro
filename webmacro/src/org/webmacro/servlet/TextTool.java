@@ -63,7 +63,7 @@ public class TextTool implements ContextTool
      * If either parameter is <code>null</code>, <code>split()</code> returns
      * a String[] of zero elements.
      */
-    public static final String[] split (String input, String delimiter)
+    public static String[] split (String input, String delimiter)
     {
         if (input == null || delimiter == null)
             return new String[0];
@@ -89,7 +89,7 @@ public class TextTool implements ContextTool
      * If either parameter is <code>null</code>, <code>join()</code> returns
      * <code>null</code>.
      */
-    public static final String join (String[] input, String delimiter)
+    public static String join (String[] input, String delimiter)
     {
         if (input == null || delimiter == null)
             return null;
@@ -146,7 +146,7 @@ public class TextTool implements ContextTool
      *
      * @see java.net.URLEncoder
      */
-    public static final String URLEncode (String input)
+    public static String URLEncode (String input)
     {
         return input == null ? null : java.net.URLEncoder.encode (input);
     }
@@ -159,7 +159,7 @@ public class TextTool implements ContextTool
      *
      * @see java.net.URLDecoder
      */
-    public static final String URLDecode (String input)
+    public static String URLDecode (String input)
     {
       try { 
         return input == null ? null : java.net.URLDecoder.decode (input);
@@ -178,7 +178,7 @@ public class TextTool implements ContextTool
      *
      * @see org.webmacro.util.HTMLEscaper
      */
-    public static final String HTMLEncode (String input)
+    public static String HTMLEncode (String input)
     {
         return input == null ? "" : org.webmacro.util.HTMLEscaper.escape (input);
     }
@@ -190,7 +190,7 @@ public class TextTool implements ContextTool
      * @see java.util.Date
      * @see java.text.SimpleDateFormat
      */
-    public static final String formatDate (Date date, String format)
+    public static String formatDate (Date date, String format)
     {
         SimpleDateFormat formatter = new SimpleDateFormat (format);
         return formatter.format (date);
@@ -203,7 +203,7 @@ public class TextTool implements ContextTool
      *
      * @throws java.io.IOException if the stream cannot be read
      */
-    public static final String streamToString (InputStream in) throws IOException
+    public static String streamToString (InputStream in) throws IOException
     {
         return streamToString (in, null);
     }
@@ -215,7 +215,7 @@ public class TextTool implements ContextTool
      *
      * @throws java.io.IOException if the stream cannot be read
      */
-    public static final String streamToString (InputStream in, final String encoding) throws IOException
+    public static String streamToString (InputStream in, final String encoding) throws IOException
     {
         if (in == null)
             return null;
@@ -239,6 +239,23 @@ public class TextTool implements ContextTool
         
         return sb.toString ();
     }
+    
+    /** 
+     * convert a <code>byte[]</code> to a String using the system-default
+     * encoding
+     */
+    public static String bytesToString (byte[] bytes) {
+      return new String (bytes)  
+    }
+    
+    /**
+     * convert a <code>byte[]</code> to a String using the specified
+     * encoding
+     */
+    public Static String bytesToString (byte[] bytes, String encoding) {
+      return new String (bytes, encoding);
+    }
+    
     
     /** remove any leading and trailing whitespace from a string */
     public static String trim(String s){
