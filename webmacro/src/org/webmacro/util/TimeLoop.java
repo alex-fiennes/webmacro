@@ -55,6 +55,7 @@ public class TimeLoop extends Thread
      */
    public TimeLoop(long duration, int periods) {
       setName("TimeLoop(" + duration + "," + periods + ")");
+      setDaemon(true);
       _duration = duration;
       _periods = periods;
 
