@@ -182,23 +182,78 @@ public abstract class Variable implements Macro, Visitable
             ((Macro) val).write(out,context);
          } else {
             if (val != null) {
+                // if val.toString() evaluates to null
+                // it is trapped and logged below
+                // since this probably won't happen often
+                // we'll let Java throw the exception
+                // instead of doing the if (val.toString() == null) thing
+                // at this point
                out.write(val.toString());
-            } 
-            else {
-              context.getLog("engine")
-                .warning("Variable: " + _vname + " does not exist");
-              out.write((String) context.getEvaluationExceptionHandler()
-                        .handle(this, context, 
-                                new NullVariableException(_vname)));
+            } else {
+                if (isSimpleName ()) {
+                    // user accessed a variable that isn't in the context
+                    //     $ObjectNotInContext
+                    context.getLog("engine")
+                           .warning("Variable: " + _vname + 
+                                    " does not exist in context");
+              
+                    out.write(context.getEvaluationExceptionHandler()
+                                     .handle(this, context, 
+                                     new VariableNotInContextException(_vname)));
+                } else {
+                    // user accessed a valid property who's value is null
+                    // this should also happen if the user tries to access
+                    // a void method.
+                    
+                    context.getLog("engine")
+                           .warning("Variable: " + _vname + 
+                                    " evaluated to null");
+              
+                    out.write(context.getEvaluationExceptionHandler()
+                                     .handle(this, context, 
+                                     new NullVariableException(_vname)));
+                }
             }
          }
-      } catch (Exception e) {
+      } catch (PropertyException pe) {
+          // most likely, user tried to access a method/property
+          // of this Variable that doesn't exist, so treat it as
+          // a warning
+          
+          // log it
          context.getLog("engine")
-           .warning("Variable: exception evaluating " + _vname + ":\n" + e, e);
-         out.write((String) context.getEvaluationExceptionHandler()
-                   .handle(this, context, 
-                       new PropertyException("Variable: exception evaluating " 
-                                             + _vname, e)));
+                .warning("Variable: " + pe.getMessage());
+
+         // write it out to stream
+         out.write (context.getEvaluationExceptionHandler()
+            .handle (this, context, pe));
+      } catch (NullPointerException e) {
+         // an NPE at this point indicates that the Variable *does* exist
+         // in the context, but it's .toString() method returned null.
+         // The variable reference would be written like this:
+         //         $ValidVariable
+          
+         String message = "The .toString() method of $" + _vname + " returned null. " +
+                          "This probably indicates a problem with your code, not " +
+                          "WebMacro";
+         
+         // we'll log an error here, but w/o a stack trace
+         // b/c the stack trace is useless to the user for this particular error
+         // as it's a bug in his code, not ours.
+         context.getLog ("engine")
+                .error (message);
+         
+         out.write (context.getEvaluationExceptionHandler ()
+                           .handle (this, context, new PropertyException (message)));
+      } catch (Exception e) {
+          // something we weren't expecting happened!
+          // I wonder if we would ever get here?  --eric
+         String message = "Variable: unexpected exception evaluating " + _vname + ":\n" + e; 
+         context.getLog("engine")
+                .error(message, e);
+         
+         out.write (context.getEvaluationExceptionHandler()
+            .handle (this, context, e));
       }
    }
 
