@@ -347,10 +347,10 @@ public class WMEval
     /**
      *  Evaluates the current context for the input file and writes it to the output file.
      */
-    public String eval (Context context, String templateName, String outputFileName, boolean append) throws Exception
+    public String eval (Context context, String templateName, String outputFileName, boolean append, String encoding) throws Exception
     {
       OutputStream out = new FileOutputStream(outputFileName, append);
-      return eval(context, templateName, out, null);
+      return eval(context, templateName, out, encoding);
     }      
 
 

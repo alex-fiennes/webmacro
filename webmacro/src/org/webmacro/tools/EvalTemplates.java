@@ -1,7 +1,8 @@
 package org.webmacro.tools;
-
+import java.io.FileOutputStream;
 import org.webmacro.Context;
 import org.webmacro.util.WMEval;
+
 
 /**
  * EvalTemplates supports an ant task execution to evaluate a set of
@@ -31,7 +32,7 @@ public class EvalTemplates
         System.out.println("Template File=" + inputTemplate);
         try
         {
-            wm.eval(wm.getNewContext(), inputTemplate, null, false, null);
+            wm.eval(wm.getNewContext(), inputTemplate, null, null);
         }
         catch (Exception e)
         {

@@ -34,6 +34,7 @@ public class TemplateServlet extends HttpServlet {
   protected Context globalContext;
   protected String globalName;
   protected String globalTemplate;
+  private static final String[] welcomeList = {"home.html", "index.html"};
 
   /**
    * Performs all application template initialization.
@@ -117,7 +118,15 @@ public class TemplateServlet extends HttpServlet {
    */
   protected String locateTemplate(HttpServletRequest request)
   {
-		return request.getRequestURI().substring(1); // strip out the leading /
+		String value = request.getRequestURI().substring(1); // strip out the leading /
+    if (value == null || value.trim().length() == 0)
+    {
+      return welcomeList[0];
+    }
+    else
+    {
+      return value;
+    }
   }
   
   /**
