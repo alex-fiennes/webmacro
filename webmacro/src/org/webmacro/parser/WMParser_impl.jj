@@ -318,7 +318,8 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
 
   try { 
     descriptor = 
-      (DirectiveDescriptor) broker.get("new-directive", directive);
+      (DirectiveDescriptor) broker.get("org.webmacro.directive.Directive", 
+                                       directive);
     if (!descriptor.valid) 
       throw new ParseException("Descriptor for directive " + directive
                                + " is not valid");
