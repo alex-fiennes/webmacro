@@ -81,6 +81,13 @@ public class WM implements WebMacro
          }
          broker = owner.init();
       } finally {
+         if (broker == null) {
+            throw new InitException(
+                 "WebMacro was unable to create a broker, typically this\n"
+               + "means that there was a problem loading the properties\n"
+               + "file (" + config + "). Check your settings, your\n"
+               + "classpath, and make sure everything is in place.\n");
+            }
          _owner = owner;
          _broker = broker;
          _alive = true;

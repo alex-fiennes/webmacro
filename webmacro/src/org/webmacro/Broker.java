@@ -10,6 +10,8 @@ import java.util.StringTokenizer;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
   * The Broker is responsible for loading and initializing almost everything
@@ -88,16 +90,18 @@ final public class Broker
       error.append(fileName);
       error.append("\n");
       error.append("This means that WebMacro could not be started. The \n");
-      error.append("following list may help you figure out where to put it:\n");
+      error.append("following list should be where I looked for it:\n");
       error.append("\n");
-      error.append("MY CLASSPATH:\n");
+      error.append("   my classpath: ");
       try {
          buildPath(error, fileName, cl.getResources("."));
       } catch (Exception e) { }
-      error.append("SYSTEM CLASSPATH:\n");
+      error.append("\n");
+      error.append("   system classpath: ");
       try {
          buildPath(error, fileName, ClassLoader.getSystemResources("."));
       } catch (Exception e) { }
+      error.append("\n\n");
       error.append("Alternately you can modify your servlet to request a\n");
       error.append("specific location or supply the properties yourself.\n");
       error.append("See the classes WebMacro, WM, and Broker in the\n");
@@ -111,7 +115,7 @@ final public class Broker
       while (e.hasMoreElements()) {
          b.append(e.nextElement().toString());
          b.append(fileName);
-         b.append("\n");
+         b.append("");
       }         
    }
 
@@ -258,6 +262,7 @@ final public class Broker
          _log.info("stopping: " + pr);
          pr.destroy();
       }
+      _lm.flush();
    }
 
    /**
@@ -283,4 +288,36 @@ final public class Broker
       return _name;
    }
 
+   /**
+     * Test the broker or a provider. Reads from stdin: TYPE NAME
+     */
+   public static void main(String arg[]) {
+      try {
+         if (arg.length != 1) {
+            System.out.println("Arg required: config file URL");
+            System.out.println("Then input is: TYPE NAME lines on stdin");
+            System.exit(1);
+         }
+         Broker broker = new Broker(arg[0]);
+
+         BufferedReader in = 
+            new BufferedReader(new InputStreamReader(System.in));
+
+         String line;
+         while ( (line = in.readLine()) != null) 
+         {
+
+            int space = line.indexOf(' ');
+            String type = line.substring(0, space);
+            String name = line.substring(space + 1);
+            System.out.println("broker.get(\"" + type + "\", \"" 
+                           +  name + "\"):");
+            Object o = broker.get(type,name);
+            System.out.println("RESULT:");
+            System.out.println(o.toString());
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
 }

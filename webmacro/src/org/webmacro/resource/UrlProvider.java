@@ -37,6 +37,10 @@ import org.webmacro.*;
 final public class UrlProvider extends CachingProvider
 {
 
+   static final public long AVG_TIMEOUT = 10000;
+   static final public long MAX_TIMEOUT = 60000;
+   static final public long MIN_TIMEOUT = 5000;
+
    /**
      * We serve up "url" type resources
      */
@@ -47,8 +51,10 @@ final public class UrlProvider extends CachingProvider
      * time for the SoftReference will be set to the expire time
      * for the loaded URL.
      * <p>
-     * Http expires informationwill be obeyed between the minimum and
-     * maximum refresh times of 1 second to 2 minutes.
+     * Http expires information will be obeyed between the MIN_TIMEOUT
+     * and MAX_TIMEOUT bounds. URLs which do not specify a timeout, 
+     * and files from the filesystem, will be cached for AVG_TIMEOUT
+     * milliseconds.
      */
    final public TimedReference load(String name) 
       throws NotFoundException
@@ -61,6 +67,7 @@ final public class UrlProvider extends CachingProvider
          } else {
             u = new URL(name);
          }
+
          URLConnection uc = u.openConnection();
 
          String encoding = uc.getContentEncoding();
@@ -75,15 +82,14 @@ final public class UrlProvider extends CachingProvider
          }
 
          long now = System.currentTimeMillis();
-         long timeout = uc.getExpiration() - now;
-         if (timeout < 1) {
-            timeout = (now - uc.getLastModified())/2;
+         long timeout = uc.getExpiration();
+         if (timeout != 0) {
+            timeout -= now;
+         } else {
+            timeout = AVG_TIMEOUT; 
          }
-         if (timeout > 120000) {
-            timeout = 120000;   
-         } else if (timeout < 1000) {
-            timeout = 1000;
-         }
+         if (timeout > MAX_TIMEOUT) timeout = MAX_TIMEOUT;   
+         else if (timeout < MIN_TIMEOUT) timeout = MIN_TIMEOUT;
 
          char buf[] = new char[1024];
          StringWriter sw = new StringWriter(length);

@@ -50,6 +50,9 @@ public class GuestBook extends WMServlet
    public Template handle(WebContext context) 
       throws HandlerException
    {
+
+      context.getResponse().setContentType("text/html");
+
       Object output = new Object();
       String templateName;
 

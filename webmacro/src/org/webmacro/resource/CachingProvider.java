@@ -6,14 +6,23 @@ import org.webmacro.util.*;
 import java.util.Properties;
 import java.util.Hashtable;
 import java.lang.ref.Reference;
-import java.util.TimerTask;
-import java.util.Timer;
+import org.webmacro.util.TimeLoop;
+import org.webmacro.Log;
 
 abstract public class CachingProvider implements Provider
 {
 
    private Hashtable _cache;
-   private static final Timer _timer = new Timer(true); // i am daemon
+   private static final TimeLoop _tl;
+   private Log _log;
+
+   private static final long DURATION = 1000;
+   private static int PERIODS = 600; 
+   static {
+      _tl = new TimeLoop(DURATION, PERIODS); // 10min max, 1sec intervals
+      _tl.setDaemon(true);
+      _tl.start();
+   }
 
    /**
      * You must implement this, loading an object from permanent
@@ -27,6 +36,7 @@ abstract public class CachingProvider implements Provider
      */
    public void init(Broker b, Properties config) throws InitException
    {
+      _log = b.getLog("resource");
       _cache = new Hashtable();
    }
 
@@ -69,12 +79,16 @@ abstract public class CachingProvider implements Provider
             _cache.put(query,r);
             o = r.get();
             try {
-               _timer.schedule( 
-                  new TimerTask() { 
-                     public void run() { _cache.remove(query); } 
+               _log.debug("cached: " + query + " for " + r.getTimeout());
+               _tl.scheduleTime( 
+                  new Runnable() { 
+                     public void run() { 
+                        _cache.remove(query); 
+                        _log.debug("cache expired: " + query);
+                     } 
                   }, r.getTimeout());
             } catch (Exception e) {
-               // not much we can do, ignore it
+               _log.error("CachingProvider caught an exception", e);
             }
          } 
       }
