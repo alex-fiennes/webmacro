@@ -1,0 +1,53 @@
+<table border=0 width="100%">
+<tr>
+      <td align=left nowrap>
+            #if ($Page && $User) {
+               #if (($User.IsModerator) || (!$Page.IsModerated)) {
+                  <a href="ControllerPage?edit=$Page.Title"><span class="Options">Edit page</span></a>
+                     
+                  #if ($User.IsModerator) {
+                     || <a href="ControllerPage?delete=$Page.Title"><span class="Options">Delete page</span></a>
+                  }
+               }
+            } #elseif (!$User) {
+                 <a href="?login=true"><span class="Options">Log in</span></a>
+                 || <a href="?register=true" class="Options">Register</a>
+            }
+      </td>
+
+   <td width=15>&nbsp;</td>
+      
+   <td align=center width="100%">
+      <a href="SiteMap"><span class="NavigationLinks">Site Map</span></a>
+       || <a href="http://www.webmacro.org/bugzilla/"><span class="NavigationLinks">Bugzilla</span></a>
+       || <a href="http://www.webmacro.org/cvs/"><span class="NavigationLinks">CVS</span></a>
+   </td>
+   
+   <td width=15>&nbsp;</td>
+   
+   <form action="ControllerPage" method=GET>
+   <td align=right width=0 nowrap>
+      #if ($Form.find)
+         #set $value = $Form.find
+      #else
+         #set $value = ""
+      #end
+      <font face="Arial" size=2><b>Find:</b> <input type=text width=15 name="find" value="$Text.HTMLEncode($value)"></font>
+   </td>
+   </form>
+      
+   <form action="ControllerPage" method=GET>
+   <td align=right width=0 nowrap>
+      <font face="Arial" size=2><b>Jump to:</b> <input type=text width=15 name="jump" value=""></font>
+   </td>
+   </form>
+</tr>
+</table>
+<table width="100%">
+<tr>
+   <td bgcolor="#000000" height=1></td>
+</tr>
+</table>
+#if (($User) && ($Wiki.isAdministrator($User))) {
+   #parse "adminoptionsbar.wm"
+}

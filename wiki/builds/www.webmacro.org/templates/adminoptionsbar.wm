@@ -1,0 +1,14 @@
+<!--<table border=0 width="100%">
+   <td align=center>
+         <a href="ControllerPage?user_admin=true"><span class="AdminOptions">User Administration</a></span> ||
+         <a href="ControllerPage?reparse=$PageName"><span class="AdminOptions">Reparse Page</span></a> ||
+         <a href="ControllerPage?reload_props=$PageName"><span class="AdminOptions">Reload .props</span></a>
+   </td>
+</table>
+
+<table width="100%">
+<tr>
+   <td bgcolor="#000000" height=1></td>
+</tr>
+</table>
+-->

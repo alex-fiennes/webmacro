@@ -1,0 +1,46 @@
+#set $PageName="Find Results"
+#parse "header.wm"
+
+<table border=0 width="100%">
+<tr>
+	<td class="LeftMenu" valign=top width="120"> 
+		#parse "leftmenu.wm"
+	</td>
+	
+	<td width="8">&nbsp;</td>
+	
+	<td valign=top>
+	   <br>
+	   #if ($Results.length > 0) {
+	      #set $pages = "pages"
+	      #if ($Results.length == 1) {
+	         #set $pages = "page"
+	      }
+	      <b>$Results.length $pages found</b><p>
+	      
+         #foreach $result in $Results {
+            #set $page = $result.page
+            #set $text = $result.preview
+            #set $author = $page.Author
+            #set $textLength = 120
+            
+            #if ($text.length() > $textLength) {
+               #set $text = "$text.substring(0, $textLength)..."
+            }
+            
+            #if ($author) {
+               #set $author_user = $Wiki.getUser($author)
+               <li><a href="$page.Title">$page.Title</a> -- $author_user.Name
+            } #else {
+               <li><a href="$page.Title">$page.Title</a> -- unknown
+            }
+            <br><font size=1>$text</font><p>
+         }
+      } #else {
+         <b>No pages match your query</b>
+      }
+   </td>         
+   </tr>
+</table>
+
+#parse "footer.wm"
