@@ -48,7 +48,7 @@ public class FileTemplate extends WMTemplate
      */
    public FileTemplate(Broker broker, String filename)
    {
-      this (broker, new File(filename), defaultEncoding(broker));
+      this (broker, new File(filename), null);
    }
 
    /**
@@ -57,7 +57,7 @@ public class FileTemplate extends WMTemplate
      * if not specified there then the UTF-8 encoding.
      */
    public FileTemplate(Broker broker, File templateFile) {
-      this (broker, templateFile, defaultEncoding(broker));
+      this (broker, templateFile, null);
    }
 
    /** 
@@ -67,18 +67,12 @@ public class FileTemplate extends WMTemplate
    public FileTemplate(Broker broker, File tmplFile, String encoding) {
       super(broker);
       myFile = tmplFile;
-      myEncoding = encoding;
-   }
-
-   private static final String defaultEncoding(Broker b) {
-      try {
-         return (String) b.get("config", "TemplateEncoding");
-      } catch (Exception e) {
-         return System.getProperty("file.encoding");
+      if (encoding == null) {
+         myEncoding = getDefaultEncoding();
+      } else {
+         myEncoding = encoding;
       }
-
    }
-
 
    /**
      * Get the stream the template should be read from. Parse will 
