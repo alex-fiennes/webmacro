@@ -91,7 +91,7 @@ public class SavePageAction implements PageAction {
         // get the page elements from the request
         String editor = user.getIdentifier();
         String text = wc.getForm ("TEXT");
-        boolean moderated = wc.getForm ("MODERATED").equals ("true");
+        boolean moderated = wc.getForm ("MODERATED") != null && wc.getForm("MODERATED").equals ("true");
         String keywords = wc.getForm ("RELATED_TITLES");
         String pageName = wc.getForm ("save");
         
