@@ -13,6 +13,7 @@ import org.webmacro.directive.Directive;
 import org.webmacro.directive.DirectiveProvider;
 import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
+import org.webmacro.directive.Directive.OptionChoice;
 import org.webmacro.directive.Directive.Subdirective;
 
 /**
@@ -413,6 +414,7 @@ void parse_args(DirectiveDescriptor descriptor,
       if (arg.type == Directive.ArgType_GROUP) 
         parse_arg_group(descriptor, args, i, da);
       else if (arg.type == Directive.ArgType_CHOICE) {
+        OptionChoice oc = (OptionChoice) arg;
         for (boolean more=true; more; ) {
           for (int j=0; j<arg.subordinateArgs; j++) {
             more = false;
@@ -420,7 +422,8 @@ void parse_args(DirectiveDescriptor descriptor,
             ArgDescriptor child = args[arg.children[j]];
             if (lookahead_keyword(args[child.children[0]].keyword)) {
               parse_arg_group(descriptor, args, arg.children[j], da);
-              more = true;
+              if (oc.repeating) 
+                more = true;
               break;
             }
           }

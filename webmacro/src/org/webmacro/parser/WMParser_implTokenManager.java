@@ -9,6 +9,7 @@ import org.webmacro.directive.Directive;
 import org.webmacro.directive.DirectiveProvider;
 import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
+import org.webmacro.directive.Directive.OptionChoice;
 import org.webmacro.directive.Directive.Subdirective;
 
 public class WMParser_implTokenManager implements WMParser_implConstants

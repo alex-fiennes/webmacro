@@ -255,9 +255,23 @@ public abstract class Directive implements Macro, Visitable {
    * accept either "from n max m" or "from n" or "max m from n".  
    */
   public static class OptionChoice extends ArgDescriptor {
+    public boolean repeating = true;
+
     public OptionChoice(int groupCount) { 
       super(0, ArgType_CHOICE); 
       setOptional(groupCount);
+    }
+  }
+
+
+  /**
+   * The SingleOptionChoice indicates that zero or one of several
+   * optional groups can be accepted, but only once.  Otherwise works
+   * exactly as OptionChoice.  */
+  public static class SingleOptionChoice extends OptionChoice {
+    public SingleOptionChoice(int groupCount) { 
+      super(groupCount); 
+      repeating = false;
     }
   }
 
