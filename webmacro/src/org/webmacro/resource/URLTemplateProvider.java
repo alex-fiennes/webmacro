@@ -7,6 +7,8 @@ import org.webmacro.resource.*;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -74,9 +76,10 @@ final public class URLTemplateProvider extends CachingProvider
     /** The default separator for TemplathPath
      */
     private static String _pathSeparator = ";";
-    
+
     /**
-     */
+      *
+      */
     private String[] _templateDirectory = null;
 
     /**
@@ -96,7 +99,15 @@ final public class URLTemplateProvider extends CachingProvider
     private static final String CONTEXT_PREFIX   = "context:";
     private static final String IGNORE_PREFIX    = "ignore:";
 
+    private static final int CLASSPATH_PREFIX_LENGTH 
+        = CLASSPATH_PREFIX.length();
+    private static final int CONTEXT_PREFIX_LENGTH
+        = CONTEXT_PREFIX.length();
+
+
     private static final String _TYPE    = "template";
+
+
 
     /**
      *  _baseURL is just a placeholder for the moment.
@@ -126,13 +137,13 @@ final public class URLTemplateProvider extends CachingProvider
      * <li> [path] - Equivalent to file:[path]</li>
      * </ol>
      */
-     
+
     private String _templatePath;
 
     /**
      * Where we write our log messages
      */
-     
+
     private Log _log;
 
     /**
@@ -140,7 +151,7 @@ final public class URLTemplateProvider extends CachingProvider
      * default TemplateProvider
      * @return the template type.  Always the String "template"
      */
-     
+
     final public String getType() {
         return _TYPE;
     }
@@ -265,7 +276,7 @@ final public class URLTemplateProvider extends CachingProvider
         URLTemplate tmpl = (URLTemplate) templateNameCache.get(name);
         return (tmpl == null) ?  false : tmpl.shouldReload();
     }
-    
+
     private final boolean exists(URL url) {
         InputStream _is = null;
         try
@@ -274,14 +285,14 @@ final public class URLTemplateProvider extends CachingProvider
             System.out.println(url +" exists");
             return true;
         }
-        catch (IOException e) 
+        catch (IOException e)
         {
             System.out.println(url +" does not exist");
             return false;
         }
         finally
         {
-            if (_is != null) 
+            if (_is != null)
             {
                 try {
                     _is.close();
@@ -383,7 +394,7 @@ final public class URLTemplateProvider extends CachingProvider
             URL url = null;
             if (tPart.startsWith(CLASSPATH_PREFIX))
             {
-                tPart = tPart.substring(CLASSPATH_PREFIX.length());
+                tPart = tPart.substring(CLASSPATH_PREFIX_LENGTH);
                 url = searchClasspath(join(tPart,path));
 
                 if (url == null) {
@@ -392,10 +403,8 @@ final public class URLTemplateProvider extends CachingProvider
             }
             else if (tPart.startsWith(CONTEXT_PREFIX))
             {
-                tPart = tPart.substring(CONTEXT_PREFIX.length());
-                // no way to get hold of the servletcontext yet
-                // url = servletContext.getResource(tPart+"/"+urlPath);
-                throw new IllegalArgumentException("Can't deal with "+CONTEXT_PREFIX+" yet");
+                tPart = tPart.substring(CONTEXT_PREFIX_LENGTH);
+                throw new IllegalStateException("Not implemented");
             }
             else if (tPart.startsWith(IGNORE_PREFIX))
             {
@@ -462,7 +471,14 @@ final public class URLTemplateProvider extends CachingProvider
     private final URL searchClasspath(String resource)
     {
         _log.debug("Searching classpath for "+resource);
-        URL url = _broker.getResource(resource);
+        URL url = null;
+        ClassLoader cl = this.getClass().getClassLoader();
+        if (cl != null) {
+            url = cl.getResource(resource);
+        }
+        else {
+            url = ClassLoader.getSystemResource(resource);
+        }
 
         if (url != null)
         {

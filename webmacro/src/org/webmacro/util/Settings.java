@@ -9,7 +9,6 @@ public class Settings {
 
    Properties _props;
    String _prefix;
-   private final boolean debugClassLoaders = false;
 
    /**
      * Create an empty Settings object
@@ -28,18 +27,6 @@ public class Settings {
    {
       this();
       load(settingsFile);
-   }
-
-   /**
-     * Search for the named settingsFile on the classpath 
-     * and instantiate a Settings object based on its values.
-     * Use supplied classloader
-     */
-   public Settings(String settingsFile, ClassLoader classloader) 
-      throws InitException, IOException
-   {
-      this();
-      load(settingsFile, classloader);
    }
 
    /**
@@ -94,31 +81,9 @@ public class Settings {
      * the file along the classpath.
      */
    public void load(String fileName) throws InitException, IOException 
-   { 
-      load(fileName,this.getClass().getClassLoader());
-   }
-   
-   /**
-     * Load settings from the supplied fileName, searching for 
-     * the file along the classpath, using external classloader
-     */
-   public void load(String fileName, ClassLoader _cl) throws InitException, IOException 
    {  
-      if (debugClassLoaders) {     
-         System.out.println("Loading settings from "+fileName);
-         System.out.println("Settings class ClassLoader: "+Settings.class.getClassLoader());
-         System.out.println("Given ClassLoader: "+_cl);
-      }
-      URL u = null;
-      if (_cl != null) {
-         u = _cl.getResource(fileName);
-      }
-      if (u == null) {
-         _cl = Settings.class.getClassLoader();
-         if (_cl != null) {
-            u = _cl.getResource(fileName);
-         }
-      }
+      ClassLoader cl = this.getClass().getClassLoader();
+      URL u = cl.getResource(fileName);
       if (u == null) {
          u = ClassLoader.getSystemResource(fileName);
       }
@@ -132,7 +97,7 @@ public class Settings {
          error.append("\n");
          error.append("   my classpath:\n");
          try {
-            buildPath(error, fileName, _cl.getResources("."));
+            buildPath(error, fileName, cl.getResources("."));
          } catch (Exception e) { }
          error.append("\n");
          error.append("   system classpath:\n");
