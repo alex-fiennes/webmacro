@@ -2,6 +2,7 @@
   In order to compile WebMacro, you may need to set these environment variables
     JAVACC_HOME: your JavaCC installation
  -->
+<!-- 0.97a1. -->
 
 <project name="WebMacro" default="compile" basedir=".">
 
@@ -89,7 +90,7 @@
     <copy todir="${dist}" file="${jar}"/>
     <copy todir="${dist}">
       <fileset dir="webroot" 
-               includes="LICENSE,CREDITS,README.html,RELEASE-NOTES.html"/>
+               includes="LICENSE,CREDITS,README.html"/>
     </copy>
   </target>
 

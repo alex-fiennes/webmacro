@@ -7,10 +7,11 @@ and originally implemented by Justin Wells and Yuen-Ping Leung.
 WebMacro is an opensource community development effort. The 
 current team is:
 
-      Justin Wells            Project Leader
+      Justin Wells            Original Developer
+
+      Brian Goetz             Current Lead Software Engineer
 
       Fergus Gallagher        Core Developer
-      Brian Goetz             Core Developer
       Marcel Huijkman         Core Developer
       Tim Joyce               Core Developer
       Sebastian Kanthak       Core Developer
@@ -32,12 +33,17 @@ current team is:
       Michelle Yeh            Contributor
       Doug Young              Contributor
 
-There are many more people who have contributed on the mailing 
-list that I am not able to list here--thanks to you all! Webmacro
-is a community development effort that would not have been 
-possible without you.
+Many people beyond this list contribute to WebMacro. 
 
-If you would like to contribute to the WebMacro project please 
-contact the project leader, justin@webmacro.org. New contributors
-are always welcome!
+THANK YOU TO EACH AND EVERYONE OF YOU.
+
+If you wish to make a software contribution, please visit
+the WebMacro wiki site to learn how to join the mailing list,
+make a software contribution, or to rant or rave on the interactive
+wiki site.
+
+Webmacro is a community development effort that would not have been 
+possible without folks like you.
+
+Again, new contributors are always welcome!
 
