@@ -139,72 +139,47 @@ public interface WebContext extends Cloneable, Map
    // LEGACY METHODS
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Access a form value as a string. If there are multiple form 
+     * values corresponding to this name the first one is returned.
+     * Tool interface: implemented by loading a ContextTool
      */
    public String getForm(String field);
 
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Access a form value as a list. If there is only one value 
+     * corresponding to this name it will be returned as a one 
+     * element array.
+     * Tool interface: implemented by loading a ContextTool
      */
    public String[] getFormList(String field);
 
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Access to properties with names familiar to CGI programmers. 
+     * All of this data is available via the request and response 
+     * interfaces, but ex-CGI programmers may find this more familiar.
+     * Tool interface: implemented by loading a ContextTool
      */
    public CGI_Impersonator getCGI();
 
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Load a cookie by name.
+     * Tool interface: implemented by loading a ContextTool
      */
    public Cookie getCookie(String cookieName);
    
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Set a cookie by name.
+     * Tool interface: implemented by loading a ContextTool
      */
    public void setCookie(String name, String value);
 
    /**
-     * This method is provided for backwards compatibility with older 
-     * versions of WebMacro. Instead of this method you should either 
-     * use getMacro or getTool, using the property name of this method.
-     * The request will be evaluated using a tool or object plugged in
-     * to the context, probably via the configuration file. Using the
-     * underlying Tool or Macro directily will be more efficient.
-     * @deprecated use getTool or getMacro instead
+     * Load the users session. 
+     * Tool interface: implemented by loading a ContextTool
      */
    public HttpSession getSession();
 
