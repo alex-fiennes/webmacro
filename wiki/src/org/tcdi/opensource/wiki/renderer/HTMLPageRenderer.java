@@ -79,7 +79,7 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderUnknown(WikiData data) {
-        return "<!-- " + data.getType() + " is an unknown WikiData type";
+        return "<!-- " + data.getType() + " is an unknown WikiData type -->";
     }
     
     protected String renderEmail(String emailAddress) {
@@ -112,10 +112,12 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     }
     
     protected String renderGT() {
+        System.err.println ("render: >");
         return "&gt;";
     }
     
     protected String renderLT() {
+        System.err.println ("render: <");
         return "&lt;";
     }
     
@@ -131,7 +133,7 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     protected String renderQuotedBlock(String text) {
         StringBuffer sb = new StringBuffer (text.length());
         sb.append ("<pre>")
-          .append (text)
+          .append (replace (replace (text, "<", "&lt;"), ">", "&gt;"))
           .append ("</pre>");
         
         return sb.toString ();
@@ -255,4 +257,35 @@ public class HTMLPageRenderer extends WikiPageRenderer {
     protected String renderParagraphBreak() {
         return "<br><br>";
     }    
+    
+    /**
+    * replace all occurrences of 'from' to 'to' in 'src'
+    *
+    * @param src String to perform replace on
+    * @param from substring that needs to be replaced
+    * @param to string to replace 'from' with
+    * @returns String with all occurrences of 'from' replaced with 'to' or 'src' if 'from' not found
+    */
+    private static final String replace (String src, String from, String to)
+    {
+        if (src == null || from == null || to == null) return src;
+        
+        int fromlen = from.length ();
+        int idx = -fromlen,
+        lastidx = 0;
+        
+        StringBuffer newstr = new StringBuffer ();
+        
+        while ( (idx = src.indexOf (from, lastidx)) > -1)
+        {
+            newstr.append (src.substring (lastidx, idx));
+            newstr.append (to);
+            
+            lastidx = idx+fromlen;
+        }
+        if (lastidx == 0) return src;
+        else newstr.append (src.substring (lastidx));
+        
+        return newstr.toString ();
+    }   
 }
