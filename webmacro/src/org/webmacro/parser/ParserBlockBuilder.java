@@ -41,6 +41,9 @@ import org.webmacro.engine.*;
 public class ParserBlockBuilder extends BlockBuilder {
   private int literalMark = 0;
 
+  /** Mark the last character in the block as being a literal (quoted
+   * with backslash) so we don't eat trailing quoted whitespace.
+   */
   final public void markLiteral() {
     literalMark = size();
   } 
@@ -142,7 +145,7 @@ public class ParserBlockBuilder extends BlockBuilder {
       else {
         String s = (String) o;
         char ch = s.charAt(s.length()-1);
-        if (ch == '=' || ch == '\'' || ch == '\"' 
+        if (ch == '=' || ch == '\'' || ch == '\"' || ch == ':'
             || Character.isLetterOrDigit(ch))
           return false;
       }

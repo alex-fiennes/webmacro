@@ -130,4 +130,10 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals(assn + "$s.substring( 1 , 4)", "tri");
       assertStringTemplateEquals(assn + "$s.substring( 1 , 4 )", "tri");
    }
+
+   public void testColor() throws Exception {
+      assertStringTemplateEquals("layer-background-color:#FFFFCC", 
+                                 "layer-background-color:#FFFFCC");
+   }
+
 }

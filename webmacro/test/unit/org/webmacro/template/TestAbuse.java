@@ -123,4 +123,8 @@ public class TestAbuse extends TemplateTestCase {
                   + "#end";
       assertStringTemplateEquals (tmpl, jscript);
    }
+
+   public void testParenSemi() throws Exception {
+      assertSTringTemplateEquals("#set $foo=\"blah\" $(foo);", "blah");
+   }
 }
