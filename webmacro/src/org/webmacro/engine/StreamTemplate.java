@@ -102,9 +102,6 @@ public class StreamTemplate extends WMTemplate
          e.printStackTrace();
       }
 
-      org.webmacro.examples.Test tst = org.webmacro.examples.Test.getTest();
-      context.put("tst", tst);
-
       context.put("helloworld", "Hello World");
       context.put("hello", "Hello");
       context.put("file", "include.txt");
