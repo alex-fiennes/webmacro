@@ -1,17 +1,19 @@
 var org = Packages.org;
-// var wm = new org.webmacro.WM("./conf/WebMacro_locale.properties");
+var CWD="./contrib/Tests/URLTemplateProvider/";
+
+function getTemplate(url) {
+    var url = new java.net.URL("file",null,CWD+url);
+    var t = broker.getValue("template",url.toString());
+    print(t+" "+t.hashCode());
+}
+
+
 var wm = new org.webmacro.WM();
 var broker = wm.getBroker();
 
-var t = wm.getTemplate("file:templates/webmacro/full{_en_GB}.wm");
-print(t+" "+t.hashCode());
-var t = wm.getTemplate("file:templates/webmacro/short{_en_GB}.wm");
-print(t+" "+t.hashCode());
-var t = wm.getTemplate("file:templates/webmacro/short{_en_CN}.wm");
-print(t+" "+t.hashCode());
-var t = wm.getTemplate("file:templates/webmacro/short{_en_GB}.wm");
-print(t+" "+t.hashCode());
-var t = wm.getTemplate("file:templates/webmacro/short{_en_DE}.wm");
-print(t+" "+t.hashCode());
-//wm.getTemplate("file:templates/webmacro/notexist{_en_GB}.wm");
-//wm.getTemplate("./webmacro/include.wm");
+getTemplate("templates/full{_en_GB}.wm");
+getTemplate("templates/short{_en_GB}.wm");
+getTemplate("templates/short{_en_CN}.wm");
+getTemplate("templates/short{_en_DE}.wm");
+
+getTemplate("templates/notexist{_en_GB}.wm");
