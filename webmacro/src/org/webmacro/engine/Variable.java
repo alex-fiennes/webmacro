@@ -80,12 +80,12 @@ abstract class Variable implements Macro
    /**
      * The name of this variable.
      */
-   final protected String _vname;
+   protected String _vname;
 
    /**
      * The name as an array
      */
-   final protected Object[] _names;
+   protected Object[] _names;
 
    /**
      * Create a variable with the supplied name. The elements of the name 

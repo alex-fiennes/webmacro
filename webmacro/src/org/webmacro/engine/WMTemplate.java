@@ -48,7 +48,7 @@ abstract public class WMTemplate implements Template
    /**
      * The resource broker used to resolve things in this template
      */
-   final private Broker _broker;
+   private Broker _broker;
 
    /**
      * What this template contains is a top level block
@@ -58,12 +58,12 @@ abstract public class WMTemplate implements Template
    /**
      *
      */
-   private final String _parserName;
+   private String _parserName;
 
    /**
      * Log
      */
-   private static final Log _log = new Log("tmpl", "Template Processing");
+   private static Log _log = new Log("tmpl", "Template Processing");
 
    /**
      * Template parameters

@@ -119,8 +119,6 @@ public class StreamTemplate extends WMTemplate
          context.put("fruits", fruits);
          context.put("flipper", new TestObject("flip",false));
 
-         context.registerTool("testTool", new TestTool());
-
          System.out.println("- - - - - - - - - - - - - - - - - - - -");
          System.out.println("Context contains: helloWorld, hello, file, TestObject[] fruits, SelectList sl(fruits, 3), TestObject flipper"); 
          System.out.println("- - - - - - - - - - - - - - - - - - - -");
