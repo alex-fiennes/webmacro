@@ -142,9 +142,12 @@ public class URLTemplate extends WMTemplate
     {
         InputStream is = null;
         URL u = null;
+        String defaultEncoding = getDefaultEncoding();
 
         try
         {
+            _inputEncoding = defaultEncoding;
+
             u = new URL(_url, WMConstants.WEBMACRO_LOCAL_FILE);
             _log.debug("Looking for encodings file: "+u);
             Object obj = propertiesCache.get(u);
@@ -160,7 +163,7 @@ public class URLTemplate extends WMTemplate
             _inputEncoding = p.getProperty(WMConstants.TEMPLATE_INPUT_ENCODING);
             if (_inputEncoding == null)
             {
-                _inputEncoding = getDefaultEncoding();
+                _inputEncoding = defaultEncoding;
             }
             _outputEncoding = p.getProperty(WMConstants.TEMPLATE_OUTPUT_ENCODING);
             
