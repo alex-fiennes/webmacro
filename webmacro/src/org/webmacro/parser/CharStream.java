@@ -16,7 +16,7 @@ package org.webmacro.parser;
  * operation.
  */
 
-abstract public interface CharStream {
+public interface CharStream {
 
   /**
    * Returns the next character from the selected input.  The method
