@@ -37,6 +37,9 @@ public class HandlerException extends WebMacroException
       super(reason);
    }
 
+   public HandlerException(String reason, Exception e) { 
+      super(reason, e);
+   }
 }
 
 
