@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>ActionServlet Design Guidelines</title>
+	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
+	<!--#include virtual="vars.inc" -->
+<style>
+<!--
+.shadow {
+	filter: DropShadow(Color=#776699,OffX=3,OffY=3,Positive=1);
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+UL.main	{
+	list-style: none;
+}
+
+UL.sub  {
+	list-style: disc;
+}
+
+H1 {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+
+H3 {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+-->
+</style>
+</head>
+<body>
+<TABLE WIDTH="560" ALIGN="CENTER" BORDER="0"><TR><TD ALIGN=CENTER>
+
+<TABLE WIDTH="90%" CELLPADDING="15" BGCOLOR="Silver"><TR><TD>
+<TABLE ALIGN=CENTER><TR><TD ALIGN=CENTER>
+<STRONG>&quot;Easy mapping of HTTP requests to methods of Java components&quot;</STRONG>
+</TD></TR><TR><TD CLASS="shadow" ALIGN=CENTER>
+<FONT COLOR="Red" SIZE="+3"><FONT SIZE="+4">A</FONT>CTION&nbsp;<FONT SIZE="+4">S</FONT>ERVLET</FONT>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+version 0.8<P>
+
+Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+</TD></TR><TR><TD>
+
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+
+<CENTER><H1>Why use ActionServlet?</H1></CENTER>
+
+<H3>1. Traditional methods</H3>
+
+When you create a web-aware application, you always deal with two things: the <EM>code</EM> (application logic) 
+and the <EM>look&amp;feel</EM> (HTML pages). Traditional approaches use two basic methods:
+
+<OL>
+<LI><B>Code that generates the HTML output</B> - servlets (or CGI scripts etc.), for example:
+
+<PRE>
+public class SimpleServlet extends HttpServlet {
+   public void doGet (HttpServletRequest request, HttpServletResponse response) 
+   throws ServletException, IOException {
+      PrintWriter out;
+
+      response.setContentType("<B>text/html</B>");
+      out = response.getWriter();
+
+      out.println("<B>&lt;HTML&gt;&lt;BODY&gt;</B>");
+      out.println("<B>&lt;H1&gt;This is output from servlet.&lt;/H1&gt;</B>");
+      out.println("<B>&lt;/BODY&gt;&lt;/HTML&gt;</B>");
+      out.close();
+   }
+}</PRE>
+
+<LI><B>Code that is embedded in HTML</B> - JSP (or ASP, PHP etc.), for example:
+
+<PRE>
+&lt;HTML&gt;
+
+&lt;jsp:useBean id="cart" scope="session" class="ShoppingCart"/&gt;
+&lt;jsp:setProperty name="cart" property="*" /&gt;
+&lt;% <B>cart.processRequest(request)</B>; %&gt;
+
+&lt;br&gt; You have the following items in your cart:
+&lt;OL&gt;
+&lt;%
+   <B>String[] items = cart.getItems();
+   for (int i=0; i&lt;items.length; i++) {</B>
+%&gt;
+&lt;li&gt; &lt;%= <B>items[i]</B> %&gt; 
+&lt;%
+   <B>}</B>
+%&gt;
+&lt;/OL&gt;
+
+&lt;/HTML&gt;</PRE>
+</OL>
+
+Both these approaches mix application logic with look&amp;feel, which should be created as quite separate tasks!<P>
+
+<H3>2. Model-View-Controller (MVC)</H3>
+
+Using a template engine like <A HREF="http://www.webmacro.org">WebMacro</A> is undoubtely an advance of
+the programming model comparing - you can separate <EM>Model</EM> (data representation), <EM>View</EM> 
+(HTML template) and <EM>Controller</EM> (manages application flow).<P>
+
+In WebMacro MVC model, there is almost no code in the HTML templates - just the simple WebMacro script, which
+can be easily understood by the web designer, and there is no HTML embedded in the program (servlet) code.<P>
+
+<UL>
+<LI>Servlet code using WebMacro:
+<PRE>
+public class GuestBook extends WMServlet {
+   private Vector book = new Vector();
+
+   public Template handle(WebContext context) throws HandlerException {
+      if ("input".equals(<B>context.getForm("action")</B>)) {
+         // get the form variables
+         String name = (String) <B>context.getForm("name")</B>;    // (1)
+         String email = (String) <B>context.getForm("email")</B>;
+
+         // ...
+
+         <B>context.put("registry", book);</B>                     // (2)
+         <B>return getTemplate("output.wm");</B>                   // (3)
+      }
+   }
+}</PRE>
+<LI>WebMacro HTML template:
+<PRE>
+&lt;html&gt;
+#set $Response.ContentType = "text/html"
+
+&lt;TABLE&gt;
+#foreach $guest in $registry {
+   &lt;TR&gt;
+   &lt;TD&gt;$guest.Name&lt;/TD&gt;
+   &lt;TD&gt;$guest.Email&lt;/TD&gt;
+   &lt;/TR&gt;
+}
+&lt;/TABLE&gt;
+
+&lt;/html&gt;</PRE>
+</UL>
+</BLOCKQUOTE>
+
+The only "ugly" parts (in <B>bold</B>) are the necessities that retrieve parameters values from HTTP request (1), 
+set output $variables (2) and select templates to be displayed (3). "Ugly" means that the code above depends
+on the template and vice versa. Simply, you cannot change parameters or template names without recompiling and 
+you cannot create reusable code easily.
+
+<H3>3. One more level of indirection</H3>
+
+ActionServlet removes the dependencies mentioned above - you can map HTTP requests to methods and pass HTTP 
+parameters values to them, map return values to template names and bind $variables (not on the picture) 
+independently - in the XML configuration file (called <EM>ActionConfig</EM>):
+
+<P><CENTER><IMG SRC="images/auth2.gif" WIDTH=644 HEIGHT=386 BORDER=0 ALT=""></CENTER><P>
+
+With ActionServlet, you can create reusable web components, that do not dependend on the templates and can deal 
+easily with session data, because components can be scoped to session/request/application (like with JSP).<P>
+
+For more advantages see <A HREF="specification.html#usage">Specification: Development using ActionServlet </A>
+
+<P><!--#include virtual="/java/footer.inc" -->
+</TD></TR></TABLE>
+</body>
+</html>
