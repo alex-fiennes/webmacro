@@ -99,6 +99,14 @@ public class RecentChangesAction implements PageAction {
         
         for (int x=0; x<pageNames.length; x++) {
             WikiPage p = wiki.getPage (pageNames[x]);
+            if (p == null) {
+                // HACK:  This should never happen, but it does.
+                // it seems VLH thinks subdirectories inside its store directory
+                // are actually part of its hash.  Probably need to fix VLH
+                wc.getLog("RecentChanges").error ("WikiPage for " + pageNames[x] + " not found in wiki system.  Skipping");
+                continue;
+            }
+
             if (p.getDateLastModifiedAsLong() >= cutoff)
                 pages.add (p);
         }          
