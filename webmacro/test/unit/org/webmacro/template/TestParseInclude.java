@@ -85,17 +85,18 @@ public class TestParseInclude extends TemplateTestCase {
     
     public void testBasicMacros() throws Exception {
         // now execute each one:
-        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+        assertStringTemplateMatches( "#include as macro \"org/webmacro/template/macrosandbox/all.wmm\"\n"
                      + "#hello(\"Brian Goetz & Eric Ridge\")", "Hello, Brian Goetz & Eric Ridge");
 
-        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+        assertStringTemplateMatches( "#include as macro \"org/webmacro/template/macrosandbox/all.wmm\"\n"
                      + "#showVar($nullVar)", "");
 
-        assertStringTemplateMatches( "#include as macro \"allmacros.wmm\"\n"
+        assertStringTemplateMatches( "#include as macro \"org/webmacro/template/macrosandbox/all.wmm\"\n"
                      + "#setVar($foo, \"brian\")\n"
                      + "#showVar($foo)", "brian");
     }
     
+    /** executes out of the standard macro/ distribution. */
     public void testEcommMacros() throws Exception {
       // execute the pay pal eCommerce test case and store the output
       String value = executeFileTemplate("org/webmacro/template/ecomm.wm");

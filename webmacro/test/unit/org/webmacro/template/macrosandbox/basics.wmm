@@ -1,0 +1,14 @@
+#comment {
+  sandbox/basics.wmm 
+  Some elementary macros.
+}
+## hello(arg) A hello message
+#macro hello($who) { Hello, $who }
+
+## setVar(arg1, arg2) make arg1 reference arg2
+#macro setVar($a, $b) { #set $a = $b }
+
+## showVar(arg) shows the argument if it is not null
+#macro showVar($a) { #if ($a) { $a} }
+
+

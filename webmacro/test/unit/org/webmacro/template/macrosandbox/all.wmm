@@ -1,0 +1,6 @@
+#comment {
+  sandbox/all.wmm 
+  Includes all wm macros in the sandbox directory for testing purposes.
+  add at will individual macro files beneath basics.wmm
+}
+#include as macro "org/webmacro/template/macrosandbox/basics.wmm"
