@@ -181,13 +181,13 @@ public class Config implements ResourceProvider
      * Platform dependent line separator required to construct 
      * path names for File
      */
-   static final public String lineSeparator;
-   static {
+   static final public String lineSeparator = getLineSeparator();
+   private static String getLineSeparator() {
       String tempSep = System.getProperty("line.separator");
       if (tempSep == null) {
          tempSep = "\n";
       }
-      lineSeparator = tempSep;
+      return tempSep;
    }
 
    /**
