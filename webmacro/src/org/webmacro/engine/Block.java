@@ -140,6 +140,9 @@ final public class Block implements Macro, Visitable
       return _name;
    }
 
+   public void setTemplateName(String name) {
+      _name = name;
+   }
    public int getLineNo(int i) {
       return (_lineNos != null && _lineNos.length >= i) ? _lineNos[i] : 0;
    }

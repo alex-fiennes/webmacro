@@ -68,7 +68,7 @@ abstract public class WMTemplate implements Template
    /**
      * What this template contains is a top level block
      */
-   private Block _content; 
+   protected Block _content; 
 
    /**
      * Which parser (grammar) is used to parse this template, 

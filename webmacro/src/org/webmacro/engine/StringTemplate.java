@@ -66,8 +66,13 @@ public class StringTemplate extends WMTemplate
        this.templateName = name;
    }
 
+   public void setName(String name) {
+      templateName = name;
+      _content.setTemplateName(name);
+   }
+
     public String getName() {
-        return templateName;
+       return templateName;
     }
 
    /**
