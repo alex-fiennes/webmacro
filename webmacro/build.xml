@@ -141,7 +141,7 @@
     </ant>
   </target>
 
-  <target name="all" depends="clean,prepare,compile,contrib,javadoc,dist,test-unit"/>
+  <target name="all" depends="clean,prepare,compile,javadoc,dist,test-unit"/>
 
   <!--
   <taskdef name="wmtemplates" 
