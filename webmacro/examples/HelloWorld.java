@@ -37,7 +37,7 @@ public class HelloWorld extends WMServlet
      * its put(key,value)method,they become available in the 
      * template as variables named after the key.
      */
-   public void handle(WebContext context) throws HandlerException
+   public Template handle(WebContext context) throws HandlerException
    {
 
       // Put whatever data you like into the context. In
@@ -89,16 +89,17 @@ public class HelloWorld extends WMServlet
       }
 
       // Now that we have done all our processing, it's time to produce 
-      // some output. We take the template we have located, plus the 
-      // context we have built up (potentially different than WebContext)
-      // and we execute the template. This causes WebMacro to write output
-      // to the web browser via the output stream in the HttpResponse 
-      // object (inside WebContext).
-
-      execute(view, context);
+      // some output. We return the template we have created. WebMacro
+      // will automatically execute it for us. If you don't want this 
+      // to happen, you can return "null" instead and WebMacro will 
+      // do nothing--leaving you responsible for what is returned to
+      // the user. You could execute the template yourself if wanted,
+      // giving you a chance to do some post execution cleanup--in 
+      // that case you would do a view.execute(context) here, followed
+      // by whatever you wanted to do, followed by a return null.
+      return view;
 
    }
-
 
 }
 
