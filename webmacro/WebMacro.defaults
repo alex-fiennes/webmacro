@@ -81,7 +81,7 @@ LogTraceExceptions: TRUE
 # can edit this template to customize the way script failures appear
 
 ErrorTemplate: error.wm
-
+ErrorVariable: error
 
 # Set Profile.rate to control the impact of the profiler on your CPU. 
 # Set it to 0 to turn profiling off. Setting it to 1 incurs profiling 

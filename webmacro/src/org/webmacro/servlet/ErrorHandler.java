@@ -26,6 +26,7 @@ import java.util.*;
 import org.webmacro.util.*;
 import org.webmacro.*;
 import org.webmacro.resource.*;
+import org.webmacro.engine.StringTemplate;
 
 /**
   * This handler gets called if a normal handler could not 
@@ -34,9 +35,12 @@ import org.webmacro.resource.*;
   */
 final class ErrorHandler implements Handler
 {
-
-   private Template _errorTmpl = null;
-
+  private static final String DEFAULT_ERROR_TEXT = 
+    "<HTML><HEAD><TITLE>Error</TITLE></HEAD>" 
+    + "<BODY><H1>Error</H1>"
+    + "<HR>$error</BODY></HTML>";
+  
+  private Template _errorTemplate = null;
    /**
      * The default error handler simply returns its template
      * @see TemplateStore
@@ -46,26 +50,24 @@ final class ErrorHandler implements Handler
    public Template accept(WebContext c)
       throws HandlerException 
    {
+     Broker broker = c.getBroker();
+     String templateName;
 
-      if (_errorTmpl == null) {
-         try {
-            String name = (String) c.getBroker().get(
-                  "config", WMServlet.ERROR_TEMPLATE);
-            _errorTmpl = (Template) c.getBroker().get(
-                  "template", name);
-         } catch (Exception e) { } 
-         finally {
-            if (_errorTmpl == null) {
-               try {
-                  _errorTmpl = (Template) c.getBroker().get(
-                     "template", WMServlet.ERROR_TEMPLATE_DEFAULT);
-               } catch (Exception e) {
-                  throw new HandlerException("Could not load error handler");
-               }
-            }
-         }
-      }
-      return _errorTmpl;
+     try {
+       templateName = (String) broker.get("config", WMServlet.ERROR_TEMPLATE);
+     } 
+     catch (NotFoundException e) {
+       templateName = WMServlet.ERROR_TEMPLATE_DEFAULT;
+     }
+
+     try {
+       _errorTemplate = (Template) broker.get("template", templateName);
+     }
+     catch (NotFoundException e) {
+       _errorTemplate = new StringTemplate(broker, DEFAULT_ERROR_TEXT);
+     }
+     
+     return _errorTemplate;
    }
 
    /**

@@ -64,9 +64,10 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
    final static String ERROR_TEMPLATE = "ErrorTemplate";
 
    /**
-     * We put error messages into this variable for the ErrorTemplate
+     * Defaults for error variable and error template
      */
    final static String ERROR_TEMPLATE_DEFAULT = "error.wm";
+   final static String ERROR_VARIABLE_DEFAULT = "error";
    
    /**
      * Log object used to write out messages
@@ -300,10 +301,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       _log.warning(error);
       Handler hand = new ErrorHandler();
       try {
-         context.put(getConfig(ERROR_VARIABLE), error);
+        context.put(getConfig(ERROR_VARIABLE, ERROR_VARIABLE_DEFAULT), 
+                    error);
          tmpl = hand.accept(context);
-      } catch(NotFoundException e2) {
-         _log.error("Could not find error variable in Config", e2);
       } catch(Exception e2) {
          _log.error("Unable to use ErrorHandler", e2);
       }
@@ -380,6 +380,19 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
       throws NotFoundException
    {
       return _wm.getConfig(key);
+   }
+
+   /**
+     * Retrieve configuration information from the "config" provider.
+     * Return specified default if key could not be found
+     */
+   final public String getConfig(String key, String defaultValue) {
+     try {
+       return _wm.getConfig(key);
+     }
+     catch (NotFoundException e) {
+       return defaultValue;
+     }
    }
 
    /**
