@@ -1,7 +1,7 @@
 Note
 ----
-	* JDK 1.1 (or higher), JSDK 2.0 and WebMacro 0.95p1 or 0.97a1 or 0.97
-	  must be installed first
+	* JDK 1.1 (or higher), JSDK 2.0 and WebMacro 0.95p1 or 0.97a1 
+	  or 0.97 or 0.98 must be installed first
 
 	* ..\lib\jaxp.jar and ..\lib\parser.jar are not needed if you are 
 	  using JDK 1.4 (alias Java 2 SDK v1.4) or higher
