@@ -73,16 +73,17 @@ public final class DirectiveDescriptor {
   private static void completeArgs(ArgDescriptor[] args) {
     int j, k;
 
-    for (int i=0; i<args.length; i++) {
+    for (int i=0; i<args.length; i++) 
       args[i].nextArg = nextArg(args, i);
 
+    for (int i=0; i<args.length; i++) {
       switch (args[i].type) {
       case Directive.ArgType_GROUP:
       case Directive.ArgType_CHOICE:
         args[i].children = new int[args[i].subordinateArgs];
         for (j=0, k=i+1; j<args[i].subordinateArgs; j++) {
           args[i].children[j] = k;
-          k = nextArg(args, k);
+          k = args[k].nextArg;
         }
         break;
 
@@ -103,7 +104,9 @@ public final class DirectiveDescriptor {
     boolean valid = true;
     for (int i=0; i<args.length; i++) {
       if (args[i].type == Directive.ArgType_GROUP) {
-        if (args[args[i].children[0]].type != Directive.ArgType_KEYWORD
+        if (args[i].subordinateArgs == 0)
+          valid = false;
+        else if (args[args[i].children[0]].type != Directive.ArgType_KEYWORD
             || args[args[i].children[0]].optional)
           valid = false;
         for (int j=0; j<args[i].subordinateArgs; j++) {
