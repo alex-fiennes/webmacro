@@ -75,4 +75,21 @@ public class ParserBlockBuilder extends BlockBuilder {
     markLiteral();
   }
 
+  final public boolean directiveOk() {
+    if (size() == 0 || size() == literalMark) 
+      return true;
+    else {
+      Object o = elementAt(size() - 1);
+      if (!(o instanceof String))
+        return true;
+      else {
+        String s = (String) o;
+        char ch = s.charAt(s.length()-1);
+        if (ch == '=' || ch == '\'' || ch == '\"' 
+            || Character.isLetterOrDigit(ch))
+          return false;
+      }
+    }
+    return true;
+  }
 }

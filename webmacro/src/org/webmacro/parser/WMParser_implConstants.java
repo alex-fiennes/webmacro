@@ -12,51 +12,55 @@ public interface WMParser_implConstants {
   int _NEWLINE = 6;
   int _WHITESPACE = 7;
   int _QCHAR = 8;
-  int _COMMENT = 9;
-  int STUFF = 10;
-  int BEGIN = 11;
-  int END = 12;
-  int LBRACE = 13;
-  int RBRACE = 14;
-  int COMMENT = 16;
-  int DOLLAR = 17;
-  int QCHAR = 18;
-  int SLASH = 19;
-  int POUND = 20;
-  int QUOTE = 21;
-  int NULL = 22;
-  int TRUE = 23;
-  int FALSE = 24;
-  int WORD = 25;
-  int WS = 26;
-  int NEWLINE = 27;
-  int LPAREN = 28;
-  int RPAREN = 29;
-  int LBRACKET = 30;
-  int RBRACKET = 31;
-  int DOT = 32;
-  int OP_LT = 33;
-  int OP_LE = 34;
-  int OP_GT = 35;
-  int OP_GE = 36;
-  int OP_EQ = 37;
-  int OP_SET = 38;
-  int OP_NE = 39;
-  int OP_PLUS = 40;
-  int OP_MINUS = 41;
-  int OP_MULT = 42;
-  int OP_DIV = 43;
-  int OP_AND = 44;
-  int OP_OR = 45;
-  int OP_NOT = 46;
-  int COMMA = 47;
-  int NUMBER = 48;
-  int OTHER = 49;
-  int QS_TEXT = 50;
+  int _RESTOFLINE = 9;
+  int _COMMENT = 10;
+  int STUFF = 11;
+  int BEGIN = 12;
+  int END = 13;
+  int LBRACE = 14;
+  int RBRACE = 15;
+  int POUNDPOUND = 17;
+  int RESTOFLINE = 18;
+  int COMMENT_ELSE = 19;
+  int DOLLAR = 20;
+  int QCHAR = 21;
+  int SLASH = 22;
+  int POUND = 23;
+  int QUOTE = 24;
+  int NULL = 25;
+  int TRUE = 26;
+  int FALSE = 27;
+  int WORD = 28;
+  int WS = 29;
+  int NEWLINE = 30;
+  int LPAREN = 31;
+  int RPAREN = 32;
+  int LBRACKET = 33;
+  int RBRACKET = 34;
+  int DOT = 35;
+  int OP_LT = 36;
+  int OP_LE = 37;
+  int OP_GT = 38;
+  int OP_GE = 39;
+  int OP_EQ = 40;
+  int OP_SET = 41;
+  int OP_NE = 42;
+  int OP_PLUS = 43;
+  int OP_MINUS = 44;
+  int OP_MULT = 45;
+  int OP_DIV = 46;
+  int OP_AND = 47;
+  int OP_OR = 48;
+  int OP_NOT = 49;
+  int COMMA = 50;
+  int NUMBER = 51;
+  int OTHER = 52;
+  int QS_TEXT = 53;
 
   int QS = 0;
-  int WM = 1;
-  int DEFAULT = 2;
+  int COMMENT = 1;
+  int WM = 2;
+  int DEFAULT = 3;
 
   String[] tokenImage = {
     "<EOF>",
@@ -68,14 +72,17 @@ public interface WMParser_implConstants {
     "<_NEWLINE>",
     "<_WHITESPACE>",
     "<_QCHAR>",
+    "<_RESTOFLINE>",
     "<_COMMENT>",
     "<STUFF>",
     "\"#begin\"",
     "\"#end\"",
     "\"{\"",
     "\"}\"",
-    "<token of kind 15>",
-    "<COMMENT>",
+    "<token of kind 16>",
+    "\"##\"",
+    "<RESTOFLINE>",
+    "<COMMENT_ELSE>",
     "\"$\"",
     "<QCHAR>",
     "\"\\\\\"",

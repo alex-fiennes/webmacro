@@ -21,6 +21,7 @@ public class WMParser_impl {
     broker = b;
   }
 
+  // Standalone test harness
   public static void main(String[] args) throws Exception {
     WM wm = new WM();
     Broker broker = wm.getBroker();
@@ -36,14 +37,17 @@ public class WMParser_impl {
        Object names[] = { "prop" };
        context.setProperty(names, "Example property");
        Block b = (Block) bb.build(new BuildContext(broker,encoding));
-       // Dumper d = new Dumper();
-       // b.accept(d);
+       //Dumper d = new Dumper();
+       //b.accept(d);
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();
     }
   }     
   
+
+  // JavaCC hack for doing lexical state transitions syntactically
+
   void SetState(int state) {
     while (token.next != null) {
       Token t = token;
@@ -62,6 +66,7 @@ public class WMParser_impl {
 PARSER_END(WMParser_impl)
 
 TOKEN_MGR_DECLS : {
+  // Required by SetState
   void backup(int n) { input_stream.backup(n); }
 }
 
@@ -90,8 +95,26 @@ TOKEN_MGR_DECLS : {
   WM:      We are in this state when we are parsing a WM directive. 
   QS:      We are in this state when we are parsing a quoted string in
            an WM directive.  
- 
+  COMMENT: We are in this state when we are parsing a comment
+
+  If there are any state dependencies, productions are tagged with comments
+  indicating this.  
+  "State: X" means that the rule expects to be in state X on entry and is 
+  in state X on exit.  
+  "State: X->Y" means that the rule expects to be in state X on entry and
+  is in state Y on exit.  
+  "State: preserved" means that there are not state dependencies.   
+
+  This parser also uses some JAVACODE productions, to account for the fact
+  that directives are pluggable.  Directives and directive arguments are 
+  parsed with JAVACODE productions. 
+
  */
+
+
+/* ***************** */
+/* Token Definitions */
+/* ***************** */
 
 <*> TOKEN : {
   <#_ALPHA_CHAR: ["a"-"z", "A"-"Z"] >
@@ -102,7 +125,8 @@ TOKEN_MGR_DECLS : {
 | <#_NEWLINE:    ( "\r\n" | "\r" | "\n" ) >
 | <#_WHITESPACE: ( " " | "\t" ) >
 | <#_QCHAR:      ( "\\" (<_NEWLINE> | ~["a"-"z", "A"-"Z", "0"-"9"] ) ) >
-| <#_COMMENT:    "##" (~["\r", "\n"])* >
+| <#_RESTOFLINE: (~["\r", "\n"])* >
+| <#_COMMENT:    "##" <_RESTOFLINE> >
 }
 
 <DEFAULT> TOKEN : {
@@ -118,7 +142,12 @@ TOKEN_MGR_DECLS : {
 }
 
 <DEFAULT> TOKEN : {
-  <COMMENT:   <_COMMENT>>
+  <POUNDPOUND: "##">
+}
+
+<COMMENT> TOKEN : {
+  <RESTOFLINE: <_RESTOFLINE>>
+| <COMMENT_ELSE: ~[]>
 }
 
 <DEFAULT, WM, QS> TOKEN : {
@@ -128,7 +157,7 @@ TOKEN_MGR_DECLS : {
 }
 
 <DEFAULT, WM> TOKEN : {
-  <POUND:     "#">
+  <POUND:      "#">
 }
 
 <WM, QS> TOKEN : {
@@ -170,21 +199,17 @@ TOKEN_MGR_DECLS : {
   <QS_TEXT:      (~["\"", "$", "\r", "\n", "\\"])+>
 }
 
-/* 
- 
-  This parser also uses some JAVACODE productions, to account for the fact
-  that directives are pluggable.  Directives and directive arguments are 
-  parsed with these JAVACODE productions. 
 
- */
+/* ********************* */
+/* Lookahead Productions */
+/* ********************* */
 
-
-// Lookahead productions
+/* Used by JAVACODE productions to do lookahead.  
+   All lookahead productions assume state WM */
 
 // is the next thing a subdirective? 
 JAVACODE
-Subdirective 
-lookahead_subdirective(Subdirective[] subdirectives) {
+Subdirective lookahead_subdirective(Subdirective[] subdirectives) {
   int n=1;
   if (getToken(n).kind == WS)            ++n;
   if (getToken(n).kind == NEWLINE)       ++n;
@@ -201,8 +226,7 @@ lookahead_subdirective(Subdirective[] subdirectives) {
 
 // is the next thing the specified keyword? 
 JAVACODE
-boolean 
-lookahead_keyword(String keyword) {
+boolean lookahead_keyword(String keyword) {
   int n=1;
   if (getToken(n).kind == WS)
     ++n;
@@ -214,11 +238,17 @@ lookahead_keyword(String keyword) {
 }
 
 
-//parse_arg -- parses a directive argument and returns it.  If the 
+/* ************************** */
+/* Directive Argument Parsing */
+/* ************************** */
+
+/* All argument parsing productions assume state WM */
+
+// parse_arg -- parses a directive argument and returns it.  If the 
 // argument is optional and omitted, it returns null, otherwise will
 // throw a parse exception
-//State information: expects WM, returns in WM
-JAVACODE
+
+JAVACODE 
 Object parse_arg(ArgDescriptor arg) {
   switch (arg.type) {
   case Directive.ArgType_CONDITION:
@@ -269,12 +299,13 @@ Object parse_arg(ArgDescriptor arg) {
   return null;
 }
 
-//parse_group -- parses a group of arguments.  If the group is optional, 
+// parse_arg_group -- parses a group of arguments.  If the group is optional, 
 // it looks ahead for the group's starting keyword, returning false if the
 // group is not seen.  
+
 JAVACODE
-boolean parse_group(ArgDescriptor[] args, int i, 
-                    DirectiveArgs da) 
+boolean parse_arg_group(ArgDescriptor[] args, int i, 
+                         DirectiveArgs da) 
   throws BuildException {
   if (args[i].optional) 
     if (!lookahead_keyword(args[i+1].keyword))
@@ -286,9 +317,8 @@ boolean parse_group(ArgDescriptor[] args, int i,
   return true;
 }
 
-
 //parse_args -- parse a whole directive's worth of arguments 
-//State information -- expects WM, returns WM
+
 JAVACODE 
 void parse_args(ArgDescriptor[] args, DirectiveArgs da) {
   try {
@@ -296,7 +326,7 @@ void parse_args(ArgDescriptor[] args, DirectiveArgs da) {
       ArgDescriptor arg = args[i];
 
       if (arg.type == Directive.ArgType_GROUP) {
-        boolean parsed = parse_group(args, i, da);
+        boolean parsed = parse_arg_group(args, i, da);
         if (!parsed || !arg.repeating)
           i += 1 + arg.subordinateArgs;
       }
@@ -315,7 +345,12 @@ void parse_args(ArgDescriptor[] args, DirectiveArgs da) {
 }
 
 
-// State information: On entry, expect WM; on exit, DEFAULT
+/* ***************** */
+/* Directive Parsing */
+/* ***************** */
+
+/* Parses all of a directive's arguments.  Assumes state WM.  */
+
 JAVACODE
 DirectiveBuilder parse_directive(String directive) throws ParseException {
   DirectiveBuilder db=null;
@@ -355,17 +390,11 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
   }
   OptionalWs();
     
-  SetState(DEFAULT);
   return db;
 }
 
-Token RelOp() : { 
-  Token t;
-}
-{
-  ( t=<OP_EQ> | t=<OP_NE> | t=<OP_GT> | t=<OP_GE> | t=<OP_LE> | t=<OP_LT> )
-  { return t; }
-}
+
+/* Utility productions used by above JavaCode productions (State: WM) */
 
 void OptionalWsNl() : {
 }
@@ -378,6 +407,16 @@ void OptionalWs() : {
 {
   [ <WS> ] 
 }
+
+void SubdirectiveStart() : {
+}
+{ 
+  OptionalWsNl() <POUND> <WORD> [ <WS> ] 
+}
+
+
+/* Productions used by JavaCode productions to parse directive arguments. 
+   Correpond mostly to the defined argument types.  (State: WM) */
 
 Builder LValue() : {
   Builder lv;
@@ -441,6 +480,13 @@ Object Conditional() : {
 }
 
 
+/* ******************* */
+/* Variable References */
+/* ******************* */
+
+/* Productions used in WM variable references.  State: WM.  */
+
+// Used by VariableReference; shouldn't be used outside it
 void VariableReferenceGuts(Vector v) : {
   Token t;
   Object element;
@@ -456,7 +502,6 @@ void VariableReferenceGuts(Vector v) : {
   )*  
 }
 
-// State information: Expects WM
 Builder VariableReference() : {
   Vector v = new Vector();
 }
@@ -472,7 +517,15 @@ Builder VariableReference() : {
   }
 }
 
-// State information: state is preserved
+
+/* ********************** */
+/* Expression Productions */
+/* ********************** */
+
+/* Productions used in parsing WM expressions.  State: WM.  
+   Most general expression type is Expression() */
+
+// State: preserved
 Builder QuotedString() : {
   int entryState = token_source.curLexState;
   Token t;
@@ -492,16 +545,6 @@ Builder QuotedString() : {
   { return qs; }
 }
 
-
-ListBuilder BracketList() : {
-  ListBuilder list;
-}
-{
-  <LBRACKET> [<WS>] list=ArgList() <RBRACKET> 
-  { return list; }
-}
-
-
 ListBuilder ArgList() : {
   ListBuilder list = new ListBuilder();
   Object e;
@@ -513,6 +556,39 @@ ListBuilder ArgList() : {
     ) * 
   ] 
   { return list; }
+}
+
+ListBuilder BracketList() : {
+  ListBuilder list;
+}
+{
+  <LBRACKET> [<WS>] list=ArgList() <RBRACKET> 
+  { return list; }
+}
+
+
+Object Term() : {
+  Object e;
+  Token t;
+}
+{
+  ( 
+    e=VariableReference() 
+    | <LPAREN> e=Expression() <RPAREN>
+    | e=QuotedString()
+    | e=BracketList() 
+    | <NULL>           { e = null; } 
+    | <TRUE>           { e = Boolean.TRUE; } 
+    | <FALSE>          { e = Boolean.FALSE; }
+    | <OP_NOT>e=Term() { e = new Expression.NotBuilder(e); }
+    | t=<NUMBER>           
+      { try { e = new Long(t.image); } 
+        catch (NumberFormatException ex) { e=null; } }
+    | <OP_MINUS>t=<NUMBER> 
+      { try { long l = Long.parseLong(t.image); e = new Long(-l); }
+        catch (NumberFormatException ex) { e=null; } }
+  ) 
+  { return e; }
 }
 
 Object Factor() : {
@@ -553,6 +629,14 @@ Object AExpression() : {
     else 
       throw new ParseException("internal parser error in AExpression()");
   }
+}
+
+Token RelOp() : { 
+  Token t;
+}
+{
+  ( t=<OP_EQ> | t=<OP_NE> | t=<OP_GT> | t=<OP_GE> | t=<OP_LE> | t=<OP_LT> )
+  { return t; }
 }
 
 Object CExpression() : {
@@ -605,32 +689,44 @@ Object Expression() : {
   e=BExpression() { return e; }
 }
 
-Object Term() : {
-  Object e;
+
+/* ********************** */
+/* WM Content Productions */
+/* ********************** */
+
+/* All of the following operate in the DEFAULT state */
+
+// Parses an entire directive.  Treats # as text if the previous character
+// is a letter, digit, or certain special characters (=, ', ")
+void Directive(ParserBlockBuilder b) : {
   Token t;
+  Object o;
 }
 {
-  ( 
-    e=VariableReference() 
-    | <LPAREN> e=Expression() <RPAREN>
-    | e=QuotedString()
-    | e=BracketList() 
-    | <NULL>           { e = null; } 
-    | <TRUE>           { e = Boolean.TRUE; } 
-    | <FALSE>          { e = Boolean.FALSE; }
-    | <OP_NOT>e=Term() { e = new Expression.NotBuilder(e); }
-    | t=<NUMBER>           
-      { try { e = new Long(t.image); } 
-        catch (NumberFormatException ex) { e=null; } }
-    | <OP_MINUS>t=<NUMBER> 
-      { try { long l = Long.parseLong(t.image); e = new Long(-l); }
-        catch (NumberFormatException ex) { e=null; } }
+  <POUND>
+  { SetState(WM); } 
+  ( LOOKAHEAD(<WORD>, { b.directiveOk() } ) 
+       t=<WORD> [ <WS> ] o=parse_directive(t.image) 
+       { b.eatTrailingWsNl(); b.addElement(o); }
+    | { b.addElement("#"); }
   ) 
-  { return e; }
+  { SetState(DEFAULT); }
 }
 
-  
-// State information: assumes DEFAULT; returns in DEFAULT
+// Parses an entire directive.  Treats ## as text if the previous character
+// is a letter, digit, or certain special characters (=, ', ")
+void Comment(ParserBlockBuilder b) : {
+}
+{
+  <POUNDPOUND>
+  { SetState(COMMENT); } 
+  ( LOOKAHEAD( { b.directiveOk() } ) 
+      [ <RESTOFLINE> ] { b.eatTrailingWsNl(); }
+    | { b.addElement("##"); }
+  ) 
+  { SetState(DEFAULT); }
+}
+
 void WMContent(ParserBlockBuilder b) : {
   Token t;
   Object o;
@@ -639,14 +735,13 @@ void WMContent(ParserBlockBuilder b) : {
   ( t=<STUFF>       { b.addElement(t.image); }
     | t=<QCHAR>     { b.addElement(t.image.substring(1)); b.markLiteral(); }
     | t=<SLASH>     { b.addElement(t.image); }
-    | <POUND> { SetState(WM); } 
-          t=<WORD> [ <WS> ] o=parse_directive(t.image) 
-          { b.eatTrailingWsNl(); b.addElement(o); }
+    | Directive(b) 
+    | Comment(b)
     | LOOKAHEAD(<DOLLAR>) 
           { SetState(WM); } 
           o=VariableReference() 
           { b.addElement(o); SetState(DEFAULT); }
-  ) [ <COMMENT> { b.eatTrailingWsNl(); } ]
+  ) 
 }
 
 void LiteralWMContent(ParserBlockBuilder b) : {
@@ -655,16 +750,9 @@ void LiteralWMContent(ParserBlockBuilder b) : {
 {
   ( 
     t=<QCHAR> { b.addElement(t.image.substring(1)); }
-    | ( t=<STUFF> | t=<SLASH> | t=<POUND> | t=<DOLLAR> | t=<COMMENT> )
+    | ( t=<STUFF> | t=<SLASH> | t=<POUND> | t=<DOLLAR> | t=<POUNDPOUND> )
       { b.addElement(t.image); }
   )
-}
-
-// State: Assumes WM
-void SubdirectiveStart() : {
-}
-{ 
-  OptionalWsNl() <POUND> <WORD> [ <WS> ] 
 }
 
 BlockBuilder LiteralBlock() : {
@@ -687,7 +775,6 @@ BlockBuilder LiteralBlock() : {
   )
   { return block; }
 }
-
 
 BlockBuilder Block() : {
   ParserBlockBuilder block = new ParserBlockBuilder();
