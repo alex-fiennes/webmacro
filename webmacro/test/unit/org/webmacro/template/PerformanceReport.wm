@@ -8,22 +8,28 @@ Usage: This is a report to catch snapshot performance of
 typical webmacro operations.
 -->
 <head>
-<title>WebMacro Peformance Area Report</title>
+<title>WebMacro Peformance Spectrum Report</title>
 <STYLE TYPE="text/css">
-BODY, TABLE, TD, TH, P, H3, H4, H5 {font: 12px Arial; color: #000000;}
+BODY, TABLE, TD, P, H3, H4, H5 {font: 12px Arial; color: #000000;}
+H2 {font: 14px; color:#666666}
 </style>
 </head>
-<body>
+<body bgcolor="#FFFFFF">
 
-<table align=center>
-<tr><th align=center bgcolor="#C0C0C0">Current Performance Report</th></tr>
-
-<td>
 
 ##
 ## data table here:
-
-<table>
+<center><h2>WebMacro Peformance Spectrum Report</h2></center>
+<table width=600 cellpadding=4 cellspacing=4 align=center>
+<tr>
+<td colspan=2>
+All tests are open source under the WM license and are freely
+available for inspection under the test tree of the cvs
+repository.
+<p>
+See org.webmacro.template.TestPerformanceAreas.java for
+the top-level test case.
+</td>
 <tr>
 <td>WebMacro Build Tested</td><td>CVS Version</td>
 </tr>
@@ -39,10 +45,34 @@ BODY, TABLE, TD, TH, P, H3, H4, H5 {font: 12px Arial; color: #000000;}
 <tr>
 <td>Host Description</td>
 <td>
-$SystemProperty.get("java.vm.vendor") 
-$SystemProperty.get("java.runtime.version")
-$SystemProperty.get("os.arch")
-Total Memory=$TotalMemory (MB)
+$SystemProperty.get("java.vm.vendor")
+<br>$SystemProperty.get("java.runtime.version")
+<br>$SystemProperty.get("os.arch")
+<br>Total Memory=$TotalMemory (MB)
+</td>
+</tr>
+
+<tr>
+<td>
+<center><H2>Comparative Analysis: Accessor/Mutator methods versus Public Member</H2></center>
+<p>
+It is well-known that someInstance.getMember(Object)
+incurs a performance cost for method invocation
+versus memory reference to a public (or package protected)
+variable as in someInstance.someAccessibleVariable.
+<p>
+The question is "how much?".
+<p>
+The following statistics show how much for 
+the jvm, $SystemProperty.get("java.runtime.version"),	
+running on the $SystemProperty.get("os.arch") architecture 
+in both a pure java environment and under introspection resolution with the
+WM introspection engine.
+<p>
+The test showing both Iteration Count and Total Elapsed Time
+allow you to conclude throughput (operations per unit of time)
+and comparative speed of one case verus the other
+(total operations / total time).
 </td>
 </tr>
 
@@ -58,26 +88,35 @@ Total Memory=$TotalMemory (MB)
 <td>Total Elapsed Time in Millis: Java Method Accesors (Get/Set)</td><td>$TETPrivateAccess</td>
 </tr>
 
+<tr>
+<td>
+<center><H2>WM Template Comparative Analysis</H2></center>
+<p>
+The following tests perform access via introspection
+in a WebMacro template. WM introspection first looks
+for a method signature and then a public member. 
+</td>
+</tr>
+
+<tr>
+<td>Iteration Count</td><td>$IterationCount</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis: Template Introspection 
+Resolving to Public Member</td>
+<td>$WMTETPublicAccess</td>
+</tr>
+
+<tr>
+<td>Total Elapsed Time in Millis: Template Introspection
+Resolving to Method Access (Get/Set)</td>
+<td>$WMTETPrivateAccess</td>
+</tr>
 
 </table>
 ## end data table
 
-</td></tr></table>
-
-<hr>
-
-<table align=center>
-<tr><th align=center bgcolor="#C0C0C0">Historical Performance Values
-<br><a href="mailto:lane@opendoors.com">Baseline Mediator and Overlord</a>
-</th></tr>
-<td>
-
-## the following table is created by viewing the html output.
-## paste in the html when you are convinced it has historical value.
-## if it does, paste it in here and commit to cvs!
-
-
-</td></tr></table>
 
 </body></html>
 

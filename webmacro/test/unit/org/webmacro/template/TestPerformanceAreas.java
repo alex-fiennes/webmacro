@@ -10,7 +10,9 @@ import org.webmacro.*;
  * <p>
  * This test produces its output using PerformanceReport.wm as a template
  * and outputs the result to PerformanceReport.html.
- * A very vanilla template, PerformanceOperations.wm, contains the WM operations.
+ * A very vanilla template, TemplateOperations.wm, contains the WM 
+ * operations and this template works in conjunction with 
+ * TemplateOperations.java. 
  */
 public class TestPerformanceAreas extends TemplateTestCase {
 
@@ -23,6 +25,7 @@ public class TestPerformanceAreas extends TemplateTestCase {
   // the report variables.
   long tetPublicAccess;
   long tetPrivateAccess;
+  PerformanceOperations po;
   
   public TestPerformanceAreas (String name) {
     super (name);
@@ -39,6 +42,8 @@ public class TestPerformanceAreas extends TemplateTestCase {
         protected void runTest() throws Exception {
           this.iterationCount = _wm.getBroker().getIntegerSetting("TestPerformanceAreas.IterationCount", this.iterationCount);
           this.testPublicVersusAccessor();
+          po = new PerformanceOperations(iterationCount);
+          po.run();
           report();
         }
       }
@@ -71,9 +76,9 @@ public class TestPerformanceAreas extends TemplateTestCase {
     start = System.currentTimeMillis();
     for (long index = 0; index < iterationCount; index++) {
       value = pub.value; // the get
-      pub.value = index; // the set
-      object = pub.object;
-      pub.object  = this;
+      object = pub.object; // the get
+      pub.object  = this; // the set
+      pub.value = index;
  
     }
     tetPublicAccess = System.currentTimeMillis() - start;
@@ -82,9 +87,9 @@ public class TestPerformanceAreas extends TemplateTestCase {
     start = System.currentTimeMillis();
     for (long index = 0; index < iterationCount; index++) {
       value = priv.getValue(); // the get
-      priv.setValue(index); // the set
       object = priv.getObject();
       priv.setObject(this);
+      priv.setValue(index);
     }
     tetPrivateAccess = System.currentTimeMillis() - start;
     
@@ -92,9 +97,14 @@ public class TestPerformanceAreas extends TemplateTestCase {
 
   /** A webmacro report sent to LoadReport.html. */
   protected void report() throws Exception {
+    context.put("Today", new java.util.Date());
+    context.put("SystemProperty", System.getProperties());
+    context.put("TotalMemory", Runtime.getRuntime().totalMemory()/1024);
     context.put("IterationCount", iterationCount);
     context.put("TETPublicAccess", tetPublicAccess);
     context.put("TETPrivateAccess", tetPrivateAccess);
+    context.put("WMTETPublicAccess", po.tetPublicAccess);
+    context.put("WMTETPrivateAccess", po.tetPrivateAccess);
     String report = executeFileTemplate(reportName);
    	PrintWriter p = new PrintWriter( new FileOutputStream("PerformanceReport.html") );
    	p.write(report);
@@ -103,16 +113,4 @@ public class TestPerformanceAreas extends TemplateTestCase {
 
 }
 
-class PublicValue {
-    public long value;
-    public Object object;
-}
 
-class PrivateValue {
-    private long value;
-    private Object object;
-    public long getValue() { return value; }
-    public void setValue(long value) { this.value = value; }
-    public Object getObject() { return object; }
-    public void setObject(Object object) { this.object = object; }
-}

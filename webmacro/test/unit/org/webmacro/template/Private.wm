@@ -1,0 +1,7 @@
+## Public.wm
+## Iterates through an object accessing the members which are public.
+#foreach $element in $PrivateList {
+  #set $value = $element.Value
+  #set $object = $element.Object
+  #set $element.Object = $object
+}
