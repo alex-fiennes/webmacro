@@ -1,0 +1,241 @@
+<html><head>
+<meta name="description" value="WebMacro: Answers to Frequently Asked Questions">
+<meta name="keywords" value="webmacro servlet framework, webmacro script language, webmacro, web macro, servlet, java, template, script, java servlet, html template, web programming , web development, generating html, developer, programming, development">
+
+<title>WebMacro Java Servlet Framework: Frequently Asked Questions</title>
+
+</head>
+
+<body bgcolor="white"><blockquote>
+<h1><font color="green">WebMacro: Frequently Asked Questions</font></h1>
+
+This document answers some questions which are commonly asked on the 
+mailing list. Hopefully you'll find the answers you're looking for 
+here, or elsewhere in the documentation.
+<p>
+If not, please join the mailing list and ask! That's how answers 
+wind up being in this FAQ. The mailing list is also the best place 
+to suggest new features, talk about interesting uses of WebMacro, 
+and debug problems you're having.
+<p>
+You can join the mailing list <a href="http://lists.semiotek.com/mailman/listinfo/webmacro">here</a>.
+
+
+<h3><font color="green">What is WebMacro?</font></h3>
+
+WebMacro is a free Java servlet development framework, including
+a template language and extensible component model. It uses beans
+and introspection to make any Java object in your servlet accessible
+in your template.
+<p>
+The big idea is that HTML and other layout information should not 
+appear in your program code; and program code should not appear 
+in your HTML: 
+<p>
+WebMacro allows programmers to implement functionality 
+with traditional objects and data structures, paying little or no 
+attention to formatting issues.
+<p>
+Page designers then use WebMacro's template language to build standard
+looking HTML pages, with format-oriented script codes (variables, loops,
+conditionals) that have full access to the data structures created by 
+the programmer.
+<p>
+
+<h3><font color="green">Where do I find help?</font></h3>
+
+Use the mailing list for bug reports, feature suggestions, comments, 
+criticisms, or any other feedback. Other users may be able to help you, 
+and the developers are on the list if not. 
+<p>
+To join the list just <a href="http://lists.semiotek.com/mailman/listinfo/webmacro">visit our listserv</a> and add yourself.
+<p>
+Commercial users may also purchase support, along with a commercial license,
+if support beyond that provided by the mailing list is inadequate. However,
+the mailing list is pretty good.
+
+
+<h3><font color="green">Why should I join the mailing list?</font></h3>
+
+If you're using WebMacro we really want to hear from you--you'll become our
+best resource: we want to know what works well, and we especially want to
+know what doesn't work. You must have some ideas about how it could be 
+improved, and you've probably noticed a few bugs.
+<p>
+If you don't report them, we can't fix them! And if you have a good idea 
+that you don't tell us about--how are we supposed to implement it?
+<p>
+We also use the mailing list to post announcements, and hold votes on 
+features or the direction WebMacro should go.
+<p>
+To join the mailing list <a href="http://lists.semiotek.com/mailman/listinfo/webmacro">add yourself here</a>.
+
+
+
+<h3><font color="green">How much does it cost?</font></h3>
+
+WebMacro is free under the GNU Public License. 
+<p>
+Commercial use licenses are available for a fee for people who are
+unable to work with the GPL--this non-free license will entitle
+you to distribute binary only versions of your software.
+<p>
+To learn more about the WebMacro license, <a href="License.html">look here.</a>.
+
+<h3><font color="green">Why is it free?</font></h3>
+
+We've used free software extensively in our business, and we thought it
+was high time we gave something back. Releasing WebMacro to the world 
+makes me feel good about myself.
+<p>
+In addition, it makes good business sense. Semiotek is a small company
+without a large marketing department. We live off contract work, and 
+needed a way to get some more exposure. Releasing WebMacro
+does that for us--we're hoping people will like it so much, they come and 
+hire us to use it.
+<p>
+Finally, it'll improve the product we use for our regular work.
+We've got a growing mailing list full of people using WebMacro for
+their own work--regularly sending in feature suggestions, code
+reviews, and bug reports.
+<p>
+So in my opinion, the open-source route is a big win all around: I get 
+to feel good about life, Semiotek gets some badly needed PR, WebMacro
+gains market share and beta testers, and you get WebMacro for free! 
+<p>
+
+<h3><font color="green">Who wrote it?</font></h3>
+
+WebMacro was designed and implemented primarily by Justin Wells at
+Semiotek Inc.; initially with a lot of help from Yuen-Ping Leung. The
+people on the mailing list also deserve a lot of credit as well: many
+of the design ideas, and a large number of bug fixes, are due to 
+helpful list members! WebMacro's README gives them better credit.
+<p>
+Semiotek Inc. is a consulting company in Toronto, Ontario. We work 
+primiarliy with large OO web projects, especially in Java. If you 
+have some web design or programming you need done, perhaps using
+WebMacro, you might contact us: 
+<a href="mailto:info@semiotek.com">info@semiotek.com</a>
+
+
+<h3><font color="green">How do I contact you?</font></h3>
+
+Use the mailing list for support, feature requests, bug reports, general 
+queries about WebMacro, and so forth--we read it!  However for
+other issues, such as acquiring a different license (if the
+GPL is not acceptable to you), information about Semiotek Inc., 
+services, etc., you should contact us via the general address: 
+<a href="mailto:info@webmacro.org">info@webmacro.org</a>
+
+<h3><font color="green">I can't get the WebMacro examples to work</font></h3>
+
+<ul>
+<li>Be sure that you have compiled them. They are not in the WebMacro.jar
+    file and are shipped as source code. Once compiled, they must be in 
+    your classpath.<p>
+
+<li>Be sure that the webmacro.properties file is in your classpath, and
+    that you have edited it to contain the correct values. It is sometimes
+    confusing to know what CLASSPATH to use--put the properties file in
+    the same place you put webmacro.jar<p>
+
+<li>Check your classpath carefully. Most problems with WebMacro are 
+    either incorrect paths in the webmacro.properties file, or else 
+    incorrect classpaths.<p>
+
+<li>Under NT: The \ character does not behave as expected in a Java
+   properties file.  Instead of being a file separator, it is the
+   escape character. You either have to use the Unix style / character,
+   or escape the \ (by doubling it) to name a path in webmacro.properties.
+   Thus the path C:\webmacro\examples should be written either as
+   C:/webmacro/examples or as C:\\webmacro\\examples<p>
+
+<li>Make sure you have JDK 1.1.6 or later. In particular, bugs in 
+    JDK 1.1.3 prevent WebMacro from functioning correctly on NT and
+    some other platforms.
+
+<li>The GuestBook example should work as a traditional servlet. The
+    configuration for TestWM is trickier and requires you to register
+    Reactor as the servlet for the TestWM URL.
+
+</ul>
+
+<h3><font color="green">I have trouble compiling the WebMacro sources</font></h3>
+
+First, you need to have at least JDK 1.1.6 to compile WebMacro. 
+<p>
+Second, you cannot use javac under JDK 1.1.6 and 1.1.7 since it has 
+some bugs (with respect to final and static variables). Instead, use 
+the jikes compiler which is freely available from IBM. 
+<a href="Links.html">Check here</a> for a link to jikes.
+<p>
+Third, to compile WebMacro under Java2 you will have to edit the 
+sources to fix minor incompatibilities. I have mirrored some of
+the Java2 classes to make a future migration easier--in particular,
+the classes in com/semiotek/util/java2 must be deleted to avoid 
+conflicts with the built in collection API.
+
+<h3><font color="green">Why don't updates to my templates show up in the running version?</font></h3>
+
+Edit your WebMacro.properties file and set the cache expire time for
+templates to zero. This will seriously degrade performance, but prove
+invaluable during development. Set it back to 10min or so for 
+production use. Note the expire clock is reset each time that
+the template is accessed. 
+<p>
+There is no way to do this prior to version 0.85.
+
+
+<h3><font color="green">What about syntax highlighting editors?</font></h3>
+
+If you use EMACS, <a href="http://www.webmacro.org/contrib/webmacro.elisp">try this</a>, it
+will highlight WebMacro directives in templates.
+<p>
+
+<h3><font color="green">Can I use JavaScript in a WebMacro template?</font></h3>
+
+Yes. However, to avoid conflicts with WebMacro's braces you must put 
+your JavaScript in a #use block, like this:
+<br>
+<pre>
+  #use 'text' until end
+    Javascipt here will not be parsed, { and } are safe
+  end
+</pre>
+<br>
+WebMacro will not attempt to parse anything between the start of 
+the #use directive and the matching 'end' statement. 
+<p>
+You only need to do this for blocks of JavaScript which include 
+{, }, #, or $ characters which are meaningful to WebMacro.
+
+<h3><font color="green">Under WebMacro 0.75.3 and earlier I get errors in the log 
+    indicating a problem with UserDB</font></h3>
+
+Ignore them. UserDB is a prototype class that is broken under 0.75.3, and
+not actually used by any of the example code. To turn these errors off, 
+edit your WebMacro properties file and remove the line which loads the
+UserProvider. It isn't needed.
+ 
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

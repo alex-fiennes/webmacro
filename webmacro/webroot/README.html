@@ -1,0 +1,485 @@
+<html><head>
+<title>WebMacro Documentation</title>
+</head>
+
+<body bgcolor="white">
+<blockquote>
+<h1>Welcome to the WebMacro project!</h1>
+
+
+   <!-- -----------------------------------------------------
+        This document is fairly readable as text, but looks 
+        real ugly. It'll be more fun reading it in a browser.
+        ----------------------------------------------------- -->
+
+Contents:
+
+<ul>
+
+   <li><a href="#About">About WebMacro</a>
+   <li><a href="#Contact">Where to learn more</a>
+   <li><a href="#License">Licensing</a>
+   <li><a href="#Anatomy">Anatomy of this release</a>
+   <li><a href="#Install">Installing</a>
+   <li><a href="#Compiling">Compiling</a>
+   <li><a href="#Overview">Overview</a>
+   <li><a href="#Credits">Credits</a>
+
+</ul>
+
+
+
+<a name="About"><h2>About WebMacro</h2></a>
+
+WebMacro is a free Java development package that allows you to keep
+HTML and presentational issues out of your Java servlet code--while
+providing web designers with a simple template language capable of
+displaying any Java object.  <p>
+
+WebMacro was mostly written by Justin Wells, with a lot of help from 
+Yuen-Ping Leung, and crucial support from the WebMacro mailing list.  <p>
+
+WebMacro is available for use under the GPL (v2), or you may negotiate
+a less restrictive license with Semiotek Inc. See the attached 
+<a href="docs/License.html">LICENSE</a> file for specific details.
+<p>
+
+
+<a name="Contact"><h2>Documentation & Contact Information</h2></a>
+
+Full documentation for WebMacro can be found on the WebSite. This 
+README is just an overview.
+<p>
+<ul>
+<li><a href="http://www.webmacro.org">WebMacro Website</a>
+<li><a href="http://lists.semiotek.com/mailman/listinfo/webmacro">Mailing list</a>
+</ul>
+<p>
+A <a href="docs/index.html">snapshot</a> of the website has been 
+included in the "docs" directory for convenience. It includes 
+<a href="docs/api/index.html">Java Doc API's</a>, and everything else 
+you might need to find.
+<p>
+If you are looking for support, found a bug, have a suggestion, or just 
+want to chat with the developers, use the WebMacro 
+<a href="mailto:webmacro-request@webmacro.org">mailing list</a>--that's 
+where we are! You may also find that other WebMacro users have
+answers to your problems as well.
+
+
+<hr><!--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+<a name="License"><h2>Licensing</h2></a>
+
+WebMacro can be used for free under the GPL, or you can acquire a
+commercial license for non-GPL use. WebMacro is copyright (c)
+1998, 1999 by Semiotek Inc.
+<p>
+For details on the various licensing options, including free
+use under the GPL, see the <a href="docs/License.html">License.html</a>
+file included in the documentation with this release.
+
+<a name="Anatomy"><h2>Anatomy of this Release</h2></a>
+
+<ul>
+<li> webmacro.jar contains all the core classes, and needs to be added
+     to your classpath.
+     <p>
+<li> src.zip contains all the .java source code for WebMacro, you only
+     need it if you intend to modify the source
+     <p>
+<li> docs contains all the documentation, including the JavaDoc 
+     stuff under webroot/api, and licensing information.
+     <p>
+<li> examples contains a few example WebMacro programs and templates 
+     for you to look at to figure out how things work
+     <p>
+</ul>
+
+<p>
+
+<a name="Install"><h2>How To Use It</h2></a>
+
+<ul>
+
+  <li>This step applies to the HelloWorld and GuestBook examples,
+      which use the WMServlet base class approach:
+      <p>
+      These classes are servlets. Compile them and install them in 
+      your servlet directory. Note that there are multiple .class
+      files for GuestBook.
+      <p>
+      Then follow the instructions below to configure your classpath,
+      and edit the webmacro.properties configuration file.
+      <p>
+
+  <li>This step applies to the TestWM example, which uses the Handler 
+      approach:
+     <p>
+     This class implements the Handler interface, and is not a
+     servlet itself. It relies on the WebMacro Reactor servlet
+     to load and run it. This approach is advantageous if you 
+     want to subclass from something else instead of WMServlet.
+     <p>
+     For example, to use the TestWM handler from webmacro/examples
+     with the JSDK's servletrunner, you would add the following
+     line to servlet.properties:<pre>
+
+        servlet.TestWM.code=org.webmacro.servlet.Reactor
+
+     </pre>
+     This names "TestWM" as the application (and therefore handler) 
+     to use, and the WebMacro package as the server to use with it. WebMacro
+     (Reactor) will then look for a handler named TestWM, so in this case
+     you had better have webmacro/examples in your CLASSPATH so that it 
+     finds the $HOME/webmacro/examples/TestWM.class handler (if you 
+     unpacked webmacro in your home directory.)
+     <p>
+
+  <li> Edit the WebMacro.properties file to fix directories for your system
+     You MUST set the directory in which templates live. To use the example
+     code this would be in (perhaps) $HOME/webmacro/examples directory, which
+     must be in your classpath.
+     <p>
+     <b>WARNING:</b> Be careful with what is meant by "classpath" here.
+     WebMacro will try to load the properties file using the 
+     ClassLoader (and therefore the classpath) which loaded 
+     the classes in WebMacro.jar--some servlet runners, JRun 
+     for example, set this classpath in a configuration file.
+     <p>
+
+  <li> You need to have the JSDK installed and working, or an 
+     equivalent servlet interface, and it has to be in your CLASSPATH.
+     <p>
+
+  <li> You need a Java 1.1 compatible runtime environment to use
+      the WebMacro.jar file distributed with this release. Java2
+      users should unpack the sources, erase the contents of 
+      org/webmacro/util/java2 (pseudo classes which conflict 
+      with the real Java2 counterparts), and recompile. See the
+      section on compiling for help.
+     <p>
+
+  <li> You need to include WebMacro.jar in your classpath
+     <p>
+
+  <li> You need to include your own Java directory in your classpath, where
+     you will have your WebMacro handlers and other work. To use the 
+     WebMacro examples you might use $HOME/webmacro/examples--it is usually
+     convenient to make this the same directory as your WebMacro.properties
+     files lives in.
+     <p>
+
+</ul>
+
+  Here is an example CLASSPATH: <pre>
+
+CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/examples:$JSDK_HOME
+
+  </pre>
+
+  You have unpacked WebMacro in your home directory in this example. 
+  $JSDK_HOME contains the "javax" directory in which you have your JSDK
+  base classes, and JAVA_HOME/lib/classes.zip contains the standard library.   
+
+  <h3>Using the examples</h3>
+
+  Follow the steps above. Then read the comments at the head of
+  each examples .java file for detailed instructions.
+  <p>
+  Note that the examples are not pre-compiled, you must compile
+  them. 
+  <p>
+  HelloWorld and GuestBook use the WMServlet approach, so put all their 
+  .class files in your servlet directory.
+  <p>
+  TestWM uses the Reactor method. So register Reactor as the
+  servlet with TestWM as its script name (last part of the
+  URL).
+
+
+<a name="Compiling"><h2>How to Compile WebMacro</h2></a>
+
+WebMacro ships with a webmacro.jar file compiled for JDK 1.1.7
+and 1.1.8; to use WebMacro with java2 you will need to recompile.
+
+<ul>
+  <li> You need the JSDK sources installed and in your classpath. 
+  <li> You need a FULLY compliant Java compiler for JDK 1.1.7 or better.
+       Please note that Sun's "javac" and compiler derived form it do 
+       not fulfil this requirement, as JDK 1.1 javac has a known bug 
+       with respect to blank final variables. Hopefully this will be 
+       fixed in Java2/JD1.2--in the meantime you can use IBM's jikes 
+       compiler, which IS fully compliant with the Java specification.
+    
+  <li> Unpack the src.zip file in a directory that is part of your classpath
+</ul>
+
+<p>
+To compile under JDK 1.1.7 and 1.1.8:
+<ul>
+  <li> you must use "jikes" (compiler from IBM, free)
+     rather than javac, due to a compiler bug in
+     javac relating to final variables.
+
+  <li> WebMacro comes with some java2 imitation classes
+     in org.webmacro.util.java2, which you can compile
+     against. Alternately, if you have the JDK 1.1 
+     version of the collections API installed, you
+     can erase the java2 directory and compile 
+     against that. Some changes to import statements
+     may be required.
+</ul>
+To compile under java2:
+<ul>
+
+  <li> you need the most recent version of javac, or
+     the most recent version of jikes. Older 
+     versions may result in "Invalid stack length" errors
+     arising at runtime due to compiler bugs.
+
+  <li> erase the files in org/webmacro/util/java2, to
+     avoid conflicts with the java2 collections API.
+     Thus causes WebMacro to use the actual collections
+     API rather than the imitation classes.
+</ul>
+Note that you cannot compile against the imitation classes and
+expect WebMacro to properly introspect classes derived from the
+real collections API. Thus, when you use the real collections API
+you must use it for everything, not using WebMacros imitation
+classes for anything.
+<p>
+See the website for a link to jikes; and check the FAQ and 
+mailing list if you have any trouble.
+<p>
+A few more notes:
+<ul> 
+  <li> Many classes have test harnesses on them, written as main(),
+       which you can use to test whether things are working for you.
+
+  <li> There is a 'mkdoc' shell script available to create the JavaDoc 
+       documentation in under the webroot directory. This just contains
+       the correct javadoc command, so if you are running under NT you 
+       can inspect it to see the correct command line to generate 
+       the javadocs. 
+
+</ul>
+
+
+<a name="Overview"><h2>Overview of the WebMacro System: </h2></a>
+
+   WebMacro is similar in many ways to JSP/ASP and other projects in many
+   ways, but differs from those according to our biases:
+   <ul>
+
+      <li> We think it is wrong to use markup for a scripting language
+      <li> We think it is wrong to embed programs on a web page
+      <li> We think it is wrong for web scripts to look like hard programming
+
+      <li><b> We believe that programming and graphics design 
+              are separate tasks</b>
+   </ul>
+
+   So we have designed a language very much like all the other, but which 
+   fits with our biases above.  <p>
+
+   WebMacro presents two separate interfaces:  <ol>
+
+       <li> A template language for web page designers to use, into which
+          they can substitute values from a web program 
+
+       <li> A library and framework for web based programming, for use 
+          by technical developers, which is independent of any layout 
+          or other graphical concerns
+
+   </ol>
+   You might be both a graphics designer AND a programmer. Many people are. 
+   However I think you will agree that these activies use different sides
+   of your brain--or at least very different kinds of thinking--and it is 
+   painful to try and do both at the same time.    <p>
+
+   Alternately you might be a programmer working with a web designer: By 
+   providing the web designer with a list of variables which they can 
+   substitute into a page, you keep the designer at some distance from 
+   your sensitive program codes. At the same time, the designer is free 
+   to take those variables and lay them out any which way they please.    <p>
+
+   This separation of program code and content is the fundamental idea 
+   behind the WebMacro system.    <p>
+
+
+
+<h3>How It Works:</h3>
+
+   You don't need to understand this section to use it, but it probably
+   helps to read it anyway.
+   <p>
+   Note that many steps apply only to the Reactor method, as noted. The
+   WMServlet method is much simpler.<ul>
+
+   <li> You implement the org.webmacro.servlet.Handler interface, and write
+      your application. This is the "top level class" of your application,
+      and is akin to subclassing from applet. Alternately you can subclass
+      from WMServlet and override its handle() method.
+
+   <li> You set up a servlet with the same name as your application, but set 
+      the code to be org.webmacro.servlet.Reactor instead of your class. 
+      If you are using the JSDK servletrunner, you would do this in the 
+      servlet.properties configuraiton file. You don't have to do this if 
+      you subclassed from WMServlet--just register your servlet.
+
+   <li> When a connection occurs, the Reactor checks the ScriptName, finds
+      the matching Handler--it searches the classpath for a .class
+      file with the same name as the servlet name of the request.
+      This applies only to the Reactor/Handler approach. With the 
+      WMServlet method, your class is a regular servlet--register
+      it with your servlet runner as with any other Servlet.
+
+   <li>WebMacro builds up a data structure called a WebContext,
+      containing a bunch of objects that know how to interpret and return
+      various kinds of information about the request. 
+
+   <li>Your Handler or WMServlet.handle() method is invoked, and
+   gets passed the WebContext object. You access cookies, form
+   data, http headers, etc., through the WebContext object. You
+   also populate the WebContext with your own data. Finally you
+   decide which Template should be used to interpret your data,
+   and you return that Template back to WebMacro.
+
+   <li>WebMacro feeds your modified WebContext to the Template you have
+      selected, and invokes the WebMacro interpreter
+
+   <li> The processing engine interprets the Template according to the 
+      data you have put into the WebContext. It uses Java's introspection
+      and reflection library to extract values out of your data structures.
+      It will perform iterations, substutions, and inclusions based on 
+      the directives in the Template.
+      
+   <li> The result of this processing is returned to the user.      
+  
+   </ul>
+
+Some notes: 
+<ul>
+
+<li> Each connection runs in its own thread, and templates are shared across
+     threads. WebContext objects are unique to each thread, so you can write
+     to them in an unsynchronized manner safely. You must carefully guard
+     your Handlers own data structures against thread issues, since the
+     same instance of your Handler can simultaneously serve many requests.
+
+<li> Template files and other resources are managed by the ResourceBroker. 
+     You can get a lot of useful data out of the ResourceBroker
+     object--including templates, config information, and other
+     objects. You can even register your own providers--replacing
+     the default ones, or adding entirely new services.
+
+<li> Variable lookup in the templates depend heavily on introspection 
+     in the Property class. We're working on getting more informative errors
+     out of that class--in the meantime if you really don't understand why
+     some data has not been located in your Template, you might find it 
+     helpful to edit com/semiotek/util/Property.java and set "debug" 
+     to TRUE. If you set the log level to Log.DEBUG you will get a huge
+     amount of feedback about what is going on (way too much actually.)
+</ul>
+
+
+<a name="Credits"><h2>Credits</h2></a>
+
+WebMacro grew out of various internal projects at Semiotek Inc., and
+was largely written by me--Justin Wells. It's my third attempt at 
+a template oriented web framework, incorporating the experiences I
+had with the previous systems.
+<p>
+Yuen-Ping Leung, a close friend and sometimes co-worker of mine, 
+contributed a great deal to the project in its early days--and 
+continues to help out on a regular basis. 
+<p?
+Finally, there are many others whose helpful suggestions, insights, 
+criticisms, bug reviews, bug reports, comments, and advice have
+helped make WebMacro what it is--Unfortunately so many people have
+contributed so much on the mailing list that I am losing track! So
+please forgive me, I am bound to forget a few important people:
+<p>
+<dl>
+  <dt><b>Simon Arthur</b>
+  <dd>Model-View-Controller!! Simon noticed that this is what WebMacro
+      is really all about.
+      <p>
+
+  <dt><b>Frank Carver</b>
+  <dd>Shot down a lot of my bad ideas, and provided excellent critiques 
+      of proposed features. 
+      <p>
+
+  <dt><b>Dirk-Willem van Gulik</b>
+  <dd>Credit Dirk with the list initializer syntax--great idea!
+      <p>
+
+  <dt><b>Tom Goring</b>
+  <dd>Bug finding! Plus lots of useful commentary on the list.
+      <p>
+
+  <dt><b>Ari Halberstadt</b>
+  <dd>Tons of bugfixes. Lots of useful critiques, several features. Ari
+      has been contributing useful stuff since the minute he subscribed.
+      Literally.
+      <p>
+
+  <dt><b>Yuen-Ping Leung</b>
+  <dd>I owe a lot to YP. She wrote a good chunk of the code in the early
+      days. Unfortunately she's too busy with her real job to contribute
+      much these days, but she says she wants to come back soon, let's
+      hope she does!
+      <p>
+
+  <dt><b>Tom May</b>
+  <dd>Code reviews! Lots of them, and always excellent! I never knew how
+      much I hated "Chaper 17" before. 
+      <p>
+
+  <dt><b>Claudio Mio</b>
+  <dd>Lots of good ideas on the list. Keep it up!
+      <p>
+
+  <dt><b>Cristi Opris</b>
+  <dd>Cristi took the other side of the debate with David over SSI in
+      WebMacro. The result was the comprimise involving WMServlet and
+      the #param directive--a huge increase in WebMacro's capabilities.
+
+  <dt><b>David Poon</b>
+  <dd>A huge amount of excellent comments on the list. I am saving your  
+      mail about the benefits of MVC for future reference. Also a good
+      overview of WebMacro installation issues for NT--now in the FAQ!
+      <p>
+
+  <dt><b>Klaasjan Tukker</b>
+  <dd>Tons and tons of bug finding. All of them valuable--and for quite
+      some time now! 
+      <p>
+</dl>
+
+Lots of other people have reported a bug or two. I don't have time to 
+go back and find everyone's name anymore, though I wish I could. WebMacro's
+stability is largely due to the great participation of everyone on the list.
+<p>
+In general, I rely heavily on the list to keep me out of trouble, find my
+bugs, and point me in the right direction. So far everyone is doing a 
+great job of that!
+<p>
+I encourage everyone to subscribe to the list and gripe about whatever 
+bothers them, help me find flaws, suggest features, and periodically
+vote on what direction we should take: send your subscribe message to 
+<a href="mailto:webmacro-request@webmacro.org">webmacro-request@webmacro.org</a>
+<p>
+Thanks for all your support!
+<p>
+<blockquote>
+-Justin
+</blockquote>
+
+
+<hr><!--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+</blockquote>
+</body></html>
+

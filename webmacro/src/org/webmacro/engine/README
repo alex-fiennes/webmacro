@@ -1,0 +1,13 @@
+
+What's in this directory:
+
+  -- Classes that relate to processing Webmacro's script language, 
+     including interpreting them, loading and parsing templates, 
+     and tokenizing the input. All WebMacro system macros and 
+     directives live in this directory.
+
+As a user of these classes you will be most interested in these classes:
+
+   Template: The top level class that you use to access a template
+   TemplateStore: How you save and retrieve templates
+   

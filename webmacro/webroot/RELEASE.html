@@ -1,0 +1,524 @@
+<html><head>
+<title>WebMacro Documentation</title>
+</head>
+
+<body bgcolor="white">
+
+<h2>RELEASE NOTES</h2>
+
+The release notes describe the changes for each version,
+and what to do about it--<b>including important advice about
+upgrading</b>: pre 1.0 there are often incompatible changes 
+between versions. These notes will always mention it, 
+and include advice on what to do.
+<p>
+<hr>
+<h3>Release 0.89.1</h3>
+May 3rd, 1999
+<p>
+Fixed a bug in the new conditional code; a condition is false if
+the return of a method o.equals(Boolean.FALSE) rather than ==.
+<p>
+
+<h3>Release 0.89</h3>
+May 2nd, 1999
+<p>
+
+This release adds some key functionality, and fixes several
+bugs:
+
+<ul>
+<li><b>Full conditional logic.</b> #if directive conditions can now
+    make use of the boolean operators: <b>&&</b> (and),  <b>||</b> 
+    (or), and the unary operator <b>!</b> (not). These boolean 
+    ooerators mean the same thing they do in Java. They are 
+    left-associative, and short circuiting (meaning the right 
+    operand is evaluated only if it has to be).
+    <p>
+    You can also use the boolean ooerators <b>==</b> (equals) 
+    and <b>!=</b> to compare objects. These do not behave like
+    Java operators do: they rely on Object.equals() rather 
+    than object identity to determine equivalence.
+    <p>
+    A conditional can use any WebMacro Term as its operands. A Term
+    is considered false if it is null, undefined, or equal to the
+    constant Boolean.FALSE; and true otherwise. You are encouraged 
+    to use regular boolean primitives in your code as these will
+    be translated to Boolean.TRUE and Boolean.FALSE during introspection.
+    <p>
+    Finally, you can group expressions based on Terms and these five
+    operators using parentheses, as you would expect. Thus the following
+    is a valid condition: (($User && $User.isOK()) || ($Magic == "foo"))
+    <p>
+<li><b>Integer support.</b> An Integer object will be constructed from a Term 
+    when it is fully numeric. For example, if you write:
+    <pre>
+        #set $a = 10
+    </pre>
+    that is equivalent to context.put("a", new Integer(10)). You may 
+    prefix a value with a minus sign to create negative values. Also, 
+    you may construct a Long instead of an Integer by adding the 
+    suffix <b>l</b> or <b>L</b>, as in Java. 
+    <p>
+    An Integer will automatically be converted to an <b>int</b> 
+    primitive, so you can use these constants to call methods 
+    which require an int argument.
+    <p>
+    No support is provided for Double, Float, or other values. If you
+    wish to write a numeric value as a string, enclose it in quotation
+    marks. For example, "101L" is a four character string, whereas 
+    101L when used as a Term, is a three digit Integer.
+    <p>
+    Note that this only applies to Terms: list members, arguments to 
+    functions, parameters of directives, etc.; numeric values in running 
+    text are unaffected.
+    <p>
+<li><b>HelloWorld example servlet.</b> Should be easier for new users to 
+    configure and get working than the other examples.
+    <p>
+<li>Bugs fixed: The introspector was ordering overloaded methods 
+    incorrectly and selecting the wrong one when multiple matches
+    were available--it now selects the most specific method for 
+    an objects true type. ParseErrors are now reported with the correct 
+    line number and filename; previously it always said line 0.
+    <p>
+<li>Many error messages have been cleaned up; as has the handling of 
+    exceptions on startup. WMServlet now tries really hard to give you
+    good advice when something goes wrong during initialization.
+    <p>
+<li>Minor API changes throughout the system. These should have no effect
+    on most users: directives are loaded with Class.forName() in 
+    preparation for future extensions; ResourceBroker's internal 
+    revocation code now has reasons attached; WMServlet no longer
+    throws a ServletException, instead it displays an error message
+    to web users; visibility has changed on several classes and methods.
+</ul>
+
+Because of the widespread code changes, you will have to recompile your
+servlets in order to use the new release. You should not have to make
+any modifications to your source code, or to your templates, in this
+upgrade.
+<p>
+As usual, let me know if you find any bugs! I always expect there will 
+be a few--and will put out fixes as soon as I can once they're reported.
+<p>
+Thanks to everyone on the list for all the help!
+
+<p>
+
+<h3>Release 0.85.2</h3>
+April 25th, 1999
+<p>
+
+This is a maintenance release which fixes several bugs:
+<ul>
+<li>#if directive sometimes evaluated its argument twice, 
+which was silly and sometimes caused problems--now guaranteed to 
+evaluate it just once. 
+<li>ResourceManager now has public visibility
+again--I made it package in the last release, which confused the 
+introspector when trying to access $Broker values from a 
+template. 
+<li>Lists (such as arguments to methods) were not 
+recursively evaluating macros within their members, now they do.
+<li>You can now use a list (with [ a b c ] syntax) as the list 
+argument to a #foreach directive--previously you could only 
+use a variable.
+</ul>
+
+The documentation was also cleaned up in a few places, mostly
+incorrect javadoc comments.
+<p>
+Other changes: The Macro interface no longer has an isDefined()
+method, as it wasn't needed. Many classes and methods have had 
+their visibility reduced, to clarify the API and prevent 
+undesirable dependencies.
+<p>
+You will have to recompile your WebMacro servlets to upgrade.
+You shouldn't have to make any code changes. If you notice a
+template variable that acesses the WebMacro API no longer 
+works, I probably got over-zealous in removing public 
+visibility somewhere--add it back, and report the bug.
+<p>
+License note: WebMacro is now directly under the GPL, there 
+is no longer any intermediate license. It's simpler this way.
+The clause stating that feedback you send to the list may 
+be freely used by everyone is now a condition of the list,
+rather than WebMacro's usage license. This means nothing if
+you are registered as a commercial developer--and practically
+nothing if you are using the GPL. (This clause allows me to 
+share feedback with non-GPL users, without worrying about
+copyright).
+<p>
+As usual, thanks to everyone on the list who helped track
+down these bugs! 
+<p>
+
+<h3>Release 0.85.1</h3>
+April 17th, 1999
+<p>
+
+This release fixes two bugs: meaningless exceptions were being
+logged when TemplatePath has multiple directories; iterator() methods
+were being ignored by Property introspection when extracting list
+from object. Also, the com.semiotek.* sources have been moved into
+the org.webmacro.* package. Minor documentation fixes and updates.
+<p>
+Note that because sources have moved from one package to another,
+you should recompile your WebMacro applications against this 
+version due to binary incompatibilities. No change to your Java
+code itself should be necessary, though.
+
+<h3>Release 0.85</h3>
+April 11th, 1999
+<p>
+This release fixes several bugs, and improves functionality in some simple
+but important ways. WebMacro is a lot easier to use now; and better suited 
+for use in production environments.     <p>
+
+Here's a list:
+
+<ul>
+   <li><b>Reloadable Templates:</b>
+ 
+       You can set the duration of the template loader's cache in 
+       the config file (WebMacro.properties). By setting this to
+       zero you can disable caching altogether. 
+       <p>
+       Set "TemplateExpireTime" to zero for development and debugging;
+       set it to a non-zero value (10 min recommended) for production
+       use.    <p>
+
+   <li><b>WMServlet API</b>
+
+       The WMServlet API has changed to be identical with the old Handler
+       API. This is an incompatible change--you will have to modify your
+       WMServlet subclasses to compile against this version. 
+       <p>
+       In particular, the return type of the handle method has changed,
+       and you can now throw an exception from it on error. This handle
+       method is now identical to the one in the Handler interface.   <p>
+
+   <li><b>Form Variables</b>
+       
+       In the WebMacro script language the built-in variable $Form
+       is now always a scalar String. A new variable has been created,
+       $FormList, which is always an iterator.
+       <p>
+       This is an incompatible change. Any template which had been using 
+       a $Form variable as the iterator in a #foreach statement must be
+       changed to use $FormList.
+       <p>
+       This also should end the problems reported with POST data,
+       and is more consistent with the Servlet API.   <p>
+
+   <li><b>TemplatePath</b>
+
+       Rather than TemplateDirectory, WebMacro.properties now uses
+       a TemplatePath property. This is an incompatible change. You
+       must modify your WebMacro.properties file to use the new
+       property.
+       <p>
+       You can specify a whole list of paths separated by your 
+       platform path separtor (eg: ";" or ":") similar to your 
+       CLASSPATH evironment variable. WebMacro will search all
+       directories in this path for a Template. 
+       <p>
+       Also, the name you pass to the TemplateProvider can incldue
+       a subdirectory, such as "foo/hello.wm". This is useful in 
+       production environments since it allows you to specify 
+       different subdirectories based on the Script Name of your 
+       Servlet, allowing you to partition the name space.   <p>
+
+   <li><b>Boolean Constants</b>
+       
+       A Term can now be one of the constants "true", or "false" (case 
+       insensitive).  These constants can be used in #set directives,
+       as well as method arguments, and anywhere else a Term is
+       allowed. They are equivalent to the objects Boolean.TRUE
+       and Boolean.FALSE.
+       <p>
+       One use of these is to undefine a variable by explicitly
+       #setting it to false.    <p>
+
+   <li><b>Java 2</b>
+
+       It is easier to compile  WebMacro against JDK 1.2 now:
+       Erase the files in com/semiotek/util/java2, which are 
+       all pseudo classes that mirror the JDK1.2 collection API.   <p>
+
+   <li><b>Examples</b>
+
+       The Guestbook example now uses the WMServlet approach; and
+       the TestWM template is a little more functional.   <p>
+
+   <li><b>Bug Fixes</b>
+       
+       Several bugs have been fixed. The most important are:
+
+       <ul>
+          <li>A bug which prevented using methods which returned
+          Java primitives as arguments to other methods.
+          <li>A bug which caused templates to be cached permanently 
+          under some conditions, and likely had a similar effect
+          on other Providers using the ResourceBroker's caching
+          mechanism. 
+      </ul>   <p>
+</ul>
+
+As usual, thanks to everyone on the list, and keep sending in 
+those bug reports!
+
+
+<h3>Release 0.80.1</h3>
+March 7th, 1999
+<p>
+Minor bug fixes: Error messages are now correctly displayed.
+
+<h3>Release 0.80</h3>
+March 5th, 1999
+<p>
+
+Changes in this release are on both the back end and the script side.
+Many of them have little visible effect, but potentially widespread 
+implications--thus you should thorougly test your applications with 
+the new 0.80 release before putting it into production use.    <p>
+
+Here's an overview:
+
+<ul>
+   <li><b>Generic Servlets:</b>
+
+       This release introduces the servlet.WMServlet class. You can 
+       subclass from this rather than implementing Handler and using
+       Reactor--if you do, you should be able to register your WMServlet
+       subclass as a regular servlet with your servlet engine. This should
+       make registration and configuration of WebMacro based servlets 
+       much easier than it was in the past. 
+       <p>
+       If you prefer the old way,
+       Reactor still exists (now a subclass of WMServlet) and behaves 
+       exactly as before--with Reactor you implement a Handler and 
+       register Reactor as your servlet.
+       <p>
+       The WMServlet base class manages an instance of ResourceBroker 
+       that is shared between all instances, so you don't lose any of 
+       the benefit of working in the WebMacro framework.   <p>
+
+   <li><b>Template parameters:</b>
+
+       You can use the #param directive to define parameters in your 
+       WebMacro templates. You can then access them in your template 
+       as a variable, except prefixed with two $'s rather than one 
+       (eg: $$myParam). 
+       <p>
+       The big difference is that they are statically evaluated at 
+       parse time, not dynamically evaluated against your context. They
+       are also available to your Handler or WMServlet subclass via 
+       the Template.getParam(name) call. 
+       <p>
+       This allows your Handler or WMServlet to query a template to determine
+       how information should be processed in order to correctly populate 
+       the WebContext. One use of this feature would be to implement a 
+       WMServlet subclass that behaves like a server-side-include. In the
+       future WebMacro will probably ship with such a subclass as an 
+       example application.    <p>
+
+   <li><b>List Initializer Syntax:</b>
+      
+       You can define lists from within your template using square 
+       bracket notation, like this:   <pre>
+
+           #set $myList = [ "first", second, $third ]
+
+       </pre>
+
+       You could also use the initializer syntax directly in a #foreach 
+       loop. List initializations can be nested to define lists of lists
+       if you so desire. You can also use the list initializer syntax
+       with a #param directive to pass a list back to the Handler/WMServlet. <p>
+
+   <li><b>Comments:</b>
+
+       You can put comments in your templates now. A comment is a line 
+       beginning with two #'s, like this:   <pre>
+
+            ## this is a comment
+       </pre>
+
+       The ## must appear as the first non-whitespace on a line, like any
+       other directive. Unfortunately the current implementation is not 
+       completely whitespace clean--you will notice an extra blank line 
+       in the output in place of your comment. This should be fixed in a 
+       future release.
+       <p>
+
+   <li><b>Method Invocation:</b>
+
+       You can invoke methods as part of regular property evaluation now. 
+       For example: <pre>
+
+            $myVar.property.method( "param", $param, $$param ).property
+
+       </pre>
+
+       When you name an overloaded method, WebMacro will pick the most 
+       specific according to the real types of the parameters at runtime.
+       This is slightly different than Java, which would pick the most 
+       specific according to the declared types of the objects at 
+       compile time--but WebMacro is not a strongly typed language, and
+       this approximation does what you expect 99.9% of the time.
+       <p>
+       Please note that method invocation should be used only when there
+       is no viable way to use a regular property name. For one thing it 
+       is slower. For another, it binds your template to specific knowledge
+       about the method signatures of the target object--leaving the 
+       programmer with less flexibility in providing the information 
+       you requested.
+       <p>
+
+   <li><b>Conditionals:</b>
+
+       A slight but important improvement to conditionals: they know about
+       Booleans now. You can use 'true' and 'false' to indicate whether
+       a condition is true now, rather than just null or not-null. It is
+       still acceptable to use null or not-null. 
+       <p>
+       In conjunction with method calls, this means you should be able
+       to write things like $customer.isPaidUp() in conditionals in
+       the templates now.
+       <p>
+
+   <li><b>Documentation Improvements:</b>
+
+       The Script.html and FAQ.html provide some much needed documentation.
+       The former is a reference guide to the script language; the latter
+       answers some questions commonly asked on the mailing list.
+       <p>
+
+   <li><b>Lesser Changes:</b>
+
+       Technically, a context no longer needs to be a map. You can supply
+       any object and the introspector will do what it can with it.
+       <p>
+       Macros are now recursively evaluated--if evaluate() returns a Macro,
+       it will be re-evaluated until a non-Macro is obtained.
+       <p>
+       You can throw an exception out of Handler.init() if you need to now,
+       to indicate that it failed to initialize.
+       <p>
+       Variables now evaluate to whatever object they actually represent.
+       They used to always evaluate to a String. This is a subtle change
+       which should have no effect, but has the potential to break things.
+       <p>
+       Fixed up the display of some error messages and other things. 
+</ul>
+<p>
+
+<h3>Release 0.75</h3>
+
+Dec. 18th, 1998
+<p>
+Changes in this release are all on the back end Java processing side, 
+but they are substantial: 
+<ul>
+   <li><b>Component Model.</b> 
+   
+       WebMacro's core services are largely component based now.
+       You can add new components, or replace the default components
+       (like URL to handler mapping, locating templates, etc.) with
+       your own. Simply implement a new ResourceProvider and add
+       it to the config file instead of, or in addition to the
+       providers that ship with WebMacro.  <p>
+
+       The ResourceBroker shares resources between handlers, caches 
+       them, expires them over time, and segregates providers of 
+       information from their consumers.  <p>
+
+       It also introduces the possibility of concurrency within
+       the same servlet, as it is capable of resolving a request
+       for information asynchronously. For example, you could open 
+       a network connection to a database while reading your template.
+       Your handler won't block until it actually attempts to access
+       the requested information.  <p>
+
+   <li><b>Smarter Introspection.</b>
+
+       The Property class has been totally rewritten. It has all of 
+       the old behavior, plus two new features:  <p>
+
+       First, you can now use an array/enumeration/iterator as a
+       list (previously you had to have an "elements()" or "iterator()"
+       method that returned one). Now if you have a getCustomers() 
+       method that returns an enumeration, you can use that method 
+       with #foreach to iterate through your customers.  <p>
+
+       Second, "binary" property introspection is now supported. Basic
+       introspection means the presence of a getFoo method means $Foo 
+       will work as a variable. "Binary" introspection means that if 
+       you have a getFoo("Bar") method $Foo.Bar works. This is especially
+       useful in the case of methods like getHeader("Referer"). It also
+       works for setting a value: setThing("name", value) can be 
+       called as #set Thing.name = value from the script language.
+       <p>
+
+   <li><b>Refactoring.</b> 
+   
+       There have been slight changes to the back end design. Many
+       of the core system classes have been completely redesigned
+       to fit into the ResourceBroker component model. The most
+       noticible changes are that TemplateStore and Config have
+       disappeared from sight--they are now accessed by way of the
+       ResourceBroker (the "template" and "config" resources).  <p>
+
+   <li><b>Bug fixes.</b>
+
+       Lots of minor bugs have been squashed. Many people on the 
+       WebMacro mailing list pointed out problems, and they've 
+       been fixed--keep sending in those reports! I encourage 
+       everyone to subscribe to the list and post their problems, 
+       suggestions, etc.  <p>
+
+   <li><b>License Fix</b>
+
+       WebMacro can be distributed under a variety of licenses, including
+       the GPL. So when you submit bugs and suggestions I need the right 
+       to use them! The old license gave me the right to reuse <i>anything</i>
+       people submitted--which was way to broad. You should be able to send
+       in something like a module without giving up any rights to it at 
+       all. The new license makes it clear that you can send in stuff under
+       your own license, and I'll happily include it in the distribution 
+       if your license allows it. Without some other indication to 
+       the contrary, I still get to use bug fixes/suggestions/etc. without
+       having anyone fill out any forms.
+       <p>
+</ul>
+
+<h3>Release 0.70</h3>
+
+Nov. 19th, 1998 <p>
+
+This release is better tested and easier to use than the previous release. It
+also has some hope of running under NT, as file separator and line separator
+bugs have been fixed. It has been tested under Linux and FreeBSD, and will
+be tested under NT and Solaris soon (but hasn't yet been).  <p>
+
+We've included some examples for you to look at, and cleaned up the 
+API documentation quite a bit--however we haven't got around to writing
+a proper user manual yet either for graphics designers or programmers.<p>
+
+Please bear with us -- this is an experimental early release. We believe
+it will work for you, but can't promise anything. In particular you 
+probably should use it for production systems yet, as it may contain
+bugs. You've been warned.  <p>
+
+See the <a href="License.html">LICENSE</a> file for details about your 
+rights and obligations with respect to the software (for example, your
+right to use it under the GPL), plus legal disclaimers, and so forth. <p>
+
+If you are interested in using WebMacro, we'd like you to join our 
+<a href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing list</a> and send us some feedback.  <p>
+
+We hope you like it!   <p>
+
+</body></html>

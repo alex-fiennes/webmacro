@@ -1,0 +1,135 @@
+<html><head>
+<meta name="description" value="WebMacro is a free Java servlet development package that allows you to keep HTML and presentational issues out of your Java servlet code; while providing web page designers with a simple template script language capable of displaying any Java object.">
+<meta name="keywords" value="webmacro java servlet framework, html template, html templates, html script, webmacro, web macro, servlet, java, java servlet, web programming , web development, generating html, programming">
+
+<title>WebMacro Java Servlet Framework & HTML Template Language</title>
+
+</head>
+
+<body bgcolor="white"><blockquote>
+
+<h1><font color="green">WebMacro Framework Design Overview</font></h1>
+
+Here's an overview of WebMacro's overall design. You can also:
+
+<ul>
+  <li><b><a href="http://www.webmacro.org/Download.html">download WebMacro here.</a></b>
+  <li>Go back to <a href="Intro-Program.html">Programming</a> or up to <a href="Introduction.html">Intro top</a>
+  <li>Read the <a href="Servlet.html">Fundamentals of Servlet Design</a> article
+</ul>
+
+<hr>
+
+<h3><font color="green">WebMacro Servlet Design</font></h3>
+WebMacro's <a href="Servlet.html">fundamental idea</a> is to separate work
+into three distinct categories:
+<ol>
+
+   <li><b>Page design</b>: Create HTML templates using WebMacro Script.
+       This can be done using many regular old HTML editing tools, since
+       the script language does not interfere with HTML syntax.
+       <p>
+       
+   <li><b>Domain logic</b>: Write your business logic in back end 
+        classes that know nothing about servlets. Make them available
+        using WebMacro's ResourceProvider.
+        <p>
+   
+   <li><b>Controller code</b>: Write session management code in standard
+       Java. Just subclass from WMServlet. Your code will examine the 
+       request, select a template, and put all the information it will
+       require into a hashtable. WebMacro does the rest.
+       <p>
+</ol>
+
+<p>
+A framework like this is called a <i>Model/View/Controller</i> (MVC)
+approach to servlet design.
+<p>
+Your business logic objects represent a <i>model</i> which your servlet 
+interacts with. The front end templates are <i>views</i> into the system.
+You create a <i>controller</i> by subclassing from WMServlet--here you 
+process the request and perform session management tasks, including 
+selecting which template to return.
+<p>
+In <a href="Servlet.html">Fundamentals of 
+Servlet Design</a> I present the reasons why this is usually the right 
+way to design a servlet--it's also a good introduction to the overall
+design principles behind WebMacro.
+<p>
+
+WebMacro provides extensive support for all three levels of the MVC
+architecture:
+
+<ul>
+
+<li><b>Model</b>:<br>
+Register your own information providers with WebMacro's 
+ResourceProvider. This gives you a convenient way to link in 
+your business logic--WebMacro can even cache model objects in a pool 
+for more effecient access.
+<p>
+
+<li><b>View</b>:<br>
+WebMacro's templates 
+make creation and modification of views trivial. You don't have to 
+recompile your servlet every time you change the way something looks; 
+and the page designer can work in parallel with the servlet writer.
+<p>
+
+<li><b>Controller</b>:<br>
+The WMServlet superclass provides a controller framework that
+looks after many housekeeping tasks, providing access to WebMacro's
+servlet library.  You can actually plug your own components into
+this library, and even replace core WebMacro functionality (such
+as template loading).  
+<p>
+</ul>
+
+<a href="DesignGoals.html">This way of doing things</a> has numerous 
+advantages:
+
+<ul>
+
+  <li><b>Clarity.</b> Simple, obvious script language with minimal syntax. 
+
+  <li><b>Power.</b> Templates can access any object in your Java servlet. 
+
+  <li><b>Elegance.</b> Keep HTML clutter out of your servlet code.
+
+  <li><b>Independence.</b> Change the look and feel without touching the servlet.
+ 
+  <li><b>Extensibity.</b> Component model lets you extend or replace core 
+      WebMacro functionality with your own classes.
+
+  <li><b>Friendly.</b> WebMacro won't confuse your XML/HTML editor or parser.
+   
+  <li><b>Free.</b> WebMacro is available under the GNU Public License.
+</ul>   
+<p>
+Now that you know all about WebMacro, why not try it out? 
+
+<hr>
+On to: <font size="+3"><a href="Download.html"><b>Download WebMacro</b></a></font>
+<p>
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

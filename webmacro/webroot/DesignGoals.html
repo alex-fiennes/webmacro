@@ -1,0 +1,174 @@
+<html><head>
+<meta name="description" value="Design goals and requirements for the WebMacro Servlet Framework and WebMacro Template Script language">
+<meta name="keywords" value="design goals, requirements, ease of use, simple template script, webmacro servlet framework, webmacro script language, webmacro, web macro, servlet, java, template, script, java servlet, html template, web programming , web development, generating html, developer, programming, development">
+<title>Design of the WebMacro Java Servlet Framework & Template Script Language</title>
+
+</head>
+
+
+<body bgcolor="white">
+<blockquote>
+
+<h1><font color="green">WebMacro Script and Framework Design Goals</font></h1>
+
+This document records the main things we want to accomplish with this
+package. Not all of them are present in the current implementation, but
+even then they do represent the direction we hope to move in. 
+<p>
+You should also check my <a href="Servlet.html">Fundamentals of Servlet Design</a> article, which argues for the Model/View/Controller framework which 
+WebMacro embodies.
+<p>
+Here are the simple, direct goals of the WebMacro framework:
+
+<ul>
+
+<li><font color="green"><b>Templates: Make Simple Things Simple</b></font>
+   <p>
+   A template should look and feel like an HTML document; the fact 
+   that it has some data stuck into it shouldn't obscure its overall
+   appearance.
+   <p>
+   A template language is not a scripting language. If you want to have
+   advanced scripting features, you should not use a template language
+   to do that--in WebMacro we expect you to open up a block and write
+   a bunch of real programming code when you want to do that.
+   <p>
+   80% of the time all you want to do is stick some automatically 
+   generated output into a web page. WebMacro makes that simple, while 
+   still allowing you to use a full fledged standard programming 
+   language in those cases where that just won't do.
+   <p>
+   So taking a page out of the PERL book, we want to make the simple 
+   thing simple--and the hard thing not so bad.
+   <p>
+
+<li><font color="green"><b>Programming: Use A Standard Language</b></font>
+   <p>
+   We want programmers to be able to develop the cool core of their
+   application using a normal programming language. Other tools, such
+   as PHP, try to re-invent the wheel--they create a whole new language
+   that is not as powerful as Java, and you have to learn it.
+   <p>
+   Why?
+   <p>
+   There are perfectly good programming languages out there that work 
+   great as it is: Java, C++, PERL, etc.--why shouldn't developers use
+   these for the core of their application?
+   <p>
+   WebMacro is intended to let web developers go back to using standard
+   programming langauges. For starters, Java--but we'll add more 
+   languages as time goes by.
+   <p>
+
+<li><font color="green"><b>Clean Separation of Form and Function</b></font>
+   <p>
+   We want the programmer and the graphics designer to agree on what 
+   the page should contain, and then go off and do their separate
+   things. One will write functions that produce the content; the 
+   other will write a template that lays it out.
+   <p>   
+   Of course they will have to communicate--the application 
+   will demand it. But now they can spend their time together talking
+   about what the application should do, rather than how to get 
+   some extra whitespace into table cells--the web designer can do
+   that on their own, and the programmer can get back to implementing
+   cool functionality.
+   <p>
+   The intent of the WebMacro system is to cleanly separate work that
+   is programming from work that is page design.
+   <p>
+   One thing we haven't done yet that we hope to do in the future is 
+   allow the establishment of a contract: A specification of what 
+   automatically generated content will exist so that we can validate
+   templates and programs, proving that they get along before a 
+   problem happens. Look for this in verson 1.1 or 1.2.
+
+   <p>
+<li><font color="green"><b>Orthagonal to XML</b></font>
+   <p>
+   Unlike every other server side language out there, we did not want
+   to violate the XML/HTML language specifications.
+   <p>
+   Most languages use odd things like <%...%> that are just completely
+   non-standard. Or they embed tags inside of tags in weird ways. Or
+   they make up tags that don't make sense.
+   <p>
+   Instead we wanted to be independent of XML. We wanted to create a 
+   language that would smoothly interoperate with XML, so you could 
+   have a document full of our markup and it would ALSO be a valid 
+   XML document. 
+   <p>
+   There is a deeper problem here too: If you are trying to generate
+   XML/HTML output, and you are using XML/HTML as your input, and you
+   are also using XML/HTML as your parsing language--well then you are
+   really trying to do three things with the same parse tree, and it
+   is a bloody mess.
+   <p>
+   Sun's JSP does this: <a img src="<DISPLAY attributes=here>"> That's
+   just plain wrong--it is not even a valid XML document if you have to
+   put quotes around the attribute value. It's also messy and verbose
+   and hard to read. It's also hard to parse--you can't just use a 
+   standard XML parser, since it won't find the DISPLAY tag that has 
+   been stuck into the SRC attribute as CDATA.
+   <p>
+   We wanted to avoid all these thorny issues and produce something
+   that was a whole lot easier to read.
+   <p>
+
+<li><font color="green"><b>Intuitive Sytnax</b></font>
+   <p>
+   Our syntax is kind of a mix of PERL and the C preprocessor. But
+   don't let that scare you--we picked these tokens because they were
+   easy to read, and they are familiar to a large number of 
+   programmers.
+   <p>
+   We use the '#' character to start a macro directive just as the 
+   C preprocesor does. We use the '$' character to prefix a variable
+   like PERL does. Originally we also used '@' to prefix list variables,
+   but then we eventually realized that it was eaier not to distinguish
+   different kinds of variables so we merged the '@' variables back 
+   into the '$' variables. If this turns out to be a bad choice, we 
+   may reverse the decision and ressurect '@'.
+   <p>
+   The idea here is that by using vaguely familiar syntax, people 
+   will learn the language more quickly.
+   <p>
+   The one thing I hate about this whole thing is that we are 
+   requiring people to learn a new language syntax. I really would 
+   rather use an existing language syntax--but none of the languages
+   I could find were suitable.
+   <p>
+   I considered using a macro processor like M4, but it's too 
+   dangerous--there's no good way to stop user data from interfering
+   with the macro language. And the syntax that results can hardly
+   be called intuitive. 
+   <p>
+   Aside from JavaScript, none of the other languages allow such easy
+   integration with Java code either--and remember, one of our design
+   goals was to allow people to write their software code in Java 
+   (or another sufficiently high level language). PERL was another
+   possibility, but didn't offer some of the other features we 
+   were looking for.
+
+</ul>
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

@@ -1,0 +1,26 @@
+<html><head><title>Hello, World!</title></head>
+
+##  You have to set the content type. You could do this from
+##  the servlet instead--but this way your page designer can 
+##  change it if XML was wanted. What the line below does is 
+##  use WebMacro's introspection to find and use the method:
+##
+##     WebContext.getResponse().setContentType("text/html")
+
+#set $Response.ContentType = "text/html"
+
+## Now the rest of your HTML, including a few example WebMacro 
+## statements, just for fun. Note the use of the $Hello variable
+## which is defined in the HelloWorld servlet.
+
+<h1>WebMacro is working!</h1>
+<ul>
+#set $go = "<font color=red size=+1><b>$Hello</b></font>"
+#foreach $count in [ five four three two one $go ] {
+    <li>$count
+}
+</ul>
+
+Thanks for looking into WebMacro!
+
+</body></html>

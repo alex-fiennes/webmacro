@@ -1,0 +1,40 @@
+
+WebMacro Examples
+=================
+
+These trivial examples are intended to help you get started with 
+WebMacro. We suggest you try the HelloWorld example first, as it
+is the easiest to get going.
+
+In each case you will find comments inside the .java file explaining
+what the example is, and how to get it working.
+
+Here is an overview:
+
+
+   HelloWorld 
+   ----------
+
+   A servlet. Demonstrates the basic workings of WebMacro, with lots
+   of comments explainig each step. Try installing this one first.
+
+
+   GuestBook
+   ---------
+
+   A servlet. Intended to give you an application with several 
+   different templates, so you can experiment with customizing it.
+   Also shows WebMacro using and introspecting some ordinary objects.
+ 
+
+   TestWM
+   ------
+
+   A handler. This is an alternate way of using WebMacro that may 
+   be convenient to people who would like to build controller servlets
+   from existing classes. A handler is an interface you can implement
+   rather than subclassing WMServlet. But then configuration becomes
+   slightly trickier.
+ 
+
+   

@@ -1,0 +1,297 @@
+<html><head>
+<meta name="description" value="How to install and use the WebMacro Servlet Framework and the WebMacro HTML template script language.">
+<meta name="keywords" value="install, instruction, quickstart, webmacro servlet framework, webmacro script language, webmacro, web macro, servlet, java, template, script, java servlet, html template, web programming , web development, generating html, developer, programming, development">
+
+<title>How To Write Java Servlets with WebMacro</title>
+
+</head>
+
+<body bgcolor="white">
+
+<blockquote>
+<h1><font color="green">How to write Java servlets and create HTML templates with WebMacro</font></h1>
+
+WebMacro provides a very simple interface for both program author and
+web page designer--so you should be able to get simple things up and
+working quickly.
+<p>
+<blockquote>
+   <a href="Download.html">Download WebMacro here</a>
+</blockquote>
+<p>
+If you have any questions or comments about WebMacro, we urge you 
+to join the WebMacro <a
+href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing
+list</a>. It's there for technical support, feedback, bug reporting,
+and so forth.
+<p>
+WebMacro configuration is fairly straight-forward: you have to
+install WebMacro as a servlet, then edit its configuration file.
+In future versions configuration will be web-based, but until then
+please bear with us, you'll have to edit a couple of text files.
+<p>
+The best way to get going quickly is to look at the examples. WebMacro is
+both an application framework, and a script language--so be sure and look
+at both sides of it.
+<p>
+The <a href="api/index.html">API documentation</a> contains some pretty
+comprehensive documentation which you should read as well.
+<p>
+This document will give you a very brief overview of the package.
+<p>
+<hr>
+<h3><font color="green">How To Install</font></h3>
+
+<ul>
+<li>You need to have a Java 1.1 VM in order to use this software; and if 
+    you want to compile it you'll also need JDK 1.1 as well. We developed
+    it under JDK 1.1.6, so you should probably have at least that.
+    <p>
+<li>Follow the installation instructions in the <a href="README.html">README.html</a>
+    text file included with the distribution. The short story is:
+    You have to get a bunch of stuff into your CLASSPATH:
+    <p>
+    <ul>
+       <li>The JSDK base classes have to be in your classpath
+       <li>WebMacro.jar has to be in your classpath
+       <li>The directory where you've put your handlers and other
+           programs (or our example handlers) have to be in your classpth
+       <li>Of course the core Java classes have to be there too
+    </ul>
+    <p>
+    In addition to that, you have to edit the WebMacro.properties file
+    to reflect the settings on your system. Make sure this WebMacro.properties
+    is in a directory from the same classpath as WebMacro.jar: WebMacro
+    will use the ClassLoader (and therefore the classpath) which loaded 
+    it to try and find its properties file.
+    <p>
+    Finally, you have to configure your servlet runner to launch WebMacro
+    under the names of the applications you want to use. See Below.
+          
+</ul>
+
+<h3><font color="green">How to Configure</font></h3>
+<ul>
+<li>If your servlet is a subclass of WMServlet (such as the Guestbook
+    example), simply place it in your servlets directory or register
+    it in the standard way. You must also ensure that WebMacro.jar
+    and Webmacro.properties are in your classpath (and that you
+    have edited WebMacro.properties to contain the correct values
+    for your system.).
+    <p>
+    Note that this makes your derived class a Servlet, therefore
+    you must put it in your CLASSPATH or register it with your
+    servlet runner as you would with any other servlet.
+    <p>
+    Another way to use WebMacro is to create classes which 
+    implement the Handler interface, such as the TestWM example.
+    This allows you to subclass from some other base class, but
+    complicates configuration slightly. In this case you use
+    org.webmacro.servlet.Reactor as your servlet. It is associated
+    with your handler via the URL.  Configure your servletrunner
+    with the following property information.  For the JSDK
+    "servletrunner", that means adding the following lines to
+    servlet.properties in the servlet
+    directory:<pre>
+
+             servlet.APPNAME.code=org.webmacro.servlet.Reactor
+   
+    </pre>"APPNAME" is the name of your application, it is a single word. It
+    becomes a part of the URL that people use to access your application.
+    Install one line like this for every application you intend to write
+    using the WebMacro package. Here is an example:<pre>
+
+             servlet.list.code=org.webmacro.servlet.Reactor
+             servlet.catalogue.code=org.webmacro.servlet.Reactor
+
+    </pre>This says you will have two appliactions. If you run WebMacro
+    using the JSDK servletrunner they will appear under the URLS:<pre>
+
+             /servlet/list/
+             /servlet/catalogue/
+ 
+    </pre>The WebMacro package will take over the entire namespace under
+    these prefixes, and view any URL in those areas as being part of that
+    particular application.
+    <p>
+    You will probably prefer the simpler method, of subclassing 
+    from org.webmacro.servlet.WMServlet, with its simpler configuration.
+    Reactor is a subclass of WMServlet, so there is no real difference
+    between these two approaches.
+    
+
+<li>Edit the WebmMacro.properties configuration file. It specifies
+    some things like the directory where templates are stored--if you
+    do not se this, WebMacro won't be able to return anything at all 
+    since it needs to find its templates to write data.
+    <p>
+</ul>
+
+<h3><font color="green">Writing Your Application</font></h3>
+<ul>
+
+<li>Write the core of your application in Java. This means implementing 
+    the <b>org.webmacro.servlet.Handler</b> interface, or else subclassing
+    from <b>org.webmacro.servlet.WMServlet</b>.
+    <p>
+    With the Handler approach:
+    <ul>
+    <li><i>String toString()</i> must return the same name you registered in the 
+        servlet.properties file--if your application was called "list" 
+        there, then toString() must return the word "list".
+    <li><i>Template accept(WebContext)</i> is the primary method you want to implement. 
+         Each connection to the server results in a call to your Handler's
+         accept method. 
+    </ul>
+
+    When WebMacro calls your Handler.accept() method or WMServlet.handle()
+    method it will pass you something called a <i>WebContext</i>.
+    This is basically a big Map that you can put whatever you want
+    into. The WebContext object also has a variety of helper objects
+    within it that you can use to query things about the state of
+    your application.
+    <p>
+    <b>The WebContext object is what you share with the Template.</b>
+    <p>
+    Any variable that you put into the WebContext is available as a 
+    local variable to the template script. The WebContext is a JDK
+    1.2 style Map.  (it will actually be a subclass of java.util.Map
+    once JDK 1.2 is out).  <p> Your accept() method returns a
+    Template object. You can get these out of a TemplateStore. It
+    is the responsibility fo the accept() method to decide which
+    Template will be used to generate the HTML that is returned to
+    the browser.
+    <p>
+    You choose what view you will send back to the user by choosing which 
+    template to return. It is your responsibility to ensure that you have
+    populated the WebContext with all of the information the Template will
+    require.
+    <p>
+
+<li><b>Property Introspection</b>: Templates use "Propety Introspection" to
+     access the data you put into the WebContext. You should understand what
+     that means.
+     <p>WebMacro uses the introspection/reflection APIs to take a pretty deep
+     look into the objects you stick in the WebContext. The template language 
+     has access to the properties of the objects you throw into the
+     map.
+     <p>For simple values, it will attempt this in two ways:<p>
+     <ul>
+     <li>it will use the bean approach and look for public fields or
+         appropriately named get/set methods.<p>
+     <li>if it hasn't found a specific method, it will try and view
+         the object as a collection and use put/get methods.<p>
+     </ul>
+<li> If you want to put in a list of objects into the template you have 
+     numerous options. The property introspection method is capable
+     of iterating through any of the following types:<p>
+     <ul>
+        <li>an array<p>
+        <li>anything that has an elements() method that returns an Enumeration<p>
+        <li>anything that has an iterator() method that returns an Iterator<p>
+     </ul>
+     NOTE: We do not <b>yet</b> support the indexed properties in the Java
+     bean specification, but we will. Also the iterator() method above only
+     mimics the JDK 1.2 iterators--we will convert to using real iterators 
+     once the JDK 1.2 has been released.
+     <p>
+     The above introspection can be applied recursively, so all your objects
+     have to do is provide a "customer[] getList()" method, for example, and 
+     template users can loop through it conveniently.
+     <p>
+</ul>
+
+<h3><font color="green">Creating Templates</font></h3>
+
+<ul>
+<li>Write a set of Templates to handle the output of your application. Each
+    Template represents one page view in the system.
+    <p>
+    If the Handler write put an object called "customer" in the WebContext
+    passed to your template, then you can access its fields like this:
+    <p>
+    <pre>Customer $customer.name owes $customer.owing</pre>
+    <p>
+<li>You can also loop through list values that may be part of an object:
+    <p>
+    <pre>
+         &lt;ul&gt;
+         #foreach $customer in $customerList
+         {
+            &lt;li&gt; $customer.name owes $customer.owing
+         }
+         &lt;/ul&gt;
+    </pre>
+    <p>
+<li> We also support really simple conditionals. In the current version all
+    you can do is test whether something is defined or not:<pre>
+
+    #if ($variable) {
+       Yes we have variable: $variable
+    } #else {
+       Sorry, variable is not defined here
+    }
+    </pre><p>
+<li>Other things you can do:
+    <ul>
+       <li>#include "someUnparsedFile.txt"
+       <li>#set $variable = value
+       <li>#parse "includeSomeWebMacroTemplate.wm"
+       <li>#include "$variableFile"
+       <li><pre>#use 'text' until "--The End--"
+           Text here is not parsed by WebMacro, up until the line matching
+           the supplied boundary. You can use this to surround sensitive 
+           things like JavaScript, if you fear a conflict with WebMacro. In
+           the long run we will use the #use directive to include support
+           for inlining Java, Python, PERL, and other languages. For now
+           the only supported parser is the "text" parser which passes 
+           its contents through unmodified.
+           --The End--</pre>
+    </ul>
+    Note that some of the above are currently untested.
+    <p>
+    The WebMacro context includes a bunch of convenient variables that you
+    can access. See the Javadoc comments for the WebContext class for details:
+    <ul>
+       <li>$Broker allows you to read things from the ResourceBroker,
+           an extensible resource manager which a programmer can plug
+           components into on the back and.
+       <li>$CGI provides access to CGI-style variables
+       <li>$Form provides access to FORM data 
+       <li>$Config provides access to properties in WebMacro.properties
+       <li>$Cookie allows you to get and set cookies from the template
+       <li>$Session allows you to get and set things in the JSDK session
+       <li>$Request is the HTTP request (HttpServletRequest)
+       <li>$Response is the HTTP response (HttpServletResponse)
+    </ul>
+</ul>
+
+<h3><font color="green">More information</font></h3>
+
+For more information consult the JavaDoc documentation for the various 
+classes, and see our example code.
+<p>
+You might also try asking on the <a href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing list</a>.
+
+
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

@@ -1,0 +1,53 @@
+<html>
+
+<!-- setting the content type -->
+#set $response.ContentType = "text/html"
+
+<head><title>Example Page</title> </head>
+<body bgcolor="white">
+
+<h1><font color="red">Example Page</font></h1>
+
+This example does nothing useful, but illustrates some of the commands 
+you can use in the WebMacro script language.
+
+<h2>Setting and getting a simple variable:</h2>
+#set $myvar = "hello world"
+My variable: <b>$myvar</b><br>
+
+<h2>CGI Data:</h2>
+<ul>
+<li>Script name: $cgi.SCRIPT_NAME
+<li>Path info: $cgi.PATH_INFO
+<li>Request method: $cgi.REQUEST_METHOD
+<li>Path translated: $cgi.PATH_TRANSLATED
+<li>Query string: $cgi.QUERY_STRING
+</ul>
+
+<h2>Cookie data:</h2>
+
+Hello cookie was: $cookie.hello.Value<br>
+(setting it to "i am a cookie")<br>
+#set $cookie.hello = "i am a cookie"
+
+<h2>Access to FORM data:</h2>
+
+Form variable "hi": $form.hi
+
+<h2>Access list data:</h2>
+
+Form variable "list": $form.list
+
+<ul>
+#foreach $item in $form.list
+{
+   <li>$item
+}
+</ul>
+
+<h2>Access config file data:</h2>
+
+Default template directory: $config.Default_Template_Dir
+
+</body>
+</html>

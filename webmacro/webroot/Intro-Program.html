@@ -1,0 +1,83 @@
+<html><head>
+<meta name="description" value="WebMacro is a free Java servlet development package that allows you to keep HTML and presentational issues out of your Java servlet code; while providing web page designers with a simple template script language capable of displaying any Java object.">
+<meta name="keywords" value="webmacro java servlet framework, html template, html templates, html script, webmacro, web macro, servlet, java, java servlet, web programming , web development, generating html, programming">
+
+<title>Introduction to WebMacro Programming</title>
+
+</head>
+
+<body bgcolor="white">
+<blockquote>
+
+
+<h1><font color="green">Introduction to WebMacro Programming</font></h1>
+
+Here's an overview of WebMacro's programming framework. You can also:
+
+<ul>
+  <li><b><a href="http://www.webmacro.org/Download.html">download WebMacro here.</a></b>
+  <li>Go back to <a href="Intro-Script.html">Script</a> or on to <a href="Intro-Design.html">Design</a> 
+  <li>Browse WebMacro's <a href="api">JavaDoc API</a>
+</ul>
+
+<hr>
+
+<h3><font color="green">Servlet Programming</font></h3>
+
+The script language is built on top of a highly effective introspection
+engine, which makes life easy for the back-end programmer.
+<p>
+Here are <i>all</i>
+the steps required to make data available to the template script:
+<ol>
+   <li><i>Put the object in a hashtable</i>
+</ol>
+WebMacro's powerful introspection engine takes care of the rest--examining
+your object to determine what properties and fields it contains, and 
+making those available as template script variables. There are no special
+superclasses required, no object descriptions needed. It works with any
+Java class.
+<p>
+In the above template example, WebMacro might determine that $Customer.Name
+corresponds to Customer.getName() and that $order.Item.Name resolves
+to Order.getItem(String name). You'll also notice that, should the 
+introspector prove inadequate, you can just call methods as is the 
+case with $Accounting.findAccount($Customer). In general, though, it's
+preferable to stick to regular introspection where possible.
+<p>
+In addition to this, WebMacro's framework takes care of many servlet
+"housekeeping tasks", and provides access to a back-end component 
+system capable of loading and caching objects.
+<p>
+In fact, you can register your own components with the back-end 
+system, re-implementing some of WebMacro's core functionality to 
+your own liking, and extending it with classes of your own.
+<p>
+You can view the <a href="api/">API documentation</a> online to learn
+more about it--but the best way to find out how it works is to 
+<a href="Download.html">download WebMacro</a> and try it out!
+<p>
+<hr>
+On to <font size="+3"><a href="Intro-Design.html"><b>WebMacro Design</b></a></font>
+<p>
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

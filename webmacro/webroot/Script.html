@@ -1,0 +1,564 @@
+<html><head>
+<meta name="description" value="WebMacro Framework: A Java programming tool to help developers build Java servlets in a standard programming language, while providing web page designers to format the output with a convenient template language.">
+<meta name="keywords" value="webmacro servlet framework, webmacro script language, webmacro, web macro, servlet, java, template, script, java servlet, html template, web programming , web development, generating html, developer, programming, development">
+<title>WebMacro Script Documentation</title>
+
+</head>
+
+
+<body bgcolor="white">
+
+<blockquote>
+<h1><font color="green">WebMacro Template Script Documentation</font></h1>
+
+<h3><font color="green">Who Should Read This</font></h3>
+
+This is an overview of the script language used in WebMacro templates. It
+is aimed at web page designers who are building the front end look and 
+feel of an application based on WebMacro.
+<p>
+Programmers interested in the servlet back end should read the 
+<a href="/api/">API documentation</a>; and possibly my article on 
+the <a href="Servlet.html">Fundamentals of Servlet Design</a> which
+explains the idea behind WebMacro.
+<p>
+You might want to glance over the <a href="Intro-Script.html">Script Intro</a>
+page as well, for an overview.
+
+<h3><font color="green">Script Language Design Goals</font></h3>
+
+The main ideas behind WebMacro's script language are:
+
+<ul>
+  <li>Page designer doesn't need to know about back end programming
+  <li>Conceptually simple script language
+  <li>Compact, elegant syntax 
+  <li>Orthagonal to HTML/XML to avoid conflict
+</ul>
+<p>
+the main goal of the script language is to free the 
+page designer from having to know how the back end programming 
+was done. The page designer and back end programmer need only agree
+on what information is to be provided, not how it works.
+<p>
+The intent was to create a script language that was ideal for 
+page designers, while providing flexible access to all of the 
+underlying data that may be needed--and enough power to lay it 
+out in the desired way.
+<p>
+A secondary goal was to create a script language which could be freely
+used with XML and HTML: Many similar products exist which try and 
+use HTML or XML as the script language--resulting in an obscure 
+collection of tags that can't be properly parsed except with a 
+modified editor; and where conflicts between the content of the 
+document and the structure of the script language are a constant 
+headache.
+<p>
+WebMacro avoids this by carefully choosing a script language syntax
+in which none of the tokens are meaningful in HTML or XML.
+<p>
+The end result is a language which is easy to use, frees the page 
+designer from worrying about programming issues, and can generally 
+be manipulated from within a standard web editor (most of the time).
+
+
+<h3><font color="green">Templates and Contexts</font></h3>
+
+A template is an HTML (or other) document containing some WebMacro 
+script codes. The template should look so much like an HTML document 
+that it can (mostly) be edited as if it were one. Template creation 
+is the job of a page designer, and does not involve application 
+programming.
+<p>
+Templates are loaded by the WebMacro processing engine and parsed
+into an intermediate form for faster execution. When it's executed,
+the WebMacro engine resolves all the script codes in the document
+to produce the output, which is returned to the user.
+<p>
+Normally, a template will be parsed once and executed many times.
+<p>
+Each time the template is executed, it will be supplied with a new 
+context. A context is a bundle of information provided by the back-end 
+system which the template can access and display. 
+<p>
+The general idea behind WebMacro is that an application programmer
+writes some back end software which evaluates the users request,
+selects a template to display, and then populates the context with
+information that should be returned to the user.
+<p>
+The page designer writes the template which displays the information 
+found in this context. With each request the context will contain 
+different information.
+<p>
+What follows is a description of the kinds of things you can do in 
+a WebMacro template--how to access data in the context, how to iterate
+through lists, set variables, include different information by testing
+for conditions, and so on.
+
+<h3><font color="green">Variable</font></h3>
+
+Variables are the basic way you access information in the context that's
+been supplied to you. Most are quite simple, though some can be fairly 
+complex. Here are some examples:
+<pre>
+   $Title
+   $Customer.Name
+   $Inventory.Products.findProduct("hinge").PartNumber
+</pre>
+Each of these variables refers to an object somewhere in the context. It's
+WebMacro's job to figure out how to find the object referred to; it's the 
+application programmers job to make sure that it's there. 
+<p>
+In the second example, the Customer object has a Name property--the dot 
+operator is used to navigate from an object to one of its property. You 
+can navigate as deeply as you want into an object. 
+<p>
+The third example includes a method call. Generally you should prefer 
+regular property evaluation, since it's simpler and faster. However, 
+from time to time you will simply have to call a method on an object 
+to get what you want--and WebMacro allows you to do so. You can continue
+navigating from the object returned by the method into its properties.
+<p>
+Note that all text in WebMacro resolves to a String. Thus in a method call
+such as foo.bar(baz) you are passing the String arguement "baz" to the
+method bar on object foo. If you want to use an object of another type,
+you must get it as the return value of a Variable reference.
+<p>
+The back end programmer should provide you with a list of the objects you
+may find in your context, along with the properties they contain. If you 
+need to call any methods, the back end programmer will explain to you 
+what they are and how to use them. 
+<p>
+<i>Technical note:</i> For the curious, what happens here is that WebMacro
+uses Java property introspection to examine an object and determine how 
+to extract the requested information from it. It goes far beyond the simple
+introspection described in the Bean standard and is more or less capable of
+getting anything you want out of an object. Programmers should refer to the
+PropertyOperator documentation for more details on how WebMacro extracts 
+values from objects. 
+<p>
+
+In addition to accessing variables and properties, you can also set them 
+using the #set directive. See below for information on that.
+
+<p>
+The WebMacro servlet environment provides you with a number of standard 
+variables and objects pre-defined, in addition to those that the back 
+end programmer created. Check the WebContext documentation for more 
+information on what's available.
+
+<p>You can use a semi-colon to terminate a variable references in
+cases where there might be ambiguity. For example: "$Prefix;body"
+contains a variable named Prefix, with no space after it.
+<p>
+
+<h3><font color="green">Term</font></h3>
+
+Many WebMacro expressions require some kind of value--for 
+example, you may want to set a variable called $hi to the 
+value "Hello". The value "Hello" is called a term. 
+<p>
+WebMacro allows you to use six different kinds of things as 
+terms: words, numbers, booleans, variable references, quoted text, 
+and lists. 
+<p>
+Here are some examples of terms:
+<pre>
+
+      #set $thing = "this is a term"
+
+      #foreach $item in [ "these are all terms", $term, term ]
+
+      $variable.method( "method arguments are terms", $term, term );
+
+      #if (true) {
+         true is a Term equal to Java's Boolean.TRUE; similarly
+         false means Boolean.FALSE
+      }
+
+      #set $myInteger = 594
+      #set $myLong = 42L
+
+</pre>
+
+And here are more detailed explanations of each type:
+
+<dl>
+<dt><b>Word</b>
+<dd>A word is a series of letters and numbers
+    <p>
+    <i>examples:</i> Hello 1 
+    <p>
+    If your word has something other than letters and numbers in it you 
+    should quote it--see the description of Quoted Text below.
+    <p>
+    There are two special constants: <b>true</b>, and <b>false</b>.
+    You can use these anywhere a bare word can be used as a Term;
+    they are equivalent to Boolean.TRUE, and Boolean.FALSE. One
+    useful thing this allows you to do is set a variable to false
+    with the #set directive: "#set $v = false".
+    <p>
+
+<dt><b>Number</b>
+<dd> An Integer object will be constructed from a Term 
+    when it is fully numeric. For example, if you write:
+    <pre>
+        #set $a = 10
+    </pre>
+    that is equivalent to context.put("a", new Integer(10)). You may 
+    prefix a value with a minus sign to create negative values. Also, 
+    you may construct a Long instead of an Integer by adding the 
+    suffix <b>l</b> or <b>L</b>, as in Java. 
+    <p>
+    An Integer will automatically be converted to an <b>int</b> 
+    primitive, so you can use these constants to call methods 
+    which require an int argument.
+    <p>
+    No support is provided for Double, Float, or other values. If you
+    wish to write a numeric value as a string, enclose it in quotation
+    marks. For example, "101L" is a four character string, whereas 
+    101L when used as a Term, is a three digit Integer.
+    <p>
+    Note that this only applies to Terms: list members, arguments to 
+    functions, parameters of directives, etc.; numeric values in running 
+    text are unaffected.
+    <p>
+<dt><b>Boolean</b>
+<dd>There are only two boolean values: true and false. They are 
+    equivalent to the Java objects Boolean.TRUE and Boolean.FALSE.
+    You can use them to call functions or set properties which 
+    expect a boolean. Or you could save them in a variable, and 
+    conditionally include text using #if directives throughout
+    your document.
+    <p>
+    For example: <pre>
+
+       #set $Testing = true
+        ...
+       #if ($Testing) {
+          logged in user is $Customer.Name
+       }
+    </pre>
+    Introspection automatically convets Booleans to primitive 
+    Java boolean types when necessary.
+    <p> 
+
+<dt><b>Variable Reference</b>
+<dd>Just as you can have variables floating freely anywhere in 
+    your template, you can use a variable reference as a term. 
+    <p>
+    <i>example:</i> $Customer.Name
+    <p>
+    Variables are more fully explained above.
+    <p>
+
+<dt><b>Quoted Text</b>
+<dd>You can quote a string of words to group them together as a 
+    single term. You also need to use quotation marks if your 
+    term includes special characters. Without the quotes, WebMacro 
+    will view each word or special characer as a separate term (or 
+    possibly a parse error).
+    <p>
+    A string begins with either a double or single quotation mark, 
+    and ends with the same closing quote. It may contain variables, 
+    and you can use the \ character to escape characters within 
+    the string (if you need a literal $, for example).
+    <p>
+    <i>example</i>: "This is a string. Here is a variable: $var"<br>
+    Notice that the string contains a variable reference, $var.
+    <p>
+
+<dt><b>List</b>
+<dd>A list is an ordered set of terms. You might create a list so that 
+    you can iterate through it in a #foreach statement. Here is an 
+    example of creating a list:<pre>
+     #set $myList = [ "first thing", $second, third ]
+    </pre>
+
+     This example creates a list with three things. You can create lists
+     that contain lists too, if you want to do that: <pre>
+      #set $complex = [ [ first ], [second, two], [third, third, "number 3" ] ]
+     </pre>
+     
+     This complicated example creates a list of three elements, each of 
+     which is a list. The first list has one element, the second two, and
+     the third three elements.
+
+    <p>
+    <i>Programmer note:</i> These lists are of type Object[], and may
+    be returned to you via the Template API (parameters) or added to
+    your context by your template script.
+</dl>
+
+
+<h3><font color="green">Directives</font></h3>
+
+Directives are WebMacro statements that perform some operation; 
+conditionally include text; or repeat a block within your template.
+<p>
+Directives all begin with a '#' character, and must be the first thing 
+appearing on a line (they may have optional whitespace in front of them).
+<p>
+Many directives operate on a block. A block begins with a { and continues
+up until a matching } closes it. The closing } character will only be 
+recognized if it appears at the start of a line.
+<p>
+Here's an overview of the available directives.
+<p>
+
+
+<h4><font color="green">## <i>comments</i></font></h4>
+
+Two (or more) #'s at the start of a line form a comment. The rest of 
+the line is ignored. The comment may be preceeded by some whitespace,
+but otherwise is only recognized at the start of a line. 
+<p>
+Here's an example:
+<pre>
+    ## this is a comment
+</pre>
+<p>
+
+
+<h4><font color="green">#foreach <i>$thing</i> in <i>list</i></font></h4>
+
+The #foreach directive is the way you create tables and lists in 
+WebMacro.
+<p>
+#foreach iterates through a list, including its output block once for
+each element in the list.
+<p>
+Here's an example:
+<pre>
+   &lt;ul&gt;
+   #foreach $customer in $list {
+      &lt;li&gt;$customer.name lives at $customer.address
+   }
+   &lt;/ul&gt;
+</pre>
+
+Each time through the list the variable $customer takes on the value 
+of a term from the supplied $list. 
+<p>
+You may create the list yourself using the #set statement, or put the
+list here directly with [] syntax. More likely the back end programmer has
+provided the list for you by placing it in your context.
+<p>
+For example the list could be the result of a database query.
+<p>
+You can replace "$customer" with any variable you like. The block of text 
+within the braces will be output once for each item in the list, performing
+any substitution required. The block can contain arbitrary WebMacro script
+code, including further #foreach directives, #if statements, etc.
+<p>
+One warning: when the #foreach directive sets $customer to an element of 
+the list, it will overwrite any value which may have previously existed 
+in the context under the name "customer". 
+
+<h4><font color="green">#if (<i>condition</i>) { ... } #else { ... }</font></h4>
+
+Use the #if directive to conditionally include text. The text is included 
+if the condition is true, and not include if it is false.
+<p>
+In WebMacro, a condition is true if it is defined and has a non-null value
+other than Boolean.FALSE. Since WebMacro automatically converts to and
+from primitive boolean types, you are encouraged to use boolean values
+in conditions whenever possible.
+<p>
+#if directive conditions can make use of the boolean operators:
+<b>&&</b> (and),  <b>||</b> (or), and the unary operator <b>!</b>
+(not). These boolean ooerators mean the same thing they do in
+Java. They are left-associative, and short circuiting (meaning
+the right operand is evaluated only if it has to be).
+<p>
+You can also use the boolean ooerators <b>==</b> (equals)
+and <b>!=</b> to compare objects. These do not behave like
+Java operators do: they rely on Object.equals() rather
+than object identity to determine equivalence.
+    <p>
+A conditional can use any WebMacro Term as its operands. A Term
+is considered false if it is null, undefined, or equal to the
+constant Boolean.FALSE; and true otherwise. You are encouraged
+to use regular boolean primitives in your code as these will
+be translated to Boolean.TRUE and Boolean.FALSE during introspection.
+    <p>
+Finally, you can group expressions based on Terms and these five
+operators using parentheses, as you would expect. Thus the following
+is a valid condition: (($User && $User.isOK()) || ($Magic == "foo"))
+
+<p>
+Here's an example:
+<pre>
+    #if ( $Customer.owesMoney() && ($Customer.Name != "Fred") ) 
+    {
+        Pay up, or else!
+    } #else {
+        Thank you for your patronage.
+    }
+</pre>
+
+The #else block is optional--you can leave it off.
+
+
+<h4><font color="green">#include <i>file</i></font></h4>
+
+Use the #include directive to read in a file. The contents of the 
+file will not be parsed, so this is a good way to include JavaScript and
+other things that might conflict with WebMacro. 
+<p>
+You can also use it to read in standard block of HTML which you would 
+like to include in every page.
+<p>
+Here is an example:
+<pre>
+   #include /web/script/banner.html
+</pre>
+
+<h4><font color="green">#param <i>name</i> = <i>value</i></font></h4>
+
+The #param directive can be used to specify parameters of the template 
+which can be examined by the handler. These are static values that do not 
+change over the life of the template.
+<p>
+The purpose of the #param directive is to allow the template author to 
+specify some parameters to the back end programmer that may be used to 
+determine what kind of information to put into the context.
+<p>
+Here are some examples:
+<pre>
+   #param author = "Joe"
+   #param require = [ "user", "document", "session" ]
+</pre>
+
+The first parameter sets the "author" keyword to "joe". The second parameter
+sets the "require" keyword to a list of three things: user, document, and 
+session.
+<p>
+These parameters are arbitrary and only meaningful if the back end 
+programmer makes use of them.
+
+
+<h4><font color="green">#parse <i>file</i></font></h4>
+
+The #parse directive includes a target file and parses it as though it
+were part of the current template. 
+<p>
+You can use this to include common template code that may be shared 
+among several different templates.
+<p>
+Here are some examples:
+<pre>
+   #parse "C:/webmacro/library/banner.wm"
+
+   #set $library = "C:/webmacro/library"
+   #parse "$library/banner.wm"
+</pre>
+
+Note that you must normally specify an absolute path to the target. Future
+versions of WebMacro may alleviate this restriction.
+
+
+<h4><font color="green">#set <i>$property</i> = <i>value</i></font></h4>
+
+Just as you can access values in the context, you can set them. 
+<p>
+Here is a simple use of the #set keyword:
+<pre>
+    #set name = "Fred Flinstone"
+    Hi my name is $name
+</pre>
+
+The #set directive is much more poweful than this simple use, however. It
+can also be used to set properties on complicated objects--if there is a 
+way to do it: 
+<pre>
+   #set $Customer.name = "Sidney"
+   #set $Database.findItem($partNum).Description = $newDescription
+</pre>
+
+Whether or not it is possible for you to set a value depends on the 
+public methods available on the target object. WebMacro will use normal 
+Variable reference evaluation to evaluate all but the last term specified
+in the left hand side of the #set. Then it will introspect the final object
+to determine if it's possible to set the value in some way.
+<p>
+Refer to the PropertyOperator documentation for a complete list of the 
+mechanisms by which WebMacro can succeed in setting a value.
+
+
+<h4><font color="green">#use <i>'parser'</i> until <i>end-marker</i></font></h4>
+
+The #use directive switches to a parser other than the one normally 
+used by WebMacro. It's a hook into other languages. Currently, the only
+other parser that WebMacro can call is a "text" parser that does nothing.
+<p>
+You can use the "text" parser to mark off a portion of your template as 
+being non-Webmacro script. For example, you could surround some JavaScript
+this way so that the {'s don't confuse Webmacro.
+<p>
+Here is how it works:
+<pre>
+   #use 'text' until '-end-'
+      this appears verbatim in the output, the 
+      #number signs and { characters do not }
+      confuse WebMacro but will be output as is. 
+      It is safe to put JavaScript code here.
+   -end-
+</pre>
+
+The specified parser (in this case 'text') eats all the input until a 
+line matching the until clause is found (in this case '-end'). 
+
+<h3><font color="green">Retrospective Overview</font></h3>
+
+WebMacro's script language is fairly powerful--but it is completely 
+focussed on formatting and laying out a page. 
+<p>
+As a designer you will have to learn some simple scripting. However, it 
+should never be very complicated, and it is always related to what you 
+are trying to do: lay out information on a page.
+<p>
+All programming issues, the creation and manipulatio of information, are 
+expected to be handled by the programmer in Java.
+<p>
+As a programmer you may be surprised that WebMacro is lacking more 
+sophisticated programming structures. This is intentional. You have 
+an excellent, full fledged language--Java--in which to write your 
+back end code. 
+<p>
+Because Webmacro separates all the programming out of the template, both
+the program and the HTML templates are much more elegant and understandable
+than when those two worlds collide in one document.
+<p>
+In addition, because they are separate, programmers and page designers 
+can work on a project simultaneously. 
+<p> 
+To learn more about WebMacro, its design, and to share and exchange ideas
+on its use, please join the <a href="http://lists.semiotek.com/mailman/listinfo/webmacro">mailing list</a>.
+<p>
+The mailing list is also the appropriate place to direct support questions, 
+and we do encourage you to post if you run into trouble. We'd also like to 
+hear from you if you figure out a clever way to do something interesting, 
+or feel that an important feature is missing from WebMacro.
+
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

@@ -1,0 +1,23 @@
+<html><head><title>GuestBook Example</title></head>
+#set $Response.Header.Content-Type = "text/html"
+
+<body bgcolor="white">
+<h1><font color="green">GuestBook Example</font></h1>
+<p> This sample webmacro script will collect form data and then interpret 
+the form data and return the information in a table.
+
+<FORM METHOD="POST" ACTION="GuestBook">
+<TABLE ALIGN="CENTER" width="600">
+<INPUT TYPE="HIDDEN" NAME="loadFile" VALUE="verify">
+<TR><TD font color="red">Your Name:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="name" VALUE=""></TD></TR>
+<TR><TD font color="red">e-Mail:</TD><TD font color="green"><INPUT TYPE="TEXT" NAME="email" VALUE=""></TD></TR>
+<TR><TD font color="red">Comment:</TD><TD font color="green"><TEXTAREA NAME="comment" COLS="60" ROWS="25" WRAP="HARD"></TEXTAREA></TD></TR> 
+<TR><TD ALIGN="CENTER" COLSPAN="2"><INPUT TYPE="SUBMIT" NAME="ACTION" VALUE="SUBMIT"></TD></TR>
+</TABLE>
+</FORM>
+
+<a href="GuestBook?loadFile=allguest">
+See Guests</a>
+
+
+</body></html>

@@ -1,0 +1,32 @@
+
+Albert L. Ting posted this to the webmacro mailing list:
+
+For those of you who use emacs, sgml-mode, and font-lock highlighting,
+below is some initial code to highlight the webmacro keywords and
+variables.
+
+;; WebMacro highlighting
+(let ((webmac "^\\(#\\)")
+      (keyword-tokens
+       (concat "\\<\\("
+               (mapconcat
+                'identity
+                '("else" "foreach" "if" "in" "param" "set")
+                   "\\|")
+                  "\\)\\>"))
+      (include-tokens
+       (concat "\\<\\("
+               (mapconcat 'identity '("include" "parse") "\\|")
+               "\\)\\>")))
+  (font-lock-add-keywords
+   'sgml-mode
+   `((,(concat webmac "#.*") . font-lock-comment-face)
+     ("\\(^\\|[^\\]\\)\\(\$[0-9A-Za-z_\\.]+\\)"
+      (2 font-lock-variable-name-face))
+     (,webmac (1 font-lock-builtin-face)
+              (,keyword-tokens nil nil (1 font-lock-keyword-face)))
+     (,webmac (1 font-lock-builtin-face)
+              (,(concat include-tokens "[ \t]+\\([^ \t]+\\)") nil nil
+               (1 font-lock-constant-face) (2 font-lock-string-face)))
+     )))
+

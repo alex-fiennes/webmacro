@@ -1,0 +1,150 @@
+<html><head>
+<meta name="description" value="Current status of the WebMacro development effort, quality of the current release, and future development ideas">
+<meta name="keywords" value="development effort, status, webmacro servlet framework, webmacro script language, webmacro, web macro, servlet, java, template, script, java servlet, html template, web programming , web development, generating html, developer, programming, development">
+
+<title>WebMacro Java Servlet Framework: Project Status</title>
+
+</head>
+
+<body bgcolor="white">
+<blockquote>
+<h1><font color="green">WebMacro: Project Status</font></h1>
+
+WARNING: <b><font color="red">WebMacro versions pre-1.0 are experimental early releases.</font></b>
+<p>
+Version 0.89.1, released May 3rd, fixes a bug in the new conditional code
+<p>
+Version 0.89, released May 2nd 1999, adds conditional logic, 
+tests for equality and inequality, integer support, fixes many
+bugs, and cleans up error reporting.  
+<p>
+
+Version 0.85.2, released April 25th 1999, fixes bugs and tightens
+up the source. Bugs fixed: #foreach can now take a list as its
+argument; macros within lists properly expanded; #if is now 
+guaranteed to evaluate its argument only once; and restored
+public visibilityto ResourceManager.
+<p>
+
+Version 0.85.1, released April 17th 1999, fixes a few small bugs:
+meaningless exceptions were being logged when TemplatePath has
+multiple directories; iterator() methods were being ignored by
+Property introspection when extracting list from object.  
+<p>
+
+Version 0.85, released April 11th 1999, adds reloadable templates,
+cleans up the WMServlet API, adds template paths, makes it easier
+to compile under Java 2, and fixes several nasty bugs.
+<p>
+
+Version 0.80, released March 5th 1999, adds generic servlets, template
+parameters, method invocation, list initialization, comments, and 
+numerous smaller changes. The 0.80.1 release on March 7 fixes a minor
+bug in error rendering.<p>
+
+Version 0.75.3 fixes a bug that caused JavaScript programs embedded in 
+WebMacro scripts to break (a problem with { and } in some contexts.). <p>
+
+Version 0.75.2 fixes a lot of bugs that were reported on the mailing 
+list, and adds one new feature: If the result of evaluating a Variable 
+is a Macro, it is recursively evaluated; otherwise Object.toString() 
+is used to acquire a value. Previously only Object.toString() was used.
+The bugs fixed included problems with the #use directive, parse errors 
+associated with the #if directive, improper handling of tabs, and 
+a variety of less critical bugs. <p>
+
+Version 0.75.1 fixes a bug in the parser that was present in the 
+first 0.75 release of WebMacro. Newlines in nested blocks were not 
+handled correctly, leading to a failure to recognize the closing 
+brace.  <p>
+
+Version 0.75 of WebMacro adds a flexible component model to the
+development side. The new ResourceBroker manages a cache of resources
+shared between multiple connctions; allows expensive resources to
+be retrieved asynchronously, blocking your servlet only when it
+attempts to access the requested information.  <p>
+
+In addition, with the ResourceBroker you can replace any of the
+core components within WebMacro with your own versions. You can also
+write new core functionality and add it to the system.  <p>
+
+On the front end, the template script language has much faster and
+smarter property introspection: it's capable of extracting much more
+information from arbitrary Java objects, and it does so more quickly. <p>
+
+And we've now tested on more platforms: Linux, FreeBSD, Solaris, and NT!
+<p>
+<blockquote>
+<a href="http://www.webmacro.org/Download.html">download WebMacro here</a>
+</blockquote>
+<hr>
+
+Version numbers of WebMacro pre-1.0 will indicate what percent of the way
+we think we are to having a stable 1.0 release. To get to 1.0 we 
+still have to: 
+
+<ul>
+  <li>Fix bugs and test! We need help here--if you run into any problems,
+      please report them on the mailing list. Otherwise we don't know!
+      <p>
+  <li>Smarter conditionals. WebMacro if statements are limited to simple
+      true or false (returned from a method, or in a variable). It should
+      support the full suite of and/or/not operators.
+      <p>  
+  <li>It should be possible to build static pages out of WebMacro 
+      templates, in conjunction with a database of some sort. It would 
+      also be good if templates could be generated programatically, 
+      not just read from a file. This may or may not make it into 1.0.
+      <p>
+  <li>Better support for distributed servlets. Primrily, using URLs rather
+      than just file names to load resources.
+      <p>
+  <li>WebMacro should ship with better examples, possibly even some simple
+      but useful common applications.
+      <p>
+  <li>Better documentation. The API and script documentation are pretty 
+      good now--but there should be a better tutorial and other things.
+</ul>
+
+Between now and 1.0 we reserve the right to change any interface, rewrite
+any class, modify the format of the config file, alter the template script
+language, etc. 
+<p>
+To shield people from the worst of this, we've marked many classes as 
+"final" unnecessarily, and marked many constructors as protected. As the 
+interfaces stabilize, these restrictions will be removed.
+<p>
+After 1.0 we will try really really hard not to break anyone's existing
+code. So be warned: WebMacro pre 1.0 is still experimental "beta" software
+that continues to undergo substantial transformations.
+<p>
+On the other hand, the current version is pretty good. A great deal of 
+functionality is in place, and you should be able to put it to productive
+use.
+
+<hr>
+
+If you want to stay current, have feature requests, ideas, or you
+want to help out with the project--get on our<a href="http://lists.semiotek.com/mailman/listinfo/webmacro"> mailing list</a>.
+
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

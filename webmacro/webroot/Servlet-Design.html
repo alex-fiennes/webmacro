@@ -1,0 +1,276 @@
+<html><head>
+<meta name="description" value="Servlet design">
+
+<meta name="keywords" value="servlet, servlets, java servlet design, webmacro, model/view/controller, MVC">
+
+<title>How to Design Servlets</title>
+
+</head>
+
+<body bgcolor="white">
+
+<blockquote>
+<center>
+<h1><font color="green">Fundamentals of Servlet Design</font></h1>
+
+<a href="mailto:justin@webmacro.org"><font color="green" size="+2">Justin Wells</font></a><br>
+<a href="http://www.webmacro.org/"><font color="red">webmacro.org</font></a>
+
+</center>
+
+<p>
+
+This section of <a href="Servlet.html">Fundamentals of Servlet Design</a>
+describes what I think is the right way to design a servlet. In the 
+<a href="Servlet-Issues.html">previous</a> section I analyzed the 
+context of servlet programming and came up with a some servlet 
+design issues. The <a href="Introduction.html">WebMacro  Servlet Framework</a>
+which incorporates these ideas.
+
+<hr>
+
+<h2><font color="green">The Right Way to Design A Servlet</font></h2>
+
+Without any further delay, here is my opinion on the right way to
+design servlets: <b>
+<ul>
+
+   <li>Encapsulate your back end data; keep it separate from the servlet.
+       <p> 
+   <li>Create templates that represent the page views your servlet
+       will send back to the user
+       <p>
+   <li>Write a servlet that reads the client request, accesses the
+       back end, and fills in the data needed by the template
+</ul>
+</b>
+
+This way of doing things is called a <i>Model/View/Controller</i>
+approach, generally abbreviated to just MVC. It's common to many
+user-interface systems in the GUI world--I am just saying you should
+use this fundamental approach in the servlet world too. 
+<p>
+First, let's clear up what's meant by "model", "view", and 
+"controller": 
+<p>
+The abstract back end of your servlet is your "model", the templates
+that embody the look and feel of your servlet represent "views". 
+The code that glues these two things together is called the 
+"controller"--it's responsible for interpreting requests, and translating 
+them into operations on the model, then displaying some result.
+<p>
+The fundamental principle here is that business logic, managing 
+requests, and generating a page are three separate tasks.
+<p>
+I will sometimes refer to your controller as your servlet. The templates
+and business logic are part of your servlet framework, most easily 
+implemented as separate entities.
+<p>
+The <a href="http://www.webmacro.org/">WebMacro Servlet Framework</a> implements
+this design--but the principles enumerated here stand by themselves.
+
+<h4><font color="green">Does It Measure Up?</font></h4>
+<p>
+
+I'll go through the servlet design issues I raised in the previous
+article and show you that the Model/View/Controller approach to 
+servlet writing is a natural consequence of those requirements.
+
+<ul>
+   <li><b>Good servlet design makes it possible to partition work</b>
+</ul>
+
+This servlet design partitions work into three categories, allowing 
+three different groups of people to work concurrently:
+<p>
+The first group is responsible for the back end model. This is an abstract
+representation of your business or other problem domain. Sometimes this
+already exists--when you're developing a servlet to provide access to an 
+existing application or resource. In any case it is a separate
+module which will likely be valuable outside your current servlet
+project.
+<p>
+A second group is responsible for designing page views. These are 
+your web page designers, marketing people, writers, and so forth. They 
+work on the look and feel of your servlet and view programming work as 
+something they'd rather not see--a distraction, and inconvenience 
+which gets them away from their core work.
+<p>
+A third group is responsible for writing a servlet that glues the 
+other two parts together: some controller code which handles requests 
+from the client and returns a response. This servlet uses the model
+to perform operations and find information, chooses a template with
+which to display the information, and provides it with data. The result
+is returned to the client.
+<p>
+Though I've called only the third thing your servlet, you probably 
+think of a servlet as the combinatin of the model, view, and 
+controller. In practice it is easier to implement the
+controller as a servlet, and link in other modules that implement
+the model and the view.
+<p>
+The above applies equally well if you are a single, overworked servlet
+programmer and page designer doing the whole thing yourself. By
+dividing your work into more concrete and better directed tasks,
+your life is made easier.  
+<ul>
+   <li><b>Good designs allows prototyping</b>
+</ul>
+
+To create a prototype of your servlet, mock up a bunch of HTML
+pages and look at them.
+<p>
+Anyone can do this with any servlet design--the difference is, with this 
+approach you can turn those example pages into templates directly.
+With other designs you would have to translate the example pages
+into something more complicated.
+<p>
+When you do translate your examples into templates, you'll need to
+write a "smoke and mirrors" controller servlet that provides some
+bogus data, adequate for demonstration purposes. Just because 
+you've moved one step forward doesn't mean you aren't still 
+prototyping your servlet--you're just being more sophisticated about it.
+<p>
+The next step is to link in some kind of back end model and make
+your prototype servlet a bit more realistic. Depending on what 
+you're doing you might even be able to turn your prototype 
+servlet into the end product through progressive steps. Presumably by
+this time you've already shown early demos of your servlet to your client 
+several times and have had many new insights into what you're doing.
+<p>
+Be careful though. The idea here is that seeing a working servlet
+leads to flashes of insight. Often you or your customer will realize 
+a completely different approach would be better. In that case, be willing
+to throw out your work and start again.
+<p>
+Since you will have invested very little work in creating your 
+prototype servlet, your important new insights will be  adequate 
+compensation for the small amount of work you've done.
+<p>
+You can progress as far as you need to, committing only small
+amounts of work to your servlet at each stage--at which point you
+call in the customer, manager, or whoever else has a stake in the
+servlet project to see whether things are looking good.
+
+<ul>
+   <li><b>Good designs allow frequent, easy changes</b>
+</ul>
+
+No doubt upon seeing a working servlet, your manager or customer will
+want to change something. You can, on the spot, edit the template to make
+whatever trivial changes are desired to the look and feel. 
+<p>
+Bigger changes may require modifications or even a rewrite of your Java
+servlet code--but this won't be so bad since you can continue using
+the same template for the front end, and the same model for the
+back end.
+<p>
+Substantial changes to your servlet will obviously require rethinking
+the back end model itself. Depending on how extensive the change
+is, you may be able to do it with few or no changes to the front
+end controller and template.
+<p>
+In summary--this is a servlet design that likes change. It makes look and
+feel changes to servlets trivial; and even provides support for
+more substantial changes by limiting the extent to which a change
+can disrupt work already done.
+<ul>
+   <li><b>Good designs produce visible results at every stage</b>
+</ul>
+
+This one's easy to see:
+<p>
+You've always got your templates. And if you can get enough of a
+back end servlet working to populate them with some data--you've
+got something you can show.
+
+<ul>
+   <li><b>Servlet programmers must be able to write clear code</b>
+</ul>
+
+Many servlet and web solutions miss the importance of this one, but 
+the MVC approach to servlets allows for it. 
+<p>
+No HTML codes appear in the servlet; and no client/server knowledge
+need appear in the back end model. The servlet programmers need
+concern themselves only with what data is required, and how to get it. 
+The team developing the model need concern themselves only with business
+logic.
+<p>
+Many other solutions embed business logic into the servlet; some even 
+mix it freely with the HTML. This obscures the big picture by combining
+too many conflicting interests in one place. 
+<p>
+By separating your concerns into three distinct areas, each one 
+becomes simpler--with only one clear issue to deal with, each segment of
+your servlet can be implemented with simple, clear, single-purpose code.
+
+<ul>
+   <li><b>Servlet page designers must be able to operate on the whole page</b>
+</ul>
+
+No problem. The template is the whole page, and is completely under 
+the control of the page designer. 
+<p>
+
+<ul>
+   <li><b>A good servlet design separates programming from page design</b>
+</ul>
+
+It goes without saying that the template author can modify the
+look and feel of the servlet  without having to recompile the
+underlying controller or model. Similarly, the servlet programmer
+can mess around with the back end without having to do anything
+special with the template.
+<p>
+In particular both can work with "stubbed" versions of the other--the 
+servlet programmer can develop with a simple functional (but ugly) template; 
+the template author can create the look and feel with a barely 
+functional "smoke-and-mirrors" servlet that provides some example data.
+
+<ul>
+  <li><b>A good design clarifies and simplifies session management</b>
+</ul>
+
+The controller code, the heart of your servlet, has full and sole 
+responsibility for tracking the user--figuring out what they've done, 
+what they're trying to do now, and facilitating it. 
+<p>
+The generation of a view, and the state of the back end model, are 
+handled elsewhere. Session management is clearly expressed in 
+the controlling servlet, making it easier to comprehend, and therefore
+easier to design and debug.
+<p>
+The importance of this will not be lost on experienced CGI/servlet 
+writers. 
+
+<h3><font color="green">The WebMacro Servlet Framework</font></h3>
+
+The next section presents the WebMacro servlet framework, which
+incorporates this design.
+<p>
+Next: <font size="+2"><a href="Introduction.html"><b>The WebMacro Framework</b></a></font>
+<p>
+
+
+</blockquote>
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

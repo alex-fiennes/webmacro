@@ -1,0 +1,452 @@
+<html><head>
+<meta name="description" value="Servlet design">
+
+<meta name="keywords" value="servlet, servlets, java servlet design, webmacro, model/view/controller, MVC">
+
+<title>Servlet Programming</title>
+
+</head>
+
+<body bgcolor="white">
+
+<blockquote>
+<center>
+<h1><font color="green">Fundamentals of Servlet Design</font></h1>
+
+<a href="mailto:justin@webmacro.org"><font color="green" size="+2">Justin Wells</font></a><br>
+<a href="http://www.webmacro.org/"><font color="red">webmacro.org</font></a>
+
+</center>
+
+<p>
+
+In this article I generate a list of requirements for a good servlet 
+design, and propose a general framework which I think you should adopt. 
+At the end I briefly talk about how I've translated these ideas into 
+a free development framework called <a href="http://www.webmacro.org/">WebMacro</a>; 
+but the general design approach is not tied to that product.
+<p>
+I start out by taking a good long look at web development--noting the key 
+features of that type of work, and deriving some important design requirements.
+Any servlet design should live up to these requirements. 
+<p>
+I also take a brief look at what makes servlets different than CGI programs,
+and other technologies--noting some of the features of the Java language that
+a good servlet design could exploit. 
+<p>
+Finally, I collect all these insights together into an argument for a 
+Model/View/Controller approach to servlet design. I explain what that 
+means, and why it's the right way to develop servlets. 
+
+
+<h2><font color="green">What is servlet development?</font></h2>
+
+Servlet design exists in a context. In order to understand the right way to look at 
+servlets, take a step back and look at web development in general. 
+<p>
+I've been developing web applications since 1995. In all that time, I've noticed 
+a few things about web projects--they're a little bit different than other kinds 
+of projects, and any design must accomodate the particular nature of the field.
+<p>
+Here's what I think:
+<p>
+<h4>Servlet development involves teamwork</h4> 
+
+A typical web development project involves one or more programmers,
+page designers, and customers, all working together to build the final product.  
+<p>
+This gives us our first requirement, which is so fundamental that many people overlook it:
+  <ul>
+      <li><i>Good servlet design makes it possible to partition work</i>
+  </ul>
+A servlet design is no good if it means the page designer has to
+depend on the programmer to make look and feel changes. It's also
+no good if the page designer can't do any work at all until the
+programmer is done--people need to work in parallel.
+<p>
+
+<h4>Servlet development must be rapid</h4>
+
+Customers come to servlet developers with a most basic question: What 
+can servlets do that will help me out? 
+<p>
+Initially there will be many good ideas, but not much certainty. Customers 
+generally need to see some results before they know what they want. This puts
+web developers in an uncomfortable position: "Build it and I'll tell you whether
+I want it" is not on the road to success and profit.
+<p>
+The correct approach is to spend a small effort generating something that is 
+just good enough to give the client a better idea. Then allow frequent changes
+as the project moves forward.
+<p>
+From these observations I derive three requirements, which can be summed up 
+as "a good servlet design supports rapid development":
+  <ul>
+     <li><i>Good designs allows prototyping</i>
+     <li><i>Good designs allow frequent, easy changes</i>
+     <li><i>Good designs produce visible results at every stage</i>
+  </ul>
+Without the ability to show the customer something early, you'll build the 
+wrong thing. And even after you've built the right thing, the customer will 
+want to tweak it. And in order to know whether what you're doing is the 
+right thing, you need to show it often.
+
+
+<h4>Servlet development is complex</h4>
+
+Software systems are incredibly complicated. People only hope to understand 
+them by breaking them down into simple components that are easy to understand.
+The idea is to abstract out the important principles, and illustrate them 
+clearly in your servlet code--only then can a programmer look at the whole 
+and feel like it's well understood.
+<p>
+Similarly, page design is hard. And unlike programming, it cannot easily
+be broken down into component parts. Instead a good designer looks at the 
+whole and, based on experience and artistry, decides how to improve it.  
+<p>
+Both of these tasks are fairly complex, and need to be supported by any 
+servlet design. 
+<p>
+So here are two more requirements:
+<ul>
+   <li><i>Servlet programmers must be able to write clear code</i>
+   <li><i>Servlet page designers must be able to operate on the whole page</i>
+</ul>
+<p>
+If the servlet programmer can't write clear code, then they'll have
+trouble illustrating the key abstractions. Next they'll feel they don't have
+a competent grip on how the whole servlet works. They'll make mistakes, or else 
+avoid making changes out of fear of making a mistake.
+<p>
+If page designers can't deal with the page as a whole, and change whatever they 
+want easily, then they won't be able to do a good job. Their task can't be broken
+down into separate parts as a program can: how a title is formatted depends 
+on everything else on the page.
+<p>
+Since these two ways of working are incompatible, this leads to a new 
+requirement:
+<p>
+<ul>
+   <li><i>A good servlet design separates programming from page design</i>
+</ul>
+
+The two problems can't be broken down the same way, cannot be solved the 
+same way, and often involve different people anyway. 
+
+
+<h4>Servlet development is client/server</h4>
+
+You don't have much choice here--there's a web browser, the client, and your 
+servlet lives on the server,  accepting requests and generating responses.
+<p>
+But here it is, stated a bit more generally, so we can see it:
+<ul>
+  <li><i>A good design clarifies and simplifies session management</i>
+</ul>
+
+The immediate consequence of a client/server architecture is that the 
+server must track the client and figure out what it's been doing; whether
+all the appropriate information has been supplied; whether all the 
+correct steps have been followed--for example, perhaps a user must log in 
+before posting a message.
+<p>
+Many designs bury interaction control in HTML and/or the back end, without
+clearly expressing it anywhere. 
+<p>
+Soon people working on projects like this find themselves spending an
+inordinate amount of time trying to comprehend how all the pages and
+information fit together in an expensive attempt to solve some 
+mysterious bug.
+<p>
+A good design simplifies this work by allowing session management and
+other client/server issues to be dealt with from a well defined place,
+separate from the other work.
+
+
+<h2><font color="green">What's different about Servlets?</font></h2>
+
+The second general area to think about in servlet design is, how are servlets
+different than previous web technologies? 
+<p>
+CGI scripts have been around for quite awhile, and there is some tendency to 
+follow the same general designs with servlets as worked with CGI's. This is 
+a mistake--servlets are different.
+<p>
+Here are some considerations:
+<p>
+
+<h4>Servlets are Persistent</h4>
+
+This is the biggest difference between servlets technologies like CGI or PHP:
+servlets don't go away after each request. Instead they wait around. 
+<p>
+A servlet design can take advantage of this in several ways:
+<ul>
+  <li><i>Offload expensive processing to "between connect" times</i>
+  <li><i>Cache large or expensive objects in a pool and share them between users</i>
+  <li><i>Track session state in a persistent object</i>
+</ul>
+
+In fact, the servlet API itself provides some support for the last 
+point--the session API includes a hashtable into which you can put 
+whatever you want. 
+<p>
+
+<h4>Servlets are Object-Oriented Java Programs</h4>
+
+Java is an Object-Oriented language. CGI programs are typically
+implemented in a language which is not.  The implication here, of
+course, is that object oriented techniques should be applied to
+servlet design.
+<p>
+I have no intention of going through all the benefits of object-oriented 
+design and programming here, but some of the more basic points are:
+<ul>
+  <li><i>Use encapsulation to control access to data</i>
+  <li><i>Use polymorphism to reduce complexity</i>
+</ul>
+
+Encapsulating, binding data and methods together, is what object oriented
+programming is all about. Use it to control access to data, so that you 
+can change the implementation later without breaking code that uses 
+your object. 
+<p>
+Another benefit of encapsulation is that it allows for an optimization
+known as <i>lazy evaluation</i>--because data is accessed via a
+method, it does not need to be computed or fetched until it's
+needed. The method which returns it can check whether it has already
+been produced, and create it on the spot if it hasn't already been.
+The advantage is that if the information is never needed, you don't
+waste time loading or computing it.
+<p>
+As for inheritence and polymophism--the idea here is to reduce complexity. 
+More abstract types (superclasses and interfaces) are simpler--they have
+fewer methods and fewer issues. And by dealing with an interface or 
+superclass you introduce fewer dependencies between different modules 
+of your servlet. This reduces complexity as well, since then there are 
+fewer things to worry about when you change something.
+<p>
+Aside from these basics, and more advanced OO topics which you will find in any
+good OO design book, Java has its own peculiarities. It's important to consider
+these two:
+<ul>
+  <li><i>Use Java Beans (and reflection in general) to break your servlet down 
+      into well defined componant parts. </i>
+  <li><i>Use threads and concurrency to improve responsiveness</i>
+</ul>
+
+Component programming takes the benefits of polymorphism one step further: All 
+you need to know about a component is what it does, and what methods it 
+supports. Components can be interchanged if they do the same thing in the 
+same way--whereas with polymorphism, the objects involved are all required 
+to be of the same eventual (super) type. With components this restriction 
+is dropped. 
+<p>
+Concurrency is a mixed bag. On the one hand, it allows you to improve performance
+by maximizing your servlets use of resources--while a database connection is 
+being opened, another part of your servlet can be generating some HTML. The 
+downside is that with this extra power comes a whole lot of responsibility--new 
+kinds of mistakes are possible, and sometimes difficult to avoid.
+<p>
+A good servlet design should probably isolate concurrency to a few well 
+thought out places, under the control of a general framework that deals with 
+the possible problems. 
+<p>
+Your servlet can exploit beans and reflection to improve re-useability and 
+simplify design; you can also, with some care, use threads to speed up 
+performance--or at the very least, perceived performance.
+<p>
+
+
+
+<h2><font color="green">The Right Way to Design A Servlet</font></h2>
+
+Without any further delay, here is the right way to design servlets: 
+<ul>
+
+   <li>Encapsulate your back end data; keep it separate from the servlet.
+       <p> 
+   <li>Create templates that represent the page views your system
+       will send back to the user
+       <p>
+   <li>Write a controller that reads the client request, accesses 
+       the back end, and fills in the data needed by the template
+</ul>
+
+This way of doing this is usually called a "Model/View/Controller" 
+design. The abstract back end is your "model", the templates that 
+embody the look and field represent "views", and the code that 
+glues things together (your servlet) is called the "controller".
+<p>
+How does it measure up to our requirements?
+<p>
+
+<ul>
+   <li><i>Good servlet design makes it possible to partition work</i>
+</ul>
+
+This design partitions work into three categories, allowing 
+simultaneous work to proceed:
+<p>
+One group is responsible for the back end model. This is an abstract
+representation of your business or other problem domain. It's a separate 
+module which may prove useful outside the servlet you are writing. 
+<p>
+A second group is responsible for creating page views. These are likely
+your web designers, marketing people, and so forth. They can work 
+on look and feel independent of everyone else. 
+<p>
+A third group is responsible for writing the program that glues the 
+other two tasks together: some controller code, embodied in a servlet,
+which accepts requests form the client, makes use of the model to find
+the relevant information, chooses a template somehow, and supplies 
+it with data. 
+<p>
+
+<ul>
+   <li><i>Good designs allows prototyping</i>
+</ul>
+
+To create a prototype, mock up a bunch of HTML pages and look at them. 
+If they're adequate, turn them into templates. At this point you'll 
+need to write a "smoke and mirrors" controller that provides some 
+bogus data, adequate for demonstration purposes. The next step is 
+to link in some kind of back end model and make it a bit more 
+realistic. 
+<p>
+You can progress as far as you need to, committing only small amounts
+of work at each stage--at which point you call in the customer, manager,
+or whoever else has a stake in the project to see whether things are 
+looking like they'd want. 
+
+<ul>
+   <li><i>Good designs allow frequent, easy changes</i>
+</ul>
+
+No doubt upon seeing your prototype, your manager or customer will have
+a few ideas. You can, on the spot, edit the template to make whatever
+trivial chagnes are desired. 
+<p>
+If necessary you may have to change or even rewrite your controller--but 
+this won't be so bad since you can continue using the same template for
+the front end, and the same model for the back end. 
+<p>
+Substantial changes will obvousily require rethinking the back end 
+model itself. Depending on how extensive the change is, you may be 
+able to do it with few or no changes to the front end controller and 
+template.
+<p>
+In summary--this design likes change. It makes look and feel changes 
+trivial; and even provides support for more substantial changes by 
+limiting the extent to which a change can disrupt work already done.
+
+<ul>
+   <li><i>Good designs produce visible results at every stage</i>
+</ul>
+
+This one's easy to see:
+<p>
+You've always got your templates. And if you can get enough of a back 
+end working to populate them with some data--you've got something 
+you can show. 
+
+<ul>
+   <li><i>Servlet programmers must be able to write clear code</i>
+</ul>
+
+Many servlet and web solutions miss the importance of this one, but 
+the MVC approach allows for it. 
+<p>
+No HTML codes appear in the controller; and no client/server knowledge
+need appear in the back end model. The author of the controller need
+concern themselves only with what data is required, and how to get it. 
+The author of the module need concern themselves only with the logic 
+of the problem domain.
+<p>
+Many other solutions embed business logic into the servlet; some even 
+mix it freely with the HTML. This obscures the big picture by combining
+too many conflicting interests in one place. 
+<p>
+By separating your concerns into three distinct areas, each one 
+becomes simpler--a fact embodied by single-puprose, simple code.
+
+<ul>
+   <li><i>Servlet page designers must be able to operate on the whole page</i>
+</ul>
+
+No problem. The template is the whole page, and is completely under 
+the control of the page designer. 
+<p>
+
+<ul>
+   <li><i>A good servlet design separates programming from page design</i>
+</ul>
+
+It goes without saying that the template author can modify the
+template without having to recompile the underlying controller or
+model. Similarly, the servlet programmer can mess around with the 
+back end without having to do anything special with the template.
+<p>
+In particular both can work with "stubbed" versions of the other--the 
+programmer can develop with a simple functional (but ugly) template; 
+the template author can create the look and feel with a barely 
+functional "smoke-and-mirrors" back end that only provides some 
+example data.
+
+<ul>
+  <li><i>A good design clarifies and simplifies session management</i>
+</ul>
+
+The controller code, the heart of your servlet, has full and sole 
+responsibility for tracking the user--figuring out what they've done, 
+what they're trying to do now, and facilitating it. 
+<p>
+The generation of a view, and the state of the back end model, are 
+handled elsewhere. Session management is clearly expressed in 
+the controller, making it easier to comprehend, and therefore easier
+to design and debug.
+<p>
+The importance of this will not be lost on experienced CGI/servlet 
+writers. 
+
+<hr>
+
+And the Java features we would like to take advantage of:
+
+
+<h2><font color="green">WebMacro Servlets</font></h2>
+
+  <li><i>Offload expensive processing to "between connect" times</i>
+  <li><i>Cache large or expensive objects in a pool and share them between users</i>
+  <li><i>Track session state in a persistent object</i>
+  <li><i>Use encapsulation to control access to data</i>
+  <li><i>Use polymorphism to reduce complexity</i>
+  <li><i>Use Java Beans (and reflection in general) to break your servlet down 
+      into well defined componant parts. </i>
+  <li><i>Use threads and concurrency to improve responsiveness</i>
+
+
+<p>
+
+</blockquote>
+
+<!--TAIL-->
+
+
+<hr>
+<center>
+<font size="+2"><a href="Introduction.html">Introduction</a> | <a href="Download.html">Download</a> 
+</font> <p> 
+<a href="api/index.html">api</a> |
+<a href="Servlet.html">design</a> |
+<a href="FAQ.html">faq</a> |
+<a href="DesignGoals.html">goals</a> | 
+<a href="Links.html">links</a> |
+<a href="License.html">license</a> |
+<a href="OtherTech.html">othertech</a> | 
+<a href="QuickStart.html">quickstart</a> | 
+<a href="Script.html">script</a> |
+<a href="Status.html">status</a> 
+</center>
+</body></html>
+

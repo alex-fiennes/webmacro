@@ -1,0 +1,20 @@
+
+What's in this directory:
+
+ -- Classes that relate to the WebMacro servlet specifically, including
+    how the system bootstraps itself, configures itself, accepts
+    connections, and constructs the framework from which a servlet 
+    author works. 
+
+As a user of these classes you will be most interested in these classes:
+
+   Reactor: This is the WebMacro servlet. You have to get it running.
+
+   Handler: You subclass this to write your applicaton.
+
+   Config:  Allows you to access configuration data.
+
+   WebContext: What you get to work with when a request comes along
+
+
+

@@ -1,0 +1,9 @@
+#! /bin/sh
+
+DIR=`dirname $0`
+DIR="$DIR/api"
+
+chmod 755 $DIR/*.html $DIR
+
+javadoc -d $DIR -version -author -protected org.webmacro.engine org.webmacro.servlet org.webmacro.resource org.webmacro.util org.webmacro.broker  
+
