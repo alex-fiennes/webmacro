@@ -1,24 +1,38 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
 
 <application repository="@as.home@/examples/OutputVars/classes">
    <templates>
       <template name="template1.wm" is-new-session="true">
          <output-variable name="first" component="MyComponent" value="getFirst()"/>
          <output-variable name="lengthOfFirst" value="$first.length()"/>
+         <output-variable name="second" value="true" if="$lengthOfFirst == 5"/>
+         <output-variable name="third" value="Will not be set!" if="false"/>
       </template>
 
       <template name="template2.wm">
          <output-variable name="third" value="$second"/>
+         <output-variable name="lengthOfThird" value="$third.length()"/>
+      </template>
+
+      <template name="template3.wm">
+         <output-variable name="first" value="123456"/>
+         <output-variable name="first" value="0" if="!$first"/>
       </template>
    </templates>
 
    <components>
       <component name="MyComponent" class="MyComponent" persistence="application">
-         <action name="Continue..." method="myAction()">
+         <action form="form1" name="Continue..." method="myAction1()">
+            <output-variable name="first" value="Hello world!"/>
             <output-variable name="second" component="MyComponent" value="getSecond()"/>
-            <output-variable name="lengthOfSecond" value="$second.length()"/>
          </action>
+
+         <action form="form2" name="Continue..." method="myAction2()"/>
+
+         <on-return value="void" show-template="template3.wm">
+            <output-variable name="first" value="Hello world!"/>
+         </on-return>
       </component>
    </components>
 </application>

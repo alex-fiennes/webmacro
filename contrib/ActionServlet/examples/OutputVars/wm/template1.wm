@@ -7,17 +7,22 @@
 
 <PRE>
    &lt;template name="template1.wm"&gt;
-      &lt;output-variable name="first" component="MyComponent" value="getFirst()"/&gt;
-      &lt;output-variable name="lengthOfFirst" value="\$first.length()"/&gt;
+      &lt;output-variable name="<B>first</B>" component="<B>MyComponent</B>" value="<B>getFirst()</B>"/&gt;
+      &lt;output-variable name="<B>lengthOfFirst</B>" value="<B>\$first.length()</B>"/&gt;
+      &lt;output-variable name="<B>second</B>" value="<B>true</B>" if="<B>\$lengthOfFirst == 5</B>"/&gt;
+      &lt;output-variable name="<B>third</B>" value="<B>Will not be set!</B>" if="<B>false</B>"/&gt;
    &lt;/template&gt;
 </PRE>
 
 <UL>
 <LI>\$first = $first
 <LI>\$lengthOfFirst = $lengthOfFirst
+<LI>\$second = $second
+<LI>\$third = $third <EM>(not evaluated - value of <TT>if</TT> attribute is false)</EM>
 </UL>
 
 <FORM METHOD="POST">
+<INPUT TYPE="Hidden" NAME="form" VALUE="form1">
 <INPUT TYPE="Submit" NAME="action" VALUE=" Continue... "><P>
 </FORM>
 

@@ -9,11 +9,18 @@ public class MyComponent {
     public MyComponent(ActionServlet as) {}
 
     /** 
-     * Implements 'myAction' action.
+     * Implements 'myAction1' action.
      */
-    public String myAction() {
+    public String myAction1() {
        // do something...
        return "template2.wm";
+    }
+
+    /** 
+     * Implements 'myAction2' action.
+     */
+    public void myAction2() {
+       // do something...
     }
 
     /**

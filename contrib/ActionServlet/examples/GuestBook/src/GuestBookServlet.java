@@ -13,9 +13,9 @@ public class GuestBookServlet extends ActionServlet {
      * error message and restores other input fields.
      */
     protected Template conversionError(WebContext context,
-                                      String formName,
-                                      String actionName, 
-                                      ConversionException e) {
+                                       String formName,
+                                       String actionName, 
+                                       ConversionException e) {
         context.put("badEmail", Boolean.TRUE);
         context.put("name", context.getRequest().getParameter("name"));
         context.put("comment", context.getRequest().getParameter("comment"));

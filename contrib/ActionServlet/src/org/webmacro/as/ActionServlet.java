@@ -404,16 +404,16 @@ public class ActionServlet extends WMServlet {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             docBuilder.setEntityResolver(new EntityResolver() {
-                private String DTD = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd";
+                private String DTD = "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd";
 
                 public InputSource resolveEntity (String publicId, String systemId) {
                     try {
                         if (DTD.equals(systemId)) {
-                            InputStream is = getClass().getResourceAsStream("/ActionServlet_0_6.dtd");
+                            InputStream is = getClass().getResourceAsStream("/ActionServlet_0_7.dtd");
                             return new InputSource(new InputStreamReader(is));
                         } else log.warning("SYSTEM attribute of <!DOCTYPE> should be \"" + DTD + "\"");
                     } catch (Exception e) {
-                        log.warning("Error while loading 'ActionServlet_0_6.dtd'" + ": " + e.getMessage());
+                        log.warning("Error while loading 'ActionServlet_0_7.dtd'" + ": " + e.getMessage());
                     }
                     return null;
                 }
@@ -727,7 +727,7 @@ public class ActionServlet extends WMServlet {
             throw new InitException("More than one component of &lt;class&gt; name '"+
                                     componentClassName + "' defined in ActionConfig");
 
-        componentClasses.put(componentName, new ComponentData(componentName, componentClass, 
+        componentClasses.put(componentName, new ComponentData(componentName, componentClass,
                                             constructor, consOne, persistence));
     }
 
@@ -796,9 +796,23 @@ public class ActionServlet extends WMServlet {
                    throw new InitException("Attribute 'value' must be unique among <on-return> " +
                                            "elements of a single component");
 
-                if ("void".equals(value))
+                Vector outputVariables = new Vector();
+                NodeList list2 = node.getChildNodes();
+
+                // <output-variable>s
+                for(int j=0; j < list2.getLength(); j++) {
+                    node = list2.item(j);
+
+                    if (node.getNodeType() == Node.ELEMENT_NODE)
+                        parseOutputVariable(outputVariables, (Element)node);
+                }
+
+                if ("void".equals(value)) {
                     componentData.onReturns.put("void", showTemplate);
-                else try {
+
+                    if (!outputVariables.isEmpty())
+                        componentData.onReturnsOutputVars.put("void", outputVariables);
+                } else try {
                     Field f = componentData.componentClass.getField(value);
                     if (!Modifier.isPublic(f.getModifiers()) ||
                         !Modifier.isStatic(f.getModifiers()) ||
@@ -806,6 +820,9 @@ public class ActionServlet extends WMServlet {
                         throw new NoSuchFieldException();
 
                     componentData.onReturns.put(f.get(null), showTemplate);
+
+                    if (!outputVariables.isEmpty())
+                        componentData.onReturnsOutputVars.put(f.get(null), outputVariables);
                 } catch(NoSuchFieldException e) {
                     throw new InitException("No \"public static final\" field of name '" + value + "' found in component " +
                     "class '" + componentData.componentClass.getName() + "' (error while parsing <on-return> element)");
@@ -834,10 +851,10 @@ public class ActionServlet extends WMServlet {
         String value = element.getAttribute("value");
 
         try {
-            outputVariables.addElement(new OutputVariable(this, componentData, element.getAttribute("name"), value));
+            outputVariables.addElement(new OutputVariable(this, componentData,
+            element.getAttribute("name"), value, element.getAttribute("if")));
         } catch (org.webmacro.engine.ParseException e) {
-            throw new InitException("Error while parsing '" + value + "' (value of 'value' attribute" +
-                                    " in the &lt;output-variable&gt; element):" + e.getMessage());
+            throw new InitException("Error while parsing &lt;output-variable&gt; element: " + e.getMessage(), e);
         }
     }
 
@@ -979,7 +996,7 @@ public class ActionServlet extends WMServlet {
     public String getProperty(String name) throws MissingResourceException {
         String property = (String) properties.get(name);
         if (property == null)
-            throw new MissingResourceException("Value of global property '" + name + 
+            throw new MissingResourceException("Value of global property '" + name +
                   "' not defined in ActionConfig", "ActionServlet", name);
         return property;
     }
@@ -991,15 +1008,15 @@ public class ActionServlet extends WMServlet {
      * @param propertyName property name
      * @exception MissingResourceException if the property is not defined
      */
-    public String getProperty(String componentName, String propertyName) 
+    public String getProperty(String componentName, String propertyName)
     throws MissingResourceException {
         ComponentData componentData = (ComponentData) componentClasses.get(componentName);
         if (componentData == null) return null;
 
         String property = (String) componentData.properties.get(propertyName);
         if (property == null)
-            throw new MissingResourceException("Value of property '" + propertyName+ 
-                      "' for component '" + componentName + "' not defined in ActionConfig", 
+            throw new MissingResourceException("Value of property '" + propertyName+
+                      "' for component '" + componentName + "' not defined in ActionConfig",
                       "ActionServlet", propertyName);
         return property;
     }
@@ -1108,7 +1125,7 @@ public class ActionServlet extends WMServlet {
      */
     private Template evalOutputVars(Template t, WebContext context) {
         if (t != null) {
-            String name = "error.wm".equals(t.getName())? 
+            String name = "error.wm".equals(t.getName()) || t.getName().endsWith(File.separator+"error.wm")?
                           "error.wm": (String) templatesNames.get(t);
 
             Vector templateOutputVariables = (Vector) this.templateOutputVariables.get(name);
@@ -1267,7 +1284,7 @@ public class ActionServlet extends WMServlet {
                 else template = getWMTemplate(value.toString());
 
         if (template == null)
-           throw new ActionException("Cannot find template of name'" + value + "' " +
+           throw new ActionException("Cannot find template of name '" + value + "' " +
                                      "returned by action '" + (form==null?"":
                                       form+"'.'") + action + "'");
         return template;

@@ -64,6 +64,12 @@ class ComponentData {
     final Hashtable onReturns = new Hashtable();
 
     /**
+     * Table of &lt;on-return&gt; elements:
+     * key = field value, value = vector of OutputVariables
+     */
+    final Hashtable onReturnsOutputVars = new Hashtable();
+
+    /**
      * Table &lt;properties&gt;: key = property name, value = property value.
      */
     final Hashtable properties = new Hashtable();

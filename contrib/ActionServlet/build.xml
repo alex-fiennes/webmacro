@@ -68,6 +68,7 @@
       <delete dir="lib/classes"/>
       <delete dir="doc/api"/>
       <delete file="lib/ActionServlet.jar" quiet="yes"/>
+      <delete file="examples/.orig/war/DbDemo.xml" quiet="yes"/>
 
       <delete>
          <fileset dir="examples" includes="**/classes/*.class"/>
@@ -95,7 +96,7 @@
       <javadoc sourcepath="src"
                destdir="doc/api"  
                packagenames="org.webmacro.as"
-               windowtitle="ActionServlet 0.61 API"
+               windowtitle="ActionServlet 0.7 API"
                nodeprecated="true"
                use="true">
          <classpath refid="class.path"/>
@@ -108,7 +109,7 @@
          <fileset dir="lib/classes"/>
 
          <fileset dir="src" >
-            <include name="ActionServlet_0_6.dtd"/>
+            <include name="ActionServlet_0_7.dtd"/>
          </fileset>
       </jar>
    </target>
@@ -291,10 +292,11 @@
    <target name="dist" depends="all">
       <mkdir dir="dist"/>
 
-      <zip zipfile="dist/ActionServlet_0_61_1.zip"
+      <zip zipfile="dist/ActionServlet_0_7.zip"
            basedir="."
            excludes="**">
          <zipfileset dir="." prefix="ActionServlet">
+            <exclude name="examples/.orig/war/DbDemo.xml"/>
             <exclude name="examples/as_examples.war"/>
             <exclude name="project"/>
             <exclude name="**/cvs/**"/>

@@ -45,7 +45,7 @@ H3.main {
 </TD></TR>
 
 <TR><TD ALIGN=CENTER>
-version 0.61<P>
+version 0.7<P>
 
 Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
 </TD></TR></TABLE>
@@ -176,7 +176,7 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  <PRE>
  &lt;?xml version="1.0"?&gt;
  &lt;!DOCTYPE application SYSTEM
-  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd"&gt;
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd"&gt;
 
  &lt;application&gt;
     &lt;properties&gt;
@@ -382,25 +382,29 @@ Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
  </PRE>
 
  <B>1.5.6 Zero or more <A NAME="el_outvar"><TT>&lt;output-variable&gt;</TT></A> elements</B><P>
- can be specified inside <TT>&lt;template&gt;</TT> and/or <TT>&lt;action&gt;</TT> elements. It
- has three attributes:<P>
+ can be specified inside <TT>&lt;template&gt;</TT>, <TT>&lt;action&gt;</TT> <TT>&lt;on-return&gt;</TT>
+ and elements. It has four attributes:<P>
 
  <UL>
  <LI><TT>name</TT> - determines name of the template $variable,
  <LI><TT>component</TT> (optional) - reffers to the component's <TT>name</TT> from which the
      <TT>value</TT> taken (the component is instantiated, if it doesn't yet exist),
  <LI><TT>value</TT> - operator applied to the <TT>component</TT> (a method call, for example)
-     or to a $variable.
+     or to a $variable or it can be directly boolean, int, double or String value.
+ <LI><TT>if</TT> (optional) - specifies a condition which must be true in order to evaluate
+     the $variable.
  </UL><P>
 
  Note 1: Output variables are evaluated in the specified order.<BR>
  Note 2: First are set output variables of <TT>&lt;action&gt;</TT> and at last of
          <TT>&lt;template&gt;</TT>.
 
- <P><B>Example:</B> set $user to Authenticator.getUser() and $name to $user.getName()
+ <P><B>Example:</B>
+
  <PRE>
  &lt;output-variable name="user" component="Authenticator" value="getUser()"/&gt;
- &lt;output-variable name="name" value="$user.Name"/&gt;</PRE>
+ &lt;output-variable name="name" value="$user.Name"/&gt;
+ &lt;output-variable name="number" value="123" if="$name == &amp;quot;admin&amp;quot;"/&gt;</PRE>
 
 See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
 
@@ -412,7 +416,7 @@ See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
  <PRE>
  &lt;?xml version="1.0"?&gt;
  &lt;!DOCTYPE application SYSTEM
-  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd"&gt;
+  "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd"&gt;
 
  &lt;application&gt;
     &lt;properties&gt;
@@ -441,7 +445,7 @@ See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
        &lt;component name="<B>Main</B>" class="<B>shop.Main</B>" persistence="<B>application</B>"&gt;
           &lt;action name="<B>showMain</B>" method="<B>showMain()</B>"/&gt;
           &lt;action name="<B>showGoods</B>" method="<B>showGoods()</B>"&gt;
-             &lt;output-variable name="<B>goods</B>" value="<B>getGoods()</B>"/&gt;
+             &lt;output-variable name="<B>goods</B>" component="<B>Main</B>" value="<B>getGoods()</B>"/&gt;
           &lt;/action&gt;
        &lt;/component&gt;
 
@@ -449,7 +453,10 @@ See also: <A HREF="../examples/OutputVars">examples/OutputVars</A> example.<P>
                   class="<B>shop.Authenticator</B>" persistence="<B>session</B>"&gt;
           &lt;action name="<B>Login</B>" method="<B>login(String name,String passwd)</B>"/&gt;
           &lt;on-return value="<B>OK</B>" show-template="<B>Main.wm</B>"/&gt;
-          &lt;on-return value="<B>ERROR</B>" show-template="<B>error.wm</B>"/&gt;
+          &lt;on-return value="<B>ERROR</B>" show-template="<B>error.wm</B>"&gt;
+             &lt;output-variable name="<B>retries</B>" 
+                              component="<B>Authenticator</B>" value="<B>getRetries()</B>"/&gt;
+          &lt;/on-return&gt;
        &lt;/component&gt;
     &lt;/components&gt;
  &lt;/application&gt;

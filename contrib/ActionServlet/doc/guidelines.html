@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>ActionServlet Design Guidelines</title>
+	<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1250">
+	<!--#include virtual="vars.inc" -->
+<style>
+<!--
+.shadow {
+	filter: DropShadow(Color=#776699,OffX=3,OffY=3,Positive=1);
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+UL.main	{
+	list-style: none;
+}
+
+UL.sub  {
+	list-style: disc;
+}
+
+H1 {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+
+H3 {
+	font-family: helvetica, arial, sans-serif;
+	color: green;
+}
+-->
+</style>
+</head>
+<body>
+<TABLE WIDTH="560" ALIGN="CENTER" BORDER="0"><TR><TD ALIGN=CENTER>
+
+<TABLE WIDTH="90%" CELLPADDING="15" BGCOLOR="Silver"><TR><TD>
+<TABLE ALIGN=CENTER><TR><TD ALIGN=CENTER>
+<STRONG>&quot;Easy mapping of HTTP requests to methods of Java components&quot;</STRONG>
+</TD></TR><TR><TD CLASS="shadow" ALIGN=CENTER>
+<FONT COLOR="Red" SIZE="+3"><FONT SIZE="+4">A</FONT>CTION&nbsp;<FONT SIZE="+4">S</FONT>ERVLET</FONT>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+version 0.7<P>
+
+Copyright (c) 1999-2001 <A HREF="http://dione.zcu.cz/~toman40">Petr Toman</A>
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+</TD></TR><TR><TD>
+
+<TABLE ALIGN="CENTER" BORDER="0" CELLPADDING="20"><TR><TD>
+
+<CENTER><H1>ActionServlet Design Guidelines</H1></CENTER>
+
+<H3>1. Create reusable components!</H3>
+This means you should not use WebContext in action methods:<P>
+
+<UL>
+<LI>for retrieving HTTP parameter values, if possible. Use parameter passing provided by ActionServlet instead.<P>
+
+<B>Example: non-reusable component</B><P>
+<PRE>
+public MyComponent {
+   public void someMethod(WebContext context) {
+      String <B>parameter</B> = context.getForm("someParameter");
+      <EM>// do something...</EM>
+   }
+}</PRE>
+
+<B>Example: reusable component</B><P>
+<PRE>
+public MyComponent {
+   public void someMethod(String <B>parameter</B>) {
+      <EM>// do something...</EM>
+   }
+}</PRE>
+
+<EM>Advantage</EM>: You can map any HTTP parameter of any name to the formal parameter of the 
+                    method - in ActionConfig by <A HREF="specification.html#el_action"><TT>&lt;action&gt;</TT></A> element:
+
+<PRE>&lt;action name="ActionName" method="someMethod(String HTTPParameterName)"/&gt;</PRE>
+
+<LI>for assigning WebMacro variables.<P>
+
+<B>Example: non-reusable component</B><P>
+<PRE>
+public MyComponent {
+   public void someMethod(WebContext context) {
+      <EM>// do something...</EM>
+      context.put("variable", someValue);
+   }
+}</PRE>
+
+<B>Example: reusable component</B><P>
+<PRE>
+public <B>MyComponent</B> {
+   private int variable;
+
+   public void someMethod() {
+      variable = someValue;
+   }
+   
+   public int <B>getValue()</B> {
+      return variable;
+   }
+}</PRE>
+
+<EM>Advantage:</EM> You can map return value to any WebMacro variable without changing the
+                    component's code in ActionConfig by <A HREF="specification.html#el_outvar"><TT>&lt;output-variable&gt;</TT></A> element:
+
+<PRE>&lt;output-variable name="variable"
+                 component="<B>MyComponent</B>" value="<B>getValue()</B>"/&gt;</PRE>
+</UL>
+		   
+<H3>2. Create self-describing components!</H3>
+This means you should action methods that return error codes instead of template names.
+ActionServlet forces you to declare error codes as <TT>public static final</TT> fields of
+the component.<P>
+
+<B>Example: non self-describing component</B><P>
+<PRE>
+public MyComponent {
+   public String someMethod() {
+      <EM>// do something...</EM>
+      return "someTemplate.wm";
+   }
+}</PRE>
+
+<B>Example: self-describing component</B><P>
+<PRE>
+public MyComponent {
+   public static final int <B>OK</B> = 1;
+
+   public String someMethod() {
+      <EM>// do something...</EM>
+      return <B>OK</B>;
+   }
+}</PRE>
+
+<EM>Advantage:</EM> You can map error codes to templates by <A HREF="specification.html#el_onreturn"><TT>&lt;on-return&gt;</TT></A> element:<P>
+
+<PRE>&lt;on-return value="<B>OK</B>" show-template="someTemplate.wm"/&gt;</PRE>
+
+<H3>3. Use <A HREF="specification.html#el_props"><TT>&lt;properties&gt;</TT></A> to setup your components!</H3>
+
+<B>Example: component using proprietary solution</B><P>
+<PRE>
+public DbComponent {
+   private int maxDbConnections;
+   
+   public DbComponent (ActionServlet servlet) {
+      maxDbConnections = Integer.parseInt(System.getProperty("max.db.connections"));
+      <EM>// ...</EM>
+   }
+}</PRE>
+
+<B>Example: solution using <TT>&lt;properties&gt;</TT></B><P>
+<PRE>
+public <B>DbComponent</B> {
+   private int maxDbConnections;
+   
+   public DbComponent (ActionServlet servlet) {
+      maxDbConnections = Integer.parseInt(servlet.getProperty("<B>max.db.connections</B>"));
+      <EM>// ...</EM>
+   }
+}</PRE>
+
+<EM>Advantage:</EM> You can supply configuration for each component without risking 
+                    namespace conflicts:<P>
+
+<PRE>&lt;property component="<B>DbComponent</B>" 
+          name="<B>max.db.connections</B>" value="20"/&gt;</PRE>
+
+<H3>4. Use <A HREF="specification.html#tha">type handlers</A> for converting custom types!</H3>
+
+<B>Example: hard coded solution</B><P>
+<PRE>
+public MyComponent {
+   public void someMethod(String email) {
+      <EM>// parse string to get recipient name and his/her address, ...
+      // (this must be done by each component class handling email)</EM>
+   }
+}</PRE>
+
+<B>Example: solution with type handler</B><P>
+<PRE>
+public class <B>EmailHandler</B> implements SimpleTypeHandler {
+   public Object convert(WebContext context, String email) 
+   throws ConversionException {
+      return new <B>Email</B>(email);   <EM>// Email does parsing</EM>
+   }
+}
+
+public MyComponent {
+   public void someMethod(<B>Email</B> email) {
+      String recipient = email.getRecipient();
+      String address = email.getAddress();
+      <EM>// ...</EM>
+   }
+}</PRE>
+
+<EM>Advantage:</EM> You delegate proper type conversion to classes that know their types.<P>
+<EM>Note:</EM> You must bind type handler to its type in ActionConfig:
+
+<PRE>&lt;type-handler type="<B>Email</B>" class="<B>EmailHandler</B>"/&gt;</PRE>
+
+
+<P><!--#include virtual="/java/footer.inc" -->
+</TD></TR></TABLE>
+</body>
+</html>

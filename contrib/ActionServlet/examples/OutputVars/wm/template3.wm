@@ -1,0 +1,30 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+
+<H2>Demo of &lt;output-variable&gt; usage</H2>
+(see <B>config/OutputVars.xml</B>)
+
+<PRE>
+   &lt;template name="template3.wm"&gt;
+      &lt;output-variable name="<B>first</B>" value="<B>123456</B>"/&gt;
+      &lt;output-variable name="<B>first</B>" value="<B>0</B>" if="<B>!\$first</B>"/&gt;
+   &lt;/template&gt;
+
+   &lt;component name="MyComponent" ...&gt;
+      &lt;action form="form2" name="Continue..." method="myAction2()"/&gt;
+
+      &lt;on-return name="void" show-template="template3.wm"&gt;
+         &lt;output-variable name="<B>first</B>" value="<B>Hello world!</B>"/&gt;
+      &lt;/on-return&gt;
+   &lt;/component&gt;
+</PRE>
+
+<UL>
+<LI>\$first = $first <EM>(value overriden in <TT>&lt;template&gt;</TT> but not by "0" because of <TT>if</TT> condition)</EM>
+#set $first = $first + 1
+<LI>\$first + 1 = $first
+</UL>
+
+</BODY>
+</HTML>

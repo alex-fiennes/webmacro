@@ -615,11 +615,23 @@ final class Action {
             ComponentData componentData = (ComponentData) servlet.componentClasses.get(componentName);
             String templateName = (String) componentData.onReturns.get(retTypeIsVoid?"void":retValue);
             if (templateName == null) template = servlet.onReturn(context, formName, actionName, retValue);
-                else template = servlet.getWMTemplate(templateName);
+            else {
+               template = servlet.getWMTemplate(templateName);
+               if (template == null)
+                   throw new ActionException("Cannot find template of name '" + templateName + "' " +
+                                             "returned by action '" + (formName==null?"":
+                                             formName+"'.'") + actionName + "'");
+            }
 
             // set <output-variable>s of action
             for (Enumeration e = outputVariables.elements(); e.hasMoreElements(); )
                 ((OutputVariable) e.nextElement()).evaluate(context);
+
+            // set <output-variable>s of <on-return>
+            Vector onReturnsOutputVars = (Vector) componentData.onReturnsOutputVars.get(retTypeIsVoid?"void":retValue);
+            if (onReturnsOutputVars != null)
+                for (Enumeration e = onReturnsOutputVars.elements(); e.hasMoreElements(); )
+                    ((OutputVariable) e.nextElement()).evaluate(context);
 
             // set <output-variable>s of template
             Vector templateOutputVariables = (Vector) servlet.templateOutputVariables.get(servlet.templatesNames.get(template));
@@ -632,7 +644,11 @@ final class Action {
         } catch (InvocationTargetException e) {
             Throwable target = e.getTargetException();
 
-            if (target instanceof ActionException) throw (ActionException) target;
+            if (target instanceof Exception)
+                servlet.log.error("Exception thrown by method '" + method.getName() +
+                                  "()' implementing action '" +
+                                  (formName==null?"": formName+"'.'") +
+                                  actionName + "': " + target.getMessage(), (Exception)target);
 
             throw new ActionException("Exception thrown by method '" + method.getName() +
                                       "()' implementing action '" +

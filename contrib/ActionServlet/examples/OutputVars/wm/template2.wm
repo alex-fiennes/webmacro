@@ -7,22 +7,29 @@
 
 <PRE>
    &lt;template name="template2.wm"&gt;
-      &lt;output-variable name="third" value="\$second"/&gt;
+      &lt;output-variable name="<B>third</B>" value="<B>\$second</B>"/&gt;
+      &lt;output-variable name="<B>lengthOfThird</B>" value="<B>\$third.length()</B>"/&gt;
    &lt;/template&gt;
 
    &lt;component name="MyComponent" ...&gt;
-      &lt;action ...&gt;
-         &lt;output-variable name="second" component="MyComponent" value="getSecond()"/&gt;
-         &lt;output-variable name="lengthOfSecond" value="\$second.length()"/&gt;
+      &lt;action form="form1" name="Continue..." method="myAction1()"&gt;
+         &lt;output-variable name="<B>first</B>" value="<B>Hello world!</B>"/&gt;
+         &lt;output-variable name="<B>second</B>" component="<B>MyComponent</B>" value="<B>getSecond()</B>"/&gt;
       &lt;/action&gt;
    &lt;/component&gt;
 </PRE>
 
 <UL>
+<LI>\$first = $first
 <LI>\$second = $second
-<LI>\$lengthOfSecond = $lengthOfSecond
 <LI>\$third = $third
+<LI>\$lengthOfThird = $lengthOfThird
 </UL>
+
+<FORM METHOD="POST">
+<INPUT TYPE="Hidden" NAME="form" VALUE="form2">
+<INPUT TYPE="Submit" NAME="action" VALUE=" Continue... "><P>
+</FORM>
 
 </BODY>
 </HTML>

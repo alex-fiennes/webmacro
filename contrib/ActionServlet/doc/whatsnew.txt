@@ -1,3 +1,17 @@
+Changes from 0.7 to 0.61.1
+8-Nov-2001
+--------------------------
+- <output-variable> can be nested also in <on-return> element
+- <output-variable>s are evaluated in the order: <action>,<on-return>,<template>
+- <output-variable> can be also assigned booleam, number or String val. directly
+- <output-variable> may have optional 'if' attribute
+- ActionServlet_0_6.dtd -> ActionServlet_0_7.dtd
+- minor debug fixes
+- examples improvements: 
+  - OutputVars example was enhanced to demonstrate new features
+  - run.bat-s finally use your default browser :-)
+
+
 Changes from 0.61 to 0.61.1
 30-Oct-2001
 ---------------------------

@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
 
 <application repository="@as.home@/examples/DbDemo/classes">
    <properties>
       <property component="actors"
                 name="db.directory"
                 value="@as.home@/examples/DbDemo/db"/>
-      <property component="actors" name="page.size" value="5"/>
 
       <property component="movies"
                 name="db.directory"
@@ -25,7 +24,7 @@
 
    <components>
       <component name="actors" class="SimpleDbComponent" persistence="session">
-         <action form="actors" name="select" method="select(String sql)"/>
+         <action form="actors" name="select" method="setSelect(String sql)"/>
          <action form="actors" name="first" method="first()"/>
          <action form="actors" name="prev" method="prev()"/>
          <action form="actors" name="next" method="next()"/>
@@ -35,7 +34,7 @@
       </component>
 
       <component name="movies" class="SimpleDbComponent" persistence="session">
-         <action form="movies" name="select" method="select(String sql)"/>
+         <action form="movies" name="select" method="setSelect(String sql)"/>
          <action form="movies" name="first" method="first()"/>
          <action form="movies" name="prev" method="prev()"/>
          <action form="movies" name="next" method="next()"/>

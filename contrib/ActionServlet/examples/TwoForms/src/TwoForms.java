@@ -14,7 +14,7 @@ public class TwoForms {
      * Implements 'Form1'.'OK' action.
      */
     public String submit(WebContext context, double number) {
-        context.put("number", String.valueOf(number));
+        context.put("number", number);
 
         return "Form1Handled.wm";
     }
@@ -23,7 +23,7 @@ public class TwoForms {
      * Implements 'Form2'.'OK' action.
      */
     public String submit(WebContext context, char ch) {
-        context.put("char", String.valueOf(ch));
+        context.put("char", ch);
 
         return "Form2Handled.wm";
     }

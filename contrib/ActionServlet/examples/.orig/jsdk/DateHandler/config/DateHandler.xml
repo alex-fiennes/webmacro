@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_6.dtd">
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_7.dtd">
 
 <application repository="@as.home@/examples/DateHandler/classes">
    <templates>
@@ -17,6 +17,7 @@
    <components>
       <component name="DateComponent" class="DateComponent" persistence="application">
          <action name="Submit" method="submit(java.util.Date date)"/>
+         <on-return value="void" show-template="SubmittedDate.wm"/>
       </component>
    </components>
 </application>

@@ -17,10 +17,8 @@ public class DateComponent {
     /** 
      * Implements 'OK' action.
      */
-    public String submit(Date date) {
+    public void submit(Date date) {
         this.date = date;
-
-        return "SubmittedDate.wm";
     }
 
     /**

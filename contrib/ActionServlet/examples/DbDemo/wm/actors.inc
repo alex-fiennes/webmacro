@@ -2,7 +2,7 @@
     <tr bgcolor="#D0D0D0">
       <th><a href="DbDemo?form=actors&action=orderBy&attr=FIRSTNAME">First Name</a></th>
       <th><a href="DbDemo?form=actors&action=orderBy&attr=SURNAME">Last Name</a></th>
-      <th></th>
+      <th>&nbsp;</th>
     </tr>
 
     #foreach $actor in $actors {
