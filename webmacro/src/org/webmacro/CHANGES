@@ -1,3 +1,12 @@
+-- Feb-2000 brian: Integrated Keat's PropertyOperator changes so we can
+   put arrays of primitives into the context and iterate on them; add 
+   convenience methods so we can add primitives to the context too. 
+
+-- Feb-2000 brian: Make sure all exceptions have and use a rethrowable form;
+   add uniform copyright notice; make sure that a sensible error is displayed
+   even if error.wm cannot be found; add omitted ErrorVariable to WM.defaults.
+   Added NoServlet example.  
+
 -- Jan-2000 eric: setup of new CVS server @ TCDI
 
 -- Jan-2000 fergus: added setParam() in org.webmacro.Template.  The particular 

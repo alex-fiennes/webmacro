@@ -36,6 +36,7 @@ public class WMParser implements Parser
 
   public WMParser(Broker b) {
     broker = b;
+    broker.getLog("parser").info("parser created");
   }
 
 
@@ -60,8 +61,7 @@ public class WMParser implements Parser
   {
     BlockBuilder bb;
     try {
-      WMParser_impl parser = new WMParser_impl(in);
-      parser.setBroker(broker);
+      WMParser_impl parser = new WMParser_impl(broker, in);
       bb = parser.WMDocument();
     } 
     catch (ParseException e) {

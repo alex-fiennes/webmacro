@@ -472,5 +472,15 @@ public class Context implements Map, Cloneable
       _prof.stopEvent();
    }
 
+  /* Convenience methods for primitive types */
+
+  final public void put(Object o, int i)     { put(o, new Integer(i)); }
+  final public void put(Object o, byte b)    { put(o, new Byte(b)); }
+  final public void put(Object o, short s)   { put(o, new Short(s)); }
+  final public void put(Object o, long l)    { put(o, new Long(l)); }
+  final public void put(Object o, char c)    { put(o, new Character(c)); }
+  final public void put(Object o, float f)   { put(o, new Float(f)); }
+  final public void put(Object o, double d)  { put(o, new Double(d)); }
+  final public void put(Object o, boolean b) { put(o, new Boolean(b)); }
 }
 

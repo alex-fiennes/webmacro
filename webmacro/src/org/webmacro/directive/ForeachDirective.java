@@ -123,33 +123,20 @@ public class ForeachDirective extends Directive {
     }
 
     try {
-      if (l instanceof Object[]) {
-        Object[] alist = (Object[]) l;
-        for (int i = 0; i < alist.length; i++) {
-          target.setValue(context, alist[i]);
-          if (index != null) 
-            index.setValue(context, new Long(loopIndex + loopStart));
-          body.write(out, context);
-          ++loopIndex;
-          if (loopLimit > 0 && loopIndex >= loopLimit) 
-            break;
-        }
-      } else {
-        Iterator iter;
-        try {
-          iter = PropertyOperator.getIterator(l);
-        } catch (Exception e) {
-          throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
-        }
-        while(iter.hasNext()) {
-          target.setValue(context, iter.next());
-          if (index != null) 
-            index.setValue(context, new Long(loopIndex + loopStart));
-          body.write(out, context);
-          ++loopIndex;
-          if (loopLimit > 0 && loopIndex >= loopLimit) 
-            break;
-        }
+      Iterator iter;
+      try {
+        iter = PropertyOperator.getIterator(l);
+      } catch (Exception e) {
+        throw new PropertyException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
+      }
+      while(iter.hasNext()) {
+        target.setValue(context, iter.next());
+        if (index != null) 
+          index.setValue(context, new Long(loopIndex + loopStart));
+        body.write(out, context);
+        ++loopIndex;
+        if (loopLimit > 0 && loopIndex >= loopLimit) 
+          break;
       }
     } catch (PropertyException e) {
       String errorText = "#foreach: Unable to set list index";

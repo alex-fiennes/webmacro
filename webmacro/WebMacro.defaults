@@ -61,7 +61,7 @@ LogLevel.context: NOTICE
 LogLevel.webcon: NOTICE
 LogLevel.engine: NOTICE
 LogLevel.directive: NOTICE
-
+LogLevel.parser: NOTICE
 
 # LogTraceExceptions causes exception stack traces to be included in the log,
 # this causes exceptions to be verbose, but may point out the exact line

@@ -24,12 +24,9 @@ public class WMParser_impl implements WMParser_implConstants {
 
   private Broker broker;
 
-  public void setBroker(Broker b) {
-    broker = b;
-  }
-
-  public WMParser_impl(java.io.Reader reader) {
+  public WMParser_impl(Broker broker, java.io.Reader reader) {
     this(new BackupCharStream(reader));
+    this.broker = broker;
   }
 
   // Standalone test harness
@@ -39,13 +36,13 @@ public class WMParser_impl implements WMParser_implConstants {
     WMParser_impl parser;
 
     if (args.length >= 1)
-      parser = new WMParser_impl(new FileReader(args[0]));
+      parser = new WMParser_impl(broker, new FileReader(args[0]));
     else
-      parser = new WMParser_impl(new InputStreamReader(System.in));
+      parser = new WMParser_impl(broker, new InputStreamReader(System.in));
 
-    parser.setBroker(broker);
     Builder bb = parser.WMDocument();
     Context context = null;
+
     try {
        context = wm.getContext();
        Object names[] = { "prop" };
@@ -73,7 +70,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
         token_source.backup(t.next.image.length());
         t.next = null;
-      }
+      };
       jj_ntk = -1;
       token_source.SwitchTo(state);
     }
@@ -162,7 +159,7 @@ public class WMParser_impl implements WMParser_implConstants {
   default:
     throw new ParseException("ParseDirectiveArg: Unknown argument type "
                              + arg.type);
-  }
+  };
   }
 
   boolean parse_arg_group(ArgDescriptor[] args, int i,
@@ -1572,6 +1569,24 @@ public class WMParser_impl implements WMParser_implConstants {
     return retval;
   }
 
+  final private boolean jj_3R_36() {
+    if (jj_scan_token(OP_LE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_51() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3R_33() {
+    if (jj_scan_token(OP_NE)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_8() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1985,24 +2000,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_19() {
     if (jj_scan_token(WS)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_36() {
-    if (jj_scan_token(OP_LE)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_51() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3R_33() {
-    if (jj_scan_token(OP_NE)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

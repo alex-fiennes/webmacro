@@ -142,15 +142,16 @@ final public class PropertyOperator
    static final public Iterator getIterator(Object instance)
       throws PropertyException
    {
-      if (instance instanceof Object[]) {
-         return new ArrayIterator((Object[])instance);
-      } else if (instance instanceof Iterator) {
-         return (Iterator) instance;
-      } else if (instance instanceof Enumeration) {
-         return new EnumIterator((Enumeration)instance);
-      } else {
-         return getOperator(instance.getClass()).findIterator(instance);
-      }
+     if (instance instanceof Object[]) 
+       return new ArrayIterator((Object[])instance);
+     else if (instance.getClass().isArray()) 
+       return new PrimitiveArrayIterator(instance);
+     else if (instance instanceof Iterator) 
+       return (Iterator) instance;
+     else if (instance instanceof Enumeration) 
+       return new EnumIterator((Enumeration)instance);
+     else 
+       return getOperator(instance.getClass()).findIterator(instance);
    }
 
    // operator cache

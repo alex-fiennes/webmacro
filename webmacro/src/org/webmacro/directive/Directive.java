@@ -98,7 +98,7 @@ public abstract class Directive implements Macro, Visitable {
 
   protected static String getWarningText(String warning) 
   throws IOException {
-    return "<!--\nWARNING: " + warning + " \n-->";
+    return "<!-- WARNING: " + warning + " -->";
   }
 
   /**
