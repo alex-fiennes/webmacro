@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.  
- * 
+ * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted under the terms of either of the following
  * Open Source licenses:
@@ -9,15 +9,15 @@
  * published by the Free Software Foundation
  * (http://www.fsf.org/copyleft/gpl.html);
  *
- *  or 
+ *  or
  *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)  
+ * The Semiotek Public License (http://webmacro.org/LICENSE.)
  *
- * This software is provided "as is", with NO WARRANTY, not even the 
+ * This software is provided "as is", with NO WARRANTY, not even the
  * implied warranties of fitness to purpose, or merchantability. You
  * assume all risks and liabilities associated with its use.
  *
- * See www.webmacro.org for more information on the WebMacro project.  
+ * See www.webmacro.org for more information on the WebMacro project.
  */
 
 package org.webmacro.directive;
@@ -41,13 +41,50 @@ public final class DirectiveProvider implements Provider
    private Log _log;
    private Broker _broker;
 
+
+   /**
+    * a simple class to take care of registering Directives specified
+    * in the Settings of the Broker.
+    */
+   private class SettingHandler extends Settings.ListSettingHandler {
+       public void processSetting(String settingKey, String settingValue) {
+          try {
+             registerDirective(settingValue, settingKey);
+          } catch (Exception ce) {
+             _log.warning("Exception loading directive " + settingValue, ce);
+          }
+       }
+    }
+
+
+    /**
+     * Register an org.webmacro.directive.DirectiveDescriptor to be used
+     * as if it were a real Directive named <code>dirName</code>.<p>
+     *
+     * If the specified <code>dirName</code> is already registered, it is
+     * happily, and silently replaced.<p>
+     *
+     * Once registered, one can use this "directive" from a template like so:<pre>
+     *    #dirName arg1 arg2 argN
+     *
+     * where the args are dependant on the DirectiveDescriptor
+     * </pre>
+     *
+     * @param dd the DirectiveDescriptor
+     * @param dirName name of the "directive"
+     */
+    public final void registerDescriptor (DirectiveDescriptor dd, String dirName) {
+        _descriptors.put (dirName, dd);
+    }
+
+
    /**
      * Register a new directive class, so that a builder
      * of this type can be retrieved later.
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */
-   public final void register(String dirClassName, String dirName) 
+   public final void registerDirective(String dirClassName, String dirName)
       throws IntrospectionException, InitException
    {
       Class directive = null;
@@ -61,7 +98,7 @@ public final class DirectiveProvider implements Provider
       // Make sure this class is an instance of o.w.directive.Directive
       if (Directive.class.isAssignableFrom(directive)) {
         try {
-          templateDesc = (DirectiveDescriptor) 
+          templateDesc = (DirectiveDescriptor)
             directive.getMethod("getDescriptor", null).invoke(null, null);
           newDesc = new DirectiveDescriptor(templateDesc.name,
                                             templateDesc.dirClass,
@@ -69,12 +106,12 @@ public final class DirectiveProvider implements Provider
                                             templateDesc.subdirectives);
           if (newDesc.dirClass == null)
             newDesc.dirClass = directive;
-        } 
+        }
         catch (Exception e) {
-          throw new IntrospectionException("Class " + dirClassName 
+          throw new IntrospectionException("Class " + dirClassName
             + " does not have a getDescriptor() method", e);
         }
-        
+
         // added by Keats 5Jul01
         // use introspection to invoke the static init method of directive, if it exists
         Class[] cArg = { Broker.class };
@@ -85,7 +122,7 @@ public final class DirectiveProvider implements Provider
                 m.invoke(null, brokerArg);
             }
             catch (Exception e){
-                _log.warning("Unable to invoke the init method for the directive " 
+                _log.warning("Unable to invoke the init method for the directive "
                 + directive.getName(), e);
             }
         }
@@ -100,7 +137,7 @@ public final class DirectiveProvider implements Provider
           _log.info("Registered directive: " + newDesc.name);
         } else if (newDesc.dirClass != oldDesc.dirClass) {
           throw new InitException("Attempt to register directive " + directive
-             + " failed because " + oldDesc.dirClass.getName() 
+             + " failed because " + oldDesc.dirClass.getName()
              + " is already registered for type " + newDesc.name);
         }
       }
@@ -122,16 +159,6 @@ public final class DirectiveProvider implements Provider
       return DIRECTIVE_KEY;
    }
 
-   private class SettingHandler extends Settings.ListSettingHandler {
-      public void processSetting(String settingKey, String settingValue) {
-         try {
-            register(settingValue, settingKey);
-         } catch (Exception ce) {
-            _log.warning("Exception loading directive " + settingValue, ce);
-         }
-      }
-   }
-
    public void init(Broker broker, Settings config) throws InitException
    {
       _broker = broker;
@@ -144,16 +171,16 @@ public final class DirectiveProvider implements Provider
       }
    }
 
-   public void destroy() 
+   public void destroy()
    {
       _descriptors.clear();
    }
 
   /**
    * The DirectiveProvider doesn't throw an exception when it can't find
-   * the directive -- it just returns null.  
+   * the directive -- it just returns null.
    */
-   public Object get(String name) 
+   public Object get(String name)
    {
      return getDescriptor(name);
    }
