@@ -69,6 +69,9 @@ public class TestParseInclude extends TemplateTestCase
         assertStringTemplateMatches("#include as text \"org/webmacro/template/test_parse.wm\"",
                 "pass");
 
+        assertStringTemplateMatches("#include as macro \"org/webmacro/template/test_parse.wm\"",
+                "pass");
+
         // include as <something dynamic>
         assertStringTemplateMatches("#include \"org/webmacro/template/test_parse.wm\"",
                 "pass");
