@@ -38,12 +38,34 @@ public class TestWhitespace extends TemplateTestCase {
    // test whitespace before a comment
    //
    public void testBeforeComment () throws Exception {
+      // do it with the implicit "begin"
       String tmpl = "#if (true)\n   ## Don't say anything\n#end";
       assertStringTemplateEquals (tmpl, "");
 
       tmpl = "#if (true)\n## Don't say anything\n#end";
       assertStringTemplateEquals (tmpl, "");
 
+
+
+      // do it with the explicit #begin
+      tmpl = "#if (true)\n#begin\n   ## Don't say anything\n#end";
+      assertStringTemplateEquals (tmpl, "");
+
+      tmpl = "#if (true)\n#begin\n## Don't say anything\n#end";
+      assertStringTemplateEquals (tmpl, "");
+
+
+
+      // Geeks do it with braces
+      tmpl = "#if (true){   ## Don't say anything\n}";
+      assertStringTemplateEquals (tmpl, "");
+
+      tmpl = "#if (true){## Don't say anything\n}";
+      assertStringTemplateEquals (tmpl, "");
+
+
+
+      // don't do it in a block
       tmpl = "   ## Don't say anything";
       assertStringTemplateEquals (tmpl, "   ");
    }
