@@ -18,10 +18,10 @@ import org.webmacro.servlet.*;
   *
   *   2.  Compile this servlet and install it in your servlet directory
   *
-  *   3.  Add webmacro.jar to your servlet runner's classpath,
-  *       and put webmacro.properties in the same place
+  *   3.  Add webmacro.jar to your servlet runner's classpath
   *
-  *   4.  Edit webmacro.properties to configure WebMacro for your setup
+  *   4.  Put your template (helloWorld.wm) in your "application directory"
+  *       if using Servlet 2.2.  Or in your servlet container CLASSPATH otherwise.
   *
   *   5.  Start your servlet runner
   *
@@ -61,7 +61,7 @@ public class HelloWorld extends WMServlet
 
          view = getTemplate("helloWorld.wm");
 
-      } catch (NotFoundException e) {
+      } catch (ResourceException e) {
 
          // If this happens you have not set WebMacro up correctly:
          // either WebMacro isn't up and running well enough to be able 

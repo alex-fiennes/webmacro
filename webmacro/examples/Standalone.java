@@ -37,13 +37,18 @@ import javax.servlet.ServletException;
   * The WebMacro master object is initialized when the servlet is initialized
   * and destroyed when the servlet is destroyed. There is some overhead 
   * involved in creating the interface so you should prefer not to create one
-  * on every request, although it is not too expensive. 
+  * on every request.
   * <p>
   * This servlet can be compiled and installed as an ordinary servlet. You 
-  * need to ensure that your WebMacro.properties file is properly configured
-  * and available on your CLASSPATH. When setting up WebMacro.properties 
-  * make sure that the TemplatePath is correctly set and that the template
-  * used by this servlet, "standalone.wm", is available on that path.
+  * need to ensure that your WebMacro.defaults (and possible WebMacro.properties)
+  * file is properly configured and available on your CLASSPATH. 
+  * <p>
+  * When setting up WebMacro.properties make sure that the TemplatePath is 
+  * correctly set and that the template used by this servlet, "standalone.wm", 
+  * is available on that path.
+  * <p>
+  * If you do not create a custom WebMacro.properties, WebMacro will attempt
+  * to load templates from the CLASSPATH.
   */
 public class Standalone extends HttpServlet
 {
@@ -134,19 +139,19 @@ public class Standalone extends HttpServlet
             Template t = _wm.getTemplate("standalone.wm");
 
             // Create FastWriter for fast output encoding
-            FastWriter fw = new FastWriter(resp.getOutputStream(),
+            FastWriter fw = new FastWriter(_wm.getBroker(), resp.getOutputStream(),
                                            resp.getCharacterEncoding());
             // write the template to the output, using our context
             t.write(fw, c);
             fw.close();
-         } catch (org.webmacro.NotFoundException e) {
-             FastWriter out = new FastWriter(resp.getOutputStream(),
+         } catch (org.webmacro.ResourceException e) {
+             FastWriter out = new FastWriter(_wm.getBroker(), resp.getOutputStream(),
                                              resp.getCharacterEncoding());
              
              out.write("ERROR!  Could not locate template standalone.wm, check that your template path is set properly in WebMacro.properties");
              out.close();
          } catch (org.webmacro.ContextException e) {
-             FastWriter out = new FastWriter(resp.getOutputStream(),
+             FastWriter out = new FastWriter(_wm.getBroker(), resp.getOutputStream(),
                                              resp.getCharacterEncoding());
              out.write("ERROR!  Could not locate required data in the Context.");
              out.close();
@@ -156,5 +161,4 @@ public class Standalone extends HttpServlet
           System.out.println("ERROR: IOException while writing to servlet output stream.");
       }
    }
-
 }
