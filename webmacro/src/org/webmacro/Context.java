@@ -566,7 +566,6 @@ public class Context implements Map, Cloneable {
       return _variables.values();
    }
    
-
    /**
     * Attempts to instantiate the tool using three different constructors
     * until one succeeds, in the following order:
@@ -588,8 +587,7 @@ public class Context implements Map, Cloneable {
       Class c;
       try {
          c = _broker.classForName(className);
-      }
-		catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException e) {
          _log.warning("Context: Could not locate class for context tool "
          + className);
          return;
@@ -608,59 +606,63 @@ public class Context implements Map, Cloneable {
          key = key.substring(start, end);
       }
       
+      Constructor ctor = null;
+      Constructor[] ctors = c.getConstructors();
+      Class[] parmTypes = null;
       Object instance = null;
-      StringBuffer log = null;
-      try {
-         Constructor ctor = c.getConstructor(_ctorArgs1);
-         Object[] args = new Object[2];
-         args[0] = key;
-         args[1] = new SubSettings(_broker.getSettings(), key);
-         instance = ctor.newInstance(args);
-      }
-		catch (Exception e) {
-         log = new StringBuffer();
-         log.append("Error loading component key=");
-         log.append(key);
-         log.append(" class=");
-         log.append(c.toString());
-         log.append("\n");
-         log.append("Trying 2-argument constructor: ");
-         log.append(e.toString());
-         log.append("\n");
-      }
       
-      if (instance == null) {
-         try {
-            Constructor ctor = c.getConstructor(_ctorArgs2);
-            Object[] args = new Object[1];
-            args[0] = key;
-            instance = ctor.newInstance(args);
-         }
-			catch (Exception e) {
-            log.append("Trying 1-argument constructor: ");
-            log.append(e.toString());
-            log.append("\n");
+      // check for 2 arg constructor
+      for (int i=0; i<ctors.length; i++){
+         parmTypes = ctors[i].getParameterTypes();
+         if (parmTypes.length == 2
+            && parmTypes[0].equals(_ctorArgs1[0])
+            && parmTypes[1].equals(_ctorArgs1[1])){
+               ctor = ctors[i];
+               Object[] args = new Object[2];
+               args[0] = key;
+               args[1] = new SubSettings(_broker.getSettings(), key);
+               try {
+                  instance = ctor.newInstance(args);
+               }
+               catch (Exception e){
+                  _log.error("Failed to instantiate tool "
+                  + key + " of class " + className + " using constructor "
+                  + ctor.toString(), e);                  
+               }
          }
       }
-      
+      if (instance == null){
+         // check for 1 arg constructor
+         for (int i=0; i<ctors.length; i++){
+            parmTypes = ctors[i].getParameterTypes();
+            if (parmTypes.length == 1 && parmTypes[0].equals(_ctorArgs1[0])){
+               ctor = ctors[i];
+               Object[] args = new Object[1];
+               args[0] = key;
+               try {
+                  instance = ctor.newInstance(args);
+               }
+               catch (Exception e){
+                  _log.error("Failed to instantiate tool "
+                  + key + " of class " + className + " using constructor "
+                  + ctor.toString(), e);
+               }                  
+            }
+         }
+      }
       if (instance == null) {
+         // try no-arg constructor
          try {
             instance = c.newInstance();
-         }
-			catch (Exception e) {
-            log.append("Trying 0-argument constructor: ");
-            log.append(e.toString());
-            log.append("\n");
-            _log.warning(log.toString());
+         } catch (Exception e) {
+            _log.error("Unable to construct tool " + key + " of class " + className, e);
             return;
          }
       }
       _tools.put(key, instance);
       _log.info("Registered ContextTool " + key);
    }
-   
-   
-   
+    
    //////////////////////////////////////////////////////////////
    
    /**
