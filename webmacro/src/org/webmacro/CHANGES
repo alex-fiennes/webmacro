@@ -1,3 +1,22 @@
+-- Oct-2000 brian: New parser, and some new directives checked
+   in.  New parser supports more flexible directive argument
+   mechanism, and adds arithmetic expressions and comparisons.
+   Changed DirectiveProvider to silently ignore directives of the
+   wrong type, so that new and old directive providers can coexist
+   peacefully.  New directives and Directive structure are in
+   o.w.directive; new parser is in o.w.parser.  New #if supports #elseif.  
+
+-- Oct-2000 brian: Made all WM Exceptions inherit from 
+   RethrowableException, so you can wrap exceptions without losing the
+   stack information from their original throw point.  Separate Parser
+   and ParseException from ParseTool so new parsers can be added. 
+
+-- Oct-2000 brian: Added a TemplateVisitor class, and made some Macros
+   support it (Block, {If,Set,Foreach}Directive,
+   {And,Or,Not,Term}Condition, Variable.  There is a Dumper class
+   which dumps out a built template.  If the Visitor idea catches on, 
+   support for it can be added to all Macro and Directive types.  
+
 -- 16-Oct-2000 e_ridge: The internal map type of o.wm.Context is now a 
    java.util.Map object.  A .setGlobalVarialbes(Map globalMap) method 
    has been added to allow one to quickly load a context with a 
