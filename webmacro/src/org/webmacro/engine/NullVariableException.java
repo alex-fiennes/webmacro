@@ -34,7 +34,7 @@ public class NullVariableException extends PropertyException {
    public String variableName;
 
    public NullVariableException(String variableName) {
-      super("Attempted to evaluate unbound variable " + variableName);
+      super("Value of $" + variableName + " is null");
       this.variableName = variableName;
    }
 }

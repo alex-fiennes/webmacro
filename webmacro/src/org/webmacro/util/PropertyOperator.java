@@ -483,13 +483,13 @@ final public class PropertyOperator
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
          if (acc == null) {
-            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
+            throw new PropertyException("No public method " + pm + " on variable $" + names[0] + " of " + instance.getClass());
          }
          try {
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new PropertyException("No method " + pm + " on object " + instance + " of class " + instance.getClass());
+            throw new PropertyException("No public method " + pm + " on variable $" + names[0] + " of " + instance.getClass());
          }
 
       } else {
@@ -543,15 +543,18 @@ final public class PropertyOperator
       } 
       
       if (acc == null) {
-         throw new PropertyException("No public method on object " + 
-               instance + " of " + instance.getClass() + 
-               " for property " + names[start] + "--is this the right class?");
+         // user tried to access a property of a property that doesn't exist
+         // ex:  $TestObject.FirstName.NotThere
+         throw new PropertyException("No public method " + names[start] + 
+                   " in variable $" + fillInName (names, start) +
+                   " of " + instance.getClass());
       }
 
       if (start <= end) {
          try {
            return getOperator(nextProp.getClass()).getProperty(context,nextProp,names,start,end);
          } catch (NullPointerException e) {
+             // will we ever get here? --eric
             throw new PropertyException("No way to access property " + 
                   names[start] + " on object " + instance + " of " 
                   + instance.getClass() + "--possibly null?");
@@ -559,6 +562,23 @@ final public class PropertyOperator
       } else {
          return nextProp;
       }
+   }
+   
+   /**
+    * given an object[] of names, append them together up to index <code>end</code>
+    * in the form of <code>Name1.Name2.Name3.NameN</code>
+    */
+   private static final String fillInName (Object[] names, int end)
+   {
+        StringBuffer sb = new StringBuffer ();
+        for (int x=0; x<end; x++)
+        {
+            if (x > 0)
+                sb.append (".");
+            sb.append (names[x]);
+        }
+        
+        return sb.toString ();
    }
 
    /**
@@ -678,7 +698,14 @@ final public class PropertyOperator
       throws PropertyException, NoSuchMethodException
    {
       try {
-         return meth.invoke(instance,args);
+          Object obj = meth.invoke (instance, args);
+          
+          
+          if (meth.getReturnType().isAssignableFrom (java.lang.Void.TYPE))
+              return new org.webmacro.engine.VoidMacro ();
+          else
+              return obj;
+          
       } catch (IllegalAccessException e) {
          throw new PropertyException(
             "You don't have permission to access the requested method (" +
@@ -1054,5 +1081,3 @@ final class BinaryMethodAccessor extends MethodAccessor
       return setImpl(instance,args);
    }
 }
-
-
