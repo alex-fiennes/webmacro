@@ -391,6 +391,13 @@ final public class Wiki implements WikiSystem, QueueListener {
     public boolean isWikiTermReference(String word) {
         char[] chars = word.toCharArray();
         int ucase=0, lcase=0;
+        
+        // does the word end in a backwards tick?
+        if (chars[chars.length-1] == '`')
+            return true;    
+        
+        // else, make sure we have atleast 2 Upper and 2 Lower characters
+        // non-alphanumerics cause us to immediately return false
         for (int x=0; x<chars.length; x++) {
             char c = chars[x];
             if (c >= 'A' && c <= 'Z')

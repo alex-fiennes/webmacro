@@ -153,7 +153,10 @@ public class WikiParser implements WikiParserConstants {
         break;
       case SHORT_WIKI_TERM:
         t = jj_consume_token(SHORT_WIKI_TERM);
-                            builder.wikiTerm (t.image.substring(0, t.image.length()-1));
+         if (builder.isWikiTermReference (t.image))
+            builder.wikiTerm (t.image.substring(0, t.image.length()-1));
+         else
+            builder.word (t.image);
         break;
       case WORD:
         t = jj_consume_token(WORD);

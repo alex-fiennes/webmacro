@@ -139,7 +139,12 @@ WikiPage parse (WikiPageBuilder builder) : { Token t;}
         else
             builder.word (t.image);
     }
-  | t = <SHORT_WIKI_TERM> { builder.wikiTerm (t.image.substring(0, t.image.length()-1)); }
+  | t = <SHORT_WIKI_TERM> { 
+         if (builder.isWikiTermReference (t.image))
+            builder.wikiTerm (t.image.substring(0, t.image.length()-1)); 
+         else
+            builder.word (t.image);
+    }
   | t = <WORD>          { builder.word (t.image); }
   | t = <NEW_PARAGRAPH> { builder.paragraph (); }
   | t = <LINE_BREAK>    { builder.newline(); }
