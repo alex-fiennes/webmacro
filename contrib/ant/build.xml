@@ -104,6 +104,10 @@
             todir="${webapp.classes}"
             file="examples/WebMacro.properties"
         />
+        <copy 
+            todir="${webapp}"
+            file="examples/index.html"
+        />
     </target>
     
     <target name="tomcat" depends="examplewebapp">
