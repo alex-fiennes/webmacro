@@ -1,11 +1,11 @@
--- Mar-2000 brian: Refactor cache manager (again) to move all the
+-- Mar-2001 brian: Refactor cache manager (again) to move all the
    SoftReference stuff out of the providers.  The cache manager is now 
    completely decoupled from the caching providers.  All timeouts, soft
    reference stuff, etc, is moved to SimpleCacheManager, which used to 
    be CachingProvider.  Caching can be disabled by using
    TrivialCacheManager.
 
--- Mar-2000 brian: Integrated Tim Joyce's suggestion about evaluation 
+-- Mar-2001 brian: Integrated Tim Joyce's suggestion about evaluation 
    exception handlers -- created EvaluationExceptionHandlers and allow
    the user to set them on a per-context or per-Broker basis.  EEH is
    responsible for formatting error messages that will go in the template;
@@ -13,11 +13,11 @@
    a PropertyException if it wants.  Modified WMTemplate and WMServlet
    to deal better with thrown errors.  
 
--- Mar-2000 brian: Modified resource providers to be able to throw
+-- Mar-2001 brian: Modified resource providers to be able to throw
    ResourceException, so we can differentiate between parse errors
    and template not found. 
 
--- Feb-2000 brian: Servlet 2.2 integration; substantial refactoring of
+-- Feb-2001 brian: Servlet 2.2 integration; substantial refactoring of
    Broker.  Created a BrokerTemplateProvider to load templates through
    Broker.getResource(); modified TemplateProvider to use it as a last
    resort.  Created Servlet22Broker and Servlet20Broker to find resources
@@ -28,47 +28,47 @@
    settings through system properties, and also through web.xml in WAR
    file on 2.2.  
 
--- Feb-2000 brian: Streamlined how Providers, et al, are speicifed in the
+-- Feb-2001 brian: Streamlined how Providers, et al, are speicifed in the
    settings file, to make it easier to override individual providers,
    directives, context tools, etc.
 
--- Feb-2000 brian: Refactored CachingProvider, significant optimizations. 
+-- Feb-2001 brian: Refactored CachingProvider, significant optimizations. 
 
--- Feb-2000 brian: Integrated Keat's PropertyOperator changes so we can
+-- Feb-2001 brian: Integrated Keat's PropertyOperator changes so we can
    put arrays of primitives into the context and iterate on them; add 
    convenience methods so we can add primitives to the context too. 
 
--- Feb-2000 brian: Make sure all exceptions have and use a rethrowable form;
+-- Feb-2001 brian: Make sure all exceptions have and use a rethrowable form;
    add uniform copyright notice; make sure that a sensible error is displayed
    even if error.wm cannot be found; add omitted ErrorVariable to WM.defaults.
    Added NoServlet example.  
 
--- Jan-2000 eric: setup of new CVS server @ TCDI
+-- Jan-2001 eric: setup of new CVS server @ TCDI
 
--- Jan-2000 fergus: added setParam() in org.webmacro.Template.  The particular 
+-- Jan-2001 fergus: added setParam() in org.webmacro.Template.  The particular 
    need is for templates (and/or providers) to be able to pass arbitrary
    parameters back to the playout routine (e.g., WMServlet), such as encoding
    information.  This should allow "foreign" encodings such as Korean, Chinese,
    Japanese, etc., to use the out-of-the-box webmacro more easily.
 
--- Jan-2000 fergus: added a "sand box" in examples for end-users to play around
+-- Jan-2001 fergus: added a "sand box" in examples for end-users to play around
     with
 
--- Jan-2000 fergus: added a simple build script to run the example servlets 
+-- Jan-2001 fergus: added a simple build script to run the example servlets 
     under Tomcat 3.2.  Added under contrib/Tomcat/3.2/
 
--- Jan-2000 fergus: imported ContextDebugger from Alex Jeannopoulos into
+-- Jan-2001 fergus: imported ContextDebugger from Alex Jeannopoulos into
    contrib
 
--- Jan-2000 fergus: added LocaleTool.  Gives access to Locales from within
+-- Jan-2001 fergus: added LocaleTool.  Gives access to Locales from within
    templates.  This is especially useful for setting the correct response
    encoding without resorting to setting ";charset=xxxx" in the content type.
    
--- Jan-2000 fergus: added getResource() & getResourceAsStream() methods to
+-- Jan-2001 fergus: added getResource() & getResourceAsStream() methods to
    Broker to load resources (properties files, templates) using supplied
    classloader (see also 3 items below)
 
--- Jan-2000 fergus: big changes to URLTemplate & URLTemplateProvider.
+-- Jan-2001 fergus: big changes to URLTemplate & URLTemplateProvider.
     a) URLTemplate now looks for a file WebMacro.local in the same directory
     as the template.  This is a local properties file and the key TemplateEncoding
     is used to determine the template encoding of a per directory basis
@@ -76,13 +76,13 @@
     c) significant code refactoring as a partial consequence of the above
     d) also updated tests in contrib/Tests/URLTemplateProvider
 
--- Jan-2000 fergus: added NativeAsciiReader.java for use with URLTemplate.  
+-- Jan-2001 fergus: added NativeAsciiReader.java for use with URLTemplate.  
    Any files read with the pseudo encoding "native_ascii" are read as if they
    were converted to unicode escape syntax with the JDK utility 
    native2ascii.   Thus one can translate all ones templates at deployment time
    ('ant' has this facility built in) and have a single global encoding.
 
--- Jan-2000 fergus: upgraded WM, WMServlet & Broker to use the earlier change
+-- Jan-2001 fergus: upgraded WM, WMServlet & Broker to use the earlier change
    to Settings.  By default WMSerlvet will pass through the classloader of the
    servlet, which may be different from the classloader that loads in WebMacro
    core classes
