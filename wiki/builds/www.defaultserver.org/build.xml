@@ -1,4 +1,4 @@
-<project name="www.webmacro.org" default="install" basedir=".">
+<project name="www.defaultserver.org" default="install" basedir=".">
         <!-- ${dir.install} should be a command-line defined parameter -->
         <property name="dir.etc" value="./etc/" />
         <property name="dir.htdocs" value="./htdocs/" />
@@ -7,7 +7,7 @@
         <property name="file.resources" value="./resources.jar" />
 
         <target name="verify" unless="dir.install">
-		<fail message="Please define dir.install" />
+          <fail message="Please define dir.install" />
         </target>
 
         <!-- a taget for building a "resources.jar" file in
