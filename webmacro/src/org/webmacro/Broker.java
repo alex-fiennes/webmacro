@@ -73,6 +73,8 @@ public class Broker
 
     /** Reference count to detect unused brokers */
     private int count;
+    /** our key in the cache of brokers */
+    private Object key;
 
    /*
     * Constructors.  Callers shouldn't use them; they should use the
@@ -132,7 +134,7 @@ public class Broker
      * configure from. You also need to specify a name for this
      * set of properties so WebMacro can figure out whether 
      * two brokers point at the same properties information.
-     * @param config WebMacro's configuration settings
+     * @param dummy a Broker instance that is never used
      * @param name Two brokers are the "same" if they have the same name
      */
    protected Broker(Broker dummy, String name)
@@ -283,6 +285,7 @@ public class Broker
             b = new Broker(settingsFile);
             register(settingsFile, b);
          }
+
          b.startClient();
          return b;
       }
@@ -346,6 +349,7 @@ public class Broker
     */
    protected static void register(Object key, Broker broker) {
       brokers.put(key, new WeakReference(broker));
+       broker.key = key;
    }
 
    /**
@@ -599,6 +603,7 @@ public class Broker
      */
    synchronized public void shutdown() {
       _log.notice("shutting down");
+
       Enumeration e = _providers.elements();
       while (e.hasMoreElements()) {
          Provider pr = (Provider) e.nextElement();
@@ -609,6 +614,8 @@ public class Broker
       _log.info("stopping clock");
       Clock.stopClient();
       _ls.flush();
+
+       brokers.remove(this.key);
    }
 
    /**
