@@ -18,9 +18,15 @@
  */
 
 
-import org.webmacro.servlet.*;
 import org.webmacro.*;
+import org.webmacro.servlet.WebContext;
 import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 
 /**
   * This is the "hello world" WebMacro example. To get it working, put this
@@ -40,32 +46,69 @@ import java.util.Date;
   *
   * You should see "Hello there: hello world!" up on your screen.
   */
-public class TestWM implements Handler
+public class TestWM extends HttpServlet
 {
-   public Template accept(WebContext c) 
-      throws HandlerException
-   {
 
-      c.put("Today", new Date());
-      c.put("Number", new Long(23));
+   private WebMacro _wm = null;
 
-      // grab form variable named other
-      String other = c.getForm("other"); 
-
-      if (other == null) {
-         c.put("hello","hello again!"); // put this into the hash
-      } else {
-         c.put("hello",other);          // else put this in
-      }
-
-      // now we have to return a template
+   public void init(ServletConfig sc) throws ServletException {
       try {
-         return (Template) c.getBroker().request("template","test.wm").getValue();
-      } catch (Exception e) {
-         throw new HandlerException("Something is not right.");
+         if (_wm == null) {
+            _wm = new WM();
+         }
+      } catch (InitException e) {
+         throw new ServletException("Could not initialize WebMacro: " + e);
       }
    }
 
-   public void init() { }
-   public void destroy() { }
+   public void destroy() {
+      if (_wm != null) {
+         _wm.destroy();
+         _wm = null;
+      }
+   }
+
+
+   public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+
+      try {
+         java.io.Writer out = null;
+
+         try {
+
+            // get the stream we intend to write to
+            out = resp.getWriter();
+
+            // create a context for the current request
+            WebContext c = _wm.getWebContext(req,resp);
+
+            // fill up the context with our data
+            c.put("Today", new Date());
+            c.put("Number", new Long(23));
+
+            // WebContext provides some utilities as well
+            String other = c.getForm("other"); 
+            if (other == null) {
+               c.put("hello","hello again!"); // put this into the hash
+            } else {
+               c.put("hello",other);          // else put this in
+            }
+
+            // get the template we intend to execute
+            Template t = _wm.getTemplate("test.wm");
+
+            // write the template to the output, using our context
+            t.write(resp.getWriter(), c);
+
+         } catch (org.webmacro.NotFoundException e) {
+         out.write("ERROR!  Could not locate template test.wm, check that your template path is set properly in WebMacro.properties");
+         } catch (org.webmacro.ContextException e) {
+            out.write("ERROR!  Could not locate required data in the Context.");
+         }
+      } catch (java.io.IOException e) {
+         // what else can we do?
+         System.out.println("ERROR: IOException while writing to servlet output stream.");
+      }
+   }
+
 }
