@@ -14,6 +14,15 @@ import org.webmacro.directive.DirectiveBuilder;
 import org.webmacro.directive.Directive.ArgDescriptor;
 import org.webmacro.directive.Directive.Subdirective;
 
+/**
+ * WMParser_impl
+ *
+ * JavaCC parser class for parsing WebMacro templates.  
+ * The supported entry point is WMDocument, which returns a BlockBuilder. 
+ *
+ * @author Brian Goetz
+ */
+
 public class WMParser_impl {
 
   private Broker broker;
@@ -45,6 +54,7 @@ public class WMParser_impl {
        Block b = (Block) bb.build(new BuildContext(broker,encoding));
        // TemplateDumper d = new TemplateDumper();
        // b.accept(d);
+       // System.out.println("---------------------------------------------");
        System.out.println((String) b.evaluate(context));
     } catch (Exception e) {
        e.printStackTrace();

@@ -4,6 +4,14 @@ import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
+/**
+ * ArgsHolder is a container for directive arguments.  The parser creates
+ * and populates the ArgsHolder based on the contents of the directive
+ * descriptor.  The directive, in the build() method, will call the getArg()
+ * methods to retrieve the arguments and build the directive.  
+ * @author Brian Goetz
+ */
+
 public final class ArgsHolder implements DirectiveArgs
 {
   // The argument descriptors for the arguments we hold
@@ -29,12 +37,19 @@ public final class ArgsHolder implements DirectiveArgs
     throw new BuildException("Invalid argument ID " + id + " requested ");
   }
 
+  /**
+   * Retrieve the argument whose id is the specified id.  
+   */
   public final Object getArg(int id) 
     throws BuildException {
     int index = findArgIndex(id);
     return buildArgs[index];
   }
 
+  /**
+   * Retrieve the argument whose id is the specified id, and if it is a 
+   * Builder, build it with the specified build context.
+   */
   public final Object getArg(int id, BuildContext bc) 
     throws BuildException {
     int index = findArgIndex(id);
@@ -44,6 +59,12 @@ public final class ArgsHolder implements DirectiveArgs
       ? ((Builder) o).build(bc)
       : o;
   }
+
+  /**
+   * Set the argument whose id is the specified id.  If the argument has
+   * already been set, it is overwritten.  Generally not used by directives,
+   * only used by the parser. 
+   */
 
   public final void setArg(int id, Object o) 
     throws BuildException {

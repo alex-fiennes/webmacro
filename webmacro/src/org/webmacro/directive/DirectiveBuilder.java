@@ -4,6 +4,14 @@ import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
 
+/**
+ * DirectiveBuilder manages the building of directives.  It is created
+ * by the parser, which populates it with the directive arguments, and 
+ * the DirectiveBuilder.build() method calls the build() method for the
+ * appropriate directive.  
+ * @author Brian Goetz
+ */
+
 public final class DirectiveBuilder implements Builder, DirectiveArgs
 {
   // The descriptor for the directive we're building
@@ -51,6 +59,9 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
                              + " requested for directive " + desc.name);
   }
 
+  /**
+   * Retrieve the argument whose id is the specified id.  
+   */
   public Object getArg(int argId) 
     throws BuildException {
     if (buildArgs == null)
@@ -59,6 +70,10 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
       return buildArgs.getArg(argId);
   }
 
+  /**
+   * Retrieve the argument whose id is the specified id, and if it is a 
+   * Builder, build it with the specified build context.
+   */
   public Object getArg(int argId, BuildContext bc) 
     throws BuildException {
     if (buildArgs == null)
@@ -67,6 +82,9 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
       return buildArgs.getArg(argId, bc);
   }
 
+  /**
+   * Find out how many subdirectives of the specified id were present.  
+   */
   public int getSubdirectiveCount(int subdId) 
     throws BuildException {
     int i = findSubdirectiveIndex(subdId);
@@ -78,11 +96,20 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
         : 1;
   }
 
+  /**
+   * Set the argument whose id is the specified id.  If the argument has
+   * already been set, it is overwritten.  Generally not used by directives,
+   * only used by the parser. 
+   */
   public void setArg(int argId, Object arg) 
   throws BuildException {
     buildArgs.setArg(argId, arg);
   }
 
+  /**
+   * Create a new subdirective of the specified id and create an ArgsHolder
+   * for its arguments.  Not used by directives.  
+   */
   public DirectiveArgs newSubdirective(int subdId) 
   throws BuildException {
     ArgsHolder ah = null;
@@ -104,6 +131,11 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
     return ah;
   }
 
+  /**
+   * Retrieves the ArgsHolder for the associated subdirective so that the
+   * subdirective arguments can be retrieved.  Only valid if the specified
+   * subdirective is not repeating. 
+   */
   public ArgsHolder getSubdirective(int subdId) 
     throws BuildException {
     int index = findSubdirectiveIndex(subdId);
@@ -112,6 +144,11 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
     return (ArgsHolder) subdirectives[index];
   }
 
+  /**
+   * Retrieves an array of ArgsHolders for the associated subdirective
+   * so that the subdirective arguments can be retrieved.  Only valid
+   * if the specified subdirective is repeating.  
+   */
   public ArgsHolder[] getRepeatingSubdirective(int subdId) 
     throws BuildException {
     int index = findSubdirectiveIndex(subdId);
@@ -123,6 +160,9 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
       return (ArgsHolder[]) ((Vector) subdirectives[index]).toArray(aha);
   }
 
+  /**
+   * Build the directive.  Calls the build() method of the directive.
+   */
   public Object build(BuildContext bc) throws BuildException {
     if (directive == null) 
       throw new BuildException("Error instantiating Directive object for #" 

@@ -20,6 +20,7 @@ import org.webmacro.engine.*;
  * It is expected that all directives will build a copy of their descriptor
  * statically, using the various XxxArg() constructors, and return a reference
  * to that from getDescriptor().  
+ * @author Brian Goetz
  */ 
 
 public abstract class Directive implements Macro, Visitable { 
@@ -69,7 +70,7 @@ public abstract class Directive implements Macro, Visitable {
   }  
 
   /**
-   * Convenience methods for directives to write HTML warnings into the output
+   * Convenience method for directives to write HTML warnings into the output
    * stream.  Eventually this will be parameterizable so that HTML is not
    * assumed to be the only underlying language. 
    */
@@ -78,6 +79,12 @@ public abstract class Directive implements Macro, Visitable {
   throws IOException {
     return "<!--\nWARNING: " + warning + " \n-->";
   }
+
+  /**
+   * Convenience method for directives to write HTML warnings into the output
+   * stream.  Eventually this will be parameterizable so that HTML is not
+   * assumed to be the only underlying language. 
+   */
 
   protected static void writeWarning(String warning, FastWriter writer) 
   throws IOException {
@@ -95,6 +102,9 @@ public abstract class Directive implements Macro, Visitable {
    * ArgDescriptor is the base class for all the different types
    * of argument descriptors, like ConditionalArg, KeywordArg, RValueArg,
    * etc.  
+   * Most ArgDescriptor constructors take an argId parameter, which is
+   * an integer which uniquely identifies the argument which will be passed
+   * to DirectiveBuilder.getArg when retrieving the argument.  
    */
 
   public static abstract class ArgDescriptor {
@@ -110,10 +120,6 @@ public abstract class Directive implements Macro, Visitable {
       this.type = type;
     }
 
-    public int getSubordinateArgs() {
-      return subordinateArgs;
-    }
-
     protected void setOptional() {
       optional = true;
     }
@@ -125,42 +131,66 @@ public abstract class Directive implements Macro, Visitable {
   }
 
 
+  /**
+   * Condition argument type.  Accepts a WM expression which evaluates
+   * to a boolean result, evaluated according to Expression.isTrue.  
+   */
   public static class ConditionArg extends ArgDescriptor {
     public ConditionArg(int id) { 
       super(id, ArgType_CONDITION); 
     }
   }
 
+  /**
+   * Block argument type.  Accepts a WM Block.
+   */
   public static class BlockArg extends ArgDescriptor {
     public BlockArg(int id) { 
       super(id, ArgType_BLOCK); 
     }
   }
 
+  /**
+   * Literal block argument type.  Accepts a WM Block, but does not intepret
+   * any directives or property references contained in the block.
+   */
   public static class LiteralBlockArg extends ArgDescriptor {
     public LiteralBlockArg(int id) { 
       super(id, ArgType_LITBLOCK); 
     }
   }
 
+  /**
+   * RValue argument type.  Accepts any WM expression.  
+   */
   public static class RValueArg extends ArgDescriptor {
     public RValueArg(int id) { 
       super(id, ArgType_RVALUE); 
     }
   }
 
+  /**
+   * LValue argument type.  Accepts any WM property reference.
+   */
   public static class LValueArg extends ArgDescriptor {
     public LValueArg(int id) { 
       super(id, ArgType_LVALUE); 
     }
   }
 
+  /**
+   * Quoted string argument type.  Accepts a quoted string with embedded
+   * property references (e.g., "hello $foo")
+   */
   public static class QuotedStringArg extends ArgDescriptor {
     public QuotedStringArg(int id) { 
       super(id, ArgType_QUOTEDSTRING); 
     }
   }
 
+  /**
+   * Keyword argument type.  Accepts only the specified keyword. 
+   */
   public static class KeywordArg extends ArgDescriptor {
     public KeywordArg(int id, String keyword) { 
       super(id, ArgType_KEYWORD); 
@@ -168,12 +198,22 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+  /**
+   * Assignment.  In the standard parser, the parser looks for an = 
+   * operator, but other parsers can handle this as they see fit.
+   */
   public static class AssignmentArg extends ArgDescriptor {
     public AssignmentArg() { 
       super(0, ArgType_ASSIGN); 
     }
   }
 
+  /**
+   * Optional group.  An optional group can begin with a Keyword argument.
+   * If the keyword argument is not present in the input text, the entire
+   * group is skipped.  Can contain other groups.  The argCount parameter
+   * is the number of simple arguments or groups in this argument group.  
+   */
   public static class OptionalGroup extends ArgDescriptor {
     public OptionalGroup(int argCount) { 
       super(0, ArgType_GROUP); 
@@ -181,6 +221,15 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+  /**
+   * The OptionChoice indicates that several optional groups can be accepted
+   * in any order.  The groupCount parameter is the number of OptionalGroup
+   * arguments following.  Each group in the choice will be accepted zero
+   * or one time, in any order.  
+   * For example, OptionChoice would allow a directive with the optional
+   * groups (Keyword("from"), RValue()) and (Keyword("max"), RValue()) to
+   * accept either "from n max m" or "from n" or "max m from n".  
+   */
   public static class OptionChoice extends ArgDescriptor {
     public OptionChoice(int groupCount) { 
       super(0, ArgType_CHOICE); 
@@ -188,6 +237,13 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+
+  /**
+   * Subdirectives are like directives, except that they do not have their
+   * own class.  The directive is responsible for fetching and processing
+   * the subdirective's arguments.  Each Subdirective can have its own 
+   * argument list.  
+   */
   public static class Subdirective extends ArgDescriptor {
     public final String name; 
     public final ArgDescriptor[] args;
@@ -201,6 +257,10 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+  /**
+   * Optional subdirective.  This means that the subdirective can appear
+   * zero or one time.
+   */
   public static class OptionalSubdirective extends Subdirective {
     public OptionalSubdirective(int id, String name,
                                 ArgDescriptor[] args) {
@@ -209,6 +269,10 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+  /**
+   * Optional repeating subdirective.  This means that the
+   * subdirective can appear zero or more times.  
+   */
   public static class OptionalRepeatingSubdirective
     extends OptionalSubdirective {
     public OptionalRepeatingSubdirective(int id, String name,
@@ -221,6 +285,11 @@ public abstract class Directive implements Macro, Visitable {
 
   // Utility exception classes for use by directives
 
+  /**
+   * Utility exception used by directives to signal that an argument
+   * that was supposed to be a Variable is not a variable.  Subclasses
+   * BuildException.
+   */
   public static class NotVariableBuildException extends BuildException {
     public NotVariableBuildException(String directive) {
       super("#" + directive + ": Argument must be a variable");
@@ -231,6 +300,11 @@ public abstract class Directive implements Macro, Visitable {
     }
   }
 
+  /**
+   * Utility exception used by directives to signal that an argument
+   * that was supposed to be a simple Variable (only one term) is not.  
+   * Subclasses BuildException.
+   */
   public static class NotSimpleVariableBuildException extends BuildException {
     public NotSimpleVariableBuildException(String directive) {
       super("#" + directive + ": Argument must be a simple variable");
