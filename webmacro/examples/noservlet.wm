@@ -1,0 +1,6 @@
+WebMacro "NoServlet" example!
+
+Hello is $hello
+Today is $Today 
+Number is $Number 
+
