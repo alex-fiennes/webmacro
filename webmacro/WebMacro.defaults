@@ -125,7 +125,6 @@ Profile.time: 120000
 Providers:  org.webmacro.resource.TemplateProvider \
             org.webmacro.resource.UrlProvider \
             org.webmacro.resource.ConfigProvider \
-            org.webmacro.engine.DirectiveProvider \
             org.webmacro.directive.DirectiveProvider \
             org.webmacro.engine.ParserProvider
 
@@ -134,21 +133,7 @@ Providers:  org.webmacro.resource.TemplateProvider \
 # by changing this list--you could even add your own. They are 
 # all implementations of org.webmacro.engine.Directive
 
-Directives:  org.webmacro.engine.ElseDirective \
-             org.webmacro.engine.EscapeDirective \
-             org.webmacro.engine.EncodeDirective \
-             org.webmacro.engine.ForeachDirective \
-             org.webmacro.engine.IfDirective \
-             org.webmacro.engine.IncludeDirective \
-             org.webmacro.engine.LocalDirective \
-             org.webmacro.engine.ParamDirective \
-             org.webmacro.engine.ParseDirective \
-             org.webmacro.engine.ProfileDirective \
-             org.webmacro.engine.PropertyDirective \
-             org.webmacro.engine.SetDirective \
-             org.webmacro.engine.SilenceDirective \
-             org.webmacro.engine.UseDirective \
-             org.webmacro.directive.IncludeDirective \
+Directives:  org.webmacro.directive.IncludeDirective \
              org.webmacro.directive.ParseDirective \
              org.webmacro.directive.SetDirective \
              org.webmacro.directive.IfDirective \
@@ -207,7 +192,5 @@ ContextTools:
 # invoke a different parser by way of the #use directive, if it has
 # been included. These parsers all impoement org.webmacro.engine.Parser
 
-Parsers:  org.webmacro.engine.WMParser \
-          org.webmacro.engine.NullParser \
-          org.webmacro.engine.TextParser
+Parsers:  org.webmacro.parser.WMParser 
 
