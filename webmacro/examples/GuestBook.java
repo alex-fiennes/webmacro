@@ -38,7 +38,7 @@ import org.webmacro.util.*;
   */
 public class GuestBook extends WMServlet 
 {
-   Vector book = new Vector();
+   ArrayList book = new ArrayList();
 
    String name;
    String email;
@@ -79,7 +79,7 @@ public class GuestBook extends WMServlet
       // verifying for submissions
       if (output.equals("verify")) {
          myGuestEntry = new GuestEntry(name, email, comment);
-         book.addElement(myGuestEntry); 
+         book.add(myGuestEntry); 
          context.put("registry", book);
        
          templateName = "verify.wm";
@@ -107,9 +107,9 @@ public class GuestBook extends WMServlet
 
    public final class GuestEntry 
    {
-       private String name;
-       private String email;
-       private String comment;
+       final private String name;
+       final private String email;
+       final private String comment;
        
    
        GuestEntry(String inName, String inEmail, String inComment)
@@ -118,7 +118,6 @@ public class GuestBook extends WMServlet
           email = inEmail; 
           comment = inComment;
        }
-   
    
        final public String getName()
        {

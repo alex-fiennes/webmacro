@@ -1,0 +1,30 @@
+<html><head><title>WebMacro Profile</title></head>
+
+#set $Response.ContentType = "text/html"
+
+<h1>WebMacro Profile Statistics</h1>
+
+#if (!$compiled) {
+   <b>PROFILING WAS NOT ENABLED IN org.webmacro.Flags</b>
+}
+
+#if (!$enabled) {
+   <b>PROFILING WAS NOT ENABLED (check WebMacro.properties)</b>
+}
+
+#if ($compiled && $enabled) {
+   <table border="1">
+   <tr><td><b>Name</b></td><td><b>Calls</b></td><td><b>Time</b></td></tr>
+   #foreach $stat in $statistics {
+      <tr>
+      <td>$stat.Name</td>
+      <td>$stat.Calls</td>
+      <td>$stat.Time</td>
+      </tr>
+   }
+   </table>
+} #else {
+   Unable to display profiling information.
+}
+
+</body></html>

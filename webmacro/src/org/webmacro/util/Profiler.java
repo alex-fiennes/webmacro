@@ -60,11 +60,75 @@ public class Profiler
      * the parent profiler.
      */
    public Profiler newProfiler(String childName) {
-      Profiler child = new Profiler(_name + "." + childName, _rate);
+      Profiler child = new Profiler(_name + ":" + childName, _rate);
       synchronized(this) {
          _children.add(child);
       }
       return child;
+   }
+
+   /**
+     * Convenience method... the actual name will be the concatenation
+     * of the supplied strings, but only if profiling occurs. The 
+     * array will be joined with '.' characters. 
+     */
+   final public Object start(String name, String arg[]) {
+      if ((_rate == 0) || (++_count < _rate)) return null;
+      _count = 0;
+      StringBuffer buf = new StringBuffer();
+      buf.append(name);
+      buf.append(":");
+      for (int i = 0; i < arg.length; i++) {
+         if (i != 0) {
+            buf.append("."); 
+         }
+         buf.append(arg[i]);
+      }
+      return sample(buf.toString());
+   }
+
+   /**
+     * Convenience method... the actual name will be the concatenation
+     * of the supplied Object.toString()'s, but only if profiling occurs. 
+     * The array will be joined with '.' characters. 
+     */
+   final public Object start(String name, Object arg[]) {
+      if ((_rate == 0) || (++_count < _rate)) return null;
+      _count = 0;
+      StringBuffer buf = new StringBuffer();
+      buf.append(name);
+      buf.append(":");
+      for (int i = 0; i < arg.length; i++) {
+         if (i != 0) {
+            buf.append("."); 
+         }
+         if (arg[i] != null) {
+            buf.append(arg[i].toString());
+         } else {
+            buf.append("null");
+         }
+      }
+      return sample(buf.toString());
+   }
+
+   /**
+     * Convenience method... the actual name will be the concatenation
+     * of the supplied strings, but only if profiling occurs.
+     */
+   final public Object start(String name1, String name2) {
+      if ((_rate == 0) || (++_count < _rate)) return null;
+      _count = 0;
+      return (sample(name1 + ":" + name2));
+   }
+
+   /**
+     * Convenience method... the actual name will be the concatenation
+     * of the supplied strings, but only if profiling occurs.
+     */
+   final public Object start(String name1, Object name2) {
+      if ((_rate == 0) || (++_count < _rate)) return null;
+      _count = 0;
+      return sample(name1 + ":" + ((name2 != null) ? name2 : "null") );
    }
 
    /**
@@ -90,7 +154,7 @@ public class Profiler
       synchronized(this) {
          n.data = (ProfilerStatistics) _leaves.get(name);
          if (n.data == null) {
-            n.data = new ProfilerStatistics(_name + "." + name);
+            n.data = new ProfilerStatistics(_name + ":" + name);
             _leaves.put(name,n.data);
          }
       }

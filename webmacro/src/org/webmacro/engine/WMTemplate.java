@@ -207,7 +207,7 @@ abstract public class WMTemplate implements Template
          out.write(warning);
          out.write(e.toString());
          out.write(" \n-->");
-      }
+      } 
    }
 
    public void accept(TemplateVisitor v) { _content.accept(v); }

@@ -2,6 +2,8 @@
 package org.webmacro;
 
 import org.webmacro.util.LogManager;
+import org.webmacro.util.Profiler;
+import org.webmacro.util.ProfilerStatistics;
 
 import java.util.Hashtable;
 import java.util.Properties;
@@ -53,6 +55,7 @@ final public class Broker
    private String _name;
    private LogManager _lm;
    private Log _log;
+   private Profiler _prof = null;
 
    /**
      * Equivalent to Broker("WebMacro.properties")
@@ -167,6 +170,19 @@ final public class Broker
       }
       _config = config;
 
+      String profileRate = config.getProperty("Profile.rate");
+      if (profileRate != null) {
+         _log.notice("starting profiler");
+         try {
+            int rate = Integer.valueOf(profileRate).intValue();
+            _prof = new Profiler(name, rate);
+         } catch (Exception e) {
+            _log.error("error starting profiler", e);
+         }
+      } else {
+         _log.notice("profiler disabled");
+      }
+
       String providers = config.getProperty("Providers");
       if (providers == null) {
          _log.error("configuration exists but has no Providers listed");
@@ -176,9 +192,11 @@ final public class Broker
       Enumeration pen = new StringTokenizer(providers);
       Class pClass;
       Provider instance;
-
+      Profiler p = getProfiler("init");
+      Object prof = null;
       while (pen.hasMoreElements()) {
          String className = (String) pen.nextElement();
+         if (p != null) prof = p.start(className);
          try {
             pClass = Class.forName(className);
             instance = (Provider) pClass.newInstance();
@@ -186,8 +204,20 @@ final public class Broker
             _log.info("Loaded provider: " + className);
          } catch (Exception e) {
             _log.error("Provider (" + className + ") failed to load", e);
+         } finally {
+            if (p != null) p.stop(prof);
          }
       }
+   }
+
+   public Profiler getProfiler(String name) {
+      if (_prof == null) return null;
+      return _prof.newProfiler(name);
+   }
+
+   public ProfilerStatistics[] getProfilerStatistics() {
+      if (_prof == null) return null;
+      return _prof.getStatistics();
    }
 
    /**

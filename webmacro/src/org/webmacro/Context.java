@@ -49,6 +49,8 @@ public class Context implements Cloneable {
 
    private Locale _locale = Locale.getDefault();
 
+   private Profiler _prof = null;
+
    /**
      * Log configuration errors, context errors, etc.
      */
@@ -102,6 +104,10 @@ public class Context implements Cloneable {
      * with its parent. It will have a null property bean.
      */
    protected Object clone() {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("clone");
+      }
       Context c = null;
       try {
          c = (Context) super.clone();
@@ -113,6 +119,9 @@ public class Context implements Cloneable {
       c._bean = null;
       c._locale = _locale;
 
+      if (Flags.PROFILE && (_prof != null)) {
+         _prof.stop(prof);
+      }
       return c;
    }
 
@@ -122,6 +131,10 @@ public class Context implements Cloneable {
      * Clear the context of its non-shared data, preserving only the toolbox.
      */
    public void clear() {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("clear");
+      }
       if (_tools != null) {
          Iterator i = _tools.entrySet().iterator();
          while (i.hasNext()) {
@@ -133,7 +146,24 @@ public class Context implements Cloneable {
       _tools = null;
       _globals = null;
       _bean = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         _prof.stop(prof);
+      }
    }
+
+   // PROFILER
+
+   /**
+     * If a Profiler has been installed, return it
+     */
+   public Profiler getProfiler() { return _prof; }
+
+   /**
+     * Install a Profiler. This will collect statistics on key 
+     * functions in the Context under the name "context". Note 
+     * that Flags.PROFILE controls many of these profiling statements.
+     */
+   public void setProfiler(Profiler p) { _prof = p; }
 
 
    // INITIALIZATION: TOOL CONFIGURATION
@@ -216,7 +246,6 @@ public class Context implements Cloneable {
       return _broker.getLog(name);
    }
 
-
    // PROPERTY API
 
    /**
@@ -260,6 +289,7 @@ public class Context implements Cloneable {
    final public void setBean(Object bean) {
       _bean = bean;
       // check if "bean" has set and get methods like a Map
+      // XXX: this is going to be slow!!! what is it doing?
       try {
         _beanGet = bean.getClass().getMethod("get", new Class[]{ java.lang.Object.class });
         _beanPut = bean.getClass().getMethod("put", new Class[]{ java.lang.Object.class, java.lang.Object.class });
@@ -277,19 +307,26 @@ public class Context implements Cloneable {
    public final Object getProperty(final Object[] names) 
       throws PropertyException, ContextException
    {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("getProperty",names);
+      }
       Object ret = null;
       if (_bean == null) {
          ret = getGlobal(names);
       } else {
-        // 13-Oct-00 - re-added by keats: consume the first PropertyException to allow tools to be checked
         try {
           ret = PropertyOperator.getProperty(this,_bean,names);
         } catch (PropertyException pe){
-          // consume this exception and try again below, will get thrown again if appropriate
+          // consume this exception and try again below
+          // will get thrown again if appropriate
         }
       }
       if (ret == null){
         ret = getTool(names);
+      }
+      if (Flags.PROFILE && (_prof != null)) {
+         _prof.stop(prof);
       }
       return ret;
    }
@@ -300,14 +337,23 @@ public class Context implements Cloneable {
    final public boolean setProperty(final Object[] names, final Object value) 
       throws PropertyException, ContextException
    {
+      boolean ret;
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("setProperty",names);
+      }
       if (names.length == 0) {
-         return false;
+         ret = false;
       } else if (_bean == null) {
-         return setGlobal(names, value) || setTool(names, value);
+         ret = setGlobal(names, value) || setTool(names, value);
       } else {
-         return PropertyOperator.setProperty(this,_bean,names,value) || 
+         ret = PropertyOperator.setProperty(this,_bean,names,value) || 
                setTool(names, value);      
       }
+      if (Flags.PROFILE && (_prof != null)) {
+         _prof.stop(prof);
+      }
+      return ret;
    }
 
 
@@ -317,20 +363,34 @@ public class Context implements Cloneable {
      * Retrieve a local value from this Context. 
      */
    final public Object get(Object name) {
-      //return (_globals != null) ? _globals.get(name) : null;
-      if (_globals != null) return _globals.get(name);
-      if (_beanGet != null){
-        try {
-          return _beanGet.invoke(_bean, new Object[]{ name });
-        } catch (Exception e){}
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("get",name);
       }
-      return null;
+      try {
+         //return (_globals != null) ? _globals.get(name) : null;
+         if (_globals != null) return _globals.get(name);
+         if (_beanGet != null){
+           try {
+             return _beanGet.invoke(_bean, new Object[]{ name });
+           } catch (Exception e){}
+         }
+         return null;
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) {
+            _prof.stop(prof);
+         }
+      }
    }
 
    /**
      * Set a local value in this Context
      */
    final public void put(Object name, Object value) {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("put",name);
+      }
       if (_globals == null) {
          if (_beanPut != null){
             try {
@@ -342,6 +402,9 @@ public class Context implements Cloneable {
       } else {
          _globals.put(name,value);
       }
+      if (Flags.PROFILE && (_prof != null)) {
+         _prof.stop(prof);
+      }
    }
 
    /**
@@ -351,15 +414,25 @@ public class Context implements Cloneable {
    public final Object getGlobal(final Object[] names) 
       throws PropertyException, ContextException
    {
-      int len = names.length;
-      if ((_globals == null) || (len == 0)) {
-         return null;
-      } 
-      Object res = get(names[0]); 
-      if ((len == 1) || (res == null)) { 
-         return res; 
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("getGlobal",names);
       }
-      return PropertyOperator.getProperty(this,res,names,1);
+      try {
+         int len = names.length;
+         if ((_globals == null) || (len == 0)) {
+            return null;
+         } 
+         Object res = get(names[0]); 
+         if ((len == 1) || (res == null)) { 
+            return res; 
+         }
+         return PropertyOperator.getProperty(this,res,names,1);
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) {
+            _prof.stop(prof);
+         }
+      }
    }
 
    /**
@@ -369,20 +442,28 @@ public class Context implements Cloneable {
    final public boolean setGlobal(final Object[] names, final Object value) 
       throws PropertyException, ContextException
    {
-      if (names.length == 0) {
-         return false;
-      } 
-      if (names.length == 1) {
-         put(names[0], value);
-         return true;
-      } else {
-         Object parent = get(names[0]);
-         if (parent == null) {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("setGlobal",names);
+      }
+      try {
+         if (names.length == 0) {
             return false;
+         } 
+         if (names.length == 1) {
+            put(names[0], value);
+            return true;
          } else {
-            return PropertyOperator.setProperty(this,parent,names,1,value);
-         }
-      } 
+            Object parent = get(names[0]);
+            if (parent == null) {
+               return false;
+            } else {
+               return PropertyOperator.setProperty(this,parent,names,1,value);
+            }
+         } 
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
+      }
    }
 
 
@@ -395,6 +476,10 @@ public class Context implements Cloneable {
    final public Object getTool(Object name) 
       throws ContextException
    {
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) {
+         prof = _prof.start("getTool",name);
+      }
       try {
          if (_toolbox == null) {
             return null;
@@ -414,6 +499,8 @@ public class Context implements Cloneable {
       } catch (ClassCastException ce) {
          throw new ContextException("Tool" + name  
                + " does not implement the ContextTool interface!");
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
       }
    }
    /**
@@ -423,15 +510,21 @@ public class Context implements Cloneable {
    public final Object getTool(final Object[] names) 
       throws PropertyException, ContextException
    {
-      if ((names.length == 0) || (_toolbox == null)) {
-         return null;
-      } else {
-         Object res = getTool(names[0]);
-         if (names.length == 1) {
-            return res;
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) prof = _prof.start("getTool",names);
+      try {
+         if ((names.length == 0) || (_toolbox == null)) {
+            return null;
+         } else {
+            Object res = getTool(names[0]);
+            if (names.length == 1) {
+               return res;
+            } 
+            return PropertyOperator.getProperty(this,getTool(names[0]),names,1);
          } 
-         return PropertyOperator.getProperty(this,getTool(names[0]),names,1);
-      } 
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
+      }
    }
 
    /**
@@ -441,14 +534,20 @@ public class Context implements Cloneable {
    final public boolean setTool(final Object[] names, final Object value) 
       throws PropertyException, ContextException
    {
-      if (names.length == 0) {
-         return false;
-      } 
-      if (names.length == 1) {
-         throw new ContextException("Cannot reset tool in a running context. Tools can only be registered via the registerTool method.");
-      } else {
-         return PropertyOperator.setProperty(this,getTool(names[0]),names,1,value);
-      } 
+      Object prof = null;
+      if (Flags.PROFILE && (_prof != null)) prof = _prof.start("setTool",names);
+      try {
+         if (names.length == 0) {
+            return false;
+         } 
+         if (names.length == 1) {
+            throw new ContextException("Cannot reset tool in a running context. Tools can only be registered via the registerTool method.");
+         } else {
+            return PropertyOperator.setProperty(this,getTool(names[0]),names,1,value);
+         } 
+      } finally {
+         if (Flags.PROFILE && (_prof != null)) _prof.stop(prof);
+      }
    }
 
    /**
