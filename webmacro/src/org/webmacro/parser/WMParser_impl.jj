@@ -199,10 +199,13 @@ TOKEN_MGR_DECLS : {
 
 <DEFAULT> TOKEN : {
   <STUFF:     ( ~["#", "$", "{", "}", "\\"] )+ >
-| <BEGIN:     "#begin">
-| <END:       "#end">
-| <LBRACE:    "{">
 | <RBRACE:    "}">
+| <END:       "#end">
+}
+
+<DEFAULT, WM> TOKEN : {
+  <BEGIN:     "#begin">
+| <LBRACE:    "{">
 }
 
 <WM> SKIP : {
@@ -524,7 +527,7 @@ void EatWsNlOrSpace(BlockBuilder b) : {
 void BeforeBlock() : {
 }
 {
-  [ <WS> ] [ <NEWLINE> [ LOOKAHEAD(<WS> <POUND>) <WS> ] ]
+  [ <WS> ] [ <NEWLINE> [ LOOKAHEAD(<WS> (<BEGIN>|<LBRACE>)) <WS> ] ]
 }
 
 void OptionalWsNl() : {

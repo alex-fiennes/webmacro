@@ -15,10 +15,10 @@ public interface WMParser_implConstants {
   int _RESTOFLINE = 9;
   int _COMMENT = 10;
   int STUFF = 11;
-  int BEGIN = 12;
+  int RBRACE = 12;
   int END = 13;
-  int LBRACE = 14;
-  int RBRACE = 15;
+  int BEGIN = 14;
+  int LBRACE = 15;
   int POUNDPOUND = 17;
   int RESTOFLINE = 18;
   int COMMENT_ELSE = 19;
@@ -79,10 +79,10 @@ public interface WMParser_implConstants {
     "<_RESTOFLINE>",
     "<_COMMENT>",
     "<STUFF>",
-    "\"#begin\"",
-    "\"#end\"",
-    "\"{\"",
     "\"}\"",
+    "\"#end\"",
+    "\"#begin\"",
+    "\"{\"",
     "<token of kind 16>",
     "\"##\"",
     "<RESTOFLINE>",

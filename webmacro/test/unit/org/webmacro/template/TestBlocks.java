@@ -37,6 +37,9 @@ public class TestBlocks extends TemplateTestCase {
 
       tmpl = "#if (true)\n #begin pass\n #end\n #else\n #begin fail\n #end";
       assertStringTemplateEquals (tmpl, "pass\n");
+
+      tmpl = "#if (true)\n { pass\n }\n #else\n { fail\n }";
+      assertStringTemplateEquals (tmpl, " pass\n ");
    }
 
    public void testOnlyEnd () throws Exception {
@@ -44,13 +47,6 @@ public class TestBlocks extends TemplateTestCase {
       assertStringTemplateEquals (tmpl, "pass");
    }
 
-   /**
-    * until Brian adds support for #if #elseif #else #end
-    * this will fail.
-    *
-    * The point of this is really to make sure the parser
-    * doesn't throw exceptions, not to test the conditionals
-    */
    public void testIfElseIfEnd () throws Exception {
       String tmpl = "#if ($foo)\n"
                   + "pass\n"
