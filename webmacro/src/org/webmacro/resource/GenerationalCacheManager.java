@@ -49,7 +49,12 @@ import org.opendoors.cache.immutable.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
 
-
+/**
+ * The GenerationalCacheManager implements the CacheManager
+ * interface for WebMacro providers which extend the CachingProvider
+ * base class. This implementation encapsulates the use of VFC
+ * provided by Open Doors Software and incorporated into WM.
+ */
 public class GenerationalCacheManager implements CacheManager {
 
   private UpdateableCache cache;
