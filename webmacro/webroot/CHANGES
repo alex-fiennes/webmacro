@@ -1,3 +1,7 @@
+-- Eric: added option of -1 to TemplateExpireTime.  This tells CachingProvider
+   and TemplateProvider to reload _only_ when the template has been modified.
+   
+
 -- renamed #silent to #silence, #htmlescape to #escape
 -- removed setEncoding()/getEncoding() from context and added it to 
    the constructor for a template
