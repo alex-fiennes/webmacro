@@ -172,8 +172,37 @@ Directives.type:       org.webmacro.directive.TypeDirective
 # Directive Configuration
 #
 
+
+#
+# Should the #type directive be enabled?  By default, yes it is.
+# When moving to a production environment, you should set this 
+# to "false", so as not to incur the overhead of #type
 type.Enabled = true
 
+#
+# Configuration for #include and #parse
+#
+# NOTE:  #parse has been deprecated.  It is included for backwards
+# compatibility only.  You should instead use:
+#      #include as template "template.wm" 
+#
+#
+# Lazy - is the #include'd (or #parse'd) file inserted into the
+#        parent template during build-time or run-time?
+#        If Lazy==true, then run-time.  This allows you to take
+#        advantage of the "ReloadOnChange" parameters of the
+#        various template providers
+#
+# TemplateExtensions - a list of (comma-separated) file extensions
+#                      that are assumed to be templates when
+#                      #include is used withough qualifing the
+#                      file type
+#
+# StrictCompatibility - if true, then the directive works exactly
+#                       like previous versions of WebMacro.  Which
+#                       means that #include "somefile" always
+#                       assumes "text file", and #parse "somefile"
+#                       always assumes "template"       
 include.Lazy: true
 include.TemplateExtensions: .wm, .wmt, .tml
 include.StrictCompatibility: false
