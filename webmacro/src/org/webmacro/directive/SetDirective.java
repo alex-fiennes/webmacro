@@ -14,18 +14,18 @@ public class SetDirective extends Directive {
   private Object   result;
 
   private static final ArgDescriptor[] 
-    setArgs = new ArgDescriptor[] {
+    myArgs = new ArgDescriptor[] {
       new LValueArg(SET_TARGET), 
       new PunctArg(SET_EQ, Directive.Punct_EQUALS),
       new RValueArg(SET_RESULT)
     };
 
   private static final DirectiveDescriptor 
-    setDescr = new DirectiveDescriptor("set", SetDirective.class, setArgs, 
-                                       null);
+    myDescr = new DirectiveDescriptor("set", SetDirective.class, myArgs, 
+                                      null);
 
   public static DirectiveDescriptor getDescriptor() {
-    return setDescr;
+    return myDescr;
   }
 
   public Object build(DirectiveBuilder builder, 
@@ -52,8 +52,8 @@ public class SetDirective extends Directive {
     }
   } 
 
-  public void accept(MacroVisitor v) {
-    v.beginDirective("set");
+  public void accept(TemplateVisitor v) {
+    v.beginDirective(myDescr.name);
     v.visitDirectiveArg("SetTarget", target);
     v.visitDirectiveArg("SetValue", result);
     v.endDirective();

@@ -11,16 +11,16 @@ public class TextDirective extends Directive {
   private Block block; 
 
   private static final ArgDescriptor[] 
-    textArgs = new ArgDescriptor[] {
+    myArgs = new ArgDescriptor[] {
       new LiteralBlockArg(TEXT_BLOCK)
     };
 
   private static final DirectiveDescriptor 
-    textDescr = new DirectiveDescriptor("text", TextDirective.class, textArgs, 
-                                        null);
+    myDescr = new DirectiveDescriptor("text", TextDirective.class, myArgs, 
+                                      null);
 
   public static DirectiveDescriptor getDescriptor() {
-    return textDescr;
+    return myDescr;
   }
 
   public Object build(DirectiveBuilder builder, 
@@ -35,8 +35,8 @@ public class TextDirective extends Directive {
     block.write(out, context);
   } 
 
-  public void accept(MacroVisitor v) {
-    v.beginDirective("text");
+  public void accept(TemplateVisitor v) {
+    v.beginDirective(myDescr.name);
     block.accept(v);
     v.endDirective();
   }

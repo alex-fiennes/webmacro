@@ -32,6 +32,7 @@ public abstract class Directive implements Macro, Visitable {
   public static final int ArgType_BLOCK        = 6;
   public static final int ArgType_LITBLOCK     = 7;
   public static final int ArgType_SUBDIRECTIVE = 8;
+  public static final int ArgType_QUOTEDSTRING = 9;
   public static final int ArgType_GROUP        = 50;
   public static final int ArgType_CHOICE       = 51;
 
@@ -71,7 +72,7 @@ public abstract class Directive implements Macro, Visitable {
       }
   }  
 
-  public void accept(MacroVisitor v) {
+  public void accept(TemplateVisitor v) {
     v.visitUnknownMacro(this.getClass().getName(), this);
   }
 
@@ -137,6 +138,12 @@ public abstract class Directive implements Macro, Visitable {
   public static class LValueArg extends ArgDescriptor {
     public LValueArg(int id) { 
       super(id, ArgType_LVALUE); 
+    }
+  }
+
+  public static class QuotedStringArg extends ArgDescriptor {
+    public QuotedStringArg(int id) { 
+      super(id, ArgType_QUOTEDSTRING); 
     }
   }
 

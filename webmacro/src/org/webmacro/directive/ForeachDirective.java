@@ -18,7 +18,7 @@ public class ForeachDirective extends Directive {
   private Macro    body;
 
   private static final ArgDescriptor[] 
-    foreachArgs = new ArgDescriptor[] {
+    myArgs = new ArgDescriptor[] {
       new LValueArg(FOREACH_TARGET), 
       new KeywordArg(FOREACH_IN, "in"),
       new RValueArg(FOREACH_LIST), 
@@ -26,11 +26,11 @@ public class ForeachDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    foreachDescr = new DirectiveDescriptor("foreach", ForeachDirective.class, 
-                                           foreachArgs, null);
+    myDescr = new DirectiveDescriptor("foreach", ForeachDirective.class, 
+                                      myArgs, null);
   
   public static DirectiveDescriptor getDescriptor() {
-    return foreachDescr;
+    return myDescr;
   }
 
   public Object build(DirectiveBuilder builder, 
@@ -75,8 +75,8 @@ public class ForeachDirective extends Directive {
     }
   } 
 
-  public void accept(MacroVisitor v) {
-    v.beginDirective("foreach");
+  public void accept(TemplateVisitor v) {
+    v.beginDirective(myDescr.name);
     v.visitDirectiveArg("ForeachTarget", target);
     v.visitDirectiveArg("ForeachList", list);
     v.visitDirectiveArg("ForeachBlock", body);

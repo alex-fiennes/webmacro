@@ -9,16 +9,16 @@ public class CommentDirective extends Directive {
   private static final int COMMENT_BLOCK = 1;
 
   private static final ArgDescriptor[] 
-    commentArgs = new ArgDescriptor[] {
+    myArgs = new ArgDescriptor[] {
       new LiteralBlockArg(COMMENT_BLOCK)
     };
 
   private static final DirectiveDescriptor 
-    commentDescr = new DirectiveDescriptor("comment", CommentDirective.class, 
-                                           commentArgs, null);
+    myDescr = new DirectiveDescriptor("comment", CommentDirective.class, 
+                                      myArgs, null);
 
   public static DirectiveDescriptor getDescriptor() {
-    return commentDescr;
+    return myDescr;
   }
 
   public Object build(DirectiveBuilder builder, 
@@ -31,4 +31,8 @@ public class CommentDirective extends Directive {
     throws ContextException, IOException {
   } 
 
+  public void accept(TemplateVisitor v) {
+    v.beginDirective(myDescr.name);
+    v.endDirective();
+  }
 }

@@ -52,12 +52,12 @@ class IfDirective extends Directive {
     };
 
   private static final DirectiveDescriptor 
-    ifDescr = new DirectiveDescriptor("if", IfDirective.class, ifArgs, 
+    myDescr = new DirectiveDescriptor("if", IfDirective.class, ifArgs, 
                                       ifSubdirectives);
   
 
   public static DirectiveDescriptor getDescriptor() {
-    return ifDescr;
+    return myDescr;
   }
 
   public Object build(DirectiveBuilder builder, 
@@ -165,8 +165,8 @@ class IfDirective extends Directive {
       elseBlock.write(out, context);
   } 
   
-  public void accept(MacroVisitor v) {
-    v.beginDirective("if");
+  public void accept(TemplateVisitor v) {
+    v.beginDirective(myDescr.name);
     for (int i=0; i<nConditions; i++) {
       v.visitDirectiveArg((i == 0)? "IfCondition" : "ElseIfCondition", 
                           conditions[i]);
