@@ -5,7 +5,7 @@
 
 <project name="WebMacro" default="compile" basedir=".">
 
-  <property name="version"        value="0.98"/>
+  <property name="version"        value="0.98p1"/>
   <property name="app.name"       value="webmacro"/>
   <property name="classes"        value="classes"/>
   <property name="dist"           value="webmacro-${version}"/>
