@@ -283,8 +283,8 @@ FastWriter.DefaultBufferSize = 4096
 # Template caching
 #
 
-CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
-CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
+CachingProvider.template.CacheManager: org.webmacro.resource.ReloadingCacheManager
+CachingProvider.url.CacheManager:      org.webmacro.resource.ReloadingCacheManager
 #CachingProvider.template.CacheManager: org.webmacro.resource.GenerationalCacheManager
 #CachingProvider.url.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
@@ -292,31 +292,23 @@ CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
 # Encoding caching
 #
 
-Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
-#Encoder.*.CacheManager: org.webmacro.resource.StaticIdentityCacheManager
+Encoder.*.CacheManager: org.webmacro.resource.SimpleCacheManager
 #Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
-PropertyOperator.CacheManager: org.webmacro.resource.StaticSMapCacheManager
-# Larger bucket size for the PropertyOperator cache seems to speed test runs
-StaticSMapCacheManager.PropertyOperator.CacheBuckets: 10001
+PropertyOperator.CacheManager: org.webmacro.resource.SimpleCacheManager
 
-# SMapCacheManager properties (if used)
+# ReloadingCacheManager properties (if used)
 #    - An ExpireTime of 0 (zero) means WebMacro will never cache the resource
 #    - A positive ExpireTime means WebMacro will re-fetch the resource every
 #        X milliseconds  (ie, 10000 is 10 seconds)
 #    - A negative ExpireTime means WebMacro will only re-fetch resources
 #        when they change.
 
-SMapCacheManager.*.ExpireTime: 30000
-SMapCacheManager.*.ReloadOnChange: true
+ReloadingCacheManager.*.ExpireTime: 30000
+ReloadingCacheManager.*.ReloadOnChange: true
 
 # Advanced properties:
-SMapCacheManager.*.CacheBuckets: 1001
-SMapCacheManager.*.CacheFactor: 5
-SMapCacheManager.*.UseSoftReferences: TRUE
-
-StaticSMapCacheManager.*.CacheBuckets: 1001
-StaticSMapCacheManager.*.CacheFactor: 5
+ReloadingCacheManager.*.UseSoftReferences: TRUE
 
 # CheckForReloadDelay sets, how often a cached template should
 # be checked for reload at maximum. 0 (which is the default) means

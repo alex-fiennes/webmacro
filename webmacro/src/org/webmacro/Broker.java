@@ -37,6 +37,7 @@ import org.webmacro.util.LogTarget;
 import org.webmacro.util.LogTargetFactory;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Broker is responsible for loading and initializing almost everything
@@ -82,13 +83,13 @@ public class Broker
     private EvaluationExceptionHandler _eeHandler;
 
     /** a local map for one to dump stuff into, specific to this Broker */
-    private Map _brokerLocal = Collections.synchronizedMap(new HashMap());
+    private Map _brokerLocal = new ConcurrentHashMap();
 
     /** a local map for "global functions" */
-    private Map _functionMap = Collections.synchronizedMap(new HashMap());
+    private Map _functionMap = new ConcurrentHashMap();
 
     /** a local map for context tools */
-    private Map _tools = Collections.synchronizedMap(new HashMap());
+    private Map _tools = new ConcurrentHashMap();
 
 
     /*

@@ -25,7 +25,7 @@ package org.webmacro.engine;
 
 import org.webmacro.*;
 import org.webmacro.resource.CacheManager;
-import org.webmacro.resource.StaticSMapCacheManager;
+import org.webmacro.resource.SimpleCacheManager;
 import org.webmacro.util.*;
 
 import java.lang.reflect.Field;
@@ -54,8 +54,8 @@ final public class PropertyOperatorCache
         cacheManager = b.getSetting("PropertyOperator.CacheManager");
         if (cacheManager == null || cacheManager.equals(""))
         {
-            _log.info("CachingProvider: No cache manager specified for PropertyOperator, using StaticSMapCacheManager");
-            _cache = new StaticSMapCacheManager();
+            _log.info("CachingProvider: No cache manager specified for PropertyOperator, using SimpleCacheManager");
+            _cache = new SimpleCacheManager();
         }
         else
         {
@@ -66,8 +66,8 @@ final public class PropertyOperatorCache
             catch (Exception e)
             {
                 _log.warning("Unable to load cache manager " + cacheManager
-                        + " for PropertyOperator, using StaticSMapCacheManager.  Reason:\n" + e);
-                _cache = new StaticSMapCacheManager();
+                        + " for PropertyOperator, using SimpleCacheManager.  Reason:\n" + e);
+                _cache = new SimpleCacheManager();
             }
         }
         _cache.init(b, config, "PropertyOperator");

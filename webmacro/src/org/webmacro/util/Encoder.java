@@ -49,7 +49,6 @@ import java.io.UnsupportedEncodingException;
  * environment's requirements or no caching scheme at all.
  *
  * @see EncoderProvider
- * @see SimpleEncoder
  * @since 0.96
  * @author Michael Bayne
  */
