@@ -146,23 +146,22 @@ final public class Log
    static private DateFormat dateFmt 
       = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 
-      // marcelh start 04092000
    /**
      * If there is a logfile per day
      */
-	static private boolean				boolLogFilePerDay = false;
-	static private SimpleDateFormat 	obLogFileSuffix = new SimpleDateFormat("_yyyyMMdd");
-   static private String				strPrevLogDate = "";
-   static private String				strLogDate = "";
-	static private String				strOrgLogFile = "";
+   static private boolean isLogFilePerDay = false;
+   static private SimpleDateFormat _logFileSuffix = 
+                      new SimpleDateFormat("_yyyyMMdd");
+   static private String _prevLogDate = "";
+   static private String _logDate = "";
+   static private String _orgLogFile = "";
 
    /**
      * How the date and time are formatted in the logfile
      * example: "dd-MM-yyyy  HH:mm:ss"
-	  */
-   static private SimpleDateFormat 	obLogFileDateFormat = null;
-	static private String				strDateTime;
-   // marcelh end 04092000
+     */
+   static private SimpleDateFormat _logFileDateFormat = null;
+   static private String _dateTime;
 
    // STATIC METHODS
 
@@ -210,23 +209,22 @@ final public class Log
       return ret;
    }
 
-	// marcelh start 04092000
    /**
      * LOG_FILE_EACH_DAY: if we want a logfile per day
-     * @param boolIsLogFileForEachDay true/false
+     * @param isLogFileForEachDay true/false
      */
-   static final public void setLogFileEachDay(boolean boolIsLogFileForEachDay)
-	{
-		boolLogFilePerDay = boolIsLogFileForEachDay;
+   static final public void setLogFileEachDay(boolean isLogFileForEachDay)
+   {
+      Log.isLogFilePerDay = isLogFileForEachDay;
    }
 
    /**
      * LOG_FILE_DATE_FORMAT: How the date and time are formatted in the logfile
-	  * @param strDateFormat a string according to a simpledateformat
+     * @param strDateFormat a string according to a simpledateformat
      */
    static final public void setLogFileDateFormat(String strDateFormat)
    {
-	   obLogFileDateFormat = new SimpleDateFormat(strDateFormat);
+      _logFileDateFormat = new SimpleDateFormat(strDateFormat);
    }
    // marcelh end 04092000
 
@@ -248,15 +246,15 @@ final public class Log
          target = new PrintWriter(new OutputStreamWriter(System.err));
       }
       myTarget = target;
-		// marcelh start 04092000
-		strDateTime = dateFmt.format(new Date());
-		if (obLogFileDateFormat != null)
-		{
-			strDateTime = obLogFileDateFormat.format(new Date());
-		}
-	   // marcelh old 04092000
-		// myTarget.println("*** BEGIN: " + dateFmt.format(new Date()) + "***");
-		myTarget.println("*** BEGIN: " + strDateTime + " ***");
+      // marcelh start 04092000
+      _dateTime = dateFmt.format(new Date());
+      if (_logFileDateFormat != null)
+      {
+         _dateTime = _logFileDateFormat.format(new Date());
+      }
+      // marcelh old 04092000
+      // myTarget.println("*** BEGIN: " + dateFmt.format(new Date()) + "***");
+      myTarget.println("*** BEGIN: " + _dateTime + " ***");
    }
 
 
@@ -278,15 +276,15 @@ final public class Log
    {
       PrintWriter out;
       if (logfile != null) {
-			// marcelh start 04092000
-			if (boolLogFilePerDay)
-			{
-				// change logfilename if a logfile per day is wanted
-				strOrgLogFile	= logfile;
-				strLogDate		= getLogFileSuffix();
-				strPrevLogDate	= strLogDate;
-				logfile += strLogDate;
-			}
+         // marcelh start 04092000
+         if (isLogFilePerDay)
+         {
+            // change logfilename if a logfile per day is wanted
+            _orgLogFile   = logfile;
+            _logDate      = getLogFileSuffix();
+            _prevLogDate   = _logDate;
+            logfile += _logDate;
+         }
          // marcelh end 04092000
          out = new PrintWriter(new FileWriter(logfile,true));
       } else {
@@ -317,24 +315,24 @@ final public class Log
 
 
       try {
-	      // marcelh start 04092000
-	      if (boolLogFilePerDay)
-	      {
-	         strLogDate = getLogFileSuffix();
-	      	if (!strLogDate.equals(strPrevLogDate))
-	      	{
-	      		setTarget(strOrgLogFile);
-	      	}
-	      }
-		
-         strDateTime = dateFmt.format(new Date());
-         if (obLogFileDateFormat != null)
+         // marcelh start 04092000
+         if (isLogFilePerDay)
          {
-         	strDateTime = obLogFileDateFormat.format(new Date());
+            _logDate = getLogFileSuffix();
+            if (!_logDate.equals(_prevLogDate))
+            {
+               setTarget(_orgLogFile);
+            }
+         }
+      
+         _dateTime = dateFmt.format(new Date());
+         if (_logFileDateFormat != null)
+         {
+            _dateTime = _logFileDateFormat.format(new Date());
          }
          // marcelh old 04092000
          // myTarget.print(dateFmt.format(new Date())
-         myTarget.print(strDateTime
+         myTarget.print(_dateTime
                          + "\t" + type 
                          + "\t" + level 
                          + "\t" + message); 
@@ -551,8 +549,8 @@ final public class Log
      */
    private static String getLogFileSuffix()
    {
-   	String strDate = obLogFileSuffix.format(Calendar.getInstance().getTime());
-   	return strDate;
+      String _date = _logFileSuffix.format(Calendar.getInstance().getTime());
+      return _date;
    }
    // marcelh end 04092000 
 
