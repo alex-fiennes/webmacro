@@ -35,7 +35,7 @@ public class VariableNotInContextException extends PropertyException {
    public String variableName;
 
    public VariableNotInContextException (String variableName) {
-      super("$" + variableName + " is not in the Context");
+      super("Attempt to evaluate unbound variable $" + variableName);
       
       this.variableName = variableName;
    }

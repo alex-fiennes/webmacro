@@ -483,13 +483,17 @@ final public class PropertyOperator
          acc = (Accessor) _directAccessors.get(prop);
          Object[] args = pm.getArguments(context);
          if (acc == null) {
-            throw new PropertyException("No public method " + pm + " on variable $" + names[0] + " of " + instance.getClass());
+            throw new PropertyException("No public method " + pm + " on " 
+                                        + fillInName(names, start) 
+                                        + " of " + instance.getClass());
          }
          try {
             nextProp = acc.get(instance,args);
             start++;
          } catch (NoSuchMethodException e) {
-            throw new PropertyException("No public method " + pm + " on variable $" + names[0] + " of " + instance.getClass());
+            throw new PropertyException("No public method " + pm + " on " 
+                                        + fillInName(names, start)
+                                        + " of " + instance.getClass());
          }
 
       } else {
@@ -552,7 +556,8 @@ final public class PropertyOperator
 
       if (start <= end) {
          try {
-           return getOperator(nextProp.getClass()).getProperty(context,nextProp,names,start,end);
+           return getOperator(nextProp.getClass())
+             .getProperty(context,nextProp,names,start,end);
          } catch (NullPointerException e) {
              // will we ever get here? --eric
             throw new PropertyException("No way to access property " + 
@@ -565,8 +570,9 @@ final public class PropertyOperator
    }
    
    /**
-    * given an object[] of names, append them together up to index <code>end</code>
-    * in the form of <code>Name1.Name2.Name3.NameN</code>
+    * given an object[] of names, append them together up to index
+    * <code>end</code> in the form of
+    * <code>Name1.Name2.Name3.NameN</code> 
     */
    private static final String fillInName (Object[] names, int end)
    {
@@ -698,18 +704,16 @@ final public class PropertyOperator
       throws PropertyException, NoSuchMethodException
    {
       try {
-          Object obj = meth.invoke (instance, args);
-          
-          // if the method's return type is void
-          // return the VoidMacro instance, instead of the
-          // 'null' we used to return here
-          if (meth.getReturnType().isAssignableFrom (java.lang.Void.TYPE))
-              return org.webmacro.engine.VoidMacro.instance;
-          
-          // otherwise, just return whatever the method returned
-          else
-              return obj;
-          
+         Object obj = meth.invoke (instance, args);
+         
+         // if the method's return type is void return the VoidMacro
+         // instance, instead of the 'null' we used to return here
+         // otherwise, just return whatever the method returned
+         if (meth.getReturnType() == java.lang.Void.TYPE)
+            return org.webmacro.engine.VoidMacro.instance;
+         else
+            return obj;
+         
       } catch (IllegalAccessException e) {
          throw new PropertyException(
             "You don't have permission to access the requested method (" +

@@ -4,7 +4,7 @@
     <exec executable="sh" failonerror="yes">
       <arg line="test/templates/test-templates.sh"/>
       <arg line="test/templates"/>
-      <arg line="${classes}"/>
+      <env key="CLASSPATH" path="${java.class.path}:${classes}"/>
     </exec>
   </target>
 
