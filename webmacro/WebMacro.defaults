@@ -216,3 +216,8 @@ Parsers:
 
 Parsers.wm:  org.webmacro.parser.WMParser 
 
+#
+# Template caching
+#
+
+CachingProvider.template.CacheManager: org.webmacro.resource.SimpleCacheManager

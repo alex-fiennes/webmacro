@@ -56,7 +56,7 @@ final public class BrokerTemplateProvider extends CachingProvider
       return "template";
    }
 
-   final public TimedReference load(String name) throws ResourceException 
+   final public CacheableElement load(String name) throws ResourceException 
    {
       if (_log.loggingInfo())
          _log.info("Loading template: " + name);

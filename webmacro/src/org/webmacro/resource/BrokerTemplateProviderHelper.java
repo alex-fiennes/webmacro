@@ -69,11 +69,11 @@ final public class BrokerTemplateProviderHelper
    /**
      * Grab a template based on its name.
      */
-   final public TimedReference load(String name) throws ResourceException 
+   final public CacheableElement load(String name) throws ResourceException 
    {
       Template t = null;
       URL tUrl;
-      TimedReference ret = null;
+      CacheableElement ret = null;
 
       tUrl = findTemplate(name);
       try {
@@ -83,7 +83,7 @@ final public class BrokerTemplateProviderHelper
                                 new InputStreamReader(
                                   UrlProvider.getUrlInputStream(tUrl)));
          t.parse ();
-         ret = new UrlTemplateTimedReference(t, _cacheDuration, tUrl, lastMod);
+         ret = new UrlTemplateCacheableElement(t, tUrl, lastMod);
       }
       catch (NullPointerException npe) {
          _log.warning ("BrokerTemplateProvider: Template not found: " + name);

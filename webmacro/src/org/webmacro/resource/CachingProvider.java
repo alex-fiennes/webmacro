@@ -30,25 +30,10 @@ import java.lang.ref.Reference;
 abstract public class CachingProvider implements Provider, 
                                                  CachingProviderMethods
 {
-
-   private ScalableMap _cache;
-   private Object[] _writeLocks = new Object[101];
-
-   private static final TimeLoop _tl;
+   private CacheManager _cache; 
    private Log _log;
 
-   private static final long DURATION = 1000;
-   private static int PERIODS = 600; 
-   static {
-      _tl = new TimeLoop(DURATION, PERIODS); // 10min max, 1sec intervals
-      _tl.setDaemon(true);
-      _tl.start();
-   }
-
    public CachingProvider() { 
-      for (int i=0; i<_writeLocks.length; i++) {
-        _writeLocks[i] = new Object();
-      }
    }
    
    /**
@@ -57,7 +42,26 @@ abstract public class CachingProvider implements Provider,
    public void init(Broker b, Settings config) throws InitException
    {
       _log = b.getLog("resource", "Object loading and caching");
-      _cache = new ScalableMap(1001);
+      String cacheManager = b.getSetting("CachingProvider." + getType() 
+                                         + ".CacheManager");
+      if (cacheManager == null || cacheManager.trim().length() == 0) {
+         _log.info("No cache manager specified for " + getType() 
+                   + ", using TrivialCacheManager");
+         _cache = new TrivialCacheManager();
+      }
+      else {
+         try {
+            Class c = Class.forName(cacheManager);
+            _cache = (CacheManager) c.newInstance();
+         }
+         catch (Exception e) {
+            _log.warning("Unable to load cache manager " + cacheManager 
+                         + " for resource type " + getType()
+                         + ", using TrivialCacheManager.  Reason:\n" + e);
+            _cache = new TrivialCacheManager();
+         }
+      }
+      _cache.init(b, config, getType());
    }
 
    /**
@@ -65,7 +69,7 @@ abstract public class CachingProvider implements Provider,
      * and call super.flush().
      */
    public void flush() {
-      _cache.clear();
+      _cache.flush();
    }
 
    /**
@@ -73,76 +77,15 @@ abstract public class CachingProvider implements Provider,
      * sure and call super.destroy().
      */
    public void destroy() {
-      _cache = null;
+      _cache.destroy();
    }
 
    /**
-     * Get the object associated with the specific query, first 
-     * trying to look it up in a cache. If it's not there, then
-     * call load(String) to load it into the cache.
+     * Get the object associated with the specific query, using the
+     * specified cache manager. 
      */
-   public Object get(final String query) throws ResourceException
-   {
-      TimedReference r;
-      Object o = null;
-      boolean reload = true;
-
-      // bg; Reordered this logic to only call shouldReload if we have a 
-      // candidate for reloading.  
-      try {
-         r = (TimedReference) _cache.get(query);
-         if (r != null) 
-            o = r.get();
-      } catch (NullPointerException e) {
-         throw new ResourceException(this + " is not initialized", e);
-      }
-      // should the template be reloaded, regardless of cached status?
-      if (o != null) 
-         reload = r.shouldReload();
-
-      if (o == null || reload) {
-
-         // DOUBLE CHECKED LOCKING IS DANGEROUS IN JAVA:
-         // this looks like double-checked locking but it isn't, we
-         // synchronized on a less expensive lock inside _cache.get()
-         // the following line lets us simultaneously load up to 
-         // writeLocks.length resources.
-         
-         int lockIndex = query.hashCode() % _writeLocks.length;
-         if (lockIndex < 0) lockIndex = -lockIndex;
-         synchronized(_writeLocks[lockIndex])
-         {
-            r = (TimedReference) _cache.get(query);
-            if (r != null)
-              o = r.get();
-            if (o == null || reload) {
-               r = load(query);
-               if (r != null) {
-                  _cache.put(query,r);
-                  o = r.get();
-               }
-               try {
-                  if (_log.loggingDebug())
-                     _log.debug("cached: " + query + " for " + r._timeout);
-                  // if timeout of TimedReference is < 0,
-                  // then don't schedule a removal from cache
-                  if (r._timeout >= 0) {   
-                     _tl.scheduleTime( 
-                        new Runnable() { 
-                           public void run() { 
-                              _cache.remove(query); 
-                              if (_log.loggingDebug())
-                                 _log.debug("cache expired: " + query);
-                           } 
-                        }, r._timeout);
-                  }
-               } catch (Exception e) {
-                  _log.error("CachingProvider caught an exception", e);
-               }
-            }
-         } 
-      }
-      return o;
+   public Object get(final String query) throws ResourceException {
+      return _cache.get(query, this);
    }
 
    public String toString() {

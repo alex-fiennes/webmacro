@@ -50,7 +50,6 @@ final public class TemplateProvider extends CachingProvider
    private String _templateDirectory[] = null;
    private Broker _broker = null;
    private String _templatePath;
-   private int _cacheDuration;
    private Log _log;
    private BrokerTemplateProviderHelper _btpHelper;
 
@@ -74,7 +73,6 @@ final public class TemplateProvider extends CachingProvider
       _log = b.getLog("resource", "Object loading and caching");
 
       try {
-         _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
          _templatePath = config.getSetting("TemplatePath", "");
          if (_templatePath.equals(""))
            _log.info("Template path is empty; will load from class path");
@@ -104,9 +102,9 @@ final public class TemplateProvider extends CachingProvider
    /**
      * Grab a template based on its name.
      */
-   final public TimedReference load(String name) throws ResourceException 
-   {
-      TimedReference ret = null;
+   final public CacheableElement load(String name)
+   throws ResourceException  {
+      CacheableElement ret = null;
 
       if (_log.loggingInfo())
          _log.info("Loading template: " + name);
@@ -115,8 +113,8 @@ final public class TemplateProvider extends CachingProvider
       if (tFile != null) {
          try {
             Template t = new FileTemplate (_broker, tFile);
-            ret = new FileTemplateTimedReference(t, _cacheDuration, 
-                                                 tFile, tFile.lastModified());
+            ret = new FileTemplateCacheableElement(t, tFile, 
+                                                   tFile.lastModified());
          }
          catch (NullPointerException npe) {
             _log.warning ("TemplateProvider: Template not found: " + name, 
