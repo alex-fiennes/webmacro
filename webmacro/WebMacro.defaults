@@ -220,24 +220,27 @@ Parsers.wm:  org.webmacro.parser.WMParser
 # Template caching
 #
 
-CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
-CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
-#CachingProvider.template.CacheManager=org.opendoors.cache.VfcCacheManager
-#CachingProvider.url.CacheManager=org.opendoors.cache.VfcCacheManager
+#CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
+#CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
+CachingProvider.template.CacheManager=org.webmacro.resource.GenerationalCacheManager
+CachingProvider.url.CacheManager=org.webmacro.resource.GenerationalCacheManager
 
 #
-# set the refresh rate to 1 second
-#VfcCacheManager.*.RefreshRate=1000
+# Set reloading to true since we are in development mode by default.
+GenerationalCacheManager.*.ReloadOnChange: true
 
-
+#
+# The refresh rate for incorporating changes to the mutable image
+GenerationalCacheManager.*.RefreshRate: 1000
 
 
 #
 # Encoding caching
 #
 
-Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
-#Encoder.*.CacheManager: org.opendoors.cache.VfcCacheManager
+#Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
+Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
+
 
 # SMapCacheManager caches templates for efficiency and expires them 
 # after a certain period of time to save memory.
