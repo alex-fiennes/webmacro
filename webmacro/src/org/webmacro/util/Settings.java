@@ -171,9 +171,13 @@ public class Settings {
      * remove the quotes. 
      */
    public String getSetting(String key) {
-     String prop = _props.getProperty(key).trim();
-     if (prop.charAt(0) == '"' &&
-         prop.charAt(prop.length()-1) == '"')
+     String prop = _props.getProperty(key);
+     if (prop != null)
+       prop = prop.trim();
+     if (prop != null 
+         && prop.length() > 2 
+         && prop.charAt(0) == '"' 
+         && prop.charAt(prop.length()-1) == '"')
        prop = prop.substring(1, prop.length()-1);
 
      return prop;
