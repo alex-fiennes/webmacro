@@ -60,5 +60,15 @@ public interface Cache {
 	 */
 	public Object get(Object key);
 
+	/**
+	 * Returns all the values in the cache.
+	 */
+  public Object[] values();
+
+  /**
+   * Returns all the keys in the cache.
+   */
+  public Object[] keys();
+
 }
 

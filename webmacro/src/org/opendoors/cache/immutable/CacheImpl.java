@@ -97,6 +97,21 @@ class CacheImpl implements UpdateableCache  {
     return o;
 	}
 
+  /** Returns the elements in the cache as an array. */
+  public Object[] values() {
+    HashMap h;
+    synchronized (immutable) { h = immutable; }
+    return h.values().toArray();
+  }
+
+  /** Returns the keys of the cache as an array. */
+  public Object[] keys() {
+    HashMap h;
+    synchronized (immutable) { h = immutable; }
+    return h.keySet().toArray();
+  }
+    
+
 	/**
    * Invalidates an object in the cache by removing
    * it from the mutable cache. On the next
