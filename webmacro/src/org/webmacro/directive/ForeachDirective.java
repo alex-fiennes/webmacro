@@ -61,7 +61,7 @@ public class ForeachDirective extends Directive {
         try {
           iter = PropertyOperator.getIterator(l);
         } catch (Exception e) {
-          throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": " + e);
+          throw new ContextException("The object used as the list of values in a foreach statement must have some way of returning a list type, or be a list type itself. See the documentation for PropertyOperator.getIterator() for more details. No such property was found on the supplied object: " + l + ": ", e);
         }
         while(iter.hasNext()) {
           target.setValue(context, iter.next());
@@ -74,5 +74,13 @@ public class ForeachDirective extends Directive {
       out.write("<!--\n Unable to resolve list " + list + " \n-->");
     }
   } 
+
+  public void accept(MacroVisitor v) {
+    v.beginDirective("foreach");
+    v.visitDirectiveArg("ForeachTarget", target);
+    v.visitDirectiveArg("ForeachList", list);
+    v.visitDirectiveArg("ForeachBlock", body);
+    v.endDirective();
+  }
   
 }

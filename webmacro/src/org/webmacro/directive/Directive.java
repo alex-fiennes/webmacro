@@ -22,7 +22,7 @@ import org.webmacro.engine.*;
  * to that from getDescriptor().  
  */ 
 
-public abstract class Directive implements Macro { 
+public abstract class Directive implements Macro, Visitable { 
 
   public static final int ArgType_CONDITION    = 1;
   public static final int ArgType_LVALUE       = 2;
@@ -71,6 +71,9 @@ public abstract class Directive implements Macro {
       }
   }  
 
+  public void accept(MacroVisitor v) {
+    v.visitUnknownMacro(this.getClass().getName(), this);
+  }
 
   /* Nested static classes */ 
 

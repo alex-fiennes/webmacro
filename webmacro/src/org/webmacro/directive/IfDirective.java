@@ -165,4 +165,16 @@ class IfDirective extends Directive {
       elseBlock.write(out, context);
   } 
   
+  public void accept(MacroVisitor v) {
+    v.beginDirective("if");
+    for (int i=0; i<nConditions; i++) {
+      v.visitDirectiveArg((i == 0)? "IfCondition" : "ElseIfCondition", 
+                          conditions[i]);
+      v.visitDirectiveArg((i == 0)? "IfBlock" : "ElseIfBlock", blocks[i]);
+    }
+    if (elseBlock != null) 
+      v.visitDirectiveArg("ElseBlock", elseBlock);
+    v.endDirective();
+  }
+  
 }

@@ -52,4 +52,11 @@ public class SetDirective extends Directive {
     }
   } 
 
+  public void accept(MacroVisitor v) {
+    v.beginDirective("set");
+    v.visitDirectiveArg("SetTarget", target);
+    v.visitDirectiveArg("SetValue", result);
+    v.endDirective();
+  }
+
 }

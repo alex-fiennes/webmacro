@@ -52,7 +52,7 @@ import org.webmacro.*;
   * <p>
   * @see Macro
   */
-final class IfDirective implements Directive
+final class IfDirective implements Directive, Visitable
 {
 
    /**
@@ -153,6 +153,15 @@ final class IfDirective implements Directive
 	 }
       } 
    }
+
+   public void accept(TemplateVisitor v) {
+      v.beginDirective("if");
+      v.visitDirectiveArg("IfCondition", myCondition);
+      v.visitDirectiveArg("IfBlock", myIfBlock);
+      v.visitDirectiveArg("ElseBlock", myElseBlock);
+      v.endDirective();
+   }
+   
 }
 
 

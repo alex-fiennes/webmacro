@@ -35,4 +35,10 @@ public class TextDirective extends Directive {
     block.write(out, context);
   } 
 
+  public void accept(MacroVisitor v) {
+    v.beginDirective("text");
+    block.accept(v);
+    v.endDirective();
+  }
+
 }

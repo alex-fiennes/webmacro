@@ -69,7 +69,7 @@ import org.webmacro.*;
   * methods, and getFoo() over get("Foo").
   *
   */
-public abstract class Variable implements Macro
+public abstract class Variable implements Macro, Visitable
 {
 
 
@@ -190,6 +190,8 @@ public abstract class Variable implements Macro
      * representing its type. For example local:a.b.c
      */
    public abstract String toString();
+
+   public void accept(TemplateVisitor v) { v.visitVariable(this, _names); } 
 
 }
 

@@ -252,6 +252,8 @@ abstract public class WMTemplate implements Template
       }
    }
 
+   public void accept(TemplateVisitor v) { _content.accept(v); }
+
    /**
      * Template API
      */

@@ -9,7 +9,7 @@ import org.webmacro.util.*;
   * a Macro via the createMacro method. You can use this when you
   * have to return a Macro, but what you have is something else.
   */
-final public class MacroAdapter implements Macro
+final public class MacroAdapter implements Macro, Visitable
 {
 
    private Object _self;
@@ -42,6 +42,8 @@ final public class MacroAdapter implements Macro
    {
       out.write(_self.toString());
    }
+
+   public void accept(TemplateVisitor v) { v.visitString(_self.toString()); } 
 
    /**
      * If wrapMe is not a Macro, wrap it and return it. If it
@@ -79,7 +81,7 @@ final public class MacroAdapter implements Macro
 /**
   * Looks like a Macro, but really it's a String. 
   */
-final class StringMacroAdapter implements Macro
+final class StringMacroAdapter implements Macro, Visitable
 {
 
    private byte[] _self;
@@ -100,6 +102,8 @@ final class StringMacroAdapter implements Macro
       }
       return _cache;
    }
+
+   public void accept(TemplateVisitor v) { v.visitString(toString()); } 
 
    /**
      * Returns the wrapped object, context is ignored.

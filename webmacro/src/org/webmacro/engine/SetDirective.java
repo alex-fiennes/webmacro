@@ -31,7 +31,7 @@ import org.webmacro.*;
   * accordingly. Expects the following syntax:
   * #set $abc = Term 
   */
-final class SetDirective implements Directive
+final class SetDirective implements Directive, Visitable
 {
 
    final private Variable myVariable;
@@ -106,6 +106,13 @@ final class SetDirective implements Directive
       } 
       return null;
    }  
+
+   public void accept(TemplateVisitor v) {
+      v.beginDirective("set");
+      v.visitDirectiveArg("SetTarget", myVariable);
+      v.visitDirectiveArg("SetValue", myValue);
+      v.endDirective();
+   }
 
 }
 

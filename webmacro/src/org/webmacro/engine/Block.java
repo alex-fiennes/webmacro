@@ -29,7 +29,7 @@ import org.webmacro.util.*;
   * A Block is essentially a Macro[] that knows how to write itself
   * out as a String.
   */
-final public class Block implements Macro 
+final public class Block implements Macro, Visitable
 {
 
    final private Macro[] _content;
@@ -76,5 +76,11 @@ final public class Block implements Macro
       }
    }
 
+  public void accept(TemplateVisitor v) { 
+    v.beginBlock();
+    for(int i = 0; i < _content.length; i++) 
+      v.visitMacro(_content[i]);
+    v.endBlock(); 
+  } 
 }
 

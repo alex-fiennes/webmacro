@@ -25,7 +25,7 @@ final class TermConditionBuilder implements Builder {
 /**
   * Utility class
   */
-final class TermCondition extends Condition implements Macro {
+final class TermCondition extends Condition implements Macro, Visitable {
 
    final private Macro _term;
 
@@ -50,5 +50,13 @@ final class TermCondition extends Condition implements Macro {
    final public String toString() {
       return "TermCondition:" + _term;
    }
+
+   public void accept(TemplateVisitor v) { 
+     if (_term instanceof Macro) 
+       v.visitMacro(_term);
+     else
+       v.visitString(_term.toString());
+   }
+
 }
 

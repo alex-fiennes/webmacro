@@ -23,7 +23,7 @@ package org.webmacro;
 import java.util.*;
 import java.io.*;
 
-public interface Template extends Macro
+public interface Template extends Macro, Visitable
 {
 
    /**

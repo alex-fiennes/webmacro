@@ -35,7 +35,7 @@ import org.webmacro.util.*;
   * the list element, so if the list contains hashtables, referencing the
   * members of the hashtable will work as expected.
   */
-final class ForeachDirective implements Directive
+final class ForeachDirective implements Directive, Visitable
 {
 
    final static private String[] _verbs = { "in" };
@@ -162,6 +162,14 @@ final class ForeachDirective implements Directive
          return "";
       }
    }  
+
+   public void accept(TemplateVisitor v) {
+      v.beginDirective("foreach");
+      v.visitDirectiveArg("ForeachTarget", _iterVar);
+      v.visitDirectiveArg("ForeachList", _list);
+      v.visitDirectiveArg("ForeachBlock", _body);
+      v.endDirective();
+   }
 
 
 }

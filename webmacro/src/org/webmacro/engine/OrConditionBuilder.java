@@ -32,13 +32,17 @@ final class OrConditionBuilder implements Builder
 /**
   * Utility class
   */
-final class OrCondition extends Condition implements Macro {
+final class OrCondition extends Condition implements Macro, Visitable {
    
    private final Condition _l,_r;
    OrCondition(Condition l, Condition r) { _l = l; _r = r; }
 
    public final boolean test(Context context) {
       return (_l.test(context) || _r.test(context));
+   }
+
+   public void accept(TemplateVisitor v) { 
+     v.visitBinaryOperation("OrCondition", _l, _r); 
    }
 }
 

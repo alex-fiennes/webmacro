@@ -24,7 +24,7 @@ final class NotConditionBuilder implements Builder {
 /**
   * Utility class
   */
-final class NotCondition extends Condition implements Macro {
+final class NotCondition extends Condition implements Macro, Visitable {
 
    private final Condition _cond;
 
@@ -35,4 +35,9 @@ final class NotCondition extends Condition implements Macro {
    final public boolean test(Context context) {
       return (! _cond.test(context) );
    }
+
+   public void accept(TemplateVisitor v) { 
+     v.visitUnaryOperation("NotCondition", _cond); 
+   }
+
 }

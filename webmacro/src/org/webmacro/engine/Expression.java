@@ -5,7 +5,7 @@ import org.webmacro.*;
 
 public abstract class Expression { 
 
-  public abstract static class ExpressionBase implements Macro {
+  public abstract static class ExpressionBase implements Macro, Visitable {
     protected ExpressionBase() {}
 
     // Macro methods 
@@ -61,6 +61,12 @@ public abstract class Expression {
 
       return operate(l, r);
     }
+
+    public abstract String getName();
+
+    public void accept(TemplateVisitor v) { 
+      v.visitBinaryOperation(getName(), _l, _r);
+    }
   }
 
   public abstract static class UnaryOperation extends ExpressionBase {
@@ -77,10 +83,17 @@ public abstract class Expression {
 
       return operate(o);
     }
+
+    public abstract String getName();
+
+    public void accept(TemplateVisitor v) { 
+      v.visitUnaryOperation(getName(), _o);
+    }
   }
 
   public static class AndOperation extends BinaryOperation {
     public AndOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "And"; };
 
     public Object operate(Object l, Object r) {
       return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
@@ -89,6 +102,7 @@ public abstract class Expression {
 
   public static class OrOperation extends BinaryOperation {
     public OrOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "Or"; };
 
     public Object operate(Object l, Object r) {
       return (Expression.isTrue(l) || Expression.isTrue(r)) ? TRUE : FALSE;
@@ -97,6 +111,7 @@ public abstract class Expression {
 
   public static class NotOperation extends UnaryOperation {
     public NotOperation(Object o) { super(o); }
+    public String getName() { return "Not"; };
 
     public Object operate(Object o) {
       return (!Expression.isTrue(o)) ? TRUE : FALSE;
@@ -106,6 +121,7 @@ public abstract class Expression {
 
   public static class AddOperation extends BinaryOperation {
     public AddOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "Add"; };
 
     public Object operate(Object l, Object r) throws ContextException {
       if (!isNumber(l) || !isNumber(r))
@@ -117,6 +133,7 @@ public abstract class Expression {
 
   public static class SubtractOperation extends BinaryOperation {
     public SubtractOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "Subtract"; };
 
     public Object operate(Object l, Object r) throws ContextException {
       if (!isNumber(l) || !isNumber(r))
@@ -128,6 +145,7 @@ public abstract class Expression {
 
   public static class MultiplyOperation extends BinaryOperation {
     public MultiplyOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "Multiply"; };
 
     public Object operate(Object l, Object r) throws ContextException {
       if (!isNumber(l) || !isNumber(r))
@@ -139,6 +157,7 @@ public abstract class Expression {
 
   public static class DivideOperation extends BinaryOperation {
     public DivideOperation(Object l, Object r) { super(l, r); }
+    public String getName() { return "Divide"; };
 
     public Object operate(Object l, Object r) throws ContextException {
       if (!isNumber(l) || !isNumber(r))
@@ -193,7 +212,8 @@ public abstract class Expression {
 
   public static class CompareEq extends Compare {
     public CompareEq(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareEq"; };
+
     public Boolean compare(Object l, Object r) {
       return (l.equals(r)) ? TRUE : FALSE;
     }
@@ -213,7 +233,8 @@ public abstract class Expression {
 
   public static class CompareNe extends Compare {
     public CompareNe(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareNe"; };
+
     public Boolean compare(Object l, Object r) {
       return (l.equals(r)) ? TRUE : FALSE;
     }
@@ -233,7 +254,8 @@ public abstract class Expression {
 
   public static class CompareLe extends Compare {
     public CompareLe(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareLe"; };
+
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) <= 0) ? TRUE : FALSE;
     }
@@ -245,7 +267,8 @@ public abstract class Expression {
 
   public static class CompareLt extends Compare {
     public CompareLt(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareLt"; };
+
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) < 0) ? TRUE : FALSE;
     }
@@ -257,7 +280,8 @@ public abstract class Expression {
 
   public static class CompareGe extends Compare {
     public CompareGe(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareGe"; };
+
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) >= 0) ? TRUE : FALSE;
     }
@@ -269,7 +293,8 @@ public abstract class Expression {
 
   public static class CompareGt extends Compare {
     public CompareGt(Object l, Object r) { super(l, r); }
-    
+    public String getName() { return "CompareGt"; };
+
     public Boolean compare(String l, String r) {
       return (l.compareTo(r) > 0) ? TRUE : FALSE;
     }
