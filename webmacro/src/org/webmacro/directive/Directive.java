@@ -171,7 +171,7 @@ public abstract class Directive implements Macro, Visitable {
   public static class OptionalGroup extends ArgDescriptor {
     public OptionalGroup(int argCount) { 
       super(0, ArgType_GROUP); 
-      setOptional(subordinateArgs);
+      setOptional(argCount);
     }
   }
 
