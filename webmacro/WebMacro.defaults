@@ -386,3 +386,18 @@ TemplateLoaderFactory=org.webmacro.resource.DefaultTemplateLoaderFactory
 # To use it, uncomment the following settings
 #Providers.template: org.webmacro.resource.DelegatingTemplateProvider
 #TemplateLoaderPath.1=broker:
+
+
+# Define global "functions" which are available to every template
+# Example:
+#   Functions.myFunc=org.webmacro.SomeClass.myFunkyMethod
+# If the class is not static, use
+#   Function.myFunc.type=instance
+# You can even pass arguments to the constructor, like
+#   Function.myFunc.args=[1, "two", [3, 4]]
+# [Probably not useful, but kind of cool. :} ]
+
+Functions.HTMLEscape=org.webmacro.util.HTMLEscaper.escape
+Functions.URLEncode=org.webmacro.servlet.TextTool.URLEncode
+Functions.URLDecode=org.webmacro.servlet.TextTool.URLDecode
+Functions.toList=org.webmacro.servlet.ListUtil.toList
