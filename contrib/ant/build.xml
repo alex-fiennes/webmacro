@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="WebMacro" default="main" basedir="../../">
+	<!--property name="ant.home" value="/home/orbis/fgallagh/cvswork/jakarta-ant/"/-->
+	<property name="build.compiler" value="modern"/>
+	<property name="dest" value="ant-build"/>
+	<property name="dest.classes" value="${dest}"/>
+
+	<target name="prepare">
+		<mkdir dir="${dest}"/>
+		<mkdir dir="${dest.classes}"/>
+	</target>
+
+	<target name="main" depends="prepare">
+		<javac
+			srcdir="."
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+            includes="org/**/*.java"
+        />
+        <copy file="./WebMacro.defaults" todir="${dest.classes}"/>
+	</target>
+
+	<target name="jar" depends="clean,main">
+		<jar jarfile="${dest}/webmacro.jar"
+       		basedir="${dest.classes}"
+  		/>
+  	</target>
+
+
+	<target name="clean">
+		<delete dir="${dest}"/>
+	</target>
+
+	<target name="all" depends="clean,main"/>
+  
+</project>
