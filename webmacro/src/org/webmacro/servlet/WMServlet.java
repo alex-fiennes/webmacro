@@ -83,7 +83,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * handing the ServletConfig object to the superclass
     * @exception ServletException if it failed to initialize
     */
-   final public synchronized void init(ServletConfig sc)
+   public synchronized void init(ServletConfig sc)
    throws ServletException {
       super.init(sc);
       init();
@@ -95,7 +95,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * of the broker--you can overide the start() method instead, which
     * is called just after the broker is initialized.
     */
-   final public synchronized void init() {
+   public synchronized void init() {
       
       if (_started) {
          return;
@@ -160,7 +160,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * the broker--you can overide the stop() method instead, which
     * will be called just before the broker is shut down.
     */
-   final public synchronized void destroy() {
+   public synchronized void destroy() {
       stop();
       _log.notice("stopped: " + this);
       _wm.destroy();
@@ -172,7 +172,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    /**
     * Check whether or not the broker we are using has been shut down
     */
-   final public boolean isDestroyed() {
+   public boolean isDestroyed() {
       return _wm.isDestroyed();
    }
    
@@ -309,7 +309,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @param context will add error variable to context (see Config)
     * @param error a string explaining what went wrong
     */
-   final protected Template error(WebContext context, String error) {
+   protected Template error(WebContext context, String error) {
       Template tmpl = null;
       //Handler hand = new ErrorHandler();
       try {
@@ -332,7 +332,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * access it after the last servlet has been shutdown, it will either
     * be in a shutdown state or else null.
     */
-   final public Broker getBroker() {
+   public Broker getBroker() {
       // this method can be unsynch. because the broker manages its own
       // state, plus the only time the _broker will be shutdown or null
       // is after the last servlet has shutdown--so why would anyone be
@@ -348,7 +348,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * every log line. The description is a longer explanation of
     * the type of messages you intend to write to this Log.
     */
-   final public Log getLog(String type, String description) {
+   public Log getLog(String type, String description) {
       return _broker.getLog(type, description);
    }
    
@@ -357,7 +357,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * Messages to the logfile will be associated with the supplied
     * type. The type will be used as the description.
     */
-   final public Log getLog(String type) {
+   public Log getLog(String type) {
       return _broker.getLog(type, type);
    }
    
@@ -367,7 +367,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * @exception NotFoundException if the template was not found
     * @exception ResourceException if the template coult not be loaded
     */
-   final public Template getTemplate(String key)
+   public Template getTemplate(String key)
    throws ResourceException {
       return _wm.getTemplate(key);
    }
@@ -378,7 +378,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * WebMacro's cache rather than re-requesting each time.
     * The content will be returned as an Object.
     */
-   final public String getURL(String url)
+   public String getURL(String url)
    throws ResourceException {
       return _wm.getURL(url);
    }
@@ -389,7 +389,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * Equivalent to getBroker().get(Config.TYPE,key)
     * @exception NotFoundException could not locate requested information
     */
-   final public String getConfig(String key)
+   public String getConfig(String key)
    throws NotFoundException {
       return _wm.getConfig(key);
    }
@@ -398,7 +398,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * Retrieve configuration information from the "config" provider.
     * Return specified default if key could not be found
     */
-   final public String getConfig(String key, String defaultValue) {
+   public String getConfig(String key, String defaultValue) {
       try {
          return _wm.getConfig(key);
       }
@@ -410,14 +410,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
    /**
     * Create a new Context object
     */
-   final public Context getContext() {
+   public Context getContext() {
       return _wm.getContext();
    }
    
    /**
     * Create a new WebContext object
     */
-   final public WebContext getWebContext(HttpServletRequest req, HttpServletResponse res) {
+   public WebContext getWebContext(HttpServletRequest req, HttpServletResponse res) {
       return _wm.getWebContext(req, res);
    }
    
@@ -489,7 +489,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
     * writes out the interpreted template to the context's output
     * stream.
     */
-   final protected void execute(Template tmpl, WebContext c)
+   protected void execute(Template tmpl, WebContext c)
    throws IOException {
       FastWriter fw = null;
       boolean timing = Flags.PROFILE && c.isTiming();
