@@ -1,4 +1,8 @@
 
+-- Nov-2000 justin: Added some profiling code, a first cut of it 
+   anyway. I hope to add profiling code throughout WM so we can 
+   get a clear idea where the time goes.
+
 -- Nov-2000 justin: Changed constructors for various template types,
    WMTemplate, FileTemplate, StreamTemplate, to remove references 
    to encoding. Encoding is now the responsibility of FastWriter only.
