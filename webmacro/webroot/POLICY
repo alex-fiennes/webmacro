@@ -3,10 +3,10 @@
 WebMacro Development Policy
 ===========================
 
-WebMacro developers are expected to follow this policy when working on
-the WebMacro project. It specifies how you get approval to make a 
-change, coding conventions you must follow when making that change, 
-and what you must do to tell everyone else about your change. 
+WebMacro developers must follow this policy when working on the WebMacro
+project. It specifies how you get approval to make a change, coding
+conventions you must follow when making that change, and what you must
+do to tell everyone else about your change.
 
 I've tried not to specify very much here, leaving a lot to your 
 common sense--but do please try and follow what is specified.
@@ -157,17 +157,31 @@ Here is a checklist of things to consider before making a change:
 In general: TEST YOUR CODE BEFORE YOU COMMIT.
 
 
-LICENSING TERMS
----------------
+LICENSING
+---------
 
-You assign copyright for contributions of the core of WebMacro 
-to Semiotek Inc., and in return Semiotek Inc. promises that WebMacro
-will forever be available under an opensource software license that
-is compatible with the GNU General Public License. Current WebMacro
-is released under both the GNU General Public License and under 
-an Apache-style license called the Semiotek Public License. 
+The following conditions ensure that WebMacro will remain available
+to everyone who currently uses it, as an opensource software project.
+Contributions to the WebMacro CVS archive (other than /contrib) are
+covered by the following terms:
 
-You may submit material to /contrib under any opensource license 
-of your choice. Code in /contrib is considered to be outside of 
-the WebMacro core, and not subject to this policy document.
+   You grant Semiotek Inc. a non-exclusive, perpetual, fully paid-up,
+   worldwide right to use, distribute, modify, display, perform, and
+   sublicense any software or other materials which you contribute to
+   the WebMacro CVS archive, either on its own or as a part of a larger
+   work. Semiotek Inc. promises to relicense the software to the public
+   under an opensource license listed at www.opensource.org. These 
+   terms do not apply to contributions uploaded in the "/contrib" 
+   area of the CVS archive.
+
+Currently WebMacro is relicensed to the public under two opensource
+software licenses:
+
+   1. The GNU General Public License (GPL), version 2
+   2. The Semiotek Public License (see the attached LICENSE file)
+
+From time to time Semiotek Inc. may grant change the terms of the 
+Semiotek Public License, or permit uses of the software not covered
+by the above licenses. WebMacro will always be available for use 
+under the terms of the GNU General Public License, version 2.
 
