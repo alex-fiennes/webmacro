@@ -97,6 +97,7 @@
         <copy todir="${webapp.tmpl}" >
             <fileset dir="examples">
                 <include name="**/*.wm"/>
+                <include name="**/*.local"/>
             </fileset>
         </copy>
         <copy 
@@ -187,6 +188,7 @@
 
 	<target name="clean">
 		<delete dir="${dest}"/>
+		<delete dir="${container}"/>
 	</target>
 
 	<target name="all" depends="clean,main"/>
