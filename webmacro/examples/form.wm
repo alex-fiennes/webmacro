@@ -1,5 +1,5 @@
 <html><head><title>GuestBook Example</title></head>
-#set $Response.Header.Content-Type = "text/html"
+#set $Response.ContentType = "text/html"
 
 <body bgcolor="white">
 <h1><font color="green">GuestBook Example</font></h1>
