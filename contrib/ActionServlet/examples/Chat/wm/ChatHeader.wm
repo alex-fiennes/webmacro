@@ -1,0 +1,6 @@
+<html>
+#set $Response.ContentType = "text/html"
+<body>
+<CENTER><H1>Welcome to <FONT COLOR="green">WWW Chat</FONT></H1></CENTER>
+</body>
+</html>

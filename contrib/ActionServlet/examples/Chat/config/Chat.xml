@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE application SYSTEM "http://dione.zcu.cz/~toman40/ActionServlet/dtd/ActionServlet_0_8.dtd">
+
+<application>
+   <properties>
+      <property name="db.directory" value="C:/Progra~1/ActionServlet/examples/Chat/db"/>
+   </properties>
+
+   <templates>
+      <template name="ChatLogin.wm" is-new-session="true"/>
+
+      <template name="ChatSend.wm">
+         <output-variable name="currentUser" component="authenticator" value="getUser()"/>
+         <output-variable name="users" component="authenticator" value="getUsers()"/>
+      </template>
+
+      <template name="ChatUsers.wm">
+         <output-variable name="users" component="rooms" value="getUsersInCurrentRoom()"/>
+         <output-variable name="room" component="rooms" value="getCurrentRoom()"/>
+      </template>
+
+      <template name="ChatRooms.wm">
+         <output-variable name="rooms" component="rooms" value="getRooms()"/>
+         <output-variable name="currentRoom" component="rooms" value="getCurrentRoom()"/>
+      </template>
+
+      <template name="ChatMessages.wm">
+         <output-variable name="messages" component="MessageCenter" value="getMessages()"/>
+      </template>
+
+      <template name="ChatToolbar.wm">
+         <output-variable name="currentRoom" component="rooms" value="getCurrentRoom()"/>
+      </template>
+   </templates>
+
+   <components>
+      <component name="show" class="chat.components.Show" persistence="application">
+         <action name="show" method="show(String target)"/>
+      </component>
+
+      <component name="authenticator" class="chat.components.Authenticator" persistence="session">
+         <action name="Login" method="login(String nickName, String password)"/>
+         <action name="Logoff" method="logoff()"/>
+
+         <on-return value="void" show-template="ChatLogin.wm"/>
+         <on-return value="OK" show-template="ChatMain.wm"/>
+         <on-return value="BAD_USERNAME_OR_PASSWORD" show-template="ChatLogin.wm">
+            <output-variable name="loginOK" value="false"/>
+         </on-return>
+      </component>
+
+      <component name="rooms" class="chat.components.Rooms" persistence="session">
+         <action name="join" method="joinRoom(String room)"/>
+         <action name="leave" method="leaveRoom()"/>
+         <action name="setLock" method="setLock(boolean lock)"/>
+
+         <on-return value="void" show-template="ChatMain.wm"/>
+      </component>
+
+      <component name="MessageCenter" class="chat.components.MessageCenter" persistence="session">
+         <action name="send" method="send(String recipient, String message)">
+            <on-return value="void" show-template="ChatMain.wm"/>
+         </action>
+         <action name="clear" method="clear()">
+            <on-return value="void" show-template="ChatMessages.wm"/>
+         </action>
+      </component>
+   </components>
+</application>

@@ -1,0 +1,21 @@
+<html>
+<head>
+#set $Response.ContentType = "text/html"
+<meta http-equiv="refresh" content="5">
+</head>
+<body>
+
+<table border=1 cellspacing=1 width="100%">
+<tr><th bgcolor="#D0D0D0">Rooms</th></tr>
+
+#foreach $room in $rooms {
+   <tr><td>
+   <A TARGET="_top" HREF="$SERVLET?action=join&room=$room.name">$room.name</A> ($room.users.size())
+   #if ($room.isLocked) { <I>locked</I> }
+   </td></tr>
+}
+
+</table>
+
+<body>
+</html>

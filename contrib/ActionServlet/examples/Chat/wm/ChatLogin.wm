@@ -1,0 +1,44 @@
+<HTML>
+#set $Response.ContentType = "text/html"
+<BODY>
+
+<table align=center border=0 width="100%" height="100%">
+<tr><td align=center>
+
+   #if ($error) {
+      <P><FONT COLOR="red">$error</FONT><P>
+   }
+
+   #if ($loginOK == false) {
+      <P><FONT COLOR="red">Bad nickname or password (or nickname in use).<BR>
+      Note: nickname may contain only letters, numbers and '_'.<BR>
+      Try again.</FONT><P>
+   }
+
+   <FORM METHOD="POST" ACTION="$SERVLET" TARGET="_top">
+   <TABLE BORDER=1 ALIGN=CENTER>
+   <tr><td bgcolor="gray" align=center colspan=2>
+      <font color="white" size="+2">WWW Chat Login</font>
+   </td></tr>
+
+   <TR><TD>
+   <TABLE>
+   <TR><TD>
+      Nickname:</TD><TD>
+      <INPUT TYPE="Text" NAME="nickName">
+      </TD></TR><TR><TD>
+      Password:</TD><TD>
+      <INPUT TYPE="Password" NAME="password"></TD></TR>
+      <TR><TD COLSPAN=2 ALIGN=CENTER>
+      <INPUT TYPE="Submit" NAME="action" VALUE="Login">
+      </TD></TR></TABLE>
+   </TD></TR></TABLE>
+   </FORM>
+
+   <P>Note: If you don't have an account, it will be created automatically.
+
+</td></tr>
+</table>
+
+</BODY>
+</HTML>

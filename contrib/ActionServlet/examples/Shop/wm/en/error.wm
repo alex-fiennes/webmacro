@@ -1,0 +1,12 @@
+<html>
+#param $TemplateOutputEncoding = "Cp1250"
+#set $Response.ContentType = "text/html;charset=windows-1250"
+
+<body bgcolor="white">
+<h1><font color="green">ERROR!</font></h1>
+
+<TT>$error</TT>
+
+<P>[ <A HREF="javascript:history.go(-1)">Back</A> ]
+
+</body></html>

@@ -1,0 +1,18 @@
+<html>
+#set $Response.ContentType = "text/html"
+
+<frameset rows="70,*" border=0 framespacing=0 frameborder=0>
+   <frame src="$SERVLET?action=show&target=ChatHeader.wm" scrolling=no frameborder=0>
+      <frameset cols="170,*,150">
+         <frame src="$SERVLET?action=show&target=ChatToolbar.wm" frameborder=0 scrolling=no>
+         <frameset rows="45,*">
+            <frame src="$SERVLET?action=show&target=ChatSend.wm" frameborder=0 scrolling=no name=content>
+            <frame name="messages" src="$SERVLET?action=show&target=ChatMessages.wm" frameborder=0 name=content>
+         </frameset>
+         <frameset rows="50%,50%">
+            <frame src="$SERVLET?action=show&target=ChatRooms.wm" frameborder=0>
+            <frame src="$SERVLET?action=show&target=ChatUsers.wm" frameborder=0>
+         </frameset>
+      </frameset>
+</frameset>		
+</html>
