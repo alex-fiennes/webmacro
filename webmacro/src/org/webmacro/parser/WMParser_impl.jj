@@ -27,10 +27,21 @@ import org.webmacro.directive.Directive.Subdirective;
 public class WMParser_impl {
 
   private Broker broker;
+  private BackupCharStream stream;
+
+  public WMParser_impl(Broker broker, BackupCharStream stream) {
+    this(stream);
+    this.stream = stream;
+    this.broker = broker;
+  }
 
   public WMParser_impl(Broker broker, java.io.Reader reader) {
-    this(new BackupCharStream(reader));
-    this.broker = broker;
+    this(broker, new BackupCharStream(reader));
+  }
+
+  public void ReInit(java.io.Reader reader) {
+    stream.ReInit(reader);
+    ReInit(stream);
   }
 
   // Standalone test harness
