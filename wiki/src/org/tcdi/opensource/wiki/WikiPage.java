@@ -23,15 +23,19 @@
  *  ServletFramework (http://www.webmacro.org).
  */
 package org.tcdi.opensource.wiki;
+import java.io.Serializable;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.tcdi.opensource.util.*;
 
 /**
  *  A WikiPage is the object that represents all information about a page in the
  *  wiki system. It contains the following information: <code>
+ *
+ *
+ *
+ *
  *
  *
  *
@@ -459,6 +463,7 @@ public class WikiPage implements Serializable {
 	 */
 	public void setWikiData(WikiData[] data) {
 		_parsedData = data;
+		updateOutgoingLinks(_parsedData);
 	}
 
 
@@ -493,6 +498,18 @@ public class WikiPage implements Serializable {
 	 */
 	public String toString() {
 		return _title;
+	}
+
+
+	private void updateOutgoingLinks(WikiData[] data) {
+		System.out.println("Recreating outgoing links for page " + this.getTitle());
+		_outgoingLinks = new String[0];
+		for (int i = 0; i < data.length; i++) {
+			if ((data[i].getType() == WikiDataTypes.PAGE_REFERENCE) ||
+					(data[i].getType() == WikiDataTypes.URL)) {
+				addOutgoingLink(data[i].toString());
+			}
+		}
 	}
 }
 

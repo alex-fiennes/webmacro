@@ -7,17 +7,17 @@ import org.tcdi.opensource.wiki.*;
 import org.webmacro.servlet.WebContext;
 
 /**
- *  User administration<p>
+ *  Lucene Index administration<p>
  *
  *
  *
  * @author     ChristianAust
- * @created    12. September 2002
+ * @created    17. December 2002
  */
-public class UserAdminAction implements PageAction {
+public class IndexAdminAction implements PageAction {
 
    /**
-    *  can only log in if "?user_admin=true" is specified in the request
+    *  can only log in if "?index_admin=true" is specified in the request
     *
     * @param  wiki  Description of the Parameter
     * @param  wc    Description of the Parameter
@@ -25,8 +25,8 @@ public class UserAdminAction implements PageAction {
     * @return       Description of the Return Value
     */
    public boolean accept(WikiSystem wiki, WebContext wc, WikiUser user) {
-      String useradmin = wc.getForm("user_admin");
-      return useradmin != null && useradmin.equals("true") && wiki.isAdministrator(user);
+      String indexadmin = wc.getForm("index_admin");
+      return indexadmin != null && indexadmin.equals("true") && wiki.isAdministrator(user);
    }
 
 
@@ -38,7 +38,7 @@ public class UserAdminAction implements PageAction {
     * @return       The templateName value
     */
    public String getTemplateName(WikiSystem wiki, WikiPage page) {
-      return wiki.getProperties().getProperty("UserAdminAction.Template");
+      return wiki.getProperties().getProperty("IndexAdminAction.Template");
    }
 
 
@@ -65,23 +65,6 @@ public class UserAdminAction implements PageAction {
     * @exception  PageAction.PageActionException  Description of the Exception
     */
    public void perform(WikiSystem wiki, WebContext wc, WikiUser user, WikiPage page) throws PageAction.PageActionException {
-      if (wc.getForm("username") != null) {
-         //display user details
-         WikiUser currentuser = wiki.getUser(wc.getForm("username"));
-         wc.put("currentuser", currentuser);
-      }
-      if (wc.getForm("update_user") != null) {
-         //save new user data
-         WikiUser currentuser = wiki.getUser(wc.getForm("username"));
-         currentuser.setName(wc.getForm("fullname"));
-         currentuser.setIsModerator(wc.getForm("is_moderator") != null);
-         currentuser.setAttribute("email", wc.getForm("email"));
-         wiki.updateUser(currentuser);
-      }
-      if (wc.getForm("delete_user") != null) {
-         //Delete user
-         wiki.deleteUser(wc.getForm("username"));
-      }
    }
 
 }

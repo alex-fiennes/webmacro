@@ -31,11 +31,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.de.GermanAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Searcher;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Searcher;
 
 import org.tcdi.opensource.wiki.*;
 
@@ -48,96 +48,99 @@ import org.tcdi.opensource.wiki.*;
  *  This should point to a directory that contains the Lucene index that should
  *  be searched.
  *
- *@author     e_ridge
- *@created    8. September 2002
+ * @author     e_ridge
+ * @created    8. September 2002
  */
 public class LuceneFinder implements WikiPageFinder {
-	static Analyzer analyzer = new GermanAnalyzer();
+   static Analyzer analyzer = new GermanAnalyzer();
 
 
-	/**
-	 *  return an array of pages that match the <code>query</code>. The query is
-	 *  implementation specific
-	 *
-	 *@param  wiki                                Description of the Parameter
-	 *@param  query                               Description of the Parameter
-	 *@return                                     Description of the Return Value
-	 *@exception  WikiPageFinder.FinderException  Description of the Exception
-	 */
-	public WikiPageFinder.FindResult[] findPages(WikiSystem wiki, String query) throws WikiPageFinder.FinderException {
-		try {
-			Searcher searcher = null;
-			//Analyzer analyzer = new StopAnalyzer();
+   /**
+    *  return an array of pages that match the <code>query</code>. The query is
+    *  implementation specific
+    *
+    * @param  wiki                                Description of the Parameter
+    * @param  query                               Description of the Parameter
+    * @return                                     Description of the Return
+    *      Value
+    * @exception  WikiPageFinder.FinderException  Description of the Exception
+    */
+   public WikiPageFinder.FindResult[] findPages(WikiSystem wiki, String query) throws WikiPageFinder.FinderException {
+      try {
+         Searcher searcher = null;
+         //Analyzer analyzer = new StopAnalyzer();
+         String _query = null;
+         if (query.indexOf(":") > 0) {
+            _query = query;
+         } else {
+            _query = "title:" + query + " keywords:" + query + "^2 " + query + "^3";
+         }
+         Query q = QueryParser.parse(_query, "text", analyzer);
+         /*
+          *  QueryParser qp = new QueryParser("text", analyzer);
+          *  Query q = qp.parse("(title:" + query + ")^4 OR (keywords:" + query + ")^2 OR (text:" + query + ")");
+          *  System.out.println("query: " + q);
+          */
+         Hits hits = null;
 
-			String _query = "title:" + query + " keywords:" + query + "^2 " + query + "^3";
-			Query q = QueryParser.parse(_query, "text", analyzer);
-			/*
-			 *  QueryParser qp = new QueryParser("text", analyzer);
-			 *  Query q = qp.parse("(title:" + query + ")^4 OR (keywords:" + query + ")^2 OR (text:" + query + ")");
-			 *  System.out.println("query: " + q);
-			 */
-			Hits hits = null;
+         if (wiki.getBaseDir() != null) {
+            searcher = new IndexSearcher(wiki.getBaseDir() + wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
+         } else {
+            searcher = new IndexSearcher(wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
+         }
+         hits = searcher.search(q);
 
-			if (wiki.getBaseDir() != null) {
-				searcher = new IndexSearcher(wiki.getBaseDir() + wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
-			} else {
-				searcher = new IndexSearcher(wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
-			}
-			hits = searcher.search(q);
+         List pages = new ArrayList();
 
-			List pages = new ArrayList();
+         int size = hits.length();
+         for (int x = 0; x < size; x++) {
+            String title = hits.doc(x).get("title");
+            if (title != null) {
+               WikiPage page = wiki.getPage(title);
+               if (page == null) {
+                  continue;
+               }
 
-			int size = hits.length();
-			for (int x = 0; x < size; x++) {
-				String title = hits.doc(x).get("title");
-				if (title != null) {
-					WikiPage page = wiki.getPage(title);
-					if (page == null) {
-						continue;
-					}
+               FindResult result = new FindResult();
+               result.page = page;
+               result.score = Math.round(hits.score(x) * 100);
+               result.preview = org.webmacro.util.HTMLEscaper.escape(hits.doc(x).get("text"));
 
-					FindResult result = new FindResult();
-					result.page = page;
-					result.score = Math.round(hits.score(x) * 100);
-					result.preview = org.webmacro.util.HTMLEscaper.escape(hits.doc(x).get("text"));
+               /*
+                *  boolean skip = false;
+                *  for (int y = 0; y < pages.size(); y++) {
+                *  FindResult fr = (FindResult) pages.get(y);
+                *  String tmp = fr.page.getTitle();
+                *  if (tmp.equals(title)) {
+                *  fr.score += 1;
+                *  skip = true;
+                *  break;
+                *  }
+                *  }
+                *  if (skip) {
+                *  continue;
+                *  }
+                */
+               pages.add(result);
+            }
+         }
 
-					/*
-					 *  boolean skip = false;
-					 *  for (int y = 0; y < pages.size(); y++) {
-					 *  FindResult fr = (FindResult) pages.get(y);
-					 *  String tmp = fr.page.getTitle();
-					 *  if (tmp.equals(title)) {
-					 *  fr.score += 1;
-					 *  skip = true;
-					 *  break;
-					 *  }
-					 *  }
-					 *  if (skip) {
-					 *  continue;
-					 *  }
-					 */
-					pages.add(result);
-				}
-			}
+         searcher.close();
+         WikiPageFinder.FindResult[] results = (FindResult[]) pages.toArray(new WikiPageFinder.FindResult[0]);
 
-			searcher.close();
-			WikiPageFinder.FindResult[] results = (FindResult[]) pages.toArray(new WikiPageFinder.FindResult[0]);
+         Arrays.sort(results,
+            new Comparator() {
+               public int compare(Object o1, Object o2) {
+                  FindResult fr1 = (FindResult) o1;
+                  FindResult fr2 = (FindResult) o2;
+                  return (int) (fr2.score * 1000 - fr1.score * 1000);
+               }
+            });
 
-			/*
-			 *  Arrays.sort(results,
-			 *  new Comparator() {
-			 *  public int compare(Object o1, Object o2) {
-			 *  FindResult fr1 = (FindResult) o1;
-			 *  FindResult fr2 = (FindResult) o2;
-			 *  return (int) (fr2.score * 1000 - fr1.score * 1000);
-			 *  }
-			 *  });
-			 */
-			return results;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new WikiPageFinder.FinderException(e.toString());
-		}
-	}
+         return results;
+      } catch (Exception e) {
+         throw new WikiPageFinder.FinderException(e.toString());
+      }
+   }
 }
 

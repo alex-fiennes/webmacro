@@ -26,15 +26,15 @@ package org.tcdi.opensource.wiki.search;
 
 import java.io.*;
 import java.util.Vector;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.de.GermanAnalyzer;
+import org.apache.lucene.document.DateField;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.DateField;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.de.GermanAnalyzer;
 
 import org.tcdi.opensource.wiki.*;
 import org.tcdi.opensource.wiki.renderer.*;
@@ -49,175 +49,191 @@ import org.tcdi.opensource.wiki.renderer.*;
  *  This is where the physical page index is stored. It must point to a
  *  directory that is writeable by the owner of the running JVM.
  *
- *@author     e_ridge
- *@created    8. September 2002
+ * @author     e_ridge
+ * @created    8. September 2002
  */
 public class LuceneIndexer implements WikiPageIndexer {
 
-	static Analyzer analyzer = new GermanAnalyzer();
+   private IndexThread _indexer = new IndexThread(this);
 
-	private Vector _pageQueue = new Vector();
+   private Vector _pageQueue = new Vector();
 
-	private WikiSystem _wiki = null;
+   private WikiSystem _wiki = null;
 
-
-	/**
-	 *  Description of the Class
-	 *
-	 *@author     christiana
-	 *@created    18. September 2002
-	 */
-	private class IndexThread extends Thread {
-		private LuceneIndexer _parent = null;
+   static Analyzer analyzer = new GermanAnalyzer();
 
 
-		/**
-		 *  Constructor for the IndexThread object
-		 *
-		 *@param  p  Description of the Parameter
-		 */
-		public IndexThread(LuceneIndexer p) {
-			this._parent = p;
-		}
+   /**
+    *  Constructor for the LuceneIndexer object
+    */
+   public LuceneIndexer() {
+      this._indexer.start();
+   }
 
 
-		/**
-		 *  Main processing method for the IndexThread object
-		 */
-		public void run() {
-			boolean optimized = true;
-			File f = null;
-			while (true) {
-				if (_parent._pageQueue.size() != 0) {
-					if (f == null) {
-						if (_parent._wiki.getBaseDir() != null) {
-							f = new File(_parent._wiki.getBaseDir() + _parent._wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
-						} else {
-							f = new File(_parent._wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
-						}
-					}
-					WikiPage p = (WikiPage) _pageQueue.elementAt(0);
-					Document doc = createDocument(_parent._wiki, p);
-					if (doc != null) {
-						try {
-							IndexReader reader = IndexReader.open(f);
-							reader.delete(new Term("title", p.getTitle()));
-							reader.close();
-
-							IndexWriter writer = new IndexWriter(f, _parent.analyzer,
-									!f.exists());
-							writer.addDocument(doc);
-							writer.close();
-						} catch (IOException ioe) {
-							ioe.printStackTrace(System.err);
-						} finally {
-							optimized = false;
-							_pageQueue.removeElementAt(0);
-						}
-
-					}
-				} else if (!optimized) {
-					//optimize the index
-					try {
-						IndexWriter writer = new IndexWriter(f, _parent.analyzer,
-								!f.exists());
-						writer.optimize();
-						writer.close();
-					} catch (IOException ioe) {
-						ioe.printStackTrace(System.err);
-					}
-					optimized = true;
-				}
-			}
-		}
+   /**
+    *  Description of the Method
+    *
+    * @param  wiki                                  Description of the Parameter
+    * @param  page                                  Description of the Parameter
+    * @exception  WikiPageIndexer.IndexerException  Description of the Exception
+    */
+   public void index(WikiSystem wiki, WikiPage page) throws WikiPageIndexer.IndexerException {
+      if (this._wiki == null) {
+         this._wiki = wiki;
+      } else {
+         if (this._wiki != wiki) {
+            throw new WikiPageIndexer.IndexerException("Using the same LuceneIndexer on multiple Wikis is not supported");
+         }
+      }
+      _pageQueue.add(page);
+   }
 
 
-		/**
-		 *  Description of the Method
-		 *
-		 *@param  wiki  Description of the Parameter
-		 *@param  page  Description of the Parameter
-		 *@return       Description of the Return Value
-		 */
-		private Document createDocument(WikiSystem wiki, WikiPage page) {
-			Document doc = new Document();
-			String tmp = null;
-
-			// title
-			tmp = page.getTitle();
-			if (tmp != null) {
-				doc.add(Field.Keyword("title", tmp));
-			}
-
-			// last modified date
-			doc.add(Field.Keyword("modified", DateField.dateToString(page.getDateLastModified())));
-
-			// creation date
-			doc.add(Field.Keyword("created", DateField.dateToString(page.getDateCreated())));
-
-			// author
-			WikiUser user = wiki.getUser(page.getAuthor());
-			if (user != null) {
-				doc.add(Field.Keyword("author", user.getName()));
-			}
-
-			// keywords (related titles)
-			StringBuffer sb = new StringBuffer(128);
-			String[] keywords = page.getRelatedTitles();
-			for (int x = 0; x < keywords.length; x++) {
-				if (sb.length() > 0) {
-					sb.append(" ");
-				}
-				sb.append(keywords[x]);
-			}
-			doc.add(Field.Text("keywords", sb.toString()));
-
-			// the actual text of the page
-			tmp = page.getUnparsedData();
-			if (tmp != null) {
-				WikiPageRenderer renderer = new TextPageRenderer(new TextURLRenderer(), wiki);
-
-				try {
-					doc.add(Field.Text("text", renderer.render(page)));
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-
-			return doc;
-		}
-	}
+   /**
+    *  Description of the Class
+    *
+    * @author     christiana
+    * @created    18. September 2002
+    */
+   private class IndexThread extends Thread {
+      private LuceneIndexer _parent = null;
 
 
-	private IndexThread _indexer = new IndexThread(this);
+      /**
+       *  Constructor for the IndexThread object
+       *
+       * @param  p  Description of the Parameter
+       */
+      public IndexThread(LuceneIndexer p) {
+         this._parent = p;
+      }
 
 
-	/**
-	 *  Constructor for the LuceneIndexer object
-	 */
-	public LuceneIndexer() {
-		this._indexer.start();
-	}
+      /**
+       *  Description of the Method
+       *
+       * @param  wiki  Description of the Parameter
+       * @param  page  Description of the Parameter
+       * @return       Description of the Return Value
+       */
+      private Document createDocument(WikiSystem wiki, WikiPage page) {
+         Document doc = new Document();
+         String tmp = null;
+
+         // title
+         tmp = page.getTitle();
+         if (tmp != null) {
+            doc.add(Field.Keyword("title", tmp));
+         }
+
+         // last modified date
+         doc.add(Field.Keyword("modified", DateField.dateToString(page.getDateLastModified())));
+
+         // creation date
+         doc.add(Field.Keyword("created", DateField.dateToString(page.getDateCreated())));
+
+         // author
+         WikiUser user = wiki.getUser(page.getAuthor());
+         if (user != null) {
+            doc.add(Field.Keyword("author", user.getName()));
+         }
+
+         // keywords (related titles)
+         StringBuffer sb = new StringBuffer(128);
+         String[] keywords = page.getRelatedTitles();
+         for (int x = 0; x < keywords.length; x++) {
+            if (sb.length() > 0) {
+               sb.append(" ");
+            }
+            sb.append(keywords[x]);
+         }
+         doc.add(Field.Text("keywords", sb.toString()));
+
+         // the actual text of the page
+         tmp = page.getUnparsedData();
+         if (tmp != null) {
+            WikiPageRenderer renderer = new TextPageRenderer(new TextURLRenderer(), wiki);
+
+            try {
+               doc.add(Field.Text("text", renderer.render(page)));
+            } catch (Exception e) {
+               e.printStackTrace();
+               return null;
+            }
+         }
+
+         return doc;
+      }
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  wiki                                  Description of the Parameter
-	 *@param  page                                  Description of the Parameter
-	 *@exception  WikiPageIndexer.IndexerException  Description of the Exception
-	 */
-	public void index(WikiSystem wiki, WikiPage page) throws WikiPageIndexer.IndexerException {
-		if (this._wiki == null) {
-			this._wiki = wiki;
-		} else {
-			if (this._wiki != wiki) {
-				throw new WikiPageIndexer.IndexerException("Using the same LuceneIndexer on multiple Wikis is not supported");
-			}
-		}
-		_pageQueue.add(page);
-	}
+      /**
+       *  Main processing method for the IndexThread object
+       */
+      public void run() {
+         boolean optimized = true;
+         File f = null;
+         boolean running = true;
+         while (running) {
+            if (_parent._pageQueue.size() != 0) {
+               if (f == null) {
+                  if (_parent._wiki.getBaseDir() != null) {
+                     f = new File(_parent._wiki.getBaseDir() + _parent._wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
+                  } else {
+                     f = new File(_parent._wiki.getProperties().getProperty("LuceneIndexer.IndexDirectory"));
+                  }
+               }
+               WikiPage p = (WikiPage) _pageQueue.elementAt(0);
+               Document doc = createDocument(_parent._wiki, p);
+               if (doc != null) {
+                  IndexWriter writer = null;
+                  try {
+                     IndexReader reader = IndexReader.open(f);
+                     reader.delete(new Term("title", p.getTitle()));
+                     reader.close();
+
+                     writer = new IndexWriter(f, _parent.analyzer,
+                           !f.exists());
+                     writer.addDocument(doc);
+                     writer.close();
+                  } catch (IOException ioe) {
+                     ioe.printStackTrace(System.err);
+                  } finally {
+                     optimized = false;
+                     _pageQueue.removeElementAt(0);
+                     try {
+                        writer.close();
+                     } catch (Exception e) {}
+
+                  }
+
+               }
+            } else if (!optimized) {
+               //optimize the index
+               IndexWriter writer = null;
+               try {
+                  writer = new IndexWriter(f, _parent.analyzer,
+                        !f.exists());
+                  writer.optimize();
+                  writer.close();
+               } catch (IOException ioe) {
+                  ioe.printStackTrace(System.err);
+               } finally {
+                  try {
+                     writer.close();
+                  } catch (Exception e) {}
+
+               }
+               optimized = true;
+            }
+            try {
+               Thread.sleep(100);
+            } catch (InterruptedException i) {
+               running = false;
+            }
+         }
+      }
+   }
 
 }
 
