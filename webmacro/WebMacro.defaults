@@ -220,34 +220,24 @@ Parsers.wm:  org.webmacro.parser.WMParser
 # Template caching
 #
 
-#CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
-#CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
-CachingProvider.template.CacheManager=org.webmacro.resource.GenerationalCacheManager
-CachingProvider.url.CacheManager=org.webmacro.resource.GenerationalCacheManager
-
-#
-# Set reloading to true since we are in development mode by default.
-GenerationalCacheManager.*.ReloadOnChange: true
-
-#
-# The refresh rate for incorporating changes to the mutable image
-GenerationalCacheManager.*.RefreshRate: 1000
-
+CachingProvider.template.CacheManager: org.webmacro.resource.SMapCacheManager
+CachingProvider.url.CacheManager:      org.webmacro.resource.SMapCacheManager
+#CachingProvider.template.CacheManager=org.webmacro.resource.GenerationalCacheManager
+#CachingProvider.url.CacheManager=org.webmacro.resource.GenerationalCacheManager
 
 #
 # Encoding caching
 #
 
-#Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
-Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
+Encoder.*.CacheManager: org.webmacro.resource.StaticSMapCacheManager
+#Encoder.*.CacheManager: org.webmacro.resource.GenerationalCacheManager
 
 
-# SMapCacheManager caches templates for efficiency and expires them 
-# after a certain period of time to save memory.
-#    - An ExpireTime of 0 (zero) means WebMacro will never cache the template
-#    - A positive ExpireTime means WebMacro will recompile templates every 
+# SMapCacheManager properties (if used)
+#    - An ExpireTime of 0 (zero) means WebMacro will never cache the resource
+#    - A positive ExpireTime means WebMacro will re-fetch the resource every 
 #        X milliseconds  (ie, 10000 is 10 seconds)
-#    - A negative ExpireTime means WebMacro will only recompile templates 
+#    - A negative ExpireTime means WebMacro will only re-fetch resources 
 #        when they change.
 
 SMapCacheManager.*.ExpireTime: 30000
@@ -259,4 +249,14 @@ SMapCacheManager.*.CacheFactor: 5
 
 StaticSMapCacheManager.*.CacheBuckets: 1001
 StaticSMapCacheManager.*.CacheFactor: 5
+
+
+# GenerationalCacheManager properties (if used)
+
+# Set reloading to true since we are in development mode by default.
+GenerationalCacheManager.*.ReloadOnChange: true
+
+# The refresh rate for incorporating changes to the mutable image
+GenerationalCacheManager.*.RefreshRate: 1000
+
 
