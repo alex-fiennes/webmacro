@@ -235,8 +235,7 @@ public class ComponentMap
    static private String[] tokenize(String list) {
       StringTokenizer st = new StringTokenizer(list," \t\n\f\r;,");
       String[] tokens = new String[st.countTokens()];
-      int i = 0;
-      while (st.hasMoreElements()) {
+      for (int i=0; st.hasMoreElements(); i++) {
          tokens[i] = st.nextToken();
       }
       return tokens;
