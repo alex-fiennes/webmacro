@@ -31,7 +31,7 @@ import java.io.File;
  * Objects of this class are responsible for searching exactly one
  * directory for templates. If it handles a request, it takes path as
  * the base path to find the template.
- * @author Sebastian Kanthak (skanthak@muehlheim.de)
+ * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public class FileTemplateLoader extends AbstractTemplateLoader {
     private String path;

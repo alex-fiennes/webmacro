@@ -44,7 +44,7 @@ import javax.servlet.ServletContext;
  * <br>
  * This TemplateLoader will automatically add trailing and starting slashed, if they
  * are missing. The starting slash is required by the servlet specification.
- * @author Sebastian Kanthak (skanthak@muehlheim.de)
+ * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public class ServletContextTemplateLoader extends AbstractTemplateLoader {
     private ServletContext loader;

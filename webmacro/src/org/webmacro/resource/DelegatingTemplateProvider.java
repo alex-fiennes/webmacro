@@ -27,6 +27,8 @@ import org.webmacro.*;
 import org.webmacro.util.Settings;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Arrays;
 
 /**
  * Alternative implementation of a TemplateProvider that uses TemplateLoaders to do the actual work.
@@ -59,7 +61,7 @@ import java.util.ArrayList;
  * </ol>
  * Note, that this setup only makes sense in a web-app environment, because the webapp template loader
  * won't work otherwise.
- * @author Sebastian Kanthak (skanthak@muehlheim.de)
+ * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public class DelegatingTemplateProvider extends CachingProvider {
     private Broker broker;
@@ -105,6 +107,17 @@ public class DelegatingTemplateProvider extends CachingProvider {
             }
         }
         throw new NotFoundException("Could not locate template "+query);
+    }
+
+    /**
+     * Returns an unmodifieable list of this provider's template loaders.
+     * The list is has the same order used for searching templates. You may
+     * use this method to access template loaders and change their settings
+     * at runtime if they have an appropriate method.
+     * @return unmodifieable list of TemplateLoader objects
+     */
+    public List getTemplateLoaders() {
+        return Collections.unmodifiableList(Arrays.asList(templateLoaders));
     }
 
     protected TemplateLoaderFactory createFactory(String classname) throws InitException {

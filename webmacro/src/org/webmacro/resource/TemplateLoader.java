@@ -30,7 +30,7 @@ import org.webmacro.util.Settings;
  * Template loaders are responsible to search for and load
  * templates from a single location. They are used by
  * DelegatingTemplateProvider to do the actual work.
- * @author Sebastian Kanthak (skanthak@muehlheim.de)
+ * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public interface TemplateLoader {
     /**
@@ -55,10 +55,9 @@ public interface TemplateLoader {
      * a resource is found at the location, but no template could be created
      * for some reason, a ResourceException is thrown.
      * <br>
-     * The method should set a reload context on the cache element to enable
-     * reload-on-demand for this template. However it should first check
-     * if cache element is not equal to null, since this means, that no
-     * cache is used.
+     * If the cache element ce is not null, this method should set a reload 
+     * context on the cache element to enable
+     * reload-on-demand for this template. If ce is null, caching is disabled.
      * @param query location to load template from
      * @param ce cache element that will be used for this template or null
      * if no cache is used.

@@ -34,7 +34,7 @@ import java.net.URL;
  * Example: If you have <pre>classpath:templates/</pre> as a
  * TemplateLoaderPath and request the template "foo/bar.wm", it will search for
  * "templates/foo/bar.wm" in your classpath.
- * @author Sebastian Kanthak (skanthak@muehlheim.de)
+ * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public class ClassPathTemplateLoader extends AbstractTemplateLoader {
     private ClassLoader loader;
@@ -54,7 +54,7 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader {
         }
 
         // It isn't clear from the javadocs, whether ClassLoader.getResource()
-        // needs a starting slash, so we'll not add one, here.
+        // needs a starting slash, so won't add one at the moment.
         this.path = config;
     }
 
