@@ -1,0 +1,16 @@
+This is the beginnings of a #cache directive for WebMacro.
+
+Although it really works, it lacks useful features like
+expiration and domain segmentation.  
+
+The internal cache structure is currently a synchronized Map.  
+However, the cache backend should be configurable and be able
+to use and of the available CacheManagers.  It should also
+be able to segment a cache by broker.  Right now, all instances
+of WebMacro share the same cache.
+
+I'm hoping somebody from the WebMacro community will be
+inspired by this directive and offer up some suggestions
+to make it useable.
+
+--ebr@tcdi.com
