@@ -1,3 +1,6 @@
+-- Jan-2000 fergus: added a simple build script to run the example servlets 
+    under Tomcat 3.2.  Added under contrib/Tomcat/3.2/
+
 -- Jan-2000 fergus: imported ContextDebugger from Alex Jeannopoulos into
    contrib
 
