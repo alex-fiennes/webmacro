@@ -35,7 +35,7 @@ public class TestSyntheticTemplate extends TemplateTestCase {
         
         protected void runTest() throws Exception {
           this.threadCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.ThreadCount", this.threadCount);
-          this.iterationCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.IterationCount", this.threadCount);
+          this.iterationCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.IterationCount", this.IterationCount);
           this.testLoadAndToss();
           this.testLoad();
         }
