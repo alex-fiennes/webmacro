@@ -2,6 +2,8 @@
 package org.webmacro.util;
 
 import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 /**
   * RefMap is a very specialized data structure that is probably
@@ -41,13 +43,13 @@ final public class RefMap {
       _size = 0;
    }
 
-   public void put(Object key, Object value) 
+   synchronized public void put(Object key, Object value) 
       throws java.lang.IndexOutOfBoundsException
    {
       if (key == null) {
          return;
       }
-      int loc = key.hashCode() % _key.length;
+      int loc = System.identityHashCode(key) % _key.length;
       if (loc < 0) { loc *= -1; }
       if ((_key[loc] != null) || (_key[loc] == key)) {
          int i = loc + 1;
@@ -65,7 +67,6 @@ final public class RefMap {
       if ((_key[loc] == null) || (_key[loc] == key)) {
          _size++;
          _value[loc] = value;
-         synchronized(_key) { } // control update order
          _key[loc] = key;
       } else {
          throw new java.lang.IndexOutOfBoundsException("RefMap is Full, use realloc");
@@ -82,7 +83,7 @@ final public class RefMap {
       if (key == null) {
          return null;
       }
-      int loc = key.hashCode() % _key.length;
+      int loc = System.identityHashCode(key) % _key.length;
       if (loc < 0) { loc *= -1; }
       if (_key[loc] == key) {
          return _value[loc];   
@@ -99,6 +100,40 @@ final public class RefMap {
          }
          return null;
       }
+   }
+
+   public Enumeration elements() {
+      return new Enumeration() {
+         int loc = -1;
+         boolean _consumed = true;
+
+         // consumed: do we use the item or just move to it?
+         private void advance() {
+            if (_consumed) {
+               try {
+                  while (_key[++loc] == null) { }
+               } catch (ArrayIndexOutOfBoundsException e) {
+                  // do nothing
+               }
+               _consumed = false;
+            }
+         }
+
+         public boolean hasMoreElements() {
+            advance();
+            return (loc < _key.length);
+         }
+
+         public Object nextElement() throws NoSuchElementException 
+         {
+            if (! hasMoreElements()) {
+               throw new NoSuchElementException("Past end of Enumeration");
+            }
+            _consumed = true;
+            return _key[loc];
+         }
+
+      };
    }
 
    public RefMap copy(int size) 
@@ -178,6 +213,14 @@ final public class RefMap {
             }
          }
          System.out.println("hashmap: " + (System.currentTimeMillis() - time));
+
+      }
+
+      System.out.println();
+      System.out.println("refmap enum: ");
+      Enumeration en = rm.elements();
+      while (en.hasMoreElements()) {
+         System.out.println("elem: " + en.nextElement());
       }
    }
 }
