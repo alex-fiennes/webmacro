@@ -70,6 +70,24 @@ within the <host> tag (just above the </host> tag):
       <servlet-mapping url-pattern='/servlet/*' servlet-name='invoker'/>
       <welcome-file-list>index.html</welcome-file-list>
     </web-app>
+    
+*ALTERNATIVE CONFIGURATION FOR RESIN*
+
+This technique avoids moving directories all over the place.
+
+Assume that you have placed webmacro/ in /usr/local/web 
+and /usr/local/web is an application directory for http://localhost
+
+  1) Copy webmacro.jar to <resin_home>/lib
+  2) Add the following to your resin.conf:
+     <web-app id='wm' app-dir='webmacro/examples'>
+      <servlet-mapping url-pattern='/servlet/*' servlet-name='invoker'/>
+      <welcome-file-list>index.html</welcome-file-list>
+    </web-app>
+
+http://localhost/wm should serve up the index.html page and the links in the page
+should serve up the servlets.
+  
 
 *NOTE ON TEMPLATE PATHS*
 	
