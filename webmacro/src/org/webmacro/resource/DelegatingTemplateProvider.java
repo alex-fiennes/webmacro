@@ -79,6 +79,17 @@ public class DelegatingTemplateProvider extends CachingProvider {
         factory = createFactory(factoryClass);
 
         List loaders = new ArrayList();
+
+        // for compatability reasons, check old TemplatePath setting
+        if (config.getBooleanSetting("DelegatingTemplateProvider.EmulateTemplatePath",false)) {
+            if (config.getSetting("TemplatePath").length() > 0) {
+                TemplateLoader loader = new TemplatePathTemplateLoader();
+                loader.init(broker,config);
+                loader.setConfig("");
+                loaders.add(loader);
+            }
+        }
+
         int i = 0;
         String loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i+1)));
         while (loader != null) {
