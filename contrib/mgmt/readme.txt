@@ -15,6 +15,11 @@ See the file release.html with your favorite browser.
 
 General Development Status
 ----------------------------
+December, 2001
+Completed the public portion of the O/R mapping service and then
+forked off the proprietary work to an in-house service.
+Write support@opendoors.com for information.
+
 October, 2001
 Added the initial release of an O/R mapping service module. Added servlets
 to process templates in a general manner and action parameters in a template.

@@ -1,5 +1,11 @@
 <html>
-<center><h1>Release 0.3, 30 - Oct - 2001</h1></center>
+<center><h1>Release 0.4, 12 - Dec - 2001</h1>
+<a href="readme.txt">The ReadMe</a>
+</center>
+<p>
+This module contains a number of general management functions for WebMacro
+template authors, java programmers, and database gurus.
+<p> 
 The examples directory contains some useful files in understanding
 how to use the management contribution as it pertains to Object Relational
 Mapping. This module is a work in process.
@@ -12,12 +18,19 @@ resin configuration file handles this for a host section:
   servlet-mapping url-pattern='*.tml' servlet-name='template'
   servlet servlet-name='template' servlet-class='org.webmacro.mgmt.impl.TemplateServlet'
 </pre>
-
-
+Any file served ending in .tml under the above will be processed by the above servlet. The servlet
+places $Servlet in the context so that you can gain access to all the underlying methods
+of the servlet class hierarchy which includes WMServlet.
+<p>
+o.w.m.i.ActionServlet is an action mapping servlet in which the template writer
+controls the action. This allows the template writer to specify the action semantic
+to handle for example forms handling and reduces the costs associated with
+writing controller servlets.
 <h3>Object Relational Mapping and Code Generation</h3>
 <p>
 The management module contains an emerging platform for integrated data
-model design, sql generation, and java source file generation.
+model design, sql generation, and java source file generation. This is the open source
+version of this platform and not the commercial version.
 <p>
 The system has a couple of moving parts. However, if you have the "template"
 servlet mentioned above serving up *.tml files, you will rock.
