@@ -1,27 +1,28 @@
-WebMacro 1.0rc3
+WebMacro 1.0
 ---------------
                     
-This is the third 1.0 release candidate.  We've worked hard to get here, and
-we hope WebMacro will (continue to) work hard for you.
+This is WebMacro 1.0.  We've worked hard to get here, and
+we're sure WebMacro will work hard for you.
 
 Should you encounter problems with this release, please submit a bug report
 to http://www.webmacro.org/bugzilla/.
 
 As always, see http://www.webmacro.org for complete documentation.
 
-Unless there are some serious problems found, this will be the last release
-candidate prior to release 1. 
 
 Changes in this Release
 -----------------------
 
-- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
-
-- Fixed "characters get dropped" when parsing templates (brian)
+- examples/WebMacro.propertes now contains all possible configuration options,
+but commented out.  For normal use, you won't need WebMacro.properties.
 
 
 Changes Prior to this Release
 -----------------------------
+
+- Fixed synchronization issues with FWPool.  No more IOOB Exceptions (lane)
+
+- Fixed "characters get dropped" when parsing templates (brian)
 
 - More encoding tests.  TestWindows1251Encoding and TestISO88591Encoding
 
