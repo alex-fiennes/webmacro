@@ -457,7 +457,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             if (timing) c.stopTiming();
          }
          if (timing) c.startTiming("FastWriter.close()");
-         try { fw.close(); }
+         try { fw.close(); fw = null; }
          finally { if (timing) c.stopTiming(); }
       } catch (IOException e) {
          // ignore disconnect
@@ -484,6 +484,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             if (fw != null) {
                fw.flush();
                fw.close();
+               fw = null;
             }
          } catch (Exception e3) {
             // ignore disconnect

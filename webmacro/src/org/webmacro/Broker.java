@@ -53,8 +53,9 @@ public class Broker
 
    public static final WeakHashMap brokers = new WeakHashMap();
    private static Settings _defaultSettings;
-   private static ClassLoader myClassLoader = Broker.class.getClassLoader(), 
-      systemClassLoader = ClassLoader.getSystemClassLoader();
+   protected static ClassLoader
+     _myClassLoader = Broker.class.getClassLoader(), 
+     _systemClassLoader = ClassLoader.getSystemClassLoader();
 
    final protected Hashtable _providers = new Hashtable();
    final protected Settings _config = new Settings();
@@ -274,12 +275,14 @@ public class Broker
    {
       URL u = getResource(name);
       if (u != null) {
-         // _log.notice("Loading properties file " + name);
          try {
             _config.load(u);
             return true;
          } catch (IOException e) {
-            _log.notice("Attempting to load properties file " + name);
+           if (optional) 
+              _log.notice("Cannot find properties file " + name 
+                          + ", continuing");
+           e.printStackTrace();
             if (!optional)
                throw new InitException("Error reading settings from " + name, 
                                        e);
@@ -424,9 +427,9 @@ public class Broker
     * Get a resource (file) from the the Broker's class loader
     */
    public URL getResource(String name) {
-      URL u = myClassLoader.getResource(name);
+      URL u = _myClassLoader.getResource(name);
       if (u == null) 
-         u = systemClassLoader.getResource(name);
+         u = _systemClassLoader.getResource(name);
       return u;
    }
 
@@ -434,9 +437,9 @@ public class Broker
     * Get a resource (file) from the Broker's class loader 
     */
    public InputStream getResourceAsStream(String name) {
-      InputStream is = myClassLoader.getResourceAsStream(name);
+      InputStream is = _myClassLoader.getResourceAsStream(name);
       if (is == null) 
-         is = systemClassLoader.getResourceAsStream(name);
+         is = _systemClassLoader.getResourceAsStream(name);
       return is;
    }
 

@@ -39,14 +39,20 @@ import java.io.*;
 import javax.servlet.*;
 
 abstract public class ServletBroker extends Broker {
-   protected static final ClassLoader 
-      _systemClassLoader = ClassLoader.getSystemClassLoader();
-
    protected ServletContext _servletContext;
 
    protected ServletBroker(ServletContext sc) throws InitException {
       super((Broker) null, sc.toString());
       _servletContext = sc;
+   }
+
+   public void initLog(Settings config) {
+      String logFile = config.getSetting("LogFile");
+      if ((logFile == null || logFile.equals(""))
+          && _config.getBooleanSetting("LogUsingServletLog"))
+        _ls.addTarget(new ServletLog(_servletContext, _config));
+      else
+        initLog();
    }
 
    public static Broker getBroker(Servlet s) throws InitException {

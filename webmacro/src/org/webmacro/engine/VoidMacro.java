@@ -43,8 +43,8 @@ public final class VoidMacro implements Macro
     */
    public Object evaluate (Context context) 
    throws PropertyException {
-      // We return null here
-      return null;
+      // We throw VoidValueException
+      throw new PropertyException.VoidValueException();
    }
     
 }

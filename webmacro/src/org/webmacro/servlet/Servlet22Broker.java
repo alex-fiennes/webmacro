@@ -41,19 +41,19 @@ import javax.servlet.*;
  */
 
 public class Servlet22Broker extends ServletBroker {
+   protected final ClassLoader _servletClassLoader;
 
-   protected Servlet22Broker(ServletContext sc) throws InitException {
+   protected Servlet22Broker(ServletContext sc, 
+                             ClassLoader cl) throws InitException {
       super(sc);
+      _servletClassLoader = cl;
       String propertySource = WEBMACRO_DEFAULTS + ", " + WEBMACRO_PROPERTIES
         + ", (WAR file)" +  ", " + "(System Properties)";
       loadDefaultSettings();
       loadSettings(WEBMACRO_PROPERTIES, true);
       loadServletSettings(Broker.SETTINGS_PREFIX);
       loadSystemSettings();
-      if (_config.getBooleanSetting("LogUsingServletLog"))
-        _ls.addTarget(new ServletLog(_servletContext, _config));
-      else
-        initLog();
+      initLog(_config);
 
       _log.notice("Loaded settings from " + propertySource);
       init();
@@ -61,7 +61,6 @@ public class Servlet22Broker extends ServletBroker {
 
    protected void loadServletSettings(String prefix) 
       throws InitException {
-      _log.notice("Loading properties from servlet context ");
       Properties p = new Properties();
       Enumeration e = _servletContext.getInitParameterNames();
       String dotPrefix = (prefix == null) ? "" : prefix + ".";
@@ -79,10 +78,11 @@ public class Servlet22Broker extends ServletBroker {
 
    public static Broker getBroker(Servlet s) throws InitException {
       ServletContext sc = s.getServletConfig().getServletContext();
+      ClassLoader cl = s.getClass().getClassLoader();
       try {
          Broker b = findBroker(sc);
          if (b == null) {
-            b = new Servlet22Broker(sc); 
+            b = new Servlet22Broker(sc, cl); 
             register(sc, b);
          }
          else 
@@ -105,6 +105,8 @@ public class Servlet22Broker extends ServletBroker {
    public URL getResource(String name) {
       try {
          URL u = _servletContext.getResource(name);
+         if (u == null)
+            u = _servletClassLoader.getResource(name);
          if (u == null) 
             u = _systemClassLoader.getResource(name);
          return u;
@@ -121,6 +123,8 @@ public class Servlet22Broker extends ServletBroker {
     */
    public InputStream getResourceAsStream(String name) {
       InputStream is = _servletContext.getResourceAsStream(name);
+      if (is == null)
+         is = _servletClassLoader.getResourceAsStream(name);
       if (is == null) 
          is = _systemClassLoader.getResourceAsStream(name);
       return is;

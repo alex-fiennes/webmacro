@@ -123,6 +123,27 @@ public class PropertyException extends ContextException
          this.propertyName = propertyName;
       }
    }
+
+
+   /**
+    * VoidValueException indicates that someone tried to use the return
+    * value of a void method
+    */
+   public static class VoidValueException extends PropertyException {
+      String variableName;
+
+     
+      public VoidValueException() {
+        super("Attempt to use void value");
+      }
+
+      public VoidValueException(String variableName) {
+         super("Variable $" + variableName + " has a void value ");
+         this.variableName = variableName;
+      }
+   }
+
+
 }
 
 
