@@ -29,19 +29,24 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Alternative implementation of a TemplateProvider that uses TemplateLoader to do the actual work.
- * This template loader controls a list of TemplateLoaders to do the actual work of loading
+ * Alternative implementation of a TemplateProvider that uses TemplateLoaders to do the actual work.
+ * This template provider controls a list of TemplateLoaders to do the actual work of loading
  * a template. It asks the template loaders one by one, until a template is found or the end of
- * the list is reached. It is configured by the "TemplatePath" setting in WebMacro.properties.<br>
+ * the list is reached. It is configured by a list of "TemplateLoaderPath.n" settings in 
+ * WebMacro.properties.<br>
  * <br>
- * Different template loaders are separated by colons (":"). Each entry consists of a key for
- * the template loader in smaller/greater signs ("<>") and a path, that is passed directly to
- * the template loader. For each key, a "TemplateLoader.key" setting must give the fully qualified
- * classname of the template load to be used for this key. If no key is given, "default" is assumed
- * as the value for key.<br>
+ * Each template loader is described by an url like syntax with a TemplateLoaderPath.n setting,
+ * where n should be a number starting from one.
+ * <br>
+ * Each template loader path is of the form "[protocol:][path]". If the protocol part in square brackets
+ * is ommited, "default:" is assumed.
+ * For each protocol, a "TemplateLoader.protocol" setting must give the fully qualified
+ * classname of the template loader to be used for this protocol.
  * Example configuration:<br>
  * <pre>
- * TemplatePath=.:&lt;classpath&gt;:&lt;webapp&gt;/WEB-INF/templates/
+ * TemplateLoaderPath.1=.
+ * TemplateLoaderPath.2=classpath:
+ * TemplateLoaderPath.3=webapp:/WEB-INF/templates/
  * TemplateLoader.default=org.webmacro.resource.FileTemplateLoader
  * TemplateLoader.classpath=org.webmacro.resource.ClassPathTemplateLoader
  * TemplateLoader.webapp=org.webmacro.resource.ServletContextTemplateLoader
@@ -49,8 +54,8 @@ import java.util.ArrayList;
  * This configuration will search for templates at three locations in this order:
  * <ol>
  * <li>The current directory (".")
- * <li>The classpath ("&lt;classpath&gt;")
- * <li>The directory WEB-INF/templates/ in the web-app directory ("&lt;webapp&gt;/WEB-INF/templates/")
+ * <li>The classpath (classpath:)
+ * <li>The directory WEB-INF/templates/ in the web-app directory ("webapp:/WEB-INF/templates/")
  * </ol>
  * Note, that this setup only makes sense in a web-app environment, because the webapp template loader
  * won't work otherwise.

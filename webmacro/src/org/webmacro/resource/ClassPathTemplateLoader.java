@@ -31,8 +31,8 @@ import java.net.URL;
  * The "path" setting is used as a prefix for all request, so it should
  * end with a slash.<br>
  * <br>
- * Example: If you have <pre>&lt;classpath&gt;templates/</pre> in your
- * TemplatePath and request the template "foo/bar.wm", it will search for
+ * Example: If you have <pre>classpath:templates/</pre> as a
+ * TemplateLoaderPath and request the template "foo/bar.wm", it will search for
  * "templates/foo/bar.wm" in your classpath.
  * @author Sebastian Kanthak (skanthak@muehlheim.de)
  */
@@ -46,6 +46,15 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader {
     }
     
     public void setConfig(String config) {
+        // as we'll later use this as a prefix, it should end with a slash
+        if (config.length() > 0 && !config.endsWith("/")) {
+            if (log.loggingInfo())
+                log.info("ClassPathTemplateLoader: appending \"/\" to path "+config);
+            config = config.concat("/");
+        }
+
+        // It isn't clear from the javadocs, whether ClassLoader.getResource()
+        // needs a starting slash, so we'll not add one, here.
         this.path = config;
     }
 

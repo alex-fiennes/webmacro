@@ -37,7 +37,17 @@ public class FileTemplateLoader extends AbstractTemplateLoader {
     private String path;
     
     public void setConfig(String config) {
+        // leading slash isn't needed, because
+        // we use File constructor.
         this.path = config;
+
+        // However, we can check, if the directory exists.
+        File f = new File(path);
+        if (!f.exists()) {
+            log.warning("FileTemplateLoader: "+f.getAbsolutePath()+" does not exist.");
+        } else if (!f.isDirectory()) {
+            log.warning("FileTemplateLoader: "+f.getAbsolutePath()+" is not a directory.");
+        }
     }
     
     /**

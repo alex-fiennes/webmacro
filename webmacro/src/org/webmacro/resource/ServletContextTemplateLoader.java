@@ -38,9 +38,12 @@ import javax.servlet.ServletContext;
  * The "path" setting is used as a prefix for all request, so it should
  * end with a slash.<br>
  * <br>
- * Example: If you have <pre>&lt;classpath&gt;/WEB-INF/templates/</pre> in your
- * TemplatePath and request the template "foo/bar.wm", it will search for
+ * Example: If you have <pre>webapp:/WEB-INF/templates/</pre> as a
+ * TemplateLoaderPath and request the template "foo/bar.wm", it will search for
  * "WEB-INF/templates/foo/bar.wm" in your web-app directory.
+ * <br>
+ * This TemplateLoader will automatically add trailing and starting slashed, if they
+ * are missing. The starting slash is required by the servlet specification.
  * @author Sebastian Kanthak (skanthak@muehlheim.de)
  */
 public class ServletContextTemplateLoader extends AbstractTemplateLoader {
@@ -58,6 +61,19 @@ public class ServletContextTemplateLoader extends AbstractTemplateLoader {
     }
     
     public void setConfig(String config) {
+        // as we'll later use this as a prefix, it should end with a slash
+        if (config.length() > 0 && !config.endsWith("/")) {
+            if (log.loggingInfo())
+                log.info("ServletContextTemplateLoader: appending \"/\" to path "+config);
+            config = config.concat("/");
+        }
+        
+        // the spec says, this has to start with a slash
+        if (!config.startsWith("/")) {
+            if (log.loggingInfo())
+                log.info("ServletContextTemplateLoader: adding \"/\" at the beginning of path "+config);
+            config = "/".concat(config);
+        }
         this.path = config;
     }
 
