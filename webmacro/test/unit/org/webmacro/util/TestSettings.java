@@ -41,6 +41,8 @@ public class TestSettings extends TestCase {
     assert(s.getSetting("quoted2").equals("quoted2"));
     assert(s.getSetting("quoted3").equals(" quoted3 "));
     assert(s.getSetting("with.spaces").equals("with spaces"));
+    assert(s.getSetting("nothing").equals(""));
+    assert(s.getSetting("alsonothing").equals(""));
   }
 
   public void testOcclude() throws Exception {
