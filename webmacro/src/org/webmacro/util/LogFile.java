@@ -1,15 +1,13 @@
 
 package org.webmacro.util;
 
-import java.text.MessageFormat;
-import java.util.Properties;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
-import java.util.Date;
-import java.text.MessageFormat;
-import java.util.Properties;
-import java.io.IOException;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Date;
+import java.util.Properties;
+import java.text.MessageFormat;
 
 public class LogFile implements LogTarget {
 
