@@ -63,6 +63,8 @@ public class Context implements Map, Cloneable
    private TemplateEvaluationContext _teContext 
      = new TemplateEvaluationContext();
 
+   final static private org.webmacro.engine.UndefinedMacro UNDEF 
+     = org.webmacro.engine.UndefinedMacro.getInstance();
    /**
      * Create a new Context relative to the supplied broker
      */
@@ -239,9 +241,10 @@ public class Context implements Map, Cloneable
                _log.error("Unable to initialize ContextTool: " + name, e);
             }
          }
-         else 
-            throw new 
-               PropertyException.NoSuchVariableException(name.toString());
+         else // changed by Keats 30-Nov-01
+             return UNDEF;
+            //throw new 
+              // PropertyException.NoSuchVariableException(name.toString());
       }
       return ret;
    }
@@ -252,9 +255,14 @@ public class Context implements Map, Cloneable
      */
    final public Object get(Object name) {
       try { 
-         return internalGet(name);
+         //return internalGet(name);
+          Object o =  internalGet(name);
+          if (o == UNDEF) 
+              return null;
+          return o;
       }
       catch (PropertyException e) {
+          // NOTE: I don't think we get here anymore!  -Keats
          return null;
       }
    }
