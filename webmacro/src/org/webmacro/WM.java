@@ -74,7 +74,7 @@ public class WM implements WebMacro
                }
             }
          }
-         broker = _owner.init();
+         broker = owner.init();
       } finally {
          _owner = owner;
          _broker = broker;

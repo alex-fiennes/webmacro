@@ -1,4 +1,6 @@
 
+-- added back support for old legacy methods in WebContext, and then 
+   fixed up the example applications so they compile.
 -- WebContext is now an interfaced implemented by servlet.WC
 -- WM can now be constructed with a string naming a particular 
    configuration file. Thus you can have multiple different brokers,

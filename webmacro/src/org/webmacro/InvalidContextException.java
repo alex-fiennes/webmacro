@@ -24,7 +24,7 @@ package org.webmacro;
   * The context supplied to a macro did not contain information that
   * the macro required in order to write or evaluate itself.
   */
-public final class InvalidContextException extends WebMacroException
+public class InvalidContextException extends WebMacroException
 {
    public InvalidContextException(String reason) 
    {
