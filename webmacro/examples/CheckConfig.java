@@ -35,11 +35,13 @@ public class CheckConfig extends WMServlet {
             TreeMap sysPropMap = new TreeMap(sysProps);
             context.put("SysProps", sysPropMap.entrySet());
             
-            //javax.servlet.ServletConfig sconf = this.getServletConfig();
+            javax.servlet.ServletConfig sconf = getServletConfig();
+
             TreeMap servletParms = new TreeMap();
-            Enumeration e = getInitParameterNames();
+            Enumeration e = sconf.getInitParameterNames();
             while (e.hasMoreElements()) {
                 String key = (String) e.nextElement();
+                servletParms.put(key, sconf.getInitParameter(key));
                 servletParms.put(key, getInitParameter(key));
             }
             context.put("ServletParms", servletParms.entrySet());
@@ -64,7 +66,16 @@ public class CheckConfig extends WMServlet {
             
             java.net.URL url = getBroker().getResource(Broker.WEBMACRO_DEFAULTS);
             context.put("WEBMACRO_DEFAULTS", url.toExternalForm());
-            url = getBroker().getResource(Broker.WEBMACRO_PROPERTIES);
+            
+            // find the WebMacro.properties file if any
+            url = null;
+            if (!"2.0".equals(jsdkVer)){
+                url = getBroker().getResource("WEB-INF/" + Broker.WEBMACRO_PROPERTIES);
+            }
+            if (url == null){
+                url = getBroker().getResource(Broker.WEBMACRO_PROPERTIES);
+            }
+
             if (url != null){
                 context.put("WEBMACRO_PROPERTIES", url.toExternalForm());
             }
