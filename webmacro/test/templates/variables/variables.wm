@@ -6,6 +6,7 @@ use an object that is not null:
 we should see:  Eric Ridge
 $TestObject
 
+
 use an object that *does* exist in the context, but who's toString() method returns null:
 we should see a 1 line warning that although the object exists, it's value is null
 $TestObject2
