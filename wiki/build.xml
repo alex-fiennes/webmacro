@@ -55,14 +55,30 @@
 		/>
 	</target>
 
-        <target name="verify.dir.install" unless="dir.install">
-        	<fail message="Please define dir.install" />
-        </target>
-        <target name="verify.site.name" unless="site.name">
-		<fail message="Please specify the site.name to install" />
-	</target>
+  <target name="verify.dir.install" unless="dir.install">
+  <fail message="Please define dir.install" />
+  </target>
+  <target name="verify.site.name" unless="site.name">
+  <fail message="Please specify the site.name to install" />
+  </target>
+  
+  <!-- prepares a new site for subsequent install. -->
+  <target name="prepareNewWiki" depends="verify.site.name,prepare">
+    <copy todir="builds/${site.name}" overwrite='true'>
+        <fileset dir="builds/www.webmacro.org" >
+          <includesfile name="FilesDirsToCreateAWiki.txt"/>
+        </fileset>
+    </copy>
+  </target>
+
+    
 
 	<target name="install" depends="verify.dir.install,verify.site.name,prepare,compile,jar">
+    <copy todir="builds/${site.name}" overwrite='false'>
+        <fileset dir="builds/www.webmacro.org" >
+          <excludesfile name="FilesDirsToCreateAWiki.txt"/>
+        </fileset>
+    </copy>
 		<ant antfile="build.xml"
                      inheritAll="false"
                      dir="builds/${site.name}/">

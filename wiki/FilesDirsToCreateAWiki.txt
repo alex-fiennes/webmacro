@@ -1,0 +1,7 @@
+build.xml
+resources.jar
+etc/**
+htdocs/**
+templates/footer.wm
+templates/header.wm
+templates/login.wm

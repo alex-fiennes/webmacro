@@ -1,5 +1,5 @@
+## www.webmacro.org/header.wm
 #set $Response.ContentType = "text/html"
-
 #if ($Page)
    #set $PageName = $Page.Title
 #end
@@ -38,7 +38,7 @@ $WikiUtil.unformatWikiTitle($PageName)</title>
    #end
       
    <td class="HeaderLeft" valign=middle nowrap width="40">
-      <a href="WebMacro" title="WebMacro Homepage"><img align=middle src=images/fish-small.gif width=48 height=44 border=0></a>
+      <a href="WebMacro" title="WebMacro Homepage"><img align=middle src=images/logo-small.gif width=48 height=44 border=0></a>
    </td>
    <td class="HeaderLeft" valign=top nowrap><span class="PageTitle">&nbsp;&nbsp;&nbsp;</span></td>
    <td class="HeaderLeft" valign=middle nowrap>

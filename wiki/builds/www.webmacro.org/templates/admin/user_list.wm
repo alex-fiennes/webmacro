@@ -12,7 +12,7 @@
     <td valign=top>
         #set $prefix=$User.Attribute.LastUserListLetter
         #if ($Form.PREFIX) { #set $prefix="$Form.PREFIX" }
-        #const $abc = "*ABCDEFGIJKLMNOPQRSTUVWXYZ"
+        #set $abc = "*ABCDEFGIJKLMNOPQRSTUVWXYZ"
 
         #foreach $letter in $abc.toCharArray() indexing $i from 0 {
             #if ($i>0) { | }

@@ -17,7 +17,6 @@
         Password: <input type='password' name='password' value=''><br>
         email: <input type='text' name='email' value='$Text.HTMLEncode($UserToUpdate.Attributes.email)' size=45><br>
         is moderator? <input type='checkbox' name='moderator' value='true'  #if($UserToUpdate.IsModerator){ checked}><p>
-
         All Attributes:<br>
         #foreach $attribute in $UserToUpdate.Attributes.entrySet() {
             $attribute.Key = $attribute.Value<br>
