@@ -1,3 +1,0 @@
-<!-- Could not interpret template. Reason: 
-Template: Exception evaluating template StreamTemplate: (stream null)
-org.webmacro.PropertyException$NoSuchMethodException: No public method DoesNotExist() on variable $TestObject of class TestTemplate$TestObject -->
