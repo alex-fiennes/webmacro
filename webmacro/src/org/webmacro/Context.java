@@ -43,7 +43,7 @@ public class Context implements Cloneable {
    private Map _toolbox; // contains tool initializers
    private Map _tools = null;   // contains in-use tools
 
-   private HashMap _globals = null; // local variables
+   private Map _globals = null; // local variables
 
    private Locale _locale = Locale.getDefault();
 
@@ -221,16 +221,16 @@ public class Context implements Cloneable {
 
 
    /**
-    * Set the local variables as a HashMap.<p>
+    * Set the local variables as a Map.<p>
     *
     * One should probably use this method like this:<br>
-    * <code>context.setGlobalVariables ( (HashMap) _myDefaultMap.clone());</code>
+    * <code>context.setGlobalVariables ( (Map) _myDefaultMap.clone());</code>
     * @author Eric B. Ridge 
     * @date Oct 16, 2000
     *
     * @param globalMap the HashMap to use as the global variabls for this Context
     */
-   final public void setGlobalVariables (HashMap globalMap)
+   final public void setGlobalVariables (Map globalMap)
    {
       _globals = globalMap;
    }
