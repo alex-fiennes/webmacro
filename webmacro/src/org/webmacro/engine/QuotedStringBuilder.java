@@ -118,10 +118,10 @@ final class QuotedString extends Vector implements Macro
 	    str.append(o.toString());
 	 } else {    // should only contain Variables and Strings 
             try {
-	       str.append(((Variable) o).evaluate(data));
+	       str.append(((Macro) o).evaluate(data));
             } catch (ClassCastException e) {
                throw new ContextException(
-                     "QuotedString: Expected variable or string, got: " + o);
+                     "QuotedString: Expected macro or string, got: " + o);
             }
 	 }
       }
