@@ -204,7 +204,7 @@ public abstract class Variable implements Macro, Visitable
                else {
                   out.write(context.getEvaluationExceptionHandler()
                             .expand(this, context, 
-                                   new PropertyException.NullValueException(_vname)));
+                                   new PropertyException.NullToStringException(_vname)));
                   context.getLog("engine")
                      .warning("Variable: $" + _vname + " evaluated to null");
                }

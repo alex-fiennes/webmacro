@@ -80,8 +80,8 @@ public class TestAbuse extends TemplateTestCase {
 
       _context.put ("Object", obj);
 
-      assertStringTemplateEquals ("$Object",
-                                  "a better error message");
+      assertStringTemplateMatches("$Object",
+                                  "^<!--.*Object.toString().*null.*-->$");
 
    }
 

@@ -62,6 +62,23 @@ public class PropertyException extends ContextException
 
 
    /**
+    * NullStringException indicates that a variable exists but its
+    * .toString() method returns null
+    */
+
+   public static class NullToStringException extends PropertyException {
+     public String variableName;
+
+     public NullToStringException(String variableName) {
+       super("Attempt to expand variable whose toString() returns null: $" 
+             + variableName);
+       
+       this.variableName = variableName;
+     }
+   }
+
+
+   /**
     * NullValueException indicates that a variable or property
     * exists, but evaluated to null in the context against which it
     * was being evaluated.  

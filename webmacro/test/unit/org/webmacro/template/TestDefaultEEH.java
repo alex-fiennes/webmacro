@@ -115,7 +115,7 @@ public class TestDefaultEEH extends AbstractVariableTestCase {
   // @@@ The behavior should probably be changed for this
    public void testNullVariable () throws Exception {
      assertStringTemplateMatches ("$NullTestObject", 
-          "^<!--.*null value.*\\$NullTestObject.*-->$");
+          "^<!--.*NullTestObject.toString().*null.*-->$");
    }
 
    public void testEvalNullVariable () throws Exception {

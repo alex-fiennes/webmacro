@@ -46,9 +46,9 @@ public class DefaultEvaluationExceptionHandler
                         Context context, 
                         Exception problem) 
    throws PropertyException {
-      if (problem instanceof PropertyException.NoSuchVariableException) 
-         return;
-      else if (problem instanceof PropertyException.NullValueException) 
+      if (problem instanceof PropertyException.NoSuchVariableException
+          || problem instanceof PropertyException.NullValueException
+          || problem instanceof PropertyException.NullToStringException)
          return;
       else if (problem instanceof PropertyException)
          throw (PropertyException) problem;
@@ -69,6 +69,12 @@ public class DefaultEvaluationExceptionHandler
       else if (problem instanceof PropertyException.NullValueException) {
          return errorString("Attempt to dereference null value $" 
                             + variable.getVariableName());
+      }
+      else if (problem instanceof 
+                 PropertyException.NullToStringException) {
+         return errorString("Variable $" 
+                            + variable.getVariableName()
+                            + ".toString() returns null");
       }
       else if (problem instanceof PropertyException)
          throw (PropertyException) problem;
