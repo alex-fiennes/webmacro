@@ -158,17 +158,6 @@ public class Settings {
       load (props, null);
    }
 
-   private static
-   void buildPath(StringBuffer b, String fileName, Enumeration e)
-   {  
-      while (e.hasMoreElements()) {
-         b.append("\t");
-         b.append(e.nextElement().toString());
-         b.append(fileName);
-         b.append("\n");
-      }
-   }
-
    /**
      * Find out if a setting is defined
      */
@@ -177,10 +166,17 @@ public class Settings {
    }
 
    /**
-     * Get a setting
+     * Get a setting.  We trim leading and trailing spaces (since the 
+     * property file loader doesn't) and, if the result is a quoted string,
+     * remove the quotes. 
      */
    public String getSetting(String key) {
-      return _props.getProperty(key);
+     String prop = _props.getProperty(key).trim();
+     if (prop.charAt(0) == '"' &&
+         prop.charAt(prop.length()-1) == '"')
+       prop = prop.substring(1, prop.length()-1);
+
+     return prop;
    }
 
    /**

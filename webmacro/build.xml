@@ -81,7 +81,11 @@
   </target>
 
   <target name="test" depends="compile" >
-    <ant antfile="build-test.xml" target="all" />
+    <ant antfile="test/build.xml" target="all" />
+  </target>
+
+  <target name="test-unit" depends="compile" >
+    <ant antfile="test/build.xml" target="unit" />
   </target>
 
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
