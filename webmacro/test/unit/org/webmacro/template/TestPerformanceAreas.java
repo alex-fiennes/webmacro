@@ -44,7 +44,7 @@ public class TestPerformanceAreas extends TemplateTestCase {
           this.testPublicVersusAccessor();
           po = new PerformanceOperations(iterationCount);
           po.run();
-          report();
+          this.report();
         }
       }
     );
