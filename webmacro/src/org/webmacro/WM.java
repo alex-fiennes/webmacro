@@ -24,6 +24,7 @@ import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
 import org.webmacro.util.java2.*;
+import java.util.*;
 
 
 /**
