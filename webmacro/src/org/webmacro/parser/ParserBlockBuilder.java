@@ -225,7 +225,14 @@ public class ParserBlockBuilder extends BlockBuilder
         else
         {
             Object o = elementAt(size() - 1);
-            if (!(o instanceof String))
+            
+            // NOTE: the test for a zero length string in the following 'if' is 
+            // a work-around for a bug parsing an explicit #begin followed 
+            // immediately by another directive, eg, 
+            // #if ($x) #begin #set $y=0 #end
+            // This can be removed when/if this bug is fixed 
+            // Keats 8-Aug-2003
+            if (!(o instanceof String) || (((String)o).length() == 0))
                 return true;
             else
             {
