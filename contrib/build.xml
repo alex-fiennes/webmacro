@@ -1,0 +1,44 @@
+<project name="WebMacro.Contrib" default="all" basedir=".">
+  <property name="contrib.root" value="contrib"/>
+  <property name="contrib.classes" value="${contrib.root}/contrib-classes"/>
+
+  <!-- the individual source targets in contrib: -->
+  <property name="mgmt" value="${contrib.root}/mgmt/src"/>
+
+
+  <path id="class.path">
+    <fileset dir="../lib/">
+      <include name="*.jar" /> <include name="*.zip" />
+    </fileset>
+    <pathelement path="${java.class.path}" />
+  </path>
+  <property name="class.path.resolved" refid="class.path"/>
+
+  <path id="contrib.class.path">
+    <pathelement location="${contrib.classes}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <target name="contrib-clean">
+    <delete>
+      <fileset dir="${contrib.classes}" />
+    </delete>
+  </target>
+
+  <target name="contrib-prepare">
+    <mkdir  dir="${contrib.classes}"/>
+  </target>
+
+  <target name="mgmt-compile" depends="contrib-prepare">
+    <javac srcdir="${mgmt}" destdir="${contrib.classes}"
+           debug="on" optimize="off" deprecation="off">
+      <classpath refid="contrib.class.path"/>
+    </javac>
+  </target>
+
+  <target name="all" depends="contrib-clean, contrib-prepare, 
+		mgmt-compile
+		" />
+  <target name="clean" depends="contrib-clean" />
+</project>
+
