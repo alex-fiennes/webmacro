@@ -26,6 +26,7 @@ public class TestTemplate extends AbstractTemplateEvaluator
       public String getFirstName () { return firstName; }
       public String getLastName () { return lastName; }
       public String toString () { return firstName + " " + lastName; }      public String returnNull () { return null; }      public void voidMethod() { ; }
+      public String throwException () throws Exception { throw new Exception ("boo!"); }
                  
    }
              
