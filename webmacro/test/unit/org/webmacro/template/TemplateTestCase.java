@@ -57,11 +57,6 @@ public abstract class TemplateTestCase extends TestCase {
     */
    protected abstract void stuffContext (Context context) throws Exception;
 
-   /**
-    * Utility method to get the current template path.
-    */
-  
-
   /**
    * Utility method to convert a template file to a string for use in
    * the test suite.
@@ -70,27 +65,26 @@ public abstract class TemplateTestCase extends TestCase {
   public String templateFileToString(String fileReference) throws Exception {
     InputStream in = null;
     try {
-      in = new FileInputStream(fileReference);
-    }
-    catch (FileNotFoundException e) {
-      in = _wm.getBroker().getResourceAsStream(fileReference);
-      if (in == null) throw new Exception(fileReference + " not found");
-    }
-    byte[] value = new byte[in.available()];
-    in.read(value);
-    in.close();
-    String string = new String(value);
-    System.out.println("file content=" + string);
-    return string;
-  }
-  
-  /**
-   * Executes a file template.
-   */
-  public String executeFileTemplate(String fileReference) throws Exception {
-    return executeStringTemplate(templateFileToString(fileReference));
-  }
-  
+   	 	in = new FileInputStream(fileReference);
+   	}
+   	catch (FileNotFoundException e) {
+   	  in = _wm.getBroker().getResourceAsStream(fileReference);
+   	  if (in == null) throw new Exception(fileReference + " not found");
+   	}
+	 	byte[] value = new byte[in.available()];
+	 	in.read(value);
+	 	in.close();
+	 	String string = new String(value);
+	 	return string;
+	}
+
+	/**
+	 * Executes a file template.
+	 */
+	public String executeFileTemplate(String fileReference) throws Exception {
+	  return executeStringTemplate(templateFileToString(fileReference));
+	}
+
   public String executeStringTemplate(String templateText) throws Exception {
     Template template = new StringTemplate(_wm.getBroker(), templateText);
     FastWriter fw = FastWriter.getInstance(_wm.getBroker(), null, "UTF8");
