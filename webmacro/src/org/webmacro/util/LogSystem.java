@@ -124,6 +124,24 @@ final public class LogSystem {
       }
    }
 
+    /**
+     * Remove the specified LogSystem instance from the internal
+     * cache of LogSystems.
+     */ 
+    public static void removeInstance(LogSystem instance) {
+        synchronized (_instances) {
+            if (_instances.containsValue(instance)) {
+                for (Iterator itr = _instances.entrySet().iterator(); itr.hasNext();) {
+                    Map.Entry e = (Map.Entry) itr.next();
+                    if (e.getValue() == instance) {
+                        itr.remove();
+                    }
+                }
+            }
+        }
+    }
+
+
    /////////////////////////////////////////////
 
    final private String _category;

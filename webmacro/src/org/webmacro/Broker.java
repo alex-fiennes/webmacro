@@ -748,6 +748,10 @@ public class Broker {
 	public synchronized void stopClient() {
 		if ( --_count == 0 ) {
 			shutdown();
+
+            // make sure to cleanup the logging system
+            // if no more references to this Broker are around
+            LogSystem.removeInstance(_ls);
 		}
 	}
 
