@@ -43,6 +43,21 @@ public class TestGetSet extends TemplateTestCase {
     public Object[] getArray () {
        return objArray;
     }
+    
+    private java.util.HashMap myProps = new java.util.HashMap();
+    
+    public Object getMyProp(String name){
+       return myProps.get(name);
+    }
+    
+    public void setMyProp(String name, Object val){
+       myProps.put(name, val);
+    }
+    
+    public java.util.Map getProps(){
+       return myProps;
+    }
+       
   }
 
   public static TestObject to = new TestObject(), to2 = new TestObject();
@@ -116,6 +131,19 @@ public class TestGetSet extends TemplateTestCase {
       to2.obj = new Object();
       assertStringTemplateEquals("$TestObject2.setObjectValue($foo)", "");
       assertTrue(to2.obj == null);
+   }
+
+   /** test the binary accessor/mutator syntax */
+   public void testBinaryMutator() throws Exception {
+      String tmpl = "#set $TestObject.ObjectValue='foo'";
+      assertStringTemplateEquals(tmpl, "");
+      assertTrue(to.obj.equals("foo"));
+      
+      tmpl = "#set $TestObject.MyProp.Foo='Bar'\n$TestObject.MyProp.Foo";
+      assertStringTemplateEquals(tmpl, "Bar");
+      
+      tmpl = "#set $TestObject.Props.MyProp=123\n$TestObject.Props.MyProp";
+      assertStringTemplateEquals(tmpl, "123");
    }
 
    /** call the ".length" field of an array */
