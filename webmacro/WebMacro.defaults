@@ -209,6 +209,7 @@ Directives.alternate:  org.webmacro.directive.AlternateDirective
 Directives.param:      org.webmacro.directive.ParamDirective
 Directives.type:       org.webmacro.directive.TypeDirective
 Directives.default:    org.webmacro.directive.DefaultDirective
+Directives.count:      org.webmacro.directive.CountDirective
 
 
 # these are currently broken
