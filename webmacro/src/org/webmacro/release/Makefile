@@ -1,5 +1,5 @@
 
-CLASSPATH=/home/justin/resin/lib/jsdk22.jar:/home/justin
+CLASSPATH=/usr/local/resin/lib/jsdk22.jar:/home/justin
 
 TARGETS = 	webmacro/webmacro.jar \
             	webmacro/src.zip \
@@ -50,7 +50,7 @@ dist: version $(TARGETS)
 	flip -m webmacro/examples/*.java
 	flip -m webmacro/docs/License.html
 	flip -m webmacro/docs/COPYING
-	flip -m webmacro/docs/LIENSE
+	flip -m webmacro/docs/LICENSE
 	flip -m webmacro/IMPORTANT
 	zip -r webmacro.`cat version`.zip webmacro
 	flip -u webmacro/RELEASE-NOTES.html
