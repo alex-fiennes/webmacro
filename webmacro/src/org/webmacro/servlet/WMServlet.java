@@ -615,6 +615,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro {
          out = null;
          _log.debug("Using Writer instead of OutputStream");
       }
+      response.setContentLength(fw.size());
       if (out != null) {
          fw.writeTo(out);
       }
