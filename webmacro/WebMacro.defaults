@@ -163,9 +163,17 @@ Directives.comment:    org.webmacro.directive.CommentDirective
 Directives.foreach:    org.webmacro.directive.ForeachDirective
 Directives.alternate:  org.webmacro.directive.AlternateDirective
 Directives.param:      org.webmacro.directive.ParamDirective
+Directives.type:       org.webmacro.directive.TypeDirective
 # Directives.encode:     org.webmacro.directive.EncodeDirective
 # Directives.escape:     org.webmacro.directive.EscapeDirective
 # Directives.silence:    org.webmacro.directive.SilenceDirective
+
+#
+# Directive Configuration
+#
+
+TypeDirective.Enabled = true
+
 
 # The following are tools which are added to your WebContext. You can 
 # customize your WebContext with special tools of your own by adding 
