@@ -92,7 +92,7 @@ public final class QuotedStringBuilder extends Vector implements Builder
   *
   * </pre>Here the text inside the quotes is the QuotedString.
   */
-final class QuotedString extends Vector implements Macro 
+final class QuotedString extends Vector implements Macro, Visitable
 {
 
    /**
@@ -146,4 +146,17 @@ final class QuotedString extends Vector implements Macro
    {
       out.write(evaluate(data).toString()); // evaluate never returns null
    }
+
+  public void accept(TemplateVisitor v) { 
+    v.beginBlock();
+    for (int i=0; i<elementCount; i++) {
+      Object o = elementData[i];
+      if (! (o instanceof Macro)) 
+        v.visitString((String) o);
+      else
+        v.visitMacro((Macro) o);
+    }
+    v.endBlock(); 
+  } 
+
 }

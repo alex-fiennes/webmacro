@@ -831,7 +831,7 @@ Object[] FormalArgList() : {
   [ <LPAREN> 
     [ [<WS>] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); } 
     ( 
-      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name); } 
+      <COMMA> [ <WS> ] <DOLLAR> name=<WORD> [<WS>] { list.add(name.image); } 
     ) * 
   ] 
     <RPAREN> 

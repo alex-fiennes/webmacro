@@ -58,7 +58,7 @@ public class MacroBuilder implements Builder
     MacroDefinition md = bc.getMacro(name);
     if (md == null)
       throw new BuildException("No such macro " + name);
-    Object[] args = (Object[]) argsBuilder.buildAsArray(bc);
+    Object[] args = argsBuilder.buildAsArray(bc);
     return md.expand(args, bc);
   }
 }
