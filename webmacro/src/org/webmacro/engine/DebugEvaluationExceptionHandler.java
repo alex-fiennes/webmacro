@@ -47,7 +47,8 @@
  *
  * @author Marcel Huijkman (Thanks to Brian Goetz & Keats Kirsch)
  *
- *	@version	03-12-2001
+ *	@since	03-12-2001
+ *	@version	04-02-2002
  */
 
 package org.webmacro.engine;
@@ -86,19 +87,19 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 	}
 
 
-	private String handleError( Variable variable, Context context, Exception problem )
+	private String handleError( Variable variable, Context context, Exception problem ) throws PropertyException
 	{
 		String strError;
 
 		ArrayList arlErrors = null;
-                PropertyException propEx = null;
-                if (problem instanceof PropertyException)
-                    propEx = (PropertyException)problem;
-                else 
-                    propEx = new PropertyException(
-                        "Error expanding $" + variable.getVariableName());
-                propEx.setContextLocation(context.getCurrentLocation());
-                strError = propEx.getMessage();
+		PropertyException propEx = null;
+		if ( problem instanceof PropertyException )
+			propEx = ( PropertyException ) problem;
+		else
+			propEx = new PropertyException(
+				"Error expanding $" + variable.getVariableName() );
+		propEx.setContextLocation( context.getCurrentLocation() );
+		strError = propEx.getMessage();
 
 		if ( context.containsKey( "WMERROR" ) )
 		{
@@ -107,26 +108,27 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 		else
 		{
 			arlErrors = new ArrayList();
-        		context.put( "WMERROR", arlErrors );
+			context.put( "WMERROR", arlErrors );
 		}
 		arlErrors.add( strError );
 
 		if ( _log != null )
 		{
-			_log.warning( strError, problem );
+			_log.warning( strError, propEx );
 		}
-		return errorString( strError );
+		// and rethrow it
+		throw (PropertyException) propEx;
 	}
 
 
-	public String warningString( String warningText )
+	public String warningString( String warningText ) throws PropertyException
 	{
-		return "<!-- " + warningText + " -->";
+		throw new PropertyException( "Evaluation warning: " + warningText );
 	}
 
 
-	public String errorString( String errorText )
+	public String errorString( String errorText ) throws PropertyException
 	{
-		return "<!-- " + errorText + " -->";
+		throw new PropertyException( "Evaluation error: " + errorText );
 	}
 }
