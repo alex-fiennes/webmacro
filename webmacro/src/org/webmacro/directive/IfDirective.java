@@ -70,8 +70,9 @@ class IfDirective extends Directive {
     DirectiveArgs[] elseifArgs = null;
 
     // If condition is static and true -- just return the block
-    if (!cMacro && Expression.isTrue(c)) 
+    if (!cMacro && Expression.isTrue(c)) {
       return (Block) builder.getArg(IF_BLOCK, bc);
+    }
 
     elseArgs = builder.getSubdirective(IF_ELSE);
     elseifArgs = builder.getRepeatingSubdirective(IF_ELSEIF);
@@ -86,6 +87,7 @@ class IfDirective extends Directive {
       }
       else {
         // Just one condition -- the IF condition, and maybe an ELSE block
+        nConditions = 1;
         conditions = new Macro[1];
         blocks     = new Block[1];
         conditions[0] = (Macro) c;
@@ -100,9 +102,7 @@ class IfDirective extends Directive {
       // we'll have.  We start with 1 + count(#elseof), and if any can be
       // folded out at compile time, we just won't use the whole thing
       int i=0;
-      nConditions=elseifCount;
-      if (cMacro)
-        ++nConditions;
+      nConditions=elseifCount + (cMacro? 1 : 0);
       conditions = new Macro[nConditions];
       blocks     = new Block[nConditions];
       if (cMacro) {
