@@ -50,14 +50,20 @@ final public class CGI_Impersonator
      * This is the request object from the WebContext
      */
    final HttpServletRequest requst_;
+   
+    final ServletContext sc_;
 
    /**
      * Use the supplied HttpServletRequest to produce the results 
      * below. Really this class just forwards methods to this sub 
      * object in order to provide a familiar interface to CGI programmers.
      */
-   CGI_Impersonator(final HttpServletRequest r) {
-      requst_ = r;
+   CGI_Impersonator(WebContext wc) {
+      requst_ = wc.getRequest();
+      // this is not very nice, but I don't see any other
+      // possibility to get the servlet context. We should
+      // provide a method in WebContext to hide this from our users.
+      sc_ = ((ServletBroker)wc.getBroker()).getServletContext();
    }
 
    /**
@@ -66,13 +72,12 @@ final public class CGI_Impersonator
    final public String getSERVER_NAME() 
       { return requst_.getServerName(); }
 
-   /*
-    * XXX: This is the only CGI variable we can't do, because we 
-    * don't have the servlet context available here.
-    *
-    *final public String getSERVER_SOFTWARE() 
-    *  { getServletContext().getServerInfo(); }
-    */
+    /**
+     * Return the server info
+     */
+    final public String getSERVER_SOFTWARE() 
+    { return sc_.getServerInfo(); }
+    
 
    /**
      * Return the server protocol
@@ -119,7 +124,7 @@ final public class CGI_Impersonator
      *
      */
    final public String getDOCUMENT_ROOT()
-      { return requst_.getRealPath("/"); }
+      { return sc_.getRealPath("/"); }
 
    /**
      * In a GET request, return the query string that was submitted, if any

@@ -37,7 +37,7 @@ public class CGITool implements ContextTool
    {
       try {
          WebContext wc = (WebContext) context;
-         CGI_Impersonator cgi = new CGI_Impersonator(wc.getRequest());
+         CGI_Impersonator cgi = new CGI_Impersonator(wc);
          return cgi;
       } catch (ClassCastException ce) {
          throw new PropertyException(
