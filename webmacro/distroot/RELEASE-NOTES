@@ -29,6 +29,8 @@ Changes in this Release
 - logging API now accepts "Throwable"s instead of "Exception"s. (eric)
    This one might require you to recompile your classes. 
 
+- the syntax for #default has changed to:
+     #default $x = 3
 
 Changes Prior to this Release
 -----------------------------
