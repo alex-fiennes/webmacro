@@ -48,6 +48,31 @@ public class ParserBlockBuilder extends BlockBuilder {
     literalMark = size();
   } 
 
+  private final static int eatWs(String s, int pos) {
+    while (pos >= 0 && Character.isSpaceChar(s.charAt(pos)))
+      pos--;
+    return pos;
+  }
+
+  private final static int eatOneWs(String s, int pos) {
+    if (pos >= 0 && Character.isSpaceChar(s.charAt(pos)))
+      pos--;
+    return pos;
+  }
+
+  private final static int eatNl(String s, int pos) {
+    if (pos >= 0) {
+      if (s.charAt(pos) == '\r')
+        pos--;
+      else if (s.charAt(pos) == '\n') {
+        pos--;
+        if (pos >= 0 && s.charAt(pos) == '\r')
+          pos--;
+      }
+    }
+    return pos;
+  }
+
   final public void eatTrailingWs() {
     int i, j;
 
@@ -59,9 +84,7 @@ public class ParserBlockBuilder extends BlockBuilder {
     if (! (o instanceof String)) 
       return;
     String s = (String) o;
-    j = s.length() - 1;
-    while (j >= 0 && Character.isSpaceChar(s.charAt(j)))
-      j--;
+    j = eatWs(s, s.length() - 1);
 
     if (j < 0)
       remove(i);
@@ -82,20 +105,50 @@ public class ParserBlockBuilder extends BlockBuilder {
     if (! (o instanceof String)) 
       return;
     String s = (String) o;
-    j = s.length() - 1;
-    while (j >= 0 && Character.isSpaceChar(s.charAt(j)))
-      j--;
-    if (j >= 0) {
-      if (s.charAt(j) == '\r')
-        j--;
-      else if (s.charAt(j) == '\n') {
-        j--;
-        if (j >= 0 && s.charAt(j) == '\r')
-          j--;
-      }
-      while (j >= 0 && Character.isSpaceChar(s.charAt(j)))
-        j--;
-    }
+    j = eatWs(s, s.length() - 1);
+    j = eatNl(s, j);
+
+    if (j < 0) 
+      remove(i);
+    else if (j < s.length() - 1)
+      setElementAt(s.substring(0, j+1), i);
+    markLiteral();
+  }
+
+  final public void eatTrailingWsNlWs() {
+    int i, j;
+
+    i = size() - 1;
+    if ( i < 0 || i+1 == literalMark ) 
+      return;
+
+    Object o = elementAt(i);
+    if (! (o instanceof String)) 
+      return;
+    String s = (String) o;
+    j = eatWs(s, s.length() - 1);
+    j = eatNl(s, j);
+    j = eatWs(s, j);
+
+    if (j < 0) 
+      remove(i);
+    else if (j < s.length() - 1)
+      setElementAt(s.substring(0, j+1), i);
+    markLiteral();
+  }
+
+  final public void eatOneWs() {
+    int i, j;
+
+    i = size() - 1;
+    if ( i < 0 || i+1 == literalMark ) 
+      return;
+
+    Object o = elementAt(i);
+    if (! (o instanceof String)) 
+      return;
+    String s = (String) o;
+    j = eatOneWs(s, s.length() - 1);
 
     if (j < 0) 
       remove(i);

@@ -331,7 +331,7 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
     return Conditional();
       
   case Directive.ArgType_BLOCK: {
-    OptionalWsNlWs();
+    BeforeBlock();
     SetState(DEFAULT);
     BlockBuilder b;
     b = Block(descriptor.hasBreakingSubdirectives
@@ -342,7 +342,7 @@ Object parse_arg(DirectiveDescriptor descriptor, ArgDescriptor arg) {
   }
 
   case Directive.ArgType_LITBLOCK: {
-    OptionalWsNlWs();
+    BeforeBlock();
     SetState(DEFAULT);
     BlockBuilder b = LiteralBlock();
     SetState(WM);
@@ -485,7 +485,7 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
       parse_args(descriptor, subd.args, da);
     }
   }
-  OptionalWs();
+  OptionalWsNl();
     
   return db;
 }
@@ -493,10 +493,35 @@ DirectiveBuilder parse_directive(String directive) throws ParseException {
 
 /* Utility productions used by above JavaCode productions (State: WM) */
 
-void OptionalWsNlWs() : {
+void EatWsNlIfNl(BlockBuilder b) : {
+  int entryState = token_source.curLexState;
 }
 {
-  [ <WS> ] [ <NEWLINE> [ <WS> ] ]
+  { SetState(WM); }
+  [ LOOKAHEAD( [<WS>] <NEWLINE> ) [<WS>]<NEWLINE> ]
+  { SetState(entryState); }
+}
+
+void EatWsNlOrSpace(BlockBuilder b) : {
+  int entryState = token_source.curLexState;
+  Token w, n=null;
+}
+{
+  { SetState(WM); }
+  (
+      LOOKAHEAD(<NEWLINE>) <NEWLINE> 
+      | LOOKAHEAD(<WS>) 
+        ( w=<WS> [ LOOKAHEAD(<NEWLINE>) n=<NEWLINE> ] 
+          { if (n == null) b.addElement(w.image.substring(1)); } 
+        )
+  )?
+  { SetState(entryState); }
+}
+
+void BeforeBlock() : {
+}
+{
+  [ <WS> ] [ <NEWLINE> [ LOOKAHEAD(<WS> ( <BEGIN> | <LBRACE> ) ) <WS> ] ]
 }
 
 void OptionalWsNl() : {
@@ -514,7 +539,7 @@ void OptionalWs() : {
 void SubdirectiveStart() : {
 }
 { 
-  OptionalWsNlWs() <POUND> <WORD> [ <WS> ] 
+  [ LOOKAHEAD( [<WS>]<NEWLINE> ) [<WS>]<NEWLINE> ] <POUND> <WORD> [ <WS> ] 
 }
 
 
@@ -860,7 +885,7 @@ void Comment(ParserBlockBuilder b) : {
   <POUNDPOUND>
   { SetState(COMMENT); } 
   ( LOOKAHEAD( { b.directiveOk() } ) 
-      [ <RESTOFLINE> ] { b.eatTrailingWsNl(); }
+      [ <RESTOFLINE> ] { b.eatTrailingWs(); }
     | { b.addElement("##"); }
   ) 
   { SetState(DEFAULT); }
@@ -945,19 +970,20 @@ BlockBuilder Block(Subdirective[] subdirectives) : {
 { 
   { blockStack.push(subdirectives); }
   ( 
-    ( <LBRACE> EatWsNl()
+    LOOKAHEAD(<LBRACE>) 
+    ( <LBRACE> EatWsNlIfNl(block) 
       ( 
         WMContent(block) 
         | (t=<BEGIN> | t=<END>)     { block.addElement(t.image); }
       ) * 
-      <RBRACE> EatWsNl()
+      <RBRACE> 
     )
-  | ( [ <BEGIN> ] EatWsNl()
+  | ( [ <BEGIN> EatWsNlOrSpace(block) ] 
       ( WMContentNoDirective(block) 
         | (t=<LBRACE> | t=<RBRACE>) { block.addElement(t.image); }
         | LOOKAHEAD(<POUND>, { lookahead_not_breaking_subd() }) 
           Directive(block)
-      ) * [ <END> ] { block.eatTrailingWsNl(); } EatWsNl() 
+     ) * [ <END> { block.eatOneWs(); } ] 
     )
   )
   { blockStack.pop(); }

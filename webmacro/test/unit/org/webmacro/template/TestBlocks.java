@@ -59,7 +59,7 @@ public class TestBlocks extends TemplateTestCase {
 
 
       _context.put ("foo", "foo");
-      assertStringTemplateEquals (tmpl, "pass");
+      assertStringTemplateEquals (tmpl, "pass\n");
    }
    
    public void testIfEnd () throws Exception {
@@ -69,7 +69,7 @@ public class TestBlocks extends TemplateTestCase {
 
 
       _context.put ("foo", "foo");
-      assertStringTemplateEquals (tmpl, "pass");
+      assertStringTemplateEquals (tmpl, "pass\n");
    }
 
 

@@ -12,11 +12,6 @@ import org.apache.regexp.RE;
 
 /**
  * tests whitespace.
- * most of these fail.  
- *
- * I believe all #directives and block tokens ({,},#begin,#end) should 
- * consume ALL whitespace to their right up to and including the first 
- * EOL character (\n or \r\n combo)
  */
 public class TestWhitespace extends TemplateTestCase {
 
@@ -36,29 +31,22 @@ public class TestWhitespace extends TemplateTestCase {
    // test whitespace before a directive
    //
 
-   public void testBeforeDirective1 () throws Exception {
-      String tmpl = "  \n#if(true){pass}";      
-      assertStringTemplateEquals (tmpl, "pass");
+   public void testBeforeDirective () throws Exception {
+      assertStringTemplateEquals ("  \n#if(true){pass}", "  pass");
+      assertStringTemplateEquals ("\n   #if(true){pass}", "pass");
+      assertStringTemplateEquals ("\n  \n#if(true){pass}", "\n  pass");
+
+      assertStringTemplateEquals("#set $a=1\n#set $b=2\n", "");
+      assertStringTemplateEquals("Hello\n#if(true)\n{ Brian }\n", "Hello Brian ");
    }
  
-   public void testBeforeDirective2 () throws Exception {
-      String tmpl = "\n   #if(true){pass}";
-      assertStringTemplateEquals (tmpl, "pass");
-   }
-
-   public void testBeforeDirective3 () throws Exception {
-      String tmpl = "\n  \n#if(true){pass}";  
-      assertStringTemplateEquals (tmpl, "\npass");
-   } 
-
-
    //
    // test whitespace after a directive
    //
 
    public void testAfterDirective () throws Exception {
-      String tmpl = "#set $a = \"foo\"   \npass";   
-      assertStringTemplateEquals (tmpl, "\npass");
+      assertStringTemplateEquals ("#set $a = \"foo\"   \npass", "pass");
+      assertStringTemplateEquals ("  #set  $a = \"foo\"   \npass", "pass");
    }
 
 
@@ -66,19 +54,19 @@ public class TestWhitespace extends TemplateTestCase {
    // test whitespace after a begin 
    //
 
-   public void testAfterBeginBlock1 () throws Exception {
-      String tmpl = "#if(true)#begin  \npass#end";             
-      assertStringTemplateEquals (tmpl, "pass");
-   }
-
-   public void testAfterBeginBlock2 () throws Exception {
-      String tmpl = "#if(true){  \npass}";            
-      assertStringTemplateEquals (tmpl, "pass");
-   }
-
-   public void testAfterBeginBlock3 () throws Exception {
-      String tmpl = "#if(true)  \npass #end";
-      assertStringTemplateEquals (tmpl, "pass");
+   public void testAfterBegin () throws Exception {
+      assertStringTemplateEquals ("#if(true)#begin  \npass#end", "pass");
+      assertStringTemplateEquals ("#if(true)#begin  \n pass#end", " pass");
+      assertStringTemplateEquals ("#if(true)#begin  pass#end", " pass");
+      assertStringTemplateEquals ("#if(true)#begin pass#end", "pass");
+      assertStringTemplateEquals ("#if(true) {pass}", "pass");
+      assertStringTemplateEquals ("#if(true){ pass}", " pass");
+      assertStringTemplateEquals ("#if(true){\n pass}", " pass");
+      assertStringTemplateEquals ("#if(true){ \n pass}", " pass");
+      assertStringTemplateEquals ("#if(true){  \npass}", "pass");
+      assertStringTemplateEquals ("#if(true)  \npass #end", "pass");
+      assertStringTemplateEquals ("#if(true) pass #end", "pass");
+      assertStringTemplateEquals ("#if(true)  \n pass #end", " pass");
    }
 
 
@@ -86,39 +74,48 @@ public class TestWhitespace extends TemplateTestCase {
    // test whitespace before an end
    //
 
-   public void testBeforeEnd1 () throws Exception {
-      String tmpl = "#if(true)#begin pass\n#end";
-      assertStringTemplateEquals (tmpl, "pass");
+   public void testBeforeEnd () throws Exception {
+      assertStringTemplateEquals ("#if(true)#begin pass #end", "pass");
+      assertStringTemplateEquals ("#if(true)#begin  pass  #end", " pass ");
+      assertStringTemplateEquals ("#if(true)#begin pass \n #end", "pass \n");
+      assertStringTemplateEquals ("#if(true)#begin pass \n#end", "pass \n");
+      assertStringTemplateEquals ("#if(true)#begin pass\n #end", "pass\n");
+      assertStringTemplateEquals ("#if(true)#begin pass  \n  #end", "pass  \n ");
+      assertStringTemplateEquals ("#if(true){pass}", "pass");
+      assertStringTemplateEquals ("#if(true){pass \n}", "pass \n");
+      assertStringTemplateEquals ("#if(true){pass\n }", "pass\n ");
+      assertStringTemplateEquals ("#if(true){pass  }", "pass  ");
+      assertStringTemplateEquals ("#if(true){pass  \n  }", "pass  \n  ");
+      assertStringTemplateEquals ("#if(true) pass #end", "pass");
+      assertStringTemplateEquals ("#if(true) pass  #end", "pass ");
+      assertStringTemplateEquals ("#if(true) pass \n#end", "pass \n");
+      assertStringTemplateEquals ("#if(true) pass\n #end", "pass\n");
+      assertStringTemplateEquals ("#if(true) pass \n #end", "pass \n");
+      assertStringTemplateEquals ("#if(true) pass  \n  #end", "pass  \n ");
    }
  
-   public void testBeforeEnd2 () throws Exception {
-      String tmpl = "#if(true){pass\n}";
-      assertStringTemplateEquals (tmpl, "pass\n");
-   }
- 
-   public void testBeforeEnd3 () throws Exception {
-      String tmpl = "#if(true) pass\n#end";
-      assertStringTemplateEquals (tmpl, "pass");
-   }   
-
-
    //
    // test whitespace after an end
    //
 
-   public void testAfterEndBlock1 () throws Exception {
-      String tmpl = "#if(true)#begin pass #end\n";
-      assertStringTemplateEquals (tmpl, "pass");
-   }
- 
-   public void testAfterEndBlock2 () throws Exception {
-      String tmpl = "#if(true){pass}\n";
-      assertStringTemplateEquals (tmpl, "pass");
-   }
-
-   public void testAfterEndBlock3 () throws Exception {
-      String tmpl = "#if(true) pass #end\n";
-      assertStringTemplateEquals (tmpl, "pass");
+   public void testAfterEnd () throws Exception {
+      assertStringTemplateEquals ("#if(true)#begin pass #end", "pass");
+      assertStringTemplateEquals ("#if(true)#begin pass #end\n", "pass");
+      assertStringTemplateEquals ("#if(true)#begin pass #end \n", "pass");
+      assertStringTemplateEquals ("#if(true)#begin pass #end\n ", "pass ");
+      assertStringTemplateEquals ("#if(true)#begin pass #end \n ", "pass ");
+      assertStringTemplateEquals ("#if(true){pass}", "pass");
+      assertStringTemplateEquals ("#if(true){pass}\n", "pass");
+      assertStringTemplateEquals ("#if(true){pass} \n", "pass");
+      assertStringTemplateEquals ("#if(true){pass}\n ", "pass ");
+      assertStringTemplateEquals ("#if(true){pass} \n ", "pass ");
+      assertStringTemplateEquals ("#if(true){pass}  \n  ", "pass  ");
+      assertStringTemplateEquals ("#if(true) pass #end", "pass");
+      assertStringTemplateEquals ("#if(true) pass #end\n", "pass");
+      assertStringTemplateEquals ("#if(true) pass #end \n", "pass");
+      assertStringTemplateEquals ("#if(true) pass #end\n ", "pass ");
+      assertStringTemplateEquals ("#if(true) pass #end \n ", "pass ");
+      assertStringTemplateEquals ("#if(true) pass #end  \n  ", "pass  ");
    }
 
    public void testSpacesInParens() throws Exception {
@@ -129,6 +126,38 @@ public class TestWhitespace extends TemplateTestCase {
       assertStringTemplateEquals(assn + "$s.substring( 1 ,4)", "tri");
       assertStringTemplateEquals(assn + "$s.substring( 1 , 4)", "tri");
       assertStringTemplateEquals(assn + "$s.substring( 1 , 4 )", "tri");
+   }
+
+   public void testForeach() throws Exception {
+      assertStringTemplateEquals("#foreach $i in $Array {$i}", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array { $i}", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array {$i }", "one two three ");
+      assertStringTemplateEquals("#foreach $i in $Array { $i }", " one  two  three ");
+      assertStringTemplateEquals("#foreach $i in $Array {\n$i}", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array {$i\n}", "one\ntwo\nthree\n");
+      assertStringTemplateEquals("#foreach $i in $Array { \n $i}", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array {$i \n }", "one \n two \n three \n ");
+      assertStringTemplateEquals("#foreach $i in $Array { \n $i \n }", " one \n  two \n  three \n ");
+
+      assertStringTemplateEquals("#foreach $i in $Array #begin $i#end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array #begin  $i#end", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array #begin $i #end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array #begin  $i #end", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array #begin \n$i#end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array #begin $i\n#end", "one\ntwo\nthree\n");
+      assertStringTemplateEquals("#foreach $i in $Array #begin  \n $i#end", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array #begin $i \n #end", "one \ntwo \nthree \n");
+      assertStringTemplateEquals("#foreach $i in $Array #begin  \n $i \n #end", " one \n two \n three \n");
+
+      assertStringTemplateEquals("#foreach $i in $Array $i#end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array  $i#end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array $i #end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array  $i #end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array \n$i#end", "onetwothree");
+      assertStringTemplateEquals("#foreach $i in $Array $i\n#end", "one\ntwo\nthree\n");
+      assertStringTemplateEquals("#foreach $i in $Array  \n $i#end", " one two three");
+      assertStringTemplateEquals("#foreach $i in $Array $i \n #end", "one \ntwo \nthree \n");
+      assertStringTemplateEquals("#foreach $i in $Array  \n $i \n #end", " one \n two \n three \n");
    }
 
    public void testColor() throws Exception {
