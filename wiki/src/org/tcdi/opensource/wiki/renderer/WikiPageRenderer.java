@@ -76,7 +76,7 @@ public abstract class WikiPageRenderer {
      *
      * This method should <b>not</b> close the output stream.
      */
-    public void render (WikiPage page, OutputStream out) throws IOException, RenderException {
+    public void render (WikiPage page, OutputStream out) throws IOException, WikiPageRenderer.RenderException {
         out.write (render (page).getBytes());
     }
     
@@ -86,7 +86,7 @@ public abstract class WikiPageRenderer {
      * methods.  Except for URL's; they are delegated to the URLRenderer
      * provided during construction of this class.
      */
-    public String render (WikiPage page) throws RenderException {
+    public String render (WikiPage page) throws WikiPageRenderer.RenderException {
         WikiData[] dataElement = page.getData();
         StringBuffer sb = new StringBuffer (2048);
         
