@@ -16,6 +16,12 @@ public interface LogTarget {
    public void log(String name, String level, String message, Exception e);
 
    /**
+     * Flush the log. This will be called after writing methods that
+     * are notice, warning, or error messages.
+     */
+   public void flush();
+
+   /**
      * Register a new Log object. Typically a LogTarget will look at 
      * l.getType() and then decide to call l.addTarget(this,N) several
      * times for suitable values of N--in order to set itself up to

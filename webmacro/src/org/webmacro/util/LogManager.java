@@ -14,16 +14,55 @@ import org.webmacro.Log;
   * Central registration class which controls the relationship between
   * a Log and a LogTarget. 
   */
-public class LogManager {
+final public class LogManager {
 
    private Hashtable  _sources = new Hashtable();
    private List _targets = new LinkedList();
-   private Log _log;
+   private Log _log = getLog("log");
 
+   /**
+     * See getSystemLog()
+     */
+   private final static LogSource _sysLog = new LogSource("sys") {
+      final private LogFile _err = 
+            new LogFile("System.err", System.err, "{1,time} {2}:{3} {4}", 
+               "WARNING", null, true);
+      protected void log(int level, String msg, Exception e) {
+         super.log(level,msg,e); 
+         if ((level >= LogSource.WARNING) && hasTargets()) {
+               _err.log("sys", LEVELS[level],msg,e);
+         }
+      }
+   };
 
+   // instance initializer block: we make sure all constructors do this
+   {
+      addSource(_sysLog); 
+   }
+
+   /**
+     * Create a new LogManager with no LogTarget objects
+     */
+   public LogManager() { }
+
+   /**
+     * Create a new LogManager with a LogFile set up from the 
+     * supplied Properties. The Properties look like this:
+     * <pre>
+         LogFile: filename
+         LogFormat: {0} {1} {2} {3}   # {0} is a date, 1,2,3 strings
+         LogExceptions: true|false meaning stack traces or not?
+         LogLevel: ALL|DEBUG|INFO|NOTICE|WARNING|ERROR
+         LogLevel.source: ALL|..|ERROR, but just for log "source"
+       </pre>
+     * There are two build in log sources "sys" which is a generic
+     * system log source, and "log" which is for messages from 
+     * the log manager itself. Other sources are created by your
+     * application when it calls getLog(). You can get the system
+     * log by calling getSystemLog(). It can be used from locations
+     * where accessing a log manager instance is infeasible.
+     */
    public LogManager(Properties config) {
-
-      _log = getLog("log");
 
       String fileName = config.getProperty("LogFile", null);
       if ( ("System.error").equalsIgnoreCase(fileName)
@@ -59,14 +98,17 @@ public class LogManager {
   
       LogFile lf;
       try {
-         lf = new LogFile(fileName, format, logLevel, levels, trace); 
+         lf = (fileName != null) ?
+            new LogFile(fileName,format,logLevel,levels,trace) :
+            new LogFile("stderr",System.err,format,logLevel,levels,trace);
       } catch (IOException ioe) {
-         lf = new LogFile("System.err", System.err, format, logLevel, levels, trace);
-         lf.log("LOG", "ERROR", "Unable to write to logfile: " + format, ioe);
+         _sysLog.error("Unable to write to logfile: " + format, ioe);
+         lf = new LogFile("System.err", null, format, logLevel, levels, trace);
       }
       addTarget(lf);
 
    }
+
 
    /**
      * Instantiate a new Log object
@@ -80,13 +122,47 @@ public class LogManager {
          _log.info("source: " + name);
       }
       l = new LogSource(name);
-      _sources.put(name,l);
+      addSource(l);
+      return l;
+   }
+
+   
+   /**
+     * Used internally by LogManager to register new sources. 
+     * Ordinarily you would get a new source by calling getLog().
+     */
+   protected void addSource(LogSource l) {
+      _sources.put(l.getName(),l);
       Iterator t = _targets.iterator();
       while (t.hasNext()) {
          LogTarget lt = (LogTarget) t.next();
          lt.attach(l);
       }
-      return l;
+   }
+
+  
+   /**
+     * Flush all log targets
+     */
+   public void flush() {
+      Iterator t = _targets.iterator();
+      while (t.hasNext()) {
+         LogTarget lt = (LogTarget) t.next();
+         lt.flush();
+      }
+   }
+
+
+   /**
+     * This is the "sys" log source. This log source is shared between
+     * all instances of LogManager. Furthermore, if there are no targets
+     * registered to receive it ERROR and WARNING messagse will be 
+     * printed on the system console (or wherever Systerm.err goes). 
+     * As soon as there is a target registered to receive "sys" 
+     * messages it will stop writing to System.err.
+     */
+   public static Log getSystemLog() {
+      return _sysLog;
    }
 
    /**

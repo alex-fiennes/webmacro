@@ -9,6 +9,7 @@ import java.util.Date;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.io.IOException;
+import java.io.BufferedOutputStream;
 
 public class LogFile implements LogTarget {
 
@@ -29,21 +30,30 @@ public class LogFile implements LogTarget {
      * The levels correspond to severity levels: ALL, DEBUG, INFO, 
      * NOTICE, WARNING, ERROR, and NONE.
      * <p>
-     * @param fileName where the log should write, null means System.err
-     * @param levels a hashtable mapping log names to levels
+     * @param fileName where the log should write
+     * @param levels a hashtable mapping log names to levels (may be null)
      * @param trace true if this log should trace out exceptions
      * @param flush true if this log should flush after every message
      */
    public LogFile(String file, String format, String defaultLevel, Properties levels, boolean trace) 
       throws IOException
    {
-      this(file, ((file != null) ? 
-           new PrintStream(new FileOutputStream(file,true)) : System.err),
-           format, defaultLevel, levels, trace);
+      this(file, new PrintStream(
+            new BufferedOutputStream(new FileOutputStream(file,true))), 
+            format, defaultLevel, levels, trace);
    }
 
-   public 
-   LogFile(String name, PrintStream out, String format, String defaultLevel, Properties levels, boolean trace)
+   /**
+     * Create a new logfile
+     * @param name what we want to call it (debugging purposes)
+     * @param out where we write our output
+     * @param format MessageFormat for our output
+     * @param defaultLevel What level do we use for unknown sources?
+     * @param levels What levels do we use for specific sources (may be null)
+     * @param trace Do we write out exceptions (true) or not (false)?
+     */
+   public LogFile(String name, PrintStream out, String format, 
+               String defaultLevel, Properties levels, boolean trace)
    {
       _mf = new MessageFormat(format);
       _levels = levels;
@@ -82,12 +92,17 @@ public class LogFile implements LogTarget {
 
    public void attach(LogSource l) {
       String name = l.getName();
-      String level = _levels.getProperty(name);
+      String level = (_levels != null) ? _levels.getProperty(name) : null;
       if (level == null) {
          level = _defaultLevel;
       }
       l.addTarget(this, level);   
    }
+
+   public void flush() {
+      _out.flush();
+   }
+
 }
 
 

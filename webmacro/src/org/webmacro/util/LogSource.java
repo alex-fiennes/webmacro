@@ -12,11 +12,24 @@ import org.webmacro.Log;
   */
 public class LogSource implements Log {
 
+
    final private String _name;
 
-   final static private String[] _levels = 
+   /**
+     * Mapping of names to numbers. The index itno this array 
+     * is the number corresponding to the log level.
+     */
+   final static protected String[] LEVELS = 
       { "DEBUG", "INFO", "NOTICE", "WARNING", "ERROR" };
 
+   final static protected int DEBUG = 0;
+   final static protected int INFO = 1;
+   final static protected int NOTICE = 2;
+   final static protected int WARNING = 3;
+   final static protected int ERROR = 4;
+
+   final static private int ALL = DEBUG;
+   final static private int NONE = ERROR;
    /**
      * Get an integer corresponding to a string level name. The
      * level names supported are: ALL, DEBUG, INFO, NOTICE, 
@@ -26,33 +39,49 @@ public class LogSource implements Log {
       if (level == null) {
          return 0;
       }
-      for (int i = 0; i < _levels.length; i++) {
-         if (_levels[i].equalsIgnoreCase(level)) {
+      for (int i = 0; i < LEVELS.length; i++) {
+         if (LEVELS[i].equalsIgnoreCase(level)) {
             return i;
          }
       }
       if ("NONE".equalsIgnoreCase(level)) {
-         return _levels.length;
+         return LEVELS.length;
       }  else {
          return 0;
       }
    }
 
-   final static private int DEBUG = 0;
-   final static private int INFO = 1;
-   final static private int NOTICE = 2;
-   final static private int WARNING = 3;
-   final static private int ERROR = 4;
 
-   final static private int ALL = DEBUG;
-   final static private int NONE = ERROR;
+   /**
+     * The number of targets currently registered with this 
+     * LogSource. 
+     */
+   private int _tCount = 0; // count number of targets
+
+   final public boolean hasTargets() {
+      return (_tCount != 0);
+   }
+
+   final static public String getLevel(int level) {
+      if (level < 0) level = 0;
+      if (level >= LEVELS.length) level = LEVELS.length -1;
+      return LEVELS[level];
+   }
+
    
    final private LogTarget[][] _targets = new LogTarget[ERROR + 1][];
 
+   /**
+     * A LogSource must have a name
+     */
    protected LogSource(String name) {
       _name = name;
    }
 
+   /**
+     * The name of this log source, as it would print in the log. 
+     * For example "sys", or "log", or "wm".
+     */
    public String getName() { return _name; }
 
    /**
@@ -76,6 +105,7 @@ public class LogSource implements Log {
          ts = new LogTarget[1];
          ts[0] = t;
          _targets[level] = ts;
+         _tCount++;
          return;
       }
 
@@ -91,6 +121,7 @@ public class LogSource implements Log {
       System.arraycopy(ts,0,nts,0,ts.length);
       nts[ts.length] = t;
       _targets[level] = nts; 
+      _tCount++;
    }
 
    /**
@@ -117,6 +148,7 @@ public class LogSource implements Log {
       if (!match) {
          return;
       }
+      _tCount--;
       if (ts.length == 1) {
          _targets[level] = null;
       }
@@ -205,9 +237,11 @@ public class LogSource implements Log {
    protected void log(int level, String msg, Exception e) {
       LogTarget[] targets = _targets[level];
       if (targets == null) { return; }
-      String sLevel = _levels[level];
+      String sLevel = LEVELS[level];
+      boolean flush = (level >= NOTICE);
       for (int i = 0; i < targets.length; i++) {
          targets[i].log(_name,sLevel,msg,e);
+         if (flush) targets[i].flush();
       }
    }
 }
