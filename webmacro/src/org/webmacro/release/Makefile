@@ -16,14 +16,16 @@ SOURCES =	org/webmacro/servlet/*.java \
 		org/webmacro/resource/*.java \
 		org/webmacro/broker/*.java \
 		org/webmacro/util/*.java \
-		org/webmacro/util/java2/*.java 
+		org/webmacro/util/java2/*.java \
+                org/webmacro/*.java
 
 CLASSES =	org/webmacro/servlet/*.class \
 		org/webmacro/engine/*.class \
 		org/webmacro/resource/*.class \
 		org/webmacro/broker/*.class \
 		org/webmacro/util/*.class \
-		org/webmacro/util/java2/*.class 
+		org/webmacro/util/java2/*.class \
+                org/webmacro/*.class
 
 DOCS =		org/webmacro/webroot/*.html \
 		org/webmacro/webroot/api \
