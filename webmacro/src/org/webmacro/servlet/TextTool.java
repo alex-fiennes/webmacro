@@ -240,6 +240,80 @@ public class TextTool implements ContextTool
         return sb.toString ();
     }
     
+    /** remove any leading and trailing whitespace from a string */
+    public static String trim(String s){
+        return s.trim();
+    }
+    
+    /** remove any leading whitespace from a string */
+    public static String ltrim(String s){
+        if (s == null) return null;
+        for (int i=0; i<s.length(); i++){
+            if (!Character.isWhitespace(s.charAt(i))) return s.substring(i);
+        }
+        // if all WS return empty string
+        return ""; 
+    }
+    
+    /** remove the trailing whitespace from a string */
+    public static String rtrim(String s){
+        if (s == null) return null;
+        for (int i=s.length() - 1; i > -1; i--){
+            if (!Character.isWhitespace(s.charAt(i))) return s.substring(0,i);
+        }
+        // if all WS return empty string
+        return ""; 
+    }    
+    
+    /** converts a block of text into an array of strings
+     * by tokenizing using \r\n as the delimiter
+     * If no \r\n, it will look for \n or \r and use them instead.
+     */
+    public static String[] getLines(String block){
+        if (block == null) return null;
+        String delim = "\r\n";
+        if (block.indexOf("\r\n") == -1){
+            if (block.indexOf('\n') > -1) delim = "\n";
+            else delim = "\r";
+        }
+        return TextTool.split(block, delim);
+    }
+
+    /** convert an array of strings into a block of text delimited by \r\n */
+    public static String makeBlock(String[] lines){
+        if (lines == null || lines.length == 0) return null;
+        if (lines.length == 1) return lines[0];
+        StringBuffer sb = new StringBuffer(lines[0]);
+        for (int i=1; i<lines.length; i++){
+            sb.append('\r').append('\n').append(lines[i]);
+        }
+        return sb.toString();
+    }
+    
+    
+    /** remove the leading and trailing whitespace from each line in a block of text */
+    public static String trimBlock(String block){
+        if (block == null) return null;
+        String[] lines = getLines(block);
+        for (int i=0; i<lines.length; i++) lines[i] = trim(lines[i]);
+        return makeBlock(lines);
+    }
+
+    /** remove the leading whitespace from each line in a block of text */
+    public static String ltrimBlock(String block){
+        if (block == null) return null;
+        String[] lines = getLines(block);
+        for (int i=0; i<lines.length; i++) lines[i] = ltrim(lines[i]);
+        return makeBlock(lines);
+    }
+    
+    /** remove the trailing whitespace from each line in a block of text */
+    public static String rtrimBlock(String block){
+        if (block == null) return null;
+        String[] lines = getLines(block);
+        for (int i=0; i<lines.length; i++) lines[i] = rtrim(lines[i]);
+        return makeBlock(lines);
+    }
     
     //
     // ContextTool implementation methods
@@ -290,5 +364,9 @@ public class TextTool implements ContextTool
         
         for (int x=0; x<split.length; x++)
             System.err.println ("/" + split[x] + "/");
+        
+        String s1 = "alpha\r\nbeta\r\ndelta\r\ngamma";
+        String[] split2 = TextTool.split(s1,"\r\n");
+        System.err.println("split2=" + Arrays.asList(split2));
     }
 }
