@@ -28,7 +28,6 @@ import java.io.UnsupportedEncodingException;
 
 final public class ByteBufferOutputStream extends OutputStream 
 {
-   
    private byte[] _buf;
    private int _pos;
 
@@ -37,6 +36,7 @@ final public class ByteBufferOutputStream extends OutputStream
      */
    public ByteBufferOutputStream(int size) 
    {
+      // _initialSize = size;
       _buf = new byte[size];   
       _pos = 0;
    }
@@ -46,6 +46,11 @@ final public class ByteBufferOutputStream extends OutputStream
      */
    public void reset() {
       _pos = 0;
+   }
+ 
+   public void resize (int size) {
+      if (size >-1)
+         _buf = new byte[size];
    }
 
    public void write(int i) {
@@ -63,12 +68,8 @@ final public class ByteBufferOutputStream extends OutputStream
      * Copy an array of bytes on to the end of the buffer
      */
    public void write(byte[] b, int offset, int len) {
-      try {
-         System.arraycopy(b, 0, _buf, _pos, len);
-      } catch (ArrayIndexOutOfBoundsException e) {
-         ensureCapacity(len);
-         System.arraycopy(b, 0, _buf, _pos, len);
-      }
+      ensureCapacity (len);
+      System.arraycopy(b, 0, _buf, _pos, len);
       _pos += len;
    }
 
@@ -76,23 +77,19 @@ final public class ByteBufferOutputStream extends OutputStream
      * Append a single byte
      */
    public void write(byte b) {
-      try {
-         _buf[_pos] = b;
-      } catch (ArrayIndexOutOfBoundsException e) {
-         ensureCapacity(1);
-         _buf[_pos] = b;
-      }
+      ensureCapacity (1);
+      _buf[_pos] = b;
       _pos++;
    }
 
    /**
      * Make sure the buffer contains space for len more bytes.
      */
-   public void ensureCapacity(int len) {
+   public final void ensureCapacity(int len) {
       if (_buf.length < _pos + len) {
          int blen = _buf.length;
          while (blen < _pos + len) {
-            blen *= 2;
+            blen += blen;
          }
          byte[] tmp = new byte[blen];
          System.arraycopy(_buf,0,tmp,0,_pos);

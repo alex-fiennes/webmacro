@@ -206,6 +206,9 @@ abstract public class WMTemplate implements Template
       catch (PropertyException e) {
          throw e;
       } 
+      catch (IOException ioe) {
+         throw ioe;
+      }
       catch (Exception e) {
          String warning = 
             "Template: Exception evaluating template " + this;
