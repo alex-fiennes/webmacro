@@ -21,7 +21,6 @@
 package org.webmacro.engine;
 import java.util.*;
 import java.io.*;
-import org.webmacro.broker.Config;
 import org.webmacro.util.*;
 import java.lang.reflect.*;
 import org.webmacro.*;
@@ -283,7 +282,7 @@ public class WMParser implements Parser
       throws NotFoundException
    {
       try {
-         return (DirectiveBuilder) _broker.getValue("directive",name);      
+         return (DirectiveBuilder) _broker.get("directive",name);      
       } catch (Exception e) {
          throw new NotFoundException("Could not load directive " 
                + name + ": " + e);

@@ -112,7 +112,7 @@ abstract public class WMTemplate implements Template
      */
    protected Parser getParser() throws TemplateException {
       try {
-         return (Parser) _broker.getValue("parser","wm"); 
+         return (Parser) _broker.get("parser","wm"); 
       } catch (Exception e) {
          Engine.log.exception(e);
          throw new TemplateException("Could not load parser type \"" + 

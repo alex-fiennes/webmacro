@@ -19,7 +19,6 @@
 
 package org.webmacro;
 
-import org.webmacro.broker.*;
 import org.webmacro.engine.*;
 import org.webmacro.resource.*;
 import org.webmacro.util.*;
@@ -51,7 +50,12 @@ public class WM implements WebMacro
 
    /*final*/ private Broker _broker;      // cache for rapid access
    /*final*/ private BrokerOwner _owner; // mgr that loads/unloads broker
+
    private boolean _alive = false;   // so we don't unload twice
+
+   private Provider _tmplProvider;
+   private Provider _urlProvider;
+   private Provider _configProvider;
 
    /**
      * Log object used to write out messages
@@ -84,8 +88,21 @@ public class WM implements WebMacro
       } finally {
          _owner = owner;
          _broker = broker;
+         _alive = true;
       }
-      _alive = true;
+   
+      try {
+         _tmplProvider = _broker.getProvider("template");
+         _urlProvider = _broker.getProvider("url");
+         _configProvider = _broker.getProvider("config");
+      } catch (NotFoundException nfe) {
+         throw new InitException("Could not locate provider: " + nfe + "\n"
+            + "This implies that WebMacro is badly misconfigured, you "
+            + "should double check that all configuration files and "
+            + "options are set up correctly. In a default install of "
+            + "WebMacro this likely means your WebMacro.properties file "
+            + "was not found on your CLASSPATH.");
+      }
    }
 
 
@@ -160,20 +177,13 @@ public class WM implements WebMacro
 
 
    /**
-     * Retrieve a template from the "template" provider. Equivalent to 
-     * getBroker().getValue("template",key)
+     * Retrieve a template from the "template" provider.
      * @exception NotFoundException if the template was not found
      */
    final public Template getTemplate(String key) 
       throws NotFoundException
    {
-      try {
-         return (Template) _broker.getValue("template", key);
-      } catch (InvalidTypeException te) {
-         _log.exception(te);
-         _log.error("Broker unable to load templates");
-         throw new NotFoundException("ERROR: Broker cannot load any templates, the template provider is missing:" + te);
-      }
+      return (Template) _tmplProvider.get(key); 
    }
 
    /**
@@ -181,33 +191,21 @@ public class WM implements WebMacro
      * getBroker().getValue("url",url)
      * @exception NotFoundException if the template was not found
      */
-   final public Object getURL(String url) 
+   final public String getURL(String url) 
       throws NotFoundException
    {
-      try {
-         return _broker.getValue("url", url);
-      } catch (InvalidTypeException te) {
-         _log.exception(te);
-         _log.error("Broker unable to load URLs");
-         throw new NotFoundException("ERROR: Broker cannot load any URLs, the URL provider is missing:" + te);
-      }
+      return (String) _urlProvider.get(url);
    }
 
    /**
      * Retrieve configuration information from the "config" provider.
-     * Equivalent to getBrker().getValue("config",key)
+     * Equivalent to getBroker().get("config",key)
      * @exception NotFoundException could not locate requested information
      */
    final public String getConfig(String key) 
       throws NotFoundException
    {
-      try {
-         return (String) _broker.getValue("config", key);
-      } catch (InvalidTypeException te) {
-         _log.exception(te);
-         _log.error("Broker unable to load config");
-         throw new NotFoundException("ERROR: Broker cannot find any config information at all, the config provider is missing:" + te);
-      }
+      return (String) _configProvider.get(key);
    }
 
 }
@@ -216,7 +214,7 @@ public class WM implements WebMacro
 final class BrokerOwner {
 
    /*final*/ String _config;
-   private ResourceBroker _broker;
+   private Broker _broker;
    private static int _brokerUsers = 0;
 
    BrokerOwner() {
@@ -234,8 +232,7 @@ final class BrokerOwner {
       _brokerUsers++;
       if (_broker == null) {
          try {
-            _broker = (_config == null) ? 
-               new ResourceBroker() : new ResourceBroker(_config);
+            _broker = (_config == null) ?  new Broker() : new Broker(_config);
          } catch (InitException e) {
             _broker = null;
             _brokerUsers = 0; 

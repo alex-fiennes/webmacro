@@ -38,13 +38,7 @@ public final class BuildContext extends Context
    public final Parser getParser(String pname) 
       throws NotFoundException
    {
-      try {
-         return (Parser) getBroker().getValue("parser", pname);
-      } catch (InvalidTypeException te) {
-         Engine.log.exception(te);
-         Engine.log.error("Broker unable to load parsers");
-         throw new NotFoundException("ERROR: Broker cannot load any parsers");
-      }
+      return (Parser) getBroker().get("parser", pname);
    }
 
    /**

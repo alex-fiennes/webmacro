@@ -70,12 +70,10 @@ class ParseDirective implements Directive
          return new ParseDirective((Macro) target);
       } else {
          try {
-            return rc.getBroker().getValue("template",target.toString());
+            return rc.getBroker().get("template",target.toString());
          } catch (NotFoundException ne) {
             return new BuildException("Template " + target + " not found: " 
                   + ne);
-         } catch (InvalidTypeException it) {
-            throw new BuildException("Broker cannot load templates: " + it);
          }
       }
    }
@@ -129,7 +127,7 @@ class ParseDirective implements Directive
       }
 
       try {
-         Template tmpl = (Template) context.getBroker().getValue("template", fname);
+         Template tmpl = (Template) context.getBroker().get("template", fname);
          tmpl.write(out,context);
      } catch (IOException e) {
          Engine.log.exception(e);

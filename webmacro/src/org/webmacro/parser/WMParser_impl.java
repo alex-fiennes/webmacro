@@ -4,7 +4,6 @@ package org.webmacro.parser;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
-import org.webmacro.broker.*;
 import org.webmacro.directive.*;
 import org.webmacro.directive.Directive;
 import org.webmacro.directive.DirectiveBuilder;
@@ -172,7 +171,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   try {
     descriptor =
-      (DirectiveDescriptor) broker.getValue("new-directive", directive);
+      (DirectiveDescriptor) broker.get("new-directive", directive);
     if (!descriptor.valid)
       throw new ParseException("Descriptor for directive " + directive
                                + " is not valid");

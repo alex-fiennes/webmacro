@@ -70,11 +70,8 @@ public class Context implements Cloneable {
       _bean = null;
       _toolbox = null;
       try {
-         String tools = (String) broker.getValue("config","ContextTools");
+         String tools = (String) broker.get("config","ContextTools");
          registerTools(tools);
-      } catch (InvalidTypeException it) {
-         _log.exception(it);
-         _log.error("config type not registered with broker!");
       } catch (NotFoundException ne) {
          _log.exception(ne);
          _log.warning("could not load ContextTools from config: " + ne);

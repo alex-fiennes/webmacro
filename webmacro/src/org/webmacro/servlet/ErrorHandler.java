@@ -49,16 +49,16 @@ final class ErrorHandler implements Handler
 
       if (_errorTmpl == null) {
          try {
-            String name = (String) c.getBroker().getValue(
-                  Broker.CONFIG_TYPE, WMServlet.ERROR_TEMPLATE);
-            _errorTmpl = (Template) c.getBroker().getValue(
-                  TemplateProvider.TYPE, name);
+            String name = (String) c.getBroker().get(
+                  "config", WMServlet.ERROR_TEMPLATE);
+            _errorTmpl = (Template) c.getBroker().get(
+                  "template", name);
          } catch (Exception e) { } 
          finally {
             if (_errorTmpl == null) {
                try {
-                  _errorTmpl = (Template) c.getBroker().getValue(
-                     TemplateProvider.TYPE, WMServlet.ERROR_TEMPLATE_DEFAULT);
+                  _errorTmpl = (Template) c.getBroker().get(
+                     "template", WMServlet.ERROR_TEMPLATE_DEFAULT);
                } catch (Exception e) {
                   throw new HandlerException("Could not load error handler");
                }

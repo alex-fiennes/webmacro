@@ -50,7 +50,6 @@ import org.webmacro.util.*;
   * to create instances of the prototype in the newInstance method. You
   * should also be sure and implement the clear() method as well.
   * <p>
-  * @see org.webmacro.servlet.Reactor
   * @see org.webmacro.util.Property
   * @see org.webmacro.util.Map
   */
@@ -84,11 +83,8 @@ public class WebContext extends Context
    {
       super(broker);
       try {
-         String tools = (String) broker.getValue("config","WebContextTools");
+         String tools = (String) broker.get("config","WebContextTools");
          registerTools(tools);
-      } catch (InvalidTypeException it) {
-         _log.exception(it);
-         _log.error("config type not registered with broker!");
       } catch (NotFoundException ne) {
          _log.exception(ne);
          _log.warning("could not load WebContextTools from config: " + ne);

@@ -21,94 +21,75 @@
 package org.webmacro.resource;
 import  org.webmacro.*;
 import  org.webmacro.engine.FileTemplate;
-import  org.webmacro.broker.*;
 import  org.webmacro.util.*;
 import  java.util.*;
 import  java.io.*;
 
 /**
-  * This is the reference implementation for the "template" ResourceProvider.
-  * Create a TemplateProvider with a directory name and it will search for 
-  * and return templates from that directory when requested to do so. 
+  * The TemplateProvider is the WebMacro class responsible for 
+  * loading templates. You could replace it with your own version
+  * in the configuration file. This implementation caches templates
+  * using soft references for a maximum amount of time specified
+  * in the configuration. Templates are loaded from the filesystem,
+  * relative to the TemplatePath specified in teh configuration.
   * <p>
-  * The "template" type will automatically be used by Handler when it 
-  * attempts to resolve a template name, via the ResourceBroker. You could
-  * install a different TemplateHandler if you wanted to load your templates
-  * from a different location (out of a database, over the network, etc.)
-  * <p>
-  * It supports only the requestResource method, and does not support the 
-  * creation or deletion of templates. 
-  * <p>
-  * @see ResourceProvider
-  * @see Handler
+  * Ordinarily you would not accses this class directly, but 
+  * instead you would call the Broker and it would look up and
+  * use the TemplateProvider for you.
+  * @see Provider
   */
-final public class TemplateProvider implements ResourceProvider
+final public class TemplateProvider extends CachingProvider
 {
 
    // INITIALIZATION
 
-   private static String pathSeparator_ = ";";
-   private String templateDirectory_[] = null;
-   private ResourceBroker _broker = null;
+   private static String _pathSeparator = ";";
+   private String _templateDirectory[] = null;
+   private Broker _broker = null;
+   private String _templatePath;
+   private int _cacheDuration;
 
    static {
       try {
-         pathSeparator_ = System.getProperty("path.separator");
+         _pathSeparator = System.getProperty("path.separator");
       } catch (Throwable t) {
          // do nothing
       }
    }
-
-   private int cacheDuration = 10 * 60 * 1000; // default 10min
-
-   /**
-     * For use by other classes when referring to the single type served
-     * by this provider.
-     */
-   final public static String TYPE = "template";
 
    /**
      * Create a new TemplateProvider that uses the specified directory
      * as the source for Template objects that it will return
      * @exception ResourceInitException provider failed to initialize
      */
-   public void init(final ResourceBroker broker)
-      throws ResourceInitException
+   public void init(Broker b, Properties config) throws InitException
    {
-
-      _broker = broker;
+      _broker = b;
 
       try {
-
          try {
-            String cacheStr = (String) 
-                 broker.getValue(Config.TYPE, Config.TEMPLATE_CACHE);
-            cacheDuration = Integer.valueOf(cacheStr).intValue();
+            String cacheStr = config.getProperty("TemplateExpireTime");
+            _cacheDuration = Integer.valueOf(cacheStr).intValue();
          } catch (Exception ee) {
             // use default
          }
-
-         String templatePath = 
-            (String) broker.getValue(Config.TYPE,Config.TEMPLATE_DIR);
-         StringTokenizer st = new StringTokenizer(templatePath, pathSeparator_);
-         if (_debug) {
-            _log.debug("template path = " + templatePath);
-         }
-         templateDirectory_ = new String[ st.countTokens() ];
+         _templatePath = config.getProperty("TemplatePath");
+         StringTokenizer st = 
+            new StringTokenizer(_templatePath, _pathSeparator);
+         _templateDirectory = new String[ st.countTokens() ];
          int i;
-         for (i=0; i < templateDirectory_.length; i++) 
+         for (i=0; i < _templateDirectory.length; i++) 
          {
             String dir = st.nextToken(); 
             if (_debug) {
                _log.debug("template dir = " + dir);
             }
-            templateDirectory_[i] = dir;
+            _templateDirectory[i] = dir;
          }
-
 
       } catch(Exception e) {
          _log.exception(e);
-         throw new ResourceInitException("Could not initialize");
+         throw new InitException("Could not initialize: " + e);
       }
    }
 
@@ -121,96 +102,38 @@ final public class TemplateProvider implements ResourceProvider
      * Where we write our log messages 
      */
    static public final Log _log = 
-      new Log(TYPE,"Template storage resource");
-
-
-   // RESOURCE PROVIDER API
-
-
-   /**
-     * This implementation only supports the "template" type
-     */
-   final private static String _types[] = { TYPE };
+      new Log("template","Template storage resource");
 
    /**
      * Supports the "template" type
      */
-   final public String[] getTypes() {
-      return _types;
-   }
-
-   /**
-     * Let cache expire after 10 minutes
-     */
-   final public int resourceExpireTime() {
-      return cacheDuration;
-   }
-
-   /**
-     * Allow a worker thread to process this class concurrently
-     */
-   final public int resourceThreads() {
-      return 1; // some concurrency is valuable, allow 1 worker thread
+   final public String getType() {
+      return "template";
    }
 
    /**
      * Grab a template based on its name, setting the request event to 
-     * contain it if we found it.
-     * @exception ResourceNotFoundException resource not found (authoritative)
-     * @exception InterruptedException work being done is no longer wanted
-     * @param request has type "template" and name equal to the template sought
+     * contain it if we found it. The template will be parsed using 
+     * the specified encoding, or UTF8 if the encoding is left off. 
+     * The rest of the name is the filename to be loaded. For example,
+     * the template name :EUC-KR:/view.wm loads the "view.wm" template 
+     * and encodes it with the EUC-KR encoding.
+     * @param name has the format :encodign:name (:encoding: is optional)
      */
-   final public void resourceRequest(RequestResourceEvent request)
-      throws NotFoundException, InterruptedException
+   final public TimedReference load(String name) throws NotFoundException 
    {
-      String name = request.getName();
       String encoding = "UTF8";
       if (name.charAt(0) == ':') {
          int fstart = name.indexOf(':', 1);
          encoding = name.substring(1,fstart);
          name = name.substring(fstart + 1);
       }
-
       Template t = get(name,encoding);
       if (t == null) {
-         return; // maybe someone else has it
+         throw new NotFoundException(
+            this + " could not locate " + name + " on path " + _templatePath);
       }
-      try {
-         request.set(t); // this makes it available and means we handled it
-      } catch (Exception e) {
-         return; // do nothing
-      }
-   }
-
-   /**
-     * Unsupported. Does nothing.
-     */
-   final public void resourceCreate(CreateResourceEvent evt) {
-      // operation unsupported (doing nothing means that)
-   }
-
-   /**
-     * Unsupported. Does nothing.
-     */
-   final public boolean resourceSave(ResourceEvent save) {
-      // operation unsupported (doing nothing means that)
-      return false;
-   }
-
-   /**
-     * Unsupported. Does nothing.
-     * @return false
-     */
-   final public boolean resourceDelete(ResourceEvent evt) {
-      return false; // operation unsupported
-   }
-
-   /**
-     * We don't really have anything to do on shutdown
-     */
-   final public void destroy()
-   {
-      // do nothing
+      return new TimedReference(t, _cacheDuration);   
    }
 
 
@@ -225,9 +148,9 @@ final public class TemplateProvider implements ResourceProvider
      * @returns a template matching that name, or null if one cannot be found
      */
    final public Template get(String fileName, String encoding) {
-      for (int i=0; i < templateDirectory_.length; i++) {
+      for (int i=0; i < _templateDirectory.length; i++) {
          Template t;
-         String dir = templateDirectory_[i];
+         String dir = _templateDirectory[i];
          if (_debug) {
             _log.debug("TemplateProvider: searching directory " + dir);
          }
@@ -253,26 +176,6 @@ final public class TemplateProvider implements ResourceProvider
       return null;
    }
 
-   /**
-     * Print out the name of this TemplateProvider, including its directory
-     */
-   final public String toString() {
-      return "TemplateProvider(" + getPath() + ")";
-   }
-
-   /**
-     * Get the search path used by this template provider 
-     */
-   final public String getPath() {
-      StringBuffer sb = new StringBuffer(200);
-      for (int i=0; i < templateDirectory_.length; i++) {
-         if (i != 0)  {
-            sb.append(pathSeparator_);
-         }
-         sb.append(templateDirectory_[i]);
-      }
-      return sb.toString();
-   }
 
 }
 

@@ -4,14 +4,13 @@ import java.util.*;
 import org.webmacro.engine.*;
 import org.webmacro.*;
 import org.webmacro.util.*;
-import org.webmacro.broker.*;
+import org.webmacro.resource.*;
 
 /**
   * Utility class to assist in the creation of directives.
   */
-public final class DirectiveProvider implements ResourceProvider
+public final class DirectiveProvider implements Provider
 {
-
 
    // BULDER CLASS MANAGEMENT
 
@@ -22,10 +21,10 @@ public final class DirectiveProvider implements ResourceProvider
      * Register a new directive class, so that a builder
      * of this type can be retrieved later.
      * @exception IntrospectionException something wrong with the class
-     * @exception ResourceInitException duplicate registration
+     * @exception InitException duplicate registration
      */
    public final void register(String dirClassName) 
-      throws IntrospectionException, ResourceInitException
+      throws IntrospectionException, InitException
    {
       Class directive = null;
       DirectiveDescriptor descriptor, oldDesc;
@@ -48,7 +47,7 @@ public final class DirectiveProvider implements ResourceProvider
         _descriptors.put(descriptor.name, descriptor);
         _log.info("Registered directive: " + descriptor.name);
       } else if (descriptor.dirClass != oldDesc.dirClass) {
-         throw new ResourceInitException(
+         throw new InitException(
                "Attempt to register directive " + directive
                + " failed because " + oldDesc.dirClass.getName() 
                + " is already registered for type " + descriptor.name);
@@ -74,16 +73,14 @@ public final class DirectiveProvider implements ResourceProvider
 
    // RESOURCE PROVIDER API
 
-   static final private String _types[] = { "new-directive" };
-
-   public String[] getTypes() {
-      return _types;
+   public String getType() {
+      return "new-directive";
    }
 
-   public void init(ResourceBroker broker) throws ResourceInitException
+   public void init(Broker broker, Properties config) throws InitException
    {
       try {
-         String directives = (String) broker.getValue("config","NewDirectives");
+         String directives = config.getProperty("NewDirectives");
          Enumeration denum = new StringTokenizer(directives);
          while (denum.hasMoreElements()) {
             String dir = (String) denum.nextElement();
@@ -97,7 +94,7 @@ public final class DirectiveProvider implements ResourceProvider
          }
       } catch (Exception e) {
          //@@@Engine.log.exception(e);
-         throw new ResourceInitException("Could not init DirectiveProvider: "
+         throw new InitException("Could not init DirectiveProvider: "
                + e);
       }
    }
@@ -107,34 +104,17 @@ public final class DirectiveProvider implements ResourceProvider
       _descriptors.clear();
    }
 
-   public void resourceRequest(RequestResourceEvent req) 
-      throws NotFoundException
+   public Object get(String name) throws NotFoundException
    {
       try {
-         req.set(getDescriptor(req.getName()));
+         return getDescriptor(name);
       } catch (Exception e) {
-         throw new NotFoundException("No such directive: " + req.getName() 
+         throw new NotFoundException("No such directive: " + name 
                + ":" + e.getMessage());
       }
    }
 
-   public void resourceCreate(CreateResourceEvent create)
-      throws NotFoundException, InterruptedException
-   {
-      // do nothing == unsupported
-   }
-
-   public boolean resourceDelete(ResourceEvent delete) {
-      // do nothing == unsupported
-      return false;
-   }
-
-   public boolean resourceSave(ResourceEvent save) {
-      return false;
-   }
-
-   public int resourceThreads() { return 0; }
-   public int resourceExpireTime() { return NEVER_CACHE; }
+   public void flush() { }
 }
 
 

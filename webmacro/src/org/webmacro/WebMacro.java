@@ -65,21 +65,21 @@ public interface WebMacro
 
    /**
      * Retrieve a template from the "template" provider. Equivalent to 
-     * getBroker().getValue(TemplateProvider.TYPE,key)
+     * getBroker().get(TemplateProvider.getType(),key)
      * @exception NotFoundException if the template was not found
      */
    public Template getTemplate(String key) throws NotFoundException;
 
    /**
-     * Retrieve the contents of a URL as an object. The only advantage of
+     * Retrieve the contents of a URL as a String. The only advantage of
      * using this instead of a regular URL object is that the result may 
      * be cached for repeated use. 
      */
-   public Object getURL(String url) throws NotFoundException;
+   public String getURL(String url) throws NotFoundException;
 
    /**
      * Retrieve configuration information from the "config" provider.
-     * Equivalent to getBrker().getValue(Config.TYPE,key)
+     * Equivalent to getBroker().get(Config.geType(),key)
      * @exception NotFoundException could not locate requested information
      */
    public String getConfig(String key) throws NotFoundException;

@@ -313,7 +313,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
    /**
      * Retrieve a template from the "template" provider. Equivalent to 
-     * getBroker().getValue(TemplateProvider.TYPE,key)
+     * getBroker().get(TemplateProvider.TYPE,key)
      * @exception NotFoundException if the template was not found
      */
    final public Template getTemplate(String key) 
@@ -328,7 +328,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * WebMacro's cache rather than re-requesting each time. 
      * The content will be returned as an Object.
      */
-   final public Object getURL(String url)
+   final public String getURL(String url)
       throws NotFoundException
    {
       return _wm.getURL(url);
@@ -337,7 +337,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
    /**
      * Retrieve configuration information from the "config" provider.
-     * Equivalent to getBrker().getValue(Config.TYPE,key)
+     * Equivalent to getBroker().get(Config.TYPE,key)
      * @exception NotFoundException could not locate requested information
      */
    final public String getConfig(String key) 

@@ -3,7 +3,6 @@ package org.webmacro.parser;
 import java.util.*;
 import org.webmacro.*;
 import org.webmacro.engine.*;
-import org.webmacro.broker.*;
 import org.webmacro.directive.*;
 import org.webmacro.directive.Directive;
 import org.webmacro.directive.DirectiveBuilder;

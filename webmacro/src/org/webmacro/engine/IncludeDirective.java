@@ -68,9 +68,7 @@ class IncludeDirective implements Directive
       try {
          fileName = name.toString();
          result = 
-            c.getBroker().getValue("url", fileName).toString();
-      } catch (InvalidTypeException it) {
-         error = "No URL provider registered in this broker.";
+            c.getBroker().get("url", fileName).toString();
       } catch (NotFoundException ne) {
          error = "Cannot include " + fileName + ": NOT FOUND";
       }  catch (NullPointerException ne) {
