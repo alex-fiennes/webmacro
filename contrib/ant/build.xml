@@ -1,19 +1,53 @@
 <?xml version="1.0"?>
 <!--
     Ant build file
-    
+
     $Id$
 -->
 <project name="WebMacro" default="main" basedir=".">
 
-	<property name="build.compiler" value="modern"/>
+<!-- 
+    These are things you might want to change
+-->
+
+    <property name="tomcat.home" value="/opt/jakarta-tomcat-3.2.1/"/>
+    
+    <!--
+        set to "modern" if you don't have jikes
+    -->
+	<property name="build.compiler" value="jikes"/>
+    
+    <!--
+        the basic build goes here
+    -->   
 	<property name="dest" value="ant-build"/>
+    
+    <!--
+        this is where the container build will go.
+        
+        For tomcat this will contain
+        ./conf/  - server.xml etc, mostly copied from ${tomcat.home}/conf
+        ./webapps/
+            ROOT.war - seems to be needed
+            ./wm/     - the examples
+                ./WEB-INF/
+                    ./classes/
+                    ./templates/
+    -->   
+    <property name="container" value="tomcat"/>
+
+<!-- end changeable things -->
+    
+	<property name="webapp" value="${container}/webapps/wm"/>
+	<property name="webapp.classes" value="${webapp}/WEB-INF/classes"/>
+	<property name="webapp.lib" value="${webapp}/WEB-INF/lib"/>
+	<property name="webapp.tmpl" value="${webapp}/WEB-INF/templates"/>
 	<property name="dest.classes" value="${dest}"/>
 
 	<target name="prepare">
-        <available property="xalan.present" 
+        <available property="xalan.present"
            classname="org.apache.xalan.xslt.XSLTProcessorFactory" />
-        <available property="jasper.present" 
+        <available property="jasper.present"
            classname="org.apache.jasper.runtime.JspRuntimeLibrary" />
 		<mkdir dir="${dest}"/>
 		<mkdir dir="${dest.classes}"/>
@@ -30,7 +64,6 @@
         <copy file="./WebMacro.defaults" todir="${dest.classes}"/>
 	</target>
 
-
 	<target name="_jar" depends="main">
         <delete file="${dest}/webmacro.jar"/>
 		<jar jarfile="${dest}/webmacro.jar"
@@ -39,15 +72,60 @@
   	</target>
 
 	<target name="jar" depends="clean,_jar">
-
   	</target>
 
+
+    <target name="webapp" depends="main">
+        <mkdir dir="${webapp}"/>
+        <mkdir dir="${webapp.classes}"/>
+        <mkdir dir="${webapp.lib}"/>
+        <mkdir dir="${webapp.tmpl}"/>
+        <copy todir="${webapp.classes}" >
+            <fileset dir="${dest.classes}">
+            </fileset>
+        </copy>
+        
+    </target>
+
+    <target name="examplewebapp" depends="webapp">
+        <javac
+			srcdir="examples"
+			destdir="${dest.classes}"
+			debug="on"
+            extdirs="lib"
+            includes="examples/**/*.java"
+        />
+        <copy todir="${webapp.tmpl}" >
+            <fileset dir="examples">
+                <include name="**/*.wm"/>
+            </fileset>
+        </copy>
+        <copy 
+            todir="${webapp.classes}"
+            file="examples/WebMacro.properties"
+        />
+    </target>
+    
+    <target name="tomcat" depends="examplewebapp">
+        <mkdir dir="${container}"/>
+        <copy 
+            todir="${container}/webapps" 
+            file="${tomcat.home}/webapps/ROOT.war"/>
+        <copy todir="${container}/conf">
+            <fileset dir="${tomcat.home}/conf">
+            </fileset>
+        </copy>
+        <copy todir="${container}/conf">
+            <fileset dir="contrib/Tomcat/3.2/conf">
+            </fileset>
+        </copy>
+    </target>
 
     <!--
         ActionServlet broken - skip
     -->
     <target name="actionservlet" if="false">
-        <javac 
+        <javac
             srcdir="contrib/ActionServlet/src"
 			destdir="${dest.classes}"
 			debug="on"
@@ -60,7 +138,7 @@
     -->
 
     <target name="datatable">
-        <javac 
+        <javac
             srcdir="contrib/DataTable"
 			destdir="${dest.classes}"
 			debug="on"
@@ -74,7 +152,7 @@
     -->
 
     <target name="contextdebugger" depends="main">
-        <javac 
+        <javac
             srcdir="contrib/ContextDebugger/src"
 			destdir="${dest.classes}"
 			debug="on"
@@ -83,18 +161,17 @@
         />
     </target>
 
-
-    <!-- 
+    <!--
         BeanTool
-        
+
         Currently requires Apache Jasper (part of Tomcat).
-        
+
         The sample files require Xalan XSLT too.  Remove this requirement
         if BeanTool becomes live.
     -->
 
     <target name="_beantool" if="xalan.present">
-        <javac 
+        <javac
             srcdir="contrib/BeanTool/src"
 			destdir="${dest.classes}"
 			debug="on"
@@ -110,5 +187,5 @@
 	</target>
 
 	<target name="all" depends="clean,main"/>
-  
+
 </project>

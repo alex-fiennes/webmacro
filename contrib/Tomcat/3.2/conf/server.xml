@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<Server>
+    <!-- Debug low-level events in XmlMapper startup -->
+    <xmlmapper:debug level="0" />
+
+    <Logger name="tc_log" 
+            verbosityLevel = "INFORMATION" 
+            path="logs/tomcat.log" 
+    />
+
+    <Logger name="servlet_log" 
+            path="logs/servlet.log"
+    />
+
+    <Logger name="JASPER_LOG" 
+	    path="logs/jasper.log"
+            verbosityLevel = "INFORMATION" />
+
+    <!-- You can add a "home" attribute to represent the "base" for 
+         all relative paths. If none is set, the TOMCAT_HOME property
+         will be used, and if not set "." will be used.
+         webapps/, work/ and logs/ will be relative to this ( unless 
+         set explicitely to absolute paths ).
+
+         You can also specify a "randomClass" attribute, which determines 
+         a subclass of java.util.Random will be used for generating session IDs.
+         By default this is "java.security.SecureRandom". 
+         Specifying "java.util.Random" will speed up Tomcat startup, 
+         but it will cause sessions to be less secure.
+
+         You can specify the "showDebugInfo" attribute to control whether
+         debugging information is displayed in Tomcat's default responses.
+         This debugging information includes:
+             1. Stack traces for exceptions
+             2. Request URI's that cause status codes >= 400
+         The default is "true", so you must specify "false" to prevent
+         the debug information from appearing.  Since the debugging
+         information reveals internal details about what Tomcat is serving,
+         set showDebugInfo="false" if you wish increased security.
+      -->
+    <ContextManager debug="0" workDir="work" showDebugInfo="true"
+    home="tomcat" >
+
+      <!-- ==================== Interceptors ==================== -->
+
+        <!-- 
+         ContextInterceptor className="org.apache.tomcat.context.LogEvents" 
+         -->
+        
+        <ContextInterceptor className="org.apache.tomcat.context.AutoSetup" />
+
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.WebXmlReader" />
+
+        <!-- Uncomment out if you have JDK1.2 and want to use policy 
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.PolicyInterceptor" />
+        -->
+
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.LoaderInterceptor" />
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.DefaultCMSetter" />
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.WorkDirInterceptor" />
+
+        <!-- Request processing -->
+        <!-- Session interceptor will extract the session id from cookies and 
+             deal with URL rewriting ( by fixing the URL ).  If you wish to
+             suppress the use of cookies for session identifiers, change the
+             "noCookies" attribute to "true"
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.SessionInterceptor"
+            noCookies="false" />
+
+        <!-- Find the container ( context and prefix/extension map ) 
+             for a request.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.SimpleMapper1" 
+            debug="0" />
+
+        <!-- Non-standard invoker, for backward compat. ( /servlet/* )
+             You can modify the prefix that is matched by adjusting the
+             "prefix" parameter below.  Be sure your modified pattern
+             starts and ends with a slash.
+
+             NOTE:  This prefix applies to *all* web applications that
+             are running in this instance of Tomcat.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.InvokerInterceptor" 
+            debug="0" prefix="/servlet/" />
+
+        <!-- "default" handler - static files and dirs.  Set the
+             "suppress" property to "true" to suppress directory listings
+             when no welcome file is present.
+
+             NOTE:  This setting applies to *all* web applications that
+             are running in this instance of Tomcat.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.StaticInterceptor" 
+            debug="0" suppress="false" />
+
+        <!-- Plug a session manager. You can plug in more advanced session
+             modules.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.session.StandardSessionInterceptor" />
+
+        <!-- Check if the request requires an authenticated role.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.AccessInterceptor" 
+            debug="0" />
+
+        <!-- Check permissions using the simple xml file. You can 
+             plug more advanced authentication modules.
+          -->
+        <RequestInterceptor 
+            className="org.apache.tomcat.request.SimpleRealm" 
+            debug="0" />
+
+
+        <!-- Loaded last since JSP's that load-on-startup use request handling -->
+        <ContextInterceptor 
+            className="org.apache.tomcat.context.LoadOnStartupInterceptor" />
+
+      <!-- ==================== Connectors ==================== -->
+
+        <!-- Normal HTTP -->
+        <Connector className="org.apache.tomcat.service.PoolTcpConnector">
+            <Parameter name="handler" 
+                value="org.apache.tomcat.service.http.HttpConnectionHandler"/>
+            <Parameter name="port" 
+                value="30180"/>
+        </Connector>
+
+        <!-- Contexts -->
+
+<!--
+        <Context path="/wm" 
+                 docBase="wm" 
+                 crossContext="true"
+                 debug="0" 
+                 reloadable="true" 
+                 trusted="false" > 
+        </Context>
+-->
+
+    </ContextManager>
+</Server>
