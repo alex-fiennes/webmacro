@@ -865,7 +865,14 @@ public class Broker
     {
         _functionMap.put(fnName, mw);
     }
-
+    
+    /** store a "global function" by name */
+    public void putFunction (String fnName, Object instance, String methodName)
+    {
+        MethodWrapper func = new MethodWrapper(instance, methodName);
+        putFunction(fnName, func);
+    }        
+    
     /** Fetch a tool */
     public Object getAutoContextVariable(String variableName, Context context) {
         ContextAutoLoader loader = (ContextAutoLoader) _toolLoader.get(variableName);
