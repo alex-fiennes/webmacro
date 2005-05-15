@@ -7,21 +7,18 @@ current team is:
 
       Justin Wells            Original Developer
 
-      Brian Goetz             Current Lead Software Engineer
-
-      Fergus Gallagher        Core Developer
-      Marcel Huijkman         Core Developer
-      Tim Joyce               Core Developer
-      Sebastian Kanthak       Core Developer
+      Brian Goetz             Core Developer
       Keats Kirsch            Core Developer
-      Paul Kmiec              Core Developer
-      Aldona Majorek          Core Developer
-      Marc Palmer             Core Developer
       Eric Ridge              Core Developer
       Lane Sharman            Core Developer
-      Petr Toman              Core Developer
-      Zeljko Trogrlic         Core Developer 
 
+      Sebastian Kanthak       Contributor
+      Marcel Huijkman         Contributor
+      Paul Kmiec              Contributor
+      Aldona Majorek          Contributor
+      Marc Palmer             Contributor
+      Petr Toman              Contributor
+      Zeljko Trogrlic         Contributor 
       Frank Carver            Contributor
       Jeff Gee                Contributor
       Chris Hoover            Contributor
@@ -30,6 +27,8 @@ current team is:
       Dr. S. G. Shering       Contributor
       Michelle Yeh            Contributor
       Doug Young              Contributor
+      Fergus Gallagher        Contributor
+      Tim Joyce               Contributor
 
 Many people beyond this list contribute to WebMacro. 
 
