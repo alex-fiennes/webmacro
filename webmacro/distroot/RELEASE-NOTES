@@ -3,15 +3,17 @@ WebMacro 2.0
                     
 This is WebMacro 2.0RC1, the first release candidate of WebMacro 2.0.  Although
 we beleive this release to be very stable (and many of us are using it in production
-environments), there are likely bugs.  Please report bugs to our subscriber-only
+environments), you may find some bugs.  Please report bugs to our subscriber-only
 mailing list.  Please visit http://www.webmacro.org/MailingList for details.
 
 WM 2.0 includes new features such as #templet, #eval, syntax-level map support
-and numerous bugfixes and improved web docs.
+and numerous bugfixes and improved web docs. 
 
 
 The best place for information about WebMacro is our website:
     http://www.webmacro.org/
+    
+This is a wiki site built from the ground up using WM.
 
 In addition, WebMacro has relocated the management aspects of the project to
 SourceForge (http://www.sourceforge.net/projects/webmacro/).  We hope this
@@ -30,7 +32,7 @@ source code which imports files from webmacro.jar
 
 - WebMacro now has a dependency on Doug Lea's "concurrent.jar".  This library
 is used internally by WebMacro to manage many of the concurrency issues inherent to
-web development.  Although "concurrent.jar" is included with WebMacro, you
+web development and execution.  Although "concurrent.jar" is included with WebMacro, you
 can read about the library here:
     http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
 
@@ -43,8 +45,12 @@ Map definitions can also span multiple lines:
                  "key2" : "value",
                  "keyN" : value }
 
-- You can build WM in a minimalist fashion for embedded systems. See
-the ant file for this.
+- WM comes in 2 distinct distributions: classic and minimal.
+Classic mode is for web deployments where you will be using WebMacro to assist in rendering
+web pages.
+
+Minimal is when you are generating email, source, code, XML documents and the like not
+within a web servlet container.
 
 - A powerul new feature has been added allowing for blocks
 to be created as templets and evaluated. This is addition to the
@@ -54,6 +60,10 @@ macro calling facility.
 in the distro. It shows how to improve performance by creating an
 immutable global context which acts as constants context for the life
 of the application (or until it is refreshed). 
+
+- Two utility classes in the package, org.webmacro.util, have been 
+added/updated: WMStringEval.java and WMEval.java. These files expose
+some of the features of WebMacro processing in a more intuitive fashion.
 
 - Generally, this release represents a very stable runtime for
 use as an embedded text processing engine in any context, web or otherwise.

@@ -399,3 +399,22 @@ Functions.eval=org.webmacro.util.Eval.eval
 # and put a space separated list after Macros.Include
 # Example: 
 # Macros.Include: myGlobalMacros.wmm macros2.wmm
+
+## NOTE: The following settings support the servlet org.webmacro.servlet.TemplateServlet
+
+# To process a template once once and to make its resultant context
+# available in every context:
+GlobalTemplate.ContextName: global
+GlobalTemplate.Resource: global.tml
+
+
+# To process a template once per request and to make its resultant context
+# available in every context.
+RequestTemplate.ContextName: global
+RequestTemplate.Resource: global.tml
+
+# If getPathInfo() returns null, use the following default template
+TemplateServlet.DefaultTemplate: index.tml
+
+
+"home.html", "index.html"
