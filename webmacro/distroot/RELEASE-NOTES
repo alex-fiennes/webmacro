@@ -1,7 +1,7 @@
 WebMacro 2.0
 ---------------
                     
-This is WebMacro 2.0b1, the first beta release of WebMacro 2.0.  Although
+This is WebMacro 2.0RC1, the first release candidate of WebMacro 2.0.  Although
 we beleive this release to be very stable (and many of us are using it in production
 environments), there are likely bugs.  Please report bugs to our subscriber-only
 mailing list.  Please visit http://www.webmacro.org/MailingList for details.
