@@ -41,7 +41,8 @@ public class TemplateServlet extends HttpServlet {
   protected Context requestContext;
   protected String requestName;
   protected String requestTemplate;
-  private static final String[] welcomeList = {"home.html", "index.html"};
+  private static String defaultTemplate = "index.tml";
+  private ServletRouter sr;
 
   /**
    * Looks for a global template to evaluate (defined in WebMacro.properties).
@@ -59,6 +60,16 @@ public class TemplateServlet extends HttpServlet {
       globalTemplate = settings.getSetting("GlobalTemplate.Resource", null);
       requestName = settings.getSetting("RequestTemplate.ContextName", null);
       requestTemplate = settings.getSetting("RequestTemplate.Resource", null);
+      String w = settings.getSetting("TemplateServlet.DefaultTemplate");
+      if (w != null)
+      {
+        defaultTemplate = w;
+      }
+      String sr = settings.getSetting("TemplateServlet.ServletRouter");
+      if (sr != null)
+      {
+         this.sr = (ServletRouter) Class.forName(sr).newInstance();
+      }
       refreshGlobalContext();
       log("TemplateServlet initialized.");
     }
@@ -129,14 +140,14 @@ public class TemplateServlet extends HttpServlet {
    */
   protected String locateTemplate(HttpServletRequest request)
   {
-		String value = request.getRequestURI().substring(1); // strip out the leading /
+	String value = request.getPathInfo().substring(1); // strip out the leading /
     if (value == null || value.trim().length() == 0)
     {
-      return welcomeList[0];
+      return defaultTemplate;
     }
     else if (value.endsWith("/"))
     {
-      return (value + welcomeList[0]);
+      return (value + defaultTemplate);
     }
     else
     {
@@ -154,16 +165,29 @@ public class TemplateServlet extends HttpServlet {
                  HttpServletRequest request, 
                  HttpServletResponse resp) throws ServletException
   {
-    if (requestName == null) return;
-    try {
-      Context c = wm.getNewContext();
-      wm.eval(c, requestTemplate, null);
-      context.put(this.requestName, c);
-    }
-    catch (Exception e)
+    if (requestName != null)
     {
-      this.log("Unable to evaluate request template " + requestName, e);
-      throw new ServletException(e.toString());
+      try {
+        Context c = wm.getNewContext();
+        wm.eval(c, requestTemplate, null);
+        context.put(this.requestName, c);
+      }
+      catch (Exception e)
+      {
+        this.log("Unable to evaluate request template " + requestName, e);
+        throw new ServletException(e.toString());
+      }
+    }
+    if (this.sr != null)
+    {
+      try {
+        sr.handleWebRequest(this, context, template);
+      }
+      catch (Exception e)
+      {
+        this.log("Unable to process router " + sr.getClass().getName(), e);
+        throw new ServletException(e.toString());
+      }
     }
   }
   

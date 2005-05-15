@@ -31,7 +31,9 @@ public class EvalTemplates
         System.out.println("Template File=" + inputTemplate);
         try
         {
-            wm.eval(wm.getNewContext(), inputTemplate, null, null);
+            String s = wm.eval(wm.getNewContext(), inputTemplate, null, null);
+            System.out.println("Template Eval Output:\n" + s);
+            
         }
         catch (Exception e)
         {

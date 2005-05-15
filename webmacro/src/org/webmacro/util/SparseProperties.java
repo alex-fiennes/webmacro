@@ -13,6 +13,8 @@ package org.webmacro.util;
 import java.util.Properties;
 import java.util.Enumeration;
 
+import javax.servlet.ServletRequest;
+
 /**
  * Implement a behavior allowing for undefined properties to return
  * a useful default value such as "" for a string, "0.00" for 
@@ -90,6 +92,22 @@ public class SparseProperties extends Properties
         Object o = super.get(key);
         return (o == null) ? defaultValue : o;
     }
-
+    
+    /**
+     * Adds all the Request attributes to this property object.
+     * 
+     * @author Lane Sharman
+     */
+    public void addRequestAttributes(ServletRequest request)
+    {
+      System.out.println("Setting Request Properties:");
+      Enumeration e = request.getParameterNames();
+      while (e.hasMoreElements())
+      {
+        String k = (String) e.nextElement();
+        this.setProperty(k, (String) request.getParameter(k));
+        System.out.println(k + ":" + request.getParameter(k));
+      }
+    }
 }
   

@@ -76,30 +76,40 @@ public class WMEval
     public static final String outputContextKey = "OutputFileName";
 
     //-------constructor(s)-----
-    /**
-     * The constructor for WebMacro decorator in a servlet context.
-     */
-    public WMEval (Servlet servlet)
-    {
-        // Build a web macro environment for currentTemplate execution.
-        try
-        {
-            if (servlet == null)
-                wm = new WM();
-            else
-                wm = new WM(servlet);
-            context = wm.getContext();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            throw new IllegalStateException(e.toString());
-        }
-    }
+  /**
+   * The constructor for WebMacro decorator in a servlet context.
+   */
+  public WMEval (Servlet servlet)
+  {
+      // Build a web macro environment for currentTemplate execution.
+      try
+      {
+          if (servlet == null)
+              wm = new WM();
+          else
+              wm = new WM(servlet);
+          context = wm.getContext();
+      }
+      catch (Exception e)
+      {
+          e.printStackTrace(System.err);
+          throw new IllegalStateException(e.toString());
+      }
+  }
 
     public WMEval ()
     {
-        this(null);
+      // Build a web macro environment for currentTemplate execution.
+      try
+      {
+          wm = new WM();
+          context = wm.getContext();
+      }
+      catch (Exception e)
+      {
+          e.printStackTrace(System.err);
+          throw new IllegalStateException(e.toString());
+      }
     }
     
     /**
