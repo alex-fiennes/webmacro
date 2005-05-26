@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 final public class EnumIterator implements Iterator
 {
 
-    final Enumeration enum;
+    final Enumeration enumeration;
     private boolean hasNext;
 
     /**
@@ -42,7 +42,7 @@ final public class EnumIterator implements Iterator
      */
     public EnumIterator (Enumeration e)
     {
-        enum = e;
+        enumeration = e;
         hasNext = e.hasMoreElements();
     }
 
@@ -64,8 +64,8 @@ final public class EnumIterator implements Iterator
         {
             throw new NoSuchElementException("advanced past end of list");
         }
-        Object o = enum.nextElement();
-        hasNext = enum.hasMoreElements();
+        Object o = enumeration.nextElement();
+        hasNext = enumeration.hasMoreElements();
         return o;
     }
 

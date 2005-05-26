@@ -146,9 +146,10 @@ final public class Form implements Bag
     {
         StringBuffer sb = new StringBuffer();
         String eol = java.lang.System.getProperty("line.separator");
-        for (Enumeration enum = _request.getParameterNames(); enum.hasMoreElements();)
+        for (Enumeration enumeration = _request.getParameterNames();
+             enumeration.hasMoreElements();)
         {
-            String key = (String) enum.nextElement();
+            String key = (String) enumeration.nextElement();
             String[] value = _request.getParameterValues(key);
 
             for (int x = 0; value != null && x < value.length; x++)
