@@ -38,11 +38,11 @@ public final class QuotedStringBuilder extends Vector implements Builder
         StringBuffer str = new StringBuffer(100);
         QuotedString qs = new QuotedString();
 
-        Enumeration enumeration = elements();
+        Enumeration elems = elements();
 
-        while (enumeration.hasMoreElements())
+        while (elems.hasMoreElements())
         {
-            Object txt = enumeration.nextElement();
+            Object txt = elems.nextElement();
 
             if (txt instanceof Builder)
             {

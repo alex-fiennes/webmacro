@@ -6,7 +6,10 @@
     <property name="test" value="Test*"/>
 
     <path id="class.path">
-        <fileset dir="lib" includes="*.jar"/>
+        <fileset dir="lib">
+            <include name="*.jar" />
+            <include name="*.zip" />
+        </fileset>
         <pathelement path="${java.class.path}"/>
     </path>
     <property name="class.path.resolved" refid="class.path"/>
@@ -21,12 +24,12 @@
         <pathelement location="${template.root}"/>
         <pathelement path="${java.class.path}"/>
     </path>
-
+<!--
     <taskdef name="junit"
         classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
         <classpath refid="class.path"/>
     </taskdef>
-
+-->
 
     <target name="unit-clean">
         <delete dir="${unit.classes}"/>

@@ -16,6 +16,8 @@ public class WMParser_implTokenManager implements WMParser_implConstants
 {
   // Required by SetState
   void backup(int n) { input_stream.backup(n); }
+  public  java.io.PrintStream debugStream = System.out;
+  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
 private final int jjStopStringLiteralDfa_4(int pos, long active0)
 {
    switch (pos)
@@ -1382,7 +1384,7 @@ static final long[] jjtoSkip = {
 static final long[] jjtoSpecial = {
    0x10000L, 
 };
-private CharStream input_stream;
+protected CharStream input_stream;
 private final int[] jjrounds = new int[31];
 private final int[] jjstateSet = new int[62];
 StringBuffer image;
@@ -1425,13 +1427,16 @@ public void SwitchTo(int lexState)
       curLexState = lexState;
 }
 
-private final Token jjFillToken()
+protected Token jjFillToken()
 {
    Token t = Token.newToken(jjmatchedKind);
    t.kind = jjmatchedKind;
    if (jjmatchedPos < 0)
    {
-      t.image = "";
+      if (image == null)
+         t.image = "";
+      else
+         t.image = image.toString();
       t.beginLine = t.endLine = input_stream.getBeginLine();
       t.beginColumn = t.endColumn = input_stream.getBeginColumn();
    }
@@ -1454,7 +1459,7 @@ int jjround;
 int jjmatchedPos;
 int jjmatchedKind;
 
-public final Token getNextToken() 
+public Token getNextToken() 
 {
   int kind;
   Token specialToken = null;
@@ -1570,7 +1575,7 @@ public final Token getNextToken()
   }
 }
 
-final void TokenLexicalActions(Token matchedToken)
+void TokenLexicalActions(Token matchedToken)
 {
    switch(jjmatchedKind)
    {

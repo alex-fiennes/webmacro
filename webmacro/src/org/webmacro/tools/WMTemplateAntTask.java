@@ -52,7 +52,7 @@ public class WMTemplateAntTask extends Task
     {
         if (compileClasspath == null)
         {
-            compileClasspath = new Path(project);
+            compileClasspath = new Path(getProject());
         }
         return compileClasspath.createPath();
     }
@@ -85,8 +85,8 @@ public class WMTemplateAntTask extends Task
         for (int i = 0; i < filesets.size(); i++)
         {
             FileSet fs = (FileSet) filesets.elementAt(i);
-            File fromDir = fs.getDir(project);
-            DirectoryScanner ds = fs.getDirectoryScanner(project);
+            File fromDir = fs.getDir(getProject());
+            DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             String[] srcFiles = ds.getIncludedFiles();
             for (int j = 0; j < srcFiles.length; j++)
                 cmdl.createArgument()
@@ -95,7 +95,7 @@ public class WMTemplateAntTask extends Task
         }
 
 
-        Path classpath = cmdl.createClasspath(project);
+        Path classpath = cmdl.createClasspath(getProject());
         classpath.append(getClasspath());
 
         Execute.runCommand(this, cmdl.getCommandline());

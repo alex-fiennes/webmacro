@@ -712,7 +712,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     "setLocale",
                     new Class[]
                     {Locale.class});
-            m.invoke(resp, new Locale[]
+            m.invoke(resp, (Object[])new Locale[]
             {locale});
             if (_log.loggingDebug())
                 _log.debug("Successfully set locale to " + locale);

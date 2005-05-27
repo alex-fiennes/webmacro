@@ -42,7 +42,7 @@ Administrative targets:
     ]]></echo>
     </target>
 
-    <property name="version"        value="2.0b1" />
+    <property name="version"        value="2.0RC1" />
     <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
@@ -83,8 +83,9 @@ Administrative targets:
         <mkdir  dir="${examples}/WEB-INF/lib"/>
         <mkdir  dir="${dist.binary}"/>
         <mkdir  dir="${dist.source}"/>
-        <available property="javacc.present" classname="COM.sun.labs.javacc.Main"
-            classpath="${javacc.home}/JavaCC.zip" />
+        <available property="javacc.present" classname="org.javacc.parser.Main"
+            classpath="${javacc.home}/javacc.jar" />
+        <!-- <available property="javacc.present" classname="COM.sun.labs.javacc.Main" classpath="${javacc.home}/JavaCC.zip" /> -->
     </target>
 
 
@@ -118,7 +119,9 @@ Administrative targets:
         <copy todir="${tmpdir}" filtering="true">
             <fileset dir="src" />
         </copy>
-        <javac srcdir="${tmpdir}" destdir="${classes}"
+        <javac srcdir="${tmpdir}"
+	    fork="Yes"
+	    destdir="${classes}"
             debug="on" optimize="off" deprecation="off">
             <classpath refid="class.path" />
         </javac>

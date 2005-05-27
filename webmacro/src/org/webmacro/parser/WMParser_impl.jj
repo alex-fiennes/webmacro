@@ -21,8 +21,9 @@ import org.webmacro.directive.Directive.Subdirective;
  *
  * JavaCC parser class for parsing WebMacro templates.
  * The supported entry point is WMDocument, which returns a BlockBuilder.
- *
+ * 
  * @author Brian Goetz
+ *
  */
 
 public class WMParser_impl {

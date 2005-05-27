@@ -115,7 +115,7 @@ public final class DirectiveProvider implements Provider
             try
             {
                 templateDesc = (DirectiveDescriptor)
-                        directive.getMethod("getDescriptor", null).invoke(null, null);
+                        directive.getMethod("getDescriptor", (Class[])null).invoke(null, (Object[])null);
                 newDesc = new DirectiveDescriptor(templateDesc.name,
                         templateDesc.dirClass,
                         templateDesc.args,
