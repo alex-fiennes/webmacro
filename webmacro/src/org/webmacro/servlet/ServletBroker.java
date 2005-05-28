@@ -41,6 +41,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
+/**
+ * The base broker for Servlets and web applications. getBroker will
+ * instantiate the correct ServletXXBroker for the version of the servlet
+ * API that is available.
+ *
+ * @see #getBroker
+ * @since Dawn of time
+ */
 abstract public class ServletBroker extends Broker
 {
 
@@ -104,6 +112,42 @@ abstract public class ServletBroker extends Broker
             b = Servlet22Broker.getBroker(s, additionalProperties);
         else
             b = Servlet20Broker.getBroker(s, additionalProperties);
+        return b;
+    }
+
+    /**
+     * Get a Broker according to Servlet API version, when no Servlet reference
+     * is available.
+     * @param sc The ServletContext of the web application
+     * @param cl A class loader, hopefully that of the web application, to
+     * use when loading resources or classes.
+     * @param additionalProperties
+     * @return
+     * @throws InitException
+     * @since 2.1
+     */
+    public static Broker getBroker (ServletContext sc, ClassLoader cl,
+        Properties additionalProperties) throws InitException
+    {
+        int minorVersion, majorVersion;
+
+        try
+        {
+            majorVersion = sc.getMajorVersion();
+            minorVersion = sc.getMinorVersion();
+        }
+        catch (NoSuchMethodError e)
+        {
+            majorVersion = 2;
+            minorVersion = 0;
+        }
+
+        Broker b;
+        if (majorVersion > 2
+                || (majorVersion == 2 && minorVersion >= 2))
+            b = Servlet22Broker.getBroker(sc, cl, additionalProperties);
+        else
+            b = Servlet20Broker.getBroker(sc, cl, additionalProperties);
         return b;
     }
 

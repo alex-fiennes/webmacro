@@ -36,9 +36,15 @@ import java.util.Properties;
 
 /**
  * An implementation of Broker tailored for Servlet 2.0/2.1
- * environments.  Loads templates and other resources from the class
- * path, writes log messages to the servlet log.
+ * environments.
+ * <p>
+ * Loads templates and other resources from:
+ * <ol>
+ * <li> the class path,
+ * </p>
+ * writes log messages to the servlet log.
  * @author Brian Goetz
+ * @author Marc Palmer (wj5@wangjammers.org)
  * @since 0.96
  */
 
@@ -47,7 +53,7 @@ public class Servlet20Broker extends ServletBroker
 
     protected ClassLoader _servletClassLoader;
 
-    private Servlet20Broker (ServletContext sc,
+    protected Servlet20Broker (ServletContext sc,
                              ClassLoader cl,
                              Properties additionalProperties) throws InitException
     {
@@ -70,10 +76,57 @@ public class Servlet20Broker extends ServletBroker
         init();
     }
 
+    /**
+     * Get a Servlet API 2.0 compatible broker for the Servlet specified
+     * @param s
+     * @param additionalProperties
+     * @return
+     * @throws InitException
+     */
     public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
     {
         ServletContext sc = s.getServletConfig().getServletContext();
         ClassLoader cl = s.getClass().getClassLoader();
+        return _getBroker(sc, cl, additionalProperties, true,
+                s.getClass().getName());
+    }
+
+    /**
+     * Get a Servlet API 2.0 compatible broker for the ServletContext specified
+     * @param sc The Servlet context
+     * @param cl A ClassLoader to use, presumably the webapp classloader
+     * @param additionalProperties
+     * @return
+     * @throws InitException
+     * @since 2.1
+     */
+    public static Broker getBroker (ServletContext sc, ClassLoader cl,
+        Properties additionalProperties) throws InitException
+    {
+        return _getBroker(sc, cl, additionalProperties, false, sc.toString() );
+    }
+
+    /**
+     * Get an existing instance of the Servlet 2.0/2.1 broker or create a new one.
+     * Templates will be retrieved relative to the ServletContext root
+     * and classes loaded from the ClassLoader passed in. NOTE: Templates
+     * will <b>not</b> be loaded from the classpath.
+     * @param sc The ServletContext to template access
+     * @param cl The ClassLoader for class loading, typically servlet or
+     * JSP page's class loader
+     * @param additionalProperties
+     * @param fromServlet true if it is actually an initialization derived from
+     * a Servlet instance passed in - just for nicer logging output
+     * @param servletOrContextName Name of the servlet or context originating this broker,
+     * for nicer logging
+     * @return
+     * @throws org.webmacro.InitException
+     * @since 2.1
+     */
+    protected static Broker _getBroker (ServletContext sc,
+        ClassLoader cl, Properties additionalProperties, boolean fromServlet,
+        String servletOrContextName) throws InitException
+    {
         try
         {
             Object key = cl;
@@ -87,15 +140,18 @@ public class Servlet20Broker extends ServletBroker
                 register(key, b);
             }
             else
-                b.getLog("broker").notice("Servlet " + s.getClass().getName()
-                        + " joining Broker " + b.getName());
+                b.getLog("broker").notice(
+                    (fromServlet ? "Servlet " : "ServletContext ")
+                    + servletOrContextName
+                    + " joining Broker" + " " + b.getName() );
             return b;
         }
         catch (InitException e)
         {
             Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialized WebMacro from servlet context"
-                    + sc.toString());
+            log.error("Failed to initialized WebMacro from "+
+                    (fromServlet ? "Servlet " : "ServletContext ")
+                    + servletOrContextName);
             throw e;
         }
     }

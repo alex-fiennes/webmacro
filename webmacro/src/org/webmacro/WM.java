@@ -26,6 +26,7 @@ package org.webmacro;
 import java.io.*;
 import java.util.*;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -105,6 +106,19 @@ public class WM implements WebMacro
     public WM (Servlet s, Properties additionalProperties) throws InitException
     {
         this(ServletBroker.getBroker(s, additionalProperties));
+    }
+
+    /**
+     * Constructs a WM is tied to a Servlet broker,
+     * with an additional set of
+     * properties passed in from the caller, using the ServletContext
+     * and ClassLoader provided.
+     * @since 2.1
+     */
+    public WM (ServletContext sc, ClassLoader cl,
+               Properties additionalProperties) throws InitException
+    {
+        this(ServletBroker.getBroker(sc, cl, additionalProperties));
     }
 
     /**

@@ -43,6 +43,7 @@ import java.util.Properties;
  * context (WAR file), writes log messages to the servlet log, and loads
  * properties from the WAR file context parameters.
  * @author Brian Goetz
+ * @author Marc Palmer (wj5@wangjammers.org)
  * @since 0.96
  */
 
@@ -57,7 +58,7 @@ public class Servlet22Broker extends ServletBroker
      * for WebMacro.properties before looking
      * in the application root.
      */
-    private Servlet22Broker (ServletContext sc,
+    protected Servlet22Broker (ServletContext sc,
                              ClassLoader cl,
                              Properties additionalProperties) throws InitException
     {
@@ -124,6 +125,48 @@ public class Servlet22Broker extends ServletBroker
     {
         ServletContext sc = s.getServletConfig().getServletContext();
         ClassLoader cl = s.getClass().getClassLoader();
+        return _getBroker(sc, cl, additionalProperties, true,
+            s.getClass().getName());
+    }
+
+    /**
+     * Get a Servlet API 2.2 compatible broker for the ServletContext specified
+     * @param sc The Servlet context
+     * @param cl A ClassLoader to use, presumably the webapp classloader
+     * @param additionalProperties
+     * @return
+     * @throws InitException
+     * @since 2.1
+     */
+    public static Broker getBroker(ServletContext sc, ClassLoader cl,
+        Properties additionalProperties) throws InitException
+    {
+        return _getBroker(sc, cl, additionalProperties, false,
+            sc.toString());
+    }
+
+    /**
+     * Get an existing instance of the Servlet 2.2 broker or create a new one.
+     * Templates will be retrieved relative to the ServletContext root
+     * and classes loaded from the ClassLoader passed in. NOTE: Templates
+     * will <b>not</b> be loaded from the classpath.
+     * @param sc The ServletContext to template access
+     * @param cl The ClassLoader for class loading, typically servlet or
+     * JSP page's class loader
+     * @param additionalProperties
+     * @param fromServlet true if it is actually an initialization derived from
+     * a Servlet instance passed in - just for nicer logging output
+     * @param servletOrContextName Name of the servlet or context originating this broker,
+     * for nicer logging
+     * @return
+     * @throws org.webmacro.InitException
+     * @since 2.1
+     */
+    private static Broker _getBroker(ServletContext sc, ClassLoader cl,
+        Properties additionalProperties, boolean fromServlet,
+        String servletOrContextName) throws InitException
+    {
+        Broker result;
         try
         {
             Object key = sc;
@@ -137,18 +180,21 @@ public class Servlet22Broker extends ServletBroker
                 register(key, b);
             }
             else
-                b.getLog("broker").notice("Servlet "
-                        + s.getServletConfig().getServletName()
-                        + " joining Broker " + b.getName());
-            return b;
+                b.getLog("broker").notice(
+                    (fromServlet ? "Servlet " : "ServletContext ")
+                    + servletOrContextName
+                    + " joining Broker" + " " + b.getName() );
+            result = b;
         }
         catch (InitException e)
         {
             Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialized WebMacro from servlet context"
-                    + sc.toString());
+            log.error("Failed to initialized WebMacro from "+
+                    (fromServlet ? "Servlet " : "ServletContext ")
+                    + servletOrContextName);
             throw e;
         }
+        return result;
     }
 
     /**
