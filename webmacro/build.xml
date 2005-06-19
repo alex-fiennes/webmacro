@@ -1,6 +1,6 @@
 <!--
     In order to compile WebMacro, you may need to set these environment variables
-        JAVACC_HOME: your JavaCC installation
+        JAVACC_HOME: your JavaCC installation home
  -->
 <!--
     Note, you will need ANT 1.5.x, available from:
