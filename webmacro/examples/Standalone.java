@@ -66,9 +66,10 @@ public class Standalone extends HttpServlet
      * every request. 
      */
    public void init(ServletConfig sc) throws ServletException {
+      super.init(sc);
       try {
          if (_wm == null) {
-            _wm = new WM();
+            _wm = new WM(this);
          }
       } catch (InitException e) {
          throw new ServletException("Could not initialize WebMacro: " + e);

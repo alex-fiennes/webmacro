@@ -42,7 +42,7 @@ Administrative targets:
     ]]></echo>
     </target>
 
-    <property name="version"        value="2.0RC1" />
+    <property name="version"        value="2.1" />
     <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
@@ -153,6 +153,7 @@ Administrative targets:
             debug="on" optimize="off" deprecation="off">
             <classpath refid="class.path" />
         </javac>
+        <copy		file="${examples}/web.xml" tofile="${examples}/WEB-INF/web.xml"/>
     </target>
 
 

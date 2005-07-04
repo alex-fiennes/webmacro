@@ -7,7 +7,7 @@
 <center>
 <b>Set Up Guidelines
 <br>
-Updated For Release 2.0</b></center>
+Updated For Release 2.1</b></center>
 
 <p>
 
@@ -27,19 +27,20 @@ Some basic guidelines for set-up:
 
 <ul>
 <li> webmacro.jar contains all the core classes, and needs to be in
-     your classpath or your WAR distribution. 
-     <p>
+     your classpath or your WAR distribution. Also, concurrent.jar, provided in the distribution, needs to be in your classpath as well.
+  <p>
 <li> webmacro.defaults contains all the runtime default properties. DO
      NOT MODIFY this file. Instead override this file by placing a file
      called WebMacro.properties in your classpath and making changes or
      replacements here. For secure 2.2+ Web Apps, place WebMacro.properties 
-     under your WEB-INF/ directory.
-     <p>
+     under your WEB-INF/classes directory where it will be automatically found in this classpath.
+  <p>
 <li> We recommend you place the root directory for your templates 
      in your classpath or your application root or for secured WEB applictions
      in a jar file in the directory WEB-INF/lib/.
      In this manner, the WebMacro resource provider will find them.
-     <p>
+For example, if you place your templates is WEB-INF/classes, they will be found because this path is automatically a part of the classpath for web applications.
+  <p>
 <li> API documentation is provided with the release and is your
      principal source of coding guidelines along with the WebMacro
      wiki site.
@@ -75,19 +76,11 @@ Some basic guidelines for set-up:
      equivalent servlet interface, and it has to be in your CLASSPATH.
      <p>
 
-  <li> You need a Java 1.2 runtime environment to use
-      the WebMacro.jar file distributed with this release. 
+  <li> As of this release, we recommend using  Java 1.4 or 1.5 runtime. 
      <p>
 
-  <li> You need to include WebMacro.jar in your classpath
-     <p>
-
-  <li> You need to include your own Java directory in your classpath, where
-     you will have your WebMacro handlers and other work. To use the 
-     WebMacro examples you might use $HOME/webmacro/examples--it is usually
-     convenient to make this the same directory as your WebMacro.properties
-     files lives in.
-     <p>
+  <li> Again, webmacro.jar and concurrent.jar must be in your classpath.
+    <p>
 
 </ul>
 
@@ -100,7 +93,7 @@ CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/
 
   You have unpacked WebMacro in your home directory in this example. 
   $JSDK_HOME contains the "javax" directory in which you have your JSDK
-  base classes, and JAVA_HOME/lib/classes.zip contains the standard library.   
+  base classes, and JAVA_HOME/lib/classes.zip contains the J2SE standard library.   
 
   <h3>Using the examples</h3>
 
@@ -111,26 +104,23 @@ CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/
   them. 
   <p>
   HelloWorld and GuestBook use the WMServlet approach, so put all their 
-  .class files in your servlet directory.
+  .class files in your servlet directory, normally, WEB-INF/classes.
   <p>
-  TestWM uses the Reactor method. So register Reactor as the
-  servlet with TestWM as its script name (last part of the
-  URL).
+<a name="Compiling"><h3>How to Compile WebMacro</h3>
+</a>
 
-
-<a name="Compiling"><h3>How to Compile WebMacro</h3></a>
-
-WebMacro ships with a webmacro.jar file compiled for JDK 1.2/1.3.
+WebMacro ships with a webmacro.jar file compiled for JDK 1.2-1.5.
 
 To recompile WM, you will need to go to the CVS archive where you
 can find the ant build script and all the supporting libraries
 referenced during compilation. You must "check out" the sources and
 supporting files to compile and test WM.
 
-<a name="Overview"><h3>Overview of the WebMacro System: </h3></a>
+<a name="Overview">
+<h3>Overview of the WebMacro System: </h3>
+</a>
 
-   WebMacro is similar in many ways to JSP/ASP and other projects in many
-   ways, but differs from those according to our biases:
+   WebMacro provides, among other benefits, a cleaner approach to web page generation than using  JSP/ASP. Philosophically:
    <ul>
 
       <li> We think it is wrong to use markup for a scripting language
@@ -143,8 +133,9 @@ supporting files to compile and test WM.
               are separate tasks</b>
    </ul>
 
-   So we have designed a language that is simple to learn, but which 
-   fits with our biases above.  <p>
+   JSP/ASP are hard to do for web page designers. WebMacro is not. So we have designed a language that is simple to learn, but which 
+   fits with our biases above.  
+   <p>
 
    WebMacro presents two separate interfaces:  <ol>
 

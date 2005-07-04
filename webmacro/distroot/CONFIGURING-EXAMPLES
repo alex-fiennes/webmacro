@@ -1,18 +1,25 @@
 *INSTALLING THE WEBMACRO EXAMPLES*
 
 This document describes how to install and configure the examples packaged
-with WebMacro using Tomcat and Resin, two popular Java servlet containers.
-Other JSDK 2.2+ compliant servlet containers should work very similarly.  
-The sources were compiled using Sun's JDK1.3. Unix/Linux configuration 
-should be virtually identical (except for the slashes 
+with WebMacro. Some of the examples expect a servlet container
+such as Tomcat and Resin, two popular Java servlet containers. Other examples,
+eg, Standalone.java, do not require a servlet container to use.
+Care has been made to remain backward compatible with all servlet specs
+from 2.2 thru 2.4.
+
+Compliant servlet containers should work very similarly.  
+The sources were compiled using Sun's JDK1.4. And, the sources
+have been compiled under JDK1.5.
+
+Unix/Linux configuration should be virtually identical (except for the slashes 
 and drive letters in the paths). All paths given such as 
 release/examples/ are relative to "release" which will be a
-specific version, eg, "webmacro-1.0rc1"
-to the  
+specific version, eg, "webmacro-2.1".
 
-*TOMCAT CONFIGURATION (v3.2.1)*
+*TOMCAT CONFIGURATION (v5.5.9)*
 
-Copy the files from release/examples to a webapps directory named wm/.  
+Copy the files from release/examples/* to a webapps directory named wm/.
+ 
 For example, if your TOMCAT_HOME is E:\tomcat then copy the examples files to 
 E:\tomcat\webapps\wm.  This will result in a directory with the 
 following files:

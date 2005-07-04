@@ -94,7 +94,9 @@ abstract public class ServletBroker extends Broker
     {
         int minorVersion, majorVersion;
 
-        ServletContext sc = s.getServletConfig().getServletContext();
+        ServletContext sc = s.
+        getServletConfig().
+        getServletContext();
         try
         {
             majorVersion = sc.getMajorVersion();
