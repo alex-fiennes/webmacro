@@ -1,0 +1,71 @@
+<!--
+    This build file will help you compile and 
+    move the examples into your environment.
+ -->
+<project name="WebMacroExamples" default="usage" basedir=".">
+
+    <target name="usage">
+        <echo><![CDATA[
+Usage:
+    ant TARGET [-Dproperty1=value -DpropertyN=value]
+
+Common targets:
+    clean
+        Remove all temporary files created during build process
+    compile
+        Compile all principal source files
+    web
+        Updates the web target with the examples
+    ]]></echo>
+    </target>
+
+    <!-- Change as needed-->
+    <property name="web.home"       value="/deploy/http/Tomcat5.5" />
+    <property environment="ENV" />
+
+    <path id="class.path">
+          <fileset dir="..">
+             <include name="webmacro.jar" />
+             <include name="concurrent.jar" />
+           </fileset>
+          <!-- Change as needed to get the servlet API-->
+          <fileset dir="${web.home}/common/lib">
+             <include name="*.jar" />
+           </fileset>
+        <pathelement path="${java.class.path}" />
+    </path>
+    <property name="classpath.resolved" refid="class.path"/>
+
+
+  	<!-- cleans out the target -->
+    <target name="clean">
+      <delete dir="${web.home}/webapps/wm"/>
+    </target>
+		
+  	<!-- makes sure there is a target -->
+    <target name="webprepare">
+      <mkdir dir="${web.home}/webapps/wm"/>
+      <copy todir="${web.home}/webapps/wm">
+          <fileset dir="." />
+      </copy>
+      <copy todir="${web.home}/webapps/wm/WEB-INF/lib">
+        <fileset dir="..">
+           <include name="*.jar" />
+         </fileset>
+      </copy>
+    </target>
+
+  	<!-- compiles and places the classes in the web-inf/classes folder. -->
+    <target name="compile" depends="webprepare">
+     <javac srcdir="." fork="Yes"
+	     destdir="${web.home}/webapps/wm/WEB-INF/classes" debug="on" optimize="off" deprecation="off">
+       <classpath refid="class.path" />
+     </javac>
+    </target>
+
+    <target name="web" depends="webprepare, compile">
+    </target>
+
+</project>
+
+
