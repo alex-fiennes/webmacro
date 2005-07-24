@@ -73,6 +73,11 @@ public class TestFunction extends TemplateTestCase
         assertStringTemplateEquals("$mySubstr(0,3)", "ABC");
     }
 
+    public void testFunctionDotMore () throws Exception
+    {
+        assertStringTemplateEquals("$escape('1234').length()", "4");
+        assertStringTemplateEquals("$mySubstr(0,3).substring(1)", "BC");
+    }
 
     public void testVoidFunction () throws Exception
     {
