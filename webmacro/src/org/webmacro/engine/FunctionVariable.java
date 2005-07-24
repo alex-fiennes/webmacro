@@ -29,7 +29,8 @@ public class FunctionVariable extends Variable
      */
     public Object getValue (Context context) throws PropertyException
     {
-        return context.getProperty(_names[0]);
+       return context.getProperty(_names);
+       //return context.getProperty(_names[0]);
     }
 
     /** The code to set the value represented by the variable in the
