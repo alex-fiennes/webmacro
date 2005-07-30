@@ -275,9 +275,7 @@ Parsers.wm:  org.webmacro.parser.WMParser
 #
 # FastWriter Configuration
 #
-# Misconfiguration of these settings can cause severe performance
-# and resource penalties
-
+# This setting can be tuned for space/time trade-offs.
 FastWriter.DefaultBufferSize = 4096
 
 
