@@ -33,6 +33,11 @@ public class UnsettableException extends ContextException
 {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Constructor only requires a reason
      * <p>
      * @param reason explains what went wrong

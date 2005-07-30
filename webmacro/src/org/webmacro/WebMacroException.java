@@ -30,7 +30,11 @@ package org.webmacro;
 public class WebMacroException extends RethrowableException
 {
 
-    private String _contextLocation;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String _contextLocation;
 
     public WebMacroException ()
     {

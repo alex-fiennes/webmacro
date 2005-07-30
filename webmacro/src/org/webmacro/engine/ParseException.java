@@ -31,7 +31,12 @@ import org.webmacro.TemplateException;
 public class ParseException extends TemplateException
 {
 
-    public ParseException ()
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ParseException ()
     {
         super();
     }

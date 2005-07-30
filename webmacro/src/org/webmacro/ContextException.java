@@ -31,7 +31,12 @@ package org.webmacro;
 public class ContextException extends WebMacroException
 {
 
-    public ContextException ()
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ContextException ()
     {
         super();
     }

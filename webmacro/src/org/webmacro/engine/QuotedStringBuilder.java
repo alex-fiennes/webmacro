@@ -33,7 +33,12 @@ import java.util.Vector;
 public final class QuotedStringBuilder extends Vector implements Builder
 {
 
-    final public Object build (BuildContext bc) throws BuildException
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	final public Object build (BuildContext bc) throws BuildException
     {
         StringBuffer str = new StringBuffer(100);
         QuotedString qs = new QuotedString();
@@ -107,6 +112,10 @@ final class QuotedString extends Vector implements Macro, Visitable
 {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
      * conditionally include debugging statements in the compiled code
      */
     private static final boolean debug = false;

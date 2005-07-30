@@ -30,7 +30,6 @@ import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.StringMacro;
-import org.webmacro.engine.StringTemplate;
 import org.webmacro.engine.Variable;
 
 /**

@@ -45,7 +45,12 @@ package org.webmacro;
 public class RethrowableException extends Exception
 {
 
-    private Throwable cause;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Throwable cause;
 
     private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 

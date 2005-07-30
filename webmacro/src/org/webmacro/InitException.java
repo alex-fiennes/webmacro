@@ -30,7 +30,12 @@ package org.webmacro;
 public class InitException extends WebMacroException
 {
 
-    public InitException (String reason)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public InitException (String reason)
     {
         super(reason);
     }

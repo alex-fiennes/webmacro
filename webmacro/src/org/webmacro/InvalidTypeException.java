@@ -30,7 +30,12 @@ package org.webmacro;
 public class InvalidTypeException extends WebMacroException
 {
 
-    public InvalidTypeException (String reason)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public InvalidTypeException (String reason)
     {
         super(reason);
     }

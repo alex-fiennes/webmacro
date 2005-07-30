@@ -34,6 +34,11 @@ public class ConfigException extends WebMacroException
 {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Constructor only requires a reason
      * <p>
      * @param reason explains what went wrong

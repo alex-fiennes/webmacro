@@ -11,7 +11,7 @@ import org.webmacro.engine.DefaultEvaluationExceptionHandler;
  * The file /etc/password should exist on your
  * filesystem and contain "root:" somewhere in it
  *
- * And your computer will need access to http://www.webmacro.org/
+ * And your computer will need access to http://www.amazon.com/
  */
 public class TestParseInclude extends TemplateTestCase
 {
@@ -81,10 +81,14 @@ public class TestParseInclude extends TemplateTestCase
         String fileName = "\"" + System.getProperty("user.dir") + "/build.xml\"";
         assertStringTemplateMatches("#include " + fileName,
                 ".*project.*");
+    }
 
-        // include http://www.yahoo.com/
-        assertStringTemplateMatches("#include \"http://www.webmacro.org\"",
-                ".*WebMacro.*");
+    public void testHttp () throws Exception
+    {
+
+        // include http://www.amazon.com/
+        assertStringTemplateMatches("#include \"http://www.amazon.com\"",
+                ".*Amazon.*");
 
     }
 

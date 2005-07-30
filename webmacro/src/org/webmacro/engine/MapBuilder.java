@@ -45,7 +45,12 @@ import java.util.Map;
  */
 public class MapBuilder extends HashMap implements Builder
 {
-    public Object build (BuildContext pc) throws BuildException
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public Object build (BuildContext pc) throws BuildException
     {
         Map ret = new HashMap(size());
         boolean isMacro = false;

@@ -33,6 +33,11 @@ public class HandlerException extends WebMacroException
 {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Declare a handler exception with a reason
      * @param reason why the handler failed
      */

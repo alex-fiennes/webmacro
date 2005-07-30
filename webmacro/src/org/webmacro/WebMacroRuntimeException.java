@@ -29,7 +29,12 @@ package org.webmacro;
 public class WebMacroRuntimeException extends RethrowableRuntimeException
 {
 
-    public WebMacroRuntimeException ()
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public WebMacroRuntimeException ()
     {
         super();
     }

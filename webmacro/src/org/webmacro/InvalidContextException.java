@@ -30,7 +30,12 @@ package org.webmacro;
 public class InvalidContextException extends PropertyException
 {
 
-    public InvalidContextException (String reason)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public InvalidContextException (String reason)
     {
         super(reason);
     }

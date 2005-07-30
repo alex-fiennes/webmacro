@@ -7,9 +7,7 @@ package org.webmacro.engine;
 import java.io.IOException;
 
 import org.webmacro.Context;
-import org.webmacro.FastWriter;
 import org.webmacro.Macro;
-import org.webmacro.PropertyException;
 
 /**
  * @author Keats Kirsch

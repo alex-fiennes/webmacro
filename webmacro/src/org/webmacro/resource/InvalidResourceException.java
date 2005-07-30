@@ -37,7 +37,12 @@ import org.webmacro.ResourceException;
 public class InvalidResourceException extends ResourceException
 {
 
-    public InvalidResourceException (String reason, Exception e)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public InvalidResourceException (String reason, Exception e)
     {
         super(reason, e);
     }

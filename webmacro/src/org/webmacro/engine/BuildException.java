@@ -28,7 +28,12 @@ import org.webmacro.TemplateException;
 public class BuildException extends TemplateException
 {
 
-    public BuildException (String message)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public BuildException (String message)
     {
         super(message);
     }

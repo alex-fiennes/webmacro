@@ -34,7 +34,11 @@ import org.webmacro.util.*;
   */
 public class TemplateServlet extends HttpServlet {
   
-  protected WMEval wm;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+protected WMEval wm;
   protected Context globalContext;
   protected String globalName;
   protected String globalTemplate;

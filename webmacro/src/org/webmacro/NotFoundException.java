@@ -29,7 +29,12 @@ package org.webmacro;
 public class NotFoundException extends ResourceException
 {
 
-    public NotFoundException (String reason, Exception e)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public NotFoundException (String reason, Exception e)
     {
         super(reason, e);
     }

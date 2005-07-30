@@ -467,7 +467,12 @@ public abstract class Directive implements Macro, Visitable
     public static class NotVariableBuildException extends BuildException
     {
 
-        public NotVariableBuildException (String directive)
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public NotVariableBuildException (String directive)
         {
             super("#" + directive + ": Argument must be a variable");
         }
@@ -486,7 +491,12 @@ public abstract class Directive implements Macro, Visitable
     public static class NotSimpleVariableBuildException extends BuildException
     {
 
-        public NotSimpleVariableBuildException (String directive)
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public NotSimpleVariableBuildException (String directive)
         {
             super("#" + directive + ": Argument must be a simple variable");
         }

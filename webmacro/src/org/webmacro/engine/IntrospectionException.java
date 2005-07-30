@@ -28,7 +28,12 @@ import org.webmacro.WebMacroException;
 public class IntrospectionException extends WebMacroException
 {
 
-    public IntrospectionException (String message, Exception e)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public IntrospectionException (String message, Exception e)
     {
         super(message, e);
     }

@@ -37,7 +37,12 @@ import org.webmacro.WebMacroRuntimeException;
 public class ParserRuntimeException extends WebMacroRuntimeException
 {
 
-    public ParserRuntimeException ()
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ParserRuntimeException ()
     {
         super();
     }

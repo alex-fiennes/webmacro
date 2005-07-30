@@ -29,7 +29,12 @@ package org.webmacro.util;
 final public class InvalidArgumentException extends Exception
 {
 
-    public InvalidArgumentException (String reason)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public InvalidArgumentException (String reason)
     {
         super(reason);
     }

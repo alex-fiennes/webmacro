@@ -42,7 +42,12 @@ import java.util.Vector;
 public final class ListBuilder extends Vector implements Builder
 {
 
-    public final Object[] buildAsArray (BuildContext bc) throws BuildException
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public final Object[] buildAsArray (BuildContext bc) throws BuildException
     {
         Object c[] = new Object[size()];
 

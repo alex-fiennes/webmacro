@@ -26,7 +26,11 @@ import javax.servlet.ServletRequest;
 public class SparseProperties extends Properties
 {
 
-    /** The global default value for all requests is "" */
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/** The global default value for all requests is "" */
     protected Object globalDefault = new String("");
 
     public SparseProperties ()

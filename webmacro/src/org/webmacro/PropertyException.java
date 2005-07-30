@@ -40,7 +40,11 @@ package org.webmacro;
  */
 public class PropertyException extends ContextException
 {
-    private String _message = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String _message = null;
 
     public PropertyException (String reason)
     {
@@ -90,7 +94,11 @@ public class PropertyException extends ContextException
     public static class NoSuchVariableException extends PropertyException
     {
 
-        public String variableName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String variableName;
 
         public NoSuchVariableException (String variableName)
         {
@@ -109,7 +117,11 @@ public class PropertyException extends ContextException
     public static class NullToStringException extends PropertyException
     {
 
-        public String variableName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String variableName;
 
         public NullToStringException (String variableName)
         {
@@ -128,7 +140,11 @@ public class PropertyException extends ContextException
     public static class NullValueException extends PropertyException
     {
 
-        public String variableName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String variableName;
 
         public NullValueException (String variableName)
         {
@@ -145,7 +161,11 @@ public class PropertyException extends ContextException
     public static class NoSuchMethodException extends PropertyException
     {
 
-        public String methodName, className, variableName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String methodName, className, variableName;
 
         public NoSuchMethodException (String methodName,
                                       String variableName,
@@ -166,7 +186,11 @@ public class PropertyException extends ContextException
     public static class NoSuchMethodWithArgumentsException extends PropertyException
     {
 
-        public String methodName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String methodName;
         public String className;
         public String arguments;
 
@@ -189,7 +213,11 @@ public class PropertyException extends ContextException
     public static class NoSuchPropertyException extends PropertyException
     {
 
-        String _propertyName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		String _propertyName;
         String _className;
         String _variableName;
 
@@ -213,7 +241,11 @@ public class PropertyException extends ContextException
     public static class VoidValueException extends PropertyException
     {
 
-        String _variableName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		String _variableName;
 
 
         public VoidValueException ()
@@ -234,7 +266,12 @@ public class PropertyException extends ContextException
     public static class InvalidTypeException extends PropertyException
     {
 
-        public InvalidTypeException (String variableName, Class clazz)
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public InvalidTypeException (String variableName, Class clazz)
         {
             super("$" + variableName + " is not a " + clazz.getName());
         }
@@ -248,7 +285,11 @@ public class PropertyException extends ContextException
     public static class RestrictedPropertyException extends PropertyException
     {
 
-        String _propertyName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		String _propertyName;
         String _className;
         String _variableName;
 
@@ -272,7 +313,11 @@ public class PropertyException extends ContextException
     public static class RestrictedMethodException extends PropertyException
     {
 
-        String _propertyName;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		String _propertyName;
         String _className;
         String _variableName;
 
@@ -295,7 +340,11 @@ public class PropertyException extends ContextException
     public static class UndefinedVariableException extends PropertyException
     {
 
-        private String _msg = "Attempted to dereference an undefined variable.";
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private String _msg = "Attempted to dereference an undefined variable.";
 
         public UndefinedVariableException ()
         {

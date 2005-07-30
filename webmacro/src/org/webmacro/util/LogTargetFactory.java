@@ -51,7 +51,12 @@ public class LogTargetFactory
     public static class LogCreationException extends WebMacroException
     {
 
-        public LogCreationException (String message, Throwable throwable)
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public LogCreationException (String message, Throwable throwable)
         {
             super(message, throwable);
         }
