@@ -1,8 +1,8 @@
 Potential Pitfalls While Ugrading
 ---------------------------------
 
-If you are upgrading from early versions of WebMacro, you should
-probably read this file. 
+If you are upgrading from a version prior to 2.0, you will want to recompile
+against the API.
 
 Since WebMacro 1.0, only 1 minor API change has been made.  WebMacro's
 simple logging API has been changed to accept "Throwable"s instead of 

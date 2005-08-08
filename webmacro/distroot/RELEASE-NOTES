@@ -1,21 +1,24 @@
-WebMacro 2.1
----------------
+WebMacro 2.1 1-August-2005
+---------------------------
                     
-This is WebMacro 2.1, the production release of WebMacro version 2.  Although
-we beleive this release to be very stable (and many of us are using it in production
-environments), you may find some bugs.  Please report bugs to our subscriber-only
+This is WebMacro 2.1, a production release of WebMacro Version 2.  245 Unit Tests
+have been executed against this release. All tests and source compile and run
+against JDK 1.4 and 1.5. There is a classic and minimal distribution discussed below.
+
+We beleive this release to be very stable and many of us are using it in production
+environments; however, you may find some bugs.  Please report bugs to our subscriber-only
 mailing list.  Please visit http://www.webmacro.org/MailingList for details.
 
 WM 2.1 includes new features such as #templet, #eval, syntax-level map support
 and numerous bugfixes and improved web docs. 
 
-
 The best place for information about WebMacro is our website:
+
     http://www.webmacro.org/
     
 This is a wiki site built from the ground up using WM.
 
-WebMacro is managed at SourceForge (http://www.sourceforge.net/projects/webmacro/).  We hope this
+WebMacro is managed at SourceForge (http://www.sourceforge.net/projects/webmacro/).
 
 Please note that our mailing list, thanks to the increase in SPAM, is now
 subscriber-only.  We apologize for any inconvienence, but beleive that it provides
@@ -25,13 +28,15 @@ Changes in this Release
 -----------------------
 
 - Some small signature changes to methods require you to recompile
-source code which imports files from webmacro.jar
+source code which imports files from webmacro.jar, especially if you are upgrading
+from a release prior to Version 2.0.
 
 - WebMacro now has a dependency on Doug Lea's "concurrent.jar". WHEREVER
 you deposit webmacro.jar, add concurrent.jar. This library is used internally 
 by WebMacro to manage many of the concurrency issues inherent to
 web development and execution.  Although "concurrent.jar" is included with WebMacro, you
 can read about the library here:
+
     http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
 
 - WebMacro 2.1 now has first-class support for creating Maps:
@@ -44,19 +49,23 @@ Map definitions can also span multiple lines:
                  "keyN" : value }
 
 - WM comes in 2 distinct distributions: classic and minimal.
-Classic mode is for web deployments where you will be using WebMacro to assist in rendering
-web pages.
 
-Minimal is when you are generating email, source, code, XML documents and the like not
-within a web servlet container. You can use the classic mode for these kinds of tasks but
-minimal is provided to avoid inclusion of web-based activities.
+Classic mode is for web deployments where you will be using WebMacro to assist in rendering
+web pages. Many conveniences exist for your web applications with this configuration.
+
+Minimal is when you are generating email, source code, XML documents and the like not
+within a web servlet container. Use the classic mode for these kinds of tasks. 
+Minimal is provided to avoid inclusion of web-based activities.
+
+Version 2 provides these features which further distinguish it from other
+Java templating engines:
 
 - A powerul new feature has been added allowing for blocks
 to be created as templets and evaluated. This is addition to the
 macro calling facility.
 
 - In addition to WMServlet.java, a servlet TemplateServlet.java is
-in the distro. It shows how to improve performance by creating an
+included. It shows how to improve performance by creating an
 immutable global context which acts as a constants context for the life
 of the application (or until it is refreshed). 
 
