@@ -3,7 +3,7 @@
 #include "$ViewServerSupport.resourceDir/templates/Copyright.tml"
 <head>
 <title>The Current View: $View</title>
-#include "$ViewServerSupport.resourceDir/templates/Acctiva.style"
+#include "$ViewServerSupport.resourceDir/templates/OpenDoors.style"
 </head>
 <body>
 #foreach $view in $View.peers.set {

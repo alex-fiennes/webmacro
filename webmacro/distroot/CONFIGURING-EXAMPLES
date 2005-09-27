@@ -1,73 +1,117 @@
-*INSTALLING THE WEBMACRO EXAMPLES*
+INSTALLING THE WEBMACRO EXAMPLES
+======================================
 
 This document describes how to install and configure the examples packaged
-with WebMacro. Some of the examples expect a servlet container
+with WebMacro Release 2. There are a couple of important things to think about
+in using the examples. Some of them are drop-dead simple. You run a simple servlet
+and the servlet loads and evaluates its template to produc the output. 
+You run a simple main method that parses/evaluates a template. 
+
+These examples establish a comfort level with WebMacro. There are other 
+examples from various projects which have been contributed for you to browse
+in the advanced folder under examples/. 
+
+And, there is CVS at SourceForge. This permits you to check
+out the devlopment tree and run the test suite. This is another
+excellent source for learning by example. "test" is the task you will use.
+test/unit is the source tree that the task references.
+
+With an IDE such as Eclipse or IntelliJ, it is easy to run interactively
+an example by wrapping a main method around the target example class,
+especially if it is a standalone example.
+
+With the advanced examples, no effort has been made
+to reproduce finihsed applications. Rather, the specimens in the 
+advanced directory represent production, unit test java or webmacro templates
+which illustrate one or more areas of WebMacro usage. 
+
+The servlet examples expect a servlet container
 such as Tomcat and Resin, two popular Java servlet containers. Other examples,
 eg, Standalone.java, do not require a servlet container to use.
 Care has been made to remain backward compatible with all servlet specs
 from 2.2 thru 2.4.
 
-Compliant servlet containers should work very similarly.  
-The sources were compiled using Sun's JDK1.4. And, the sources
-have been compiled under JDK1.5.
+Compliant servlet containers should work very similarly.
+The sources were compiled using Sun's JDK1.4 and JDK1.5. Both JDKs are
+supported under Release 2 of WebMacro.
 
 Unix/Linux configuration should be virtually identical (except for the slashes 
 and drive letters in the paths). All paths given such as 
 release/examples/ are relative to "release" which will be a
-specific version, eg, "webmacro-2.1".
+specific version, eg, "webmacro-2.0".
 
-*TOMCAT CONFIGURATION (v5.5.9)*
+TOMCAT CONFIGURATION ( tested v5.5.9)
+=========================================
 
-Copy the files from release/examples/* to a webapps directory named wm/.
+There are two ways to get started:
+
+a) Copy the files from release/examples/* to a webapps directory named wm/. This
+will create a working web application. You will want to manually copy jar files
+to the WEB-INF/lib folder such as webmacro.jar and concurrent.jar which are in the
+root of the webmacro folder /release.
+
+b) The preferred method to build your example app is to use the ant build.xml file.
+Edit the build.xml file in the examples directory. Set your web home variable
+in the build file and run the task "web" which will extract the files
+from the release and examples directory. It will compile and build a 
+ready-to-go web application running under Tomcat.
  
-For example, if your TOMCAT_HOME is E:\tomcat then copy the examples files to 
-E:\tomcat\webapps\wm.  This will result in a directory with the 
-following files:
+For example, if your TOMCAT_HOME is \tomcat then, (a) or (b) should result in a web
+application in \tomcat\webapps\wm.  The directory tree will look like this:
 
-HTML and text:
-	e:\tomcat\webapps\wm\index.html
-	e:\tomcat\webapps\wm\README
+HTML, XML and text:
+	\tomcat\webapps\wm\index.html
+	\tomcat\webapps\wm\README
+	\tomcat\webapps\wm\build.xml
 
-WebMacro configuration file:
-	e:\tomcat\webapps\wm\WebMacro.properties
+WebMacro configuration fil
+	\tomcat\webapps\wm\WebMacro.properties
 
 Sample batch file for compiling sources:	
-	e:\tomcat\webapps\wm\build.bat
+	\tomcat\webapps\wm\build.bat
 
 Templates:
-	e:\tomcat\webapps\wm\allguest.wm
-	e:\tomcat\webapps\wm\callgraph.wm
-	e:\tomcat\webapps\wm\error.wm
-	e:\tomcat\webapps\wm\form.wm
-	e:\tomcat\webapps\wm\helloWorld.wm
-	e:\tomcat\webapps\wm\noservlet.wm
-	e:\tomcat\webapps\wm\profile.wm
-	e:\tomcat\webapps\wm\sandbox.wm
-	e:\tomcat\webapps\wm\verify.wm
-	e:\tomcat\webapps\wm\WEB-INF\classes\standalone.wm
+	\tomcat\webapps\wm\allguest.wm
+	\tomcat\webapps\wm\callgraph.wm
+	\tomcat\webapps\wm\error.wm
+	\tomcat\webapps\wm\form.wm
+	\tomcat\webapps\wm\helloWorld.wm
+	\tomcat\webapps\wm\noservlet.wm
+	\tomcat\webapps\wm\profile.wm
+	\tomcat\webapps\wm\sandbox.wm
+	\tomcat\webapps\wm\verify.wm
+	\tomcat\webapps\wm\WEB-INF\classes\standalone.wm
+	advanced templates
+	\tomcat\webapps\wm\advanced\index.html and advanced\*.tml 
 
 Java sources:	
-	e:\tomcat\webapps\wm\GuestBook.java
-	e:\tomcat\webapps\wm\HelloWorld.java
-	e:\tomcat\webapps\wm\NoServlet.java
-	e:\tomcat\webapps\wm\Profile.java
-	e:\tomcat\webapps\wm\SandBox.java
-	e:\tomcat\webapps\wm\Standalone.java
+	\tomcat\webapps\wm\GuestBook.java
+	\tomcat\webapps\wm\HelloWorld.java
+	\tomcat\webapps\wm\NoServlet.java
+	\tomcat\webapps\wm\Profile.java
+	\tomcat\webapps\wm\SandBox.java
+	\tomcat\webapps\wm\Standalone.java
 	
 Class files:	
-	e:\tomcat\webapps\wm\WEB-INF\classes\GuestBook$GuestEntry.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\GuestBook.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\HelloWorld.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\NoServlet.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\Profile.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\SandBox.class
-	e:\tomcat\webapps\wm\WEB-INF\classes\Standalone.class
+	\tomcat\webapps\wm\WEB-INF\classes\GuestBook$GuestEntry.class
+	\tomcat\webapps\wm\WEB-INF\classes\GuestBook.class
+	\tomcat\webapps\wm\WEB-INF\classes\HelloWorld.class
+	\tomcat\webapps\wm\WEB-INF\classes\NoServlet.class
+	\tomcat\webapps\wm\WEB-INF\classes\Profile.class
+	\tomcat\webapps\wm\WEB-INF\classes\SandBox.class
+	\tomcat\webapps\wm\WEB-INF\classes\Standalone.class
 	
-WebMacro jar:	
-	e:\tomcat\webapps\wm\WEB-INF\lib\webmacro.jar
+WebMacro jar:
+	\tomcat\webapps\wm\WEB-INF\lib\webmacro.jar
+	
+Web App Configuration
+	\tomcat\webapps\wm\WEB-INF\web.xml
+	
+The web.xml file will activate the Tomcat invoker so you can run the servlet examples.
 	
 
-*RESIN CONFIGURATION (1.2.5)*
+RESIN CONFIGURATION (3.x)
+============================
 
 Extract the files as above to the <resin_home>/doc directory.  Add the 
 following lines to the resin.conf file (usually in <resin_home>/conf) 
@@ -109,9 +153,9 @@ able to locate it through the classpath.
 
 The alternative would have been to add a TemplatePath to the 
 webmacro.properties file.  For example, you could put all of the templates 
-in e:\tomcat\webapps\wm\WEB-INF\templates and add:
+in \tomcat\webapps\wm\WEB-INF\templates and add:
 
-   TemplatePath: e:\tomcat\webapps\wm\WEB-INF\templates
+   TemplatePath: \tomcat\webapps\wm\WEB-INF\templates
 
 to the WebMacro.properties file.  This technique should work with all 
 servlet containers.  The major drawback is that it requires a manual

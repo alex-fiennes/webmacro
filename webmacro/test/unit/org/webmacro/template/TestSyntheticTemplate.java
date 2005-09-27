@@ -19,6 +19,7 @@ public class TestSyntheticTemplate extends TemplateTestCase
     protected int threadCount = 2;
 
     private static final String fileName = "org/webmacro/template/synthetictest.wm";
+    private static final String release2TestFileName = "org/webmacro/template/synthetictestRelease2.wm";
     private static final String reportName = "org/webmacro/template/syntheticreport.wm";
     private static final String[] LOAD = {
         "1.wm", "2.wm", "3.wm", "4.wm", "5.wm",
@@ -55,6 +56,25 @@ public class TestSyntheticTemplate extends TemplateTestCase
             }
         }
         );
+        
+        suite.addTest(new TestSyntheticTemplate("Release2Features")
+        {
+            protected WebMacro createWebMacro () throws Exception
+            {
+                return new WM("org/webmacro/template/TST.properties");
+            }
+
+
+            protected void runTest () throws Exception
+            {
+                this.threadCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.ThreadCount", this.threadCount);
+                this.iterationCount = _wm.getBroker().getIntegerSetting("TestSyntheticTemplate.IterationCount", this.iterationCount);
+                this.testLoadAndToss();
+                this.testRelease2Features();
+            }
+        }
+        );
+    
         return suite;
     }
 
@@ -75,6 +95,46 @@ public class TestSyntheticTemplate extends TemplateTestCase
 //      String value = templateFileToString(fileName);
 //      String output = executeStringTemplate(value);
 //    }
+    
+    /** Runs the release 2 features. */
+    public void testRelease2Features() throws Exception
+    {
+        long min = 0;
+        long max = System.currentTimeMillis();
+        String throwAway = executeFileTemplate(fileName);
+        max = System.currentTimeMillis() - max;
+        min = max;
+        int contentSize = throwAway.length();
+
+        long tet, singleTet; 
+
+        // begin load
+        tet = System.currentTimeMillis();
+        for (int index = 0; index < iterationCount; index++)
+        {
+            singleTet = System.currentTimeMillis();
+            String value = executeFileTemplate(release2TestFileName);
+            singleTet = System.currentTimeMillis() - singleTet;
+            if (singleTet < min) min = singleTet;
+            if (singleTet > max) max = singleTet;
+        }
+        tet = System.currentTimeMillis() - tet;
+
+        // test load using threads:
+        ThreadLoad threadLoad = new ThreadLoad();
+        threadLoad.execute();
+
+        report(iterationCount,
+                tet - max - min,
+                contentSize,
+                threadLoad.tet,
+                threadLoad.worstCase,
+                threadLoad.bestCase,
+                threadCount,
+                threadLoad.duration,
+                "LoadReportRelease2Features.html",
+                release2TestFileName);
+    }
 
     /** Throw the first test result out due to parsing. */
     public void testLoadAndToss () throws Exception
@@ -134,7 +194,9 @@ public class TestSyntheticTemplate extends TemplateTestCase
                 threadLoad.worstCase,
                 threadLoad.bestCase,
                 threadCount,
-                threadLoad.duration);
+                threadLoad.duration,
+                "LoadReport.html",
+                fileName);
     }
 
 
@@ -145,7 +207,9 @@ public class TestSyntheticTemplate extends TemplateTestCase
                            long worstCase,
                            long bestCase,
                            int threadCount,
-                           long threadDuration) throws Exception
+                           long threadDuration,
+                           String outputFileName,
+                           String sourceFileName) throws Exception
     {
         context.put("IterationCount", iterationCount);
         context.put("TotalElapsedTime", totalTime);
@@ -153,7 +217,8 @@ public class TestSyntheticTemplate extends TemplateTestCase
         context.put("CharacterCount", characterCount);
         context.put("SystemProperty", System.getProperties());
         context.put("TotalMemory", Runtime.getRuntime().totalMemory() / 1024);
-        context.put("ScriptValue", templateFileToString(fileName));
+        context.put("ScriptName", sourceFileName);
+        context.put("ScriptValue", executeFileTemplate(sourceFileName));
         context.put("Today", new java.util.Date());
         context.put("ThreadDuration", threadDuration);
         context.put("ThreadTotalWaitTime", threadTet - totalTime);
@@ -164,7 +229,7 @@ public class TestSyntheticTemplate extends TemplateTestCase
         context.put("ThreadCount", threadCount);
         context.put("ThreadIterations", iterationCount);
         String report = executeFileTemplate(reportName);
-        PrintWriter p = new PrintWriter(new FileOutputStream("LoadReport.html"));
+        PrintWriter p = new PrintWriter(new FileOutputStream(outputFileName));
         p.write(report);
         p.close();
     }

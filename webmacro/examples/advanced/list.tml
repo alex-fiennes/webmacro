@@ -5,10 +5,10 @@
 
 ## create arrays and then create more powerful list structures
 ## available for manipulation by the list tool:
-#set $hrefs = ["AboutAcctiva.lbi", "HowDo.lbi"]
+#set $hrefs = ["AboutOpenDoors.lbi", "HowDo.lbi"]
 #set $refsList = $List.toList($hrefs)
 
-#set $titles = ["About Acctiva", "How Do I..."]
+#set $titles = ["About OpenDoors", "How Do I..."]
 #set $titlesList = $List.toList($titles)
 
 <html>

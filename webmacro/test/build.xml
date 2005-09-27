@@ -63,7 +63,7 @@
         </junit>
     </target>
 
-    <target name="TST" depends="unit-compile">
+    <target name="synthetic" depends="unit-compile">
         <junit printsummary="yes" haltonfailure="no">
             <classpath refid="unit.class.path"/>
             <formatter type="plain"/>
