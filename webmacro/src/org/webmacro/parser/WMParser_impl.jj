@@ -21,7 +21,7 @@ import org.webmacro.directive.Directive.Subdirective;
  *
  * JavaCC parser class for parsing WebMacro templates.
  * The supported entry point is WMDocument, which returns a BlockBuilder.
- * 
+ *
  * @author Brian Goetz
  *
  */
@@ -833,7 +833,8 @@ MapBuilder MapArgList() : {
     Object key, value;
 }
 {
-    [ [(<WS>|<NEWLINE>)+] key=Expression() [(<WS>|<NEWLINE>)+] <COLON> [(<WS>|<NEWLINE>)+] value=Expression() [(<WS>|<NEWLINE>)+] { map.put(key, value); }
+
+    [key=Expression() [(<WS>|<NEWLINE>)+] <COLON> [(<WS>|<NEWLINE>)+] value=Expression() [(<WS>|<NEWLINE>)+] { map.put(key, value); }
         (
             <COMMA> [(<WS>|<NEWLINE>)+] key=Expression() [(<WS>|<NEWLINE>)+] <COLON> [(<WS>|<NEWLINE>)+] value=Expression() [(<WS>|<NEWLINE>)+] { map.put(key, value); }
         ) *
@@ -845,7 +846,7 @@ MapBuilder CurlyMap() : {
     MapBuilder map;
 }
 {
-    <LBRACE> map=MapArgList() {SetState(DEFAULT);} <RBRACE> {SetState(WM);}
+    <LBRACE> [(<WS>|<NEWLINE>)+] map=MapArgList() {SetState(DEFAULT);} <RBRACE> {SetState(WM);}
     { return map; }
 }
 

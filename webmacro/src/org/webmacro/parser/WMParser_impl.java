@@ -18,7 +18,7 @@ import org.webmacro.directive.Directive.Subdirective;
  *
  * JavaCC parser class for parsing WebMacro templates.
  * The supported entry point is WMDocument, which returns a BlockBuilder.
- * 
+ *
  * @author Brian Goetz
  *
  */
@@ -976,13 +976,12 @@ public class WMParser_impl implements WMParser_implConstants {
     case TRUE:
     case FALSE:
     case UNDEFINED:
-    case WS:
-    case NEWLINE:
     case LPAREN:
     case LBRACKET:
     case OP_MINUS:
     case OP_NOT:
     case NUMBER:
+      key = Expression();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WS:
       case NEWLINE:
@@ -1015,7 +1014,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_la1[40] = jj_gen;
         ;
       }
-      key = Expression();
+      jj_consume_token(COLON);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WS:
       case NEWLINE:
@@ -1048,7 +1047,7 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_la1[43] = jj_gen;
         ;
       }
-      jj_consume_token(COLON);
+      value = Expression();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WS:
       case NEWLINE:
@@ -1081,51 +1080,51 @@ public class WMParser_impl implements WMParser_implConstants {
         jj_la1[46] = jj_gen;
         ;
       }
-      value = Expression();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case WS:
-      case NEWLINE:
-        label_8:
-        while (true) {
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case WS:
-            jj_consume_token(WS);
-            break;
-          case NEWLINE:
-            jj_consume_token(NEWLINE);
-            break;
-          default:
-            jj_la1[47] = jj_gen;
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case WS:
-          case NEWLINE:
-            ;
-            break;
-          default:
-            jj_la1[48] = jj_gen;
-            break label_8;
-          }
-        }
-        break;
-      default:
-        jj_la1[49] = jj_gen;
-        ;
-      }
-                                                                                                                                    map.put(key, value);
-      label_9:
+                                                                                                               map.put(key, value);
+      label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[50] = jj_gen;
-          break label_9;
+          jj_la1[47] = jj_gen;
+          break label_8;
         }
         jj_consume_token(COMMA);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case WS:
+        case NEWLINE:
+          label_9:
+          while (true) {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case WS:
+              jj_consume_token(WS);
+              break;
+            case NEWLINE:
+              jj_consume_token(NEWLINE);
+              break;
+            default:
+              jj_la1[48] = jj_gen;
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case WS:
+            case NEWLINE:
+              ;
+              break;
+            default:
+              jj_la1[49] = jj_gen;
+              break label_9;
+            }
+          }
+          break;
+        default:
+          jj_la1[50] = jj_gen;
+          ;
+        }
+        key = Expression();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case WS:
         case NEWLINE:
@@ -1158,7 +1157,7 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_la1[53] = jj_gen;
           ;
         }
-        key = Expression();
+        jj_consume_token(COLON);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case WS:
         case NEWLINE:
@@ -1191,7 +1190,7 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_la1[56] = jj_gen;
           ;
         }
-        jj_consume_token(COLON);
+        value = Expression();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case WS:
         case NEWLINE:
@@ -1224,44 +1223,11 @@ public class WMParser_impl implements WMParser_implConstants {
           jj_la1[59] = jj_gen;
           ;
         }
-        value = Expression();
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case WS:
-        case NEWLINE:
-          label_13:
-          while (true) {
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case WS:
-              jj_consume_token(WS);
-              break;
-            case NEWLINE:
-              jj_consume_token(NEWLINE);
-              break;
-            default:
-              jj_la1[60] = jj_gen;
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case WS:
-            case NEWLINE:
-              ;
-              break;
-            default:
-              jj_la1[61] = jj_gen;
-              break label_13;
-            }
-          }
-          break;
-        default:
-          jj_la1[62] = jj_gen;
-          ;
-        }
                                                                                                                                                   map.put(key, value);
       }
       break;
     default:
-      jj_la1[63] = jj_gen;
+      jj_la1[60] = jj_gen;
       ;
     }
       {if (true) return map;}
@@ -1271,10 +1237,42 @@ public class WMParser_impl implements WMParser_implConstants {
   final public MapBuilder CurlyMap() throws ParseException {
     MapBuilder map;
     jj_consume_token(LBRACE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case WS:
+    case NEWLINE:
+      label_13:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case WS:
+          jj_consume_token(WS);
+          break;
+        case NEWLINE:
+          jj_consume_token(NEWLINE);
+          break;
+        default:
+          jj_la1[61] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case WS:
+        case NEWLINE:
+          ;
+          break;
+        default:
+          jj_la1[62] = jj_gen;
+          break label_13;
+        }
+      }
+      break;
+    default:
+      jj_la1[63] = jj_gen;
+      ;
+    }
     map = MapArgList();
-                               SetState(DEFAULT);
+                                                   SetState(DEFAULT);
     jj_consume_token(RBRACE);
-                                                             SetState(WM);
+                                                                                 SetState(WM);
       {if (true) return map;}
     throw new Error("Missing return statement in function");
   }
@@ -2469,6 +2467,11 @@ public class WMParser_impl implements WMParser_implConstants {
     finally { jj_save(22, xla); }
   }
 
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(LBRACE)) return true;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     if (jj_scan_token(WS)) return true;
     Token xsp;
@@ -2480,19 +2483,14 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(LBRACE)) return true;
+  final private boolean jj_3R_57() {
+    if (jj_3R_61()) return true;
     return false;
   }
 
   final private boolean jj_3_6() {
     if (jj_scan_token(WORD)) return true;
     if (jj_scan_token(LPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_57() {
-    if (jj_3R_61()) return true;
     return false;
   }
 
@@ -2555,11 +2553,6 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_2() {
-    if (jj_scan_token(NEWLINE)) return true;
-    return false;
-  }
-
   final private boolean jj_3_15() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2568,6 +2561,11 @@ public class WMParser_impl implements WMParser_implConstants {
     xsp = jj_scanpos;
     if (jj_scan_token(30)) jj_scanpos = xsp;
     if (jj_3R_30()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(NEWLINE)) return true;
     return false;
   }
 
@@ -2591,13 +2589,13 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(WS)) return true;
+  final private boolean jj_3R_44() {
+    if (jj_scan_token(OP_NOT)) return true;
     return false;
   }
 
-  final private boolean jj_3R_44() {
-    if (jj_scan_token(OP_NOT)) return true;
+  final private boolean jj_3_4() {
+    if (jj_scan_token(WS)) return true;
     return false;
   }
 
@@ -2622,13 +2620,13 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
-  final private boolean jj_3_3() {
-    if (jj_scan_token(NEWLINE)) return true;
+  final private boolean jj_3R_41() {
+    if (jj_scan_token(TRUE)) return true;
     return false;
   }
 
-  final private boolean jj_3R_41() {
-    if (jj_scan_token(TRUE)) return true;
+  final private boolean jj_3_3() {
+    if (jj_scan_token(NEWLINE)) return true;
     return false;
   }
 
@@ -2644,11 +2642,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_39() {
     if (jj_3R_52()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_9() {
-    if (jj_scan_token(DOLLAR)) return true;
     return false;
   }
 
@@ -2673,6 +2666,11 @@ public class WMParser_impl implements WMParser_implConstants {
     return false;
   }
 
+  final private boolean jj_3_9() {
+    if (jj_scan_token(DOLLAR)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_37() {
     if (jj_3R_50()) return true;
     return false;
@@ -2690,19 +2688,6 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_35() {
     if (jj_3R_49()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_59() {
-    if (jj_scan_token(SQUOTE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(30)) jj_scanpos = xsp;
-    if (jj_scan_token(NEWLINE)) return true;
     return false;
   }
 
@@ -2753,6 +2738,19 @@ public class WMParser_impl implements WMParser_implConstants {
 
   final private boolean jj_3R_62() {
     if (jj_3R_49()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_59() {
+    if (jj_scan_token(SQUOTE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(30)) jj_scanpos = xsp;
+    if (jj_scan_token(NEWLINE)) return true;
     return false;
   }
 
@@ -2949,10 +2947,10 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1_1();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x40000000,0xc0000000,0x40000000,0x80000000,0x40000000,0x80000000,0x40000000,0xc0000000,0xc0000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x0,0x0,0x100000,0x0,0x700000,0x600000,0x700000,0x600000,0x3000000,0x3100000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0x0,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xff108000,0x40000000,0x40000000,0x0,0x40000000,0x40000000,0x7f108000,0x40000000,0x40000000,0x0,0x40000000,0x40000000,0x40100000,0x0,0x0,0x40000000,0x40000000,0x40000000,0x3f108000,0x40000000,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000,0x100000,0xe20800,0x620800,0xd20800,0xf20800,0xf26800,0x6000,0xf26800,0x4000,0xf29800,0x9000,0xf29800,0xf2f800,0xf26800,0x6000,0xf26800,0x4000,0x9000,0x729801,0x2000,0xf2f800,0xf000,0xf2f800,};
+      jj_la1_0 = new int[] {0x40000000,0xc0000000,0x40000000,0x80000000,0x40000000,0x80000000,0x40000000,0xc0000000,0xc0000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x0,0x0,0x100000,0x0,0x700000,0x600000,0x700000,0x600000,0x3000000,0x3100000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0x0,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0xc0000000,0x3f108000,0xc0000000,0xc0000000,0xc0000000,0x40000000,0x40000000,0x0,0x40000000,0x40000000,0x7f108000,0x40000000,0x40000000,0x0,0x40000000,0x40000000,0x40100000,0x0,0x0,0x40000000,0x40000000,0x40000000,0x3f108000,0x40000000,0x0,0x40000000,0x40000000,0x0,0x40000000,0x0,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000000,0x40000,0x100000,0xe20800,0x620800,0xd20800,0xf20800,0xf26800,0x6000,0xf26800,0x4000,0xf29800,0x9000,0xf29800,0xf2f800,0xf26800,0x6000,0xf26800,0x4000,0x9000,0x729801,0x2000,0xf2f800,0xf000,0xf2f800,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400000,0x1,0x0,0x400001,0x2000000,0x2000000,0x4000000,0x4000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x884005,0x0,0x0,0x100000,0x0,0x0,0x884005,0x0,0x0,0x100000,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x884005,0x0,0x18000,0x0,0x0,0x6000,0x0,0x1fc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400000,0x1,0x0,0x400001,0x2000000,0x2000000,0x4000000,0x4000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x884005,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x0,0x884005,0x0,0x0,0x100000,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x884005,0x0,0x18000,0x0,0x0,0x6000,0x0,0x1fc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[23];
   private boolean jj_rescan = false;
@@ -3018,12 +3016,7 @@ public class WMParser_impl implements WMParser_implConstants {
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L; }
+  static private final class LookaheadSuccess extends java.lang.Error { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   final private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
