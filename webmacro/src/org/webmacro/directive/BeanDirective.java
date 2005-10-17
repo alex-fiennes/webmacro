@@ -23,23 +23,22 @@
 package org.webmacro.directive;
 
 /**
- * NOTE: this class is highly experimental at this point.
- * Use at your own risk!
+ * This directive allows the instantiation of objects in WMScript. 
  */
 
 import org.webmacro.*;
 import org.webmacro.engine.*;
+import org.webmacro.util.Instantiator;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BeanDirective extends Directive
 {
 
-    private static final int BEAN_TARGET = 1;
+    private static final String APP_BEANS_KEY = "org.webmacro.directive.BeanDirective.appBeans";
+	private static final int BEAN_TARGET = 1;
     private static final int BEAN_CLASS_NAME = 2;
     private static final int BEAN_SCOPE = 3;
     private static final int BEAN_SCOPE_GLOBAL = 4;
@@ -59,6 +58,8 @@ public class BeanDirective extends Directive
         BEAN_SCOPE_SESSION, BEAN_SCOPE_PAGE
     };
 
+    static Map globalBeans = new HashMap(20);
+
     private Variable target;
     private String targetName;
     private String _className;
@@ -68,10 +69,6 @@ public class BeanDirective extends Directive
     private Object[] initArgs;
     private Block onNewBlock;
     private Log _log;
-    private List _impliedPackages;
-    private List _allowedPackages;
-    private Class _class;
-    private BeanConf beanConf;
     private Broker _broker;
 
     private static final ArgDescriptor[]
@@ -118,14 +115,8 @@ public class BeanDirective extends Directive
     {
         _broker = bc.getBroker();
         _log = _broker.getLog("directive");
-        // BeanConf object is created by the init method when this directive
+        // appBeans map is created by the init method when this directive
         // is registered by the DirectiveProvider
-        beanConf = (BeanConf) _broker.getBrokerLocal("BeanDirective.Conf");
-        if (beanConf == null)
-        {
-            throw new BuildException(
-                    "Error building the #bean directive.  The directive has not been properly initialized!");
-        }
         try
         {
             target = (Variable) builder.getArg(BEAN_TARGET, bc);
@@ -136,7 +127,7 @@ public class BeanDirective extends Directive
         }
         targetName = target.getName();
         _className = (String) builder.getArg(BEAN_CLASS_NAME, bc);
-        _class = classForName(_className);
+        classForName(_className);
 
         // check if bean is declared as static
         // this implies global scope and no constructor invocation
@@ -162,8 +153,9 @@ public class BeanDirective extends Directive
     public void write (FastWriter out, Context context)
             throws PropertyException, IOException
     {
-        Map globalBeans = BeanConf.globalBeans;
-        Map appBeans = beanConf.appBeans;
+        Map appBeans = (Map)_broker.getBrokerLocal(APP_BEANS_KEY);
+
+        //= beanConf.appBeans;
         boolean isNew = false;
 
         try
@@ -310,41 +302,7 @@ public class BeanDirective extends Directive
     private Object instantiate (Class c, Object[] args)
             throws Exception
     {
-        // @@@ FIXME(BG): either use lastException or don't record it
-        Object o = null;
-        if (args == null)
-        {
-            o = c.newInstance();
-        }
-        else
-        {
-            Exception lastException = null;
-            java.lang.reflect.Constructor[] cons = c.getConstructors();
-            for (int i = 0; i < cons.length; i++)
-            {
-                if (cons[i].getParameterTypes().length == args.length)
-                {
-                    // try to instantiate using this constructor
-                    try
-                    {
-                        o = cons[i].newInstance(args);
-                        break; // if successful, we're done!
-                    }
-                    catch (Exception e)
-                    {
-                        lastException = e;
-                    }
-                }
-            }
-            if (o == null)
-            {
-                throw new InstantiationException(
-                        "Unable to construct object of type " + c.getName()
-                        + " using the supplied arguments: "
-                        + java.util.Arrays.asList(args).toString());
-            }
-        }
-        return o;
+    	return Instantiator.getInstance(_broker).instantiate(c, args);
     }
 
     private static int getScope (DirectiveBuilder builder, BuildContext bc) throws org.webmacro.engine.BuildException
@@ -364,94 +322,19 @@ public class BeanDirective extends Directive
         // get configuration parameters
         synchronized (b)
         {
-            BeanConf bCfg = new BeanConf(b);
-            b.setBrokerLocal("BeanDirective.Conf", bCfg);
-            Log log = b.getLog("directive");
-            log.debug("BeanDirective initialization - impliedPackages: " + bCfg.impliedPackages);
-            log.debug("BeanDirective initialization - allowedPackages: " + bCfg.allowedPackages);
+            b.setBrokerLocal(APP_BEANS_KEY, new HashMap(20));
         }
     }
 
     private Class classForName (String className) throws BuildException
     {
-        Class c = null;
-        Exception except = null;
-        try
-        {
-            c = _broker.classForName(className);
-        }
-        catch (Exception cnfe)
-        {
-            except = cnfe;
-            // try with implied packages prepended
-            for (int i = 0; i < beanConf.impliedPackages.size(); i++)
-            {
-                String s = (String) beanConf.impliedPackages.get(i);
-                try
-                {
-                    c = _broker.classForName(s + "." + className);
-                    break;
-                }
-                catch (Exception cnfe2)
-                {
-                    except = cnfe2;
-                }
-            }
-            if (c == null)
-            {
-                throw new BuildException("Unable to load class " + className, except);
-            }
-        }
-
-        if (!beanConf.allowedPackages.isEmpty())
-        {
-            // check if class is in a permitted package
-            String pkg = c.getPackage().getName();
-            if (!beanConf.allowedPackages.contains(pkg))
-            {
-                throw new BuildException(
-                        "You are not permitted to load classes from this package (" + pkg
-                        + ").  Check the \"BeanDirective.AllowedPackages\" parameter in the WebMacro.properties file.");
-            }
-        }
+    	
+        Class c;
+		try {
+			c = Instantiator.getInstance(_broker).classForName(className);
+		} catch (WebMacroException e) {
+			throw new BuildException("BeanDirective failed to load class \"" + className + "\"", e);
+		}
         return c;
     }
-}
-
-class BeanConf
-{
-
-    static Map globalBeans = new HashMap(20);
-    Map appBeans = new HashMap(20);
-    List impliedPackages;
-    List allowedPackages;
-
-    public BeanConf (Broker b)
-    {
-        String s = b.getSetting("BeanDirective.ImpliedPackages");
-        impliedPackages = Arrays.asList(org.webmacro.servlet.TextTool.split(s, ","));
-        s = b.getSetting("BeanDirective.AllowedPackages");
-        allowedPackages = Arrays.asList(org.webmacro.servlet.TextTool.split(s, ","));
-    }
-
-    public Map getGlobalBeans ()
-    {
-        return globalBeans;
-    }
-
-    public Map getAppBeans ()
-    {
-        return appBeans;
-    }
-
-    public List getImpliedPackages ()
-    {
-        return impliedPackages;
-    }
-
-    public List getAllowedPackages ()
-    {
-        return allowedPackages;
-    }
-
 }
