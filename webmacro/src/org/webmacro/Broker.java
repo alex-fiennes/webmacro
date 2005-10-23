@@ -235,6 +235,15 @@ public class Broker
 
         _log.notice("starting " + this.getClass().getName() + ": " + _name);
     }
+    
+    /**
+     * Provide access to the broker's log.
+     * @author lane
+     */
+    public Log getBrokerLog()
+    {
+    	return _log;
+    }
 
     private class ProviderSettingHandler extends Settings.ListSettingHandler
     {

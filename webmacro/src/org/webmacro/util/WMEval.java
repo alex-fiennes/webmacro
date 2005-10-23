@@ -66,6 +66,7 @@ public class WMEval
 
     //-------private and protected members-----
     private WebMacro wm;
+    private Log log;
     private Template currentTemplate;
     private OutputStream out = System.out;
     private Context context;
@@ -89,6 +90,7 @@ public class WMEval
           else
               wm = new WM(servlet);
           context = wm.getContext();
+          log = wm.getBroker().getBrokerLog();
       }
       catch (Exception e)
       {
@@ -118,6 +120,14 @@ public class WMEval
     public Settings getSettings()
     {
       return wm.getBroker().getSettings();
+    }
+    
+    /**
+     * Return the log associated with this instance of WMEval.
+     */
+    public Log getLog()
+    {
+    	return this.log;
     }
 
 

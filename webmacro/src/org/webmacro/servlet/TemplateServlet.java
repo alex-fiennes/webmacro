@@ -101,6 +101,9 @@ public class TemplateServlet extends HttpServlet {
 	 * The delegate to populate the context for the application.
 	 */
 	private ServletRouter sr;
+	
+    protected Log log;
+
 
 	/**
 	 * Looks for a global template to evaluate (defined in WebMacro.properties).
@@ -112,10 +115,10 @@ public class TemplateServlet extends HttpServlet {
 		// run the application template, Application.tml.
 		try {
 			wm = new WMEval(this);
+			log = wm.getLog();
 			Settings settings = wm.getSettings();
 			log("Settings: " + settings.getAsProperties());
-			globalName = settings
-					.getSetting("GlobalTemplate.ContextName", null);
+			globalName = settings.getSetting("GlobalTemplate.ContextName", null);
 			globalTemplate = settings.getSetting("GlobalTemplate.Resource",
 					null);
 			requestName = settings.getSetting("RequestTemplate.ContextName",
@@ -199,8 +202,12 @@ public class TemplateServlet extends HttpServlet {
 	 * Default implenentation for locating the template.
 	 */
 	protected String locateTemplate(HttpServletRequest request) {
-		String value = request.getPathInfo().substring(1); // strip out the
-															// leading /
+		String value = null; // request.getPathInfo().substring(1); // strip out the
+		value = (String) request.getAttribute("javax.servlet.include.servlet_path");
+		if (value == null) value = request.getServletPath();
+		log.info("request.getPathInfo(): " + request.getPathInfo());
+		log.info("javax.servlet.include.servlet_path: " + request.getAttribute("javax.servlet.include.servlet_path"));
+		log.info("request.getServletPath(): " + request.getServletPath());
 		if (value == null || value.trim().length() == 0) {
 			return defaultTemplate;
 		} else if (value.endsWith("/")) {
@@ -219,7 +226,7 @@ public class TemplateServlet extends HttpServlet {
 	protected void loadRequestContext(WebContext context, String template,
 			HttpServletRequest request, HttpServletResponse resp)
 			throws ServletException {
-		if (requestName != null) {
+		if (this.requestName != null) {
 			try {
 				Context c = wm.getNewContext();
 				wm.eval(c, requestTemplate, null);

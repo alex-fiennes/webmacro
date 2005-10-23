@@ -399,20 +399,16 @@ Functions.eval=org.webmacro.util.Eval.eval
 # Macros.Include: myGlobalMacros.wmm macros2.wmm
 
 ## NOTE: The following settings support the servlet org.webmacro.servlet.TemplateServlet
-
+## Normally, these values will be used in the webmacro.properties file to suit
 # To process a template once once and to make its resultant context
 # available in every context:
-GlobalTemplate.ContextName: global
-GlobalTemplate.Resource: global.tml
+#GlobalTemplate.ContextName: global
+#GlobalTemplate.Resource: global.tml
+#SessionTemplate.ContextName: session
+#SessionTemplate.Resource: session.tml
+#RequestTemplate.ContextName: request
+#RequestTemplate.Resource: request.tml
 
-
-# To process a template once per request and to make its resultant context
-# available in every context.
-RequestTemplate.ContextName: global
-RequestTemplate.Resource: global.tml
 
 # If getPathInfo() returns null, use the following default template
 TemplateServlet.DefaultTemplate: index.tml
-
-
-"home.html", "index.html"

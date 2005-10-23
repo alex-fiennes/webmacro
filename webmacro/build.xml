@@ -47,9 +47,12 @@ Administrative targets:
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
     <property name="classes"        value="classes"/>
-    <property name="macros"         value="macros"/>
+	  <property name="macros"         value="macros"/>
     <property name="dist.binary"    value="webmacro-${wm-style}-bin-${version}"/>
-    <property name="dist.source"    value="webmacro-${wm-style}-src-${version}"/>
+	  <!-- The formal value not used for distribution:
+	  	<property name="dist.source"    value="webmacro-${wm-style}-src-${version}"/> 
+	  -->
+		<property name="dist.source"    value="webmacro-${version}"/> 
     <property name="javadoc"        value="javadoc"/>
     <property name="examples"       value="examples"/>
     <property name="jar"            value="${app.name}.jar"/>
@@ -212,34 +215,43 @@ Administrative targets:
         <copy file='WebMacro.defaults.${wm-style}' todir='${dist.source}' />
         <copy file='build.xml' todir='${dist.source}' />
 
-        <mkdir dir="${dist.source}/src" />
+      <mkdir dir="${dist.source}/src" />
         <copy todir="${dist.source}/src">
             <fileset dir="src" />
         </copy>
 
+      <mkdir dir="${dist.source}/src-optional" />
+        <copy todir="${dist.source}/src-optional">
+            <fileset dir="src-optional" />
+        </copy>
+
         <mkdir dir="${dist.source}/test" />
         <copy todir="${dist.source}/test">
-            <fileset dir="test" includes='perf,unit' />
+            <fileset dir="test" />
         </copy>
 
         <mkdir dir="${dist.source}/lib" />
         <copy todir="${dist.source}/lib">
-            <fileset dir="lib" includes="**/*.txt" />
+            <fileset dir="lib" />
         </copy>
 
         <mkdir dir="${dist.source}/tutorial" />
         <copy todir="${dist.source}/tutorial">
             <fileset dir="tutorial"/>
         </copy>
-        <mkdir dir="${dist.source}/examples" />
+
+      <mkdir dir="${dist.source}/examples" />
         <copy todir="${dist.source}/examples">
             <fileset dir="examples" />
         </copy>
-        <mkdir dir="${dist.source}/macros" />
-        <copy todir="${dist.source}/macros">
-            <fileset dir="${macros}" />
-        </copy>
-        <touch file="${dist.source}/WM-VERSION-${version}"/>
+
+      <mkdir dir="${dist.source}/macros" />
+      <copy todir="${dist.source}/macros">
+          <fileset dir="${macros}" />
+      </copy>
+
+      <touch file="${dist.source}/WM-VERSION-${version}"/>
+ 
     </target>
 
     <target name='zip.and.tar' depends='dist-binary,dist-source'>
