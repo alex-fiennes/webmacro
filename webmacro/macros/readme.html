@@ -10,29 +10,6 @@
 </div>
 <b><br>
 </b>
-<blockquote><b>Goal:</b> The goal of macros/ is to provide some standardized
-manner for everyday tasks like merging common html text with common objects,
-formatting html form control tags, and managing common page elements.<br>
-  <br>
-See <a href="http://www.webmacro.org/MacroDirective">http://www.webmacro.org/MacroDirective</a>
-for the complete docs on how to create a macro.<br>
-  <br>
-If macros/ is in your classpath, the following statement:<br>
-  <br>
-#include as macro "allmacros.wmm"<br>
-  <br>
-will include all standard macros in the macros/ folder. Edit this file if
-you want to make some of your own macros a standard.<br>
-  <br>
-  <ul>
-    <li>wmm is the convention for identifying a file containing macros.</li>
-    <li>You do not have to use this library and you can copy it to another
-location and hack it as you please.</li>
-    <li>You can add your own folder, eg local/, and then include the macros
-in this folder by editing allmacros.wmm.</li>
-  </ul>
-  <br>
-macros are used in 1.1. Release 1.2 will allow for automatic inclusion at
-the configuration level.</blockquote>
+<p>This directory contains standard, application-neutral WM macros.<ul>  <li>  <a href="html/" target="_blank">HTML Generation Macros</a>  </li><br>  <li>  <a href="ecomm/" target="_blank">Interfacing To PayPal and Verisign</a>  </li></ul>Include the webmacro file, allmacros.wmm, to include all macros in this library:<pre>#include as macro "allmacros.wmm"</pre></p><p>See <a href="http://www.webmacro.org/MacroDirective" target="_blank">http://www.webmacro.org/MacroDirective</a>for the complete docs on how to create a macro.
 </body>
 </html>

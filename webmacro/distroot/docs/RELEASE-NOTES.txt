@@ -1,7 +1,7 @@
-WebMacro 2.1 1-August-2005
----------------------------
+WebMacro 2.0 1-November-2005
+------------------------------
                     
-This is WebMacro 2.1, a production release of WebMacro Version 2.  245 Unit Tests
+This is WebMacro 2.0, a production release of WebMacro Version 2.  245 Unit Tests
 have been executed against this release. All tests and source compile and run
 against JDK 1.4 and 1.5. There is a classic and minimal distribution discussed below.
 
@@ -9,8 +9,9 @@ We beleive this release to be very stable and many of us are using it in product
 environments; however, you may find some bugs.  Please report bugs to our subscriber-only
 mailing list.  Please visit http://www.webmacro.org/MailingList for details.
 
-WM 2.1 includes new features such as #templet, #eval, syntax-level map support
-and numerous bugfixes and improved web docs. 
+WM 2.0 includes new features such as #templet, #eval, and
+#setproperty. Syntax-level map support and numerous bugfixes and improved web docs
+are a part of the release.
 
 The best place for information about WebMacro is our website:
 
@@ -39,7 +40,7 @@ can read about the library here:
 
     http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
 
-- WebMacro 2.1 now has first-class support for creating Maps:
+- WebMacro 2.0 now has first-class support for creating Maps:
     #set $foo = {"key" : "value", "key2" : "value", "keyN" : value }
 Creating an empty map:
     #set $foo = { }
@@ -48,14 +49,37 @@ Map definitions can also span multiple lines:
                  "key2" : "value",
                  "keyN" : value }
 
-- WM comes in 2 distinct distributions: classic and minimal.
+- WebMacro improves support for inversion of control with #bean and #setprops:
+
+Instead of:
+
+#set $User.Name = "Joe Shmo"
+#set $User.Address = "123 Any Street"
+#set $User.Phone = "555.555.5555"
+#set $User.Orders = 0
+#set $User.Type = $User.TYPE_STANDARD
+
+you can in release 2.0:
+
+#setprops $User class="com.opendoors.entity.User" {
+  Name = Joe Shmo
+  Adress = 123 Any Street
+  Phone = 555.555.5555
+  Orders = 0
+  Type = $User.TYPE_STANDARD
+}
+
+If $User is not in the context, a new instance of j.u.Hashtable will be created.
+
+- WM is released in classic mode. An alternate mode exists: minimal.
 
 Classic mode is for web deployments where you will be using WebMacro to assist in rendering
 web pages. Many conveniences exist for your web applications with this configuration.
 
 Minimal is when you are generating email, source code, XML documents and the like not
 within a web servlet container. Use the classic mode for these kinds of tasks. 
-Minimal is provided to avoid inclusion of web-based activities.
+Minimal is provided to avoid inclusion of web-based activities. To build the minimal mode,
+set property, wm-style, in build.xml to "minimal" and then rebuild the distribution. 
 
 Version 2 provides these features which further distinguish it from other
 Java templating engines:

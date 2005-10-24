@@ -1,0 +1,214 @@
+<html><head>
+<title>WebMacro Documentation. Setup Notes</title>
+</head>
+
+<body bgcolor="white">
+
+<center>
+<b>Set Up Guidelines
+<br>
+Updated For Release 2.0</b></center>
+
+<p>
+
+
+   <!-- -----------------------------------------------------
+        This document is fairly readable as text, but looks 
+        real ugly. It'll be more fun reading it in a browser.
+        ----------------------------------------------------- -->
+
+WebMacro is a free Java development package that allows you to keep
+HTML and presentational issues out of your Java servlet code--while
+providing web designers with a simple template language capable of
+displaying any Java object. In stand alone mode, it is a powerful
+language generation platform for java.  <p>
+
+Some basic guidelines for set-up:
+
+<ul>
+<li> for web apps, webmacro.jar contains all the core classes, and needs to be in
+     your classpath or your WAR distribution. Also, concurrent.jar, provided in the distribution, needs to be in your classpath as well.
+  <p>
+<li> webmacro.defaults contains all the runtime default properties. DO
+     NOT MODIFY this file. Instead override this file by placing a file
+     called WebMacro.properties in your classpath and making changes or
+     replacements here. For secure 2.2+ Web Apps, place WebMacro.properties 
+     under your WEB-INF/classes directory where it will be automatically found in this classpath.
+  <p>
+<li> We recommend you place the root directory for your templates 
+     in your classpath or your application root or for secured WEB applictions
+     in a jar file in the directory WEB-INF/lib/.
+     In this manner, the WebMacro resource provider will find them.
+For example, if you place your templates is WEB-INF/classes, they will be found because this path is automatically a part of the classpath for web applications.
+  <p>
+<li> API documentation is provided with the release and is your
+     principal source of coding guidelines along with the WebMacro
+     wiki site.
+     <p>
+<li> Examples contains a few example WebMacro programs and templates 
+     for you to look at to figure out how things work. Complete driving
+     instructions are found at the interactive WebMacro 
+     <a href="http://www.webmacro.org">site</a>.
+     <p>
+</ul>
+
+<p>
+
+<a name="Install"><h3>How To Use It</h3></a>
+
+<ul>
+
+  <li>Note: See also <a href="CONFIGURING-EXAMPLES">Configuring-Examples</a>
+  in this directory.<p>
+
+  <li>This applies to the HelloWorld, Standalone, and GuestBook examples.
+      <p>
+      These classes are servlets. Compile them and install them in 
+      your servlet directory. Note that there are multiple .class
+      files for GuestBook, so be sure to copy all of them.
+      <p>
+      Then follow the instructions below to configure your classpath.
+      If the templates are in your classpath, you will not need to
+      create and then specify a path to your template file.
+      <p>
+
+  <li> You need to have the a servlet runner installed and working, or an 
+     equivalent servlet interface, and it has to be in your CLASSPATH.
+     <p>
+
+  <li> As of this release, we recommend using  Java 1.4 or 1.5 runtime. 
+     <p>
+
+  <li> Again, webmacro.jar and concurrent.jar must be in your classpath.
+    <p>
+
+</ul>
+
+  Here is an example CLASSPATH: 
+  <pre>
+
+CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/examples:$JSDK_HOME
+
+  </pre>
+
+  You have unpacked WebMacro in your home directory in this example. 
+  $JSDK_HOME contains the "javax" directory in which you have your JSDK
+  base classes, and JAVA_HOME/lib/classes.zip contains the J2SE standard library.   
+
+  <h3>Using the examples</h3>
+
+  Follow the steps above. Then read the comments at the head of
+  each examples .java file for detailed instructions.
+  <p>
+  Note that the examples are not pre-compiled, you must compile
+  them. 
+  <p>
+  HelloWorld and GuestBook use the WMServlet approach, so put all their 
+  .class files in your servlet directory, normally, WEB-INF/classes.
+  <p>
+<a name="Compiling"><h3>How to Compile WebMacro</h3>
+</a>
+
+WebMacro ships with a webmacro.jar file compiled for JDK 1.2-1.5.
+
+To recompile WM, you will need to go to the CVS archive where you
+can find the ant build script and all the supporting libraries
+referenced during compilation. You must "check out" the sources and
+supporting files to compile and test WM.
+
+<a name="Overview">
+<h3>Overview of the WebMacro System: </h3>
+</a>
+
+   WebMacro provides, among other benefits, a cleaner approach to web page generation than using  JSP/ASP. Philosophically:
+   <ul>
+
+      <li> We think it is wrong to use markup for a scripting language
+      <li> We think it is wrong to embed programs on a web page
+      <li> We think it is wrong for web scripts to look like hard programming
+      <li> We feel that an API like WM should make it easy to do the
+      things you need to do when designing and deploying applications.
+
+      <li><b> We believe that programming and graphical page design 
+              are separate tasks</b>
+   </ul>
+
+   JSP/ASP are hard to do for web page designers. WebMacro is not. So we have designed a language that is simple to learn, but which 
+   fits with our biases above.  
+   <p>
+
+   WebMacro presents two separate interfaces:  <ol>
+
+       <li> A template language for web page designers to use, into which
+          they can substitute values from a web program 
+
+       <li> A library and framework for web based programming, for use 
+          by technical developers, which is independent of any layout 
+          or other graphical concerns
+
+   </ol>
+   You might be both a graphics designer AND a programmer. Many people are. 
+   However I think you will agree that these activies use different sides
+   of your brain--or at least very different kinds of thinking--and it is 
+   painful to try and do both at the same time.    <p>
+
+   Alternately you might be a programmer working with a web designer: By 
+   providing the web designer with a list of variables which they can 
+   substitute into a page, you keep the designer at some distance from 
+   your sensitive program codes. At the same time, the designer is free 
+   to take those variables and lay them out any which way they please.    <p>
+
+   This separation of program code and content is the fundamental idea 
+   behind the WebMacro system.    <p>
+   
+   Lastly, WM is a powerful language for code generation, mail merging
+   and rule development. A WebMacro template can contain simple
+   business logic. When a template is evaluated, the simple logic can interact
+   with more complex java and state processing. This makes for a formidable
+   framework for language generation. WebMacro is a language platform.
+
+
+<a name="Overview"><h3>How it works: </h3></a>
+
+WebMacro relies heavily on introspection to glue your template to your 
+back-end. On your back end you stick ordinary Java objects into your 
+Context. WebMacro will then introspect these objects and make them 
+available as properties in the template. 
+<p>
+Introspection is fairly expensive so WebMacro avoids doing this at 
+execution time. The first time a class is introspected WebMacro caches 
+the knowledge it gains about the class for efficient use in the future. 
+Templates are also compiled into a form suitable for rapid-execution 
+on first use. (Note that you have to turn on the Template caching 
+in your WebMacro.properties file to see this behavior.)
+<p>
+The overall design of WebMacro is that the state for each request is 
+contained in this Context object: you need to instantiate a new Context
+for every request (you can create a prototype Context and then clone it 
+for efficiency--this is automatically done for you most of the time.)
+<p>
+Since the state for each request is entirely contained within the Context,
+templates can be shared between multiple requests. Since templates have 
+no state, they don't need to be synchronized. Since Contexts are accessed
+by only one thread ("thread per request") they don't need to be 
+synchronized either. Thus you get very good performance out of WebMacro 
+since most of the code can avoid the overhead of synchronization locks. 
+<p> 
+Finally, WebMacro is a framework. Most of its behavior is loaded dynamically
+based on the configuration file, WebMacro.defaults and if present, 
+WebMacro.properties.
+
+The effect of this is that you can radically alter the behavior of WebMacro 
+by replacing the classes named in WebMacro.properties with your own. 
+There are a large number of "plug points" in the design to allow an advanced user to 
+customize WebMacro extensively. 
+<p> 
+For an ordinary user, though, it's good enough to rely on the default 
+configuration. All you have to do is create contexts and load templates 
+using the provided WebMacro interfaces. See the examples provided in 
+the examples directory for more information.
+<p>
+
+
+</body></html>
+

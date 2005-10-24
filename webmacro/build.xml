@@ -212,12 +212,18 @@ Administrative targets:
         <copy todir="${dist.source}">
             <fileset dir="distroot" />
         </copy>
-        <copy file='WebMacro.defaults.${wm-style}' todir='${dist.source}' />
-        <copy file='build.xml' todir='${dist.source}' />
+      <copy file='WebMacro.defaults.minimal' todir='${dist.source}' />
+      <copy file='WebMacro.defaults.classic' todir='${dist.source}' />
+      <copy file='build.xml' todir='${dist.source}' />
 
       <mkdir dir="${dist.source}/src" />
         <copy todir="${dist.source}/src">
             <fileset dir="src" />
+        </copy>
+
+      <mkdir dir="${dist.source}/javadoc" />
+        <copy todir="${dist.source}/javadoc">
+            <fileset dir="javadoc" />
         </copy>
 
       <mkdir dir="${dist.source}/src-optional" />
@@ -248,6 +254,11 @@ Administrative targets:
       <mkdir dir="${dist.source}/macros" />
       <copy todir="${dist.source}/macros">
           <fileset dir="${macros}" />
+      </copy>
+
+      <mkdir dir="${dist.source}/distroot" />
+      <copy todir="${dist.source}/distroot">
+          <fileset dir="distroot" />
       </copy>
 
       <touch file="${dist.source}/WM-VERSION-${version}"/>

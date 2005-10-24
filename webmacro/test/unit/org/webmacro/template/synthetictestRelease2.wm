@@ -1,0 +1,152 @@
+## synthetictestRelease2.wm
+##
+#comment {
+author: Lane Sharman lane@opendoors.com
+date			change
+10 - sept - 2005	initial revision
+
+This test when run successfully does not produce any
+useful output. Its intent is to self-test some expected
+behavior of release 2 features. These include:
+
+	maps,
+	templets
+	blocks,
+	eval
+	bean
+	
+This synthetic test also gives a general idea of the cost
+of executing with these very useful features of webmacro.
+
+Much of the code in this test is taken from the WM
+wiki site to also confirm the correctness of the docs!
+
+
+synthetictest.wm depends on synthetictest.java to evaluate and then produce a
+report.
+}
+
+##
+## bean directive:
+##
+#bean $counts = "java.util.HashMap" scope=page onNew {
+  #set $counts.Hits = 0
+  Initialized Map $counts
+  <br>
+}
+#set $counts.Hits = $counts.Hits + 1
+Number of visits to this page in this session: $counts.Hits
+<br>
+
+##
+##block directive and functions:
+##
+#setblock $blk {
+   <pre>Escape this!</pre>
+   <blockquote>"Yo!"</blockquote>
+}
+Decode html:<br>
+#set $text = $URLEncode($blk)
+#set $text = $URLDecode($text)
+Original block:<br>
+$blk
+<br>
+Encoded & Decoded block:<br>
+$text
+<br>
+#setblock as macro $greeting {<p>Hello $name</p>}
+#foreach $name in ["Camille", "Lily", "Chantal"]{
+     $greeting
+}
+<br>
+##
+##the map directive (See wiki pages: ForEachDirective
+##
+#set $fuitmap = { "a":"apple", "b":"banana" }
+#set $nummap = { "one":1, "two":2, "three": 3 }
+#set $langmap_fr = { 1:"un", 2:"deux", 3:"trois" }
+#set $keys = $langmap_fr.keySet()
+#set $values = $langmap_fr.values()
+Keys ($keys.Class.Name): 
+#foreach $key in $keys {$key,}  ($key.Class.Name)
+<br>
+Values: 
+#foreach $key in $keys {$langmap_fr.get($key),}
+<br>
+Values=$values ($values.Class.Name)
+#foreach $val in $values {$val,}
+
+##
+##the templet and eval directive (See wiki pages: TempletDirective
+##
+<br>
+templet testing of cart:
+<br>
+#templet $listCart {
+   #if ($cart.Empty){
+      No items in cart!
+   }
+   #else {
+     You have $cart.size() items in your cart:
+     <ul>
+     #foreach $item in $cart {
+       <li>$item.Name - $item.Description</li>
+     }
+     </ul>
+   }
+}
+#bean $myCart = "java.util.ArrayList" onNew {
+	#set $item = {"Name":"101", "Description":"San Diego to New Orleans, 10:00AM, 22-Dec-2005"}
+	#set $tmp = $myCart.add($item)
+	#set $item = {"Name":"801", "Description":"San Diego to New Orleans, 10:00AM, 23-Dec-2005"}
+	#set $tmp = $myCart.add($item)
+}	
+#eval $listCart using { "cart": $myCart } 
+
+
+##
+##set property directive.
+##
+<br>
+Test set property directive.
+<br>
+
+#setprops $User {
+  Name = Joe Shmo
+  Adress = 123 Any Street
+  Phone = 555.555.5555
+  Orders = 0
+}
+$User.Class.Name set to $User
+<br>
+#setprops $Locales class="java.util.Properties" {
+  en = English
+  fr = French
+  de = German
+}
+$Locales.Class.Name set to $Locales
+
+<br>
+#setprops $Container class="java.util.HashMap" {
+	#include  "org/webmacro/template/Container.properties"
+}
+$Container.Class.Name set to $Container
+
+<br>
+#text #begin
+<pre>
+the syntax below is not supported (variable for class attribute)
+
+#setprops $ApplicationProperties class="$Container.PropertyContainer" {
+	host = aix.opendoors.com
+	contact = lane\@opendoors.com
+}
+$ApplicationProperties.Class.Name set to $ApplicationProperties
+</pre>
+#end
+
+
+
+
+end of test
+
