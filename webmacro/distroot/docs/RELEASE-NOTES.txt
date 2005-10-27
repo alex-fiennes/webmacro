@@ -3,7 +3,9 @@ WebMacro 2.0 1-November-2005
                     
 This is WebMacro 2.0, a production release of WebMacro Version 2.  245 Unit Tests
 have been executed against this release. All tests and source compile and run
-against JDK 1.4 and 1.5. There is a classic and minimal distribution discussed below.
+against JDK 1.4 and 1.5. Exciting new features are in this release supporting
+demanding text applications such as AJAX applications, code generation, and 
+inversion of control.
 
 We beleive this release to be very stable and many of us are using it in production
 environments; however, you may find some bugs.  Please report bugs to our subscriber-only

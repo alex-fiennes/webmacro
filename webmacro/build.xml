@@ -206,12 +206,14 @@ Administrative targets:
         <touch file="${dist.binary}/WM-VERSION-${version}"/>
     </target>
 
-    <target name="dist-source" depends="prepare">
+    <target name="dist-source" depends="prepare,compile,compile-examples,jar,javadoc">
         <delete dir='${dist.source}' />
         <mkdir dir='${dist.source}' />
         <copy todir="${dist.source}">
             <fileset dir="distroot" />
         </copy>
+      <copy todir="${dist.source}" file="${jar}"/>
+      <copy todir="${dist.source}" file="lib/concurrent.jar" /> 
       <copy file='WebMacro.defaults.minimal' todir='${dist.source}' />
       <copy file='WebMacro.defaults.classic' todir='${dist.source}' />
       <copy file='build.xml' todir='${dist.source}' />
@@ -265,15 +267,15 @@ Administrative targets:
  
     </target>
 
-    <target name='zip.and.tar' depends='dist-binary,dist-source'>
-        <zip destfile='${dist.binary}.zip' basedir='.' includes='${dist.binary}/**/*' />
+    <target name='zip.and.tar' depends='dist-source'>
+        <!-- <zip destfile='${dist.binary}.zip' basedir='.' includes='${dist.binary}/**/*' /> -->
         <zip destfile='${dist.source}.zip' basedir='.' includes='${dist.source}/**/*' />
 
-        <tar destfile='${dist.binary}.tgz' longfile='gnu' compression='gzip' basedir='.' includes='${dist.binary}/**/*' />
+        <!-- <tar destfile='${dist.binary}.tgz' longfile='gnu' compression='gzip' basedir='.' includes='${dist.binary}/**/*' /> -->
         <tar destfile='${dist.source}.tgz' longfile='gnu' compression='gzip' basedir='.' includes='${dist.source}/**/*' />
     </target>
 
-    <target name='release' depends='clean,test,dist-binary,dist-source,zip.and.tar' />
+    <target name='release' depends='clean,test,dist-source,zip.and.tar' />
 
     <!--
       <target name="contrib" depends="compile" >
