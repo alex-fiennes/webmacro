@@ -217,7 +217,7 @@ public class WMEval
 
     /**
      * Supplies a context to be  parsed currentTemplate directly.
-     * @param parsedTemplate The currentTemplate parsed possibly from a previous run.
+     * @param c The context to be used for the evaluation.
      */
     public void setCurrentContext (Context c)
     {
@@ -286,7 +286,7 @@ public class WMEval
      * @param context The WM context to use.
      * @param templateName The name of the template.
      * @param resp The servlet response from which the encoding will be derived.
-     * @returns The string value sent to the user agent.
+     * @return The output from the evaluated template.
      */
     public String eval (WebContext context, String templateName,
                       HttpServletResponse resp) throws ServletException
@@ -325,14 +325,13 @@ public class WMEval
      * This method is the preferred method when an output stream is to be written
      * as well as the value of the string is to be returned.
      * @param context The context to use.
-     * @param templateResourceFile The input template file in the resource path.
+     * @param templateName The input template file in the resource path.
      * @param out The output stream. If null, an attempt will be
      * made to locate the outputstream in the context using the output stream key if
      * in the context. If no output stream can be resolved, the method does not
      * throw an exception.
-     * @param append If true, the file will be opened for appending the output.
      * @param encoding If null, the platform's encoding will be used.
-     * @return The output is also returned as a convenience.
+     * @return The output from the evaluation of the template.
      */
     public String eval (Context context, String templateName,
                         OutputStream out, String encoding) throws Exception

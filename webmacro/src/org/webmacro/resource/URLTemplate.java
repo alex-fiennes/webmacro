@@ -83,14 +83,13 @@ public class URLTemplate extends WMTemplate
     private static final Object dummy = new Object();
 
     /**
-     * Instantiate a template based on the specified file
-     *
+     * Instantiate a template based on the specified file.
      * We use can use the special case or URLs like
-     *
+     * <pre>
      *        file:xxxxxx
      * or
      *        jar:xxxxxx!yyyyyy
-     *
+     *</pre>
      * extracting the xxxxxx.  In the latter case the reference is to the jar containing the
      * template.
      */
@@ -123,8 +122,12 @@ public class URLTemplate extends WMTemplate
 
     /**
      * URL based templates are difficult to detect as changed in general, but the two
-     * special cases for "file:[path]" and "jar:file:[jarpath]![path]" mean we have reference
-     * to the actual file
+     * special cases can be determined for reloading.
+     * <pre>
+     * file:[path] and 
+     * jar:file:[jarpath]![path]
+     * </pre>
+     * Imply a reference to the actual file.
      */
 
     public boolean shouldReload ()

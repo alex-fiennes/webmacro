@@ -53,6 +53,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Provides a concrete implementation the AbstractLogFile.
+ */
 public class LogFile extends AbstractLogFile
 {
 

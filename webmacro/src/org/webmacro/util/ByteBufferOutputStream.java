@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * An optimized implementation of a ByteBuffer stream.
+ */
 final public class ByteBufferOutputStream extends OutputStream
 {
 

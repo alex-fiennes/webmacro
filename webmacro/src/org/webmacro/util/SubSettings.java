@@ -25,6 +25,9 @@ package org.webmacro.util;
 
 import java.util.ArrayList;
 
+/**
+ * Models the subsettings of a setting.
+ */
 public class SubSettings extends Settings
 {
 

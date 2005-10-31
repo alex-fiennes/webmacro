@@ -26,6 +26,9 @@ package org.webmacro.util;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
+/**
+ * Selects from a list of things as an enumerator.
+ */
 public class SelectList implements Enumeration
 {
 

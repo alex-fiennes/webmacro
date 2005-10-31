@@ -19,9 +19,8 @@ import javax.servlet.ServletRequest;
  * Implement a behavior allowing for undefined properties to return
  * a useful default value such as "" for a string, "0.00" for 
  * numeric properties, and so forth.
- * <p>
- * A specific default can always be used as is done for string properties in the
- * base class.
+ *
+ * @author Lane Sharman
  */
 public class SparseProperties extends Properties
 {
@@ -99,8 +98,6 @@ public class SparseProperties extends Properties
     
     /**
      * Adds all the Request attributes to this property object.
-     * 
-     * @author Lane Sharman
      */
     public void addRequestAttributes(ServletRequest request)
     {

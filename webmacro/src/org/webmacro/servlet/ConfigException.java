@@ -40,7 +40,6 @@ public class ConfigException extends WebMacroException
 
 	/**
      * Constructor only requires a reason
-     * <p>
      * @param reason explains what went wrong
      */
     public ConfigException (String reason)

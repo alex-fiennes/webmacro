@@ -46,10 +46,14 @@ abstract public class AbstractLogFile implements LogTarget
 
 
     /**
+     * <p>
      * Create a new LogFile instance reading properties from the
-     * supplied Settings object: <pre>
+     * supplied Settings object.
+     * </p> 
+     * <pre>
      *     LogTraceExceptions: true|false|yes|no|on|off
-     *     LogLevel:
+     *     LogLevel: Debug|Info|Notice|etc
+     * </pre>
      */
     public AbstractLogFile (Settings s)
     {

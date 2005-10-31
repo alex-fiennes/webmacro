@@ -33,13 +33,14 @@ import org.webmacro.engine.StringMacro;
 import org.webmacro.engine.Variable;
 
 /**
- *
- * @author  kkirsch
- * Usage:
+ * Evaluate an instance of a webmacro target.
+ * <pre>
  *   #eval $macroVar
  * or
  *   #eval $macroVar using $mapVar
+ * </pre>
  *
+ * @author  kkirsch
  */
 
 public class EvalDirective extends org.webmacro.directive.Directive

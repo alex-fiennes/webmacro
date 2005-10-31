@@ -74,7 +74,7 @@ public class LogSource implements Log
 
     /**
      * Get a description of this log source: what kind of messages
-     * does it contain? This can be a sentence or so of information
+     * does it contain. This can be a sentence or so of information
      * about what kind of messages this log represents.
      */
     public String getDescription ()

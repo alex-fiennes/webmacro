@@ -88,7 +88,7 @@ public interface Template extends Visitable
      * The returned Map can be <code>null</code> if this Template
      * does not contain Macros, or if this Template has not been
      * parsed yet.
-     * @return
+     * @return The map of macros defined.
      */
     public Map getMacros ();
 

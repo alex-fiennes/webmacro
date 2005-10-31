@@ -134,9 +134,9 @@ public class Servlet22Broker extends ServletBroker
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
      * @param additionalProperties
-     * @return
+     * @return The broker for the servlet context.
      * @throws InitException
-     * @since 2.1
+     * @since 2.1 JSDK
      */
     public static Broker getBroker(ServletContext sc, ClassLoader cl,
         Properties additionalProperties) throws InitException

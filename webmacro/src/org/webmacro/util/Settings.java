@@ -33,6 +33,9 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+/**
+ * Models the settings from a property object.
+ */
 public class Settings
 {
 

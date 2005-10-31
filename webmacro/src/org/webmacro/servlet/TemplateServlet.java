@@ -184,8 +184,8 @@ public class TemplateServlet extends HttpServlet {
 	 * 
 	 * Override this method to perform your own response handling.
 	 * 
-	 * @param The  request which has a uri such as /en/welcome.tml
-	 * @param The response object
+	 * @param request The request which has a uri such as /en/welcome.tml
+	 * @param response The response object
 	 * @return The template to evaluate and return as the response.
 	 */
 	protected String doResponse(HttpServletRequest request,

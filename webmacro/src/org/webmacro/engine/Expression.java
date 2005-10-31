@@ -26,6 +26,11 @@ import org.webmacro.*;
 
 import java.io.IOException;
 
+/**
+ * All WM expressions derive from this base class.
+ * All expression and expression builder classes are contained
+ * in this file.
+ */
 public abstract class Expression
 {
 

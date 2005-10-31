@@ -23,6 +23,10 @@
 
 package org.webmacro.util;
 
+/**
+ * A set of utility methods for working with Base64.
+ *
+ */
 final public class Base64
 {
 

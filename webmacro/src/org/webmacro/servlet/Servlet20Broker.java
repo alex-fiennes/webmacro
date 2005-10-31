@@ -78,9 +78,9 @@ public class Servlet20Broker extends ServletBroker
 
     /**
      * Get a Servlet API 2.0 compatible broker for the Servlet specified
-     * @param s
+     * @param s The servlet
      * @param additionalProperties
-     * @return
+     * @return The broker for the servlet context.
      * @throws InitException
      */
     public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
@@ -96,9 +96,9 @@ public class Servlet20Broker extends ServletBroker
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
      * @param additionalProperties
-     * @return
+     * @return The broker for the servlet context
      * @throws InitException
-     * @since 2.1
+     * @since 2.1 JSDK
      */
     public static Broker getBroker (ServletContext sc, ClassLoader cl,
         Properties additionalProperties) throws InitException
@@ -119,9 +119,9 @@ public class Servlet20Broker extends ServletBroker
      * a Servlet instance passed in - just for nicer logging output
      * @param servletOrContextName Name of the servlet or context originating this broker,
      * for nicer logging
-     * @return
+     * @return The broker for the servlet context
      * @throws org.webmacro.InitException
-     * @since 2.1
+     * @since 2.1 JSDK
      */
     protected static Broker _getBroker (ServletContext sc,
         ClassLoader cl, Properties additionalProperties, boolean fromServlet,

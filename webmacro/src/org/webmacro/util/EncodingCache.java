@@ -60,6 +60,9 @@ class ArrayBucket
 }
 
 
+/**
+ * Provides for a cache of encodings of strings.
+ */
 final public class EncodingCache
 {
 

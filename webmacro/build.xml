@@ -162,8 +162,8 @@ Administrative targets:
 
     <target name="javadoc" depends="prepare">
         <javadoc sourcepath="src" destdir="${javadoc}"
-            packagenames="org.*" author="true" version="true"
-            use="true">
+            packagenames="org.*" author="true" version="true" breakiterator="true"
+            use="true" >
             <classpath refid="class.path" />
         </javadoc>
     </target>

@@ -28,14 +28,16 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
+ * <p>
  * Provided to mimic the CGI environment within the WebMacro script
  * language via introspection. The data in this class duplicates
  * information already available in request, but makes it available
  * in a familiar form.
- * <p>
+ * </p><p>
  * From the WebMacro script language you can refer to the properties
  * contained in this class with names that exactly duplicate the names
  * familiar to CGI programmers. eg: REQUEST_METHOD, PATH_INFO, etc.
+ * </p>
  */
 final public class CGI_Impersonator
 {
@@ -104,7 +106,8 @@ final public class CGI_Impersonator
 
     /**
      * What portion of the URL appeared as additional path beyond
-     * the SCRIPT_NAME portion? Return that as a string.
+     * the SCRIPT_NAME portion.
+     * @return The path info.
      */
     final public String getPATH_INFO ()
     {
@@ -120,8 +123,8 @@ final public class CGI_Impersonator
     }
 
     /**
-     * What portion of the URL represented the servlet being run?
-     * Return that as a string.
+     * What portion of the URL represents the servlet being run.
+     * @return The servlet being run.
      */
     final public String getSCRIPT_NAME ()
     {

@@ -22,11 +22,11 @@
 package org.webmacro.util;
 
 /**
- *
+ * A singleton for casting one type to another.
  * @author  keats_kirsch
  * @since 0.96
  */
-public class CastUtil extends java.lang.Object
+public class CastUtil
 {
 
     static private CastUtil _singleton = new CastUtil();

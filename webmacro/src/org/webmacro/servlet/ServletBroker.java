@@ -124,9 +124,9 @@ abstract public class ServletBroker extends Broker
      * @param cl A class loader, hopefully that of the web application, to
      * use when loading resources or classes.
      * @param additionalProperties
-     * @return
+     * @return The broker for the servlet context.
      * @throws InitException
-     * @since 2.1
+     * @since 2.1 JSDK
      */
     public static Broker getBroker (ServletContext sc, ClassLoader cl,
         Properties additionalProperties) throws InitException

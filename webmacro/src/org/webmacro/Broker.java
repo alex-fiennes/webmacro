@@ -238,7 +238,6 @@ public class Broker
     
     /**
      * Provide access to the broker's log.
-     * @author lane
      */
     public Log getBrokerLog()
     {

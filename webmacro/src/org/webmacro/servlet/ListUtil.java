@@ -496,7 +496,6 @@ public class ListUtil
      * size cannot be divided by column count, it's padded with padValue.
      * @param arg Array to be splitted.
      * @param colCount Number of elements in each split.
-     * @param pad Last split should be null padded?
      * @param padValue Value that will be used for padding.
      * @return Array of array parts.
      */
@@ -604,7 +603,6 @@ public class ListUtil
      * size cannot be divided by column count, it's padded with padValue.
      * @param arg List to be splitted.
      * @param colCount Number of elements in each split.
-     * @param pad Last split should be null padded?
      * @param padValue Value that will be used for padding.
      * @return List of list parts.
      */
