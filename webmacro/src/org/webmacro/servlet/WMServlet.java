@@ -36,7 +36,8 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 /**
- * This is the abstract base class used by all WebMacro servlets. You
+ * This is an abstract base class which can be used
+ * to implement a kind of WebMacro servlet. You
  * can either subclass from it directly, or make use of one of the
  * generic subclasses provided.
  * <p>

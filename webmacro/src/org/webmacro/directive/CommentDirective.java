@@ -31,6 +31,10 @@ import org.webmacro.engine.BuildException;
 
 import java.io.IOException;
 
+/**
+ * Allows a template writer to make a block comment.
+ *
+ */
 public class CommentDirective extends Directive
 {
 

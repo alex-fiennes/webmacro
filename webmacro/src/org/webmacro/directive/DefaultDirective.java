@@ -28,7 +28,11 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
 import java.io.IOException;
-
+/**
+ * Implements the directive that allows
+ * a template to have a default value
+ * for a reference in the context.
+ */
 public class DefaultDirective extends Directive
 {
 

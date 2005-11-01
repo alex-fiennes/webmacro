@@ -28,7 +28,9 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
 import java.io.IOException;
-
+/**
+ * Allows setting a variable to a block of template script.
+ */
 public class SetblockDirective extends Directive
 {
 

@@ -30,7 +30,9 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
 import java.io.IOException;
-
+/**
+ * Implements a directive supporting a global value.
+ */
 public class GlobalDirective extends Directive
 {
 

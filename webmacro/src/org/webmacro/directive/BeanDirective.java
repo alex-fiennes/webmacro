@@ -33,6 +33,12 @@ import org.webmacro.util.Instantiator;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+/**
+ * Implements a directive allowing a script writer
+ * to instantiate an arbitrary
+ * java object in a WebMacro template subject to 
+ * security restrictions.
+ */
 
 public class BeanDirective extends Directive
 {

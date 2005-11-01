@@ -33,8 +33,11 @@ import org.webmacro.engine.Variable;
 import java.io.IOException;
 
 /**
+ * Allows a template to count
+ * according to a range.
+ * <pre>
  * #count $i from 1 to 100 [step 1]
- *
+ * </pre>
  * @author Eric B. Ridge (ebr@tcdi.com)
  * @since 1.1b1
  */

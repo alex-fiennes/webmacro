@@ -28,7 +28,9 @@ import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
 import java.io.IOException;
-
+/**
+ * Implements the setting of a variable.
+ */
 public class SetDirective extends Directive
 {
 

@@ -27,7 +27,10 @@ import org.webmacro.engine.*;
 
 import java.io.IOException;
 import java.util.Iterator;
-
+/**
+ * Implements iteration through a list or an array with
+ * various options.
+ */
 public class ForeachDirective extends Directive
 {
 

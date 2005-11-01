@@ -31,7 +31,10 @@ import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
 import java.io.IOException;
-
+/**
+ * Implements the treatment of a
+ * block as text not subject to evaluation.
+ */
 public class TextDirective extends Directive
 {
 

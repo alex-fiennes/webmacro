@@ -33,9 +33,9 @@ import org.webmacro.util.Instantiator;
 import java.io.IOException;
 
 /*
- * 
- * @author Keats Kirsch Set properties on an object using Java properties file
- * type syntax
+ * Set properties on an object using Java properties file
+ * type syntax.
+ * @author Keats Kirsch 
  * 
  */
 public class SetpropsDirective extends Directive

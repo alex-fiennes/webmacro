@@ -23,6 +23,9 @@
 
 package org.webmacro.util;
 
+/**
+ * A type that has a name.
+ */
 public interface Named
 {
 

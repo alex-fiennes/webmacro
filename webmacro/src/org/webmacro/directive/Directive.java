@@ -286,7 +286,7 @@ public abstract class Directive implements Macro, Visitable
     }
 
     /**
-     * Name.  This is just a name, no $ in front of it.
+     * Implements an argument as a simple name.
      */
     public static class NameArg extends ArgDescriptor
     {

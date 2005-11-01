@@ -30,7 +30,9 @@ import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 
 import java.io.IOException;
-
+/**
+ * A null directive implementation.
+ */
 public class DummyDirective extends Directive
 {
 
