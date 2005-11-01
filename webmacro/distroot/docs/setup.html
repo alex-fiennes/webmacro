@@ -109,32 +109,32 @@ CLASSPATH=$JAVA_HOME/lib/classes.zip:$HOME/webmacro/webmacro.jar:$HOME/WebMacro/
 <a name="Compiling"><h3>How to Compile WebMacro</h3>
 </a>
 
-WebMacro ships with a webmacro.jar file compiled for JDK 1.2-1.5.
+WebMacro ships with a webmacro.jar file compiled for JDK 1.4 and 1.5.
 
-To recompile WM, you will need to go to the CVS archive where you
-can find the ant build script and all the supporting libraries
-referenced during compilation. You must "check out" the sources and
-supporting files to compile and test WM.
+To recompile WM, you merely need to build from this distribution.
+The build file has a number of targets: "compile", "jar", and "test".
 
 <a name="Overview">
 <h3>Overview of the WebMacro System: </h3>
 </a>
 
-   WebMacro provides, among other benefits, a cleaner approach to web page generation than using  JSP/ASP. Philosophically:
+   WebMacro provides, among other benefits, a cleaner
+   approach to web page generation than using  JSP/ASP. Philosophically:
    <ul>
 
-      <li> We think it is wrong to use markup for a scripting language
-      <li> We think it is wrong to embed programs on a web page
-      <li> We think it is wrong for web scripts to look like hard programming
+      <li> We think it is wrong to use mix markup with a scripting language.
+      <li> We think it is wrong to embed programs on a web page.
+      <li> We think it is wrong for web scripts to look like hard programming.
       <li> We feel that an API like WM should make it easy to do the
       things you need to do when designing and deploying applications.
 
       <li><b> We believe that programming and graphical page design 
-              are separate tasks</b>
+              are separate tasks.</b>
    </ul>
 
-   JSP/ASP are hard to do for web page designers. WebMacro is not. So we have designed a language that is simple to learn, but which 
-   fits with our biases above.  
+   JSP/ASP are hard to do for web page designers. WebMacro is not. 
+   So we have designed a language that is simple to learn, but which 
+   fits with our principles above.  
    <p>
 
    WebMacro presents two separate interfaces:  <ol>
@@ -142,7 +142,7 @@ supporting files to compile and test WM.
        <li> A template language for web page designers to use, into which
           they can substitute values from a web program 
 
-       <li> A library and framework for web based programming, for use 
+       <li> A library and framework for text based programming, for use 
           by technical developers, which is independent of any layout 
           or other graphical concerns
 
@@ -164,7 +164,7 @@ supporting files to compile and test WM.
    Lastly, WM is a powerful language for code generation, mail merging
    and rule development. A WebMacro template can contain simple
    business logic. When a template is evaluated, the simple logic can interact
-   with more complex java and state processing. This makes for a formidable
+   with more complex state and behavioral patterns. This makes for a formidable
    framework for language generation. WebMacro is a language platform.
 
 
@@ -200,7 +200,7 @@ WebMacro.properties.
 
 The effect of this is that you can radically alter the behavior of WebMacro 
 by replacing the classes named in WebMacro.properties with your own. 
-There are a large number of "plug points" in the design to allow an advanced user to 
+There are a large number of "plug-in points" in the design to allow an advanced user to 
 customize WebMacro extensively. 
 <p> 
 For an ordinary user, though, it's good enough to rely on the default 
@@ -211,4 +211,3 @@ the examples directory for more information.
 
 
 </body></html>
-
