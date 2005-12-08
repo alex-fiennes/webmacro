@@ -56,6 +56,7 @@ Administrative targets:
     <property name="javadoc"        value="javadoc"/>
     <property name="examples"       value="examples"/>
     <property name="jar"            value="${app.name}.jar"/>
+    <property name="adapters-jar"   value="${app.name}-adapters.jar"/>
     <property name="src.jar"        value="${app.name}-src.jar"/>
     <property environment="ENV" />
     <property name="javacc.home"    value="${ENV.JAVACC_HOME}" />
@@ -171,8 +172,18 @@ Administrative targets:
 
     <target name="jar" depends="prepare,compile">
         <jar jarfile="${jar}" basedir="${classes}">
+            <exclude name="org/webmacro/adapter/**" />
             <manifest>
                 <attribute name="Main-Class" value="org.webmacro.WM" />
+                <attribute name="Build-Date" value="${TODAY}" />
+            </manifest>
+        </jar>
+        <jar jarfile="${adapters-jar}" basedir="${classes}">
+            <include name="org/webmacro/adapter/**" />
+            <!-- pull in any templates with macros etc -->
+            <zipfileset dir="src/org/webmacro/adapter"
+                includes="**/*.wm" prefix="org/webmacro/adapter"/>
+            <manifest>
                 <attribute name="Build-Date" value="${TODAY}" />
             </manifest>
         </jar>
@@ -182,7 +193,9 @@ Administrative targets:
         <delete dir='${dist.binary}' />
         <mkdir dir='${dist.binary}' />
         <copy todir="${dist.binary}" file="${jar}"/>
-        <copy todir="${dist.binary}" file="lib/concurrent.jar" /> 
+        <copy todir="${dist.binary}" file="${adapters-jar}"/>
+        <copy todir="${dist.binary}" file="lib/concurrent.jar" />
+        <copy todir="${dist.binary}" file="lib/servlet-2.2.jar" />
         <copy todir="${dist.binary}">
             <fileset dir="distroot" />
         </copy>
