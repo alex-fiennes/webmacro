@@ -59,6 +59,7 @@ public class WebMacroView extends AbstractTemplateView
                                              HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         WebContext context = webMacro.getWebContext(request, response);
+
         context.putAll(model);
 
         Template template = webMacro.getTemplate(getUrl());

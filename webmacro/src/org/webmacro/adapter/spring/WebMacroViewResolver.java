@@ -2,6 +2,7 @@ package org.webmacro.adapter.spring;
 
 
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.View;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -36,15 +37,10 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
         return WebMacroView.class;
     }
 
-    /**
-     * Provide any WM-specific customisation of the view object that has been instantiated
-     * @param viewName
-     * @param locale
-     * @return
-     * @throws BeansException
-     */
-    protected View loadView(String viewName, Locale locale) throws Exception
-    {
+    protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+        WebMacroView view = (WebMacroView) super.buildView(viewName);
+
+        // Tell it which WebMacro to use
         // Fetch our WebMacro in advance so we don't need to lock for
         // every render
         synchronized (this)
@@ -56,9 +52,6 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
             }
         }
 
-        WebMacroView view = (WebMacroView) super.loadView(viewName, locale);
-
-        // Tell it which WebMacro to use
         view.setWebMacro( webMacro);
 
         view.checkTemplate();
