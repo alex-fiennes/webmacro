@@ -93,9 +93,6 @@ public class EvalDirective extends org.webmacro.directive.Directive
    {
       try
       {
-         String res = null;
-         //Context c = null;
-
          Macro macro = null;
 
          // The target may be:
@@ -125,7 +122,7 @@ public class EvalDirective extends org.webmacro.directive.Directive
          if (_mapExpr == null)
          {
             // no map specified, use current context
-            res = (String) macro.evaluate(context);
+            macro.write(out, context);
          }
          else
          {
@@ -182,9 +179,8 @@ public class EvalDirective extends org.webmacro.directive.Directive
             c.put("OuterVars", outerVars);
             // add a reference to this macro
             c.put("Self", macro);
-            res = (String) macro.evaluate(c);
+            macro.write(out, c);
          }
-         out.write(res);
       }
       catch (Exception e)
       {
