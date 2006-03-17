@@ -160,11 +160,15 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * This method is called by the servlet runner--do not call it. It
      * must not be overidden because it manages a shared instance of
      * the broker--you can overide the stop() method instead, which
-     * will be called just before the broker is shut down.
+     * will be called just before the broker is shut down.  Once the
+     * stop() method has been called, the nested WM will be destroyed
+     * and then the parent destroy() method will be invoked.
+     * @see WM#destroy()
      */
     public synchronized void destroy ()
     {
         stop();
+        _wm.destroy();
         _log.notice("stopped: " + this);
         _wm = null;
         _started = false;
@@ -523,6 +527,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             // which could be happening during the template evaluation
             byte[] bytes = tmpl.evaluateAsBytes(encoding, c);
 
+
             // now write the FW buffer to the response output stream
             writeResponseBytes(resp, bytes, encoding);
         }
@@ -605,6 +610,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
             response.getWriter().write(new String(bytes, encoding));
         }
     }
+
    
     // FRAMEWORK TEMPLATE METHODS--PLUG YOUR CODE IN HERE
    
