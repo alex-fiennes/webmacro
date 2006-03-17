@@ -25,6 +25,7 @@ package org.webmacro;
 
 import java.io.*;
 import java.util.Map;
+
 /**
  * Defines the type of object which contains
  * WebMacro script, text, blocks to be evaluated.
@@ -103,10 +104,14 @@ public interface Template extends Visitable
     public void write (OutputStream out, String encoding, Context context)
             throws PropertyException, IOException;
 
+    public void write (FastWriter out, Context context)
+        throws PropertyException, IOException;
+
     public String evaluateAsString(Context context)
             throws PropertyException;
 
     public byte[] evaluateAsBytes(String encoding, Context context)
             throws PropertyException;
+
 }
 
