@@ -341,4 +341,13 @@ public class WM implements WebMacro
     {
         System.out.println("WebMacro v" + WebMacro.VERSION + ".  Built " + WebMacro.BUILD_DATE);
     }
+
+    /**
+     * Close down this WM.  This will invoke destroy() on the Broker.
+     * @see Broker#destroy()
+     **/
+    public void destroy() 
+    {
+        getBroker().destroy();
+    }
 }
