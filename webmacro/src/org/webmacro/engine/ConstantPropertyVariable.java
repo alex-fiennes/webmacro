@@ -78,7 +78,7 @@ public class ConstantPropertyVariable extends Variable
      */
     public final String toString ()
     {
-        return "constant-property:" + _vname;
+        return "constant-property:" + getVariableName();
     }
 
 }

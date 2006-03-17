@@ -39,7 +39,7 @@ public class FunctionVariable extends Variable
      */
     public void setValue (Context c, Object v) throws PropertyException
     {
-        throw new PropertyException("Cannot set the value of a function: " + _vname);
+        throw new PropertyException("Cannot set the value of a function: " + getVariableName());
     }
 
     /**
@@ -48,7 +48,7 @@ public class FunctionVariable extends Variable
      */
     public String toString ()
     {
-        return "function:" + _vname;
+        return "function:" + getVariableName();
     }
 
     public boolean isSimpleName ()

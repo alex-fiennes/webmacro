@@ -62,7 +62,7 @@ final class PropertyVariable extends Variable
     {
         if (!context.setProperty(_names, newValue))
         {
-            throw new PropertyException("No method to set \"" + _vname +
+            throw new PropertyException("No method to set \"" + getVariableName() +
                     "\" to type " +
                     ((newValue == null) ? "null" : newValue.getClass().toString())
                     + " in supplied context (" + context.getClass() + ")");
@@ -75,7 +75,7 @@ final class PropertyVariable extends Variable
      */
     public final String toString ()
     {
-        return "property:" + _vname;
+        return "property:" + getVariableName();
     }
 
 }

@@ -63,7 +63,7 @@ final class GlobalVariable extends Variable
 
         if (!context.set(_names, newValue))
         {
-            throw new PropertyException("No method to set \"" + _vname +
+            throw new PropertyException("No method to set \"" + getVariableName() +
                     "\" to type " +
                     ((newValue == null) ? "null" : newValue.getClass().toString())
                     + " in supplied context (" + context.getClass() + ")");
@@ -76,7 +76,7 @@ final class GlobalVariable extends Variable
      */
     public final String toString ()
     {
-        return "global:" + _vname;
+        return "global:" + getVariableName();
     }
 
 }

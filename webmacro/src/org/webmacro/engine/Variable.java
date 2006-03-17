@@ -85,7 +85,7 @@ public abstract class Variable implements Macro, Visitable
     /**
      * The name of this variable.
      */
-    protected String _vname;
+    private String _vname;
 
     /**
      * The name as an array
@@ -98,7 +98,6 @@ public abstract class Variable implements Macro, Visitable
      */
     Variable (Object names[])
     {
-        _vname = makeName(names).intern();
         _names = names;
 
     }
@@ -166,7 +165,7 @@ public abstract class Variable implements Macro, Visitable
             // May throw
             context.getEvaluationExceptionHandler()
                     .evaluate(this, context,
-                            new PropertyException.NullValueException(_vname));
+                              new PropertyException.NullValueException(getVariableName()));
             return null;
         }
         catch (PropertyException e)
@@ -192,7 +191,7 @@ public abstract class Variable implements Macro, Visitable
             context.getEvaluationExceptionHandler()
                     .evaluate(this, context,
                             new PropertyException("Variable: exception evaluating "
-                    + _vname, e));
+                                                  + getVariableName(), e));
             return null;
         }
     }
@@ -222,7 +221,7 @@ public abstract class Variable implements Macro, Visitable
                     {
                         out.write(context.getEvaluationExceptionHandler()
                                 .expand(this, context,
-                                        new PropertyException.NullToStringException(_vname)));
+                                        new PropertyException.NullToStringException(getVariableName())));
                     }
                 }
                 else
@@ -233,14 +232,14 @@ public abstract class Variable implements Macro, Visitable
                         //     $ObjectNotInContext
                         out.write(context.getEvaluationExceptionHandler()
                                 .expand(this, context,
-                                        new PropertyException.NoSuchVariableException(_vname)));
+                                        new PropertyException.NoSuchVariableException(getVariableName())));
                     }
                     else
                     {
                         // user accessed a valid property who's value is null
                         out.write(context.getEvaluationExceptionHandler()
                                 .expand(this, context,
-                                        new PropertyException.NullValueException(_vname)));
+                                        new PropertyException.NullValueException(getVariableName())));
                     }
                 }
             }
@@ -307,9 +306,12 @@ public abstract class Variable implements Macro, Visitable
     /**
      * Return the canonical name for this variable
      */
-    public String getVariableName ()
+    public synchronized String getVariableName ()
     {
-        return _vname;
+      if (_vname == null) {
+        _vname = makeName(_names).intern();
+      }
+      return _vname;
     }
 
     public void accept (TemplateVisitor v)

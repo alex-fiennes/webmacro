@@ -81,7 +81,7 @@ public class MacroPropertyVariable extends Variable
      */
     public final String toString ()
     {
-        return "macro-property:" + _vname;
+        return "macro-property:" + getVariableName();
     }
 
 }
