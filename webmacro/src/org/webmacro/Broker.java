@@ -685,6 +685,30 @@ public class Broker
     }
 
     /**
+     * Get an Iterator of String names that the Provider items in this
+     * Broker have been registered under.  This can then be used with
+     * getProvider(type) to retrieve the registered Provider.
+     * @return Iterator of String
+     **/
+    public Iterator getProviderTypes() 
+    {
+        return _providers.keySet().iterator();
+    }
+
+    /**
+     * Close down this Broker.  This will call destroy() on all
+     * registered Providers with the Broker.
+     * @see Provider#destroy()
+     **/
+    public void destroy() 
+    {
+        Iterator providers = _providers.values().iterator();
+        while (providers.hasNext()) {
+            ((Provider) providers.next()).destroy();
+        }
+    }
+
+    /**
      * Get a log: the behavior of this log depends on the configuration
      * of the broker. If your system loads from a WebMacro.properties
      * file then look in there for details about setting up and
