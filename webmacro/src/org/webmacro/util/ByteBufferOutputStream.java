@@ -48,13 +48,12 @@ final public class ByteBufferOutputStream extends OutputStream
     }
 
     /**
-     * Clear the contents of the byte buffer.  Also shrinks the byte buffer
-     * to the size specified during construction of this ByteBufferOutputStream
+     * Move the read point of the current buffer back to the beginning
+     * of the buffer.
      */
     public void reset ()
     {
         _pos = 0;
-        _buf = new byte[_initialSize];
     }
 
     public void write (int i)
