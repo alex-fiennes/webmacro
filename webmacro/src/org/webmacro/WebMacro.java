@@ -180,5 +180,12 @@ public interface WebMacro
                                String encoding, Context context)
             throws java.io.IOException, ResourceException, PropertyException;
 
+
+    /**
+     * Destroy this WebMacro implementation which should de-allocate
+     * any resources that have been created inside the implementation
+     * of WebMacro.
+     **/
+    public void destroy();
 }
 
