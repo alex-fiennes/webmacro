@@ -23,11 +23,11 @@
 
 package org.webmacro;
 
-import java.io.*;
-
 import org.webmacro.util.ByteBufferOutputStream;
 import org.webmacro.util.Encoder;
 import org.webmacro.util.EncoderProvider;
+
+import java.io.*;
 
 
 /**
