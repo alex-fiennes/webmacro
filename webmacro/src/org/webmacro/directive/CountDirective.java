@@ -28,16 +28,14 @@ import org.webmacro.PropertyException;
 import org.webmacro.engine.Block;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
+import org.webmacro.engine.UndefinedMacro;
 import org.webmacro.engine.Variable;
 
 import java.io.IOException;
 
 /**
- * Allows a template to count
- * according to a range.
- * <pre>
  * #count $i from 1 to 100 [step 1]
- * </pre>
+ *
  * @author Eric B. Ridge (ebr@tcdi.com)
  * @since 1.1b1
  */
@@ -142,74 +140,88 @@ public class CountDirective extends org.webmacro.directive.Directive
     public void write (FastWriter out, Context context) throws PropertyException, IOException
     {
         int start = _start, end = _end, step = _step;
-        Object tmp;
-
+        boolean error = false;
+        
         // if necessary, do run-time evaluation of our
         // start, end, and step objects.
-        if ((tmp = _objStart) != null)
+        // If object is null then it has been fully resolved during build.
+        try {
+           if (_objStart != null)
+              start = evalAsInt(context, _objStart);
+           if (_objEnd != null)
+              end = evalAsInt(context, _objEnd);
+           if (_objStep != null)
+              step = evalAsInt(context, _objStep);
+        }
+        catch (Exception e)
         {
-            while (tmp instanceof Macro)
-                tmp = ((Macro) tmp).evaluate(context);
-            if (tmp != null)
-                start = Integer.parseInt(tmp.toString());
-            else
-            {
-                writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
-                return;
-            }
+           out.write(context.getEvaluationExceptionHandler().expand(_iterator, context, e));
+           error = true;
         }
 
-        if ((tmp = _objEnd) != null)
+        if (!error)
         {
-            while (tmp instanceof Macro)
-                tmp = ((Macro) tmp).evaluate(context);
-            if (tmp != null)
-                end = Integer.parseInt(tmp.toString());
-            else
-            {
-                writeWarning("#count: Ending value cannot be null.  Not counting", context, out);
-                return;
-            }
+           // Check if no step explicitly assigned, if so auto-detect it
+           if (step == Integer.MAX_VALUE )
+           {
+               step = (start > end) ? -1 : +1;
+           }
+   
+           if (step > 0)
+           {
+               for (; start <= end; start += step)
+               {
+                   _iterator.setValue(context, new Integer(start));
+                   _body.write(out, context);
+               }
+           }
+           else if (step < 0)
+           {
+               for (; start >= end; start += step)
+               {
+                   _iterator.setValue(context, new Integer(start));
+                   _body.write(out, context);
+               }
+           }
+           else
+           {
+              PropertyException pe = new PropertyException.UndefinedVariableException();
+              pe.setMessage("#count: step cannot be 0.");
+              out.write(context.getEvaluationExceptionHandler().expand(_iterator, context, pe));
+           }
         }
-
-        if ((tmp = _objStep) != null)
-        {
-            while (tmp instanceof Macro)
-                tmp = ((Macro) tmp).evaluate(context);
-            if (tmp != null)
-                step = Integer.parseInt(tmp.toString());
-            else
-            {
-                writeWarning("#count: Starting value cannot be null.  Not counting", context, out);
-                return;
-            }
-        }
-
-        // Check if no step explicitly assigned, if so auto-detect it
-        if (step == Integer.MAX_VALUE )
-        {
-            step = (start > end) ? -1 : +1;
-        }
-
-        if (step > 0)
-        {
-            for (; start <= end; start += step)
-            {
-                _iterator.setValue(context, new Integer(start));
-                _body.write(out, context);
-            }
-        }
-        else if (step < 0)
-        {
-            for (; start >= end; start += step)
-            {
-                _iterator.setValue(context, new Integer(start));
-                _body.write(out, context);
-            }
-        }
-        else
-        {
-            writeWarning("#count: step cannot be 0.  Not counting", context, out);
-        }
+    }
+    
+    private int evalAsInt(Context context, Object o) throws PropertyException
+    {
+       if (o != null)
+       {
+          while (o instanceof Macro && !(o == UndefinedMacro.getInstance()))
+          {
+             o = ((Macro)o).evaluate(context);             
+          }
+          if (o == UndefinedMacro.getInstance()){
+             PropertyException pe = new PropertyException.UndefinedVariableException();
+             pe.setMessage("Undefined expression in #count directive.");
+             throw pe;                
+          }
+       }
+       if (o == null)
+       {
+          PropertyException pe = new PropertyException.UndefinedVariableException();
+          pe.setMessage("Null expression in #count directive.");
+          throw pe;
+       }
+       if (o instanceof Number)
+           return ((Number) o).intValue();
+       try {
+          return Integer.parseInt(o.toString());
+       }
+       catch (NumberFormatException e)
+       {
+          PropertyException pe = new PropertyException.UndefinedVariableException();
+          pe.setMessage("Invalid numeric expression in #count directive: [" + o + "]");
+          throw pe;                
+       }
     }
 }
