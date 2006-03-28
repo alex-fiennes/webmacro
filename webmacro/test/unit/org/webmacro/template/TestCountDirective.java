@@ -90,6 +90,7 @@ public class TestCountDirective extends TemplateTestCase
 
     public void testCountByZero () throws Exception
     {
+       // NOTE: this requires use of the DefaultEvaluationExceptionHandler to suppress the exception!
         executeStringTemplate("#count $i from 1 to 10 step 0 { $Counter.next() }");
         Integer i = (Integer) _context.get("i");
         Counter c = (Counter) _context.get("Counter");
@@ -98,6 +99,27 @@ public class TestCountDirective extends TemplateTestCase
     }
 
 
+    public void testUndefArgs () throws Exception
+    {
+       // NOTE: this requires use of the DefaultEvaluationExceptionHandler to suppress the exception!
+       executeStringTemplate("#count $i from 1 to 10 step $stepUndef { $Counter.next() }");
+       Integer i = (Integer) _context.get("i");
+       Counter c = (Counter) _context.get("Counter");
+       assertTrue(c.toString(), c.getCount() == 0);
+       assertTrue(i == null);
+       executeStringTemplate("#count $i from $startUndef to 10 step 1 { $Counter.next() }");
+       i = (Integer) _context.get("i");
+       c = (Counter) _context.get("Counter");
+       assertTrue(c.toString(), c.getCount() == 0);
+       assertTrue(i == null);
+       executeStringTemplate("#count $i from 1 to $stopUndef step 1 { $Counter.next() }");
+       i = (Integer) _context.get("i");
+       c = (Counter) _context.get("Counter");
+       assertTrue(c.toString(), c.getCount() == 0);
+       assertTrue(i == null);
+    }
+
+    
     public void testCountForwardsWithNegativeStep () throws Exception
     {
         executeStringTemplate("#count $i from 1 to 10 step -1 { $Counter.next() }");
