@@ -24,6 +24,7 @@ package org.webmacro.directive;
 import org.webmacro.*;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
+import org.webmacro.engine.UndefinedMacro;
 import org.webmacro.engine.Variable;
 import org.webmacro.util.Settings;
 
@@ -147,10 +148,10 @@ public class TypeDirective extends Directive
         Object o = _object;
 
         // evaluate the _object reference down to its base object
-        while (o instanceof Macro)
+        while (o instanceof Macro && o != UndefinedMacro.getInstance())
             o = ((Macro) o).evaluate(context);
 
-        if (o == null)
+        if (o == null || o == UndefinedMacro.getInstance())
         {
             // the Variable to check isn't in the Context.
             if (_required)
