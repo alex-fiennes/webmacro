@@ -25,12 +25,14 @@ public class TestSpringView extends TestCase
 
     public void testViewRender() throws Exception
     {
+        WM wm = new WM();
         WebMacroView v = new WebMacroView();
+        v.setWebMacro(wm);
 
         // Setup dummy Spring context and provide a WM instance so that
         // It doesn't try to resolve test template from Servletcontext
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        beanFactory.registerSingleton("WebMacro", new WM());
+        beanFactory.registerSingleton("WebMacro", wm);
 
         GenericWebApplicationContext springContext =
             new GenericWebApplicationContext(beanFactory);
