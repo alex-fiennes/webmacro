@@ -36,48 +36,54 @@ import java.util.Enumeration;
 
 
 /**
- * Provide access to form variables
+ * Provide access to form variables.
  */
 final public class Form implements Bag
 {
 
     /**
-     * This is the request object from the WebContext
+     * This is the request object from the WebContext.
      */
     final HttpServletRequest _request;
 
     /**
      * Read the form data from the supplied Request object
      */
-    Form (final HttpServletRequest r)
+    Form(final HttpServletRequest r)
     {
         _request = r;
     }
 
     /**
-     * Get a form value
+     * Get a form value.
      */
-    final public Object get (String field)
+    final public Object get(String field)
     {
+        String[] values = _request.getParameterValues(field);
         try
         {
-            return _request.getParameterValues(field)[0];
+            return values[0];
         }
         catch (NullPointerException ne)
         {
             return null;
         }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            // Seems to be a bug in Jetty
+            return null;
+        }
     }
 
     /**
-     * Try to get a form value
+     * Try to get a form value.
      *
-     * @param strKey  = The form key that we're looking for.
+     * @param strKey  The form key that we're looking for.
      *
      * @return	The value of that form key if found, else null
      *
      **/
-    final public Object getPossibleForm (String strKey)
+    final public Object getPossibleForm(String strKey)
     {
         String strElement;
         Object obValue;
@@ -106,9 +112,9 @@ final public class Form implements Bag
 
 
     /**
-     * Get a form value as an array
+     * Get a form value as an array.
      */
-    final public Object[] getList (String field)
+    final public Object[] getList(String field)
     {
         try
         {
@@ -121,9 +127,9 @@ final public class Form implements Bag
     }
 
     /**
-     * Unsupported
+     * Unsupported.
      */
-    final public void put (String key, Object value)
+    final public void put(String key, Object value)
             throws UnsettableException
     {
         throw new UnsettableException("Cannot set a form property");
