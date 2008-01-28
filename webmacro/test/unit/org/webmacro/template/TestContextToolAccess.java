@@ -3,9 +3,6 @@ package org.webmacro.template;
 
 import org.webmacro.Context;
 
-import java.util.Hashtable;
-import java.util.Map;
-
 /**
  * Note: Tests in this class must allow for the tool not to be loaded.
  * @author Marc Palmer (<a href="mailto:wj5@wangjammers.org">wj5@wangjammers.org</a>)

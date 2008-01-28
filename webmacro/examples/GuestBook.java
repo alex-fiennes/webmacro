@@ -18,11 +18,12 @@
  */
 
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.webmacro.servlet.*;
-import org.webmacro.*;
-import org.webmacro.util.*;
+import org.webmacro.Template;
+import org.webmacro.servlet.HandlerException;
+import org.webmacro.servlet.WMServlet;
+import org.webmacro.servlet.WebContext;
 
 /**
   * This is the "Guest Book" WebMacro example. To get it working, put this
