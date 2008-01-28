@@ -636,9 +636,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * This method is called to handle the processing of a request. It
      * should analyze the data in the request, put whatever values are
      * required into the context, and return the appropriate view.
-     * @return the template to be rendered by the WebMacro engine
-     * @exception HandlerException throw this to produce vanilla error messages
      * @param context contains all relevant data structures, incl builtins.
+     * @return the template to be rendered by the WebMacro engine
+     * @throws HandlerException throw this to produce vanilla error messages
      */
     public abstract Template handle (WebContext context)
             throws HandlerException;

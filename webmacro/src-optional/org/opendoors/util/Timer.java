@@ -136,7 +136,7 @@ public class Timer extends Observable implements Runnable, Serializable
 
     /**
      * Set this object to be one-shot or not.
-     * @param True, if one-shot operation desired
+     * @param os True, if one-shot operation desired
      */
     public void setOneShot (boolean os)
     {

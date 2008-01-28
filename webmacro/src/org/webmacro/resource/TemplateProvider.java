@@ -210,8 +210,8 @@ final public class TemplateProvider extends CachingProvider
     /**
      * @param fileName the template filename to find, relative to the
      * TemplatePath
-     * @return a File object that represents the specified template file.
-     * @return null if template file cannot be found.  */
+     * @return a File object that represents the specified template file
+     *  null if template file cannot be found.  */
     final private File findFileTemplate (String fileName)
     {
         if (_templateDirectory != null)

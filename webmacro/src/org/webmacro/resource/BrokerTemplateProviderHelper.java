@@ -183,8 +183,9 @@ final public class BrokerTemplateProviderHelper
 
     /**
      * @param fileName the template filename to find
-     * @return a File object that represents the specified template file.
-     * @return null if template file cannot be found.  */
+     * @return a File object that represents the specified template file, 
+     * null if template file cannot be found.  
+     */
     final private URL findTemplate (String fileName)
     {
         if (_log.loggingDebug())
