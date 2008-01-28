@@ -1,6 +1,5 @@
 package org.webmacro.adapter.spring;
 
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.servlet.view.AbstractTemplateView;
 import org.webmacro.*;

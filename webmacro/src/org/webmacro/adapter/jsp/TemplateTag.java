@@ -2,7 +2,6 @@ package org.webmacro.adapter.jsp;
 
 import org.webmacro.*;
 import org.webmacro.engine.StringTemplate;
-import org.webmacro.servlet.ServletBroker;
 import org.webmacro.servlet.WebContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Map;
 
 /**

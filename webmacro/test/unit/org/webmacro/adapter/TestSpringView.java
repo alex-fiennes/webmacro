@@ -5,7 +5,6 @@ import org.webmacro.adapter.spring.WebMacroView;
 import org.webmacro.WM;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 

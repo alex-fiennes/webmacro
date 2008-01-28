@@ -3,7 +3,6 @@ package org.webmacro.adapter.spring;
 
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import org.springframework.web.servlet.View;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -14,7 +13,6 @@ import org.webmacro.WebMacro;
 import org.webmacro.InitException;
 
 import javax.servlet.ServletContext;
-import java.util.Locale;
 
 /**
  * User: mpalmer

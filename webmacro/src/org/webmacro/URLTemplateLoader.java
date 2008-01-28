@@ -27,7 +27,6 @@ import org.webmacro.Template;
 import org.webmacro.resource.AbstractTemplateLoader;
 import org.webmacro.resource.CacheElement;
 
-import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 
