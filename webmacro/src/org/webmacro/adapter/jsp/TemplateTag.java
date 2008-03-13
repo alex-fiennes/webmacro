@@ -1,8 +1,7 @@
 package org.webmacro.adapter.jsp;
 
-import org.webmacro.*;
-import org.webmacro.engine.StringTemplate;
-import org.webmacro.servlet.WebContext;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,8 +10,14 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
+
+import org.webmacro.InitException;
+import org.webmacro.PropertyException;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WebMacro;
+import org.webmacro.engine.StringTemplate;
+import org.webmacro.servlet.WebContext;
 
 /**
  * <p>JSP Custom Tag for evaluating WebMacro templates inside a JSP page, or
@@ -92,8 +97,8 @@ public class TemplateTag extends BodyTagSupport
     private boolean propertyErrorsFailFast = true;
 
     /**
-     * Get the src of an external template to use
-     * @return
+     * 
+     * @return the src of an external template to use
      */
     public String getSrc()
     {
@@ -114,8 +119,7 @@ public class TemplateTag extends BodyTagSupport
     }
 
     /**
-     * Get or create our WebMacro instance
-     * @return
+     * @return a new or the existing WebMacro instance
      * @throws InitException
      */
     public WebMacro getWebMacro() throws InitException
@@ -125,8 +129,8 @@ public class TemplateTag extends BodyTagSupport
 
     /**
      * Make a WM instance using a broker with access to the ServletContext
-     * for resources
-     * @return
+     * for resources.
+     * @return a new WebMacro
      * @throws InitException
      */
     private WebMacro makeWM() throws InitException
@@ -142,7 +146,7 @@ public class TemplateTag extends BodyTagSupport
     /**
      * Called when the wm:template tag starts. If the src attribute is
      * specified we evaluate it now and ignore the body of the tag.
-     * @return
+     * @return SKIP_BODY to stop JSP evaluation the WM script
      * @throws JspException
      */
     public int doStartTag() throws JspException
@@ -163,7 +167,7 @@ public class TemplateTag extends BodyTagSupport
      * only a src attribute and no body and end tag, this method is not called.
      * If this method is called, we check to see if there was no external template
      * used and if so process the body of the tag as a WebMacro template
-     * @return
+     * @return EVAL_PAGE
      * @throws JspException
      */
     public int doEndTag() throws JspException
