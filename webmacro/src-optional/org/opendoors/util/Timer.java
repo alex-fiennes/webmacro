@@ -153,7 +153,7 @@ public class Timer extends Observable implements Runnable, Serializable
             // Sleep for the period
             try
             {
-                timerThread.sleep(period);
+                Thread.sleep(period);
             }
             catch (InterruptedException e)
             {
