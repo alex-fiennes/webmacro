@@ -128,7 +128,6 @@ public class WMParser_impl {
   }
 
   private boolean lookahead_not_breaking_subd() {
-    int entryState = token_source.curLexState;
     boolean retVal = true;
     Object o = blockStack.peek();
     if (o == null)
@@ -243,7 +242,7 @@ TOKEN_MGR_DECLS : {
 }
 
 <WM> SPECIAL_TOKEN : {
-  <<_COMMENT>>
+  < <_COMMENT> >
 }
 
 <DEFAULT> TOKEN : {
@@ -665,28 +664,24 @@ Object RValue() : {
 }
 
 void Punct_EQ() : {
-  Token t;
 }
 {
   [ <WS> ] <OP_SET> [ <WS> ]
 }
 
 void Punct_COMMA() : {
-  Token t;
 }
 {
   [ <WS> ] <COMMA> [ <WS> ]
 }
 
 void Punct_LPAREN() : {
-  Token t;
 }
 {
   [ <WS> ] <LPAREN> [ <WS> ]
 }
 
 void Punct_RPAREN() : {
-  Token t;
 }
 {
   [ <WS> ] <RPAREN> [ <WS> ]
@@ -818,7 +813,6 @@ Builder QuotedString() : {
 
 // State: WM
 Builder StringArg() : {
-  int entryState = token_source.curLexState;
   Builder b;
 }
 {
@@ -1100,7 +1094,7 @@ Object DollarReference() : {
 
 void WMContent(ParserBlockBuilder b) : {
   Token t;
-  Object o, dr;
+  Object dr;
 }
 {
   ( t=<STUFF>       { b.addElement(t.image); }
@@ -1115,7 +1109,7 @@ void WMContent(ParserBlockBuilder b) : {
 
 void WMContentNoDirective(ParserBlockBuilder b) : {
   Token t;
-  Object o, dr;
+  Object dr;
 }
 {
   ( t=<STUFF>       { b.addElement(t.image); }
