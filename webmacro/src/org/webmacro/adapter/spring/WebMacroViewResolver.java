@@ -78,7 +78,6 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
      * Attempt to load WebMacro instance from Spring application context, or fall back
      * to a plain new WM() (note: no webapp classpath template loading!)
      *
-     * @return
      * @throws org.springframework.beans.BeansException
      */
     protected WebMacro findWebMacro(
