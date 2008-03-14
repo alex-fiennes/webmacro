@@ -5,13 +5,7 @@ import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 
 
 /**
- * test that templates can be #parse'd and files (and URL's)
- * can be #include'd
- *
- * The file /etc/password should exist on your
- * filesystem and contain "root:" somewhere in it
- *
- * And your computer will need access to http://www.amazon.com/
+ * Test macros in the distribution.
  */
 public class TestParseIncludeMacroDistribution extends TemplateTestCase
 {
