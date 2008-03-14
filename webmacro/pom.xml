@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>webmacro</groupId>
+  <groupId>org.webmacro</groupId>
   <artifactId>webmacro</artifactId>
   <name>WebMacro</name>
-  <version>2.1</version>
+  <version>2.1.1</version>
   <description>WebMacro template engine</description>
-  <url>http://www.webmacro.org/</url>
+  <url>http://webmacro.sourceforge.net/</url>
   <issueManagement>
     <url>http://sourceforge.net/tracker/?group_id=64597</url>
   </issueManagement>
@@ -115,17 +115,6 @@
       <timezone>0</timezone>
     </developer>
     <developer>
-      <id>mhuijkman</id>
-      <name>Marcel Huijkman</name>
-      <email>mhuijkman AT users.sourceforge.net</email>
-      <url></url>
-      <organization>WebMacro</organization>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
       <id>skanthak</id>
       <name>Sebastian Kanthak</name>
       <email>skanthak AT users.sourceforge.net</email>
@@ -171,8 +160,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:cvs::pserver:anonymous@cvs.sourceforge.net:/cvsroot/webmacro</connection>
-    <developerConnection>scm:cvs::pserver:anonymous@cvs.sourceforge.net:/cvsroot/webmacro</developerConnection>
+    <connection>scm:cvs::pserver:anonymous@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</connection>
+    <developerConnection>scm:cvs::ext:USER@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</developerConnection>
     <url>http://cvs.sourceforge.net/viewcvs.py/webmacro/</url>
   </scm>
   <organization>
@@ -232,17 +221,20 @@
      <artifactId>maven-surefire-plugin</artifactId>
      <configuration>
       <redirectTestOutputToFile>true</redirectTestOutputToFile>
-      <forkMode>once</forkMode>
+      <!-- forkMode>once</forkMode -->
       <!-- threadCount>1</threadCount-->
-      <!-- childDelegation>false</childDelegation -->
+      <childDelegation>false</childDelegation>
       <useFile>true</useFile>
-      <includes>
-       <include>**/*Test.java</include>
-      </includes>
       <excludes>
         <!-- Ant filtered guck -->
-       <exclude>**/TestVersion.java</exclude>       
+       <exclude>**/TestVersion.java</exclude>
+       <exclude>**/TestBackupCharStream.java</exclude>
+       <exclude>**/TestParseIncludeMacroDistribution.java</exclude>
+       <exclude>**/*$*</exclude>
       </excludes>
+      <includes>
+       <include>**/Test*.java</include>
+      </includes>
      </configuration>
     </plugin>
 
@@ -294,20 +286,15 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
       <groupId>ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.5.3-1</version>
+      <version>1.6.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
+      <version>1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -335,8 +322,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>servlet</groupId>
-      <artifactId>servlet</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
       <version>2.2</version>
       <scope>compile</scope>
     </dependency>
@@ -355,12 +342,12 @@
   </dependencies>
   <reporting>
     <plugins>
-      <plugin>
+      <!--plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
         </configuration>
-      </plugin>
+      </plugin-->
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
