@@ -124,7 +124,7 @@ Administrative targets:
             <fileset dir="src" />
         </copy>
         <javac srcdir="${tmpdir}"
-	    fork="Yes"
+	    fork="yes"
 	    destdir="${classes}"
             debug="on" optimize="off" deprecation="off">
             <classpath refid="class.path" />
