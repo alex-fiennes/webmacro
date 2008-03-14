@@ -1,0 +1,423 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+<project>
+  <pomVersion>3</pomVersion>
+  <id>webmacro</id>
+  <name>WebMacro</name>
+  <currentVersion>2.1</currentVersion>
+  <organization>
+    <name>WebMacro</name>
+    <url>http://www.webmacro.org/</url>
+    <logo>http://www.webmacro.org/images/logo-normal.gif</logo>
+  </organization>
+  <inceptionYear>1999</inceptionYear>
+  <package>org.webmacro</package>
+  <logo>http://www.webmacro.org/images/logo-normal.gif</logo> 
+
+  <shortDescription>WebMacro Template Engine</shortDescription>
+
+  <description>
+WebMacro template engine
+  </description>
+
+  <url>http://www.webmacro.org/</url>
+  <siteAddress>www.webmacro.org</siteAddress>
+  <siteDirectory>/dist/webmacro/target/docs/</siteDirectory>
+  <issueTrackingUrl>       
+http://sourceforge.net/tracker/?group_id=64597
+  </issueTrackingUrl>
+  <distributionDirectory>
+    /dist/webmacro/target/distributions/
+  </distributionDirectory>
+
+  <repository>
+    <connection>
+      scm:cvs::pserver:anonymous@cvs.sourceforge.net:/cvsroot/webmacro
+    </connection>
+    <developerConnection>
+      scm:cvs::pserver:anonymous@cvs.sourceforge.net:/cvsroot/webmacro
+    </developerConnection>
+    <url>
+      http://cvs.sourceforge.net/viewcvs.py/webmacro/
+    </url>
+  </repository>
+
+  <mailingLists>
+    <mailingList>
+      <name>WebMacro Announce</name>
+      <subscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-announce
+      </subscribe>
+      <unsubscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-announce
+      </unsubscribe>
+      <archive>
+http://sourceforge.net/mailarchive/forum.php?forum=webmacro-announce
+      </archive>
+    </mailingList>
+    <mailingList>
+      <name>WebMacro Developers</name>
+      <subscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-devel
+      </subscribe>
+      <unsubscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-devel
+      </unsubscribe>
+      <archive>
+http://sourceforge.net/mailarchive/forum.php?forum=webmacro-devel
+      </archive>
+    </mailingList>
+    <mailingList>
+      <name>WebMacro Users</name>
+      <subscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-user
+      </subscribe>
+      <unsubscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-user
+      </unsubscribe>
+      <archive>
+http://sourceforge.net/mailarchive/forum.php?forum=webmacro-user
+      </archive>
+    </mailingList>
+    <mailingList>
+      <name>WebMacro CVS</name>
+      <subscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-cvs
+      </subscribe>
+      <unsubscribe>
+http://lists.sourceforge.net/lists/listinfo/webmacro-cvs
+      </unsubscribe>
+      <archive>
+http://sourceforge.net/mailarchive/forum.php?forum=webmacro-cvs
+      </archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+
+    <developer>
+      <name>Alex Fiennes</name>
+      <id>alexfiennes</id>
+      <email>alexfiennes AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url></url>
+    </developer>
+    <developer>
+      <name>Brian Goetz</name>
+      <id>briangoetz</id>
+      <email>briangoetz AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://sourceforge.net/users/briangoetz/</url>
+    </developer>
+    <developer>
+      <name>Christian Aust</name>
+      <id>datenimperator</id>
+      <email>datenimperator AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url></url>
+    </developer>
+    <developer>
+      <name>Eric B. Ridge</name>
+      <id>drater</id>
+      <email>drater AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://sourceforge.net/users/drater/</url>
+    </developer>
+    <developer>
+      <name>Keats Kirsch</name>
+      <id>keats</id>
+      <email>keats AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://sourceforge.net/users/keats/</url>
+    </developer>
+    <developer>
+      <name>Lane Sharman</name>
+      <id>lanesharman</id>
+      <email>lanesharman AT users.sourceforge.net</email>
+      <organization>OpenDoors</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>-7</timezone>
+      <url>http://www.opendoors.com/</url>
+    </developer>
+    <developer>
+      <name>Marcel Huijkman</name>
+      <id>mhuijkman</id>
+      <email>mhuijkman AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url></url>
+    </developer>
+    <developer>
+      <name>Marcel Huijkman</name>
+      <id>mhuijkman</id>
+      <email>mhuijkman AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url></url>
+    </developer>
+    <developer>
+      <name>Sebastian Kanthak</name>
+      <id>skanthak</id>
+      <email>skanthak AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url></url>
+    </developer>
+    <developer>
+      <name>Tim Pizey</name>
+      <id>timp</id>
+      <email>timp AT paneris.org</email>
+      <organization>Context Computing</organization>
+      <roles>
+        <role>Maven maven</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://context-computing.co.uk/~timp</url>
+    </developer>
+    <developer>
+      <name>Marc Palmer</name>
+      <id>wangjammer5</id>
+      <email>wangjammer5 AT users.sourceforge.net</email>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://sourceforge.net/users/wangjammer5/</url>
+    </developer>
+  </developers>
+
+  <licenses>
+   <license>
+    <name>Gnu Public License</name>
+    <url>http://www.gnu.org/copyleft/gpl.html</url>
+    <distribution>repo</distribution>
+   </license>
+   <license>
+    <name>The Apache Software License, Version 2.0</name>
+    <url>
+     http://www.apache.org/licenses/LICENSE-2.0.txt
+    </url>
+    <distribution>repo</distribution>
+   </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <id>activation</id>
+      <version>1.0</version>
+      <url>http://java.sun.com/</url>
+      <properties>
+         <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <id>ant</id>
+      <version>1.5.3-1</version>
+      <url>http://ant.apache.org/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>compile</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <id>commons-logging</id>
+      <version>1.0.4</version>
+      <url>http://jakarta.apache.org/commons/</url>
+      <properties>
+         <war.bundle>true</war.bundle>
+         <scope>runtime</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <id>concurrent</id>
+      <version>1.3.4</version>
+      <url>http://www.webmacro.org/</url>
+      <properties>
+         <war.bundle>true</war.bundle>
+         <scope>runtime</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <id>jakarta-regexp</id>
+      <version>1.4</version>
+      <url>http://jakarta.apache.org/commons/</url>
+      <properties>
+         <war.bundle>true</war.bundle>
+         <scope>runtime</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <id>junit</id>
+      <version>3.8.1</version>
+      <url>http://www.junit.org/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>test</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+      <url>http://www.mockobjects.com/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>test</scope>
+      </properties>
+    </dependency>
+    <dependency>
+      <id>servlet</id>
+      <version>2.2</version>
+      <url>http://java.sun.com/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>compile</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.2.6</version>
+      <url>http://www.springframework.org/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>compile</scope>
+      </properties>
+    </dependency>
+
+    <dependency>
+      <groupId>springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>1.2.6</version>
+      <url>http://www.springframework.org/</url>
+      <properties>
+         <war.bundle>false</war.bundle>
+         <scope>compile</scope>
+      </properties>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+
+    <unitTestSourceDirectory>test/unit</unitTestSourceDirectory>
+
+    <!-- Unit test cases -->
+    <unitTest>
+     <includes>
+      <include>**/Test*.java</include>
+     </includes>
+     <excludes>
+      <exclude>TestVersion</exclude>
+     </excludes>
+     <resources>
+      <resource>
+       <directory>test/unit</directory>
+       <includes>
+        <include>**/*.wm</include>
+        <include>**/*.wmm</include>
+        <include>**/*.defaults</include>
+        <include>**/*.properties</include>
+        <include>**/*.txt</include>
+       </includes>
+      </resource>
+      <resource>
+       <directory>macros</directory>
+       <includes>
+        <include>**/*.wmm</include>
+       </includes>
+      </resource>
+     </resources>
+    </unitTest>
+    <!-- J A R  R E S O U R C E S -->
+    <!-- Resources that are packaged up inside the JAR file -->
+    <resources>
+     <resource>
+      <directory>${basedir}</directory>
+      <targetPath>META-INF</targetPath>
+      <includes>
+       <include>NOTICE.txt</include>
+      </includes>
+     </resource>
+     <resource>
+      <directory>src</directory>
+      <includes>
+       <include>**/*.wm</include>
+       <include>**/*.wmm</include>
+       <include>**/*.defaults</include>
+      </includes>
+      <excludes>
+       <exclude>**/*.properties</exclude>
+      </excludes>
+     </resource>
+     <resource>
+      <directory>macros</directory>
+      <includes>
+       <include>**/*.wmm</include>
+      </includes>
+     </resource>
+    </resources>
+  </build>
+  <reports>
+    <report>maven-license-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-faq-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-changes-plugin</report>
+<!--
+    <report>maven-statcvs-plugin</report>
+-->
+    <report>maven-changelog-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-jcoverage-plugin</report>
+    <report>maven-linkcheck-plugin</report>
+  </reports>
+</project>
+
