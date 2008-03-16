@@ -23,7 +23,7 @@ public class TestContext extends TemplateTestCase
     {
         _context.put("Foo", null);
         Object o = _context.get("Foo");
-        assertTrue(_context.get("Foo") == null);
+        assertTrue(o == null);
     }
 
 
