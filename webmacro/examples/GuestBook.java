@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1998, 1999 Semiotek Inc. All Rights Reserved.
  *
@@ -35,19 +34,19 @@ import org.webmacro.servlet.WebContext;
   *
   * http://...servletrunner.../servlet/GuestBook/
   *
-  * You guestbook should now work.
+  * Your guestbook should now work.
   */
 public class GuestBook extends WMServlet 
 {
-   ArrayList book = new ArrayList();
+  private static final long serialVersionUID = -7787198191764480269L;
+
+  ArrayList book = new ArrayList();
 
    String name;
    String email;
    String comment;
    GuestEntry myGuestEntry;
 
-   final static private boolean debug = false;
-   
    public Template handle(WebContext context) 
       throws HandlerException
    {
