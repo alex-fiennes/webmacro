@@ -135,11 +135,16 @@ public class TestAbuse extends TemplateTestCase
                 + "   }\n"
                 + "</script>\n";
 
-        // check it with #begin and #end
+        // check no new line with #begin and #end
         String tmpl = "#if (true) #begin"
                 + jscript
                 + "#end";
         assertStringTemplateEquals(tmpl, jscript);
+        // check newline with #begin and #end
+        tmpl = "#if (true) #begin"
+                + jscriptnl
+                + "#end";
+        assertStringTemplateEquals(tmpl, jscriptnl);
     }
 
 
