@@ -23,22 +23,24 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
 
 
 public final class QuotedStringBuilder extends Vector implements Builder
 {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -7489766042268586054L;
 
-	final public Object build (BuildContext bc) throws BuildException
+  final public Object build (BuildContext bc) throws BuildException
     {
         StringBuffer str = new StringBuffer(100);
         QuotedString qs = new QuotedString();
@@ -110,15 +112,7 @@ public final class QuotedStringBuilder extends Vector implements Builder
  */
 final class QuotedString extends Vector implements Macro, Visitable
 {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-     * conditionally include debugging statements in the compiled code
-     */
-    private static final boolean debug = false;
+  private static final long serialVersionUID = 7578610597935217L;
 
     /**
      * Create a new quoted string
