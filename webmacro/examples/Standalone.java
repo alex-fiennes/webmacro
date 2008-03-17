@@ -18,15 +18,19 @@
  */
 
 
-import org.webmacro.*;
-import org.webmacro.servlet.WebContext;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.webmacro.InitException;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WebMacro;
+import org.webmacro.servlet.WebContext;
 
 /**
   * This example demonstrates using WebMacro in "standalone" mode. Instead 
@@ -52,7 +56,8 @@ import javax.servlet.ServletException;
   */
 public class Standalone extends HttpServlet
 {
-
+    private static final long serialVersionUID = 8217641121301549921L;
+    
    /**
      * This is the core WebMacro interface which we use to create Contexts, 
      * load Templates, and begin other WebMacro operations.

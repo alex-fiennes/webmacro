@@ -1,13 +1,18 @@
-import org.webmacro.*;
-import org.webmacro.servlet.*;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.servlet.HandlerException;
+import org.webmacro.servlet.WMServlet;
+import org.webmacro.servlet.WebContext;
 
 /**
-  * SandBox - where to play
+  * SandBox - where to play.
   */
 public class SandBox extends WMServlet
 {
 
-   public Template handle(WebContext context) throws HandlerException
+  private static final long serialVersionUID = -4000736997081536863L;
+
+  public Template handle(WebContext context) throws HandlerException
    {
 
       // Put whatever data you like into the context. In
