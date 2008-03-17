@@ -5,9 +5,9 @@ import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 
 
 /**
- * the abuse test.  Tries to do really mean things to
- * the parser, and even expects the parser to do them 
- * correctly.
+ * The abuse test.  
+ * Tries to do really mean things to the parser, 
+ * and even expects the parser to do them correctly.
  */
 public class TestAbuse extends TemplateTestCase
 {
@@ -26,21 +26,21 @@ public class TestAbuse extends TemplateTestCase
     }
 
 
-    /** We'll start easy */
+    /** We'll start easy. */
     public void testEOLComment () throws Exception
     {
         assertStringTemplateEquals("## a comment", "");
     }
 
 
-    /** this is easy too */
+    /** This is easy too. */
     public void testBlockComment () throws Exception
     {
         assertStringTemplateEquals("#comment { this is a comment }", "");
     }
 
 
-    /** test a variable reference like: Welcome to the site, $User. */
+    /** Test a variable reference like: Welcome to the site, $User. */
     public void testTrailingDot () throws Exception
     {
         assertStringTemplateEquals("Hello, $User.",
@@ -69,15 +69,15 @@ public class TestAbuse extends TemplateTestCase
     }
 
 
-    /** split an #if across multiple lines.
-     currently produces a big parse error
+    /** Split an #if across multiple lines.
+     *  FIXME Currently produces a parse error.
      */
     public void testMultiLineIf () throws Exception
     {
         System.err.println("NEED TO REVISIT: TestAbuse.testMultiLineIf()");
         assertTrue(true);
-//      String tmpl = "#if (true\n&& true && true\n) {pass} #else {fail}";
-//      assertStringTemplateEquals (tmpl, "pass");
+        // String tmpl = "#if (true\n&& true && true\n) {pass} #else {fail}";
+        // assertStringTemplateEquals (tmpl, "pass");
 
     }
 
@@ -113,9 +113,9 @@ public class TestAbuse extends TemplateTestCase
     }
 
 
-    /** the infamous "but I want to put Javascript in an #if block!!"
+    /** The infamous "but I want to put Javascript in an #if block!!"
 
-     Currently fails when using { and }, but passes with 
+     FIXME Currently fails when using { and }, but passes with 
      #begin and #end.  Any reason why?
      */
     public void testBlockDirectiveWithJavascript () throws Exception
@@ -148,6 +148,9 @@ public class TestAbuse extends TemplateTestCase
     }
 
 
+    /**
+     * Test that semi-colons are ignored.
+     */
     public void testSemi () throws Exception
     {
         String assn = "#set $foo=\"blah\" ";
@@ -160,6 +163,9 @@ public class TestAbuse extends TemplateTestCase
     }
 
 
+    /**
+     * Test that a BuildException is thrown.
+     */
     public void testNastyEndreTemplate () throws Exception
     {
         String tmpl = templateFileToString("org/webmacro/template/nasty_endre.wm");
