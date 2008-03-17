@@ -56,6 +56,8 @@ import org.webmacro.servlet.WebContext;
  */
 public class TemplateTag extends BodyTagSupport
 {
+    private static final long serialVersionUID = -6790150900989142583L;
+
     private static final int DEFAULT_TEMPLATE_BUFFER_SIZE = 4000;
 
     /**

@@ -31,6 +31,7 @@ import java.util.Observable;
  */
 public class Timer extends Observable implements Runnable, Serializable
 {
+    private static final long serialVersionUID = -7644577425188277667L;
 
     /** The timer thread. */
     private transient Thread timerThread;
