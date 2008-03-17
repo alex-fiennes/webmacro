@@ -35,7 +35,6 @@ final public class ByteBufferOutputStream extends OutputStream
 
     private byte[] _buf;
     private int _pos;
-    private final int _initialSize;
 
     /**
      * Create a new ByteBuffer with the specified capacity
@@ -44,7 +43,6 @@ final public class ByteBufferOutputStream extends OutputStream
     {
         _buf = new byte[size];
         _pos = 0;
-        _initialSize = size;
     }
 
     /**
