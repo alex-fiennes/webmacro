@@ -1,10 +1,18 @@
-import org.webmacro.servlet.*;
-import org.webmacro.*;
-import java.util.*;
-import java.io.StringWriter;
 import java.io.PrintWriter;
-import javax.servlet.http.*;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.TreeMap;
+
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.webmacro.Broker;
+import org.webmacro.Log;
+import org.webmacro.Template;
+import org.webmacro.servlet.HandlerException;
+import org.webmacro.servlet.WMServlet;
+import org.webmacro.servlet.WebContext;
 
 /**
  *
@@ -13,12 +21,13 @@ import javax.servlet.ServletException;
  * @since 11-Sep-01
  */
 public class CheckConfig extends WMServlet {
+    private static final long serialVersionUID = -1844295645621234018L;
+    
     final static public boolean DEBUG = true;
     final static public String DEFAULT_TEMPLATE = "default.wm";
     private Log _log = null;
     
     public Template handle(WebContext context) throws HandlerException {
-        HttpSession sess = null;
         try {
             //TODO: 
             /* Get template path
@@ -111,7 +120,7 @@ public class CheckConfig extends WMServlet {
     protected void stop() {
     }
 
-    /** debugging utility - dumps list of request headers from a WebContext */
+    /** Debugging utility - dumps list of request headers from a WebContext. */
     static public void printRequestHeaders(WebContext context){
         HttpServletRequest req = context.getRequest();
         java.util.Enumeration hdrs = req.getHeaderNames();
@@ -124,7 +133,7 @@ public class CheckConfig extends WMServlet {
         }
     }
     
-    /** write the stack trace from an exception into a string */
+    /** Write the stack trace from an exception into a string. */
     static public String getStackTrace(Throwable e){
         if (e == null) return null;
         StringWriter sw = new StringWriter();
@@ -148,4 +157,4 @@ public class CheckConfig extends WMServlet {
         }        
         
     }
-} // class CheckConfig
+}
