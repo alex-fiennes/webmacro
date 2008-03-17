@@ -50,7 +50,7 @@ final public class BrokerTemplateProviderHelper
     // INITIALIZATION
 
     private Broker _broker;
-    private int _cacheDuration;
+    //private int _cacheDuration;
     private Log _log;
     private boolean _cacheSupportsReload = true;
     private ReloadDelayDecorator reloadDelay;
@@ -75,14 +75,15 @@ final public class BrokerTemplateProviderHelper
 
     /**
      * Create a new TemplateProvider that uses the specified directory
-     * as the source for Template objects that it will return
+     * as the source for Template objects that it will return.
+     * 
      * @exception InitException provider failed to initialize
      */
     public void init (Broker b, Settings config) throws InitException
     {
         _broker = b;
         _log = b.getLog("resource", "Object loading and caching");
-        _cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
+        //_cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
         reloadDelay = new ReloadDelayDecorator();
         reloadDelay.init(b, config);
     }
