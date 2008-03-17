@@ -1,9 +1,8 @@
-
-// import the WebMacro core interfaces
-import org.webmacro.*;
-
-// import the WebMacro servlet classes
-import org.webmacro.servlet.*;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.servlet.HandlerException;
+import org.webmacro.servlet.WMServlet;
+import org.webmacro.servlet.WebContext;
 
 
 /**
@@ -28,8 +27,9 @@ import org.webmacro.servlet.*;
   */
 public class HelloWorld extends WMServlet
 {
+  private static final long serialVersionUID = 8929486027913401035L;
 
-   /**
+  /**
      * WebMacro creates a WebContext and passes it to your servlet. 
      * The WebContext contains all the information you'll need to 
      * handle the request. It is also the only object you share 
