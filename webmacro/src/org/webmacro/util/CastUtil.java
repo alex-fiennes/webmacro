@@ -186,7 +186,6 @@ public class CastUtil
 
     static public void main (String[] args)
     {
-        CastUtil cu = CastUtil.getInstance();
         println("77"
                 + test(BOOLEAN, "77")
                 + test(CHAR, "77")
@@ -205,11 +204,6 @@ public class CastUtil
     static private void println (String s)
     {
         System.out.println(s);
-    }
-
-    static private void print (Object o)
-    {
-        System.out.print(o);
     }
 
     final static public int BOOLEAN = 1;
