@@ -42,14 +42,14 @@ public class MacroBuildContext extends BuildContext
     private Object[] args;
     private Map macroArgs = new HashMap();
 
-    public MacroBuildContext (MacroDefinition macro,
-                              Object[] args,
+    public MacroBuildContext (MacroDefinition macroP,
+                              Object[] argsP,
                               BuildContext bc)
     {
         super(bc.getBroker());
         this.chainedContext = bc;
-        this.args = args;
-        this.macro = macro;
+        this.args = argsP;
+        this.macro = macroP;
         String[] argNames = macro.getArgNames();
         for (int i = 0; i < argNames.length; i++)
             macroArgs.put(argNames[i], args[i]);
