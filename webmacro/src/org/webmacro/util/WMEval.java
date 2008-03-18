@@ -22,25 +22,30 @@
 
 package org.webmacro.util;
 
-import org.webmacro.*;
-import org.webmacro.servlet.*;
-import org.webmacro.engine.*;
-
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.webmacro.Context;
+import org.webmacro.Log;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WMConstants;
+import org.webmacro.WebMacro;
+import org.webmacro.engine.StreamTemplate;
+import org.webmacro.servlet.WebContext;
+
 
 /**
  * WMEval encapsulates an instance of WebMacro for reuse in any java application.
  * <p>
- * Its main benefit are a number of convenience methods for evaluating a template
+ * It's main benefits are a number of convenience methods for evaluating a template
  * and directing output either to a supplied output stream or to a file.
  * <p>
  * It can parse a single template stream and then evaluate that template
@@ -56,6 +61,7 @@ import java.io.OutputStream;
  * <p>
  * This helper class is useful for evaluating WebMacro templates for which
  * flexibility in managing the evaluation options is key.
+ * 
  * @author Lane Sharman
  * @version 3.0
  */
