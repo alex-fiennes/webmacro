@@ -23,10 +23,11 @@ package org.webmacro.util;
 
 /**
  * A singleton for casting one type to another.
+ * 
  * @author  keats_kirsch
  * @since 0.96
  */
-public class CastUtil
+public final class CastUtil
 {
 
     static private CastUtil _singleton = new CastUtil();
@@ -36,7 +37,7 @@ public class CastUtil
     {
     }
 
-    static public CastUtil getInstance ()
+    public static CastUtil getInstance ()
     {
         return _singleton;
     }
@@ -60,7 +61,9 @@ public class CastUtil
             }
             catch (Exception e)
             {
-                throw new IllegalArgumentException("Not a valid char: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+                throw new IllegalArgumentException(
+                        "Not a valid char: " + ((o == null) ? "null" : 
+                            (o.toString() + "; type=" + o.getClass().getName())));
             }
         }
         else if (o instanceof String)
@@ -81,7 +84,8 @@ public class CastUtil
         else
         { // throw exception
             throw new org.webmacro.PropertyException(
-                    "$Type.toChar() is unable to convert the supplied value to a Character.  The argument"
+                    "$Type.toChar() is unable to convert the supplied value to a Character." + 
+                    "  The argument"
                     + " must be a number or a String.  The supplied argument was "
                     + o + " of type " + o.getClass().getName());
         }
@@ -99,7 +103,9 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid byte: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException("Not a valid byte: " + 
+                    ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return v;
     }
@@ -115,7 +121,9 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid short: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException("Not a valid short: " + 
+                    ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return v;
     }
@@ -130,7 +138,10 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid int: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException(
+                    "Not a valid int: " + 
+                    ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return i;
     }
@@ -145,7 +156,9 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid long: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException("Not a valid long: " + 
+                    ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return l;
     }
@@ -160,7 +173,9 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid float: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException(
+                    "Not a valid float: " + ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return f;
     }
@@ -175,7 +190,9 @@ public class CastUtil
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException("Not a valid double: " + ((o == null) ? "null" : (o.toString() + "; type=" + o.getClass().getName())));
+            throw new IllegalArgumentException(
+                    "Not a valid double: " + ((o == null) ? "null" : 
+                        (o.toString() + "; type=" + o.getClass().getName())));
         }
         return d;
     }
