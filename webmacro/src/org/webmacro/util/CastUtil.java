@@ -62,8 +62,8 @@ public final class CastUtil
             catch (Exception e)
             {
                 throw new IllegalArgumentException(
-                        "Not a valid char: " + ((o == null) ? "null" : 
-                            (o.toString() + "; type=" + o.getClass().getName())));
+                        "Not a valid char: " +  
+                            o.toString() + "; type=" + o.getClass().getName());
             }
         }
         else if (o instanceof String)
