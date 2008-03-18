@@ -141,8 +141,8 @@ public class TemplateTag extends BodyTagSupport
         // that is within the web application so we can access resources in there
         final ClassLoader classLoader = pageContext.getPage().getClass().getClassLoader();
 
-        return new WM( pageContext.getServletContext(),
-                classLoader, null );
+        return new WM(pageContext.getServletContext(),
+                classLoader, null);
     }
 
     /**
@@ -218,18 +218,18 @@ public class TemplateTag extends BodyTagSupport
             {
                 if (context instanceof Map)
                 {
-                    webContext.putAll( (Map) context);
+                    webContext.putAll((Map) context);
                 }
                 else
                 {
-                    webContext.put( CONTEXT_VARIABLE_NAME, context);
+                    webContext.put(CONTEXT_VARIABLE_NAME, context);
                 }
             }
 
             /*
              * Add the scoped attribute helper
              */
-            webContext.put( ATTRIBUTES_HELPER_NAME, new JSPAttributes(pageContext));
+            webContext.put(ATTRIBUTES_HELPER_NAME, new JSPAttributes(pageContext));
 
             Template templ = null;
             String templateOutput = null;
