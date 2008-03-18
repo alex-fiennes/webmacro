@@ -23,13 +23,18 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.*;
-import org.webmacro.util.Settings;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.util.Settings;
 
 /**
  * Alternative implementation of a TemplateProvider that uses TemplateLoaders to do the actual work.
@@ -60,14 +65,13 @@ import java.util.List;
  * <li>The classpath (classpath:)
  * <li>The directory WEB-INF/templates/ in the web-app directory ("webapp:/WEB-INF/templates/")
  * </ol>
- * Note, that this setup only makes sense in a web-app environment, because the webapp template loader
+ * NOTE This setup only makes sense in a web-app environment, because the webapp template loader
  * won't work otherwise.
  * @author Sebastian Kanthak (sebastian.kanthak@muehlheim.de)
  */
 public class DelegatingTemplateProvider extends CachingProvider
 {
 
-    private Broker broker;
     private Log log;
     private TemplateLoaderFactory factory;
     private TemplateLoader[] templateLoaders;
@@ -75,7 +79,6 @@ public class DelegatingTemplateProvider extends CachingProvider
     public void init (Broker broker, Settings config) throws InitException
     {
         super.init(broker, config);
-        this.broker = broker;
         log = broker.getLog("resource", "DelegatingTemplateProvider");
 
         String factoryClass = config.getSetting("TemplateLoaderFactory", "");
