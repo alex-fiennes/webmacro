@@ -18,8 +18,11 @@
  */
 
 
-import org.webmacro.*;
 import java.util.Date;
+
+import org.webmacro.Context;
+import org.webmacro.Template;
+import org.webmacro.WM;
 
 /**
   * This example demonstrates using WebMacro outside the context of a servlet.
