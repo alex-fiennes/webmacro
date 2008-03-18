@@ -1,13 +1,16 @@
 package org.webmacro.adapter.spring;
 
-import org.springframework.context.ApplicationContextException;
-import org.springframework.web.servlet.view.AbstractTemplateView;
-import org.webmacro.*;
-import org.webmacro.servlet.WebContext;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+
+import org.springframework.context.ApplicationContextException;
+import org.springframework.web.servlet.view.AbstractTemplateView;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.WebMacro;
+import org.webmacro.servlet.WebContext;
 
 /**
  * Author: mpalmer

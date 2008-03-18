@@ -22,9 +22,14 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-
 import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
 
 /**
  * All WM expressions derive from this base class.
