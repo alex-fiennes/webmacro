@@ -51,7 +51,7 @@ public class TemplateTool extends ContextTool
     public Object init (Context c) throws PropertyException
     {
         _context = c;
-        return new MacroTemplateFactory(c);
+        return new MacroTemplateFactory(_context);
     }
 
     /** A factory class for creating MacroTemplate objects.
