@@ -52,7 +52,6 @@ public class TestMultipleInstances extends TestCase
     {
         String template = " #foo ";
         String output = null;
-        Context context = null;
 
         // against the default configured WM isntance, this *should* throw
         // an exception

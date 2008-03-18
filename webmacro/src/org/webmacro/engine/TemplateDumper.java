@@ -22,7 +22,6 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.Context;
 import org.webmacro.Macro;
 import org.webmacro.TemplateVisitor;
 import org.webmacro.WM;
@@ -126,7 +125,6 @@ public class TemplateDumper extends TemplateVisitor
     public static void main (String args[]) throws Exception
     {
         WM wm = new WM();
-        Context context = wm.getContext();
         WMTemplate t = new StreamTemplate(wm.getBroker(),
                 new InputStreamReader(System.in));
         t.parse();
