@@ -39,7 +39,7 @@ public class MacroBuilder implements Builder
 
     private String name;
     private ListBuilder argsBuilder;
-    private int lineNo, colNo;
+    //private int lineNo, colNo;
     //private String[] nullArgs = new String[0];
 
     public MacroBuilder (String name,
@@ -48,8 +48,8 @@ public class MacroBuilder implements Builder
     {
         this.name = name;
         this.argsBuilder = argsBuilder;
-        this.lineNo = lineNo;
-        this.colNo = colNo;
+        //this.lineNo = lineNo;
+        //this.colNo = colNo;
     }
 
     /**
