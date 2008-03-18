@@ -30,6 +30,7 @@ package org.webmacro.engine;
  * Represents the invocation of a (C-style) macro, which gets expanded
  * during the building of a template.  Not to be confused with Macro
  * as used by WebMacro, which is something else.
+ * 
  * @author Brian Goetz
  */
 
@@ -39,7 +40,7 @@ public class MacroBuilder implements Builder
     private String name;
     private ListBuilder argsBuilder;
     private int lineNo, colNo;
-    private String[] nullArgs = new String[0];
+    //private String[] nullArgs = new String[0];
 
     public MacroBuilder (String name,
                          ListBuilder argsBuilder,

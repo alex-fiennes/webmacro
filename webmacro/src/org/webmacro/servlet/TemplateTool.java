@@ -16,7 +16,8 @@ import java.util.ArrayList;
 
 //import java.util.Map;
 
-/** This is an experimental context tool that allows templates
+/** 
+ * This is an experimental context tool that allows templates
  * to be used as macros.  The tool places a
  * MacroTemplateFactory instance into the context that can
  * be referenced as $Template in WMScript.  The factory has
@@ -31,12 +32,12 @@ public class TemplateTool extends ContextTool
 
     private Context _context = null;
     /**
-     * flag set when destroy is first called, to prevent subsequent calls from
+     * Flag set when destroy is first called, to prevent subsequent calls from
      * invoking the destroy() method on the factory object.
      */
-    private boolean _destroyed = false;
+    //private boolean _destroyed = false;
 
-    /** Creates new TemplateTool */
+    /** Creates new TemplateTool. */
     public TemplateTool ()
     {
     }
@@ -98,7 +99,8 @@ public class TemplateTool extends ContextTool
 
     }
 
-    /** Encapsulates a template and a context, allowing a template
+    /** 
+     * Encapsulates a template and a context, allowing a template
      * to be used like a function or "macro".
      */
     public class MacroTemplate
@@ -107,7 +109,8 @@ public class TemplateTool extends ContextTool
         private Template _template;
         private Context _context, _origContext;
 
-        /** Constructor
+        /** 
+         * Constructor.
          * @param c the current request context
          * @param t the template to be used as a macro
          */
@@ -119,7 +122,8 @@ public class TemplateTool extends ContextTool
             _context = c.cloneContext();
         }
 
-        /** Construct a MacroTemplate with a StringTemplate
+        /** 
+         * Construct a MacroTemplate with a StringTemplate.
          * @param c The context of the current request
          * @param src the string for the StringTemplate
          */
@@ -128,7 +132,8 @@ public class TemplateTool extends ContextTool
             this(c, new StringTemplate(c.getBroker(), src));
         }
 
-        /** Exposes the context of the current MacroTemplate.  This allows
+        /** 
+         * Exposes the context of the current MacroTemplate.  This allows
          * "arguments" to be set from a template.  E.g.,
          * <CODE>#set $myMacro.Args.Name = $User.Name</CODE>
          * @return the context of the macro
@@ -138,7 +143,8 @@ public class TemplateTool extends ContextTool
             return _context;
         }
 
-        /** Evaluates the macro's template against its context and returns the
+        /** 
+         * Evaluates the macro's template against its context and returns the
          * resulting string.
          * @throws PropertyException runtime errors in evaluating the macro's template
          * @return the resultant string after the template is evaluated.
@@ -183,7 +189,8 @@ public class TemplateTool extends ContextTool
             return eval();
         }
 
-        /** Copies all variables from the current request context into the context
+        /** 
+         * Copies all variables from the current request context into the context
          * of the macro.
          */
         public void copyCurrentContext ()
