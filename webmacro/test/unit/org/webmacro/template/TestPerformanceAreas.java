@@ -24,7 +24,7 @@ public class TestPerformanceAreas extends TemplateTestCase
 
     protected int iterationCount;
 
-    private static final String fileName = "org/webmacro/template/PerformanceOperations.wm";
+    //private static final String fileName = "org/webmacro/template/PerformanceOperations.wm";
     private static final String reportName = "org/webmacro/template/PerformanceReport.wm";
     private Context context = null;
 
@@ -80,8 +80,8 @@ public class TestPerformanceAreas extends TemplateTestCase
      */
     public void testPublicVersusAccessor () throws Exception
     {
-        long tet, singleTet, start, end;
-
+        //long tet, singleTet, end;
+        long start;
         PublicValue pub = new PublicValue();
         PrivateValue priv = new PrivateValue();
         long value;
