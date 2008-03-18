@@ -23,17 +23,32 @@
 
 package org.webmacro.servlet;
 
-import org.webmacro.*;
-import org.webmacro.util.LogSystem;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.lang.reflect.Method;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.lang.reflect.Method;
-import java.util.Locale;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.PropertyException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WMConstants;
+import org.webmacro.WebMacro;
+import org.webmacro.util.LogSystem;
 
 /**
  * This is an abstract base class which can be used
@@ -719,8 +734,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     "setLocale",
                     new Class[]
                     {Locale.class});
-            m.invoke(resp, (Object[])new Locale[]
-            {locale});
+            m.invoke(resp, (Object[])new Locale[]{locale});
             if (_log.loggingDebug())
                 _log.debug("Successfully set locale to " + locale);
         }

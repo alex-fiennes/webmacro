@@ -20,10 +20,16 @@
  */
 package org.webmacro.servlet;
 
-import javax.servlet.http.*;
-import javax.servlet.*;
-import org.webmacro.*;
-import org.webmacro.util.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.webmacro.Context;
+import org.webmacro.Log;
+import org.webmacro.util.Settings;
+import org.webmacro.util.WMEval;
 
 /**
  * <p>
