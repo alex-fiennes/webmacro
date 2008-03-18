@@ -87,10 +87,10 @@ public class Encoder implements ResourceLoader
             throw new UnsupportedEncodingException(err);
         }
 
-        // check to be sure that this encoding is supported. this will
+        // Check to be sure that this encoding is supported. this will
         // throw an UnsupportedEncodingException if the JVM doesn't
         // support the requested encoding
-        byte[] test = "some test string".getBytes(encoding);
+        "some test string".getBytes(encoding);
 
         // keep track of this for later
         _encoding = encoding;

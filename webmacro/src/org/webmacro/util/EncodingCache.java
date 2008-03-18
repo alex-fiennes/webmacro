@@ -108,7 +108,7 @@ final public class EncodingCache
             throw new UnsupportedEncodingException("The encoding you specified is invalid: " + encoding + ". Note that the UNICODE and UTF16 encodings are not supported by WebMacro because they prefix the stream with a market indicating whether the stream is big endian or little endian. Instead choose the byte ordering yourself by using the UTF-16BE or UTF-16LE encodings.");
         }
         _encoding = encoding;
-        byte[] test = "some test string".getBytes(encoding); // throw except.
+        "some test string".getBytes(encoding); // throw exception is encoding is invalid
     }
 
     public String getEncodingName ()
@@ -158,7 +158,7 @@ final public class EncodingCache
             }
             catch (UnsupportedEncodingException e)
             {
-                e.printStackTrace(); // never happen: we check in ctor
+                e.printStackTrace(); // never happen: we check in constructor
                 return null;
             }
         }
