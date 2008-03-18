@@ -1,23 +1,37 @@
 package org.webmacro.template;
 
-import junit.framework.TestCase;
-import org.webmacro.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 
-import java.io.*;
+import junit.framework.TestCase;
+
+import org.webmacro.Context;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WebMacro;
 
 /**
  * Basic test class to test webmacros handling of encodings.
  * To test a concrete encoding, you have to extends this class
  * and implement the four abstract methods. Be sure to run native2ascii
  * on your source code to have it encoding neutral before checking it into
- * CVS.<br>
+ * CVS.
+ * <br>
  * This class will then create a file of your source template, written in the
- * encoding you specified. Then three tests are run on this file:<br>
+ * encoding you specified. Then three tests are run on this file:
+ * <br>
  * 1) Parse template and evaluate it into a string.
  * 2) Parse template and output it in the encoding you specified
  * 3) Parse template and output it as utf8
  * <br>
  * In all cases, the output is compared to the expected results.
+ * 
  * @author Sebastian Kanthak
  */
 public abstract class EncodingTestCase extends TestCase
@@ -174,9 +188,10 @@ public abstract class EncodingTestCase extends TestCase
 
 
     /**
-     * FIXME Works in Eclipse but not Maven
+     * FIXME Works in Eclipse but not Maven on Linux
+     * Works in Eclipse and Maven on Windows
      */
-    public void brokenTestUTF8InputEncoding () throws Exception
+    public void testUTF8InputEncoding () throws Exception
     {
         assertEquals("InputEncoding is not UFT8",
                 wmUTF8.getConfig("TemplateEncoding"), "UTF8");
