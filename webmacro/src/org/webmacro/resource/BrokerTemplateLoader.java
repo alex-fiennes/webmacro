@@ -26,6 +26,10 @@ import org.webmacro.Template;
 
 import java.net.URL;
 
+/**
+ * @author sk
+ * @since  03 Feb 2002 
+ */
 public class BrokerTemplateLoader extends AbstractTemplateLoader
 {
 
