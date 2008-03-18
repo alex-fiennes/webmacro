@@ -40,10 +40,8 @@ package org.webmacro;
  */
 public class PropertyException extends ContextException
 {
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
 	private String _message = null;
 
     public PropertyException (String reason)

@@ -23,11 +23,15 @@
 
 package org.webmacro;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+
 import org.webmacro.util.ByteBufferOutputStream;
 import org.webmacro.util.Encoder;
 import org.webmacro.util.EncoderProvider;
-
-import java.io.*;
 
 
 /**

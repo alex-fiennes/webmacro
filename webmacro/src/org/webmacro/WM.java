@@ -23,8 +23,10 @@
 
 package org.webmacro;
 
-import java.io.*;
-import java.util.*;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

@@ -23,14 +23,15 @@
 
 package org.webmacro;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
  * Defines the type of object which contains
  * WebMacro script, text, blocks to be evaluated.
+ * 
  * @author lane
- *
  */
 public interface Template extends Visitable
 {

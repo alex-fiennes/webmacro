@@ -30,9 +30,6 @@ package org.webmacro;
 public class ResourceException extends WebMacroException
 {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public ResourceException (String reason, Exception e)

@@ -29,10 +29,6 @@ package org.webmacro;
  */
 public class TemplateException extends WebMacroException
 {
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public TemplateException ()

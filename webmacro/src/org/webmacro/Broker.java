@@ -19,13 +19,26 @@
 
 package org.webmacro;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.WeakHashMap;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 import org.webmacro.broker.ContextAutoLoader;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
@@ -38,6 +51,8 @@ import org.webmacro.util.LogTarget;
 import org.webmacro.util.LogTargetFactory;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
+
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Broker is responsible for loading and initializing almost everything

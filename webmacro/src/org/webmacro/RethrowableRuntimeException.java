@@ -44,9 +44,6 @@ package org.webmacro;
 public class RethrowableRuntimeException extends RuntimeException
 {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private Throwable cause;
