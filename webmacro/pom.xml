@@ -229,9 +229,9 @@
        <!-- Maven HACK -->
        <exclude>**/*$*</exclude>
        <!-- works in eclipse, but not maven -->
-       <!-- exclude>**/TestBackupCharStream.java</exclude -->
+       <exclude>**/TestBackupCharStream.java</exclude>
        <!-- works in eclipse, but not maven -->
-       <!-- exclude>**/TestParseIncludeMacroDistribution.java</exclude -->
+       <exclude>**/TestParseIncludeMacroDistribution.java</exclude>
       </excludes>
       <includes>
        <include>**/Test*.java</include>
