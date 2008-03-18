@@ -228,8 +228,9 @@
        <exclude>**/TestWindows1251Encoding.java</exclude>
        <!-- Maven HACK -->
        <exclude>**/*$*</exclude>
-       <!-- Seem to be working now -->
+       <!-- works in eclipse, but not maven -->
        <!-- exclude>**/TestBackupCharStream.java</exclude -->
+       <!-- works in eclipse, but not maven -->
        <!-- exclude>**/TestParseIncludeMacroDistribution.java</exclude -->
       </excludes>
       <includes>
