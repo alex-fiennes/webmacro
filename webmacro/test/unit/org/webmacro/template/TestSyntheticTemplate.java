@@ -9,7 +9,8 @@ import org.webmacro.WebMacro;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
-/** a simple test case to load and execute a file
+/** 
+ * A simple test case to load and execute a file
  * via the path relative to the classpath.
  */
 public class TestSyntheticTemplate extends TemplateTestCase
@@ -113,7 +114,8 @@ public class TestSyntheticTemplate extends TemplateTestCase
         for (int index = 0; index < iterationCount; index++)
         {
             singleTet = System.currentTimeMillis();
-            String value = executeFileTemplate(release2TestFileName);
+            //String value = 
+            executeFileTemplate(release2TestFileName);
             singleTet = System.currentTimeMillis() - singleTet;
             if (singleTet < min) min = singleTet;
             if (singleTet > max) max = singleTet;
@@ -284,7 +286,8 @@ public class TestSyntheticTemplate extends TemplateTestCase
                     long it = System.currentTimeMillis();
                     try
                     {
-                        String value = executeFileTemplate(fileName);
+                        //String value = 
+                        executeFileTemplate(fileName);
                         // Thread.yield(); // allow other threads time to run as well;
                     }
                     catch (Exception e)
