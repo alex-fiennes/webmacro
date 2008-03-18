@@ -4,7 +4,9 @@
   <artifactId>webmacro</artifactId>
   <name>WebMacro</name>
   <version>2.1-RC1-SNAPSHOT</version>
-  <description>WebMacro template engine</description>
+  <description>
+  WebMacro is a stable templating engine written in Java.
+  </description>
   <url>http://webmacro.sourceforge.net/</url>
   <issueManagement>
     <url>http://sourceforge.net/tracker/?group_id=64597</url>
