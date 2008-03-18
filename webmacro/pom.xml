@@ -156,8 +156,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:cvs::pserver:anonymous@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</connection>
-    <developerConnection>scm:cvs::ext:USER@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</developerConnection>
+    <connection>scm:cvs:pserver:anonymous@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</connection>
+    <developerConnection>scm:cvs:ext:USER@webmacro.cvs.sourceforge.net:/cvsroot/webmacro</developerConnection>
     <url>http://cvs.sourceforge.net/viewcvs.py/webmacro/</url>
   </scm>
   <organization>
