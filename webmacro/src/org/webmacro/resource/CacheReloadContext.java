@@ -29,6 +29,7 @@ package org.webmacro.resource;
  * cache invalidation on a per-element basis, for example if an underlying
  * resource has changed.  The reload context allows the cache manager to ask
  * the provider if the resource should be reloaded.
+ * 
  * @since 0.96
  */
 
@@ -36,9 +37,9 @@ public abstract class CacheReloadContext
 {
 
     /**
-     * The CacheManager calls shouldReload to ask the reference whether
-     * it has changed since we loaded it.  Subclasses should define an
-     * implementation if this if it makes sense to.  Otherwise, the default
+     * The CacheManager calls <code>shouldReload()</code> to ask the reference 
+     * whether it has changed since we loaded it.  Subclasses should define an
+     * implementation of this if it makes sense to.  Otherwise, the default
      * returns false, which means the item is replaced when it expires from
      * the cache.
      */

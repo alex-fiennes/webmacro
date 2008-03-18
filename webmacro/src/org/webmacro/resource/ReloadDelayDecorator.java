@@ -87,7 +87,7 @@ public class ReloadDelayDecorator
      * Looks up the "check for reload delay" for protocol and creates
      * a suitable TimedReloadContext or passes back the original
      * reload context if delay <= 0
-     * @param protocol protocl to look up delay for
+     * @param protocol protocol to look up delay for
      * @param reloadContext reloadContext to decorate
      * @return eventually decorated reload context
      */
