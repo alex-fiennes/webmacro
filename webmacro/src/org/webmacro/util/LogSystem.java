@@ -23,9 +23,13 @@
 
 package org.webmacro.util;
 
-import org.webmacro.Log;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
+import org.webmacro.Log;
 
 /**
  * The LogSystem class allows you to create and manage log objects
@@ -92,7 +96,7 @@ final public class LogSystem
     }
 
     /**
-     * Get the global, system-wide, default log system
+     * Get the global, system-wide, default log system.
      */
     public static LogSystem getInstance ()
     {
@@ -100,7 +104,7 @@ final public class LogSystem
     }
 
     /**
-     * Get a system-wide log
+     * Get a system-wide log.
      */
     public static Log getSystemLog (String type)
     {
@@ -108,7 +112,7 @@ final public class LogSystem
     }
 
     /**
-     * Get a system log, providing it with a description of itself
+     * Get a system log, providing it with a description of itself.
      */
     public static Log getSystemLog (String type, String description)
     {
@@ -270,7 +274,7 @@ final public class LogSystem
 
 
     /**
-     * Flush all of the LogTarget objects in the system
+     * Flush all of the LogTarget objects in the system.
      */
     synchronized public void flush ()
     {
@@ -284,7 +288,7 @@ final public class LogSystem
 
 
     /**
-     * Test out the logging system
+     * Test out the logging system.
      */
     public static void main (String arg[]) throws Exception
     {

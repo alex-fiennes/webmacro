@@ -22,11 +22,17 @@
 
 package org.webmacro.servlet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.StringTokenizer;
 
 /**
  * A utility class for templates loaded into the context as "List" by ListTool.
- * It allows template designers to work with Java arrays and lists using
+ * It allows template designers to work with Java arrays and lists 
  * without having to distinguish between them.
  *
  * @author Keats Kirsch

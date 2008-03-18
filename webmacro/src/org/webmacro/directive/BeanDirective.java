@@ -26,15 +26,28 @@ package org.webmacro.directive;
  * This directive allows the instantiation of objects in WMScript.
  */
 
-import org.webmacro.*;
-import org.webmacro.engine.*;
-import org.webmacro.util.Instantiator;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Log;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.WebMacroException;
+import org.webmacro.engine.Block;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+import org.webmacro.engine.Builder;
+import org.webmacro.engine.UndefinedMacro;
+import org.webmacro.engine.Variable;
+import org.webmacro.util.Instantiator;
+
 /**
- * Implements a directive allowing a script writer
+ * Implements a directive allowing a script writer 
  * to instantiate an arbitrary
  * java object in a WebMacro template subject to 
  * security restrictions.
