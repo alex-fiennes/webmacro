@@ -2,10 +2,12 @@ package org.webmacro.template;
 
 
 
-/** abstract variable test case for ROGUE variables/properties
- and how they're handled by each EvaluationExceptionHandler.
- It is expected that atleast 3 subclasses will exist:  TestDefaultEEH,
- TestCrankyEEH, TestComplacentEEH
+/** 
+ * Abstract variable test case for ROGUE variables/properties
+ *  and how they're handled by each EvaluationExceptionHandler.
+ *  
+ *   It is expected that at least 3 subclasses will exist:  TestDefaultEEH,
+ *   TestCrankyEEH, TestComplacentEEH.
  */
 public abstract class AbstractVariableTestCase extends TemplateTestCase
 {
@@ -79,7 +81,7 @@ public abstract class AbstractVariableTestCase extends TemplateTestCase
     }
 
 
-    /** A variable in the context who's .toString() method returns null */
+    /** A variable in the context who's .toString() method returns null. */
     public void testNullVariable () throws Exception
     {
         assertTrue(false);
