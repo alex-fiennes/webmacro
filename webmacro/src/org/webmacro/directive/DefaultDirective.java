@@ -22,12 +22,17 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-import java.io.IOException;
 /**
  * Implements the directive that allows
  * a template to have a default value
@@ -37,7 +42,7 @@ public class DefaultDirective extends Directive
 {
 
     private static final int DEFAULT_TARGET = 1;
-    private static final int DEFAULT_TO = 2;
+    //private static final int DEFAULT_TO = 2;
     private static final int DEFAULT_RESULT = 3;
 
     private Variable target;
