@@ -22,13 +22,11 @@
 
 package org.webmacro;
 
-import org.webmacro.ResourceException;
-import org.webmacro.Template;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.webmacro.resource.AbstractTemplateLoader;
 import org.webmacro.resource.CacheElement;
-
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * Implementation of TemplateLoader that loads templates from a given URL.
