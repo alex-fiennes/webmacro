@@ -3,10 +3,9 @@ package org.webmacro.template;
 import org.webmacro.Context;
 
 /**
- * This test uses russian characters encoded
- * in windows-1251 encoding.
- * As I do not understand russion, I've no idea,
- * what the text acutally means. :)
+ * This test uses Russian characters encoded in windows-1251 encoding.
+ * As I do not understand Russian, I've no idea what the text actually means. :)
+ * 
  * @author Sebastian Kanthak
  */
 public class TestWindows1251Encoding extends EncodingTestCase
