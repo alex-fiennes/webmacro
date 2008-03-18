@@ -125,8 +125,8 @@ final public class URLTemplateProvider extends CachingProvider
 
     private static final int CLASSPATH_PREFIX_LENGTH
             = CLASSPATH_PREFIX.length();
-    private static final int CONTEXT_PREFIX_LENGTH
-            = CONTEXT_PREFIX.length();
+    //private static final int CONTEXT_PREFIX_LENGTH
+    //        = CONTEXT_PREFIX.length();
 
 
     private static final String _TYPE = "template";

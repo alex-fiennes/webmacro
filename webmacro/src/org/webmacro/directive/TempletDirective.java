@@ -26,12 +26,16 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Variable;
 
-/** This directive allows a block within a template to be reused
+/** 
+ * This directive allows a block within a template to be reused
  * as a "templet" that can be invoked using the #eval directive.
  * @author Keats Kirsch
  * @since June 2003
@@ -46,7 +50,7 @@ public class TempletDirective extends org.webmacro.directive.Directive
     
     private Variable _target;
     private org.webmacro.engine.Block _result;
-    static private org.webmacro.servlet.TemplateTool _templateTool;
+    //static private org.webmacro.servlet.TemplateTool _templateTool;
     
     private static final ArgDescriptor[]
     myArgs = new ArgDescriptor[]
@@ -58,7 +62,8 @@ public class TempletDirective extends org.webmacro.directive.Directive
     private static final DirectiveDescriptor
     myDescr = new DirectiveDescriptor("templet", null, myArgs, null);
     
-    /** Returns the descriptor for this directive
+    /** 
+     * Returns the descriptor for this directive.
      * @return the directive descriptor
      */
     public static DirectiveDescriptor getDescriptor()
@@ -66,7 +71,7 @@ public class TempletDirective extends org.webmacro.directive.Directive
         return myDescr;
     }
     
-    /** Creates a new instance of TempletDirective */
+    /** Creates a new instance of TempletDirective. */
     public TempletDirective()
     {
     }
@@ -124,7 +129,7 @@ public class TempletDirective extends org.webmacro.directive.Directive
         }
     }
     
-    /** Used by template visitors
+    /** Used by template visitors.
      * @param v a template vistor
      */
     public void accept(TemplateVisitor v)
