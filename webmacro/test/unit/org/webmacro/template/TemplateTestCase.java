@@ -132,7 +132,7 @@ public abstract class TemplateTestCase extends TestCase
         if (result == null)
             assertTrue(_context.get("assertEvaluationEquals") == null);
         else
-            assertTrue(result == null ? "null" : result.toString(), result.equals(_context.get("assertEvaluationEquals")));
+            assertTrue(result.toString(), result.equals(_context.get("assertEvaluationEquals")));
     }
     
     protected void showError(String templateName, String resultText, String result)
