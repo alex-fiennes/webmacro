@@ -49,7 +49,7 @@ public class TextTool extends ContextTool
 
 
     /**
-     * @return the static instance of the MathTool
+     * @return the static instance of the TextTool
      */
     public static TextTool getInstance ()
     {
@@ -112,10 +112,10 @@ public class TextTool extends ContextTool
     }
 
     /**
-     * replace all occurrences of <code>from</code> to <code>to</code>
-     * in <code>src</code>.<P>
-     *
-     * If any paramer is <code>null</code>, <code>replace()</code> returns
+     * Replace all occurrences of <code>from</code> to <code>to</code>
+     * in <code>src</code>.
+     * <P>
+     * If any parameter is <code>null</code>, <code>replace()</code> returns
      * the value of <code>src</code>.<p>
      *
      * @return String with all occurrences of <code>from</code> replaced with
@@ -405,7 +405,6 @@ public class TextTool extends ContextTool
 
     public static void main (String[] args) throws Exception
     {
-        TextTool tt = TextTool.getInstance();
         String input1 = "This is a test";
         String input2 = "This is a test";
         String[] split = TextTool.split(input2, " ");
