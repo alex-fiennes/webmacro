@@ -35,6 +35,11 @@ import org.webmacro.TemplateVisitor;
 import org.webmacro.Visitable;
 
 
+/**
+ * @author justin
+ * @since 19 Oct 1999
+ *
+ */
 public final class QuotedStringBuilder extends Vector implements Builder
 {
 
