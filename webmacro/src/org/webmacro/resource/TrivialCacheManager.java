@@ -19,13 +19,6 @@
  *
  * See www.webmacro.org for more information on the WebMacro project.
  */
-
-
-/**
- * A trivial implementation of CacheManager which does no caching at
- * all.
- * @since 0.96
- */
 package org.webmacro.resource;
 
 import org.webmacro.Broker;
@@ -33,7 +26,11 @@ import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
-
+/**
+ * A trivial implementation of CacheManager which does no caching at
+ * all.
+ * @since 0.96
+ */
 public class TrivialCacheManager implements CacheManager
 {
 
