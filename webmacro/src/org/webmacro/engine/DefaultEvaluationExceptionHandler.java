@@ -21,6 +21,14 @@
  */
 
 
+package org.webmacro.engine;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.Log;
+import org.webmacro.PropertyException;
+import org.webmacro.util.Settings;
+
 /**
  * DefaultEvaluationExceptionHandler
  *
@@ -33,14 +41,6 @@
  * @author Brian Goetz
  * @since 0.96
  */
-
-package org.webmacro.engine;
-
-import org.webmacro.Broker;
-import org.webmacro.Context;
-import org.webmacro.Log;
-import org.webmacro.PropertyException;
-import org.webmacro.util.Settings;
 
 public class DefaultEvaluationExceptionHandler implements EvaluationExceptionHandler
 {
