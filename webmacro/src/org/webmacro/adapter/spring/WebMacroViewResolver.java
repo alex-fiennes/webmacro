@@ -16,6 +16,7 @@ import javax.servlet.ServletContext;
 
 /**
  * User: mpalmer
+ * @since 08 Dec 2005
  */
 public class WebMacroViewResolver extends AbstractTemplateViewResolver
 {
@@ -50,7 +51,7 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
             }
         }
 
-        view.setWebMacro( webMacro);
+        view.setWebMacro(webMacro);
 
         view.checkTemplate();
 
