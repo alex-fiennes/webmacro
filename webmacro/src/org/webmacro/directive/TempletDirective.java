@@ -107,7 +107,8 @@ public class TempletDirective extends org.webmacro.directive.Directive
      * @throws PropertyException N/A
      * @throws IOException N/A
      */
-    public void write(org.webmacro.FastWriter out, org.webmacro.Context context) throws org.webmacro.PropertyException, java.io.IOException
+    public void write(org.webmacro.FastWriter out, org.webmacro.Context context) 
+        throws org.webmacro.PropertyException, IOException
     {
         try
         {
