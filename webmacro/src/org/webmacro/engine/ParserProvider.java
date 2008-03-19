@@ -23,12 +23,16 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-import org.webmacro.util.Settings;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.Provider;
+import org.webmacro.util.Settings;
 
 /**
  * Utility class to assist in the creation of directives.
@@ -46,7 +50,7 @@ public final class ParserProvider implements Provider
     private final Object[] _brokerArg = new Object[1];
 
     /**
-     * Register a new parser class,
+     * Register a new parser class.
      * @exception IntrospectionException something wrong with the class
      * @exception InitException duplicate registration
      */

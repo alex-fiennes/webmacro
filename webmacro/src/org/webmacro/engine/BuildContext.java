@@ -23,10 +23,15 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.Macro;
+import org.webmacro.NotFoundException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
 
 
 /**
@@ -98,7 +103,7 @@ public class BuildContext extends Context
     }
 
     /**
-     * Add a MacroDefinition to the build context
+     * Add a MacroDefinition to the build context.
      */
     public void putMacro (String name, MacroDefinition macro)
     {
@@ -106,7 +111,7 @@ public class BuildContext extends Context
     }
 
     /**
-     * Search for a MacroDefinition in the build context
+     * Search for a MacroDefinition in the build context.
      */
     public MacroDefinition getMacro (String name)
     {
@@ -115,7 +120,7 @@ public class BuildContext extends Context
 
     /**
      * Add #macros and #params from the specified Template to
-     * this bulid context
+     * this bulid context.
      */
     public void mergeConstants (Template t)
     {
@@ -128,7 +133,7 @@ public class BuildContext extends Context
     }
 
     /**
-     * Return the map of MacroDefinitions
+     * Return the map of MacroDefinitions.
      */
     public Map getMacros ()
     {
@@ -136,8 +141,8 @@ public class BuildContext extends Context
     }
 
     /**
-     * Create a variable (or resolve a constant at build time)
-     * Used by various build() routines
+     * Create a variable (or resolve a constant at build time).
+     * Used by various build() routines.
      */
     Object resolveVariableReference (Object names[])
             throws BuildException
