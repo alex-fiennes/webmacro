@@ -75,3 +75,4 @@ public interface LogTarget
     public void removeObserver (LogSystem ls);
 
 }
+
