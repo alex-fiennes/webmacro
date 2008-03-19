@@ -41,11 +41,11 @@ import java.util.StringTokenizer;
  * @since Oct. 2000
  * @see ListTool
  */
-public class ListUtil
+public final class ListUtil
 {
 
     /**
-     * Private constructor for a singleton class
+     * Private constructor for a singleton class.
      */
     private ListUtil ()
     {
@@ -62,8 +62,6 @@ public class ListUtil
     }
 
     /**
-     *
-     * @param o
      * @return true if the argument implements the java.util.List interface, false otherwise.
      */
     public boolean isList (Object o)
@@ -73,7 +71,6 @@ public class ListUtil
     }
 
     /**
-     * @param o
      * @return true if the argument is an array, otherwise false.
      */
     public boolean isArray (Object o)
@@ -83,7 +80,6 @@ public class ListUtil
     }
 
     /**
-     * @param arg
      * @return false if the argument is a list or an array with at least one element,
      * true otherwise.
      */
@@ -177,9 +173,6 @@ public class ListUtil
 
     /**
      * Allows access to elements in an array by position.  Index is zero based.
-     *
-     * @param oa
-     * @param pos
      */
     public static Object getItem (Object[] oa, int pos)
     {
@@ -192,9 +185,6 @@ public class ListUtil
 
     /**
      * Allows access to elements in a List by position.  Index is zero based.
-     *
-     * @param list
-     * @param pos
      */
     public static Object getItem (List list, int pos)
     {
@@ -221,7 +211,6 @@ public class ListUtil
     }
 
     /**
-     * @param oa
      * @return number of elements in array argument
      */
     public static int size (Object[] oa)
@@ -230,7 +219,6 @@ public class ListUtil
     }
 
     /**
-     * @param list
      * @return number of elements in List argument
      */
     public static int size (List list)
@@ -247,8 +235,6 @@ public class ListUtil
     }
 
     /**
-     * @param list
-     * @param o
      * @return true if List argument contains the object argument, else false
      */
     public static boolean contains (List list, Object o)
@@ -257,8 +243,6 @@ public class ListUtil
     }
 
     /**
-     * @param oa
-     * @param o
      * @return true if Array argument contains the object argument, else false
      */
     public static boolean contains (Object[] oa, Object o)
@@ -267,8 +251,6 @@ public class ListUtil
     }
 
     /**
-     * @param arr
-     * @param o
      * @return true if array argument contains the object argument, else false
      */
     public static boolean contains (Object arr, Object o)
@@ -698,19 +680,20 @@ public class ListUtil
         return Arrays.asList(ia);
     }
 
-    /** create a new ArrayList */
+    /** Create a new ArrayList. */
     public static ArrayList create ()
     {
         return new ArrayList();
     }
 
-    /** create a new ArrayList with the specified capacity */
+    /** Create a new ArrayList with the specified capacity. */
     public static ArrayList create (int capacity)
     {
         return new ArrayList(capacity);
     }
 
-    /** append one list to the end of another and return the expanded list.
+    /** 
+     * Append one list to the end of another and return the expanded list.
      * If the first list is not expandable, return a new expandable list
      * with the elements of each list appended
      */
@@ -725,16 +708,15 @@ public class ListUtil
         }
         catch (Exception e)
         {
+          // create a new list
+          List l = new ArrayList(((l1.size() + l2.size()) * 2) + 10);
+          l.addAll(l1);
+          l.addAll(l2);
+          return l;
         }
-
-        // create a new list
-        List l = new ArrayList(((l1.size() + l2.size()) * 2) + 10);
-        l.addAll(l1);
-        l.addAll(l2);
-        return l;
     }
 
-    /** create a new list (ArrayList) with all the elements in the supplied list */
+    /** Create a new list (ArrayList) with all the elements in the supplied list. */
     public static List copy (Object o)
     {
         List l = toList(o);
@@ -742,7 +724,7 @@ public class ListUtil
         return new ArrayList(l);
     }
 
-    /** test harness */
+    /** Test harness. */
     public static void main (String[] args)
     {
         java.io.PrintWriter out =
