@@ -105,10 +105,19 @@ final public class EncodingCache
                 encoding.equalsIgnoreCase("UNICODELITTLE") ||
                 encoding.equalsIgnoreCase("UTF16"))
         {
-            throw new UnsupportedEncodingException("The encoding you specified is invalid: " + encoding + ". Note that the UNICODE and UTF16 encodings are not supported by WebMacro because they prefix the stream with a market indicating whether the stream is big endian or little endian. Instead choose the byte ordering yourself by using the UTF-16BE or UTF-16LE encodings.");
+            throw new UnsupportedEncodingException(
+                    "The encoding you specified is invalid: " + 
+                    encoding + ". " + 
+                    "Note that the UNICODE and UTF16 encodings are not " + 
+                    "supported by WebMacro because " + 
+                    "they prefix the stream with a marker indicating " + 
+                    "whether the stream is big endian or little endian. " + 
+                    "Instead choose the byte ordering yourself by using " + 
+                    "the UTF-16BE or UTF-16LE encodings.");
         }
         _encoding = encoding;
-        "some test string".getBytes(encoding); // throw exception is encoding is invalid
+        // throw exception if encoding is invalid
+        "some test string".getBytes(encoding); 
     }
 
     public String getEncodingName ()
@@ -217,7 +226,7 @@ final public class EncodingCache
             }
             catch (UnsupportedEncodingException e)
             {
-                e.printStackTrace(); // never happen: we check in ctor
+                e.printStackTrace(); // will never happen: we check in constructor
                 return null;
             }
         }
@@ -241,12 +250,12 @@ final public class EncodingCache
 
     public static void main (String arg[])
     {
-
         try
         {
-            /**
+            /*
              byte[] prefix = getPrefix(arg[0]);
-             System.out.println("Prefix for " + arg[0] + " is " + prefix.length + " bytes long");
+             System.out.println("Prefix for " + arg[0] + " is " + 
+             prefix.length + " bytes long");
              */
             EncodingCache ec = new EncodingCache("UTF-16LE", 11);
             BufferedReader in = new
