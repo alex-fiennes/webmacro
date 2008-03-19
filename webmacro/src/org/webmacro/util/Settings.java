@@ -39,6 +39,9 @@ import java.util.StringTokenizer;
 public class Settings
 {
 
+    /**
+     * Handler for a setting whose value may be a list.
+     */
     abstract public static class ListSettingHandler
     {
 
@@ -119,6 +122,7 @@ public class Settings
             }
             catch (MalformedURLException e)
             {
+                // Yes, ignore this exception
             }
         ;
 
