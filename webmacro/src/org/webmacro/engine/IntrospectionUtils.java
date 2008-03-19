@@ -26,15 +26,15 @@ package org.webmacro.engine;
  * @author  Keats
  * @since May 25, 2002
  */
-public class IntrospectionUtils
+public final class IntrospectionUtils
 {
 
-    /** Creates a new instance of IntrospectionUtils */
+    /** Deny instantiation */
     private IntrospectionUtils ()
     {
     }
 
-    final static boolean matches (Class[] sig, Class[] args)
+    static boolean matches (Class[] sig, Class[] args)
     {
         if (args.length != sig.length)
             return false;
@@ -68,12 +68,12 @@ public class IntrospectionUtils
         }
         catch (NullPointerException e)
         {
-            return false; // XXX: block nulls, isAssign... throws this
+            return false; // XXX: block nulls, isAssignableFrom throws this
         }
         return true;
     }
 
-    final static public Class[] createTypesFromArgs (Object[] args)
+    static public Class[] createTypesFromArgs (Object[] args)
     {
         Class[] types = new Class[args.length];
         for (int i = 0; i < args.length; i++)
@@ -90,7 +90,7 @@ public class IntrospectionUtils
         return types;
     }
 
-    /** attempt to instantiate a class with the supplied args */
+    /** Attempt to instantiate a class with the supplied args. */
     static public Object instantiate (Class c, Object[] args)
             throws Exception
     {
@@ -102,7 +102,7 @@ public class IntrospectionUtils
         else
         {
             // try each constructor with the right number of args,
-            // untill one works or all have failed
+            // until one works or all have failed
             java.lang.reflect.Constructor[] cons = c.getConstructors();
             for (int i = 0; i < cons.length; i++)
             {
@@ -116,7 +116,7 @@ public class IntrospectionUtils
                     }
                     catch (Exception e)
                     {
-
+                      // ignore this failure, try the next one
                     }
                 }
             }
