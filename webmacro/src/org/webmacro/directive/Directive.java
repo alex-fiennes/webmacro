@@ -22,11 +22,16 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
-
-import java.io.IOException;
 
 /**
  * Directive is an abstract class which directives can extend.
@@ -43,6 +48,7 @@ import java.io.IOException;
  * It is expected that all directives will build a copy of their descriptor
  * statically, using the various XxxArg() constructors, and return a reference
  * to that from getDescriptor().
+ * 
  * @author Brian Goetz
  */
 
@@ -109,7 +115,8 @@ public abstract class Directive implements Macro, Visitable
             throws IOException, PropertyException
     {
         return context.getEvaluationExceptionHandler()
-                .warningString("WARNING: " + warning + " at " + context.getCurrentLocation());
+                .warningString("WARNING: " + warning + 
+                        " at " + context.getCurrentLocation());
     }
 
     /**
@@ -119,9 +126,11 @@ public abstract class Directive implements Macro, Visitable
      *
      * This method also outputs the same warning message to a log named "directive"
      */
-    protected static void writeWarning (String warning, Context context, FastWriter writer) throws IOException, PropertyException
+    protected static void writeWarning (String warning, Context context, 
+            FastWriter writer) throws IOException, PropertyException
     {
-        context.getLog("directive").warning(warning + " at " + context.getCurrentLocation());
+        context.getLog("directive").warning(warning + 
+                " at " + context.getCurrentLocation());
         writer.write(getWarningText(warning, context));
     }
 
@@ -490,10 +499,6 @@ public abstract class Directive implements Macro, Visitable
      */
     public static class NotSimpleVariableBuildException extends BuildException
     {
-
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		public NotSimpleVariableBuildException (String directive)
