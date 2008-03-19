@@ -23,7 +23,11 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.*;
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.Provider;
+import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
 /**
@@ -111,7 +115,7 @@ abstract public class CachingProvider implements Provider,
         return _cache.get(query, this);
     }
 
-    /*
+    /**
      * Delegates to ResourceLoader implementers the load operation
      * by casting the query as a string and invoking the
      * implemented method.
