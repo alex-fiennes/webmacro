@@ -28,19 +28,25 @@ import java.util.Date;
 /**
  * This is an optimization. "System.currentTimeMillis()" is a relatively
  * slow method, and "new Date()" is an incredibly expensive operation.
+ * 
  * Update: System.ctm is no longer all that slow; replaced with a version
  * that caches the Date but not the time.
  */
 final public class Clock
 {
 
+    /** Disallow instantiation.  */
+    private Clock()
+    {
+    }
+
     /**
-     * Every tick interval the following variable is updated with the current system time
+     * Every tick interval the following variable is updated with the current system time.
      */
     static public long TIME = System.currentTimeMillis();
 
     /**
-     * Date information
+     * Date information.
      */
     private static Date date = new Date();
 
