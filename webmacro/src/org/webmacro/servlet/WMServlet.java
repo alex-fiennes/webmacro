@@ -52,8 +52,9 @@ import org.webmacro.util.LogSystem;
 
 /**
  * This is an abstract base class which can be used
- * to implement a kind of WebMacro servlet. You
- * can either subclass from it directly, or make use of one of the
+ * to implement a kind of WebMacro servlet.
+ *  
+ * You can either subclass from it directly, or make use of one of the
  * generic subclasses provided.
  * <p>
  * It's primary function is to create a WebContext and manage a
@@ -71,35 +72,36 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     private boolean _started = false;
     /**
      * The name of the config entry we look for to find out what to
-     * call the variable used in the ERROR_TEMPLATE
+     * call the variable used in the ERROR_TEMPLATE.
      */
     final static String ERROR_VARIABLE = "ErrorVariable";
 
     /**
      * The name of the error template we will use if something
-     * goes wrong
+     * goes wrong.
      */
     final static String ERROR_TEMPLATE = "ErrorTemplate";
 
     /**
-     * Defaults for error variable and error template
+     * Defaults for error variable and error template.
      */
     final static String ERROR_TEMPLATE_DEFAULT = "error.wm";
     final static String ERROR_VARIABLE_DEFAULT = "error";
 
     /**
-     * Log object used to write out messages
+     * Log object used to write out messages.
      */
     protected Log _log;
 
     /**
-     * null means all OK
+     * Null means all OK.
      */
-    private String _problem = "Not yet initialized: Your servlet API tried to access WebMacro without first calling init()!!!";
+    private String _problem = "Not yet initialized: " + 
+        "Your servlet API tried to access WebMacro without first calling init()!!!";
 
     /**
      * This is the old-style init method, it just calls init(), after
-     * handing the ServletConfig object to the superclass
+     * handing the ServletConfig object to the superclass.
      * @exception ServletException if it failed to initialize
      */
     public synchronized void init (ServletConfig sc)
@@ -326,7 +328,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * <p>Returns the name of the error variable, as per the config.</p>
+     * Returns the name of the error variable, as per the config.
      * @return Name to use for the error variable in templates
      */
     protected String getErrorVariableName ()
@@ -427,7 +429,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * Create a new Context object
+     * Create a new Context object.
      */
     public Context getContext ()
     {
@@ -435,7 +437,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * Create a new WebContext object; can be overridden
+     * Create a new WebContext object; can be overridden.
      */
     public WebContext getWebContext (HttpServletRequest req, HttpServletResponse res)
     {
@@ -808,3 +810,4 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
 
 }
+
