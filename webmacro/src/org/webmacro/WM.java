@@ -92,8 +92,8 @@ public class WM implements WebMacro
     }
 
     /**
-     * Constructs a WM is tied to a Servlet broker.  Depending on the
-     * servlet containers level of servlet support, property fetching,
+     * Constructs a WM tied to a Servlet broker.  Depending on the
+     * servlet container's level of servlet support, property fetching,
      * logging, and template fetching will be managed by the servlet broker.
      */
     public WM (Servlet s) throws InitException
