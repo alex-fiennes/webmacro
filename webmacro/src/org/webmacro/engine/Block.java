@@ -23,11 +23,16 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-import org.webmacro.util.Encoder;
-
 import java.io.IOException;
 import java.util.List;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
+import org.webmacro.util.Encoder;
 
 /**
  * A Block is essentially a Macro[] that knows how to write itself
