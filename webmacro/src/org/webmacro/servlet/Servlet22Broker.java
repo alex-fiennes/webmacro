@@ -147,18 +147,21 @@ public class Servlet22Broker extends ServletBroker
 
     /**
      * Get an existing instance of the Servlet 2.2 broker or create a new one.
+     * 
      * Templates will be retrieved relative to the ServletContext root
-     * and classes loaded from the ClassLoader passed in. NOTE: Templates
-     * will <b>not</b> be loaded from the classpath.
+     * and classes loaded from the ClassLoader passed in. 
+     * 
+     * NOTE: Templates will <b>not</b> be loaded from the classpath.
+     * 
      * @param sc The ServletContext to template access
      * @param cl The ClassLoader for class loading, typically servlet or
-     * JSP page's class loader
+     *           JSP page's class loader
      * @param additionalProperties
      * @param fromServlet true if it is actually an initialization derived from
-     * a Servlet instance passed in - just for nicer logging output
+     *                    a Servlet instance passed in - just for nicer logging output
      * @param servletOrContextName Name of the servlet or context originating this broker,
-     * for nicer logging
-     * @return
+     *                             for nicer logging
+     *                             
      * @throws org.webmacro.InitException
      * @since 2.1
      */
@@ -198,7 +201,7 @@ public class Servlet22Broker extends ServletBroker
     }
 
     /**
-     * Get a resource (file) from the the Broker's class loader
+     * Get a resource (file) from the the Broker's class loader.
      */
     public URL getResource (String name)
     {
@@ -244,7 +247,7 @@ public class Servlet22Broker extends ServletBroker
     }
 
     /**
-     * Get a resource (file) from the Broker's class loader
+     * Get a resource (file) from the Broker's class loader.
      */
     public InputStream getResourceAsStream (String name)
     {
@@ -258,7 +261,7 @@ public class Servlet22Broker extends ServletBroker
 
     /**
      * Get a template; kind of like getting a resource, but might come
-     * from a different place
+     * from a different place.
      */
     public URL getTemplate (String name)
     {
@@ -274,8 +277,8 @@ public class Servlet22Broker extends ServletBroker
     /**
      * Loads a class by name. Uses the servlet classloader to load the
      * class. If the class is not found uses the Broker classForName
-     * implementation.  */
-
+     * implementation.  
+     */
     public Class classForName (String name) throws ClassNotFoundException
     {
         Class cls = null;
