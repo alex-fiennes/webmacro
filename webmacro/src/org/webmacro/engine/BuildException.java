@@ -25,12 +25,12 @@ package org.webmacro.engine;
 
 import org.webmacro.TemplateException;
 
+/**
+ * Thrown when a Directive or it's arguments fail to build.
+ */
 public class BuildException extends TemplateException
 {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public BuildException (String message)
