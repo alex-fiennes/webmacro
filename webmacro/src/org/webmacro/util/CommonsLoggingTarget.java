@@ -25,10 +25,10 @@ public class CommonsLoggingTarget implements LogTarget
         switch (LogSystem.getLevel(level))
         {
             case LogSystem.DEBUG:
-                log.debug( message, e);
+                log.debug(message, e);
                 break;
             case LogSystem.ERROR:
-                log.error( message, e);
+                log.error(message, e);
                 break;
             case LogSystem.INFO:
                 log.trace(message, e);

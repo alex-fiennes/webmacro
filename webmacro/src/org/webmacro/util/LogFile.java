@@ -136,7 +136,7 @@ public class LogFile extends AbstractLogFile
     }
 
     /**
-     * Create a new LogFile instance
+     * Create a new LogFile instance.
      */
     public LogFile (PrintStream out)
     {
