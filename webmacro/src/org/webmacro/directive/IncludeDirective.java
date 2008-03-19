@@ -22,20 +22,29 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
-import org.webmacro.engine.BuildContext;
-import org.webmacro.engine.BuildException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.StringTokenizer;
 
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Log;
+import org.webmacro.Macro;
+import org.webmacro.NotFoundException;
+import org.webmacro.PropertyException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+
 /**
  * IncludeDirective allows you to include other text files or Templates into
- * the current Template.<p>
- *
+ * the current Template.
+ * <p>
  * Syntax:<pre>
  *    #include [as text|template|macro] quoted-string-variable
  *</pre>
@@ -166,13 +175,13 @@ import java.util.StringTokenizer;
 public class IncludeDirective extends Directive
 {
 
-    /** the file to include is a Template */
+    /** The file to include is a Template. */
     public static final int TYPE_TEMPLATE = 0;
-    /** the file to include as a Template containing #macro's */
+    /** The file to include as a Template containing #macro's. */
     public static final int TYPE_MACRO = 1;
-    /** the file to include is a static file. */
+    /** The file to include is a static file. */
     public static final int TYPE_TEXT = 2;
-    /** the file to include is unknown */
+    /** The file to include is unknown. */
     public static final int TYPE_DYNAMIC = 3;
 
 
@@ -205,23 +214,24 @@ public class IncludeDirective extends Directive
     // these values are customized for this directive during build()
     //
 
-    /** place holder for the TemplateExtensions configuration key name */
+    /** Place holder for the TemplateExtensions configuration key name. */
     private String TEMPLATE_EXTENSIONS_NAME = ".TemplateExtensions";
 
 
     /** Logging can be good */
     protected Log _log;
-    /** the included file type.  one of TYPE_TEMPLATE, TYPE_STATIC, TYPE_MACRO, or TYPE_DYNAMIC */
+    /** The included file type.  
+     * One of TYPE_TEMPLATE, TYPE_STATIC, TYPE_MACRO, or TYPE_DYNAMIC. */
     protected int _type;
-    /** the filename as a Macro, if the filename arg is a Macro */
+    /** The filename as a Macro, if the filename arg is a Macro. */
     protected Macro _macFilename;
     /**
-     * the filename as a String, if it is something we can determine during
-     * build()
+     * The filename as a String, if it is something we can determine during
+     * build().
      */
     protected String _strFilename;
     /**
-     * the name given to the directive by webmacro configuration.  Used in
+     * The name given to the directive by webmacro configuration.  Used in
      * conjuction with the <code>StrictCompatibility</code>  configuration
      * and to make determinitaions on how the #included file should be included.
      */
@@ -240,7 +250,8 @@ public class IncludeDirective extends Directive
      * Otherwise, template is found and including during runtime evaluation
      * of this directive.
      */
-    public final Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
+    public final Object build (DirectiveBuilder builder, BuildContext bc) 
+        throws BuildException
     {
         Broker broker = bc.getBroker();
         _log = bc.getLog("IncludeDirective");
@@ -344,7 +355,8 @@ public class IncludeDirective extends Directive
      * included file is actually a template, it is evaluated against the
      * <code>context</code> parameter before being written to the FastWriter
      */
-    public void write (FastWriter out, Context context) throws PropertyException, IOException
+    public void write (FastWriter out, Context context) 
+        throws PropertyException, IOException
     {
         Broker broker = context.getBroker();
 
@@ -406,8 +418,8 @@ public class IncludeDirective extends Directive
     }
 
     /**
-     * get an array of Template file extensions we should use, if type==dynamic,
-     * to decide if the specified file is a template or not
+     * Get an array of Template file extensions we should use, if type==dynamic,
+     * to decide if the specified file is a template or not.
      */
     protected String[] getTemplateExtensions (Broker b)
     {
@@ -432,7 +444,7 @@ public class IncludeDirective extends Directive
     }
 
     /**
-     * if the filename contains <i>://</i> assume it's a file b/c it's probably
+     * If the filename contains <i>://</i> assume it's a file b/c it's probably
      * a url.<p>
      *
      * If the filename ends with any of the configured
@@ -460,8 +472,8 @@ public class IncludeDirective extends Directive
     }
 
     /**
-     * get the template or file that the user wants to include, based on the
-     * specified type.  This method does not know how to get a file whose type
+     * Get the template or file that the user wants to include, based on the
+     * specified type.  This method does not know how to get a file whose type.
      * is "TYPE_DYNAMIC".
      */
     protected Object getThingToInclude (Broker b, int type, String filename) throws PropertyException
@@ -492,7 +504,7 @@ public class IncludeDirective extends Directive
     }
 
     /**
-     * get a Template via the "template" provider known by the specified broker
+     * Get a Template via the "template" provider known by the specified broker.
      */
     protected Template getTemplate (Broker b, String name) throws PropertyException
     {
@@ -515,7 +527,7 @@ public class IncludeDirective extends Directive
     }
 
     /**
-     * get the contents of a file (local file or url) via the "url" provider
+     * Get the contents of a file (local file or url) via the "url" provider
      * known by the specified broker.  If the url provider can't find it
      * we check the Broker (Broker.getResource).
      */
@@ -606,3 +618,4 @@ public class IncludeDirective extends Directive
             return new PropertyException(message);
     }
 }
+
