@@ -42,11 +42,17 @@ import org.webmacro.Context;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
+/**
+ * Handler for Exceptions generated during property evaluation.
+ * 
+ * @since  0.96
+ *
+ */
 public interface EvaluationExceptionHandler
 {
 
     /**
-     * Initialize the EEH
+     * Initialize the EEH.
      */
     public void init (Broker b, Settings config);
 
