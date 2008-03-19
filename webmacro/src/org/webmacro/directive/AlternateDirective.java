@@ -20,18 +20,22 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 package org.webmacro.directive;
-import org.webmacro.*;
-import org.webmacro.engine.BuildContext;
-import org.webmacro.engine.BuildException;
-import org.webmacro.engine.Variable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+import org.webmacro.engine.Variable;
 /**
  * 
- * Use the #alternate directive to create an "alternating" variable, which is
- * useful
+ * Use the #alternate directive to create an "alternating" variable, 
  * for creating tables that use a different background color for each line, etc.
  * <p>
  * <pre>
@@ -55,8 +59,6 @@ import java.util.List;
  * 
  * <p>
  * 
- * 
- * 
  * <i>expression</i> can be any "list" type understood by WebMacro: Object[],
  * 
  * java.util.List, java.util.Iterator, java.util.Enumeration, or any other
@@ -76,15 +78,9 @@ import java.util.List;
  * 
  * <p>
  * 
- * 
- * 
  * The first time $color is evaluated, it will have the value "red". The next
- * time it
- * 
- * is evaluated, it will have the value "blue", and so on through the list. When
- * it gets
- * 
- * to the end of the list, it wraps back around to the beginning.
+ * time it is evaluated, it will have the value "blue", and so on through the list. 
+ * When it gets to the end of the list, it wraps back around to the beginning.
  * 
  */
 public class AlternateDirective extends Directive
