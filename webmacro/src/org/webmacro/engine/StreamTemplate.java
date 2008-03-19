@@ -23,14 +23,19 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-import org.webmacro.util.SelectList;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Date;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WMConstants;
+import org.webmacro.WebMacro;
+import org.webmacro.util.SelectList;
 
 /**
  * StreamTempaltes are constructed with a stream from which they
@@ -44,7 +49,7 @@ public class StreamTemplate extends WMTemplate
 {
 
     /**
-     * Our stream
+     * Our stream.
      */
     private Reader _in;
     private String _name = null;
@@ -133,7 +138,7 @@ public class StreamTemplate extends WMTemplate
     }
 
     /**
-     * Simple test
+     * Simple test.
      */
     public static void main (String arg[])
     {
@@ -185,7 +190,9 @@ public class StreamTemplate extends WMTemplate
             context.put("flipper", new TestObject("flip", false));
 
             System.out.println("- - - - - - - - - - - - - - - - - - - -");
-            System.out.println("Context contains: helloWorld, hello, file, TestObject[] fruits, SelectList sl(fruits, 3), TestObject flipper");
+            System.out.println("Context contains: helloWorld, " + 
+                    "hello, file, TestObject[] fruits, " + 
+                    "SelectList sl(fruits, 3), TestObject flipper");
             System.out.println("- - - - - - - - - - - - - - - - - - - -");
 
             Template t1 = new StreamTemplate(wm.getBroker(),
