@@ -22,11 +22,15 @@
 
 package org.webmacro.util;
 
-import org.webmacro.*;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.NotFoundException;
+import org.webmacro.Provider;
+import org.webmacro.ResourceException;
 
 /**
  * A provider which dispenses Encoders, which are used for encoding
