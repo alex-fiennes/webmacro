@@ -1,4 +1,4 @@
-<!-- helptoc.tml -->
+<!-- list.tml -->
 ## Provides the control for listing help files in a separate window
 ## Requires $org.webmacro.servlet.ListTool to be in the context
 ## as List.
