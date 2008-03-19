@@ -63,6 +63,9 @@ import org.webmacro.util.WMEval;
  * This Servlet extends the base class of the JSDK definition eliminating any
  * magic in a super-class.
  * </p>
+ * 
+ * @since 24 Jan 2004
+ * @author lanesharman
  */
 public class TemplateServlet extends HttpServlet {
 
@@ -106,7 +109,7 @@ public class TemplateServlet extends HttpServlet {
 	/**
 	 * The delegate to populate the context for the application.
 	 */
-	private ServletRouter sr;
+	private ServletRouter servletRouter;
 	
     protected Log log;
 
@@ -137,7 +140,7 @@ public class TemplateServlet extends HttpServlet {
 			}
 			String sr = settings.getSetting("TemplateServlet.ServletRouter");
 			if (sr != null) {
-				this.sr = (ServletRouter) Class.forName(sr).newInstance();
+				this.servletRouter = (ServletRouter) Class.forName(sr).newInstance();
 			}
 			refreshGlobalContext();
 			log("TemplateServlet initialized.");
@@ -253,11 +256,11 @@ public class TemplateServlet extends HttpServlet {
 	protected void loadDelegationContext(WebContext context, String template,
 			HttpServletRequest request, HttpServletResponse resp)
 			throws ServletException {
-		if (this.sr != null) {
+		if (this.servletRouter != null) {
 			try {
-				sr.handleWebRequest(this, context, template);
+				servletRouter.handleWebRequest(this, context, template);
 			} catch (Exception e) {
-				this.log("Unable to process router " + sr.getClass().getName(),
+				this.log("Unable to process router " + servletRouter.getClass().getName(),
 						e);
 				throw new ServletException(e.toString());
 			}
