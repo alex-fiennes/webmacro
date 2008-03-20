@@ -1,17 +1,18 @@
 package org.webmacro.resource;
 
-import java.util.*;
+import java.util.Map;
 
-import org.webmacro.Log;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
+import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
+
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
 /**
- * SimpleCacheManager -- a basic cache manager backed by ConcurrentHashMap which does not support reloading,
- * or expiration
+ * SimpleCacheManager -- a basic cache manager backed by ConcurrentHashMap 
+ * which does not support reloading, or expiration.
  *
  * @author Brian Goetz
  */
@@ -79,14 +80,14 @@ public class SimpleCacheManager implements CacheManager {
     }
 
     /**
-     * Put an object in the cache
+     * Put an object in the cache.
      */
     public void put(final Object query, Object resource) {
         _cache.put(query, resource);
     }
 
     /**
-     * Remove an element
+     * Remove an element.
      */
     public void invalidate(final Object query) {
         _cache.remove(query);

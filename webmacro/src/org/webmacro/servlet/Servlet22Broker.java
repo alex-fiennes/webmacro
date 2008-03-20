@@ -42,6 +42,7 @@ import java.util.Properties;
  * environments.  Loads templates and other resources from the servlet
  * context (WAR file), writes log messages to the servlet log, and loads
  * properties from the WAR file context parameters.
+ * 
  * @author Brian Goetz
  * @author Marc Palmer (wj5@wangjammers.org)
  * @since 0.96
@@ -130,7 +131,8 @@ public class Servlet22Broker extends ServletBroker
     }
 
     /**
-     * Get a Servlet API 2.2 compatible broker for the ServletContext specified
+     * Get a Servlet API 2.2 compatible broker for the ServletContext specified.
+     * 
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
      * @param additionalProperties
@@ -186,7 +188,7 @@ public class Servlet22Broker extends ServletBroker
                 b.getLog("broker").notice(
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName
-                    + " joining Broker" + " " + b.getName() );
+                    + " joining Broker" + " " + b.getName());
             result = b;
         }
         catch (InitException e)

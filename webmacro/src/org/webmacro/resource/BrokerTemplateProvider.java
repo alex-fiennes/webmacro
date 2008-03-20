@@ -20,17 +20,20 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.resource;
 
-import org.webmacro.*;
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.Provider;
+import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
 /**
- * The BrokerTemplateProvider loads templates through
- * Broker.getResource().  Templates might be loaded from a file, from
- * a WAR, from a JAR, etc.  It just passes the requests on to a
- * BrokerTemplateProviderHelper object.
+ * The BrokerTemplateProvider loads templates through Broker.getResource().  
+ * Templates might be loaded from a file, from a WAR, from a JAR, etc.  
+ * It just passes the requests on to a BrokerTemplateProviderHelper object.
+ * 
  * @author Brian Goetz
  * @since 0.96
  * @see Provider

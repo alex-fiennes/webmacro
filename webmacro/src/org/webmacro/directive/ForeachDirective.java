@@ -22,11 +22,21 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
-import org.webmacro.engine.*;
-
 import java.io.IOException;
 import java.util.Iterator;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.engine.Block;
+import org.webmacro.engine.BuildContext;
+import org.webmacro.engine.BuildException;
+import org.webmacro.engine.Expression;
+import org.webmacro.engine.UndefinedMacro;
+import org.webmacro.engine.Variable;
+
 /**
  * Implements iteration through a list or an array with
  * various options.
