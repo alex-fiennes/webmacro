@@ -155,10 +155,11 @@ final public class Block implements Macro, Visitable
                 teC._lineNo = this.getLineNo(i);
                 teC._columnNo = this.getColNo(i);
                 _macros[i++].write(out, context);
+            case 10:
                 break;
             default :
                 throw new WebMacroRuntimeException(
-                        "Bug: _remainder value not 0 to 9: " + _remainder); 
+                        "Bug: _remainder value not 0 to 10: " + _remainder); 
                 
         }
 
