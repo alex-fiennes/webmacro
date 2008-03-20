@@ -46,9 +46,9 @@ import org.webmacro.directive.Directive.Subdirective;
  * or optional-repeating (multiple subdirectives of the same kind, like
  * #elseif.)  There are constructors for Subdirective in the Directive module
  * as well.
+ * 
  * @author Brian Goetz
  */
-
 public final class DirectiveDescriptor
 {
 
@@ -104,7 +104,7 @@ public final class DirectiveDescriptor
     }
 
     /**
-     * Set the nextArg, children[] fields as necessary
+     * Set the nextArg, children[] fields as necessary.
      */
     private static void completeArgs (ArgDescriptor[] args)
     {
