@@ -32,6 +32,7 @@ import org.webmacro.Macro;
 import org.webmacro.PropertyException;
 import org.webmacro.TemplateVisitor;
 import org.webmacro.Visitable;
+import org.webmacro.WebMacroRuntimeException;
 import org.webmacro.util.Encoder;
 
 /**
@@ -91,6 +92,12 @@ final public class Block implements Macro, Visitable
         String oldName = teC._templateName;
 
         teC._templateName = _name;
+        //
+        // The _remainder is 10 minus the number of bytes left.
+        // If we need to write out 3 bytes remainder will be 7, 
+        // so control starts at case 7 and falls through 8 and 9, 
+        // so 3 bytes are written.
+        //
         int i = 0;
         switch (_remainder)
         {
@@ -148,6 +155,11 @@ final public class Block implements Macro, Visitable
                 teC._lineNo = this.getLineNo(i);
                 teC._columnNo = this.getColNo(i);
                 _macros[i++].write(out, context);
+                break;
+            default :
+                throw new WebMacroRuntimeException(
+                        "Bug: _remainder value not 0 to 9: " + _remainder); 
+                
         }
 
         while (i < _length)
