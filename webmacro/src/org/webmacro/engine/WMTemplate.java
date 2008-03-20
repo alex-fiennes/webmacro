@@ -23,11 +23,21 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-
-import java.io.*;
-import java.util.Map;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Log;
+import org.webmacro.PropertyException;
+import org.webmacro.Template;
+import org.webmacro.TemplateException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.WMConstants;
 
 /**
  * Template objects represent the user defined layout into which the
@@ -53,12 +63,12 @@ abstract public class WMTemplate implements Template
 {
 
     /**
-     * The resource broker used to resolve things in this template
+     * The resource broker used to resolve things in this template.
      */
     final protected Broker _broker;
 
     /**
-     * Where we log our errors
+     * Where we log our errors.
      */
     final protected Log _log;
 
@@ -68,23 +78,23 @@ abstract public class WMTemplate implements Template
     private boolean _parsed;
 
     /**
-     * What this template contains is a top level block
+     * What this template contains is a top level block.
      */
     protected Block _content;
 
     /**
      * Which parser (grammar) is used to parse this template,
-     * typically "wm"
+     * typically "wm".
      */
     private String _parserName;
 
     /**
-     * Template parameters
+     * Template parameters.
      */
     private Map _parameters;
 
     /**
-     * Template Macros
+     * Template Macros.
      */
     private Map _macros;
 
@@ -123,7 +133,7 @@ abstract public class WMTemplate implements Template
     public abstract String toString ();
 
     /**
-     * Return a name for this template. If not overridden, uses toString()
+     * Return a name for this template. If not overridden, uses toString().
      */
     public String getName ()
     {
@@ -156,7 +166,7 @@ abstract public class WMTemplate implements Template
     }
 
     /**
-     * Template API
+     * Template API.
      */
     public void parse () throws IOException, TemplateException
     {
@@ -213,8 +223,9 @@ abstract public class WMTemplate implements Template
                     if (in != null)
                         in.close();
                 }
-                catch (Exception e)
+                catch (IOException e)
                 {
+                    e = null; // Real error reported above
                 }
                 _parameters = newParameters;
                 _content = newContent;
@@ -352,7 +363,7 @@ abstract public class WMTemplate implements Template
 
     /**
      * return the default encoding either from the WebMacro config
-     * or the JVM settings
+     * or the JVM settings.
      *
      * Note for Unix users: you may need to set the environmental variable
      * LC_ALL=[locale] to get the default one set up.
@@ -372,7 +383,7 @@ abstract public class WMTemplate implements Template
 
 
     /**
-     * Template API
+     * Template API.
      */
     public Object getParam (String key)
             throws IOException, TemplateException
