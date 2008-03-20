@@ -31,7 +31,6 @@ import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
 import org.webmacro.NotFoundException;
-import org.webmacro.Provider;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 import org.webmacro.engine.FileTemplate;
@@ -43,7 +42,7 @@ import org.webmacro.util.Settings;
  * This class does the actual work of retrieving templates using the
  * Broker.  It is called by both BrokerTemplateProvider and
  * TemplateProvider.
- * @see Provider
+ * @see org.webmacro.Provider
  * @see TemplateProvider
  * @see BrokerTemplateProvider
  * @author Brian Goetz
