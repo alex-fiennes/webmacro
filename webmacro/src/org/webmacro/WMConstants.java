@@ -24,6 +24,9 @@
 package org.webmacro;
 
 
+/**
+ * Constants used in WebMacro.
+ */
 public final class WMConstants
 {
 
@@ -32,18 +35,18 @@ public final class WMConstants
     public final static String TEMPLATE_LOCALE = "TemplateLocale";
 
     /**
-     * name of the local properties file.  Only limited properties are
-     * read from this (currently to do with file encodings)
+     * Name of the local properties file.  Only limited properties are
+     * read from this (currently to do with file encodings).
      */
     public static final String WEBMACRO_LOCAL_FILE = "WebMacro.local";
 
     /**
-     * name of the default properties file
+     * Name of the default properties file.
      */
     public static final String WEBMACRO_DEFAULTS_FILE = "WebMacro.defaults";
 
     /**
-     * name of the properties file
+     * Name of the properties file.
      */
     public static final String WEBMACRO_PROPERTIES_FILE = "WebMacro.properties";
 
