@@ -48,7 +48,7 @@ public class SelectList implements Enumeration
         return ((_current + 1) < _values.length);
     }
 
-    public Object nextElement () throws NoSuchElementException
+    public Object nextElement ()
     {
         _current++;
         if (_current >= _values.length)

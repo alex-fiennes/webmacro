@@ -132,7 +132,7 @@ final public class PropertyOperatorCache
    }
    
    final public PropertyOperator getOperator(final Class type)
-   throws PropertyException
+       throws PropertyException
    {
       Object o = _cache.get(type);
       if (o == null)
@@ -146,7 +146,7 @@ final public class PropertyOperatorCache
    }
    
    final public PropertyOperator getOperator(final Object obj)
-   throws PropertyException
+       throws PropertyException
    {
       Class type = obj.getClass();
       // added code to handle static classes.  Static classes must be wrapped
@@ -172,10 +172,10 @@ final public class PropertyOperatorCache
     * @exception SecurityException you are not permitted to try
     */
    final public Object getProperty(final Context context,
-   final Object instance,
-   final Object[] names,
-   int start)
-   throws PropertyException, SecurityException
+                                   final Object instance,
+                                   final Object[] names,
+                                   int start)
+       throws PropertyException
    {
       if (instance == null)
       {
@@ -192,9 +192,9 @@ final public class PropertyOperatorCache
     * Calls getProperty(context, instance, names, 0).
     */
    final public Object getProperty(final Context context,
-   final Object instance,
-   final Object[] names)
-   throws PropertyException, SecurityException
+                                   final Object instance,
+                                   final Object[] names)
+       throws PropertyException
    {
       return getProperty(context, instance, names, 0);
    }
@@ -211,11 +211,11 @@ final public class PropertyOperatorCache
     * @exception SecurityException you are not permitted to try
     */
    final public boolean setProperty(final Context context,
-   Object instance,
-   final Object[] names,
-   int start,
-   final Object value)
-   throws PropertyException, SecurityException
+                                    Object instance,
+                                    final Object[] names,
+                                    int start,
+                                    final Object value)
+       throws PropertyException
    {
       try
       {
@@ -240,10 +240,10 @@ final public class PropertyOperatorCache
     * Calls setProperty(context, names, 0, value)
     */
    final public boolean setProperty(final Context context,
-   final Object instance,
-   final Object[] names,
-   final Object value)
-   throws PropertyException, SecurityException
+                                    final Object instance,
+                                    final Object[] names,
+                                    final Object value)
+        throws PropertyException
    {
       return setProperty(context, instance, names, 0, value);
    }
@@ -257,7 +257,7 @@ final public class PropertyOperatorCache
     * @exception PropertyException could not extract iterator from instance
     */
    final public Iterator getIterator(Object instance)
-   throws PropertyException
+       throws PropertyException
    {
       if (instance instanceof Object[])
          return new ArrayIterator((Object[]) instance);
@@ -310,37 +310,37 @@ final class PropertyOperator
 {
    
    /**
-    * My accessors for fields, and binary methods
+    * My accessors for fields, and binary methods.
     */
    final private HashMap _unaryAccessors = new HashMap();
    
    /**
-    * Accessors that require an additional property name
+    * Accessors that require an additional property name.
     */
    final private HashMap _binaryAccessors = new HashMap();
    
    /**
-    * Accessors for direct method calls
+    * Accessors for direct method calls.
     */
    final private HashMap _directAccessors = new HashMap();
    
    /**
-    * Hash table accessor
+    * Hash table accessor.
     */
    private BinaryMethodAccessor _hashAccessor;
    
    /**
-    * The iterator method we found
+    * The iterator method we found.
     */
    private Method iteratorMethod = null;
    
    /**
-    * An accessor for array lengths
+    * An accessor for array lengths.
     */
    private static LengthAccessor _lengthAccessor = new LengthAccessor();
    
    /**
-    * The property operator cache
+    * The property operator cache.
     */
    final private PropertyOperatorCache _cache;
    
@@ -349,9 +349,9 @@ final class PropertyOperator
     * will be populated by a list of all the methods. Note that a method
     * may appear more than once in the vector if it is declared in more
     * than one superclass or interface.
+    * @exception SecurityException
     */
    private void getAllMethods(HashMap meths, Class c)
-   throws SecurityException
    {
       if (Modifier.isPublic(c.getModifiers()))
       {
@@ -539,10 +539,11 @@ final class PropertyOperator
    
    
    /**
-    * Construct a property operator for the target class
+    * Construct a property operator for the target class.
+    * @exception SecurityException
     */
    public PropertyOperator(final Class target, PropertyOperatorCache cache)
-   throws SecurityException, PropertyException
+       throws PropertyException
    {
       
       Accessor acc;
@@ -712,10 +713,10 @@ final class PropertyOperator
     *
     */
    public Object getProperty(final Context context,
-   final Object instance,
-   final Object[] names,
-   int start, int end)
-   throws PropertyException
+                             final Object instance,
+                             final Object[] names,
+                             int start, int end)
+       throws PropertyException
    {
       String propName;
       Object nextPropValue = null;
@@ -895,11 +896,11 @@ final class PropertyOperator
     * @return true if we succeeded in setting, false otherwise
     */
    public boolean setProperty(Context context,
-   Object instance,
-   Object[] names,
-   Object value,
-   int pos)
-   throws PropertyException, NoSuchMethodException
+                              Object instance,
+                              Object[] names,
+                              Object value,
+                              int pos)
+       throws PropertyException, NoSuchMethodException
    {
       // names[pos] is what we could set from here
       
@@ -991,7 +992,7 @@ final class PropertyOperator
     * @return an iterator representing the current object's list
     */
    public Iterator findIterator(Object instance)
-   throws PropertyException
+       throws PropertyException
    {
       if (iteratorMethod != null)
       {
@@ -1021,7 +1022,7 @@ final class PropertyOperator
     * @return return value of the method
     */
    static Object invoke(Method meth, Object instance, Object[] args)
-   throws PropertyException
+       throws PropertyException
    {
       try
       {
@@ -1109,7 +1110,7 @@ abstract class Accessor
     * Unary get
     */
    Object get(Object instance)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       throw new PropertyException("BUG in PropertyOperator.java!");
    }
@@ -1118,25 +1119,25 @@ abstract class Accessor
     * Unary set
     */
    boolean set(Object instance, Object value)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       throw new PropertyException("BUG in PropertyOperator.java!");
    }
    
    /**
-    * Binary get
+    * Binary get.
     */
    Object get(Object instance, String subName)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       throw new PropertyException("BUG in PropertyOperator.java!");
    }
    
    /**
-    * Binary
+    * Binary.
     */
    boolean set(Object instance, String subName, Object value)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       throw new PropertyException("BUG in PropertyOperator.java!");
    }
@@ -1146,7 +1147,7 @@ abstract class Accessor
     * Direct get
     */
    Object get(Object instance, Object[] args)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       throw new PropertyException("BUG in PropertyOperator.java!");
    }
@@ -1169,7 +1170,7 @@ final class FieldAccessor extends Accessor
    }
    
    final Object get(final Object instance)
-   throws PropertyException
+       throws PropertyException
    {
       try
       {
@@ -1184,7 +1185,7 @@ final class FieldAccessor extends Accessor
    }
    
    final boolean set(final Object instance, final Object value)
-   throws PropertyException
+       throws PropertyException
    {
       try
       {
@@ -1213,7 +1214,7 @@ final class LengthAccessor extends Accessor
    }
    
    final Object get(final Object instance)
-   throws PropertyException
+       throws PropertyException
    {
       try
       {
@@ -1228,7 +1229,7 @@ final class LengthAccessor extends Accessor
    }
    
    final boolean set(final Object instance, final Object value)
-   throws PropertyException
+       throws PropertyException
    {
       throw new PropertyException("Cannot set length of array");
    }
@@ -1255,7 +1256,7 @@ final class DirectAccessor extends Accessor
    }
    
    final Object get(Object instance, Object[] args)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       Class[] types = new Class[args.length];
       for (int i = 0; i < args.length; i++)
@@ -1316,7 +1317,7 @@ abstract class MethodAccessor extends Accessor
    abstract int numArgsSet();
    
    MethodAccessor(final String name, final Method m, final Class[] params)
-   throws PropertyException
+       throws PropertyException
    {
       super(name);
       addMethod(m, params);
@@ -1347,7 +1348,7 @@ abstract class MethodAccessor extends Accessor
    }
    
    final void addMethod(final Method m, Class[] params)
-   throws PropertyException
+       throws PropertyException
    {
       
       final int setArgsLength = numArgsSet();
@@ -1395,7 +1396,7 @@ abstract class MethodAccessor extends Accessor
    }
    
    final boolean setImpl(final Object inst, final Object[] args)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       //which method to use? check params for first match
       for (int i = 0; i < setCount; i++)
@@ -1433,7 +1434,7 @@ final class UnaryMethodAccessor extends MethodAccessor
 {
    
    UnaryMethodAccessor(final String name, final Method m, final Class[] params)
-   throws PropertyException
+       throws PropertyException
    {
       super(name, m, params);
    }
@@ -1449,13 +1450,13 @@ final class UnaryMethodAccessor extends MethodAccessor
    }
    
    final Object get(final Object instance)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       return PropertyOperator.invoke(_getMethod, instance, null);
    }
    
    final boolean set(final Object instance, final Object value)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       Object[] args =
       {value};
@@ -1468,7 +1469,7 @@ final class BinaryMethodAccessor extends MethodAccessor
 {
    
    BinaryMethodAccessor(String name, Method m, Class[] params)
-   throws PropertyException
+       throws PropertyException
    {
       super(name, m, params);
    }
@@ -1484,7 +1485,7 @@ final class BinaryMethodAccessor extends MethodAccessor
    }
    
    final Object get(final Object instance, String prop)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       Object[] args =
       {prop};
@@ -1492,7 +1493,7 @@ final class BinaryMethodAccessor extends MethodAccessor
    }
    
    final boolean set(final Object instance, String prop, Object value)
-   throws PropertyException, NoSuchMethodException
+       throws PropertyException, NoSuchMethodException
    {
       Object[] args =
       {prop, value};
