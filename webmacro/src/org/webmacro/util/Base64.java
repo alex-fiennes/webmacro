@@ -37,9 +37,11 @@ final public class Base64
     private static final byte UPPER_TWO = (byte) (64 + 128);
     private static final byte LOWER_SIX = (byte) (1 + 2 + 4 + 8 + 16 + 32);
 
-
+    /* Disallow instantiation. */
+    private Base64() {}
+    
     /**
-     * Get the plain text version of a base64 encoded string
+     * Get the plain text version of a base64 encoded string.
      */
 
     final public static String decode (String encoded)
@@ -142,7 +144,7 @@ final public class Base64
     }
 
     /**
-     * Get the base64 encoded version of a plain text byte array
+     * Get the base64 encoded version of a plain text byte array.
      */
     final static public String encode (byte[] plain)
     {
@@ -263,7 +265,7 @@ final public class Base64
     }
 
     /**
-     * Turn a six-bit value into a base64 digit
+     * Turn a six-bit value into a base64 digit.
      */
     static private char base64 (byte sixBits)
     {
@@ -298,7 +300,7 @@ final public class Base64
 
 
     /**
-     * Test harness
+     * Test harness.
      */
     public static void main (String arg[])
     {

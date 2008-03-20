@@ -11,9 +11,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
- * CheckTemplates
- *
- * Program which uses the WebMacro parser to validate templates
+ * Program which uses the WebMacro parser to validate templates.
  *
  * @author Brian Goetz
  */
@@ -24,6 +22,8 @@ public class CheckTemplates
     private static Parser parser;
     private static Broker broker;
 
+    private CheckTemplates() {}
+    
     public static void parseTemplate (String name, Reader in)
     {
         try
