@@ -23,10 +23,15 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-import org.webmacro.util.Named;
-
 import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
+import org.webmacro.util.Named;
 
 // PRIMARY CLASS: Variable
 
@@ -88,7 +93,7 @@ public abstract class Variable implements Macro, Visitable
     private String _vname;
 
     /**
-     * The name as an array
+     * The name as an array.
      */
     protected Object[] _names;
 
@@ -125,7 +130,7 @@ public abstract class Variable implements Macro, Visitable
     }
 
     /**
-     * Like getPropertyNames, but only works if isSimpleName is true
+     * Like getPropertyNames, but only works if isSimpleName is true.
      */
     public final String getName ()
     {
@@ -136,7 +141,7 @@ public abstract class Variable implements Macro, Visitable
 
     /**
      * Returns true if the Variable describes a simple name (one with only
-     * one element)
+     * one element).
      */
     public boolean isSimpleName ()
     {
@@ -269,7 +274,7 @@ public abstract class Variable implements Macro, Visitable
     }
 
     /**
-     * Helper method to construct a String name from a Object[] name
+     * Helper method to construct a String name from a Object[] name.
      */
     final static String makeName (Object[] names)
     {
@@ -304,7 +309,7 @@ public abstract class Variable implements Macro, Visitable
     public abstract String toString ();
 
     /**
-     * Return the canonical name for this variable
+     * Return the canonical name for this variable.
      */
     public synchronized String getVariableName ()
     {
