@@ -138,7 +138,8 @@
         <!-- No padding -->
         <module name="ParenPad"/>
         <!-- None allowed -->
-        <module name="TabCharacter" />
+        <!-- Eeek we have loads -->
+        <!-- module name="TabCharacter" / -->
         <module name="WhitespaceAfter">
          <property name="tokens" value="SEMI"/>
          <!-- Not TYPECAST or COMMA -->
@@ -200,7 +201,7 @@
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
-        <module name="ArrayTypeStyle" />
+        <!-- module name="ArrayTypeStyle" / -->
         <!-- We don't do this at all -->
         <!-- module name="FinalParameters"/ -->
         <!-- Bad check, it picks up on javadoc with terminal spaces -->
