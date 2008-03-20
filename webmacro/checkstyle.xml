@@ -63,7 +63,6 @@
         </module>
 
 
-
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="MemberName">
@@ -139,7 +138,7 @@
         <!-- No padding -->
         <module name="ParenPad"/>
         <!-- None allowed -->
-        <module name="TabCharacter">
+        <module name="TabCharacter" />
         <module name="WhitespaceAfter">
          <property name="tokens" value="SEMI"/>
          <!-- Not TYPECAST or COMMA -->
@@ -150,7 +149,7 @@
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <!-- module name="ModifierOrder"/ -->
-        <module name="RedundantModifier">
+        <module name="RedundantModifier"/>
 
 
         <!-- Checks for blocks. You know, those {}'s         -->
@@ -200,7 +199,7 @@
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
-        <module name="ArrayTypeStyle">
+        <module name="ArrayTypeStyle" />
         <!-- We don't do this at all -->
         <!-- module name="FinalParameters"/ -->
         <!-- Bad check, it picks up on javadoc with terminal spaces -->
@@ -214,3 +213,4 @@
     </module>
 
 </module>
+
