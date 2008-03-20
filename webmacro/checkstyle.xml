@@ -36,7 +36,7 @@
 
         <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
-        <property name="tabWidth" value="2"/>
+        <property name="tabWidth" value="4"/>
         <!-- module name="LeftCurly">
           <property name="option" value="eol"/>
           <property name="tokens"
@@ -52,11 +52,11 @@
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-        <module name="JavadocMethod">
-          <property name="scope" value="nothing"/>
-        </module>
         <module name="JavadocType">
           <property name="scope" value="public"/>
+        </module>
+        <module name="JavadocMethod">
+          <property name="scope" value="nothing"/>
         </module>
         <module name="JavadocVariable">
           <property name="scope" value="nothing"/>
@@ -121,7 +121,12 @@
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-        <module name="EmptyForIteratorPad"/>
+        <module name="EmptyForIteratorPad">
+          <property name="option" value="space" />
+        </module>
+        <module name="EmptyForInitializerPad">
+          <property name="option" value="space" />
+        </module>
         <module name="NoWhitespaceAfter">
          <property name="tokens" value="TYPECAST"/>
         </module>
@@ -134,7 +139,7 @@
         <!-- No padding -->
         <module name="ParenPad"/>
         <!-- None allowed -->
-        <!-- module name="TabCharacter"/ -->
+        <module name="TabCharacter">
         <module name="WhitespaceAfter">
          <property name="tokens" value="SEMI"/>
          <!-- Not TYPECAST or COMMA -->
@@ -145,13 +150,14 @@
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <!-- module name="ModifierOrder"/ -->
-        <!-- module name="RedundantModifier"/ -->
+        <module name="RedundantModifier">
 
 
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
+        <!-- We have quite a few, all OK -->
+        <!-- module name="EmptyBlock"/ -->
         
         <module name="NeedBraces">
          <property name="tokens" 
@@ -173,16 +179,10 @@
           <!-- ie ignore for params -->
         </module>
         <module name="IllegalInstantiation"/>
-        <!-- Suppressed in  poem generated code  -->
         <module name="InnerAssignment"/>
-        <!-- Suppressed in  poem generated code  -->
-        <!-- But we have another xx occurrances -->
         <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
-        <!-- We have loads of unchecked exceptions -->
-        <!-- also subclasses of PoemException in generated-->
-        <!-- bad check in my view -->
-        <!-- module name="RedundantThrows"/ -->
+        <module name="RedundantThrows" />
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
@@ -192,16 +192,15 @@
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
-        <!-- We do use public fields responsibly sometimes -->
-        <!-- module name="VisibilityModifier">
+        <module name="VisibilityModifier">
          <property name="protectedAllowed" value="true"/>
          <property name="packageAllowed" value="true"/>
-        </module -->
+        </module>
 
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
-        <!-- module name="ArrayTypeStyle"/ -->
+        <module name="ArrayTypeStyle">
         <!-- We don't do this at all -->
         <!-- module name="FinalParameters"/ -->
         <!-- Bad check, it picks up on javadoc with terminal spaces -->
