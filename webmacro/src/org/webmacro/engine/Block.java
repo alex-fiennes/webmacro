@@ -78,7 +78,7 @@ final public class Block implements Macro, Visitable
     /**
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.
-     * <p>
+     * 
      * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
@@ -316,8 +316,6 @@ final public class Block implements Macro, Visitable
     }
 
     /**
-     * same as out but returns a String
-     * <p>
      * @exception PropertyException if required data was missing from context
      */
     final public Object evaluate (Context context) throws PropertyException
@@ -332,7 +330,9 @@ final public class Block implements Macro, Visitable
         }
         catch (IOException e)
         {
-            context.getBroker().getLog("engine", "parsing and template execution").error("StringWriter threw an IOException!", e);
+            context.getBroker().getLog("engine", 
+                                       "parsing and template execution")
+                .error("StringWriter threw an IOException!", e);
             return null;
         }
     }
