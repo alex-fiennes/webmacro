@@ -2,8 +2,8 @@ package org.webmacro.tools;
 /**
  * Subclass of WMTemplateAntTask for naming
  * EvalTemplates as the ant task to run.
+ * 
  * @author lane
- *
  */
 public class TemplateEvalAntTask extends WMTemplateAntTask
 {
@@ -12,6 +12,7 @@ public class TemplateEvalAntTask extends WMTemplateAntTask
     {
         super();
     }
+    
     /**
      * Returns org.webmacro.tools.EvalTemplates
      */
