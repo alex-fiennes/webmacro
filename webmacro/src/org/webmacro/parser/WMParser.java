@@ -20,18 +20,18 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-/**
- * @author Brian Goetz
- */
-
 package org.webmacro.parser;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 
 import org.webmacro.Broker;
 import org.webmacro.engine.BlockBuilder;
 import org.webmacro.engine.Parser;
 
+/**
+ * @author Brian Goetz
+ */
 public class WMParser implements Parser
 {
 
