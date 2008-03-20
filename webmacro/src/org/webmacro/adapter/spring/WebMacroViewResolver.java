@@ -95,9 +95,9 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
         {
             try
             {
-                return webMacro == null
-                    ? webMacro = new WM(servletcontext,classLoader, null)
-                    : webMacro; // Can we find the servlet here using a bean context?
+                if (webMacro == null) // Can we find the servlet here using a bean context?
+                    webMacro = new WM(servletcontext,classLoader, null);
+                return webMacro; 
             }
             catch (InitException initEx)
             {
