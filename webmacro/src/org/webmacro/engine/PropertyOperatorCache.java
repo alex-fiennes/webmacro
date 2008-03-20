@@ -20,20 +20,39 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.engine;
-
-import org.webmacro.*;
-import org.webmacro.resource.CacheManager;
-import org.webmacro.resource.SimpleCacheManager;
-import org.webmacro.util.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.PropertyException;
+import org.webmacro.resource.CacheManager;
+import org.webmacro.resource.SimpleCacheManager;
+import org.webmacro.util.ArrayIterator;
+import org.webmacro.util.EnumIterator;
+import org.webmacro.util.PrimitiveArrayIterator;
+import org.webmacro.util.PropertyMethod;
+import org.webmacro.util.Settings;
+
+/**
+ * @author Brian Goetz
+ * @since 28 Apr 2001
+ *
+ */
 final public class PropertyOperatorCache
 {
    
@@ -54,7 +73,9 @@ final public class PropertyOperatorCache
       cacheManager = b.getSetting("PropertyOperator.CacheManager");
       if (cacheManager == null || cacheManager.equals(""))
       {
-         _log.info("CachingProvider: No cache manager specified for PropertyOperator, using SimpleCacheManager");
+         _log.info("CachingProvider: " + 
+                 "No cache manager specified for PropertyOperator, " + 
+                 "using SimpleCacheManager");
          _cache = new SimpleCacheManager();
       }
       else
@@ -82,7 +103,8 @@ final public class PropertyOperatorCache
             try
             {
                Class c = Class.forName(className);
-               String okMethList = b.getSetting("RestrictedClasses.AllowedMethods." + className);
+               String okMethList = b.getSetting(
+                       "RestrictedClasses.AllowedMethods." + className);
                ArrayList okMeths = null;
                if (okMethList != null)
                {
@@ -141,6 +163,7 @@ final public class PropertyOperatorCache
     * Attempt to retrieve a property using the rules of property
     * introspection described above. Begin reading names at position
     * start in the array of names.
+    * 
     * @param context is used to resolve sub-properties in arguments
     * @param instance is the root of introspection
     * @param names property names, one per array entry
@@ -166,7 +189,7 @@ final public class PropertyOperatorCache
    }
    
    /**
-    * Calls getProperty(context, instance, names, 0)
+    * Calls getProperty(context, instance, names, 0).
     */
    final public Object getProperty(final Context context,
    final Object instance,
@@ -180,6 +203,7 @@ final public class PropertyOperatorCache
    /**
     * Given a property description name, attempt to set the property
     * value to the supplied object.
+    * 
     * @param context An object containing a property
     * @param names The string names of that property
     * @param value the new value the property is to be set to
@@ -227,6 +251,7 @@ final public class PropertyOperatorCache
    /**
     * Evaluate the supplied object and work out a way to return it
     * as an iterator.
+    * 
     * @param instance an object believed to represent a list
     * @return an Iterator that iterates through that list
     * @exception PropertyException could not extract iterator from instance
@@ -819,7 +844,7 @@ final class PropertyOperator
          instance.getClass().getName());
       }
       
-      if ( start <= end)
+      if (start <= end)
       {
          try
          {
