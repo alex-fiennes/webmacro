@@ -25,7 +25,6 @@ package org.webmacro.resource;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
-import org.webmacro.Provider;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
@@ -36,7 +35,7 @@ import org.webmacro.util.Settings;
  * 
  * @author Brian Goetz
  * @since 0.96
- * @see Provider
+ * @see org.webmacro.Provider
  * @see BrokerTemplateProviderHelper
  */
 final public class BrokerTemplateProvider extends CachingProvider
