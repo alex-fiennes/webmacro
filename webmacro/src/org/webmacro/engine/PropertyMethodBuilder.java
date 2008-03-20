@@ -20,12 +20,15 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.engine;
 
 import org.webmacro.Macro;
 import org.webmacro.util.PropertyMethod;
 
+/**
+ * @author justin
+ * @since 13/10/1999
+ */
 public class PropertyMethodBuilder implements Builder
 {
 
