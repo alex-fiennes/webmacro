@@ -34,12 +34,15 @@ import org.webmacro.engine.Variable;
 import java.io.IOException;
 
 /**
+ * Syntax:
+ * <pre>
  * #count $i from 1 to 100 [step 1]
- *
+ * </pre>
+ * 
  * @author Eric B. Ridge (ebr@tcdi.com)
  * @since 1.1b1
  */
-public class CountDirective extends org.webmacro.directive.Directive
+public class CountDirective extends Directive
 {
 
     private static final int COUNT_ITERATOR = 1;
@@ -51,19 +54,21 @@ public class CountDirective extends org.webmacro.directive.Directive
     private static final int COUNT_STEP = 7;
     private static final int COUNT_BODY = 8;
 
-    private static final Directive.ArgDescriptor[] _args = new Directive.ArgDescriptor[]{
-        new Directive.LValueArg(COUNT_ITERATOR),
-        new Directive.KeywordArg(COUNT_FROM_K, "from"),
-        new Directive.RValueArg(COUNT_START),
-        new Directive.KeywordArg(COUNT_TO_K, "to"),
-        new Directive.RValueArg(COUNT_END),
-        new Directive.OptionalGroup(2),
-        new Directive.KeywordArg(COUNT_STEP_K, "step"),
-        new Directive.RValueArg(COUNT_STEP),
-        new Directive.BlockArg(COUNT_BODY),
-    };
+    private static final Directive.ArgDescriptor[] _args = 
+        new Directive.ArgDescriptor[]{
+            new Directive.LValueArg(COUNT_ITERATOR),
+            new Directive.KeywordArg(COUNT_FROM_K, "from"),
+            new Directive.RValueArg(COUNT_START),
+            new Directive.KeywordArg(COUNT_TO_K, "to"),
+            new Directive.RValueArg(COUNT_END),
+            new Directive.OptionalGroup(2),
+            new Directive.KeywordArg(COUNT_STEP_K, "step"),
+            new Directive.RValueArg(COUNT_STEP),
+            new Directive.BlockArg(COUNT_BODY),
+       };
 
-    private static final DirectiveDescriptor _desc = new DirectiveDescriptor("count", null, _args, null);
+    private static final DirectiveDescriptor _desc = 
+        new DirectiveDescriptor("count", null, _args, null);
 
     public static DirectiveDescriptor getDescriptor ()
     {
@@ -78,7 +83,8 @@ public class CountDirective extends org.webmacro.directive.Directive
 
     private int _start, _end, _step = Integer.MAX_VALUE;
 
-    public Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
+    public Object build (DirectiveBuilder builder, BuildContext bc) 
+        throws BuildException
     {
         try
         {
@@ -93,7 +99,8 @@ public class CountDirective extends org.webmacro.directive.Directive
         _objStep = builder.getArg(COUNT_STEP, bc);
         _body = (Block) builder.getArg(COUNT_BODY, bc);
 
-        // attempt to go ahead and force the start, end, and step values into primitive ints
+        // attempt to go ahead and force the start, end, and step values 
+        // into primitive ints
         if (_objStart != null)
         {
             if (_objStart instanceof Number)
@@ -137,7 +144,8 @@ public class CountDirective extends org.webmacro.directive.Directive
         return this;
     }
 
-    public void write (FastWriter out, Context context) throws PropertyException, IOException
+    public void write (FastWriter out, Context context) 
+        throws PropertyException, IOException
     {
         int start = _start, end = _end, step = _step;
         boolean error = false;
@@ -155,14 +163,15 @@ public class CountDirective extends org.webmacro.directive.Directive
         }
         catch (Exception e)
         {
-           out.write(context.getEvaluationExceptionHandler().expand(_iterator, context, e));
+           out.write(context.getEvaluationExceptionHandler()
+                   .expand(_iterator, context, e));
            error = true;
         }
 
         if (!error)
         {
            // Check if no step explicitly assigned, if so auto-detect it
-           if (step == Integer.MAX_VALUE )
+           if (step == Integer.MAX_VALUE)
            {
                step = (start > end) ? -1 : +1;
            }
@@ -187,7 +196,8 @@ public class CountDirective extends org.webmacro.directive.Directive
            {
               PropertyException pe = new PropertyException.UndefinedVariableException();
               pe.setMessage("#count: step cannot be 0.");
-              out.write(context.getEvaluationExceptionHandler().expand(_iterator, context, pe));
+              out.write(context.getEvaluationExceptionHandler()
+                      .expand(_iterator, context, pe));
            }
         }
     }
