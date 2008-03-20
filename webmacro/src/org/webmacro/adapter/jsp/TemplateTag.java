@@ -68,22 +68,22 @@ public class TemplateTag extends BodyTagSupport
     private static final String TEMPORARY_ENCODING = "UTF-8";
 
     /**
-     * Name used for the JSP context attributes bean when in the WM context
+     * Name used for the JSP context attributes bean when in the WM context.
      */
     private static final String ATTRIBUTES_HELPER_NAME = "Attributes";
 
     /**
-     * Name used for an optional non-Map context object if supplied
+     * Name used for an optional non-Map context object if supplied.
      */
     private static final String CONTEXT_VARIABLE_NAME = "Context";
 
     /**
-     * Our shared WebMacro instance
+     * Our shared WebMacro instance.
      */
     private WebMacro webmacro;
 
     /**
-     * Optional JSP-page supplied context variables to use
+     * Optional JSP-page supplied context variables to use.
      */
     private Object context;
 
@@ -108,7 +108,7 @@ public class TemplateTag extends BodyTagSupport
     }
 
     /**
-     * Set the src of an external template to use
+     * Set the src of an external template to use.
      * @param src
      */
     public void setSrc(String src)
@@ -243,7 +243,7 @@ public class TemplateTag extends BodyTagSupport
                 else if (bodyContent != null)
                 {
 
-                    templ = new StringTemplate( webmacro.getBroker(),
+                    templ = new StringTemplate(webmacro.getBroker(),
                             bodyContent.getString(),
                             "WebMacro script in JSP page "+servletName);
                 }
@@ -285,7 +285,7 @@ public class TemplateTag extends BodyTagSupport
     }
 
     /**
-     * Reset the tag
+     * Reset the tag.
      */
     public void release()
     {
