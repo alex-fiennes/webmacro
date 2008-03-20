@@ -31,12 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpUtils;
 
 /**
- * Provide Template with access to url handing routines
+ * Provide Template with access to url handing routines.
  * @author Sebastian Kanthak (mailto:skanthak@muehlheim.de)
  */
 public class URLTool extends ContextTool
 {
 
+    /**
+     * Tool implementation.
+     */
     public class URLToolImpl
     {
 
@@ -49,7 +52,7 @@ public class URLTool extends ContextTool
         }
 
         /**
-         * Get the url thas was used to access this page,
+         * Get the url that was used to access this page,
          * as it is returned by HttpUtils.getRequestURL.
          * @return URL used to access this page without query string
          */
@@ -59,7 +62,7 @@ public class URLTool extends ContextTool
         }
 
         /**
-         * Return the complete url, that was uses to access this page
+         * Return the complete url, that was used to access this page
          * including path_info and query_string if present.
          * <br>
          * This method uses HttpUtils.getRequestURL to

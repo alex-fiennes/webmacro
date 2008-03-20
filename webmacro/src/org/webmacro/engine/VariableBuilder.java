@@ -23,7 +23,7 @@
 
 package org.webmacro.engine;
 
-
+/** Gets variable values from context. */
 public class VariableBuilder implements Builder
 {
 

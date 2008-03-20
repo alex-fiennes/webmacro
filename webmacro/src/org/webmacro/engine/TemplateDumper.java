@@ -28,6 +28,9 @@ import org.webmacro.WM;
 
 import java.io.InputStreamReader;
 
+/**
+ * Dump a template.
+ */
 public class TemplateDumper extends TemplateVisitor
 {
 

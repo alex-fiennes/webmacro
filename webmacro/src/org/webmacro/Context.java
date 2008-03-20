@@ -72,14 +72,14 @@ public class Context implements Map, Cloneable
             = org.webmacro.engine.UndefinedMacro.getInstance();
 
     /**
-     * Create a new Context relative to the default WM instance
+     * Create a new Context relative to the default WM instance.
      */
     public Context() throws InitException {
         this(Broker.getBroker());
     }
 
     /**
-     * Create a new Context relative to the supplied broker
+     * Create a new Context relative to the supplied broker.
      */
     public Context (Broker broker)
     {
@@ -87,6 +87,7 @@ public class Context implements Map, Cloneable
         _log = broker.getLog("context", "property and evaluation errors");
     }
 
+    /** Holder for template place. */
     public final static class TemplateEvaluationContext
     {
 //      public Block _curBlock;
@@ -147,7 +148,7 @@ public class Context implements Map, Cloneable
 
 
     /**
-     * Get the instance of the Broker for this request
+     * Get the instance of the Broker for this request.
      */
     public final Broker getBroker ()
     {
@@ -187,7 +188,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Get the EvaluationExceptionHandler
+     * Get the EvaluationExceptionHandler.
      */
     public EvaluationExceptionHandler getEvaluationExceptionHandler ()
     {
@@ -203,7 +204,7 @@ public class Context implements Map, Cloneable
 
 
     /**
-     * Set a new EvaluationExceptionHandler
+     * Set a new EvaluationExceptionHandler.
      */
     public void setEvaluationExceptionHandler (EvaluationExceptionHandler eeh)
     {
@@ -287,7 +288,7 @@ public class Context implements Map, Cloneable
 
     /**
      * Convenience method for putting static classes into the context, wraps the
-     * class instance in a wrapper
+     * class instance in a wrapper.
      */
     public final Object put (Object name, Class c)
     {
@@ -419,7 +420,7 @@ public class Context implements Map, Cloneable
 
     /**
      * Same as get(name) but can be overridden by subclasses to do
-     * something different
+     * something different.
      */
     public Object getProperty (Object name) throws PropertyException
     {
@@ -428,7 +429,7 @@ public class Context implements Map, Cloneable
 
     /**
      * Same as put(name,value) but can be overridden by subclasses to do
-     * something different
+     * something different.
      */
     public boolean setProperty (Object name, Object value)
             throws PropertyException
@@ -439,7 +440,7 @@ public class Context implements Map, Cloneable
 
     /**
      * Same as get(Object names[]) but can be overridden by subclasses
-     * to behave differently
+     * to behave differently.
      */
     public Object getProperty (Object[] names) throws PropertyException
     {
@@ -448,7 +449,7 @@ public class Context implements Map, Cloneable
 
     /**
      * Same as set(Object names[], Object value) but can be overridden
-     * by subclasses to behave differently
+     * by subclasses to behave differently.
      * @return whether or not the set was successful
      */
     public boolean setProperty (Object[] names, Object value)
@@ -475,7 +476,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public boolean containsKey (Object key)
     {
@@ -483,7 +484,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final boolean containsValue (Object value)
     {
@@ -491,7 +492,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final Set entrySet ()
     {
@@ -499,7 +500,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final boolean isEmpty ()
     {
@@ -507,7 +508,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final Set keySet ()
     {
@@ -515,7 +516,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final void putAll (Map t)
     {
@@ -523,7 +524,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final Object remove (Object key)
     {
@@ -531,7 +532,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final int size ()
     {
@@ -539,7 +540,7 @@ public class Context implements Map, Cloneable
     }
 
     /**
-     * Method from Map interface, operates on underlying Map
+     * Method from Map interface, operates on underlying Map.
      */
     public final Collection values ()
     {
@@ -550,7 +551,8 @@ public class Context implements Map, Cloneable
     //////////////////////////////////////////////////////////////
 
     /**
-     * Dump the variables (and their values) contained in this Context.  Output is similiar to
+     * Dump the variables (and their values) contained in this Context.  
+     * Output is similiar to
      * <code>java.util.HashMap.toString()</code>
      */
     public String toString ()

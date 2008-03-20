@@ -23,7 +23,7 @@
 
 package org.webmacro.engine;
 
-
+/** Returns null. */
 final public class NullBuilder implements Builder
 {
 
