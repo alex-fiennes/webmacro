@@ -193,14 +193,15 @@
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
-        <module name="VisibilityModifier">
+        <!-- module name="VisibilityModifier">
          <property name="protectedAllowed" value="true"/>
          <property name="packageAllowed" value="true"/>
-        </module>
+        </module-->
 
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
+        <!-- We do have C style arrays -->
         <!-- module name="ArrayTypeStyle" / -->
         <!-- We don't do this at all -->
         <!-- module name="FinalParameters"/ -->
