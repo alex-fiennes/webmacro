@@ -126,7 +126,9 @@ public class TemplateTag extends BodyTagSupport
      */
     public WebMacro getWebMacro() throws InitException
     {
-        return webmacro == null ? webmacro = makeWM() : webmacro;
+        if (webmacro == null)
+            webmacro = makeWM();
+        return webmacro;
     }
 
     /**
