@@ -23,15 +23,22 @@
 
 package org.webmacro.resource;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * This is the canonical provider for mapping URLs to Handlers. The
@@ -41,7 +48,6 @@ import java.net.URLConnection;
  * You could implement your own version of this class to return
  * handlers based on whatever criteria you wanted.
  */
-
 final public class UrlProvider extends CachingProvider
 {
 
@@ -54,7 +60,7 @@ final public class UrlProvider extends CachingProvider
     private String defaultEncoding;
 
     /**
-     * We serve up "url" type resources
+     * We serve up "url" type resources.
      */
     final public String getType ()
     {
