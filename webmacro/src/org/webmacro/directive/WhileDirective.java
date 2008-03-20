@@ -7,12 +7,6 @@
  * See www.webmacro.org for more information on the WebMacro project. @author Mike Weerdenburg @author Marcel Huijkman
  *
  *
- * @author Mike Weerdenburg
- * @author Marcel Huijkman
- * 
- * @since   14-01-2005
- *
- * @version 02-03-2005
  */
 
 package org.webmacro.directive;
@@ -37,12 +31,14 @@ import org.webmacro.engine.UndefinedMacro;
  * create a loop without a limit, this could hang your template! Introduced at
  * release 2.0 as an experimental directive.
  * 
- * <pre>
- * TODO: Introduce unit test and mainline or drop the directive.
- * </pre>
+ * @todo Introduce unit test and mainline or drop the directive.
  * 
+ * @author Mike Weerdenburg
+ * @author Marcel Huijkman
+ * 
+ * @since   14-01-2005
+ * @version 02-03-2005
  */
-
 class WhileDirective extends Directive
 {
     private static final int WHILE_COND = 1;
@@ -53,13 +49,13 @@ class WhileDirective extends Directive
 
     private static final int WHILE_BLOCK = 4;
 
-    /* the condition as Object */
+    /* The condition as Object. */
     private Object _obCondition;
 
-    /* the condition as a Macro */
+    /* The condition as a Macro. */
     private Macro _macroCondition = null;
 
-    /* the condition as a boolean */
+    /* The condition as a boolean. */
     private boolean boolExpression = false;
 
     private Block _whileBlock;
@@ -87,7 +83,7 @@ class WhileDirective extends Directive
     //
 
     /**
-     * the name given to the directive by webmacro configuration.
+     * The name given to the directive by webmacro configuration.
      */
     protected String _directiveName;
 
@@ -139,7 +135,7 @@ class WhileDirective extends Directive
             }
         }
 
-        // evaluate the condition against the current context.
+        // evaluate the condition against the current context
         if (_macroCondition != null)
             boolExpression = Expression.isTrue(_macroCondition
                     .evaluate(context));
@@ -174,3 +170,4 @@ class WhileDirective extends Directive
         v.endDirective();
     }
 }
+
