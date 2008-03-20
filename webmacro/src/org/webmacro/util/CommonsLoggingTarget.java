@@ -2,6 +2,7 @@ package org.webmacro.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.webmacro.WebMacroRuntimeException;
 
 import java.util.Date;
 
@@ -22,7 +23,8 @@ public class CommonsLoggingTarget implements LogTarget
 
     public void log(Date date, String type, String level, String message, Throwable e)
     {
-        switch (LogSystem.getLevel(level))
+        int logLevel = LogSystem.getLevel(level);
+        switch (logLevel)
         {
             case LogSystem.DEBUG:
                 log.debug(message, e);
@@ -39,6 +41,9 @@ public class CommonsLoggingTarget implements LogTarget
             case LogSystem.WARNING:
                 log.warn(message, e);
                 break;
+            default :
+                throw new WebMacroRuntimeException(
+                        "Unanticipated value for LogLevel: (" + level + ") " + logLevel); 
         }
     }
 
@@ -67,6 +72,9 @@ public class CommonsLoggingTarget implements LogTarget
             case LogSystem.WARNING:
                 sub = log.isWarnEnabled();
                 break;
+            default :
+                throw new WebMacroRuntimeException(
+                        "Unanticipated value for LogLevel: " + logLevel); 
         }
         return sub;
     }
