@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 
 
 /**
- * This provides an iterator interface to an array of primitives
+ * This provides an iterator interface to an array of primitives.
  */
 final public class PrimitiveArrayIterator implements Iterator
 {
@@ -38,7 +38,7 @@ final public class PrimitiveArrayIterator implements Iterator
     private int pos;
 
     /**
-     * Construct an iterator given an enumeration
+     * Construct an iterator given an enumeration.
      */
     public PrimitiveArrayIterator (Object array)
     {
@@ -51,7 +51,7 @@ final public class PrimitiveArrayIterator implements Iterator
     }
 
     /**
-     * Return true if we have not yet reached the end of the enumeration
+     * Return true if we have not yet reached the end of the enumeration.
      */
     final public boolean hasNext ()
     {
@@ -62,7 +62,7 @@ final public class PrimitiveArrayIterator implements Iterator
      * Advance the iterator and return the next value. Return null if we
      * reach the end of the enumeration.
      */
-    final public Object next () throws NoSuchElementException
+    final public Object next ()
     {
         if (pos < _size)
         {
@@ -75,9 +75,9 @@ final public class PrimitiveArrayIterator implements Iterator
     }
 
     /**
-     * Unsupported
+     * Unsupported.
      */
-    final public void remove () throws UnsupportedOperationException
+    final public void remove ()
     {
         throw new UnsupportedOperationException();
     }
