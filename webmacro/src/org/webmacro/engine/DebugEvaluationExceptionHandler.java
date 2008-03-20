@@ -21,44 +21,6 @@
  */
 
 
-/**
- * DebugEvaluationExceptionHandler
- *
- * An implementation of EvaluationExceptionHandler which throws an exception
- * whenever it is called.  The error is stored back into the webcontect and
- * could be handled by the templatewriter.
- *
- * We use this in case of a live-situation to mail the error, or in other
- * situations to display the error rightaway.
- *
- * Example:
- *
- * #if ( $Variable.isDefined("WMERROR") )
- * {
- *	   Error(s):<HR>
- *	   #foreach $item in $WMERROR
- *	   {
- *		   $item<BR>
- *	   }
- * }
- *
- * This will generally cause the exception to be
- * displayed to the user -- useful for debugging.
- *
- * @author Marcel Huijkman (Thanks to Brian Goetz & Keats Kirsch)
- *
- *	@since	03-12-2001
- *	@version	17-07-2002
- *
- */
-
-/*
-	ChangeLog:
-
-	17-07-2002
-	could not compile;
-
-*/
 package org.webmacro.engine;
 
 import org.webmacro.Broker;
@@ -69,6 +31,34 @@ import org.webmacro.util.Settings;
 
 import java.util.ArrayList;
 
+/**
+ * An implementation of EvaluationExceptionHandler which throws an exception
+ * whenever it is called.  The error is stored back into the webcontect and
+ * could be handled by the templatewriter.
+ *
+ * We use this in case of a live-situation to mail the error, or in other
+ * situations to display the error rightaway.
+ *
+ * Example:
+ * <pre>
+ * #if ( $Variable.isDefined("WMERROR") )
+ * {
+ *     Error(s):<HR>
+ *     #foreach $item in $WMERROR
+ *     {
+ *         $item<BR>
+ *     }
+ * }
+ * </pre>
+ * This will generally cause the exception to be
+ * displayed to the user -- useful for debugging.
+ *
+ * @author Marcel Huijkman (Thanks to Brian Goetz & Keats Kirsch)
+ *
+ *  @since  03-12-2001
+ *  @version    17-07-2002
+ *
+ */
 public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandler
 {
 
