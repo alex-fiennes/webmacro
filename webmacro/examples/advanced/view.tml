@@ -1,3 +1,5 @@
+#set $Response.ContentType="text/plain"
+#text #begin
 <html>
 
 #include "$ViewServerSupport.resourceDir/templates/Copyright.tml"
@@ -18,4 +20,4 @@
 </body>
 
 </html>
-
+#end

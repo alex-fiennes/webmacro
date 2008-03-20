@@ -1,3 +1,5 @@
+#set $Response.ContentType="text/plain"
+#text #begin
 <!--
 wizard.tml
 -->
@@ -31,3 +33,4 @@ wizard.tml
 </form>
 </table>
 
+#end

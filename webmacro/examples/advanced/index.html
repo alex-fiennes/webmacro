@@ -1,66 +1,66 @@
 <html>
-<center>
-Templates, Java Class Files, Further Reference
-<br>Last Updated 1-Oct-2005
-</center>
+<title>
+WebMacro usage examples
+</title>
+<body>
+<h2 align="center">
+WebMacro usage examples
+</h2>
+<h4 align="center">Last Updated 19-Mar-2008</h4>
 <p>
 These examples provide advanced usage of WebMacro and features in Release 2.
-These examples cannot be run out-of-the-box as can, for example, WebMacro Wiki.
+</p>
+<p>
 However, they provide a great insight into how WebMacro can be used to create
 text applications, web pages, source files, xml, and other text-based files. 
+</p>
 <p>
 <a href=list.tml>list.tml</a> Lists can be powerfully handled by getting to know the List 
 Context Tool and its methods. Here is a simple example of transforming default arrays to more powerful
 lists implementing the java.util.List interface and thus being uniformly managed by the List Tool.
+</p>
+<p>
+<em>
+The following examples are displayed for illustration but require other machinery 
+to actually be in place to be rendered.
+</em>
+</p>
 
 <p>
-<a href=wizard.tml>wizard.tml</a> An example of how to render a form relying exclusively on introspection
-obtain the "View", the labels, the controls, the values. Labels are rendered in a locale sensitive manner:
+<a href=wizard.tml>wizard.tml</a> An example of how to render a form relying exclusively on 
+introspection to obtain the "View", the labels, the controls, the values. 
+Labels are rendered in a locale sensitive manner:
 <pre>
 $field.MetaField.getLabel($User.Locale):
 </pre>
 achieves label localization in the WM script.
 
 <p>
-<a href=wizardform.tml>wizardform.tml</a> An example of to interact with server state variables
-and then how to evaluate conditions and parse in the correct template.
-
-<p>
-<a href=wizardform.tml>wizardform.tml</a> An example of to interact with server state variables
-and then how to evaluate conditions and parse in the correct template.
-
+<a href=wizardform.tml>wizardform.tml</a> An example of interacting with server state variables
+and how to evaluate conditions and parse in the correct template.
+</p>
 <p>
 <a href=view.tml>view.tml</a> An example of a complete object report showing the "peers" of a logical
 view. In most web apps, views will be linked together as logical pages.
+</p>
 
-<center>
-<p>
-<hr size=1 width=50%>
-The examples are best viewed with a text editor, not a browser.
-<p>
-
-<hr size=1 width=50%>
-<p>
-Other example resources:
-</center>
+<h3 align="center">
+Other example resources
+<h3>
 <p>
 <a href=http://wiki.webmacro.org/WebMacroScriptLanguage>Scripting</a> tutorial
 under development by Keats Kirsch.
-
+</p>
 <p>
 <a href=http://wiki.webmacro.org/SiteMap>Map</a> of the WM wiki site with many good development links.
 Be sure to check the date on the bottom of the page for when it was last edited. Some pages
 are out of date.
+</p>
 <p>
 Many have generously contributed ideas and approaches in the current
 distribution. Check these out for ideas on how to solve a particular
 problem using WebMacro.
-
-<p>
-<a href=http://www.wangjammers.com/ignition>Ignition</a> 
-For a comprehensive web builder based on WebMacro.
-
-
-
+</p>
+</body>
 </html>
 

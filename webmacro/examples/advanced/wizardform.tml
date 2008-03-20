@@ -1,3 +1,5 @@
+#set $Response.ContentType="text/plain"
+#text #begin
 <!--
 wizardform.tml
 -->
@@ -60,3 +62,4 @@ locale=$User.Locale
 	#parse "wizard.tml"
 	#parse "footer.tml"
 }
+#end
