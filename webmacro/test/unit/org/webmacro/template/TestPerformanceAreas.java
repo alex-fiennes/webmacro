@@ -86,7 +86,10 @@ public class TestPerformanceAreas extends TemplateTestCase
         PrivateValue priv = new PrivateValue();
         long value;
         Object object;
-    
+        Object eclipsePacifier1;
+        Object eclipsePacifier2;
+        long eclipsePacifierL1;
+        long eclipsePacifierL2;
         // the public
         start = System.currentTimeMillis();
         for (long index = 0; index < iterationCount; index++)
@@ -95,7 +98,12 @@ public class TestPerformanceAreas extends TemplateTestCase
             object = pub.object; // the get
             pub.object = this; // the set
             pub.value = index;
-
+            eclipsePacifier1 = object;
+            eclipsePacifier2 = eclipsePacifier1;
+            eclipsePacifier1 = eclipsePacifier2;
+            eclipsePacifierL1 = value;
+            eclipsePacifierL2 = eclipsePacifierL1;            
+            eclipsePacifierL1 = eclipsePacifierL2;            
         }
         tetPublicAccess = System.currentTimeMillis() - start;
 
