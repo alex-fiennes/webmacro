@@ -26,7 +26,10 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import org.webmacro.Context;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.StringMacro;
@@ -70,7 +73,7 @@ public class EvalDirective extends org.webmacro.directive.Directive
       return myDescr;
    }
 
-   /** Creates a new instance of EvalDirective */
+   /** Creates a new instance of EvalDirective. */
    public EvalDirective()
    {
    }
