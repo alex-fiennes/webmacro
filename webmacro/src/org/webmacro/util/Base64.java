@@ -229,7 +229,6 @@ final public class Base64
      * @exception NumberFormatException if base64 is not a base64 character
      */
     private static byte sixBits (byte base64)
-            throws NumberFormatException
     {
 
         if ((base64 >= 'A') && (base64 <= 'Z'))
