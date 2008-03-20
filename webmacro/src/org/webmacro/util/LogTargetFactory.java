@@ -31,7 +31,8 @@ import java.lang.reflect.Constructor;
  * new LogTarget instances.<p>
  *
  * If your LogTarget needs configuration settings from WebMacro, create a
- * constructor with this signature:<pre>
+ * constructor with this signature:
+ * <pre>
  *
  *     public MyLogTarget (org.webmacro.util.Settings settings);
  *
@@ -81,7 +82,9 @@ public final class LogTargetFactory
      * @param settings WebMacro settings that will be passed off to the
      *        new LogTarget during its construction
      */
-    public final LogTarget createLogTarget (Broker broker, String classname, Settings settings) throws LogCreationException
+    public final LogTarget createLogTarget (Broker broker, String classname, 
+            Settings settings) 
+        throws LogCreationException
     {
         LogTarget lt = null;
         try
