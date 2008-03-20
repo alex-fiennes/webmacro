@@ -20,7 +20,6 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.servlet;
 
 import org.webmacro.Broker;
@@ -43,6 +42,7 @@ import java.util.Properties;
  * <li> the class path,
  * </p>
  * writes log messages to the servlet log.
+ * 
  * @author Brian Goetz
  * @author Marc Palmer (wj5@wangjammers.org)
  * @since 0.96
@@ -77,7 +77,7 @@ public class Servlet20Broker extends ServletBroker
     }
 
     /**
-     * Get a Servlet API 2.0 compatible broker for the Servlet specified
+     * Get a Servlet API 2.0 compatible broker for the Servlet specified.
      * @param s The servlet
      * @param additionalProperties
      * @return The broker for the servlet context.
@@ -92,7 +92,7 @@ public class Servlet20Broker extends ServletBroker
     }
 
     /**
-     * Get a Servlet API 2.0 compatible broker for the ServletContext specified
+     * Get a Servlet API 2.0 compatible broker for the ServletContext specified.
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
      * @param additionalProperties
@@ -103,7 +103,7 @@ public class Servlet20Broker extends ServletBroker
     public static Broker getBroker (ServletContext sc, ClassLoader cl,
         Properties additionalProperties) throws InitException
     {
-        return _getBroker(sc, cl, additionalProperties, false, sc.toString() );
+        return _getBroker(sc, cl, additionalProperties, false, sc.toString());
     }
 
     /**
@@ -143,7 +143,7 @@ public class Servlet20Broker extends ServletBroker
                 b.getLog("broker").notice(
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName
-                    + " joining Broker" + " " + b.getName() );
+                    + " joining Broker" + " " + b.getName());
             return b;
         }
         catch (InitException e)
@@ -156,8 +156,7 @@ public class Servlet20Broker extends ServletBroker
         }
     }
 
-    /**
-     * Get a resource (file) from the the Broker's class loader */
+    /** Get a resource (file) from the the Broker's class loader. */
     public URL getResource (String name)
     {
         URL u = _servletClassLoader.getResource(name);
@@ -167,7 +166,7 @@ public class Servlet20Broker extends ServletBroker
     }
 
     /**
-     * Get a resource (file) from the Broker's class loader
+     * Get a resource (file) from the Broker's class loader.
      */
     public InputStream getResourceAsStream (String name)
     {
@@ -180,8 +179,8 @@ public class Servlet20Broker extends ServletBroker
     /**
      * Loads a class by name. Uses the servlet classloader to load the
      * class. If the class is not found uses the Broker classForName
-     * implementation.  */
-
+     * implementation.
+     */
     public Class classForName (String name) throws ClassNotFoundException
     {
         Class cls = null;
