@@ -24,6 +24,9 @@
 package org.webmacro.engine;
 
 
+/**
+ * A Builder can build.
+ */
 public interface Builder
 {
 
