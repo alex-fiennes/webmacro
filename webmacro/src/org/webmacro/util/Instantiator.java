@@ -34,13 +34,13 @@ import org.webmacro.WebMacroException;
  * and using implicit package names specified by the ImpliedPackages
  * configuration property.
  * 
- * Used by BeanDirective and SetpropsDirective
+ * Used by BeanDirective and SetpropsDirective.
  * 
  * @author Keats Kirsch
  * @see org.webmacro.directive.BeanDirective
  * @see org.webmacro.directive.SetpropsDirective
  */
-public class Instantiator
+final public class Instantiator
 {
 
    private static final String IMPLIED_PACKAGES = "ImpliedPackages";
@@ -222,3 +222,4 @@ public class Instantiator
       return instantiator;
    }
 }
+
