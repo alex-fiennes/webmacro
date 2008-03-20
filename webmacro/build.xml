@@ -47,12 +47,12 @@ Administrative targets:
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
     <property name="classes"        value="classes"/>
-	  <property name="macros"         value="macros"/>
+    <property name="macros"         value="macros"/>
     <property name="dist.binary"    value="webmacro-${wm-style}-bin-${version}"/>
-	  <!-- The formal value not used for distribution:
-	  	<property name="dist.source"    value="webmacro-${wm-style}-src-${version}"/> 
-	  -->
-		<property name="dist.source"    value="webmacro-${version}"/> 
+    <!-- The formal value not used for distribution:
+    <property name="dist.source"    value="webmacro-${wm-style}-src-${version}"/> 
+     -->
+    <property name="dist.source"    value="webmacro-${version}"/> 
     <property name="javadoc"        value="javadoc"/>
     <property name="examples"       value="examples"/>
     <property name="jar"            value="${app.name}.jar"/>
@@ -124,10 +124,10 @@ Administrative targets:
             <fileset dir="src" />
         </copy>
         <javac srcdir="${tmpdir}"
-	    fork="yes"
-	    destdir="${classes}"
+            fork="yes"
+            destdir="${classes}"
             debug="on" optimize="off" deprecation="off">
-            <classpath refid="class.path" />
+          <classpath refid="class.path" />
         </javac>
 
         <copy todir="${classes}">
