@@ -20,17 +20,19 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.util;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract base class which implements most of the LogTarget interface,
  * to make it easier to write new log targets that plug into WM.
  */
-
 abstract public class AbstractLogFile implements LogTarget
 {
 
@@ -46,10 +48,8 @@ abstract public class AbstractLogFile implements LogTarget
 
 
     /**
-     * <p>
      * Create a new LogFile instance reading properties from the
      * supplied Settings object.
-     * </p> 
      * <pre>
      *     LogTraceExceptions: true|false|yes|no|on|off
      *     LogLevel: Debug|Info|Notice|etc
@@ -84,7 +84,7 @@ abstract public class AbstractLogFile implements LogTarget
     }
 
     /**
-     * Set the log level for this Logfile. The default is LogSystem.NOTICE
+     * Set the log level for this Logfile. The default is LogSystem.NOTICE.
      */
     public void setLogLevel (int level)
     {
