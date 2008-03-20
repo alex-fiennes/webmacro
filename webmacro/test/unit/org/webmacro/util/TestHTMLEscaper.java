@@ -25,7 +25,7 @@ public class TestHTMLEscaper extends TestCase
                 "\u00a3\u00a3\u00a3!",
                 "This is a test: &euro;&euro;&euro; is better than" +
                 "&pound;&pound;&pound;!" );
-	assertEscape("\u00F7","&divide;");
+        assertEscape("\u00F7","&divide;");
     }
 
     public void testEscapingNull() throws Exception
