@@ -26,8 +26,8 @@ package org.webmacro;
 import org.webmacro.broker.ContextObjectFactory;
 
 /**
- * This class is used as a base class for legacy context tools so they can fit into the ContextObjectFactory
- * framework.
+ * This class is used as a base class for legacy context tools so they can 
+ * fit into the ContextObjectFactory framework.
  */
 public abstract class ContextTool implements ContextObjectFactory
 {
@@ -41,7 +41,7 @@ public abstract class ContextTool implements ContextObjectFactory
      */
     public abstract Object init (Context c) throws PropertyException;
 
-    public Object get(Context c) throws PropertyException {
+    public Object get (Context c) throws PropertyException {
         return init(c);
     }
 }
