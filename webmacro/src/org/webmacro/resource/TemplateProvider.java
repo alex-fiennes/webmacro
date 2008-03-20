@@ -23,23 +23,30 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.*;
-import org.webmacro.engine.FileTemplate;
-import org.webmacro.util.Settings;
-
 import java.io.File;
 import java.util.StringTokenizer;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.TemplateException;
+import org.webmacro.engine.FileTemplate;
+import org.webmacro.util.Settings;
 
 /**
  * The TemplateProvider is the WebMacro class responsible for
  * loading templates. You could replace it with your own version
  * in the configuration file. Templates are loaded from the filesystem,
- * relative to the TemplatePath specified in teh configuration.
+ * relative to the TemplatePath specified in the configuration.
  * <p>
  * Ordinarily you would not accses this class directly, but
  * instead you would call the Broker and it would look up and
  * use the TemplateProvider for you.
- * @see Provider
+ * 
+ * @see org.webmacro.Provider
  */
 final public class TemplateProvider extends CachingProvider
 {
@@ -55,7 +62,7 @@ final public class TemplateProvider extends CachingProvider
 
     /**
      * Responsible for deciding, how often resources
-     * should be checked for modification at max
+     * should be checked for modification at max.
      */
     private ReloadDelayDecorator reloadDelay;
 
@@ -96,7 +103,7 @@ final public class TemplateProvider extends CachingProvider
 
     /**
      * Create a new TemplateProvider that uses the specified directory
-     * as the source for Template objects that it will return
+     * as the source for Template objects that it will return.
      * @exception InitException provider failed to initialize
      */
     public void init (Broker b, Settings config) throws InitException
@@ -135,7 +142,7 @@ final public class TemplateProvider extends CachingProvider
     }
 
     /**
-     * Supports the "template" type
+     * Supports the "template" type.
      */
     final public String getType ()
     {

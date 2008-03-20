@@ -22,9 +22,13 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
-
 import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
 
 /**
  * Looks like a Macro, but really it's a String.
