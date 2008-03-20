@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 
 
 /**
- * Allow a Java 1.1 enumeration to be used as a JDK 1.2 style Iterator
+ * Allow a Java 1.1 enumeration to be used as a JDK 1.2 style Iterator.
  */
 final public class EnumIterator implements Iterator
 {
@@ -38,7 +38,7 @@ final public class EnumIterator implements Iterator
     private boolean hasNext;
 
     /**
-     * Construct an iterator given an enumeration
+     * Construct an iterator given an enumeration.
      */
     public EnumIterator (Enumeration e)
     {
@@ -47,7 +47,7 @@ final public class EnumIterator implements Iterator
     }
 
     /**
-     * Return true if we have not yet reached the end of the enumeration
+     * @return true if we have not yet reached the end of the enumeration.
      */
     final public boolean hasNext ()
     {
@@ -57,8 +57,10 @@ final public class EnumIterator implements Iterator
     /**
      * Advance the iterator and return the next value. Return null if we
      * reach the end of the enumeration.
+     * 
+     * @throws NoSuchElementException
      */
-    final public Object next () throws NoSuchElementException
+    final public Object next ()
     {
         if (!hasNext)
         {
@@ -70,9 +72,10 @@ final public class EnumIterator implements Iterator
     }
 
     /**
-     * Unsupported
+     * Unsupported.
+     * @throws UnsupportedOperationException
      */
-    final public void remove () throws UnsupportedOperationException
+    final public void remove () 
     {
         throw new UnsupportedOperationException();
     }
