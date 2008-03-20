@@ -186,7 +186,7 @@ abstract public class WMTemplate implements Template
                 bc = new BuildContext(_broker);
                 // put global macros from Broker into the BuildContext
                 Map globalMacros = _broker.getMacros();
-                for (Iterator i=globalMacros.entrySet().iterator(); i.hasNext();) {
+                for (Iterator i=globalMacros.entrySet().iterator(); i.hasNext(); ) {
                     Map.Entry entry = (Map.Entry)i.next();
                     bc.putMacro((String)entry.getKey(),(MacroDefinition) entry.getValue());
                 }
