@@ -35,7 +35,7 @@ public interface Macro
     /**
      * Interpret the directive and write it out, using the values in
      * the supplied context as appropriate.
-     * <p>
+     * 
      * @exception PropertyException if required data was missing from context
      * @exception IOException if we could not successfully write to out
      */
@@ -43,8 +43,9 @@ public interface Macro
             throws PropertyException, IOException;
 
     /**
-     * same as out but returns a String
-     * <p>
+     * Same as write but return result as a String rather than writing it out.
+     * FIXME Return a String not an Object
+     * @return the result of interpretting as a String  
      * @exception PropertyException if required data was missing from context
      */
     public Object evaluate (Context context)
