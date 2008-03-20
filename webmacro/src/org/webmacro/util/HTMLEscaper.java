@@ -28,7 +28,9 @@ package org.webmacro.util;
  */
 public class HTMLEscaper
 {
-
+    /** Utility classes should not have a public or default constructor. */
+    private HTMLEscaper() {}
+    
     /**
      * This method will take the input and escape characters that have
      * an HTML entity representation.
