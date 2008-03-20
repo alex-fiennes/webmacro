@@ -178,7 +178,7 @@ public class CountDirective extends Directive
    
            if (step > 0)
            {
-               for (; start <= end; start += step)
+               for ( ; start <= end; start += step)
                {
                    _iterator.setValue(context, new Integer(start));
                    _body.write(out, context);
@@ -186,7 +186,7 @@ public class CountDirective extends Directive
            }
            else if (step < 0)
            {
-               for (; start >= end; start += step)
+               for ( ; start >= end; start += step)
                {
                    _iterator.setValue(context, new Integer(start));
                    _body.write(out, context);

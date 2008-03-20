@@ -45,16 +45,13 @@ import java.util.Map;
  */
 public class MapBuilder extends HashMap implements Builder
 {
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public Object build (BuildContext pc) throws BuildException
     {
         Map ret = new HashMap(size());
         boolean isMacro = false;
-        for (Iterator itr = entrySet().iterator(); itr.hasNext();)
+        for (Iterator itr = entrySet().iterator(); itr.hasNext(); )
         {
             Map.Entry entry = (Map.Entry) itr.next();
             Object key = entry.getKey();
@@ -100,7 +97,7 @@ class MapMacro implements Macro
     public Object evaluate (Context context) throws PropertyException
     {
         Map ret = new HashMap(_map.size());
-        for (Iterator itr = _map.entrySet().iterator(); itr.hasNext();)
+        for (Iterator itr = _map.entrySet().iterator(); itr.hasNext(); )
         {
             Map.Entry entry = (Map.Entry) itr.next();
             Object key = entry.getKey();
