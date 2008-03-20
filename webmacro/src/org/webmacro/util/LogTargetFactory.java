@@ -43,17 +43,15 @@ import java.lang.reflect.Constructor;
  * @author  e_ridge
  * @since 0.99
  */
-public class LogTargetFactory
+public final class LogTargetFactory
 {
 
     private static LogTargetFactory _instance = new LogTargetFactory();
 
+    /** Thrown when a log cannot be created.  */
     public static class LogCreationException extends WebMacroException
     {
 
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		public LogCreationException (String message, Throwable throwable)
@@ -62,19 +60,19 @@ public class LogTargetFactory
         }
     }
 
-    /** Creates new LogTargetFactory */
+    /** Creates new LogTargetFactory. */
     private LogTargetFactory ()
     {
     }
 
-    /** return the only instance of this LogTargetFactory */
+    /** Return the only instance of this LogTargetFactory. */
     public static final LogTargetFactory getInstance ()
     {
         return _instance;
     }
 
     /**
-     * Creates a new <code>org.webmacro.util.LogTarget</code>
+     * Creates a new <code>org.webmacro.util.LogTarget</code>.
      *
      * @param broker the Broker that is requesting to create the log.  The
      *        Broker is used to find the LogTarget class via the Broker's
@@ -111,3 +109,4 @@ public class LogTargetFactory
         return lt;
     }
 }
+
