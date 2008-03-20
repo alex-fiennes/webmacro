@@ -25,12 +25,12 @@ package org.webmacro.engine;
 
 import org.webmacro.WebMacroException;
 
+/**
+ * Thrown when a Class cannot be found.
+ */
 public class IntrospectionException extends WebMacroException
 {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public IntrospectionException (String message, Exception e)
