@@ -21,15 +21,19 @@
  */
 package org.webmacro.resource;
 
-import org.webmacro.*;
-import org.webmacro.engine.FileTemplate;
-import org.webmacro.engine.StreamTemplate;
-import org.webmacro.util.Settings;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.TemplateException;
+import org.webmacro.engine.FileTemplate;
+import org.webmacro.engine.StreamTemplate;
+import org.webmacro.util.Settings;
 
 /**
  * Helper class for template loaders to actuall load a Template.
@@ -48,7 +52,7 @@ public class TemplateLoaderHelper
     private ReloadDelayDecorator reloadDelay;
 
     /**
-     * Construct a new TemplateLoaderHelper object
+     * Construct a new TemplateLoaderHelper object.
      */
     public TemplateLoaderHelper ()
     {
@@ -56,7 +60,7 @@ public class TemplateLoaderHelper
     }
 
     /**
-     * Initialize this object
+     * Initialize this object.
      * @param b broker to use
      * @param config configuration to initialize from
      */
@@ -137,7 +141,7 @@ public class TemplateLoaderHelper
 
     /**
      * Encapsulates calls to Template.parse and wraps
-     * checked exceptions into ResourceExceptions
+     * checked exceptions into ResourceExceptions.
      */
     private void parseTemplate (Template template) throws ResourceException
     {
@@ -199,3 +203,4 @@ public class TemplateLoaderHelper
         }
     }
 }
+
