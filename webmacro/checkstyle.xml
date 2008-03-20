@@ -210,7 +210,8 @@
             <property name="format" value="\s+$"/>
             <property name="message" value="Line has trailing spaces."/>
         </module -->
-        <module name="TodoComment"/>
+        <!-- we just use Maven's tag list now -->
+        <!-- module name="TodoComment"/ -->
         <module name="UpperEll"/>
 
     </module>
