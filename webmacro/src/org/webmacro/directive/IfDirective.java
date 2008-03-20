@@ -22,26 +22,32 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.Block;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Expression;
 
-import java.io.IOException;
-
 /**
- * Syntax:
- * #if (condition) { block }
- * [ #elseif (condition) { block } ] *
- * [ #else { block } ]
- *
  * IfDirective implements a WebMacro directive for an if..elseif..else
  * control structure.  This directive is more complicated than most others
  * because it has repeating optional subdirectives, and because it tries
  * to do as much constant folding in the build() method as possible.
  * Therefore, the build() method is complicated, but the write() method
  * is fairly simple.
+ * 
+ * Syntax:
+ * <pre>
+ * #if (condition) { block }
+ * [ #elseif (condition) { block } ] *
+ * [ #else { block } ]
+ * </pre>
  */
 
 class IfDirective extends Directive
