@@ -142,22 +142,26 @@ public class WMEval
      * Initializes WMEval so that it can perform currentTemplate evaluation
      * on multiple contexts. Init parses the currentTemplate supplied.
      * <p>
-     * The argument to init() is the currentTemplate as a stream allowing the currentTemplate
-     * to come from pretty much anywhere such as a url, a file, or a db field.
+     * The argument to init() is the currentTemplate as a stream allowing the 
+     * currentTemplate to come from pretty much anywhere such as a url, 
+     * a file, or a db field.
      * <p>
-     * Care must be given to the fact that in parsing the currentTemplate, th current vm is able
-     * to resolve locations of other currentTemplates referenced within the supplied currentTemplate.
+     * Care must be given to the fact that in parsing the currentTemplate, 
+     * the current vm is able to resolve locations of other currentTemplates 
+     * referenced within the supplied currentTemplate.
      * <p>
-     * Note, once this is complete, the parsed currentTemplate can be applied to successive
-     * new object contexts. In other words, the application context
+     * Note, once this is complete, the parsed currentTemplate can be applied 
+     * to successive new object contexts. In other words, the application context
      * can assert new objects for currentTemplate application and remove others.
+     * 
      * @param template The stream containing the top-level, unparsed currentTemplate.
      *
      */
     public Template init (InputStream template) throws Exception
     {
         //
-        Template t = new StreamTemplate(wm.getBroker(), new InputStreamReader(template));
+        Template t = new StreamTemplate(wm.getBroker(), 
+                new InputStreamReader(template));
         t.parse();
         this.currentTemplate = t;
         return t;
@@ -259,14 +263,17 @@ public class WMEval
     }
 
     /**
-     * Evaluates the string template against the current context
-     * and returns the value. If an output stream is specified, the value
-     * is written out as well to this stream.
+     * Evaluates the named template against the current context
+     * and returns the value. 
+     * If an output stream is specified, the return value is 
+     * also written out to the stream.
+     * 
      * @param templateName The name of the template.
      * @param out An optional output stream.
      * @return The output from the evaluated template
      */
-    public String eval (Context context, String templateName, OutputStream out) throws Exception
+    public String eval (Context context, String templateName, OutputStream out) 
+        throws Exception
     {
       return eval(context, templateName, out, null);
     }
@@ -370,9 +377,20 @@ public class WMEval
     }
 
     /**
-     *  Evaluates the current context for the input file and writes it to the output file.
+     *  Evaluate the named template against the given context.
+     *  Writes the output to the given output file.
+     *  
+     * @param context the context to evaluate the template against
+     * @param templateName  the name of the template to evaluate
+     * @param outputFileName name of file to output to
+     * @param append whether to apppend output
+     * @param encoding the encoding to use, may be null
+     * @return
+     * @throws Exception
      */
-    public String eval (Context context, String templateName, String outputFileName, boolean append, String encoding) throws Exception
+    public String eval (Context context, String templateName, 
+            String outputFileName, boolean append, String encoding) 
+        throws Exception
     {
       OutputStream out = new FileOutputStream(outputFileName, append);
       return eval(context, templateName, out, encoding);
