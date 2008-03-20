@@ -3,7 +3,6 @@ package org.webmacro.adapter.spring;
 
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -81,11 +80,13 @@ public class WebMacroViewResolver extends AbstractTemplateViewResolver
      *
      * @throws org.springframework.beans.BeansException
      */
-    protected WebMacro findWebMacro(
-        ListableBeanFactory beanFactory, ServletContext servletcontext, ClassLoader classLoader) throws BeansException
+    protected WebMacro findWebMacro(ListableBeanFactory beanFactory, 
+                                    ServletContext servletcontext, 
+                                    ClassLoader classLoader) 
     {
         try
         {
+            // FIXME Surely webmacro = ... ?
             WebMacro wm = (WebMacro) BeanFactoryUtils.beanOfTypeIncludingAncestors(
                 beanFactory, WebMacro.class, true, false);
             return wm;
