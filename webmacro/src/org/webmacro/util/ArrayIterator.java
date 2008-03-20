@@ -20,15 +20,13 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 /**
- * This provides an iterator interface to an array
+ * An Iterator interface to an array.
  */
 final public class ArrayIterator implements Iterator
 {
@@ -37,7 +35,7 @@ final public class ArrayIterator implements Iterator
     int pos;
 
     /**
-     * Construct an iterator given an enumeration
+     * Construct an iterator given an enumeration.
      */
     public ArrayIterator (Object[] array)
     {
@@ -46,7 +44,7 @@ final public class ArrayIterator implements Iterator
     }
 
     /**
-     * Return true if we have not yet reached the end of the enumeration
+     * @return true if we have not yet reached the end of the enumeration.
      */
     final public boolean hasNext ()
     {
@@ -57,7 +55,7 @@ final public class ArrayIterator implements Iterator
      * Advance the iterator and return the next value. Return null if we
      * reach the end of the enumeration.
      */
-    final public Object next () throws NoSuchElementException
+    final public Object next () 
     {
         if (pos < a.length)
         {
@@ -70,15 +68,15 @@ final public class ArrayIterator implements Iterator
     }
 
     /**
-     * Unsupported
+     * Unsupported.
      */
-    final public void remove () throws UnsupportedOperationException
+    final public void remove ()
     {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Test harness
+     * Test harness.
      */
     static public void main (String arg[])
     {
