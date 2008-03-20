@@ -22,9 +22,6 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.*;
-import org.webmacro.util.Settings;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,11 +30,19 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
+import org.webmacro.util.Settings;
+
 /**
  *
  *
  * This is a "drop-in" replacement for the standard TemplateProvider in the
- * WebMacro distribution.  The primary benefit is to allow template to be loaded
+ * WebMacro distribution.  The primary benefit is to allow a template to be loaded
  * by a variety of means, without requiring an absolute path.  This should make
  * applications more portable.
  *
@@ -85,12 +90,14 @@ import java.util.StringTokenizer;
  *
  * @see org.webmacro.resource.CachingProvider
  * @see org.webmacro.resource.TemplateProvider
+ * 
+ * @since before 0.96
+ * @author fergus
  */
 final public class URLTemplateProvider extends CachingProvider
 {
 
-    /** CVS Revision tag
-     */
+    /** CVS Revision tag.  */
     public static final String RCS = "@(#) $Id$";
 
     // INITIALIZATION
@@ -101,9 +108,6 @@ final public class URLTemplateProvider extends CachingProvider
      */
     private static String _pathSeparator = ";";
 
-    /**
-     *
-     */
     private String[] _templateDirectory = null;
 
     /**
@@ -178,7 +182,7 @@ final public class URLTemplateProvider extends CachingProvider
 
     /**
      * Create a new TemplateProvider that uses the specified directory
-     * as the source for Template objects that it will return
+     * as the source for Template objects that it will return.
      *
      * @param b A broker
      * @param config Settings from the webmacro initialization file
@@ -329,7 +333,7 @@ final public class URLTemplateProvider extends CachingProvider
     }
 
     /**
-     * load a template relative to the base.
+     * Load a template relative to the base.
      * @param path the relative or absolute URL-path of the template
      */
 
@@ -407,7 +411,7 @@ final public class URLTemplateProvider extends CachingProvider
     }
 
     /**
-     * Get the URL for a specified template
+     * Get the URL for a specified template.
      */
 
     private Template getTemplate (String path)
@@ -459,9 +463,8 @@ final public class URLTemplateProvider extends CachingProvider
     // Utility Methods
 
     /**
-     * The URL path separator.  Used by join()
+     * The URL path separator.  Used by join().
      */
-
     private static final String _SEP = "/";
 
     /**
@@ -493,7 +496,6 @@ final public class URLTemplateProvider extends CachingProvider
      * information with the request.
      *
      */
-
     private final URL searchClasspath (String resource)
     {
         _log.debug("Searching classpath for " + resource);
@@ -532,7 +534,6 @@ final public class URLTemplateProvider extends CachingProvider
      * <p>
      * e.g. "_en_GB" => "_en"
      */
-
     private final String stripLast (String s)
     {
         if (s == null) return null;
@@ -551,7 +552,6 @@ final public class URLTemplateProvider extends CachingProvider
      * <p>
      * e.g., "path/myfile","_en_GB",".wm" => "path/myfile{_en}.wm"
      */
-
     private final String buildPath (String pre, String mid, String post)
     {
         StringBuffer sb = new StringBuffer(pre);
@@ -567,13 +567,11 @@ final public class URLTemplateProvider extends CachingProvider
     }
 
     /**
-     * parseLocalePath
-     * Looks for a string of the form AAA{BBB}CCC
+     * Looks for a string of the form AAA{BBB}CCC.
      * If found, returns [AAA,BBB,CCC], null otherwise
      *
      * This is used to strip out the "Locale" part of a resource name
      */
-
     private String[] parseLocalePath (String path)
     {
         int p1 = path.indexOf(_OPEN);
