@@ -22,7 +22,14 @@
 
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.WebMacroException;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.StringTemplate;
@@ -30,13 +37,11 @@ import org.webmacro.engine.Variable;
 import org.webmacro.servlet.TextTool;
 import org.webmacro.util.Instantiator;
 
-import java.io.IOException;
-
-/*
+/**
  * Set properties on an object using Java properties file
  * type syntax.
- * @author Keats Kirsch 
  * 
+ * @author Keats Kirsch 
  */
 public class SetpropsDirective extends Directive
 {
@@ -101,7 +106,7 @@ public class SetpropsDirective extends Directive
          if (!context.containsKey(target.getName()))
          {
             // target doesn't exist. Must create.
-            // TODO check for class loading restrictions ala bean directive
+            // TODO check for class loading restrictions as per bean directive
             try
             {
                Class c = Instantiator.getInstance(context.getBroker())
@@ -149,7 +154,7 @@ public class SetpropsDirective extends Directive
    }
 
    private void setProp(Context context, String s, String prefix)
-            throws PropertyException
+       throws PropertyException
    {
       String prop;
       String val;
