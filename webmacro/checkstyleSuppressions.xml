@@ -32,6 +32,13 @@
               files="WMParser_implTokenManager.java" />
     <suppress checks="LineLength"
               files="WMParser_implTokenManager.java" />
+    <suppress checks="EmptyForIteratorPad"
+              files="WMParser_implTokenManager.java" />
+    <suppress checks="EmptyForInitializerPad"
+              files="WMParser_implTokenManager.java" />
+    <suppress checks="MissingSwitchDefault"
+              files="WMParser_implTokenManager.java" />
+              
     <suppress checks="FileLength"
               files="WMParser_impl.java" />
     <suppress checks="LineLength"
