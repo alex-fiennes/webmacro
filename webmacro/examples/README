@@ -7,8 +7,7 @@ WebMacro. We suggest you try the HelloWorld example first, as it
 is the easiest to get going.
 
 [NOTE: For information on getting the examples configured on your system see
-the document CONFIGURING-EXAMPLES in the webroot directory of this
-distribution or the Wiki page at http://www.webmacro.org/ConfiguringExamples] 
+the Wiki page at http://www.webmacro.org/ConfiguringExamples] 
 
 In each case you will find comments inside the .java file explaining
 what the example is, and how to get it working.
