@@ -22,7 +22,12 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.*;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
+import org.webmacro.Visitable;
 
 /**
  * Looks like a Macro, but really it's an undefined variable.
@@ -66,7 +71,7 @@ public final class UndefinedMacro implements Macro, Visitable
     }
 
     /**
-     * Throws an exception -- cannot write an undefined
+     * Throws an exception -- cannot write an undefined.
      */
     public final void write (FastWriter out, Context context)
             throws PropertyException

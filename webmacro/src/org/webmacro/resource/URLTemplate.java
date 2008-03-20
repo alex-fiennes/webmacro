@@ -22,18 +22,23 @@
 
 package org.webmacro.resource;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Properties;
+
 import org.webmacro.Broker;
 import org.webmacro.TemplateException;
 import org.webmacro.WMConstants;
 import org.webmacro.engine.WMTemplate;
 import org.webmacro.servlet.LocaleTool;
 import org.webmacro.util.NativeAsciiReader;
-
-import java.io.*;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * FileTemplate objects read their template data from a text file.
@@ -42,34 +47,27 @@ import java.util.Properties;
 public class URLTemplate extends WMTemplate
 {
 
-    /**
-     * CVS revision
-     */
-
+    /** CVS revision  */
     public static final String RCS = "@(#) $Id$";
 
     /**
      * The location of the resourse (file) this template was read from.
      */
-
     private final URL _url;
 
     /**
-     * The physical file referred to by "file:" and "jar:" URLs
+     * The physical file referred to by "file:" and "jar:" URLs.
      */
-
     private File underLyingFile = null;
 
     /**
-     * The time the underlying file was last modified
+     * The time the underlying file was last modified.
      */
-
     private long underLyingFileLastModTime = 0;
 
     /**
-     * Cache for any per-directory encoding files
+     * Cache for any per-directory encoding files.
      */
-
     private final HashMap propertiesCache = new HashMap();
 
     private String _inputEncoding = null;
@@ -77,9 +75,8 @@ public class URLTemplate extends WMTemplate
     private Locale _outputLocale = null;
 
     /**
-     * A dummy object used as a place holder in the encoding cache
+     * A dummy object used as a place holder in the encoding cache.
      */
-
     private static final Object dummy = new Object();
 
     /**
@@ -90,10 +87,10 @@ public class URLTemplate extends WMTemplate
      * or
      *        jar:xxxxxx!yyyyyy
      *</pre>
-     * extracting the xxxxxx.  In the latter case the reference is to the jar containing the
+     * extracting the xxxxxx.  
+     * In the latter case the reference is to the jar containing the
      * template.
      */
-
     public URLTemplate (
             Broker broker,
             URL templateURL
@@ -129,7 +126,6 @@ public class URLTemplate extends WMTemplate
      * </pre>
      * Imply a reference to the actual file.
      */
-
     public boolean shouldReload ()
     {
         if (underLyingFile == null) return false;
@@ -146,7 +142,6 @@ public class URLTemplate extends WMTemplate
      * TODO - should make the encoding cache a bit smarter- doesn't detect
      * if the file changes
      */
-
     private void setupLocalProperties ()
     {
         InputStream is = null;
@@ -229,7 +224,7 @@ public class URLTemplate extends WMTemplate
     }
 
     /**
-     * return the URL for the current template.
+     * @return the URL for the current template
      */
     public URL getURL ()
     {

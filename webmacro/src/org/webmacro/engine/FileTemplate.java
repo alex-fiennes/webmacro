@@ -23,9 +23,14 @@
 
 package org.webmacro.engine;
 
-import org.webmacro.Broker;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-import java.io.*;
+import org.webmacro.Broker;
 
 /**
  * FileTemplate objects read their template data from a text file.
@@ -35,12 +40,12 @@ public class FileTemplate extends WMTemplate
 {
 
     /**
-     * The name of the file to read this template from
+     * The name of the file to read this template from.
      */
     private final File myFile;
 
     /**
-     * What encoding I use to read my templates
+     * What encoding I use to read my templates.
      */
     private final String myEncoding;
 

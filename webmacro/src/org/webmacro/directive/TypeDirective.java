@@ -21,25 +21,32 @@
  */
 package org.webmacro.directive;
 
-import org.webmacro.*;
+import java.io.IOException;
+
+import org.webmacro.Broker;
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
+import org.webmacro.TemplateVisitor;
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.UndefinedMacro;
 import org.webmacro.engine.Variable;
 import org.webmacro.util.Settings;
 
-import java.io.IOException;
-
 /**
  * TypeDirective allows the programmer (or template designer) to ensure
  * objects placed into the <code>Context</code> are of the required class
- * type.<p>
- *
- * Syntax:<pre>
+ * type.
+ * <p>
+ * Syntax:
+ * <pre>
  *    #type [ required ] var-reference quoted-string
  * </pre>
  *
- * Examples:<pre>
+ * Examples:
+ * <pre>
  *    $MyName, if it exists in the context, <b>must</b> be a java.lang.String
  *    #type $MyName "java.lang.String"
  *
@@ -65,7 +72,8 @@ import java.io.IOException;
  * which one can catch in their servlet code if necessary.<p>
  *
  * TypeDirective is <b>enabled by default</b>, however, it can be disabled
- * via your custom <code>WebMacro.properties</code> file:<pre>
+ * via your custom <code>WebMacro.properties</code> file:
+ * <pre>
  *    TypeDirective.Enabled = true | false
  * </pre>
  *
@@ -91,8 +99,8 @@ public class TypeDirective extends Directive
             new DirectiveDescriptor("type", null, _args, null);
 
     /**
-     * static method required by the WebMacro parser to provide
-     * a descriptor about this directive
+     * Static method required by the WebMacro parser to provide
+     * a descriptor about this directive.
      */
     public static DirectiveDescriptor getDescriptor ()
     {
@@ -100,17 +108,17 @@ public class TypeDirective extends Directive
     }
 
 
-    /** the Context object we need to check the type of */
+    /** The Context object we need to check the type of. */
     private Variable _object;
 
-    /** the Class instance that _object is requried to be */
+    /** The Class instance that _object is requried to be. */
     private Class _class;
 
-    /** is the Variable required to be in the Context? */
+    /** Is the Variable required to be in the Context? */
     private boolean _required;
 
     /**
-     * configure directive for this run and return 'this'
+     * Configure directive for this run and return 'this'.
      */
     public Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
     {
@@ -178,7 +186,7 @@ public class TypeDirective extends Directive
     }
 
     /**
-     * The #type directive does not produce output
+     * The #type directive does not produce output.
      */
     public void write (FastWriter fw, Context context) throws IOException, PropertyException
     {
@@ -237,3 +245,4 @@ public class TypeDirective extends Directive
         return clazz;
     }
 }
+
