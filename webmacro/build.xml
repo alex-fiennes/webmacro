@@ -157,7 +157,6 @@ Administrative targets:
             debug="on" optimize="off" deprecation="off">
             <classpath refid="class.path" />
         </javac>
-        <copy		file="${examples}/web.xml" tofile="${examples}/WEB-INF/web.xml"/>
     </target>
 
 
