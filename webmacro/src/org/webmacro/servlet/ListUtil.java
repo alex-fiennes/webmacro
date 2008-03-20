@@ -778,11 +778,11 @@ public final class ListUtil
         // test split
         out.println("List split with fill");
         List splitList1 = split(l, 3, true);
-        for (Iterator it1 = splitList1.iterator(); it1.hasNext();)
+        for (Iterator it1 = splitList1.iterator(); it1.hasNext(); )
         {
             out.print("-: ");
             List part = (List) it1.next();
-            for (Iterator it2 = part.iterator(); it2.hasNext();)
+            for (Iterator it2 = part.iterator(); it2.hasNext(); )
             {
                 out.print(it2.next() + ", ");
             }
@@ -790,11 +790,11 @@ public final class ListUtil
         }
         out.println("List transposeSplit");
         List splitList2 = transposeSplit(l, 3, false);
-        for (Iterator it1 = splitList2.iterator(); it1.hasNext();)
+        for (Iterator it1 = splitList2.iterator(); it1.hasNext(); )
         {
             out.print("-: ");
             List part = (List) it1.next();
-            for (Iterator it2 = part.iterator(); it2.hasNext();)
+            for (Iterator it2 = part.iterator(); it2.hasNext(); )
             {
                 out.print(it2.next() + ", ");
             }
