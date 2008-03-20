@@ -16,12 +16,9 @@ package org.webmacro.parser;
 public class ParseException extends org.webmacro.RethrowableException
 {
 
-  /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-/**
+  /**
    * This constructor is used by the method "generateParseException"
    * in the generated parser.  Calling this constructor generates
    * a new object of this type with the fields "currentToken",
@@ -208,16 +205,16 @@ public class ParseException extends org.webmacro.RethrowableException
               continue;
            default:
               if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) 
-	      {
+              {
                  String s = "0000" + Integer.toString(ch, 16);
                  retval.append("\\u" + s.substring(s.length() - 4, s.length()));
               } 
-	      else 
-	      {
+              else 
+              {
                  retval.append(ch);
               }
               continue;
-        }
+          }
       }
       return retval.toString();
    }
