@@ -23,10 +23,9 @@
 
 package org.webmacro.engine;
 
-
+/** Build from parameters. */
 public class ParamBuilder implements Builder
 {
-
 
     private Object[] _names;
 
