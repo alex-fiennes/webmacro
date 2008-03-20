@@ -20,7 +20,6 @@
  * See www.webmacro.org for more information on the WebMacro project.
  */
 
-
 package org.webmacro.engine;
 
 import org.webmacro.Context;
@@ -59,6 +58,7 @@ public class BlockBuilder implements Builder
         this.name = name;
     }
 
+    /** Iterate over a Block.   */
     public interface BlockIterator extends Iterator
     {
 
@@ -69,6 +69,7 @@ public class BlockBuilder implements Builder
         public int getColNo ();
     }
 
+    /** BlockBuilder iterator.   */
     public class BBIterator implements BlockIterator
     {
 
