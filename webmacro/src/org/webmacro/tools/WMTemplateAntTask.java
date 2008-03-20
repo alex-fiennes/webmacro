@@ -1,6 +1,5 @@
 package org.webmacro.tools;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
@@ -13,7 +12,7 @@ import java.io.File;
 import java.util.Vector;
 
 /**
- * Taskdef for validating WM templates
+ * Taskdef for validating WM templates.
  *
  * @author Brian Goetz
  */
@@ -79,7 +78,7 @@ public class WMTemplateAntTask extends Task
     }
 
 
-    public void execute () throws BuildException
+    public void execute ()
     {
 
         for (int i = 0; i < filesets.size(); i++)
