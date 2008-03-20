@@ -23,15 +23,21 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
+import org.webmacro.Broker;
+import org.webmacro.InitException;
+import org.webmacro.Log;
+import org.webmacro.NotFoundException;
+import org.webmacro.Provider;
+import org.webmacro.ResourceException;
+import org.webmacro.Template;
 import org.webmacro.engine.FileTemplate;
 import org.webmacro.engine.ParseException;
 import org.webmacro.engine.StreamTemplate;
 import org.webmacro.util.Settings;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * This class does the actual work of retrieving templates using the
@@ -168,7 +174,7 @@ final public class BrokerTemplateProviderHelper
     }
 
 
-    /** We don't implement this one */
+    /** We don't implement this one. */
     public Object load (Object query, CacheElement ce)
             throws ResourceException
     {
