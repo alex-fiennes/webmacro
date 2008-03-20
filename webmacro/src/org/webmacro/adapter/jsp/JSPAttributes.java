@@ -4,11 +4,8 @@ import javax.servlet.jsp.PageContext;
 import java.util.Enumeration;
 
 /**
- *
- * <p>
  * Class that provides access to the JSP pageContext attributes with scoping,
  * such that $Attributes.SCOPE.xxxx returns appropriate values.
- * </p>
  * <p>
  * SCOPE can be one of "Page", "Request", "Session" or "Application".
  * </p>
@@ -30,7 +27,7 @@ public class JSPAttributes
     private ApplicationAttributes applicationAttributes;
 
     /**
-     * Utility class to provide access to scoped attributes, JSP-style
+     * Utility class to provide access to scoped attributes, JSP-style.
      */
     abstract class ScopedAttributes
     {
@@ -100,7 +97,6 @@ public class JSPAttributes
     }
 
     /**
-     *
      * @return The bean that provides access to session attributes
      */
     public SessionAttributes getSession()
@@ -111,7 +107,6 @@ public class JSPAttributes
     }
 
     /**
-     *
      * @return The bean that provides access to page attributes
      */
     public PageAttributes getPage()
@@ -122,7 +117,6 @@ public class JSPAttributes
     }
 
     /**
-     *
      * @return The bean that provides access to request attributes
      */
     public RequestAttributes getRequest()
@@ -133,7 +127,6 @@ public class JSPAttributes
     }
 
     /**
-     *
      * @return The bean that provides access to application attributes
      */
     public ApplicationAttributes getApplication()
