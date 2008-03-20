@@ -19,24 +19,23 @@
  *
  * See www.webmacro.org for more information on the WebMacro project.
  *
- *	@author	Marcel Huijkman
- *
- *	@version	15-07-2002
- *
  */
 
-
 package org.webmacro.servlet;
+
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.webmacro.UnsettableException;
 import org.webmacro.util.Bag;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-
 
 /**
  * Provide access to form variables.
+ * 
+ *  @author Marcel Huijkman
+ *  @version    15-07-2002
  */
 final public class Form implements Bag
 {
@@ -47,7 +46,7 @@ final public class Form implements Bag
     final HttpServletRequest _request;
 
     /**
-     * Read the form data from the supplied Request object
+     * Read the form data from the supplied Request object.
      */
     Form(final HttpServletRequest r)
     {
@@ -137,7 +136,7 @@ final public class Form implements Bag
 
 
     /**
-     * Unsupported
+     * Unsupported.
      */
     final public void remove (String key)
             throws UnsettableException
@@ -166,3 +165,4 @@ final public class Form implements Bag
     }
 
 }
+
