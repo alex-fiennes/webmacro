@@ -1,5 +1,7 @@
 package org.webmacro.util.test;
 
+import org.webmacro.Context;
+import org.webmacro.Template;
 import org.webmacro.util.Settings;
 import org.webmacro.util.WMEval;
 
@@ -69,6 +71,7 @@ public class WMEvalTest extends TestCase
      * Test method for {@link org.webmacro.util.WMEval#getLog()}.
      */
     public void testGetLog() {
+        assertNull(new WMEval().getLog());
         
     }
 
@@ -90,7 +93,11 @@ public class WMEvalTest extends TestCase
      * Test method for {@link org.webmacro.util.WMEval#getNewContext()}.
      */
     public void testGetNewContext() {
-        
+        WMEval it = new WMEval();
+        it.getCurrentContext().put("o", "b");
+        assertEquals("b",it.getCurrentContext().get("o"));
+        it.getNewContext();
+        assertNull(it.getCurrentContext().get("o"));
     }
 
     /**
@@ -111,27 +118,37 @@ public class WMEvalTest extends TestCase
      * Test method for {@link org.webmacro.util.WMEval#getCurrentTemplate()}.
      */
     public void testGetCurrentTemplate() {
+        assertNull(new WMEval().getCurrentTemplate());
         
     }
 
     /**
      * Test method for {@link org.webmacro.util.WMEval#parseLocalTemplate(java.lang.String)}.
      */
-    public void testParseLocalTemplate() {
-        
+    public void testParseLocalTemplate() throws Exception {
+        Template t = new WMEval().parseLocalTemplate("org/webmacro/util/test/WMEvalTest.wm");
+        assertEquals("Hi!", t.evaluateAsString(new Context()));
     }
 
     /**
      * Test method for {@link org.webmacro.util.WMEval#setCurrentTemplate(org.webmacro.Template)}.
      */
-    public void testSetCurrentTemplate() {
-        
+    public void testSetCurrentTemplate() throws Exception {
+        Template t = new WMEval().parseLocalTemplate("org/webmacro/util/test/WMEvalTest.wm");
+        WMEval it = new WMEval();
+        it.setCurrentTemplate(t);
+        assertEquals("Hi!", it.eval(new Context()));
     }
 
     /**
      * Test method for {@link org.webmacro.util.WMEval#setCurrentContext(org.webmacro.Context)}.
      */
-    public void testSetCurrentContext() {
+    public void testSetCurrentContext() throws Exception {
+        WMEval it = new WMEval();
+        Context c = new Context();
+        c.put("o", "b");
+        it.setCurrentContext(c);
+        assertEquals("b",it.getCurrentContext().get("o"));
         
     }
 
@@ -145,7 +162,9 @@ public class WMEvalTest extends TestCase
     /**
      * Test method for {@link org.webmacro.util.WMEval#eval()}.
      */
-    public void testEval() {
+    public void testEval() throws Exception {
+        WMEval it = new WMEval("org/webmacro/util/test/WMEvalTest.wm");
+        assertEquals("Hi!", it.eval(new Context()));
         
     }
 
@@ -202,7 +221,12 @@ public class WMEvalTest extends TestCase
      * Test method for {@link org.webmacro.util.WMEval#destroy()}.
      */
     public void testDestroy() {
-        
+        WMEval it = new WMEval();
+        it.getCurrentContext().put("o", "b");
+        assertEquals("b",it.getCurrentContext().get("o"));
+        it.destroy();
+        assertNull(it.getCurrentContext());
+        assertNull(it.getCurrentTemplate());
     }
 
 }
