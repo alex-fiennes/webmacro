@@ -207,12 +207,14 @@ public abstract class EncodingTestCase extends TestCase
         if (a == b) return;
         assertTrue("One byte array is null",
                 ((a != null) && (b != null)));
-        assertTrue("Size of binary output differs",
-                a.length == b.length);
-        for (int i = 0; i < a.length; i++)
-        {
-            assertTrue("Binary output differs",
-                    a[i] == b[i]);
+        if (a != null) { // Eclipse forces som nonsense on us
+            assertTrue("Size of binary output differs",
+                   a.length == b.length);
+            for (int i = 0; i < a.length; i++)
+            {
+                assertTrue("Binary output differs",
+                        a[i] == b[i]);
+            }
         }
     }
 }
