@@ -71,14 +71,16 @@ public class ParamDirective extends Directive
         {
             target = (Variable) builder.getArg(PARAM_TARGET, bc);
             result = builder.getArg(PARAM_RESULT, bc);
-            if (!target.isSimpleName())
-                throw new NotSimpleVariableBuildException(myDescr.name);
-
-            target.setValue(bc, result);
         }
         catch (ClassCastException e)
         {
             throw new NotVariableBuildException(myDescr.name, e);
+        }
+        if (!target.isSimpleName())
+            throw new NotSimpleVariableBuildException(myDescr.name);
+        try
+        {
+            target.setValue(bc, result);
         }
         catch (PropertyException e)
         {

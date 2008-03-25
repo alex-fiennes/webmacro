@@ -62,18 +62,21 @@ public class AttributeDirective extends Directive
             throws BuildException
     {
         Variable target = null;
-        try
-        {
+        Object result = null;
+        try { 
             target = (Variable) builder.getArg(ATTRIBUTE_TARGET, bc);
-            Object result = builder.getArg(ATTRIBUTE_RESULT, bc);
-            if (!target.isSimpleName())
-                throw new NotSimpleVariableBuildException(myDescr.name);
-
-            target.setValue(bc, result);
+            result = builder.getArg(ATTRIBUTE_RESULT, bc);
         }
         catch (ClassCastException e)
         {
             throw new NotVariableBuildException(myDescr.name, e);
+        }
+        if (!target.isSimpleName())
+            throw new NotSimpleVariableBuildException(myDescr.name);
+
+        try
+        {
+            target.setValue(bc, result);
         }
         catch (PropertyException e)
         {
