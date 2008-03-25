@@ -68,11 +68,9 @@ public abstract class Expression
             return ((Boolean) o).booleanValue();
         //  added by Keats 30-Nov-01
         else if (o == UNDEF)
-        {
             return false;
-        }
         else
-            return (o != null);
+            return true;
     }
 
     public static boolean isNumber (Object o)
