@@ -191,13 +191,13 @@ public class ReloadingCacheManager implements CacheManager {
         boolean reload = false;
 
         r = (MyCacheElement) _cache.get(query);
-        if (r != null)
+        if (r != null) {
             o = r.getObject();
 
-        // should the template be reloaded, regardless of cached status?
-        if (o != null && r.reloadContext != null && _reloadOnChange)
-            reload = r.reloadContext.shouldReload();
-
+            // should the template be reloaded, regardless of cached status?
+            if (o != null && r.reloadContext != null && _reloadOnChange)
+                reload = r.reloadContext.shouldReload();
+        }
         if (o == null || reload)
         {
             r = newCacheElement();
