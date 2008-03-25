@@ -118,7 +118,7 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
             throws BuildException
     {
         if (buildArgs == null)
-            return null;
+            return null;  // FIXME Should throw exception here, as non-null branch does
         else
             return buildArgs.getArg(argId, bc);
     }
