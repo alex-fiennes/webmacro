@@ -217,7 +217,8 @@ parse.TemplateExtensions: .wm, .wmt, .tml, .tmpl, .wmm
 
 
 
-# There are no web or context tools in the minimal version. You supply your own context tool fault handler:
+# There are no web or context tools in the minimal version. 
+# You supply your own context tool fault handler:
 ContextAutoLoaders.ContextTools:
 ContextAutoLoaders.WebContextTools:
 
@@ -230,6 +231,7 @@ Parsers.wm:  org.webmacro.parser.WMParser
 #
 # FastWriter Configuration
 #
+# This setting can be tuned for space/time trade-offs.
 # Misconfiguration of these settings can cause severe performance
 # and resource penalties
 
