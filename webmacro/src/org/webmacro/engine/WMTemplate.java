@@ -198,13 +198,11 @@ abstract public class WMTemplate implements Template
             {
                 if (bc != null)
                     be.setContextLocation(bc.getCurrentLocation());
-                newContent = null;
                 _log.error("Template contained invalid data", be);
                 throw be;
             }
             catch (IOException e)
             {
-                newContent = null; // don't let the old one survive
                 _log.error("Template: Could not read template: " + this);
                 throw e;
             }
