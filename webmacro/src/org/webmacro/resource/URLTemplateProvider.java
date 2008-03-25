@@ -385,14 +385,7 @@ final public class URLTemplateProvider extends CachingProvider
                 try
                 {
                     String p = buildPath(pre, mid, post);
-                    if (path != null)
-                    {
-                        return (Template) _broker.get(_TYPE, p);
-                    }
-                    else
-                    {
-                        return (Template) _broker.get(_TYPE, p);
-                    }
+                    return (Template) _broker.get(_TYPE, p);
                 }
                 catch (Exception ex)
                 {
