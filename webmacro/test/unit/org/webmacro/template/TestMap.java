@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class TestMap extends TemplateTestCase
 {
-    Context _context;
 
     public TestMap (String name)
     {
