@@ -100,8 +100,7 @@ public class WMEval
       }
       catch (Exception e)
       {
-          e.printStackTrace(System.err);
-          throw new IllegalStateException(e.toString());
+          throw new IllegalStateException(e);
       }
   }
 
@@ -115,9 +114,22 @@ public class WMEval
       }
       catch (Exception e)
       {
-          e.printStackTrace(System.err);
-          throw new IllegalStateException(e.toString());
+          throw new IllegalStateException(e);
       }
+    }
+    
+    /**
+     * Build a WebMacro environment to evaluate a template given it's name.
+     */
+    public WMEval (String templateName) { 
+        try { 
+            wm = new WM();
+            context = wm.getContext();
+            parseLocalTemplate(templateName);         
+        }
+        catch (Exception e) { 
+            throw new IllegalStateException(e);
+        }
     }
     
     /**
@@ -247,9 +259,9 @@ public class WMEval
      * Evaluates the context of this instance and the instance's
      * current template and current output stream using UTF8.
      */
-    public void eval() throws Exception
+    public String eval() throws Exception
     {
-      eval(context, currentTemplate);
+      return eval(context, currentTemplate);
     }
 
 
@@ -317,8 +329,7 @@ public class WMEval
       }
       catch (Exception e)
       {
-          e.printStackTrace(System.err);
-          throw new ServletException(e.toString());
+          throw new ServletException(e);
       }
       return value;
     }
