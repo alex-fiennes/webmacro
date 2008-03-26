@@ -275,8 +275,18 @@ public class WMEval
     }
 
     /**
-     * Evaluates the named template against the current context
-     * and returns the value. 
+     * Evaluate the supplied template against the supplied context and 
+     * return the result as a string.
+     */
+    public String eval (Context context, Template template) throws Exception
+    {
+        return template.evaluateAsString(context);
+    }
+
+    
+    /**
+     * Evaluate the named template against the given context
+     * and return the result as a String. 
      * If an output stream is specified, the return value is 
      * also written out to the stream.
      * 
@@ -332,15 +342,6 @@ public class WMEval
           throw new ServletException(e);
       }
       return value;
-    }
-
-    /**
-     * Evaluate the supplied context and template and return the result as a
-     * as a string.
-     */
-    public String eval (Context context, Template template) throws Exception
-    {
-        return template.evaluateAsString(context);
     }
 
     /**
