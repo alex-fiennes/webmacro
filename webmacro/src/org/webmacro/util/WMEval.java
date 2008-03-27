@@ -72,10 +72,15 @@ public class WMEval
 
     //-------private and protected members-----
     private WebMacro wm;
+
     private Log log;
+
     private Template currentTemplate;
+
     private OutputStream out = System.out;
+
     private Context context;
+
     /**
      * If an output file is not specified as an argument, it
      * must be found in the context under this key.
@@ -83,71 +88,67 @@ public class WMEval
     public static final String outputContextKey = "OutputFileName";
 
     //-------constructor(s)-----
-  /**
-   * The constructor for WebMacro decorator in a servlet context.
-   */
-  public WMEval (Servlet servlet)
-  {
-      // Build a web macro environment for currentTemplate execution.
-      try
-      {
-          if (servlet == null)
-              wm = new WM();
-          else
-              wm = new WM(servlet);
-          context = wm.getContext();
-          log = wm.getBroker().getBrokerLog();
-      }
-      catch (Exception e)
-      {
-          throw new IllegalStateException(e);
-      }
-  }
-
-    public WMEval ()
-    {
-      // Build a web macro environment for currentTemplate execution.
-      try
-      {
-          wm = new WM();
-          context = wm.getContext();
-      }
-      catch (Exception e)
-      {
-          throw new IllegalStateException(e);
-      }
-    }
-    
     /**
-     * Build a WebMacro environment to evaluate a template given it's name.
+     * The constructor for WebMacro decorator in a servlet context.
+     * Build a web macro environment for currentTemplate execution.
      */
-    public WMEval (String templateName) { 
-        try { 
-            wm = new WM();
+    public WMEval(Servlet servlet)
+    {
+        try {
+            if (servlet == null)
+                wm = new WM();
+            else
+                wm = new WM(servlet);
             context = wm.getContext();
-            parseLocalTemplate(templateName);         
-        }
-        catch (Exception e) { 
+            log = wm.getBroker().getBrokerLog();
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
-    
+
+    /**
+     * Constructor.
+     * Build a web macro environment for currentTemplate execution.
+     */
+    public WMEval()
+    {
+        try {
+            wm = new WM();
+            context = wm.getContext();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Build a WebMacro environment to evaluate a template given it's name.
+     */
+    public WMEval(String templateName)
+    {
+        try {
+            wm = new WM();
+            context = wm.getContext();
+            parseLocalTemplate(templateName);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     /**
      * Return the settings associated with this WebMacro instance.
      */
-    public Settings getSettings()
+    public Settings getSettings ()
     {
-      return wm.getBroker().getSettings();
+        return wm.getBroker().getSettings();
     }
-    
+
     /**
      * Return the log associated with this instance of WMEval.
      */
-    public Log getLog()
+    public Log getLog ()
     {
-    	return this.log;
+        return this.log;
     }
-
 
     //-------public initializers/destroyers-----
     /**
@@ -171,14 +172,12 @@ public class WMEval
      */
     public Template init (InputStream template) throws Exception
     {
-        //
-        Template t = new StreamTemplate(wm.getBroker(), 
-                new InputStreamReader(template));
+        Template t = new StreamTemplate(wm.getBroker(),
+                template);
         t.parse();
         this.currentTemplate = t;
         return t;
     }
-    
 
     public void error (String msg, Exception e)
     {
@@ -195,7 +194,8 @@ public class WMEval
         return c;
     }
 
-    public WebContext getNewContext (HttpServletRequest req, HttpServletResponse resp)
+    public WebContext getNewContext (HttpServletRequest req,
+            HttpServletResponse resp)
     {
         WebContext c = wm.getWebContext(req, resp);
         this.context = c;
@@ -213,13 +213,14 @@ public class WMEval
     /**
      * Gets the current template.
      */
-    public Template getCurrentTemplate()
+    public Template getCurrentTemplate ()
     {
         return this.currentTemplate;
     }
 
     /**
      * A convenience method to find and parse a template in the local template path.
+     * FIXME Do not set currentTemplate here
      */
     public Template parseLocalTemplate (String templateName) throws Exception
     {
@@ -259,11 +260,10 @@ public class WMEval
      * Evaluates the context of this instance and the instance's
      * current template and current output stream using UTF8.
      */
-    public String eval() throws Exception
+    public String eval () throws Exception
     {
-      return eval(context, currentTemplate);
+        return eval(context, currentTemplate);
     }
-
 
     /**
      * Evaluate the context supplied against the current template.
@@ -271,7 +271,7 @@ public class WMEval
      */
     public String eval (Context context) throws Exception
     {
-      return eval(context, currentTemplate);
+        return eval(context, currentTemplate);
     }
 
     /**
@@ -283,7 +283,6 @@ public class WMEval
         return template.evaluateAsString(context);
     }
 
-    
     /**
      * Evaluate the named template against the given context
      * and return the result as a String. 
@@ -294,10 +293,10 @@ public class WMEval
      * @param out An optional output stream.
      * @return The output from the evaluated template
      */
-    public String eval (Context context, String templateName, OutputStream out) 
-        throws Exception
+    public String eval (Context context, String templateName, OutputStream out)
+            throws Exception
     {
-      return eval(context, templateName, out, null);
+        return eval(context, templateName, out, null);
     }
 
     /**
@@ -324,24 +323,22 @@ public class WMEval
      * @return The output from the evaluated template.
      */
     public String eval (WebContext context, String templateName,
-                      HttpServletResponse resp) throws ServletException
+            HttpServletResponse resp) throws ServletException
     {
-      String value = null;
-      try
-      {
-          resp.setContentType("text/html");
-          String encoding = wm.getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
-          if (encoding == null)
-          {
-              encoding = resp.getCharacterEncoding();
-          }
-          value = eval(context, templateName, resp.getOutputStream(), encoding);
-      }
-      catch (Exception e)
-      {
-          throw new ServletException(e);
-      }
-      return value;
+        String value = null;
+        try {
+            resp.setContentType("text/html");
+            String encoding = wm
+                    .getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            if (encoding == null) {
+                encoding = resp.getCharacterEncoding();
+            }
+            value = eval(context, templateName, resp.getOutputStream(),
+                    encoding);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+        return value;
     }
 
     /**
@@ -349,43 +346,40 @@ public class WMEval
      * <p>
      * This method is the preferred method when an output stream is to be written
      * as well as the value of the string is to be returned.
+     * 
      * @param context The context to use.
      * @param templateName The input template file in the resource path.
-     * @param out The output stream. If null, an attempt will be
-     * made to locate the outputstream in the context using the output stream key if
-     * in the context. If no output stream can be resolved, the method does not
-     * throw an exception.
+     * @param out The output stream. If null, an attempt will be made to locate 
+     *   the outputstream in the context using the output stream key if
+     *   in the context. If no output stream can be resolved, the method does not
+     *   throw an exception.
      * @param encoding If null, the platform's encoding will be used.
      * @return The output from the evaluation of the template.
      */
-    public String eval (Context context, String templateName,
-                        OutputStream out, String encoding) throws Exception
+    public String eval (Context context, String templateName, OutputStream out,
+            String encoding) throws Exception
     {
-      Template t = wm.getTemplate(templateName);
-      String value = t.evaluateAsString(context);
-      // output the file
-      if (out == null) 
-      {
-        String outputFileName = (String) context.get(outputContextKey);
-        if (outputFileName != null)
+        Template t = wm.getTemplate(templateName);
+        String value = t.evaluateAsString(context);
+        // output the file
+        if (out == null) {
+            String outputFileName = (String) context.get(outputContextKey);
+            if (outputFileName != null) {
+                out = new FileOutputStream(outputFileName);
+            }
+        }
+        if (out != null) // write it to out
         {
-          out = new FileOutputStream(outputFileName);
+            if (encoding == null) {
+                out.write(value.getBytes());
+            } else {
+                out.write(value.getBytes(encoding));
+            }
+            out.close();
         }
-      }
-      if (out != null) // write it to out
-      {
-        if (encoding == null)
-        {
-          out.write(value.getBytes());
-        }
-        else {
-          out.write(value.getBytes(encoding));
-        }
-        out.close();
-      }
-      this.currentTemplate = t;
-      this.context = context;
-      return value;
+        this.currentTemplate = t;
+        this.context = context;
+        return value;
     }
 
     /**
@@ -397,17 +391,16 @@ public class WMEval
      * @param outputFileName name of file to output to
      * @param append whether to apppend output
      * @param encoding the encoding to use, may be null
-     * @return
+     * @return the String resulting from evaluating the template against the context
      * @throws Exception
      */
-    public String eval (Context context, String templateName, 
-            String outputFileName, boolean append, String encoding) 
-        throws Exception
+    public String eval (Context context, String templateName,
+            String outputFileName, boolean append, String encoding)
+            throws Exception
     {
-      OutputStream out = new FileOutputStream(outputFileName, append);
-      return eval(context, templateName, out, encoding);
-    }      
-
+        OutputStream out = new FileOutputStream(outputFileName, append);
+        return eval(context, templateName, out, encoding);
+    }
 
     /**
      * Free up resources when no longer needed.
@@ -416,5 +409,6 @@ public class WMEval
     {
         wm = null;
         currentTemplate = null;
+        context = null;
     }
 }
