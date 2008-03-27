@@ -90,13 +90,12 @@ abstract public class ServletBroker extends Broker
         }
     }
 
-    public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
+    public static Broker getBroker (Servlet s, Properties additionalProperties) 
+        throws InitException
     {
         int minorVersion, majorVersion;
 
-        ServletContext sc = s.
-        getServletConfig().
-        getServletContext();
+        ServletContext sc = s.getServletConfig().getServletContext();
         try
         {
             majorVersion = sc.getMajorVersion();
