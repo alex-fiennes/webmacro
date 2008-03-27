@@ -101,5 +101,8 @@
     <suppress checks="HideUtilityClassConstructor"
               files="DirectiveDescriptor.java" />
 
+    <!-- The way we have it is more expressive -->
+    <suppress checks="SimplifyBooleanReturn"
+              files="Expression.java" />
 
 </suppressions>
