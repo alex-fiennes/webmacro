@@ -89,7 +89,7 @@ public class WMEval
     //-------constructor(s)-----
     /**
      * The constructor for WebMacro decorator in a servlet context.
-     * Build a web macro environment for currentTemplate execution.
+     * Build a WebMacro environment for currentTemplate execution.
      */
     public WMEval(Servlet servlet)
     {
@@ -107,7 +107,7 @@ public class WMEval
 
     /**
      * Constructor.
-     * Build a web macro environment for currentTemplate execution.
+     * Build a WebMacro environment for currentTemplate execution.
      */
     public WMEval()
     {
