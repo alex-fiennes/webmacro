@@ -25,21 +25,13 @@ public class EvalTemplates
     /**
      * Evaluates a single template file argument.
      * Exceptions are reported to standard error, not thrown.
+     * @throws Exception if anything goes wrong
      */
-    public void run (String inputTemplate)
+    public void run (String inputTemplate) throws Exception
     {
         System.out.println("Template File=" + inputTemplate);
-        try
-        {
-            String s = wm.eval(wm.getNewContext(), inputTemplate, null, null);
-            System.out.println("Template Eval Output:\n" + s);
-            
-        }
-        catch (Exception e)
-        {
-            System.err.println("Unable to evaluate input.");
-            e.printStackTrace();
-        }
+        String s = wm.eval(wm.getNewContext(), inputTemplate, null, null);
+        System.out.println("Template Eval Output:\n" + s);
     }
 
     /**
@@ -52,21 +44,13 @@ public class EvalTemplates
      * null, the template must set the output.
      * @param append If true, output will be appended to existing file.
      * @param encoding The encoding to use on the output file, null allowed.
+     * @throws Exception if anything goes wrong
      */
     public Context run (String inputTemplate, String outFile, boolean append,
-                        String encoding)
+                        String encoding) throws Exception
     {
-        try
-        {
             wm.eval(wm.getNewContext(), inputTemplate, outFile, append, encoding);
             return wm.getCurrentContext();
-        }
-        catch (Exception e)
-        {
-            System.err.println("Unable to evaluate input.");
-            e.printStackTrace();
-            return null;
-        }
     }
 
     /**
