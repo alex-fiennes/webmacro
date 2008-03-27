@@ -42,9 +42,6 @@ public class GuestBook extends WMServlet
 
   ArrayList book = new ArrayList();
 
-   String name;
-   String email;
-   String comment;
    GuestEntry myGuestEntry;
 
    public Template handle(WebContext context) 
@@ -58,9 +55,9 @@ public class GuestBook extends WMServlet
 
       // get the form variables
       output = (String) context.getForm("loadFile");
-      name = (String) context.getForm("name"); 
-      email = (String) context.getForm("email"); 
-      comment = (String) context.getForm("comment"); 
+      String name = (String) context.getForm("name");
+      String email = (String) context.getForm("email");
+      String comment = (String) context.getForm("comment");
 
       if (output == null) {
          output = "form.wm";
@@ -116,8 +113,8 @@ public class GuestBook extends WMServlet
        GuestEntry(String inName, String inEmail, String inComment)
        {
           name = inName;
-          email = inEmail; 
-          comment = inComment;
+          this.email = inEmail; 
+          this.comment = inComment;
        }
    
        final public String getName()
