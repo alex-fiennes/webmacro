@@ -43,9 +43,9 @@ public interface Template extends Visitable
      * to avoid incurring this call during an interactive session, you can
      * call the parse() function at an appropriate time. Once a template has
      * been parsed, subsequent calls to this method do not have an effect. If
-     * you want to reparse the template, because you know, it has been changed, you
+     * you want to reparse the template, because you know it has been changed, you
      * have to create a new Template object and leave this one to the garbage collector.
-     * <p>
+     * 
      * @exception TemplateException if the sytax was invalid and we could not recover
      * @exception IOException if we could not successfullly read the parseTool
      */
