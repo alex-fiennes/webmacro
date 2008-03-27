@@ -283,6 +283,17 @@ public class WMEval
     }
 
     /**
+     * Evaluates the string template against the current context
+     * and returns the value.
+     * @param templateName The name of the template.
+     * @return The output from the evaluated template
+     */
+    public String eval (String templateName) throws Exception
+    {
+        return eval(context, templateName, null, null);
+    }
+
+    /**
      * Evaluate the named template against the given context
      * and return the result as a String. 
      * If an output stream is specified, the return value is 
@@ -296,48 +307,6 @@ public class WMEval
             throws Exception
     {
         return eval(context, templateName, out, null);
-    }
-
-    /**
-     * Evaluates the string template against the current context
-     * and returns the value.
-     * @param templateName The name of the template.
-     * @return The output from the evaluated template
-     */
-    public String eval (String templateName) throws Exception
-    {
-        return eval(context, templateName, null, null);
-    }
-
-    /**
-     * Evaluates the string template against a new context and writes
-     * it to the http Response output stream using the proper encoding.
-     * <p>
-     * This is an exceptionally useful method for a servlet to use to
-     * write out a template.
-     * <p>
-     * @param context The WM context to use.
-     * @param templateName The name of the template.
-     * @param resp The servlet response from which the encoding will be derived.
-     * @return The output from the evaluated template.
-     */
-    public String eval (WebContext context, String templateName,
-            HttpServletResponse resp) throws ServletException
-    {
-        String value = null;
-        try {
-            resp.setContentType("text/html");
-            String encoding = wm
-                    .getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
-            if (encoding == null) {
-                encoding = resp.getCharacterEncoding();
-            }
-            value = eval(context, templateName, resp.getOutputStream(),
-                    encoding);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        return value;
     }
 
     /**
@@ -380,6 +349,34 @@ public class WMEval
         this.context = context;
         return value;
     }
+    /**
+     * Evaluates the string template against a new context and writes
+     * it to the http Response output stream using the proper encoding.
+     * <p>
+     * This is an exceptionally useful method for a servlet to use to
+     * write out a template.
+     * <p>
+     * @param context The WM context to use.
+     * @param templateName The name of the template.
+     * @param resp The servlet response from which the encoding will be derived.
+     * @return The output from the evaluated template.
+     */
+    public String eval (WebContext context, String templateName,
+            HttpServletResponse resp) throws ServletException
+    {
+        String value = null;
+        try {
+            resp.setContentType("text/html");
+            String encoding = wm
+                    .getConfig(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+            value = eval(context, templateName, resp.getOutputStream(),
+                    encoding);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+        return value;
+    }
+
 
     /**
      *  Evaluate the named template against the given context.
@@ -395,7 +392,7 @@ public class WMEval
      */
     public String eval (Context context, String templateName,
             String outputFileName, boolean append, String encoding)
-            throws Exception
+        throws Exception
     {
         OutputStream out = new FileOutputStream(outputFileName, append);
         return eval(context, templateName, out, encoding);
