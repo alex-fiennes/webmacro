@@ -76,7 +76,7 @@ public class WMEval
 
     private Template currentTemplate;
 
-    private OutputStream out = System.out;
+    //private OutputStream out = System.out;
 
     private Context context;
 
@@ -88,24 +88,6 @@ public class WMEval
 
     //-------constructor(s)-----
     /**
-     * The constructor for WebMacro decorator in a servlet context.
-     * Build a WebMacro environment for currentTemplate execution.
-     */
-    public WMEval(Servlet servlet)
-    {
-        try {
-            if (servlet == null)
-                wm = new WM();
-            else
-                wm = new WM(servlet);
-            context = wm.getContext();
-            log = wm.getBroker().getBrokerLog();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
      * Constructor.
      * Build a WebMacro environment for currentTemplate execution.
      */
@@ -113,7 +95,7 @@ public class WMEval
     {
         try {
             wm = new WM();
-            context = wm.getContext();
+            init();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -126,13 +108,34 @@ public class WMEval
     {
         try {
             wm = new WM();
-            context = wm.getContext();
+            init();
             parseLocalTemplate(templateName);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
+    /**
+     * The constructor for WebMacro decorator in a servlet context.
+     * Build a WebMacro environment for currentTemplate execution.
+     */
+    public WMEval(Servlet servlet)
+    {
+        try {
+            if (servlet == null)
+                wm = new WM();
+            else
+                wm = new WM(servlet);
+            init();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void init() { 
+        context = wm.getContext();
+        log = wm.getBroker().getBrokerLog();        
+    }
     /**
      * Return the settings associated with this WebMacro instance.
      */
@@ -250,10 +253,10 @@ public class WMEval
      * Sets the output stream to be different than the default, System.out.
      * @param out The new output stream for any output during currentTemplate evaluation.
      */
-    public void setOutputStream (OutputStream out)
-    {
-        this.out = out;
-    }
+    //public void setOutputStream (OutputStream out)
+    //{
+    //    this.out = out;
+    //}
 
     /**
      * Evaluates the context of this instance and the instance's
