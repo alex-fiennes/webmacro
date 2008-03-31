@@ -25,6 +25,7 @@ package org.webmacro.servlet;
 import org.webmacro.Context;
 import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
+import org.webmacro.WebMacroRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -156,11 +157,20 @@ public class TextTool extends ContextTool
      */
     public static String URLEncode (String input)
     {
-        return input == null ? null : java.net.URLEncoder.encode(input);
+        if (input == null)
+            return null;
+        try {
+            return java.net.URLEncoder.encode(input, System.getProperty( "file.encoding" ));
+        } catch (UnsupportedEncodingException e) {
+            throw new WebMacroRuntimeException( "WebMacro bug System.file.encoding not supported", e );
+        }
     }
 
     /**
-     * Decode a URLEncoded <code>input</code> String.<p>
+     * Decode a URLEncoded <code>input</code> String.
+     * Assumes that the URL was encoded with URLEncode above.
+     * 
+     * <p>
      *
      * If <code>input</code> is <code>null</code>, <code>URLEncode()</code>
      * will return <code>null</code>.
@@ -169,13 +179,12 @@ public class TextTool extends ContextTool
      */
     public static String URLDecode (String input)
     {
-        try
-        {
-            return input == null ? null : java.net.URLDecoder.decode(input);
-        }
-        catch (Exception e)
-        {
-            return null;
+        if (input == null)
+            return  null;
+        try {
+            return java.net.URLDecoder.decode(input, System.getProperty( "file.encoding" ));
+        } catch (UnsupportedEncodingException e) {
+            throw new WebMacroRuntimeException( "WebMacro bug System.file.encoding not supported", e );
         }
     }
 
