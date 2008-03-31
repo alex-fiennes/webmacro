@@ -114,7 +114,7 @@ class IfDirective extends Directive
         elseifCount = (elseifArgs == null) ? 0 : elseifArgs.length;
 
         // OK, how about no else-if subdirectives?
-        if (elseifCount == 0)
+        if (elseifArgs == null)
         {
             // If condition is static and false -- just return the else block
             if (!cMacro)
