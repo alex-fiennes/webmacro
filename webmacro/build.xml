@@ -42,7 +42,7 @@ Administrative targets:
     ]]></echo>
     </target>
 
-    <property name="version"        value="2.0" />
+    <property name="version"        value="2.1" />
     <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
     <property name="app.name"       value="webmacro" />
     <property name="tmpdir"         value="tmp" />
