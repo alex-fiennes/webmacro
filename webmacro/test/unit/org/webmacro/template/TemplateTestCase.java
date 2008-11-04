@@ -130,17 +130,16 @@ public abstract class TemplateTestCase extends TestCase
         String template = "#set $assertEvaluationEquals = " + eval;
         executeStringTemplate(template);
         if (result == null)
-            assertTrue(_context.get("assertEvaluationEquals") == null);
+            assertNull(_context.get("assertEvaluationEquals"));
         else
             assertTrue(result.toString(), result.equals(_context.get("assertEvaluationEquals")));
     }
     
     protected void showError(String templateName, String resultText, String result)
     {
-      System.err.println("/" + templateName + "/ does not "
+      fail("/" + templateName + "/ does not "
               + "evaluate to /" + resultText + "/ "
               + "result=/" + result + "/");
-      assertTrue(false);
     }
 
 
@@ -182,23 +181,21 @@ public abstract class TemplateTestCase extends TestCase
         }
         catch (Exception e)
         {
-            System.err.println("Execution of /" + templateText + "/"
+            e.printStackTrace();
+            fail("Execution of /" + templateText + "/"
                     + " threw " + e.getClass()
                     + "(" + e.getMessage() + ")"
                     + ", expecting /"
                     + resultText + "/");
-            e.printStackTrace();
-            assertTrue(false);
         }
         if (result == null)
             return;
 
         if (result.equals(resultText) != equals)
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " yielded /" + result + "/, " + (equals ? "" : " not ")+
                     "expecting /" + resultText + "/");
-            assertTrue(false);
         }
     }
 
@@ -244,27 +241,24 @@ public abstract class TemplateTestCase extends TestCase
         }
         if (caught == null)
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " yielded /" + result + "/, expecting throw "
                     + exceptionClass);
-            assertTrue(false);
         }
         else if (!exceptionClass.isAssignableFrom(caught.getClass()))
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " threw " + caught.getClass() + ", expecting "
                     + exceptionClass);
-            assertTrue(false);
         }
         else if (messageMatchText != null)
         {
             RE re = new RE(messageMatchText);
             if (!re.match(caught.getMessage()))
             {
-                System.err.println("Exception " + caught.getMessage()
+                fail("Exception " + caught.getMessage()
                         + " does not match /"
                         + messageMatchText + "/");
-                assertTrue(false);
             }
         }
     }
@@ -295,11 +289,10 @@ public abstract class TemplateTestCase extends TestCase
         }
         catch (Exception e)
         {
-            System.err.println("Execution of /" + templateText + "/"
+            e.printStackTrace(System.err);
+            fail("Execution of /" + templateText + "/"
                     + " threw " + e.getClass() + "/, expecting match /"
                     + resultPattern + "/");
-            e.printStackTrace(System.err);
-            assertTrue(false);
         }
         if (result == null)
             return;
@@ -307,10 +300,9 @@ public abstract class TemplateTestCase extends TestCase
         RE re = new RE(resultPattern);
         if (!re.match(result))
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " yielded /" + result + "/, expecting match /"
                     + resultPattern + "/");
-            assertTrue(false);
         }
     }
 
@@ -330,10 +322,9 @@ public abstract class TemplateTestCase extends TestCase
             caught = e;
             if (!(caught instanceof PropertyException))
             {
-                System.err.println("Execution of /" + templateText + "/"
+                fail("Execution of /" + templateText + "/"
                         + " yielded /" + caught.getClass()
                         + "/, expecting throw PropertyException");
-                assertTrue(false);
             }
             else
             {
@@ -342,19 +333,17 @@ public abstract class TemplateTestCase extends TestCase
         }
         if (caught == null)
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " yielded /" + result + "/, expecting throw "
                     + "PropertyException with caught exception "
                     + exceptionClass);
-            assertTrue(false);
         }
         else if (!exceptionClass.isAssignableFrom(caught.getClass()))
         {
-            System.err.println("Execution of /" + templateText + "/"
+            fail("Execution of /" + templateText + "/"
                     + " threw " + caught.getClass() + ", expecting throw "
                     + "PropertyException with caught exception "
                     + exceptionClass);
-            assertTrue(false);
         }
     }
 
