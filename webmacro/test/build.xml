@@ -36,6 +36,9 @@
         <delete dir="${unit.reports}"/>
         <delete file='LoadReport.html'/>
         <delete file='controls.html'/>
+        <delete file='winFrame.html'/>
+        <delete file='windows.html'/>
+        <delete file='verisign.html'/>
         <delete file='LoadReportRelease2Features.html'/>
         <delete file='PerformanceReport.html'/>
         <delete file='ecomm.html'/>
