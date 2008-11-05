@@ -82,7 +82,6 @@ Administrative targets:
         <mkdir  dir="${classes}"/>
         <mkdir  dir="${javadoc}"/>
         <mkdir  dir="${dist.binary}"/>
-        <mkdir  dir="${examples}/WEB-INF"/>
         <mkdir  dir="${examples}/WEB-INF/classes"/>
         <mkdir  dir="${examples}/WEB-INF/lib"/>
         <mkdir  dir="${dist.binary}"/>
@@ -104,9 +103,10 @@ Administrative targets:
         <delete file="${dist.source}.zip"/>
         <delete file="${jar}"/>
         <delete file="${src.jar}"/>
+        <delete file="${adapters-jar}"/>
         <delete dir="${tmpdir}"/>
-        <delete dir="${examples}/WEB-INF"/>
-        <delete dir="${tmpdir}"/>
+        <delete dir="${examples}/WEB-INF/classes" />
+        <delete dir="${examples}/WEB-INF/lib" />
         <ant antfile="test/build.xml" target="unit-clean" />
     </target>
 
