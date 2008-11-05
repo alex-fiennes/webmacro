@@ -23,10 +23,23 @@
 
     <display-name>WebMacro</display-name>
     <servlet>
-        <servlet-name>invoker</servlet-name>
-        <servlet-class>
-          org.mortbay.jetty.servlet.Invoker
-        </servlet-class>
+      <servlet-name>invoker</servlet-name>
+       <servlet-class>
+        org.mortbay.jetty.servlet.Invoker
+      </servlet-class>
+      <init-param>
+        <param-name>verbose</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <init-param>
+        <param-name>nonContextServlets</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <init-param>
+        <param-name>dynamicParam</param-name>
+        <param-value>anyValue</param-value>
+      </init-param>
+      <load-on-startup>0</load-on-startup>
     </servlet>
 
    <servlet-mapping>
