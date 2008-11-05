@@ -42,6 +42,9 @@
         <delete file='LoadReportRelease2Features.html'/>
         <delete file='PerformanceReport.html'/>
         <delete file='ecomm.html'/>
+        <!-- see WMEvalTest -->
+        <delete file='t.tmp'/>
+        <delete file='T'/>
     </target>
 
     <target name="unit-prepare">
