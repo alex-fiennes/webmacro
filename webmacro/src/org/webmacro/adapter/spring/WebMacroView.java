@@ -48,9 +48,9 @@ public class WebMacroView extends AbstractTemplateView
     }
 
     /**
-     * Render the template
+     * Render the template.
      *
-     * @todo Add code here to put in standard context variables used for Spring form stuff
+     * TODO Add code here to put in standard context variables used for Spring form stuff
      * 
      * @param model
      * @param request
