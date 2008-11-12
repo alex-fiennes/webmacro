@@ -28,7 +28,6 @@ import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpUtils;
 
 /**
  * Provide Template with access to url handing routines.
@@ -58,7 +57,7 @@ public class URLTool extends ContextTool
          */
         public String getRequestURL ()
         {
-            return HttpUtils.getRequestURL(context.getRequest()).toString();
+            return context.getRequest().getRequestURL().toString();
         }
 
         /**
@@ -72,7 +71,7 @@ public class URLTool extends ContextTool
         public String getCompleteRequestURL ()
         {
             HttpServletRequest req = context.getRequest();
-            StringBuffer b = HttpUtils.getRequestURL(req);
+            StringBuffer b = req.getRequestURL();
             String query = req.getQueryString();
             if (query != null)
             {
