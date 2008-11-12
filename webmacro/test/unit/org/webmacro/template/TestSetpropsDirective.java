@@ -7,19 +7,31 @@ import org.webmacro.engine.CrankyEvaluationExceptionHandler;
 public class TestSetpropsDirective extends TemplateTestCase
 {
 
-   public TestSetpropsDirective(String name)
-   {
-      super(name);
-      System.getProperties().setProperty("org.webmacro.ImpliedPackages",
-               "java.util");
-      System.getProperties().setProperty("org.webmacro.AllowedPackages",
-               "java.util");
-   }
+    public TestSetpropsDirective()
+    {
+       super();
+    }
+    public TestSetpropsDirective(String name)
+    {
+       super(name);
+    }
 
+   protected void setUp () throws Exception
+   {
+      super.setUp();
+   }
+   public void init () throws Exception
+   {
+       System.getProperties().setProperty("org.webmacro.ImpliedPackages",
+                                          "java.util");
+       System.getProperties().setProperty("org.webmacro.AllowedPackages",
+                                          "java.util");
+       super.init();
+   }
+   
    public void stuffContext(Context context) throws Exception
    {
-      context
-               .setEvaluationExceptionHandler(new CrankyEvaluationExceptionHandler());
+      context.setEvaluationExceptionHandler(new CrankyEvaluationExceptionHandler());
       context.put("User", new User());
    }
 

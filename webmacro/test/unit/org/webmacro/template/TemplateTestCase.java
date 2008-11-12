@@ -18,6 +18,10 @@ public abstract class TemplateTestCase extends TestCase
     protected Context _context;
 
 
+    public TemplateTestCase ()
+    {
+        super();
+    }
     public TemplateTestCase (String name)
     {
         super(name);
