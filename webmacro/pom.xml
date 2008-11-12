@@ -327,12 +327,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta-regexp</groupId>
-      <artifactId>jakarta-regexp</artifactId>
-      <version>1.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.3</version>
@@ -352,6 +346,12 @@
     </dependency>
 
 
+    <dependency>
+      <groupId>jakarta-regexp</groupId>
+      <artifactId>jakarta-regexp</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
      <groupId>net.sourceforge.jwebunit</groupId>
      <artifactId>jwebunit-core</artifactId>
