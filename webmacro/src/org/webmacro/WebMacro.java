@@ -42,11 +42,11 @@ public interface WebMacro
 {
 
     /**
-     * The current version of WebMacro.  The actual value is
-     * inserted by ANT during the "compile" process
+     * The current version of WebMacro.  
+     * No longer using ant filtering.
      */
-    public static final String VERSION = "@VERSION@";
-    public static final String BUILD_DATE = "@BUILD_DATE@";
+    public static final String VERSION = "2.1";
+    public static final String BUILD_DATE = "2008-11-13";
 
     /**
      * This object is used to access components that have been plugged
