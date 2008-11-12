@@ -225,7 +225,7 @@ Administrative targets:
             <fileset dir="distroot" />
         </copy>
       <copy todir="${dist.source}" file="${jar}"/>
-      <copy todir="${dist.source}" file="lib/concurrent.jar" /> 
+      <copy todir="${dist.source}" file="lib/concurrent-1.3.4.jar" />
       <copy file='WebMacro.defaults.minimal' todir='${dist.source}' />
       <copy file='WebMacro.defaults.classic' todir='${dist.source}' />
       <copy file='build.xml' todir='${dist.source}' />
