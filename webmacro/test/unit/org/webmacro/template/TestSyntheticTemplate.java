@@ -269,18 +269,18 @@ public class TestSyntheticTemplate extends TemplateTestCase
             }
             duration = System.currentTimeMillis() - duration;
             for (int index = 0; index < threadCount; index++)
-                tet += threadTest[index].tet;
+                tet += threadTest[index].tet1;
         }
 
 
         class ThreadTest extends Thread
         {
-            long tet = 0;
+            long tet1 = 0;
 
 
             public void run ()
             {
-                this.tet = System.currentTimeMillis();
+                this.tet1 = System.currentTimeMillis();
                 for (int index = 0; index < iterationCount; index++)
                 {
                     long it = System.currentTimeMillis();
@@ -298,7 +298,7 @@ public class TestSyntheticTemplate extends TemplateTestCase
                     if (it < bestCase) bestCase = it;
                     if (it > worstCase) worstCase = it;
                 }
-                this.tet = System.currentTimeMillis() - tet;
+                this.tet1 = System.currentTimeMillis() - tet1;
             }
         }
     }

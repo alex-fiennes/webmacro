@@ -59,7 +59,7 @@ public class TemplateTool extends ContextTool
     public class MacroTemplateFactory
     {
 
-        private Context _context;
+        private Context _contextLocal;
         private ArrayList _macros = new ArrayList(10);
 
         /** Constructor
@@ -67,7 +67,7 @@ public class TemplateTool extends ContextTool
          */
         public MacroTemplateFactory (Context ctx)
         {
-            _context = ctx;
+            _contextLocal = ctx;
         }
 
         /** Creates a MacroTemplate from a string with a new context.
@@ -76,7 +76,7 @@ public class TemplateTool extends ContextTool
          */
         public MacroTemplate fromString (String s)
         {
-            MacroTemplate mt = new MacroTemplate(_context, s);
+            MacroTemplate mt = new MacroTemplate(_contextLocal, s);
             _macros.add(mt);
             return mt;
         }
@@ -90,9 +90,9 @@ public class TemplateTool extends ContextTool
         public MacroTemplate fromFile (String fileRef)
                 throws org.webmacro.ResourceException
         {
-            Template t = (Template) _context.getBroker()
+            Template t = (Template) _contextLocal.getBroker()
                     .getProvider("template").get(fileRef);
-            MacroTemplate mt = new MacroTemplate(_context, t);
+            MacroTemplate mt = new MacroTemplate(_contextLocal, t);
             _macros.add(mt);
             return mt;
         }
@@ -107,7 +107,7 @@ public class TemplateTool extends ContextTool
     {
 
         private Template _template;
-        private Context _context, _origContext;
+        private Context _contextLocal, _origContext;
 
         /** 
          * Constructor.
@@ -119,7 +119,7 @@ public class TemplateTool extends ContextTool
             _template = t;
             _origContext = c;
             // @@@ Just get a new one?
-            _context = c.cloneContext();
+            _contextLocal = c.cloneContext();
         }
 
         /** 
@@ -140,7 +140,7 @@ public class TemplateTool extends ContextTool
          */
         public Context getArgs ()
         {
-            return _context;
+            return _contextLocal;
         }
 
         /** 
@@ -151,9 +151,9 @@ public class TemplateTool extends ContextTool
          */
         public Object eval () throws PropertyException
         {
-            synchronized (_context)
+            synchronized (_contextLocal)
             {
-                return _template.evaluateAsString(_context);
+                return _template.evaluateAsString(_contextLocal);
             }
         }
 
@@ -163,9 +163,9 @@ public class TemplateTool extends ContextTool
             {
                 for (int i = 0; i < args.length; i++)
                 {
-                    _context.put("arg" + (i + 1), args[i]);
+                    _contextLocal.put("arg" + (i + 1), args[i]);
                 }
-                _context.put("args", args);
+                _contextLocal.put("args", args);
             }
             return eval();
         }
@@ -177,15 +177,15 @@ public class TemplateTool extends ContextTool
                         "Usage error: both args must be arrays of equal length!");
             for (int i = 0; i < args.length; i++)
             {
-                _context.put(names[i], args[i]);
+                _contextLocal.put(names[i], args[i]);
             }
-            _context.put("args", args);
+            _contextLocal.put("args", args);
             return eval();
         }
 
         public Object eval (java.util.Map map) throws PropertyException
         {
-            _context.putAll(map);
+            _contextLocal.putAll(map);
             return eval();
         }
 
@@ -195,9 +195,9 @@ public class TemplateTool extends ContextTool
          */
         public void copyCurrentContext ()
         {
-            synchronized (_context)
+            synchronized (_contextLocal)
             {
-                _context.putAll(_origContext);
+                _contextLocal.putAll(_origContext);
             }
         }
 
