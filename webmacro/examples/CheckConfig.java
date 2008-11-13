@@ -128,7 +128,7 @@ public class CheckConfig extends WMServlet {
         while (hdrs.hasMoreElements()){
             hdrCnt++;
             String hdr = (String)hdrs.nextElement();
-            String val = (String)req.getHeader(hdr);
+            String val = req.getHeader(hdr);
             System.out.println("Req header " + hdrCnt + ", " + hdr + "=" + val);
         }
     }

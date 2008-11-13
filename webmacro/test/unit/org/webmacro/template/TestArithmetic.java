@@ -25,7 +25,7 @@ public class TestArithmetic extends TemplateTestCase
     {
         for (int i = 0; i < N; i++)
         {
-            c.put(integers[i], new Integer((int) values[i]));
+            c.put(integers[i], new Integer(values[i]));
             c.put(longs[i], new Long(values[i]));
             c.put(shorts[i], new Short((short) values[i]));
         }

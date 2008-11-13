@@ -115,7 +115,7 @@ public class TestGetSet extends TemplateTestCase
                 new DefaultEvaluationExceptionHandler());
 
         context.put("TestObject", to);
-        context.put("two", (int) 2);
+        context.put("two", 2);
         context.put("twoLong", (long) 2);
 
         TestObject.intField = 1;

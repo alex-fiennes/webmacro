@@ -54,10 +54,10 @@ public class GuestBook extends WMServlet
       String templateName;
 
       // get the form variables
-      output = (String) context.getForm("loadFile");
-      String name = (String) context.getForm("name");
-      String email = (String) context.getForm("email");
-      String comment = (String) context.getForm("comment");
+      output = context.getForm("loadFile");
+      String name = context.getForm("name");
+      String email = context.getForm("email");
+      String comment = context.getForm("comment");
 
       if (output == null) {
          output = "form.wm";

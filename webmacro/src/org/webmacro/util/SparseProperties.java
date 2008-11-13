@@ -106,7 +106,7 @@ public class SparseProperties extends Properties
       while (e.hasMoreElements())
       {
         String k = (String) e.nextElement();
-        this.setProperty(k, (String) request.getParameter(k));
+        this.setProperty(k, request.getParameter(k));
         System.out.println(k + ":" + request.getParameter(k));
       }
     }

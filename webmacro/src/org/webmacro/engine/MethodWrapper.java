@@ -71,7 +71,7 @@ public class MethodWrapper
         Class[] types = IntrospectionUtils.createTypesFromArgs(args);
         for (int i = 0; i < _methods.length; i++)
         {
-            Method m = (Method) _methods[i];
+            Method m = _methods[i];
             Class[] sig = m.getParameterTypes();
             if (IntrospectionUtils.matches(sig, types))
             {
