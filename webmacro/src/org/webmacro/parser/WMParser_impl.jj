@@ -749,7 +749,7 @@ Object ObjectRoot() : {
   (
     LOOKAHEAD(<WORD><LPAREN>)
       t=<WORD> <LPAREN> argList=ArgList() <RPAREN>
-      { element = new FunctionCallBuilder((String) t.image, argList); }
+      { element = new FunctionCallBuilder(t.image, argList); }
     | t=<WORD> { element=t.image; }
   )
   { return element; }
