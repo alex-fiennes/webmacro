@@ -241,7 +241,7 @@ abstract public class WMTemplate implements Template
      * Get the #macros' defined for this template.
      *
      * @return the #macro's defined for this template, or null if this template has
-     * not yet beed <code>parse()'d</code>.
+     * not yet been <code>parse()'d</code>.
      */
     public Map getMacros ()
     {
