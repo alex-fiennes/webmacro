@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+
 /**
  * Defines the type of object which contains
  * WebMacro script, text, blocks to be evaluated.
@@ -46,8 +47,8 @@ public interface Template extends Visitable
      * you want to reparse the template, because you know it has been changed, you
      * have to create a new Template object and leave this one to the garbage collector.
      * 
-     * @exception TemplateException if the sytax was invalid and we could not recover
-     * @exception IOException if we could not successfullly read the parseTool
+     * @exception TemplateException if the syntax was invalid and we could not recover
+     * @exception IOException if we could not successfully read the parseTool
      */
     public void parse () throws IOException, TemplateException;
 
@@ -74,7 +75,7 @@ public interface Template extends Visitable
      */
 
     /**
-     * set a parameter.  Occasinally it's necessary to provide parameters
+     * Set a parameter.  Occasionally it's necessary to provide parameters
      * externally.  Although these might be considered of a different nature to
      * those set by #param, they can be stored as such.
      *
@@ -113,6 +114,7 @@ public interface Template extends Visitable
 
     public byte[] evaluateAsBytes(String encoding, Context context)
             throws PropertyException;
+
 
 }
 
