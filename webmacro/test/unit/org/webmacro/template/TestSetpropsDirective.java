@@ -19,10 +19,10 @@ public class TestSetpropsDirective extends TemplateTestCase
    protected void setUp () throws Exception
    {
 	   //System.getProperties().setProperty("org.webmacro.LogLevel", "DEBUG");
-       System.getProperties().setProperty("org.webmacro.ImpliedPackages",
-       "java.util");
-	   System.getProperties().setProperty("org.webmacro.AllowedPackages",
-       "java.util");
+       //System.getProperties().setProperty("org.webmacro.ImpliedPackages",
+       //"java.util");
+	   //System.getProperties().setProperty("org.webmacro.AllowedPackages",
+       //"java.util");
       super.setUp();
    }
    
@@ -119,7 +119,7 @@ public class TestSetpropsDirective extends TemplateTestCase
     */
    public void testSetpropsThrows() throws Exception
    {
-      String tmpl = "#setprops $e class=\"java.lang.Exception\"";
+      String tmpl = "#setprops $e class=\"org.melati.Melati\"";
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$e";
