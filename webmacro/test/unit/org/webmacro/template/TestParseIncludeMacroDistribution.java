@@ -25,6 +25,7 @@ public class TestParseIncludeMacroDistribution extends TemplateTestCase
     }
 
 
+
     /** executes out of the standard macro/ distribution. */
     public void testEcommMacros () throws Exception
     {

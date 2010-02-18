@@ -28,14 +28,25 @@ public abstract class TemplateTestCase extends TestCase
     }
 
 
+    /**
+     * Initialize this TemplateTester by creating a WebMacro instance
+     * and a default Context.
+     */
     protected void setUp () throws Exception
     {
-        init();
+        //if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
+        //    System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
+        _wm = createWebMacro();
+        _context = _wm.getContext();
+
+        // let subclasses stuff the context with custom data
+        stuffContext(_context);
+        System.err.println("Called :" + _wm.getBroker());
     }
 
 
     /**
-     * create a default-configured instance of WebMacro.  Subclasses may
+     * Create a default-configured instance of WebMacro.  Subclasses may
      * override if WM needs to be created/configured differently.
      */
     protected WebMacro createWebMacro () throws Exception
@@ -44,20 +55,6 @@ public abstract class TemplateTestCase extends TestCase
     }
 
 
-    /**
-     * initialize this TemplateTester by creating a WebMacro instance
-     * and a default Context.
-     */
-    public void init () throws Exception
-    {
-        if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
-            System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
-        _wm = createWebMacro();
-        _context = _wm.getContext();
-
-        // let subclasses stuff the context with custom data
-        stuffContext(_context);
-    }
 
 
     /**
@@ -242,6 +239,7 @@ public abstract class TemplateTestCase extends TestCase
         catch (Exception e)
         {
             caught = e;
+            e.printStackTrace();
         }
         if (caught == null)
         {

@@ -22,13 +22,6 @@ public class TestDirectiveParser extends TemplateTestCase
     }
 
 
-    public void init () throws Exception
-    {
-        System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
-        super.init();
-    }
-
-
     public void stuffContext (Context context) throws Exception
     {
     }
