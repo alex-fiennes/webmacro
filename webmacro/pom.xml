@@ -12,6 +12,10 @@
     <url>http://sourceforge.net/tracker/?group_id=64597</url>
   </issueManagement>
   <inceptionYear>1999</inceptionYear>
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://hudson.paneris.net/</url>
+  </ciManagement>
   <mailingLists>
     <mailingList>
       <name>WebMacro Announce</name>
@@ -80,6 +84,17 @@
       <organization>WebMacro</organization>
       <roles>
         <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>guyboltonking</id>
+      <name>Guy Bolton King</name>
+      <email>guyboltonking AT users.sourceforge.net</email>
+      <url></url>
+      <organization>WebMacro</organization>
+      <roles>
+        <role>Developer</role>
       </roles>
       <timezone>0</timezone>
     </developer>
@@ -235,19 +250,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
-          <!-- forkMode>once</forkMode -->
+          <forkMode>pertest</forkMode>
           <!-- threadCount>1</threadCount-->
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <excludes>
-            <!-- Works on windows but not linux/maven -->
-            <!-- exclude>**/TestWindows1251Encoding.java</exclude -->
             <!-- Maven HACK -->
             <exclude>**/*$*</exclude>
-            <!-- works in eclipse, but not maven -->
-            <!-- exclude>**/TestBackupCharStream.java</exclude -->
-            <!-- works in eclipse, but not maven -->
-            <!-- exclude>**/TestParseIncludeMacroDistribution.java</exclude -->
             <!-- works in eclipse, but not maven -->
             <!-- exclude>**/TestSetpropsDirective.java</exclude -->
            </excludes>
@@ -286,7 +295,7 @@
      <artifactId>cobertura-maven-plugin</artifactId>
      <configuration>
        <instrumentation>
-       <!-- Test source shouldnot be included, but seems to be -->
+       <!-- Test source should not be included, but seems to be -->
         <excludes>
           <exclude>**/CheckConfig.class</exclude>
           <exclude>**/GuestBook.class</exclude>
@@ -411,10 +420,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
-      <!-- plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-      </plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
