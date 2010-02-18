@@ -18,15 +18,12 @@ public class TestSetpropsDirective extends TemplateTestCase
 
    protected void setUp () throws Exception
    {
-      super.setUp();
-   }
-   public void init () throws Exception
-   {
+	   //System.getProperties().setProperty("org.webmacro.LogLevel", "DEBUG");
        System.getProperties().setProperty("org.webmacro.ImpliedPackages",
-                                          "java.util");
-       System.getProperties().setProperty("org.webmacro.AllowedPackages",
-                                          "java.util");
-       super.init();
+       "java.util");
+	   System.getProperties().setProperty("org.webmacro.AllowedPackages",
+       "java.util");
+      super.setUp();
    }
    
    public void stuffContext(Context context) throws Exception
@@ -35,7 +32,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       context.put("User", new User());
    }
 
-   /*
+   /**
     * Test the basic functionality of the directive: create a new hashtable and
     * sets a simple property.
     */
@@ -45,7 +42,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Some Text");
    }
 
-   /*
+   /**
     * Test the creation of an empty map.
     */
    public void testSetpropsEmpty() throws Exception
@@ -54,7 +51,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "true");
    }
 
-   /*
+   /**
     * This version set properties on a POJO instead of the default hashtable.
     */
    public void testSetpropsWithNonMap() throws Exception
@@ -68,7 +65,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Keats Kirsch is 45 years old.");
    }
 
-   /*
+   /**
     * This version uses the line continuation character. Notice that it needs to
     * be double escaped here (\\\\). In a template file it should be be escaped
     * once (I think).
@@ -84,7 +81,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Keats Kirsch weighs 190.");
    }
 
-   /*
+   /**
     * This tests the "class" option which lets you construct any class with a
     * no-arg constructor.
     */
@@ -100,8 +97,8 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Red Large 3");
    }
 
-   /*
-    * This tests the "class" option with the ImpliedPackages configuration
+   /**
+    * Tests the "class" option with the ImpliedPackages configuration
     * option which lets you omit the package from the class name.
     */
    public void testSetpropsImpliedPackage() throws Exception
@@ -116,8 +113,21 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Red Large 3");
    }
 
-   /*
-    * This tests the "class" option with the AllowedPackages configuration
+   /**
+    * Tests the "class" option with the ImpliedPackages configuration
+    * option which lets you omit the package from the class name.
+    */
+   public void testSetpropsThrows() throws Exception
+   {
+      String tmpl = "#setprops $e class=\"java.lang.Exception\"";
+      tmpl += "\n{\n";
+      tmpl += "}\n";
+      tmpl += "$e";
+      assertStringTemplateThrows(tmpl, WebMacroException.class);
+   }
+
+   /**
+    * Tests the "class" option with the AllowedPackages configuration
     * option which restricts the classes that can be loaded.
     */
    public void testSetpropsAllowedPackage() throws Exception
@@ -126,6 +136,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$WM";
+      System.err.println(_wm.getBroker());
       assertStringTemplateThrows(tmpl, WebMacroException.class);
    }
 
