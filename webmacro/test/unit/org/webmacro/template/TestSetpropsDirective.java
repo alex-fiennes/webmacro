@@ -113,13 +113,18 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Red Large 3");
    }
 
-   /**
-    * Tests the "class" option with the ImpliedPackages configuration
-    * option which lets you omit the package from the class name.
-    */
-   public void testSetpropsThrows() throws Exception
+   public void testSetpropsThrowsOnNotFoundClass() throws Exception
    {
       String tmpl = "#setprops $e class=\"org.melati.Melati\"";
+      tmpl += "\n{\n";
+      tmpl += "}\n";
+      tmpl += "$e";
+      assertStringTemplateThrows(tmpl, WebMacroException.class);
+   }
+
+   public void testSetpropsThrowsOnUnAllowedClass() throws Exception
+   {
+      String tmpl = "#setprops $e class=\"org.webmacro.WM\"";
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$e";
