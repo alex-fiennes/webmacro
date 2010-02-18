@@ -67,7 +67,9 @@ import org.webmacro.util.LogSystem;
 abstract public class WMServlet extends HttpServlet implements WebMacro
 {
 
-    private WebMacro _wm = null;
+	private static final long serialVersionUID = -4903102471116106113L;
+
+	private WebMacro _wm = null;
     private Broker _broker = null;
     private boolean _started = false;
     /**
