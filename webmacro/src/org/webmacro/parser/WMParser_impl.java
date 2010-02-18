@@ -566,8 +566,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[11] = jj_gen;
       ;
     }
-                                             {if (true) return lv;}
-    throw new Error("Missing return statement in function");
+    return lv;
   }
 
   final public Object RValue() throws ParseException {
@@ -589,8 +588,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[13] = jj_gen;
       ;
     }
-                                      {if (true) return rv;}
-    throw new Error("Missing return statement in function");
+    return rv;
   }
 
   final public void Punct_EQ() throws ParseException {
@@ -716,8 +714,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[25] = jj_gen;
       ;
     }
-    {if (true) return t.image;}
-    throw new Error("Missing return statement in function");
+    return t.image;
   }
 
   final public Object Conditional() throws ParseException {
@@ -741,8 +738,7 @@ public class WMParser_impl implements WMParser_implConstants {
       ;
     }
     jj_consume_token(RPAREN);
-                                                   {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
 /* ******************* */
@@ -774,8 +770,7 @@ public class WMParser_impl implements WMParser_implConstants {
         throw new ParseException();
       }
     }
-    {if (true) return element;}
-    throw new Error("Missing return statement in function");
+    return element;
   }
 
 // Used by VariableReference; shouldn't be used outside it
@@ -844,8 +839,7 @@ public class WMParser_impl implements WMParser_implConstants {
       }
     }
     Object[] names = v.toArray();
-    {if (true) return new VariableBuilder(names);}
-    throw new Error("Missing return statement in function");
+    return new VariableBuilder(names);
   }
 
 /* ********************** */
@@ -952,8 +946,7 @@ public class WMParser_impl implements WMParser_implConstants {
       throw new ParseException();
     }
     SetState(entryState);
-    {if (true) return qs;}
-    throw new Error("Missing return statement in function");
+    return qs;
   }
 
 // State: WM
@@ -972,8 +965,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    {if (true) return b;}
-    throw new Error("Missing return statement in function");
+    return b;
   }
 
   final public MapBuilder MapArgList() throws ParseException {
@@ -1242,8 +1234,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[60] = jj_gen;
       ;
     }
-      {if (true) return map;}
-    throw new Error("Missing return statement in function");
+    return map;
   }
 
   final public MapBuilder CurlyMap() throws ParseException {
@@ -1285,8 +1276,7 @@ public class WMParser_impl implements WMParser_implConstants {
                                                    SetState(DEFAULT);
     jj_consume_token(RBRACE);
                                                                                  SetState(WM);
-      {if (true) return map;}
-    throw new Error("Missing return statement in function");
+    return map;
   }
 
   final public ListBuilder ArgList() throws ParseException {
@@ -1360,8 +1350,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[69] = jj_gen;
       ;
     }
-    {if (true) return list;}
-    throw new Error("Missing return statement in function");
+    return list;
   }
 
   final public ListBuilder BracketList() throws ParseException {
@@ -1369,8 +1358,7 @@ public class WMParser_impl implements WMParser_implConstants {
     jj_consume_token(LBRACKET);
     list = ArgList();
     jj_consume_token(RBRACKET);
-    {if (true) return list;}
-    throw new Error("Missing return statement in function");
+    return list;
   }
 
   final public Object[] FormalArgList() throws ParseException {
@@ -1443,8 +1431,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[76] = jj_gen;
       ;
     }
-    {if (true) return list.toArray();}
-    throw new Error("Missing return statement in function");
+    return list.toArray();
   }
 
   final public ListBuilder MacroArgList() throws ParseException {
@@ -1459,8 +1446,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_la1[77] = jj_gen;
       ;
     }
-    {if (true) return list;}
-    throw new Error("Missing return statement in function");
+    return list;
   }
 
   final public Object Term() throws ParseException {
@@ -1546,8 +1532,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   final public Object Factor() throws ParseException {
@@ -1597,8 +1582,7 @@ public class WMParser_impl implements WMParser_implConstants {
       else
         {if (true) throw new ParseException("internal parser error in Factor()");}
     }
-    {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   final public Object AExpression() throws ParseException {
@@ -1648,8 +1632,7 @@ public class WMParser_impl implements WMParser_implConstants {
       else
         {if (true) throw new ParseException("internal parser error in AExpression()");}
     }
-    {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   final public Token RelOp() throws ParseException {
@@ -1681,8 +1664,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    {if (true) return t;}
-    throw new Error("Missing return statement in function");
+    return t;
   }
 
   final public Object CExpression() throws ParseException {
@@ -1716,7 +1698,7 @@ public class WMParser_impl implements WMParser_implConstants {
       ;
     }
     if (op == null)
-      {if (true) return e1;}
+      return e1;
     else switch (op.kind) {
       case OP_EQ:  {if (true) return new Expression.CompareEqBuilder(e1, e2);}
       case OP_SET: {if (true) return new Expression.CompareEqBuilder(e1, e2);}
@@ -1726,9 +1708,8 @@ public class WMParser_impl implements WMParser_implConstants {
       case OP_LE:  {if (true) return new Expression.CompareLeBuilder(e1, e2);}
       case OP_LT:  {if (true) return new Expression.CompareLtBuilder(e1, e2);}
       default:
-        {if (true) throw new ParseException("internal parser error in CExpression()");}
+        throw new ParseException("internal parser error in CExpression()");
     }
-    throw new Error("Missing return statement in function");
   }
 
   final public Object AndExpression() throws ParseException {
@@ -1761,8 +1742,7 @@ public class WMParser_impl implements WMParser_implConstants {
       e2 = CExpression();
       e = new Expression.AndBuilder(e, e2);
     }
-    {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   final public Object OrExpression() throws ParseException {
@@ -1795,15 +1775,13 @@ public class WMParser_impl implements WMParser_implConstants {
       e2 = AndExpression();
       e = new Expression.OrBuilder(e, e2);
     }
-    {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   final public Object Expression() throws ParseException {
   Object e=null;
     e = OrExpression();
-                     {if (true) return e;}
-    throw new Error("Missing return statement in function");
+    return e;
   }
 
   void EatWsNl() throws ParseException {
@@ -1878,8 +1856,7 @@ public class WMParser_impl implements WMParser_implConstants {
       }
     }
     SetState(entryState);
-    {if (true) return o;}
-    throw new Error("Missing return statement in function");
+    return o;
   }
 
   final public void WMContent(ParserBlockBuilder b) throws ParseException {
@@ -2121,8 +2098,7 @@ public class WMParser_impl implements WMParser_implConstants {
         throw new ParseException();
       }
     }
-    {if (true) return block;}
-    throw new Error("Missing return statement in function");
+    return block;
   }
 
   final public BlockBuilder Block(Subdirective[] subdirectives) throws ParseException {
@@ -2208,8 +2184,7 @@ public class WMParser_impl implements WMParser_implConstants {
           break;
         case 0:
           jj_consume_token(0);
-                    {if (true) throw new ParseException("Unclosed block beginning at line " + token.beginLine + ".  Check for invalid directive options or missing a #end");}
-          break;
+          throw new ParseException("Unclosed block beginning at line " + token.beginLine + ".  Check for invalid directive options or missing a #end");
         case RBRACE:
         case LBRACE:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2247,8 +2222,7 @@ public class WMParser_impl implements WMParser_implConstants {
       }
     }
     blockStack.pop();
-    {if (true) return block;}
-    throw new Error("Missing return statement in function");
+    return block;
   }
 
   final public BlockBuilder WMDocument() throws ParseException {
@@ -2313,8 +2287,7 @@ public class WMParser_impl implements WMParser_implConstants {
       }
     }
     jj_consume_token(0);
-    {if (true) return block;}
-    throw new Error("Missing return statement in function");
+    return block;
   }
 
   private boolean jj_2_1(int xla) {
