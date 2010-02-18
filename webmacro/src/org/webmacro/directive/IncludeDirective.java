@@ -522,7 +522,7 @@ public class IncludeDirective extends Directive
         }
         catch (Exception e)
         {
-            throw makePropertyException("Unexpected ectpion while getting template");
+            throw makePropertyException("Unexpected exception while getting template");
         }
     }
 
