@@ -37,13 +37,13 @@ public class TestSetpropsDirective extends TemplateTestCase
       context.put("User", new User());
    }
 
-   public void testSetpropsThrowsOnUnAllowedClass() throws Exception
+   public void testSetpropsDoesNotThrowIfUnconfigured() throws Exception
    {
       String tmpl = "#setprops $e class=\"org.webmacro.WM\"";
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$e";
-      assertStringTemplateThrows(tmpl, WebMacroException.class);
+      assertStringTemplateEquals(tmpl, "WebMacro(WebMacro.properties)");
    }
 
    /**
