@@ -1,6 +1,10 @@
 package org.webmacro.template;
 
+import java.util.Properties;
+
+import org.webmacro.Broker;
 import org.webmacro.Context;
+import org.webmacro.WM;
 import org.webmacro.WebMacroException;
 import org.webmacro.engine.CrankyEvaluationExceptionHandler;
 
@@ -19,10 +23,6 @@ public class TestSetpropsDirective extends TemplateTestCase
    protected void setUp () throws Exception
    {
 	   //System.getProperties().setProperty("org.webmacro.LogLevel", "DEBUG");
-       //System.getProperties().setProperty("org.webmacro.ImpliedPackages",
-       //"java.util");
-	   //System.getProperties().setProperty("org.webmacro.AllowedPackages",
-       //"java.util");
       super.setUp();
    }
    
@@ -63,6 +63,27 @@ public class TestSetpropsDirective extends TemplateTestCase
       tmpl += "\n}\n";
       tmpl += "$User.Name is $User.Age years old.";
       assertStringTemplateEquals(tmpl, "Keats Kirsch is 45 years old.");
+   }
+
+   /**
+    * Tests the "class" option with the AllowedPackages configuration
+    * option which restricts the classes that can be loaded.
+    */
+   public void testSetpropsAllowedPackage() throws Exception
+   {
+	   System.getProperties().setProperty("org.webmacro.AllowedPackages", "org.webmacro");
+	   // overwrite the wm created in setup
+	   _wm = null;
+	   _context = null;
+	   System.err.println("IN");
+	   
+       _wm = new WM(Broker.getBroker(new Properties()));
+       _context = _wm.getContext();
+      String tmpl = "#setprops $WM class=\"org.webmacro.WM\"";
+      tmpl += "\n{\n";
+      tmpl += "}\n";
+      tmpl += "$WM";
+      assertStringTemplateEquals(tmpl, "WebMacro(WebMacro.properties)");
    }
 
    /**
@@ -113,7 +134,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       assertStringTemplateEquals(tmpl, "Red Large 3");
    }
 
-   public void testSetpropsThrowsOnNotFoundClass() throws Exception
+   public void testSetpropsThrowsOnClassNotFound() throws Exception
    {
       String tmpl = "#setprops $e class=\"org.melati.Melati\"";
       tmpl += "\n{\n";
@@ -128,20 +149,6 @@ public class TestSetpropsDirective extends TemplateTestCase
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$e";
-      assertStringTemplateThrows(tmpl, WebMacroException.class);
-   }
-
-   /**
-    * Tests the "class" option with the AllowedPackages configuration
-    * option which restricts the classes that can be loaded.
-    */
-   public void testSetpropsAllowedPackage() throws Exception
-   {
-      String tmpl = "#setprops $WM class=\"org.webmacro.WM\"";
-      tmpl += "\n{\n";
-      tmpl += "}\n";
-      tmpl += "$WM";
-      System.err.println(_wm.getBroker());
       assertStringTemplateThrows(tmpl, WebMacroException.class);
    }
 
