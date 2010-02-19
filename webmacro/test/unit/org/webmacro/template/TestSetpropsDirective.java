@@ -37,6 +37,15 @@ public class TestSetpropsDirective extends TemplateTestCase
       context.put("User", new User());
    }
 
+   public void testSetpropsThrowsOnUnAllowedClass() throws Exception
+   {
+      String tmpl = "#setprops $e class=\"org.webmacro.WM\"";
+      tmpl += "\n{\n";
+      tmpl += "}\n";
+      tmpl += "$e";
+      assertStringTemplateThrows(tmpl, WebMacroException.class);
+   }
+
    /**
     * Test the basic functionality of the directive: create a new hashtable and
     * sets a simple property.
@@ -76,7 +85,7 @@ public class TestSetpropsDirective extends TemplateTestCase
     */
    public void testSetpropsAllowedPackage() throws Exception
    {
-	   System.getProperties().setProperty("org.webmacro.AllowedPackages", "java.lang,java.util,org.webmacro");
+	   System.getProperties().setProperty("org.webmacro.AllowedPackages","java.lang,java.util,org.webmacro");
 	   // overwrite the wm created in setup
 	   Broker.BROKERS.clear();
        _wm = new WM(Broker.getBroker(new Properties()));
@@ -146,15 +155,6 @@ public class TestSetpropsDirective extends TemplateTestCase
    public void testSetpropsThrowsOnClassNotFound() throws Exception
    {
       String tmpl = "#setprops $e class=\"org.melati.Melati\"";
-      tmpl += "\n{\n";
-      tmpl += "}\n";
-      tmpl += "$e";
-      assertStringTemplateThrows(tmpl, WebMacroException.class);
-   }
-
-   public void testSetpropsThrowsOnUnAllowedClass() throws Exception
-   {
-      String tmpl = "#setprops $e class=\"org.webmacro.WM\"";
       tmpl += "\n{\n";
       tmpl += "}\n";
       tmpl += "$e";
