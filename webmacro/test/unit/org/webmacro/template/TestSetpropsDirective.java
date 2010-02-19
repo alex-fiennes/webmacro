@@ -26,6 +26,11 @@ public class TestSetpropsDirective extends TemplateTestCase
       super.setUp();
    }
    
+   protected void tearDown() throws Exception {
+	 super.tearDown();
+	 Broker.BROKERS.clear();
+   }
+   
    public void stuffContext(Context context) throws Exception
    {
       context.setEvaluationExceptionHandler(new CrankyEvaluationExceptionHandler());
@@ -71,12 +76,9 @@ public class TestSetpropsDirective extends TemplateTestCase
     */
    public void testSetpropsAllowedPackage() throws Exception
    {
-	   System.getProperties().setProperty("org.webmacro.AllowedPackages", "org.webmacro");
+	   System.getProperties().setProperty("org.webmacro.AllowedPackages", "java.lang,java.util,org.webmacro");
 	   // overwrite the wm created in setup
-	   _wm = null;
-	   _context = null;
-	   System.err.println("IN");
-	   
+	   Broker.BROKERS.clear();
        _wm = new WM(Broker.getBroker(new Properties()));
        _context = _wm.getContext();
       String tmpl = "#setprops $WM class=\"org.webmacro.WM\"";
@@ -84,6 +86,7 @@ public class TestSetpropsDirective extends TemplateTestCase
       tmpl += "}\n";
       tmpl += "$WM";
       assertStringTemplateEquals(tmpl, "WebMacro(WebMacro.properties)");
+      System.getProperties().setProperty("org.webmacro.AllowedPackages", "java.lang,java.util");
    }
 
    /**
@@ -124,6 +127,12 @@ public class TestSetpropsDirective extends TemplateTestCase
     */
    public void testSetpropsImpliedPackage() throws Exception
    {
+	   System.getProperties().setProperty("org.webmacro.ImpliedPackages", "java.util");
+	   // overwrite the wm created in setup
+	   Broker.BROKERS.clear();
+	   
+       _wm = new WM(Broker.getBroker(new Properties()));
+       _context = _wm.getContext();
       String tmpl = "#setprops $Prefs class=\"HashMap\"";
       tmpl += "\n{\n";
       tmpl += "Color=Red\n";
