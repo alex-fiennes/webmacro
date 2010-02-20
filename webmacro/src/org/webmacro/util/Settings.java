@@ -95,8 +95,8 @@ public class Settings
     }
 
     /**
-     * Instantaite a new Settings object using the supplied
-     * Settings as the defaults
+     * Instantiate a new Settings object using the supplied
+     * Settings as the defaults.
      */
     public Settings (Settings defaults)
     {
@@ -180,13 +180,18 @@ public class Settings
         {
             String key = (String) e.nextElement();
             if (prefix == null)
-                _props.setProperty(key, props.getProperty(key));
-            else if (key.startsWith(dotPrefix))
-                _props.setProperty(key.substring(dotPrefix.length()),
+            	setProperty(_props,key, props.getProperty(key));
+            else if (key.startsWith(dotPrefix)) {
+            	setProperty(_props,key.substring(dotPrefix.length()),
                         props.getProperty(key));
+            }
         }
     }
 
+    private static void setProperty(Properties props, String key, String value) {
+    	//System.out.println("Setting " + key + " to " + value);
+    	props.setProperty(key, value);
+    }
     /**
      * Load settings from a Properties
      */
