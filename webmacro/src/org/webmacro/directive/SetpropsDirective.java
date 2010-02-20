@@ -132,7 +132,7 @@ public class SetpropsDirective extends Directive
         } catch (PropertyException e) {
             throw e;
         } catch (Exception e) {
-            String errorText = "#setprops: Unable to set " + target;
+            String errorText = "#setprops: Unable to set " + target + " as " + e.getMessage();
             writeWarning(errorText, context, out);
         }
     }
