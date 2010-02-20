@@ -36,6 +36,8 @@ import org.webmacro.WebMacroException;
  * 
  * Used by BeanDirective and SetpropsDirective.
  * 
+ * NOTE If AllowedPackages is empty then all packages are allowed.
+ * 
  * @author Keats Kirsch
  * @see org.webmacro.directive.BeanDirective
  * @see org.webmacro.directive.SetpropsDirective
@@ -123,21 +125,21 @@ final public class Instantiator
    public Class classForName(String className) throws WebMacroException
    {
       Class c = null;
-      ClassNotFoundException except = null;
-      if (className.indexOf('.') >= 0)
+      if (className.indexOf('.') >= 0) // it is a fully specified class name
       {
          try
          {
             c = _broker.classForName(className);
          }
-         catch (ClassNotFoundException cnfe)
+         catch (ClassNotFoundException e)
          {
-            except = cnfe;
+         	throw new WebMacroException("Unable to load class " + className, e);
          }
       }
       else
-      {
-         // try with implied packages prepended
+      {  // try with implied packages prepended
+         ClassNotFoundException exception = null;
+         
          for (int i = 0; i < _impliedPackages.size(); i++)
          {
             String s = (String) _impliedPackages.get(i);
@@ -146,16 +148,19 @@ final public class Instantiator
                c = _broker.classForName(s + "." + className);
                break;
             }
-            catch (ClassNotFoundException cnfe2)
+            catch (ClassNotFoundException e)
             {
-               except = cnfe2;
+            	exception = e;
             }
          }
-      }
-      if (c == null)
-      {
-         throw new WebMacroException("Unable to load class " + className,
-                  except);
+         if (c == null) {
+        	 if (exception == null)
+        		 throw new WebMacroException("Unable to load class " + className + 
+        				 ", property " + IMPLIED_PACKAGES + " contains " + 
+        				 _impliedPackages.size() + " items");
+        	 else
+        		 throw new WebMacroException("Unable to load class " + className, exception);
+         }
       }
 
       if (!_allowedPackages.isEmpty())
@@ -169,7 +174,9 @@ final public class Instantiator
                               + pkg + ").  Check the \"" + ALLOWED_PACKAGES
                               + "\" parameter in the WebMacro configuration.");
          }
-      }
+      } 
+      // else allowed packages not specified so all allowed
+    	  
       return c;
    }
 
