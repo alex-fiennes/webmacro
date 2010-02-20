@@ -34,14 +34,13 @@ public abstract class TemplateTestCase extends TestCase
      */
     protected void setUp () throws Exception
     {
-        //if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
-        //    System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
+        if (System.getProperties().getProperty("org.webmacro.LogLevel") == null)
+            System.getProperties().setProperty("org.webmacro.LogLevel", "NONE");
         _wm = createWebMacro();
         _context = _wm.getContext();
 
         // let subclasses stuff the context with custom data
         stuffContext(_context);
-        System.err.println("Called :" + _wm.getBroker());
     }
 
 
@@ -169,7 +168,7 @@ public abstract class TemplateTestCase extends TestCase
     }
 
 
-    /** Asserts that the given template text evalutes to the given result text
+    /** Asserts that the given template text evaluates to the given result text
      * when evaluated against the current context */
     private void assertStringTemplate(String templateText,
                                      String resultText, boolean equals)
