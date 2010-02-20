@@ -142,7 +142,7 @@ public class SetpropsDirective extends Directive
     {
         String prop;
         String val;
-        StringTemplate stmpl;
+        StringTemplate stringTemplate;
 
         if (s.length() > 0 && !s.startsWith("#")) {
             for (int j = 0; j < s.length(); j++) {
@@ -156,14 +156,14 @@ public class SetpropsDirective extends Directive
                     // try first as a string
                     s = prefix + prop + "=\"" + val + "\"";
                     try {
-                        stmpl = new StringTemplate(context.getBroker(), s);
-                        stmpl.evaluateAsString(context);
+                        stringTemplate = new StringTemplate(context.getBroker(), s);
+                        stringTemplate.evaluateAsString(context);
                     } catch (WebMacroException wme) {
                         // try again without quotes.
                         s = prefix + prop + "=" + val;
                         try {
-                            stmpl = new StringTemplate(context.getBroker(), s);
-                            stmpl.evaluateAsString(context);
+                            stringTemplate = new StringTemplate(context.getBroker(), s);
+                            stringTemplate.evaluateAsString(context);
                         } catch (WebMacroException wme2) {
                             PropertyException pex = new PropertyException(
                                     "Failed to set property \"" + prop
