@@ -174,7 +174,7 @@
   </licenses>
   <scm>
     <connection>scm:cvs:pserver:anonymous@webmacro.cvs.sourceforge.net:/cvsroot/webmacro:webmacro</connection>
-    <developerConnection>scm:cvs:ext:${user}@webmacro.cvs.sourceforge.net:/cvsroot/webmacro:webmacro</developerConnection>
+    <developerConnection>scm:cvs:ext:timp@webmacro.cvs.sourceforge.net:/cvsroot/webmacro:webmacro</developerConnection>
     <url>http://cvs.sourceforge.net/viewcvs.py/webmacro/</url>
   </scm>
   <organization>
