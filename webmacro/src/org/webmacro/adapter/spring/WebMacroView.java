@@ -66,7 +66,7 @@ public class WebMacroView extends AbstractTemplateView
 
         Template template = webMacro.getTemplate(getUrl());
 
-        // @todo Need handling for template encodings here
+        // TODO Need handling for template encodings here
         template.write(response.getOutputStream(), context);
     }
 

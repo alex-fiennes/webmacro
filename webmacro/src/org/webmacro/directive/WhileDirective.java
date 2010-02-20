@@ -1,10 +1,19 @@
 /*
- * Copyright (C) 2005. All Rights Reserved. Redistribution and use in source and binary forms, with or without
- * modification, are permitted under the terms of either of the following Open Source licenses: The GNU General Public
- * License, version 2, or any later version, as published by the Free Software Foundation
- * (http://www.fsf.org/copyleft/gpl.html); This software is provided "as is", with NO WARRANTY, not even the implied
- * warranties of fitness to purpose, or merchantability. You assume all risks and liabilities associated with its use.
- * See www.webmacro.org for more information on the WebMacro project. @author Mike Weerdenburg @author Marcel Huijkman
+ * Copyright (C) 2005. 
+ * All Rights Reserved. Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted under the terms of either of 
+ * the following Open Source licenses: 
+ *   The GNU General Public License, version 2, or 
+ * any later version, as published by the Free Software Foundation
+ * (http://www.fsf.org/copyleft/gpl.html); 
+ *
+ * This software is provided "as is", with NO WARRANTY, not even the implied
+ * warranties of fitness to purpose, or merchantability. You assume all risks 
+ * and liabilities associated with its use.
+ * See www.webmacro.org for more information on the WebMacro project.
+ *  
+ * @author Mike Weerdenburg 
+ * @author Marcel Huijkman
  *
  *
  */
@@ -31,7 +40,7 @@ import org.webmacro.engine.UndefinedMacro;
  * create a loop without a limit, this could hang your template! Introduced at
  * release 2.0 as an experimental directive.
  * 
- * @todo Introduce unit test and mainline or drop the directive.
+ * TODO Introduce unit test and mainline or drop the directive.
  * 
  * @author Mike Weerdenburg
  * @author Marcel Huijkman
