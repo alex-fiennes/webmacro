@@ -3,7 +3,7 @@
   <groupId>org.webmacro</groupId>
   <artifactId>webmacro</artifactId>
   <name>WebMacro</name>
-  <version>2.1</version>
+  <version>2.2-SNAPSHOT</version>
   <description>
   WebMacro is a stable templating engine written in Java.
   </description>
@@ -176,7 +176,6 @@
     <connection>scm:cvs:pserver:anonymous@webmacro.cvs.sourceforge.net:/cvsroot/webmacro:webmacro</connection>
     <developerConnection>scm:cvs:ext:timp@webmacro.cvs.sourceforge.net:/cvsroot/webmacro:webmacro</developerConnection>
     <url>http://cvs.sourceforge.net/viewcvs.py/webmacro/</url>
-    <tag>webmacro-2_1</tag>
   </scm>
   <organization>
     <name>WebMacro</name>
