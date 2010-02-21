@@ -1,10 +1,10 @@
 package org.webmacro.resource;
 
 import java.lang.ref.SoftReference;
+import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadFactory;
 
-import EDU.oswego.cs.dl.util.concurrent.ClockDaemon;
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.Log;
@@ -30,7 +30,7 @@ public class ReloadingCacheManager implements CacheManager {
     private long _checkForReloadDelay;
 
     // Use ClockDaemon instead of the original TimeLoop -- more efficient priority-queue based implementation
-    private ClockDaemon _clockDaemon;
+    private Timer _clockDaemon;
 
     private Log _log;
 
@@ -93,7 +93,7 @@ public class ReloadingCacheManager implements CacheManager {
     {
         Settings ourSettings, defaultSettings;
 
-        _clockDaemon = new ClockDaemon();
+        _clockDaemon = new Timer();
         _clockDaemon.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 _log.info("Creating new ClockDaemon thread");

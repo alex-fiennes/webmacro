@@ -182,8 +182,8 @@
     <url>http://webmacro.sourceforge.net/</url>
   </organization>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test/unit</testSourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <resources>
       <resource>
         <targetPath>META-INF</targetPath>
@@ -193,7 +193,7 @@
         </includes>
       </resource>
       <resource>
-        <directory>src</directory>
+        <directory>src/main/java</directory>
         <includes>
           <include>**/*.wm</include>
           <include>**/*.wmm</include>
@@ -204,7 +204,7 @@
         </excludes>
       </resource>
       <resource>
-        <directory>macros</directory>
+        <directory>src/main/resources/macros</directory>
         <includes>
           <include>**/*.wmm</include>
         </includes>
@@ -212,7 +212,7 @@
     </resources>
     <testResources>
       <testResource>
-        <directory>test/unit</directory>
+        <directory>src/test/java</directory>
         <includes>
           <include>**/*.wm</include>
           <include>**/*.wmm</include>
@@ -221,14 +221,17 @@
           <include>**/*.txt</include>
         </includes>
       </testResource>
+<!--
       <testResource>
         <directory>macros</directory>
         <includes>
           <include>**/*.wmm</include>
         </includes>
       </testResource>
+-->      
     </testResources>
     <plugins>
+    <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -245,6 +248,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -269,7 +273,7 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
+          <source>1.6</source>
           <docencoding>UTF-8</docencoding>
         </configuration>
       </plugin>
@@ -279,8 +283,8 @@
           <debug>true</debug>
           <optimize>false</optimize>
           <showDeprecation>false</showDeprecation>
-          <source>1.4</source>
-          <target>1.4</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
     <plugin>
@@ -311,12 +315,6 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.7.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1</version>
@@ -334,36 +332,23 @@
       <version>2.3</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>1.2.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
-      <version>1.2.6</version>
-      <scope>compile</scope>
-    </dependency>
-
 
     <dependency>
       <groupId>jakarta-regexp</groupId>
       <artifactId>jakarta-regexp</artifactId>
-      <version>1.4</version>
+      <version>1.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
      <groupId>net.sourceforge.jwebunit</groupId>
      <artifactId>jwebunit-core</artifactId>
-     <version>1.4.1</version>
+     <version>1.6.1</version>
      <scope>test</scope>
     </dependency>
     <dependency>
      <groupId>net.sourceforge.jwebunit</groupId>
      <artifactId>jwebunit-htmlunit-plugin</artifactId>
-     <version>1.4.1</version>
+     <version>1.6.1</version>
      <scope>test</scope>
     </dependency>
     <dependency>

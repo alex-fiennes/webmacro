@@ -52,7 +52,7 @@ import org.webmacro.util.LogTargetFactory;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Broker is responsible for loading and initializing almost everything

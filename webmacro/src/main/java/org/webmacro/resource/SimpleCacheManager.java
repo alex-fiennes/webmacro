@@ -8,7 +8,7 @@ import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * SimpleCacheManager -- a basic cache manager backed by ConcurrentHashMap 
