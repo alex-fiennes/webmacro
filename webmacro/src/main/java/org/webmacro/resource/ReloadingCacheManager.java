@@ -3,7 +3,10 @@ package org.webmacro.resource;
 import java.lang.ref.SoftReference;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.webmacro.Broker;
 import org.webmacro.InitException;
@@ -11,6 +14,8 @@ import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
+
+import EDU.oswego.cs.dl.util.concurrent.ClockDaemon;
 
 /**
  * ReloadingCacheManager -- a cache manager which supports reloading and expiration, backed
@@ -23,14 +28,15 @@ public class ReloadingCacheManager implements CacheManager {
     private static final String NAME = "ReloadingCacheManager";
 
     private final ConcurrentHashMap _cache = new ConcurrentHashMap();
-    private int _cacheDuration;
+    private int _cacheDurationMilliseconds;
     private String _resourceType;
     private boolean _reloadOnChange = true, _useSoftReferences = true;
     private boolean _delayReloadChecks = false;
     private long _checkForReloadDelay;
 
-    // Use ClockDaemon instead of the original TimeLoop -- more efficient priority-queue based implementation
-    private Timer _clockDaemon;
+    // Used ClockDaemon instead of the original TimeLoop -- more efficient priority-queue based implementation
+    // Then renamed in move to java.util.concurrent
+    private ScheduledExecutorService _clockDaemon;
 
     private Log _log;
 
@@ -93,8 +99,7 @@ public class ReloadingCacheManager implements CacheManager {
     {
         Settings ourSettings, defaultSettings;
 
-        _clockDaemon = new Timer();
-        _clockDaemon.setThreadFactory(new ThreadFactory() {
+        _clockDaemon = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 _log.info("Creating new ClockDaemon thread");
                 Thread t = new Thread(runnable);
@@ -109,7 +114,7 @@ public class ReloadingCacheManager implements CacheManager {
         ourSettings = new SubSettings(config, NAME + "." + _resourceType);
         defaultSettings = new SubSettings(config, NAME + ".*");
 
-        _cacheDuration =
+        _cacheDurationMilliseconds =
                 ourSettings.getIntegerSetting("ExpireTime",
                         defaultSettings.getIntegerSetting("ExpireTime",
                                 config.getIntegerSetting("TemplateExpireTime", 0)));
@@ -130,7 +135,7 @@ public class ReloadingCacheManager implements CacheManager {
         _delayReloadChecks = _checkForReloadDelay > 0;
 
         _log.info(NAME + "." + _resourceType + ": "
-                + "; expireTime=" + _cacheDuration
+                + "; expireTime=" + _cacheDurationMilliseconds
                 + "; reload=" + _reloadOnChange
                 + "; softReference=" + _useSoftReferences
                 + "; checkForReloadDelay=" + _checkForReloadDelay);
@@ -157,7 +162,7 @@ public class ReloadingCacheManager implements CacheManager {
     public void destroy ()
     {
         _cache.clear();
-        _clockDaemon.shutDown();
+        _clockDaemon.shutdown();
     }
 
     public boolean supportsReload ()
@@ -166,7 +171,7 @@ public class ReloadingCacheManager implements CacheManager {
     }
 
     private final void scheduleRemoval(final Object key) {
-        _clockDaemon.executeAfterDelay(_cacheDuration,
+        _clockDaemon.schedule(
                 new Runnable()
                 {
                     public void run ()
@@ -175,7 +180,9 @@ public class ReloadingCacheManager implements CacheManager {
                         if (_log.loggingDebug())
                             _log.debug("cache expired: " + key);
                     }
-                });
+                },
+                _cacheDurationMilliseconds,
+                TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -207,12 +214,12 @@ public class ReloadingCacheManager implements CacheManager {
                 r.setObject(o);
                 _cache.put(query, r);
                 if (_log.loggingDebug())
-                    _log.debug("cached: " + query + " for " + _cacheDuration);
+                    _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
                 try
                 {
                     // if timeout is < 0,
                     // then don't schedule a removal from cache
-                    if (_cacheDuration >= 0)
+                    if (_cacheDurationMilliseconds >= 0)
                         scheduleRemoval(query);
                 }
                 catch (Exception e)
@@ -246,10 +253,10 @@ public class ReloadingCacheManager implements CacheManager {
         r.setObject(resource);
 
         _cache.put(query, r);
-        if (_cacheDuration >= 0)
+        if (_cacheDurationMilliseconds >= 0)
         {
             if (_log.loggingDebug())
-                _log.debug("cached: " + query + " for " + _cacheDuration);
+                _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
             scheduleRemoval(query);
         }
     }
