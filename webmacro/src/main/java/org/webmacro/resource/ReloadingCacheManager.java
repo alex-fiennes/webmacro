@@ -1,7 +1,6 @@
 package org.webmacro.resource;
 
 import java.lang.ref.SoftReference;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,7 +14,6 @@ import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
 
-import EDU.oswego.cs.dl.util.concurrent.ClockDaemon;
 
 /**
  * ReloadingCacheManager -- a cache manager which supports reloading and expiration, backed
