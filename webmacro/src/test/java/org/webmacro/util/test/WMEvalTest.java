@@ -27,7 +27,7 @@ public class WMEvalTest extends TestCase
 {
 
     // FIXME Hardcoded path to tests
-    private static final String PATH_TO_TESTS = "test/unit/";
+    private static final String PATH_TO_TESTS = "src/test/java/";
 
     /**
      * @param name
