@@ -22,6 +22,8 @@
 
 package org.webmacro.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Context;
 import org.webmacro.ContextTool;
 import org.webmacro.PropertyException;
@@ -37,6 +39,7 @@ import org.webmacro.PropertyException;
 public class VariableTool extends ContextTool
 {
 
+    static Logger _log =  LoggerFactory.getLogger(VariableTool.class);
     Context context;
 
     public VariableTool ()
@@ -91,14 +94,12 @@ public class VariableTool extends ContextTool
         }
         catch (ClassNotFoundException cnfe)
         {
-            context.getBroker().getLog("VariableTool")
-                    .error("VariableTool could not locate the class: /"
+            _log.error("VariableTool could not locate the class: /"
                     + className + "/");
         }
         catch (Exception e)
         {
-            context.getBroker().getLog("VariableTool")
-                    .error("An unexpected exception occured", e);
+            _log.error("An unexpected exception occured", e);
         }
         return false;
     }

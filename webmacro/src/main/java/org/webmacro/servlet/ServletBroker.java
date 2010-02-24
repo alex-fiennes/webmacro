@@ -31,9 +31,10 @@
  */
 package org.webmacro.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.util.Settings;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -53,6 +54,8 @@ abstract public class ServletBroker extends Broker
 {
 
     protected ServletContext _servletContext;
+    protected Logger _log =  LoggerFactory.getLogger(ServletBroker.class);
+    
 
     /**
      * Tracks ServletContexts we have been instantiated for, to prevent
@@ -68,27 +71,6 @@ abstract public class ServletBroker extends Broker
         _servletContext = sc;
     }
 
-    public void initLog (Settings config)
-    {
-        String logFile = config.getSetting("LogFile");
-        if ((logFile == null || logFile.equals(""))
-                && _config.getBooleanSetting("LogUsingServletLog"))
-            addLogTarget();
-        else
-            initLog();
-    }
-
-    private void addLogTarget ()
-    {
-        synchronized (servletContextsWithLogTargets)
-        {
-            if (!servletContextsWithLogTargets.containsKey(_servletContext))
-            {
-                _ls.addTarget(new ServletLog(_servletContext, _config));
-                servletContextsWithLogTargets.put(_servletContext, Boolean.TRUE);
-            }
-        }
-    }
 
     public static Broker getBroker (Servlet s, Properties additionalProperties) 
         throws InitException

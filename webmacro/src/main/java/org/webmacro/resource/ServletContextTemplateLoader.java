@@ -21,6 +21,8 @@
  */
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
@@ -52,6 +54,8 @@ import java.net.URL;
 public class ServletContextTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(ServletContextTemplateLoader.class);
+
     private ServletContext loader;
     private String path;
 
@@ -74,16 +78,14 @@ public class ServletContextTemplateLoader extends AbstractTemplateLoader
         // as we'll later use this as a prefix, it should end with a slash
         if (config.length() > 0 && !config.endsWith("/"))
         {
-            if (log.loggingInfo())
-                log.info("ServletContextTemplateLoader: appending \"/\" to path " + config);
+            _log.info("ServletContextTemplateLoader: appending \"/\" to path " + config);
             config = config.concat("/");
         }
 
         // the spec says, this has to start with a slash
         if (!config.startsWith("/"))
         {
-            if (log.loggingInfo())
-                log.info("ServletContextTemplateLoader: adding \"/\" at the beginning of path " + config);
+            _log.info("ServletContextTemplateLoader: adding \"/\" at the beginning of path " + config);
             config = "/".concat(config);
         }
         this.path = config;
@@ -94,9 +96,9 @@ public class ServletContextTemplateLoader extends AbstractTemplateLoader
         try
         {
             URL url = loader.getResource(path.concat(query));
-            if (url != null && log.loggingDebug())
+            if (url != null && _log.isDebugEnabled())
             {
-                log.debug("ServletContextTemplateProvider: Found Template " + url.toString());
+                _log.debug("ServletContextTemplateProvider: Found Template " + url.toString());
             }
             return (url != null) ? helper.load(url, ce) : null;
         }

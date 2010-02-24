@@ -23,13 +23,15 @@
 
 package org.webmacro;
 
+import org.slf4j.Logger;
+
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
  * WebMacro Manager Interface
  *
- * This interface provies root access into the WebMacro system. Use it to
+ * This interface provides root access into the WebMacro system. Use it to
  * obtain references to other WebMacro objects which you might need.
  * <p>
  * Create a new instance of this object in each thread that intends to
@@ -45,8 +47,8 @@ public interface WebMacro
      * The current version of WebMacro.  
      * No longer using ant filtering.
      */
-    public static final String VERSION = "2.1";
-    public static final String BUILD_DATE = "2008-11-13";
+    public static final String VERSION = "2.2";
+    public static final String BUILD_DATE = "2010-02-22";
 
     /**
      * This object is used to access components that have been plugged
@@ -115,12 +117,12 @@ public interface WebMacro
      * configuration) for information on how to set up and
      * control logging.
      */
-    public Log getLog (String type, String description);
+    //public Logger getLog (String type, String description);
 
     /**
      * Get a log using the type as the description
      */
-    public Log getLog (String type);
+    //public Logger getLog (String type);
 
     /**
      * Create a new WebContext object. This returns a Context object

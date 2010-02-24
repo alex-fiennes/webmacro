@@ -1,5 +1,7 @@
 package org.webmacro;
 
+import org.slf4j.Logger;
+
 import junit.framework.TestCase;
 import org.webmacro.util.Settings;
 
@@ -55,16 +57,6 @@ public class TestBroker extends TestCase
     {
         Provider p = _broker.getProvider("template");
         assertTrue(p != null);
-    }
-
-
-    public void testGetLog () throws Exception
-    {
-        Log l = _broker.getLog("template");
-        assertTrue(l != null);
-
-        l = _broker.getLog("NewLog");
-        assertTrue(l != null);
     }
 
 

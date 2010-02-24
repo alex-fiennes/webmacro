@@ -30,10 +30,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
-import org.webmacro.Log;
 import org.webmacro.Macro;
 import org.webmacro.PropertyException;
 import org.webmacro.TemplateVisitor;
@@ -56,6 +57,8 @@ import org.webmacro.util.Instantiator;
 public class BeanDirective extends Directive
 {
 
+	   static Logger _log =  LoggerFactory.getLogger(BeanDirective.class);
+   
    private static final String APP_BEANS_KEY = "org.webmacro.directive.BeanDirective.appBeans";
 
    private static final int BEAN_TARGET = 1;
@@ -106,8 +109,6 @@ public class BeanDirective extends Directive
 
    private Block onNewBlock;
 
-   private Log _log;
-
    private Broker _broker;
 
    private static final ArgDescriptor[] myArgs = new ArgDescriptor[]
@@ -142,7 +143,6 @@ public class BeanDirective extends Directive
             throws BuildException
    {
       _broker = bc.getBroker();
-      _log = _broker.getLog("directive");
       // appBeans map is created by the init method when this directive
       // is registered by the DirectiveProvider
       try

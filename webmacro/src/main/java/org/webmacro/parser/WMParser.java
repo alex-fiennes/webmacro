@@ -25,6 +25,8 @@ package org.webmacro.parser;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.engine.BlockBuilder;
 import org.webmacro.engine.Parser;
@@ -35,12 +37,13 @@ import org.webmacro.engine.Parser;
 public class WMParser implements Parser
 {
 
+    static Logger _log =  LoggerFactory.getLogger(WMParser.class);
     private final Broker _broker;
 
     public WMParser (Broker b)
     {
         _broker = b;
-        _broker.getLog("parser").info("parser created");
+        _log.info("parser created");
     }
 
     // Parser Interface

@@ -24,6 +24,8 @@ package org.webmacro.directive;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.Macro;
@@ -55,6 +57,7 @@ import org.webmacro.engine.BuildException;
 public abstract class Directive implements Macro, Visitable
 {
 
+    static Logger _log =  LoggerFactory.getLogger(Directive.class);
     public static final int ArgType_CONDITION = 1;
     public static final int ArgType_LVALUE = 2;
     public static final int ArgType_RVALUE = 3;
@@ -99,7 +102,7 @@ public abstract class Directive implements Macro, Visitable
         }
         catch (IOException e)
         {
-            context.getBroker().getLog("engine").error(
+            _log.error(
                     "Directive.evaluate: IO exception on write to StringWriter", e);
             return "";
         }
@@ -129,7 +132,7 @@ public abstract class Directive implements Macro, Visitable
     protected static void writeWarning (String warning, Context context, 
             FastWriter writer) throws IOException, PropertyException
     {
-        context.getLog("directive").warning(warning + 
+        context.getLog("directive").warn(warning + 
                 " at " + context.getCurrentLocation());
         writer.write(getWarningText(warning, context));
     }

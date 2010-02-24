@@ -21,10 +21,12 @@
  */
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.util.Settings;
+import org.webmacro.util.WMEval;
 
 /**
  * Abstract implementation of TemplateLoader, that stores broker
@@ -38,8 +40,8 @@ public abstract class AbstractTemplateLoader implements TemplateLoader
     /** Our broker */
     protected Broker broker;
 
-    /** Log to use */
-    protected Log log;
+    /** Logger to use */
+    static Logger _log =  LoggerFactory.getLogger(AbstractTemplateLoader.class);
 
     /** Helper class for loading templates from files or URLs */
     protected TemplateLoaderHelper helper;
@@ -52,7 +54,6 @@ public abstract class AbstractTemplateLoader implements TemplateLoader
     public void init (Broker b, Settings config) throws InitException
     {
         this.broker = b;
-        log = b.getLog("resource", "Loading templates");
         helper = new TemplateLoaderHelper();
         helper.init(b, config);
     }

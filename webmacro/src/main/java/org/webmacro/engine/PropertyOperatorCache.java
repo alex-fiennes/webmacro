@@ -35,10 +35,11 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.resource.CacheManager;
 import org.webmacro.resource.SimpleCacheManager;
@@ -57,7 +58,7 @@ final public class PropertyOperatorCache
 {
    
    private CacheManager _cache;
-   private Log _log;
+   static Logger _log =  LoggerFactory.getLogger(PropertyOperatorCache.class);
    private HashMap _restrictedClasses;
    
    public PropertyOperatorCache()
@@ -68,7 +69,6 @@ final public class PropertyOperatorCache
    {
       String cacheManager;
       
-      _log = b.getLog("resource", "Object loading and caching");
       
       cacheManager = b.getSetting("PropertyOperator.CacheManager");
       if (cacheManager == null || cacheManager.equals(""))
@@ -86,7 +86,7 @@ final public class PropertyOperatorCache
          }
          catch (Exception e)
          {
-            _log.warning("Unable to load cache manager " + cacheManager
+            _log.warn("Unable to load cache manager " + cacheManager
             + " for PropertyOperator, using SimpleCacheManager.  Reason:\n" + e);
             _cache = new SimpleCacheManager();
          }

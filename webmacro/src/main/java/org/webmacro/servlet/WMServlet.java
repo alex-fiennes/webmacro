@@ -36,11 +36,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.PropertyException;
 import org.webmacro.ResourceException;
@@ -48,7 +50,6 @@ import org.webmacro.Template;
 import org.webmacro.WM;
 import org.webmacro.WMConstants;
 import org.webmacro.WebMacro;
-import org.webmacro.util.LogSystem;
 
 /**
  * This is an abstract base class which can be used
@@ -68,6 +69,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 {
 
 	private static final long serialVersionUID = -4903102471116106113L;
+    static Logger _log =  LoggerFactory.getLogger(WMServlet.class);
 
 	private WebMacro _wm = null;
     private Broker _broker = null;
@@ -89,11 +91,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      */
     final static String ERROR_TEMPLATE_DEFAULT = "error.wm";
     final static String ERROR_VARIABLE_DEFAULT = "error";
-
-    /**
-     * Log object used to write out messages.
-     */
-    protected Log _log;
 
     /**
      * Null means all OK.
@@ -143,16 +140,14 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                         + "*** classpath, in a similar place to webmacro.jar \n"
                         + "*** and that all values were set correctly.\n\n"
                         + e.getMessage();
-                Log sysLog = LogSystem.getSystemLog("servlet");
-                sysLog.error(_problem, e);
+                _log.error(_problem, e);
                 return;
             }
         }
-        _log = _broker.getLog("servlet", "WMServlet lifecycle information");
       
         try
         {
-            if (_log.loggingDebug())
+            if (_log.isDebugEnabled())
             {
                 java.net.URL url = getBroker().getResource(Broker.WEBMACRO_PROPERTIES);
                 if (url != null)
@@ -170,7 +165,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     + "code supplied by the application programmer.\n";
             _log.error(_problem, e);
         }
-        _log.notice("started: " + this);
+        _log.info("started: " + this);
         _started = true;
 
     }
@@ -188,7 +183,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     {
         stop();
         _wm.destroy();
-        _log.notice("stopped: " + this);
+        _log.info("stopped: " + this);
         _wm = null;
         _started = false;
         super.destroy();
@@ -357,28 +352,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
     }
 
     /**
-     * Get a Log object which can be used to write to the log file.
-     * Messages to the logfile will be associated with the supplied
-     * type. The type name should be short as it may be printed on
-     * every log line. The description is a longer explanation of
-     * the type of messages you intend to write to this Log.
-     */
-    public Log getLog (String type, String description)
-    {
-        return _broker.getLog(type, description);
-    }
-
-    /**
-     * Get a Log object which can be used to write to the log file.
-     * Messages to the logfile will be associated with the supplied
-     * type. The type will be used as the description.
-     */
-    public Log getLog (String type)
-    {
-        return _broker.getLog(type, type);
-    }
-
-    /**
      * Retrieve a template from the "template" provider. Equivalent to
      * getBroker().get(TemplateProvider.TYPE,key)
      * @exception NotFoundException if the template was not found
@@ -523,8 +496,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
 
             Locale locale = (Locale) tmpl.getParam(
                     WMConstants.TEMPLATE_LOCALE);
-            if (_log.loggingDebug())
-                _log.debug("TemplateLocale=" + locale);
+            _log.debug("TemplateLocale=" + locale);
             if (locale != null)
             {
                 setLocale(resp, locale);
@@ -537,8 +509,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                 encoding = resp.getCharacterEncoding();
             }
 
-            if (_log.loggingDebug())
-                _log.debug("Using output encoding " + encoding);
+            _log.debug("Using output encoding " + encoding);
 
             // get the bytes before calling getOutputStream
             // this is necessary to be compatible with JSDK 2.3
@@ -739,13 +710,11 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
                     new Class[]
                     {Locale.class});
             m.invoke(resp, (Object[])new Locale[]{locale});
-            if (_log.loggingDebug())
-                _log.debug("Successfully set locale to " + locale);
+            _log.debug("Successfully set locale to " + locale);
         }
         catch (Exception e)
         {
-            if (_log.loggingDebug())
-                _log.debug("Error set locale to " + locale + ": " + e.getClass());
+           _log.debug("Error set locale to " + locale + ": " + e.getClass());
         }
     }
 

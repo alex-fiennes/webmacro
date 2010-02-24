@@ -27,11 +27,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.Provider;
+import org.webmacro.util.Instantiator;
 import org.webmacro.util.Settings;
 
 /**
@@ -39,13 +42,13 @@ import org.webmacro.util.Settings;
  */
 public final class ParserProvider implements Provider
 {
+    static Logger _log =  LoggerFactory.getLogger(Instantiator.class);
 
     // BULDER CLASS MANAGEMENT
 
     private final Hashtable _parsers = new Hashtable();
 
     private Broker _broker = null;
-    private Log _log;
     private final Class[] _brokerParam = {Broker.class};
     private final Object[] _brokerArg = new Object[1];
 
@@ -163,7 +166,6 @@ public final class ParserProvider implements Provider
     {
         _brokerArg[0] = broker;
         _broker = broker;
-        _log = broker.getLog("engine");
 
         try
         {

@@ -28,9 +28,12 @@
 
 package org.webmacro.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.Log;
+import org.webmacro.engine.Block;
 import org.webmacro.util.Bag;
 
 import javax.servlet.http.Cookie;
@@ -62,9 +65,9 @@ public class WebContext extends Context
 {
 
     /**
-     * Log configuration errors, context errors, etc.
+     * Logger configuration errors, context errors, etc.
      */
-    private final Log _log;
+    static Logger _log =  LoggerFactory.getLogger(WebContext.class);
 
     /**
      * The request for this http connect
@@ -87,7 +90,6 @@ public class WebContext extends Context
         super(broker);
         _request = req;
         _response = resp;
-        _log = broker.getLog("WebContext");
     }
 
 

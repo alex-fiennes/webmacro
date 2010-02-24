@@ -23,10 +23,11 @@
 
 package org.webmacro.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
-import org.webmacro.util.LogSystem;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -51,6 +52,7 @@ import java.util.Properties;
 public class Servlet22Broker extends ServletBroker
 {
 
+    static Logger _log =  LoggerFactory.getLogger(Servlet22Broker.class);
     protected final ClassLoader _servletClassLoader;
     protected String _templatePrefix;
 
@@ -84,9 +86,8 @@ public class Servlet22Broker extends ServletBroker
         }
         propertySource += ", (System Properties)";
         loadSystemSettings();
-        initLog(_config);
 
-        _log.notice("Loaded settings from " + propertySource);
+        _log.info("Loaded settings from " + propertySource);
         init();
     }
 
@@ -185,7 +186,7 @@ public class Servlet22Broker extends ServletBroker
                 register(key, b);
             }
             else
-                b.getLog("broker").notice(
+                _log.info(
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName
                     + " joining Broker" + " " + b.getName());
@@ -193,8 +194,7 @@ public class Servlet22Broker extends ServletBroker
         }
         catch (InitException e)
         {
-            Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialized WebMacro from "+
+            _log.error("Failed to initialized WebMacro from "+
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName);
             throw e;
@@ -242,7 +242,7 @@ public class Servlet22Broker extends ServletBroker
         }
         catch (MalformedURLException e)
         {
-            _log.warning("MalformedURLException caught in " +
+            _log.warn("MalformedURLException caught in " +
                     "ServletBroker.getResource for " + name);
             return null;
         }

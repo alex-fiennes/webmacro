@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.WM;
@@ -30,6 +32,7 @@ import org.webmacro.engine.MapBuilder;
 import org.webmacro.engine.PropertyMethodBuilder;
 import org.webmacro.engine.QuotedStringBuilder;
 import org.webmacro.engine.VariableBuilder;
+import org.webmacro.resource.DelegatingTemplateProvider;
 
 /**
  * WMParser_impl
@@ -43,6 +46,7 @@ import org.webmacro.engine.VariableBuilder;
 
 public class WMParser_impl implements WMParser_implConstants {
 
+  static Logger _log =  LoggerFactory.getLogger(WMParser_impl.class);
   private Broker broker;
   private BackupCharStream stream;
   private Stack blockStack = new Stack();
@@ -173,7 +177,7 @@ public class WMParser_impl implements WMParser_implConstants {
 
   // Warning routines
   private void warnDeprecated(String feature, int line, int col) {
-    broker.getLog("parser").warning("Deprecated feature: " + feature + " at " + templateName + ":" + line + "." + col);
+    _log.warn("Deprecated feature: " + feature + " at " + templateName + ":" + line + "." + col);
   }
 
   Subdirective lookahead_subdirective(Subdirective[] subdirectives) throws ParseException {

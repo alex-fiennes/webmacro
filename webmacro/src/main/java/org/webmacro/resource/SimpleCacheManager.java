@@ -2,9 +2,11 @@ package org.webmacro.resource;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
@@ -18,11 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SimpleCacheManager implements CacheManager {
 
+    static Logger _log =  LoggerFactory.getLogger(SimpleCacheManager.class);
+
     private static final String NAME = "SimpleCacheManager";
     private final Map _cache = new ConcurrentHashMap();
 
     private String _resourceType;
-    private Log _log;
 
     public SimpleCacheManager() {
     }
@@ -30,7 +33,6 @@ public class SimpleCacheManager implements CacheManager {
     public void init(Broker b, Settings config, String resourceType)
             throws InitException {
 
-        _log = b.getLog("resource", "Object loading and caching");
         _resourceType = resourceType;
 
         _log.info(NAME + "." + _resourceType);

@@ -25,6 +25,9 @@ package org.webmacro.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.WebMacroException;
 
@@ -44,6 +47,7 @@ import org.webmacro.WebMacroException;
  */
 final public class Instantiator
 {
+    static Logger _log =  LoggerFactory.getLogger(Instantiator.class);
 
    private static final String IMPLIED_PACKAGES = "ImpliedPackages";
 
@@ -70,7 +74,7 @@ final public class Instantiator
          s = b.getSetting(DEPRECATED_IMPLIED_PACKAGES);
          if (s != null)
          {
-            b.getLog("engine").warning(
+            _log.warn(
                      "The configuration parameter \""
                               + DEPRECATED_IMPLIED_PACKAGES
                               + "\" has been deprecated! Use \""
@@ -94,7 +98,7 @@ final public class Instantiator
          s = b.getSetting(DEPRECATED_ALLOWED_PACKAGES);
          if (s != null)
          {
-            b.getLog("engine").warning(
+            _log.warn(
                      "The configuration parameter \""
                               + DEPRECATED_ALLOWED_PACKAGES
                               + "\" has been deprecated! Use \""

@@ -32,6 +32,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.servlet.ServletBroker;
 import org.webmacro.servlet.WebContext;
 
@@ -47,6 +50,7 @@ import org.webmacro.servlet.WebContext;
  */
 public class WM implements WebMacro
 {
+    static Logger _log =  LoggerFactory.getLogger(WM.class);
 
     // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
@@ -54,7 +58,6 @@ public class WM implements WebMacro
 
     final private Provider _tmplProvider;
     final private Provider _urlProvider;
-    final private Log _log;
 
 
     /**
@@ -134,8 +137,7 @@ public class WM implements WebMacro
             throw new InitException("No Broker passed to WM()");
 
         _broker = broker;
-        _log = _broker.getLog("wm", "WebMacro instance lifecycle");
-        _log.notice("new " + this + " v" + WebMacro.VERSION);
+        _log.info("new " + this + " v" + WebMacro.VERSION);
 
         try
         {
@@ -259,22 +261,22 @@ public class WM implements WebMacro
     }
 
     /**
-     * Get a log to write information to. Log type names should be lower
+     * Get a log to write information to. Logger type names should be lower
      * case and short. They may be printed on every line of the log
      * file. The description is a longer explanation of the type of
-     * log messages you intend to produce with this Log object.
+     * log messages you intend to produce with this Logger object.
      */
-    final public Log getLog (String type, String description)
+    final public Logger getLog (String type, String description)
     {
-        return _broker.getLog(type, description);
+        return _log;
     }
 
     /**
      * Get a log using the type as the description
      */
-    final public Log getLog (String type)
+    final public Logger getLog (String type)
     {
-        return _broker.getLog(type, type);
+        return _log;
     }
 
     /**

@@ -22,9 +22,10 @@
 
 package org.webmacro.directive;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.Provider;
 import org.webmacro.engine.IntrospectionException;
 import org.webmacro.util.Settings;
@@ -37,12 +38,13 @@ import java.util.Hashtable;
 public final class DirectiveProvider implements Provider
 {
 
+    static Logger _log =  LoggerFactory.getLogger(DirectiveProvider.class);
+
     public static final String DIRECTIVE_KEY = "directive";
 
     // BULDER CLASS MANAGEMENT
 
     private final Hashtable _descriptors = new Hashtable();
-    private Log _log;
     private Broker _broker;
 
 
@@ -61,7 +63,7 @@ public final class DirectiveProvider implements Provider
             }
             catch (Exception ce)
             {
-                _log.warning("Exception loading directive " + settingValue, ce);
+                _log.warn("Exception loading directive " + settingValue, ce);
             }
         }
     }
@@ -142,7 +144,7 @@ public final class DirectiveProvider implements Provider
                 }
                 catch (Exception e)
                 {
-                    _log.warning("Unable to invoke the init method for the directive "
+                    _log.warn("Unable to invoke the init method for the directive "
                             + directive.getName(), e);
                 }
             }
@@ -187,14 +189,13 @@ public final class DirectiveProvider implements Provider
     public void init (Broker broker, Settings config) throws InitException
     {
         _broker = broker;
-        _log = broker.getLog("directive");
         try
         {
             config.processListSetting("Directives", new SettingHandler());
         }
         catch (Exception e)
         {
-            _log.warning("Error initializing DirectiveProvider", e);
+            _log.warn("Error initializing DirectiveProvider", e);
             throw new InitException("Could not initialize DirectiveProvider", e);
         }
     }

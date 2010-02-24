@@ -7,9 +7,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
@@ -22,6 +24,8 @@ import org.webmacro.util.SubSettings;
  * @author Brian Goetz
  */
 public class ReloadingCacheManager implements CacheManager {
+
+    static Logger _log =  LoggerFactory.getLogger(ReloadDelayDecorator.class);
 
     private static final String NAME = "ReloadingCacheManager";
 
@@ -36,7 +40,6 @@ public class ReloadingCacheManager implements CacheManager {
     // Then renamed in move to java.util.concurrent
     private ScheduledExecutorService _clockDaemon;
 
-    private Log _log;
 
     private abstract class MyCacheElement extends CacheElement implements Cloneable
     {
@@ -106,7 +109,6 @@ public class ReloadingCacheManager implements CacheManager {
             }
         });
 
-        _log = b.getLog("resource", "Object loading and caching");
         _resourceType = resourceType;
 
         ourSettings = new SubSettings(config, NAME + "." + _resourceType);
@@ -175,8 +177,7 @@ public class ReloadingCacheManager implements CacheManager {
                     public void run ()
                     {
                         _cache.remove(key);
-                        if (_log.loggingDebug())
-                            _log.debug("cache expired: " + key);
+                        _log.debug("cache expired: " + key);
                     }
                 },
                 _cacheDurationMilliseconds,
@@ -211,8 +212,7 @@ public class ReloadingCacheManager implements CacheManager {
             {
                 r.setObject(o);
                 _cache.put(query, r);
-                if (_log.loggingDebug())
-                    _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
+                _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
                 try
                 {
                     // if timeout is < 0,
@@ -253,8 +253,7 @@ public class ReloadingCacheManager implements CacheManager {
         _cache.put(query, r);
         if (_cacheDurationMilliseconds >= 0)
         {
-            if (_log.loggingDebug())
-                _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
+            _log.debug("cached: " + query + " for " + _cacheDurationMilliseconds);
             scheduleRemoval(query);
         }
     }

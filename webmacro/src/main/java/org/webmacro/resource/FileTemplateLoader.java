@@ -22,6 +22,8 @@
 
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 
@@ -37,6 +39,8 @@ import java.io.File;
 public class FileTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(FileTemplateLoader.class);
+
     private String path;
 
     public void setConfig (String config)
@@ -49,11 +53,11 @@ public class FileTemplateLoader extends AbstractTemplateLoader
         File f = new File(path);
         if (!f.exists())
         {
-            log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " does not exist.");
+            _log.warn("FileTemplateLoader: " + f.getAbsolutePath() + " does not exist.");
         }
         else if (!f.isDirectory())
         {
-            log.warning("FileTemplateLoader: " + f.getAbsolutePath() + " is not a directory.");
+            _log.warn("FileTemplateLoader: " + f.getAbsolutePath() + " is not a directory.");
         }
     }
 
@@ -66,8 +70,7 @@ public class FileTemplateLoader extends AbstractTemplateLoader
         File tFile = new File(path, query);
         if (tFile.isFile() && tFile.canRead())
         {
-            if (log.loggingDebug())
-                log.debug("FileTemplateProvider: Found template " + tFile.getAbsolutePath());
+            _log.debug("FileTemplateProvider: Found template " + tFile.getAbsolutePath());
             return helper.load(tFile, ce);
         }
         else

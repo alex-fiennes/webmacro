@@ -22,9 +22,10 @@
 
 package org.webmacro.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.resource.CacheElement;
 import org.webmacro.resource.CacheManager;
@@ -58,7 +59,7 @@ public class Encoder implements ResourceLoader
 
     private String _encoding;
     private CacheManager _cache;
-    private Log _log;
+    static Logger _log =  LoggerFactory.getLogger(Encoder.class);
 
     /**
      * Creates an encoder instance with the supplied encoding.
@@ -100,7 +101,6 @@ public class Encoder implements ResourceLoader
             throws InitException
     {
         String cacheManager;
-        _log = b.getLog("resource", "Object loading and caching");
 
         cacheManager = b.getSetting("Encoder." + _encoding + ".CacheManager");
         if (cacheManager == null)
@@ -120,7 +120,7 @@ public class Encoder implements ResourceLoader
             }
             catch (Exception e)
             {
-                _log.warning("Unable to load cache manager " + cacheManager
+                _log.warn("Unable to load cache manager " + cacheManager
                         + " for encoding type " + _encoding
                         + ", using TrivialCacheManager.  Reason:\n" + e);
                 _cache = new TrivialCacheManager();

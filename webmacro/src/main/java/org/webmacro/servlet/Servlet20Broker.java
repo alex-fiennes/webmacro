@@ -22,10 +22,11 @@
 
 package org.webmacro.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
-import org.webmacro.util.LogSystem;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -51,6 +52,8 @@ import java.util.Properties;
 public class Servlet20Broker extends ServletBroker
 {
 
+    static Logger _log =  LoggerFactory.getLogger(Servlet20Broker.class);
+    
     protected ClassLoader _servletClassLoader;
 
     protected Servlet20Broker (ServletContext sc,
@@ -70,9 +73,8 @@ public class Servlet20Broker extends ServletBroker
         }
         propertySource += ", (System Properties)";
         loadSystemSettings();
-        initLog(_config);
 
-        _log.notice("Loaded settings from " + propertySource);
+        _log.info("Loaded settings from " + propertySource);
         init();
     }
 
@@ -140,7 +142,7 @@ public class Servlet20Broker extends ServletBroker
                 register(key, b);
             }
             else
-                b.getLog("broker").notice(
+                _log.info(
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName
                     + " joining Broker" + " " + b.getName());
@@ -148,8 +150,7 @@ public class Servlet20Broker extends ServletBroker
         }
         catch (InitException e)
         {
-            Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialized WebMacro from "+
+            _log.error("Failed to initialized WebMacro from "+
                     (fromServlet ? "Servlet " : "ServletContext ")
                     + servletOrContextName);
             throw e;

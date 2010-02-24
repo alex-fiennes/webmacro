@@ -4,9 +4,10 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
@@ -18,13 +19,12 @@ import org.webmacro.util.Settings;
  */
 public class DefaultContextAutoLoader implements ContextAutoLoader {
 
-    private Log _log;
+    static Logger _log =  LoggerFactory.getLogger(DefaultContextAutoLoader.class);
     private Broker _broker;
     private Map _factories = new ConcurrentHashMap();
 
     public void init(Broker b, String name) {
         _broker = b;
-        _log = b.getLog("broker");
         loadFactories(name);
     }
 
@@ -85,7 +85,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
         }
         catch (ClassNotFoundException e)
         {
-            _log.warning("Context: Could not locate class for context tool " + className);
+            _log.warn("Context: Could not locate class for context tool " + className);
             return;
         }
         if (toolName == null || toolName.equals(""))
@@ -143,7 +143,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
             _log.info("Registered automatic variable factory " + toolName);
         }
         else {
-            _log.warning("Context object " + toolName + " is not of type ContextObjectFactory");
+            _log.warn("Context object " + toolName + " is not of type ContextObjectFactory");
         }
     }
 }

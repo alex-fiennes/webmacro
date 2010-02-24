@@ -22,6 +22,8 @@
 
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
@@ -40,6 +42,8 @@ import java.util.StringTokenizer;
 public class TemplatePathTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(TemplatePathTemplateLoader.class);
+    
     private TemplateLoader[] loaders;
 
     public void setConfig (String config) throws InitException
@@ -47,7 +51,7 @@ public class TemplatePathTemplateLoader extends AbstractTemplateLoader
         // ignore parameter
         Settings settings = broker.getSettings();
         String templatePath = settings.getSetting("TemplatePath", "");
-        log.info("Using legacy template path " + templatePath);
+        _log.info("Using legacy template path " + templatePath);
         if (templatePath.length() != 0)
         {
             StringTokenizer st = new StringTokenizer(templatePath, File.pathSeparator);

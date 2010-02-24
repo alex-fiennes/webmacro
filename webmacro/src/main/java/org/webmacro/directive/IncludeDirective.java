@@ -28,10 +28,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
-import org.webmacro.Log;
 import org.webmacro.Macro;
 import org.webmacro.NotFoundException;
 import org.webmacro.PropertyException;
@@ -219,7 +220,7 @@ public class IncludeDirective extends Directive
 
 
     /** Logging can be good */
-    protected Log _log;
+    protected Logger _log;
     /** The included file type.  
      * One of TYPE_TEMPLATE, TYPE_STATIC, TYPE_MACRO, or TYPE_DYNAMIC. */
     protected int _type;
@@ -287,7 +288,7 @@ public class IncludeDirective extends Directive
         {
             if (_type == TYPE_TEXT || _type == TYPE_MACRO)
             {
-                _log.warning("Included a 'static' file type using a dynamic filename. "
+                _log.warn("Included a 'static' file type using a dynamic filename. "
                         + "File will be included, but any included #macro's will not at " + bc.getCurrentLocation());
             }
             _macFilename = (Macro) o;
@@ -371,12 +372,12 @@ public class IncludeDirective extends Directive
             }
         }
 
-        if (_log.loggingDebug() && context.getCurrentLocation().indexOf(_strFilename) > -1)
+        if (_log.isDebugEnabled() && context.getCurrentLocation().indexOf(_strFilename) > -1)
         {
             // when in debug mode, output a warning if a template tries to include itself
-            // there are situtations where this is desired, but it's good to make
+            // there are situations where this is desired, but it's good to make
             // the user aware of what they're doing
-            _log.warning(context.getCurrentLocation() + " includes itself.");
+            _log.warn(context.getCurrentLocation() + " includes itself.");
         }
 
         // this should only be true if StrictCompatibility is set to false
@@ -384,14 +385,11 @@ public class IncludeDirective extends Directive
         if (_type == TYPE_DYNAMIC)
             _type = guessType(broker, _strFilename);
 
-        if (_log.loggingDebug())
-        {
-            _log.debug("Including '" + _strFilename + "' as "
+        _log.debug("Including '" + _strFilename + "' as "
                     + ((_type == TYPE_MACRO) ? "MACRO"
                     : (_type == TYPE_TEMPLATE) ? "TEMPLATE"
                     : (_type == TYPE_TEXT) ? "TEXT"
                     : "UNKNOWN.  Throwing exception"));
-        }
 
         Object toInclude = getThingToInclude(broker, _type, _strFilename);
         switch (_type)

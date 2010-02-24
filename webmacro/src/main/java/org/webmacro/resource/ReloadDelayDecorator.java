@@ -21,9 +21,10 @@
  */
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.util.Settings;
 
 import java.util.HashMap;
@@ -44,10 +45,11 @@ import java.util.Map;
 public class ReloadDelayDecorator
 {
 
-    /** maps protocol types to Long objects */
+    static Logger _log =  LoggerFactory.getLogger(ReloadDelayDecorator.class);
+
+	 /** maps protocol types to Long objects */
     private Map reloadDelays;
     private long defaultDelay;
-    private Log log;
 
     public ReloadDelayDecorator ()
     {
@@ -80,7 +82,6 @@ public class ReloadDelayDecorator
                         }
                     });
         }
-        log = b.getLog("resource", "ReloadDelayDecorator");
     }
 
     /**
@@ -103,18 +104,12 @@ public class ReloadDelayDecorator
         delay = (l != null) ? l.longValue() : defaultDelay;
         if (delay > 0)
         {
-            if (log.loggingDebug())
-            {
-                log.debug("Returning timed reload context with delay " + delay);
-            }
+            _log.debug("Returning timed reload context with delay " + delay);
             return new TimedReloadContext(reloadContext, delay);
         }
         else
         {
-            if (log.loggingDebug())
-            {
-                log.debug("Returning unmodified reload context");
-            }
+            _log.debug("Returning unmodified reload context");
             return reloadContext;
         }
     }

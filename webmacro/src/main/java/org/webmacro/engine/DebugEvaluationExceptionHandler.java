@@ -23,9 +23,10 @@
 
 package org.webmacro.engine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
@@ -62,7 +63,7 @@ import java.util.ArrayList;
 public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandler
 {
 
-    private Log _log;
+    static Logger _log =  LoggerFactory.getLogger(DebugEvaluationExceptionHandler.class);
 
     public DebugEvaluationExceptionHandler ()
     {
@@ -75,7 +76,6 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 
     public void init (Broker b, Settings config)
     {
-        _log = b.getLog("engine");
     }
 
     public void evaluate (Variable variable, Context context, Exception problem) throws PropertyException
@@ -129,7 +129,7 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
 
         if (_log != null)
         {
-            _log.warning(strError, propEx);
+            _log.warn(strError, propEx);
         }
         // and rethrow it
         throw propEx;

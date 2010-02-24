@@ -26,8 +26,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+
 import org.webmacro.Context;
-import org.webmacro.Log;
 import org.webmacro.util.Settings;
 import org.webmacro.util.WMEval;
 
@@ -111,7 +112,7 @@ public class TemplateServlet extends HttpServlet {
 	 */
 	private ServletRouter servletRouter;
 	
-    protected Log log;
+    protected Logger log;
 
 
 	/**

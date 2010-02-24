@@ -31,13 +31,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Context;
-import org.webmacro.Log;
 import org.webmacro.Template;
 import org.webmacro.WM;
 import org.webmacro.WMConstants;
 import org.webmacro.WebMacro;
 import org.webmacro.engine.StreamTemplate;
+import org.webmacro.resource.AbstractTemplateLoader;
+import org.webmacro.servlet.WMServlet;
 import org.webmacro.servlet.WebContext;
 
 
@@ -72,7 +76,7 @@ public class WMEval
     //-------private and protected members-----
     private WebMacro wm;
 
-    private Log log;
+    static Logger _log =  LoggerFactory.getLogger(WMEval.class);
 
     private Template currentTemplate;
 
@@ -134,7 +138,6 @@ public class WMEval
 
     private void init() { 
         context = wm.getContext();
-        log = wm.getBroker().getBrokerLog();        
     }
     /**
      * Return the settings associated with this WebMacro instance.
@@ -147,9 +150,9 @@ public class WMEval
     /**
      * Return the log associated with this instance of WMEval.
      */
-    public Log getLog ()
+    public Logger getLog ()
     {
-        return this.log;
+        return _log;
     }
 
     //-------public initializers/destroyers-----
@@ -183,7 +186,7 @@ public class WMEval
 
     public void error (String msg, Exception e)
     {
-        wm.getLog("ERROR").error(msg, e);
+        _log.error(msg, e);
     }
 
     /**

@@ -26,6 +26,8 @@ package org.webmacro.engine;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
 import org.webmacro.Macro;
@@ -41,6 +43,8 @@ import org.webmacro.util.Encoder;
  */
 final public class Block implements Macro, Visitable
 {
+
+    static Logger _log =  LoggerFactory.getLogger(Block.class);
 
     private final String[] _strings;
     private final Macro[] _macros;
@@ -343,9 +347,7 @@ final public class Block implements Macro, Visitable
         }
         catch (IOException e)
         {
-            context.getBroker().getLog("engine", 
-                                       "parsing and template execution")
-                .error("StringWriter threw an IOException!", e);
+            _log.error("StringWriter threw an IOException!", e);
             return null;
         }
     }

@@ -1,11 +1,20 @@
 package org.webmacro.template;
 
-import junit.framework.TestCase;
-import org.apache.regexp.RE;
-import org.webmacro.*;
-import org.webmacro.engine.StringTemplate;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
 
-import java.io.*;
+import junit.framework.TestCase;
+
+import org.apache.regexp.RE;
+import org.webmacro.Context;
+import org.webmacro.PropertyException;
+import org.webmacro.Template;
+import org.webmacro.WM;
+import org.webmacro.WebMacro;
+import org.webmacro.engine.StringTemplate;
 
 
 public abstract class TemplateTestCase extends TestCase

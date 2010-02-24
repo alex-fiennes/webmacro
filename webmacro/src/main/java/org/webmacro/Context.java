@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.FunctionCall;
 import org.webmacro.engine.MethodWrapper;
@@ -37,14 +39,14 @@ import org.webmacro.engine.MethodWrapper;
  * wish to render into the Context and then merge it with a Template
  * via the Template.write() or Template.evaluate() methods. Actually
  * you can render any Macro object by passing a Context to its
- * write() or evaluat() method, not just templates.
+ * write() or evaluate() method, not just templates.
  * <p>
  * A Context is a per-thread data structure. It should not be shared
  * between threads since it is not thread safe. The idea is to put all
  * of the state for a single request into the context and then execute
  * it, with each request having its own separate context. In this
- * thread-per-request worldview there is no reason to synchronize
- * the Context objects as they are not shared bewteen threads.
+ * thread-per-request world view there is no reason to synchronize
+ * the Context objects as they are not shared between threads.
  * <p>
  * Ordinarily you acquire a Context object from the WebMacro
  * interface, use it for awhile, and then recycle() it. But you
@@ -57,8 +59,9 @@ import org.webmacro.engine.MethodWrapper;
  */
 public class Context implements Map, Cloneable
 {
+    static Logger _log =  LoggerFactory.getLogger(Context.class);
+    
     private final Broker _broker;
-    private final Log _log;
     private HashMap _funcs = null; // lazy initialization
 
     private EvaluationExceptionHandler _eeHandler;
@@ -84,7 +87,6 @@ public class Context implements Map, Cloneable
     public Context (Broker broker)
     {
         _broker = broker;
-        _log = broker.getLog("context", "property and evaluation errors");
     }
 
     /** Holder for template place. */
@@ -172,9 +174,9 @@ public class Context implements Map, Cloneable
      * Get a log instance that can be used to write log messages
      * into the log under the supplied log type.
      */
-    public final Log getLog (String type, String description)
+    public final Logger getLog (String type, String description)
     {
-        return _broker.getLog(type, description);
+        return _log;
     }
 
     /**
@@ -182,9 +184,9 @@ public class Context implements Map, Cloneable
      * into the log under the supplied log type. The type will
      * be used as the description.
      */
-    public final Log getLog (String type)
+    public final Logger getLog (String type)
     {
-        return _broker.getLog(type, type);
+        return _log;
     }
 
     /**

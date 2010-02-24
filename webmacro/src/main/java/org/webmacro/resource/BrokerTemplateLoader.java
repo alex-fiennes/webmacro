@@ -21,6 +21,8 @@
  */
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
 
@@ -33,24 +35,22 @@ import java.net.URL;
 public class BrokerTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(BrokerTemplateLoader.class);
     public void setConfig (String config)
     {
         // ignore config
         if (config != null && config.length() > 0)
         {
-            if (log.loggingWarning())
-            {
-                log.warning("BrokerTemplateProvider: Ignoring configuration options " + config);
-            }
+            _log.warn("BrokerTemplateProvider: Ignoring configuration options " + config);
         }
     }
 
     public final Template load (String query, CacheElement ce) throws ResourceException
     {
         URL url = broker.getTemplate(query);
-        if (url != null && log.loggingDebug())
+        if (url != null && _log.isDebugEnabled())
         {
-            log.debug("BrokerTemplateLoader: Found Template " + url.toString());
+            _log.debug("BrokerTemplateLoader: Found Template " + url.toString());
         }
         return (url != null) ? helper.load(url, ce) : null;
     }

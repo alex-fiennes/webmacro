@@ -26,9 +26,11 @@ package org.webmacro.resource;
 import java.io.File;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
@@ -42,7 +44,7 @@ import org.webmacro.util.Settings;
  * in the configuration file. Templates are loaded from the filesystem,
  * relative to the TemplatePath specified in the configuration.
  * <p>
- * Ordinarily you would not accses this class directly, but
+ * Ordinarily you would not access this class directly, but
  * instead you would call the Broker and it would look up and
  * use the TemplateProvider for you.
  * 
@@ -51,13 +53,13 @@ import org.webmacro.util.Settings;
 final public class TemplateProvider extends CachingProvider
 {
 
+    static Logger _log =  LoggerFactory.getLogger(TemplateProvider.class);
     // INITIALIZATION
 
     private static String _pathSeparator = ";";
     private String _templateDirectory[] = null;
     private Broker _broker = null;
     private String _templatePath;
-    private Log _log;
     private BrokerTemplateProviderHelper _btpHelper;
 
     /**
@@ -110,7 +112,6 @@ final public class TemplateProvider extends CachingProvider
     {
         super.init(b, config);
         _broker = b;
-        _log = b.getLog("resource", "Object loading and caching");
 
         try
         {
@@ -157,8 +158,7 @@ final public class TemplateProvider extends CachingProvider
     {
         Object ret = null;
 
-        if (_log.loggingInfo())
-            _log.info("Loading template: " + name);
+        _log.info("Loading template: " + name);
 
         File tFile = findFileTemplate(name);
         if (tFile != null)
@@ -178,21 +178,21 @@ final public class TemplateProvider extends CachingProvider
             }
             catch (NullPointerException npe)
             {
-                _log.warning("TemplateProvider: Template not found: " + name,
+                _log.warn("TemplateProvider: Template not found: " + name,
                         npe);
                 throw new ResourceException("Error fetching template " + name, npe);
             }
             catch (TemplateException e)
             {
                 // Parse error
-                _log.warning("TemplateProvider: Error occured while parsing "
+                _log.warn("TemplateProvider: Error occured while parsing "
                         + name, e);
                 throw new InvalidResourceException("Error parsing template "
                         + name, e);
             }
             catch (Exception e)
             {
-                _log.warning("TemplateProvider: Error occured while fetching "
+                _log.warn("TemplateProvider: Error occured while fetching "
                         + name, e);
                 throw new ResourceException("Error fetching template " + name, e);
             }
@@ -223,16 +223,14 @@ final public class TemplateProvider extends CachingProvider
     {
         if (_templateDirectory != null)
         {
-            if (_log.loggingDebug())
-                _log.debug("Looking for template in TemplatePath: " + fileName);
+            _log.debug("Looking for template in TemplatePath: " + fileName);
             for (int i = 0; i < _templateDirectory.length; i++)
             {
                 String dir = _templateDirectory[i];
                 File tFile = new File(dir, fileName);
                 if (tFile.canRead())
                 {
-                    if (_log.loggingDebug())
-                        _log.debug("TemplateProvider: Found " + fileName + " in " + dir);
+                    _log.debug("TemplateProvider: Found " + fileName + " in " + dir);
                     return tFile;
                 }
             }

@@ -27,9 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
@@ -52,11 +53,14 @@ final public class BrokerTemplateProviderHelper
         implements ResourceLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(BrokerTemplateProviderHelper.class);
+
     // INITIALIZATION
 
     private Broker _broker;
     //private int _cacheDuration;
-    private Log _log;
+
+    
     private boolean _cacheSupportsReload = true;
     private ReloadDelayDecorator reloadDelay;
 
@@ -87,7 +91,6 @@ final public class BrokerTemplateProviderHelper
     public void init (Broker b, Settings config) throws InitException
     {
         _broker = b;
-        _log = b.getLog("resource", "Object loading and caching");
         //_cacheDuration = config.getIntegerSetting("TemplateExpireTime", 0);
         reloadDelay = new ReloadDelayDecorator();
         reloadDelay.init(b, config);
@@ -144,25 +147,25 @@ final public class BrokerTemplateProviderHelper
         }
         catch (NullPointerException npe)
         {
-            _log.warning("BrokerTemplateProvider: Template not found: " + name);
+            _log.warn("BrokerTemplateProvider: Template not found: " + name);
         }
         catch (ParseException e)
         {
-            _log.warning("BrokerTemplateProvider: Error occured while parsing "
+            _log.warn("BrokerTemplateProvider: Error occured while parsing "
                     + name, e);
             throw new InvalidResourceException("Error parsing template " + name,
                     e);
         }
         catch (IOException e)
         {
-            _log.warning("BrokerTemplateProvider: IOException while parsing "
+            _log.warn("BrokerTemplateProvider: IOException while parsing "
                     + name, e);
             throw new InvalidResourceException("Error parsing template " + name,
                     e);
         }
         catch (Exception e)
         {
-            _log.warning("BrokerTemplateProvider: Error occured while fetching "
+            _log.warn("BrokerTemplateProvider: Error occured while fetching "
                     + name, e);
             throw new ResourceException("Error parsing template " + name, e);
         }
@@ -194,12 +197,10 @@ final public class BrokerTemplateProviderHelper
      */
     final private URL findTemplate (String fileName)
     {
-        if (_log.loggingDebug())
-            _log.debug("Looking for template in class path: " + fileName);
+        _log.debug("Looking for template in class path: " + fileName);
         URL u = _broker.getTemplate(fileName);
         if (u != null)
-            if (_log.loggingDebug())
-                _log.debug("BrokerTemplateProvider: Found " + fileName
+            _log.debug("BrokerTemplateProvider: Found " + fileName
                         + " at " + u.toString());
         return u;
     }

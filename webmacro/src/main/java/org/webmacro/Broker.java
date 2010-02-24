@@ -39,16 +39,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.broker.ContextAutoLoader;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.IntrospectionUtils;
 import org.webmacro.engine.MethodWrapper;
 import org.webmacro.engine.PropertyOperatorCache;
-import org.webmacro.util.LogFile;
-import org.webmacro.util.LogSystem;
-import org.webmacro.util.LogTarget;
-import org.webmacro.util.LogTargetFactory;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
 
@@ -90,11 +89,11 @@ public class Broker
     final protected Hashtable _providers = new Hashtable();
     final protected Settings _config = new Settings();
     final protected String _name;
-    final protected LogSystem _ls;
     final public PropertyOperatorCache _propertyOperators
             = new PropertyOperatorCache();
 
-    protected Log _log;
+    protected Logger _log =  LoggerFactory.getLogger(Broker.class);
+    
     private EvaluationExceptionHandler _eeHandler;
 
     /** a local map for one to dump stuff into, specific to this Broker */
@@ -137,8 +136,7 @@ public class Broker
         loadDefaultSettings();
         loadSettings(WEBMACRO_PROPERTIES, true);
         loadSystemSettings();
-        initLog();
-        _log.notice("Loaded settings from " + propertySource);
+        _log.info("Loaded settings from " + propertySource);
         init();
     }
 
@@ -156,8 +154,7 @@ public class Broker
         loadSettings(WEBMACRO_PROPERTIES, true);
         loadSettings(props);
         loadSystemSettings();
-        initLog();
-        _log.notice("Loaded settings from " + propertySource);
+        _log.info("Loaded settings from " + propertySource);
         init();
     }
 
@@ -178,8 +175,7 @@ public class Broker
         }
         loadSystemSettings();
         propertySource += ", " + "(System Properties)";
-        initLog();
-        _log.notice("Loaded settings from " + propertySource);
+        _log.info("Loaded settings from " + propertySource);
         init();
     }
 
@@ -195,66 +191,13 @@ public class Broker
             throws InitException
     {
         _name = name;
-        _ls = new LogSystem(_name);
-        _log = _ls.getLog("broker", "general object loader and configuration");
     }
 
-    /**
-     * Constructors should call this after they've set up the properties
-     * to set up the log target.  If subclasses are going to set up logging
-     * themselves, then they don't have to call it.
-     */
-    protected void initLog ()
-    {
-        final LogTargetFactory ltf = LogTargetFactory.getInstance();
-        final Broker broker = this;
-
-        if (!_config.containsKey("LogTargets"))
-        {
-            // no log targets defined so just start with the
-            // standard LogFile
-            try
-            {
-                _ls.addTarget(new LogFile(_config));
-            }
-            catch (IOException e)
-            {
-                _log.error("Failed to open logfile", e);
-            }
-        }
-        else
-        {
-            // use whatever was defined in the configuration for this broker
-            _config.processListSetting("LogTargets",
-                    new Settings.ListSettingHandler()
-                    {
-                        public void processSetting (String settingKey,
-                                                    String settingValue)
-                        {
-                            try
-                            {
-                                LogTarget lt = ltf.createLogTarget(broker,
-                                        settingValue,
-                                        _config);
-                                _ls.addTarget(lt);
-                            }
-                            catch (LogTargetFactory.LogCreationException e)
-                            {
-                                _log.error("Broker unable to init log "
-                                        + settingValue, e);
-                            }
-                        }
-                    }
-            );
-        }
-
-        _log.notice("starting " + this.getClass().getName() + ": " + _name);
-    }
     
     /**
      * Provide access to the broker's log.
      */
-    public Log getBrokerLog()
+    public Logger getBrokerLog()
     {
     	return _log;
     }
@@ -306,7 +249,7 @@ public class Broker
         _propertyOperators.init(this, _config);
 
         // Write out our properties as debug records
-        if (_log.loggingDebug())
+        if (_log.isDebugEnabled())
         {
             String[] properties = _config.getKeys();
             Arrays.sort(properties);
@@ -338,7 +281,7 @@ public class Broker
             }
             catch (Exception e)
             {
-                _log.warning("Unable to instantiate exception handler of class "
+                _log.warn("Unable to instantiate exception handler of class "
                         + eehClass + "; " + e);
             }
         }
@@ -481,51 +424,31 @@ public class Broker
         }
         catch (InitException e)
         {
-            Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialize WebMacro with default config");
-            throw e;
+            throw new InitException("Failed to initialize WebMacro with default config",e);
         }
     }
 
     public static Broker getBroker (Properties p) throws InitException
     {
-        try
+        Broker b = findBroker(p);
+        if (b == null)
         {
-            Broker b = findBroker(p);
-            if (b == null)
-            {
-                b = new Broker(p);
-                register(p, b);
-            }
-            return b;
+            b = new Broker(p);
+            register(p, b);
         }
-        catch (InitException e)
-        {
-            Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialize WebMacro with default config");
-            throw e;
-        }
+        return b;
     }
 
     public static Broker getBroker (String settingsFile) throws InitException
     {
-        try
+        Broker b = findBroker(settingsFile);
+        if (b == null)
         {
-            Broker b = findBroker(settingsFile);
-            if (b == null)
-            {
-                b = new Broker(settingsFile);
-                register(settingsFile, b);
-            }
+            b = new Broker(settingsFile);
+            register(settingsFile, b);
+        }
 
-            return b;
-        }
-        catch (InitException e)
-        {
-            Log log = LogSystem.getSystemLog("wm");
-            log.error("Failed to initialize WebMacro from " + settingsFile);
-            throw e;
-        }
+        return b;
     }
 
     /* Static (internal) methods used for loading settings */
@@ -545,7 +468,7 @@ public class Broker
                         e);
             }
         }
-        // _log.notice("Loading properties file " + WEBMACRO_DEFAULTS);
+        // _log.info("Loading properties file " + WEBMACRO_DEFAULTS);
         _config.load(_defaultSettings);
     }
 
@@ -564,7 +487,7 @@ public class Broker
             {
                 if (optional)
                 {
-                    _log.notice("Cannot find properties file " + name + ", continuing");
+                    _log.info("Cannot find properties file " + name + ", continuing");
                 }
                 e.printStackTrace();
                 if (!optional)
@@ -590,7 +513,7 @@ public class Broker
 
     protected void loadSystemSettings ()
     {
-        // _log.notice("Loading properties from system properties");
+        // _log.info("Loading properties from system properties");
         _config.load(System.getProperties(), SETTINGS_PREFIX);
     }
 
@@ -721,32 +644,6 @@ public class Broker
         while (providers.hasNext()) {
             ((Provider) providers.next()).destroy();
         }
-    }
-
-    /**
-     * Get a log: the behavior of this log depends on the configuration
-     * of the broker. If your system loads from a WebMacro.properties
-     * file then look in there for details about setting up and
-     * controlling the Log.
-     * <p>
-     * You should try and hang on to the Log you get back from this
-     * method since creating new Log objects can be expensive. You
-     * also likely pay for IO when you use a log object.
-     * <p>
-     * The type you supply will be associated with your log messages
-     * in the log file.
-     */
-    public Log getLog (String type, String description)
-    {
-        return _ls.getLog(type, description);
-    }
-
-    /**
-     * Shortcut: create a new log using the type as the description
-     */
-    public Log getLog (String type)
-    {
-        return _ls.getLog(type, type);
     }
 
     /**

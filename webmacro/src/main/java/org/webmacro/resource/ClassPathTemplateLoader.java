@@ -21,6 +21,8 @@
  */
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.ResourceException;
@@ -42,6 +44,7 @@ import java.net.URL;
 public class ClassPathTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(ClassPathTemplateLoader.class);
     private ClassLoader loader;
     private String path;
 
@@ -56,8 +59,7 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader
         // as we'll later use this as a prefix, it should end with a slash
         if (config.length() > 0 && !config.endsWith("/"))
         {
-            if (log.loggingInfo())
-                log.info("ClassPathTemplateLoader: appending \"/\" to path " + config);
+            _log.info("ClassPathTemplateLoader: appending \"/\" to path " + config);
             config = config.concat("/");
         }
 
@@ -79,9 +81,9 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader
             query = query.substring(1);
         }
         URL url = loader.getResource(path.concat(query));
-        if (url != null && log.loggingDebug())
+        if (url != null && _log.isDebugEnabled())
         {
-            log.debug("ClassPathTemplateProvider: Found Template " + url.toString());
+            _log.debug("ClassPathTemplateProvider: Found Template " + url.toString());
         }
         return (url != null) ? helper.load(url, ce) : null;
     }

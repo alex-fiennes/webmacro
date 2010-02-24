@@ -30,9 +30,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
@@ -96,6 +98,7 @@ import org.webmacro.util.Settings;
  */
 final public class URLTemplateProvider extends CachingProvider
 {
+    static Logger _log =  LoggerFactory.getLogger(URLTemplateProvider.class);
 
     /** CVS Revision tag.  */
     public static final String RCS = "@(#) $Id$";
@@ -163,12 +166,6 @@ final public class URLTemplateProvider extends CachingProvider
     private String _templatePath;
 
     /**
-     * Where we write our log messages
-     */
-
-    private Log _log;
-
-    /**
      * Supports the "template" type.  This is a straight replacement for the
      * default TemplateProvider
      * @return the template type.  Always the String "template"
@@ -193,7 +190,6 @@ final public class URLTemplateProvider extends CachingProvider
     {
         super.init(b, config);
         _broker = b;
-        _log = b.getLog("resource", "general object loading");
 
         try
         {

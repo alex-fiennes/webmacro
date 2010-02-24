@@ -35,14 +35,14 @@ TemplateOutputEncoding: UTF-8
 #
 
 # A whitespace separated list of org.webmacro.util.LogTarget
-# implementations that should should receive your log output.
+# implementations that should receive your log output.
 #
 # WebMacro comes with a default target, LogFile, which logs
 # to stderr (or a file if the LogFile setting is set, see below).
 # You can easily create your own implementations that log to your
 # custom logging system or to Log4J or whatever.
 
-LogTargets: org.webmacro.util.LogFile
+#LogTargets: org.webmacro.util.LogFile
 
 
 # LogLevel can be: ALL, DEBUG, INFO, NOTICE, WARNING, ERROR, or NONE

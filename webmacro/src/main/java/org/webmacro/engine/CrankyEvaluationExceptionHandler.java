@@ -23,9 +23,10 @@
 
 package org.webmacro.engine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.util.Settings;
 
@@ -43,9 +44,9 @@ import org.webmacro.util.Settings;
 public class CrankyEvaluationExceptionHandler implements EvaluationExceptionHandler
 {
 
-    private Log _log;
+    static Logger _log =  LoggerFactory.getLogger(CrankyEvaluationExceptionHandler.class);
 
-    public CrankyEvaluationExceptionHandler ()
+	public CrankyEvaluationExceptionHandler ()
     {
     }
 
@@ -56,7 +57,6 @@ public class CrankyEvaluationExceptionHandler implements EvaluationExceptionHand
 
     public void init (Broker b, Settings config)
     {
-        _log = b.getLog("engine");
     }
 
     public void evaluate (Variable variable, Context context, Exception problem)
@@ -81,7 +81,7 @@ public class CrankyEvaluationExceptionHandler implements EvaluationExceptionHand
 
         // log it
         if (_log != null)
-            _log.warning("Error evaluating $" + variable.getVariableName(), problem);
+            _log.warn("Error evaluating $" + variable.getVariableName(), problem);
 
 
         // and rethrow it
@@ -110,7 +110,7 @@ public class CrankyEvaluationExceptionHandler implements EvaluationExceptionHand
 
         // log it
         if (_log != null)
-            _log.warning("Error expanding $" + variable.getVariableName(), problem);
+            _log.warn("Error expanding $" + variable.getVariableName(), problem);
 
 
         // and rethrow it

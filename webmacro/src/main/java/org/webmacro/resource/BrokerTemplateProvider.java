@@ -22,9 +22,10 @@
 
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
 
@@ -42,7 +43,7 @@ final public class BrokerTemplateProvider extends CachingProvider
 {
 
     private BrokerTemplateProviderHelper _helper;
-    private Log _log;
+    static Logger _log =  LoggerFactory.getLogger(BrokerTemplateProvider.class);
 
     public void init (Broker b, Settings config) throws InitException
     {
@@ -50,7 +51,6 @@ final public class BrokerTemplateProvider extends CachingProvider
         _helper = new BrokerTemplateProviderHelper();
         _helper.init(b, config);
         _helper.setReload(_cacheSupportsReload);
-        _log = b.getLog("resource", "Object loading and caching");
     }
 
     final public String getType ()
@@ -61,8 +61,7 @@ final public class BrokerTemplateProvider extends CachingProvider
     final public Object load (String name, CacheElement ce)
             throws ResourceException
     {
-        if (_log.loggingInfo())
-            _log.info("Loading template: " + name);
+        _log.info("Loading template: " + name);
         return _helper.load(name, ce);
     }
 

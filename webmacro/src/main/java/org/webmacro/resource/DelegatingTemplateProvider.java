@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
+import org.webmacro.Context;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.NotFoundException;
 import org.webmacro.ResourceException;
 import org.webmacro.Template;
@@ -72,17 +74,17 @@ import org.webmacro.util.Settings;
 public class DelegatingTemplateProvider extends CachingProvider
 {
 
-    private Log log;
+    static Logger _log =  LoggerFactory.getLogger(DelegatingTemplateProvider.class);
+    
     private TemplateLoaderFactory factory;
     private TemplateLoader[] templateLoaders;
 
     public void init (Broker broker, Settings config) throws InitException
     {
         super.init(broker, config);
-        log = broker.getLog("resource", "DelegatingTemplateProvider");
 
         String factoryClass = config.getSetting("TemplateLoaderFactory", "");
-        log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory " + factoryClass);
+        _log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory " + factoryClass);
         factory = createFactory(factoryClass);
 
         List loaders = new ArrayList();

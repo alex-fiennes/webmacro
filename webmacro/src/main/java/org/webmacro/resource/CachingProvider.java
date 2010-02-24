@@ -23,9 +23,10 @@
 
 package org.webmacro.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-import org.webmacro.Log;
 import org.webmacro.Provider;
 import org.webmacro.ResourceException;
 import org.webmacro.util.Settings;
@@ -43,8 +44,9 @@ abstract public class CachingProvider implements Provider,
         ResourceLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(CachingProvider.class);
+
     private CacheManager _cache;
-    private Log _log;
     protected boolean _cacheSupportsReload;
 
     public CachingProvider ()
@@ -57,8 +59,6 @@ abstract public class CachingProvider implements Provider,
     public void init (Broker b, Settings config) throws InitException
     {
         String cacheManager;
-
-        _log = b.getLog("resource", "Object loading and caching");
 
         cacheManager = b.getSetting("CachingProvider." + getType()
                 + ".CacheManager");
@@ -78,7 +78,7 @@ abstract public class CachingProvider implements Provider,
             }
             catch (Exception e)
             {
-                _log.warning("Unable to load cache manager " + cacheManager
+                _log.warn("Unable to load cache manager " + cacheManager
                         + " for resource type " + getType()
                         + ", using TrivialCacheManager.  Reason:\n" + e);
                 _cache = new TrivialCacheManager();

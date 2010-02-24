@@ -7,8 +7,10 @@ import java.util.TreeMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
-import org.webmacro.Log;
 import org.webmacro.Template;
 import org.webmacro.servlet.HandlerException;
 import org.webmacro.servlet.WMServlet;
@@ -22,10 +24,11 @@ import org.webmacro.servlet.WebContext;
  */
 public class CheckConfig extends WMServlet {
     private static final long serialVersionUID = -1844295645621234018L;
+
+    static Logger _log =  LoggerFactory.getLogger(CheckConfig.class);
     
     final static public boolean DEBUG = true;
     final static public String DEFAULT_TEMPLATE = "default.wm";
-    private Log _log = null;
     
     public Template handle(WebContext context) throws HandlerException {
         try {
@@ -109,7 +112,6 @@ public class CheckConfig extends WMServlet {
     protected void start() throws ServletException {
         // get the log
         //_log = org.webmacro.util.LogSystem.getInstance().getLog("WMTest", "WMTest log");
-        _log = org.webmacro.util.LogSystem.getInstance().getLog(null);
         _log.info(this.getClass().getName() + ".start() invoked.");
     } // start()
     

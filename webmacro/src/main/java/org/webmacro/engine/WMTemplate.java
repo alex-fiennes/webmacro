@@ -29,10 +29,12 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.Context;
 import org.webmacro.FastWriter;
-import org.webmacro.Log;
 import org.webmacro.PropertyException;
 import org.webmacro.Template;
 import org.webmacro.TemplateException;
@@ -62,15 +64,11 @@ import org.webmacro.WMConstants;
 abstract public class WMTemplate implements Template
 {
 
+    static Logger _log =  LoggerFactory.getLogger(WMTemplate.class);
     /**
      * The resource broker used to resolve things in this template.
      */
     final protected Broker _broker;
-
-    /**
-     * Where we log our errors.
-     */
-    final protected Log _log;
 
     /**
      * Whether template has already been parsed.
@@ -115,7 +113,6 @@ abstract public class WMTemplate implements Template
     {
         _broker = broker;
         _parserName = parserName;
-        _log = broker.getLog("template", "template lifecycle");
     }
 
     /**
@@ -345,7 +342,7 @@ abstract public class WMTemplate implements Template
         {
             String warning =
                     "Template: Exception evaluating template " + this;
-            _log.warning(warning, e);
+            _log.warn(warning, e);
 
             out.write(context.getEvaluationExceptionHandler()
                     .warningString("Could not interpret template. Reason: \n"

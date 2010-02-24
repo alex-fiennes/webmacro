@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.webmacro.Broker;
 import org.webmacro.TemplateException;
 import org.webmacro.WMConstants;
@@ -46,6 +49,8 @@ import org.webmacro.util.NativeAsciiReader;
 
 public class URLTemplate extends WMTemplate
 {
+
+    static Logger _log =  LoggerFactory.getLogger(URLTemplate.class);
 
     /** CVS revision  */
     public static final String RCS = "@(#) $Id$";

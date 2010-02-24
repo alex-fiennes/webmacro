@@ -25,6 +25,8 @@ package org.webmacro;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webmacro.resource.AbstractTemplateLoader;
 import org.webmacro.resource.CacheElement;
 
@@ -38,6 +40,7 @@ import org.webmacro.resource.CacheElement;
 public class URLTemplateLoader extends AbstractTemplateLoader
 {
 
+    static Logger _log =  LoggerFactory.getLogger(URLTemplateLoader.class);
     private URL baseURI;
 
     public void setConfig (String config)
@@ -48,7 +51,7 @@ public class URLTemplateLoader extends AbstractTemplateLoader
         }
         catch (MalformedURLException e)
         {
-            log.error("Cannot init url template loader, bad URL", e);
+            _log.error("Cannot init url template loader, bad URL", e);
         }
     }
 
@@ -61,10 +64,7 @@ public class URLTemplateLoader extends AbstractTemplateLoader
         try
         {
             URL url = new URL(baseURI, query);
-            if (log.loggingDebug())
-            {
-                log.debug("FileTemplateProvider: Found template " + url);
-            }
+            _log.debug("FileTemplateProvider: Found template " + url);
             return helper.load(url, ce);
         }
         catch (MalformedURLException e)
