@@ -159,13 +159,13 @@ abstract class Alternator implements Macro
 }
 class IteratorAlternator extends Alternator
 {
-	private Iterator itr;
-	private List list;
+	private Iterator<Object> itr;
+	private List<Object> list;
 	private int index = -1;
-	public IteratorAlternator(Iterator itr)
+	public IteratorAlternator(Iterator<Object> itr)
 	{
 		this.itr = itr;
-		this.list = new ArrayList();
+		this.list = new ArrayList<Object>();
 	}
 	public Object evaluate(Context context)
 	{
