@@ -221,14 +221,6 @@
           <include>**/*.txt</include>
         </includes>
       </testResource>
-<!--
-      <testResource>
-        <directory>macros</directory>
-        <includes>
-          <include>**/*.wmm</include>
-        </includes>
-      </testResource>
--->      
     </testResources>
     <plugins>
       <plugin>
@@ -312,32 +304,30 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
+    <!-- ONE compile-time dependency !!! -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.8</version>
       <scope>compile</scope>
     </dependency>
+
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    
+    
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
+      <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.8</version>
       <scope>test</scope>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
--->
     <dependency>
       <groupId>jakarta-regexp</groupId>
       <artifactId>jakarta-regexp</artifactId>
@@ -430,16 +420,43 @@
       </plugin>
     </plugins>
   </reporting>
-  <distributionManagement>
+  <repositories>
     <repository>
-      <id>default</id>
-      <name>Default Repository</name>
-      <url>scp://shell.sourceforge.net/home/groups/w/we/webmacro/htdocs/maven2/</url>
+     <id>sf</id>
+     <name>SourceForge</name>
+     <url>http://webmacro.sourceforge.net/maven2/</url>
     </repository>
+  </repositories>
+  <!-- 
+  Note that you need to have created a shell to get scp to work with shell.sourceforge.net
+  I could not get scp to work with web.sourceforge.net
+  
+  -->
+  
+  <!-- 
+    ssh -t timp,webmacro@shell.sourceforge.net create
+  -->
+  <distributionManagement>
+    <downloadUrl>http://webmacro.sourceforge.net/maven2/</downloadUrl>
+    <repository>
+     <id>sf</id>
+     <name>SourceForge</name>
+     <!--
+     <url>scp://timp,webmacro@shell.sourceforge.net:/home/groups/w/we/webmacro/htdocs/maven2/</url>
+     -->
+     <url>sftp://timp,webmacro@web.sourceforge.net:/home/groups/w/we/webmacro/htdocs/maven2</url>
+    </repository>
+    <!-- Need a separate release thingy to deploy to frs 
+    <repository>
+     <id>sf</id>
+     <name>SourceForge</name>
+     <url>sftp://timp,webmacro@web.sourceforge.net:/home/frs/project/w/we/webmacro/releases</url>
+    </repository>
+    -->
     <site>
-      <id>default</id>
-      <name>Default Site</name>
-      <url>scp://shell.sourceforge.net/home/groups/w/we/webmacro/htdocs/</url>
+     <id>sf</id>
+     <name>SourceForge</name>
+     <url>sftp://timp,webmacro@web.sourceforge.net:/home/groups/w/we/webmacro/htdocs/</url>
     </site>
   </distributionManagement>
 </project>
