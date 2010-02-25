@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.util.Settings;
-import org.webmacro.util.WMEval;
 
 /**
  * Abstract implementation of TemplateLoader, that stores broker
