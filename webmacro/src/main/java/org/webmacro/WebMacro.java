@@ -23,8 +23,6 @@
 
 package org.webmacro;
 
-import org.slf4j.Logger;
-
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 

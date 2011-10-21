@@ -38,10 +38,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.webmacro.broker.ContextAutoLoader;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
@@ -50,8 +50,6 @@ import org.webmacro.engine.MethodWrapper;
 import org.webmacro.engine.PropertyOperatorCache;
 import org.webmacro.util.Settings;
 import org.webmacro.util.SubSettings;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Broker is responsible for loading and initializing almost everything
