@@ -2,6 +2,7 @@
 /.project
 /.classpath
 *.iml
+*.class
 *~
 .#*
 .DS_Store
