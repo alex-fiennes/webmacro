@@ -108,6 +108,7 @@ public class ParseException extends org.webmacro.RethrowableException
    * of the final stack trace, and hence the correct error message
    * gets displayed.
    */
+  @Override
   public String getMessage () 
   {
     if (!specialConstructor) 

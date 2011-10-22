@@ -251,6 +251,7 @@ public class IncludeDirective extends Directive
      * Otherwise, template is found and including during runtime evaluation
      * of this directive.
      */
+    @Override
     public final Object build (DirectiveBuilder builder, BuildContext bc) 
         throws BuildException
     {
@@ -577,6 +578,7 @@ public class IncludeDirective extends Directive
         }
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(_desc.name);

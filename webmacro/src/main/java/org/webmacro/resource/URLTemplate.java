@@ -212,6 +212,7 @@ public class URLTemplate extends WMTemplate
      * call this method in order to locate a stream.
      *
      */
+    @Override
     protected Reader getReader () throws IOException
     {
         _log.debug("Using encoding " + _inputEncoding);
@@ -241,11 +242,13 @@ public class URLTemplate extends WMTemplate
      * from a file you might want to mention which it is--will be used to
      * produce error messages describing which template had a problem.
      */
+    @Override
     public String toString ()
     {
         return "URLTemplate:" + _url;
     }
 
+    @Override
     public void parse () throws IOException, TemplateException
     {
         super.parse();

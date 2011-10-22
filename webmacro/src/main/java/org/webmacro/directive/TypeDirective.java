@@ -120,6 +120,7 @@ public class TypeDirective extends Directive
     /**
      * Configure directive for this run and return 'this'.
      */
+    @Override
     public Object build (DirectiveBuilder builder, BuildContext bc) throws BuildException
     {
 
@@ -151,6 +152,7 @@ public class TypeDirective extends Directive
      * @throws PropertyException.NoSuchVariableException if the
      *         specified variable arg evaluates to null
      */
+    @Override
     public Object evaluate (Context context) throws PropertyException
     {
         Object o = _object;
@@ -193,6 +195,7 @@ public class TypeDirective extends Directive
         evaluate(context);
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(_dd.name);

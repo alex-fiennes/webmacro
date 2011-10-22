@@ -60,29 +60,34 @@ public class TemplateDumper extends TemplateVisitor
     }
 
 
+    @Override
     public void visitString (String s)
     {
         print(s);
     }
 
+    @Override
     public void beginBlock ()
     {
         newLine();
         println("#begin");
     }
 
+    @Override
     public void endBlock ()
     {
         newLine();
         println("#end");
     }
 
+    @Override
     public void beginDirective (String directiveName)
     {
         newLine();
         print("#" + directiveName + " ");
     }
 
+    @Override
     public void visitDirectiveArg (String argName, Object o)
     {
         print(":" + argName + ":");
@@ -94,6 +99,7 @@ public class TemplateDumper extends TemplateVisitor
             print(o.toString());
     }
 
+    @Override
     public void visitBinaryOperation (String opType, Object l, Object r)
     {
         print(opType + "(");
@@ -109,17 +115,20 @@ public class TemplateDumper extends TemplateVisitor
         print(")");
     }
 
+    @Override
     public void visitUnaryOperation (String opType, Object o)
     {
         print(opType + "(" + ((o != null) ? o.toString() : "<NULL>")
                 + ")");
     }
 
+    @Override
     public void visitVariable (Variable v, Object[] names)
     {
         print("$" + v.toString());
     }
 
+    @Override
     public void visitUnknownMacro (String macroType, Macro m)
     {
         print("[Unknown macro type " + macroType + "]");

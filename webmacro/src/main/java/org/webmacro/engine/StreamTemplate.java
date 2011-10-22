@@ -98,6 +98,7 @@ public class StreamTemplate extends WMTemplate
      * Get the stream the template should be read from. Parse will
      * call this method in order to locate a stream.
      */
+    @Override
     protected Reader getReader () throws IOException
     {
         if (_in != null)
@@ -117,6 +118,7 @@ public class StreamTemplate extends WMTemplate
      * from a file you might want to mention which it is--will be used to
      * produce error messages describing which template had a problem.
      */
+    @Override
     public String toString ()
     {
         String s = null;
@@ -127,11 +129,13 @@ public class StreamTemplate extends WMTemplate
                 : (s != null) ? "StreamTemplate(" + _in + ")" : "(stream)";
     }
 
+    @Override
     public String getName ()
     {
         return (_name == null) ? toString() : _name;
     }
 
+    @Override
     public void setName (String name)
     {
         _name = name;

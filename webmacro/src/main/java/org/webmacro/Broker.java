@@ -202,6 +202,7 @@ public class Broker
 
     private class ProviderSettingHandler extends Settings.ListSettingHandler
     {
+        @Override
         public void processSetting (String settingKey, String settingValue)
         {
             try
@@ -219,6 +220,7 @@ public class Broker
 
     private class AutoLoaderSettingHandler extends Settings.ListSettingHandler
     {
+        @Override
         public void processSetting (String settingKey, String settingValue)
         {
             try
@@ -393,6 +395,7 @@ public class Broker
     private class MacroIncludeSettingHandler extends Settings.ListSettingHandler {
         Exception e;
 
+        @Override
         public void processSetting(String settingKey, String settingValue) {
             try {
                 Template t = (Template) getProvider("template").get(settingValue);
@@ -652,8 +655,9 @@ public class Broker
      *           this will be your ServletOutputStream.  It can be null if
      *           only want the fast writer to buffer the output.
      * @param enctype the Encoding type to use
-     * @deprecated
+     * @deprecated pending deletion
      */
+    @Deprecated
     public final FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException
     {
@@ -837,6 +841,7 @@ public class Broker
      * Backwards compatible, calls get(String,String)
      * @deprecated call get(String,String) instead
      */
+    @Deprecated
     public final Object getValue (String type, String query)
             throws ResourceException
     {
@@ -846,6 +851,7 @@ public class Broker
     /**
      * Explain myself
      */
+    @Override
     public String toString ()
     {
         StringBuffer buf = new StringBuffer();

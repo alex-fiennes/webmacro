@@ -55,6 +55,7 @@ public class TextDirective extends Directive
         return myDescr;
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -69,6 +70,7 @@ public class TextDirective extends Directive
         block.write(out, context);
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

@@ -96,6 +96,7 @@ final class ErrorHandler implements Handler
     /**
      * Return the name of this handler
      */
+    @Override
     final public String toString ()
     {
         return "WebMacro ErrorHandler";

@@ -83,6 +83,7 @@ public class TempletDirective extends org.webmacro.directive.Directive
      * e.g., when the first argument is not a valid lval.
      * @return the built directive
      */
+    @Override
     public Object build(DirectiveBuilder builder, BuildContext bc)
     throws BuildException
     {
@@ -133,6 +134,7 @@ public class TempletDirective extends org.webmacro.directive.Directive
     /** Used by template visitors.
      * @param v a template vistor
      */
+    @Override
     public void accept(TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

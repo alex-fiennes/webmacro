@@ -112,6 +112,7 @@ public class Servlet22Broker extends ServletBroker
         _config.load(p, prefix);
     }
 
+    @Override
     protected void init () throws InitException
     {
         super.init();
@@ -205,6 +206,7 @@ public class Servlet22Broker extends ServletBroker
     /**
      * Get a resource (file) from the the Broker's class loader.
      */
+    @Override
     public URL getResource (String name)
     {
         try
@@ -251,6 +253,7 @@ public class Servlet22Broker extends ServletBroker
     /**
      * Get a resource (file) from the Broker's class loader.
      */
+    @Override
     public InputStream getResourceAsStream (String name)
     {
         InputStream is = _servletContext.getResourceAsStream(name);
@@ -265,6 +268,7 @@ public class Servlet22Broker extends ServletBroker
      * Get a template; kind of like getting a resource, but might come
      * from a different place.
      */
+    @Override
     public URL getTemplate (String name)
     {
         if (_templatePrefix == null)
@@ -281,6 +285,7 @@ public class Servlet22Broker extends ServletBroker
      * class. If the class is not found uses the Broker classForName
      * implementation.  
      */
+    @Override
     public Class classForName (String name) throws ClassNotFoundException
     {
         Class cls = null;

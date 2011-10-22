@@ -68,6 +68,7 @@ public class TimedReloadContext extends CacheReloadContext
      * this method will simply return false.
      * @return whether resource should be reloaded.
      **/
+    @Override
     public boolean shouldReload ()
     {
         //long time = System.currentTimeMillis();

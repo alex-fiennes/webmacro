@@ -155,6 +155,7 @@ public class WM implements WebMacro
         }
     }
 
+    @Override
     public String toString ()
     {
         return "WebMacro(" + _broker.getName() + ")";
@@ -187,8 +188,9 @@ public class WM implements WebMacro
      *           this will be your ServletOutputStream.  It can be null if
      *           only want the fast writer to buffer the output.
      * @param enctype the Encoding type to use
-     * @deprecated
+     * @deprecated pending removal
      */
+    @Deprecated
     final public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException
     {

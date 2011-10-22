@@ -1101,7 +1101,8 @@ abstract class Accessor
       return _name;
    }
    
-   public final String toString()
+   @Override
+  public final String toString()
    {
       return "Accessor:" + _name;
    }
@@ -1169,7 +1170,8 @@ final class FieldAccessor extends Accessor
       _field = f;
    }
    
-   final Object get(final Object instance)
+   @Override
+  final Object get(final Object instance)
        throws PropertyException
    {
       try
@@ -1184,7 +1186,8 @@ final class FieldAccessor extends Accessor
       }
    }
    
-   final boolean set(final Object instance, final Object value)
+   @Override
+  final boolean set(final Object instance, final Object value)
        throws PropertyException
    {
       try
@@ -1213,7 +1216,8 @@ final class LengthAccessor extends Accessor
       super("length");
    }
    
-   final Object get(final Object instance)
+   @Override
+  final Object get(final Object instance)
        throws PropertyException
    {
       try
@@ -1228,7 +1232,8 @@ final class LengthAccessor extends Accessor
       }
    }
    
-   final boolean set(final Object instance, final Object value)
+   @Override
+  final boolean set(final Object instance, final Object value)
        throws PropertyException
    {
       throw new PropertyException("Cannot set length of array");
@@ -1255,7 +1260,8 @@ final class DirectAccessor extends Accessor
       _methods.addElement(m);
    }
    
-   final Object get(Object instance, Object[] args)
+   @Override
+  final Object get(Object instance, Object[] args)
        throws PropertyException, NoSuchMethodException
    {
       Class[] types = new Class[args.length];
@@ -1439,23 +1445,27 @@ final class UnaryMethodAccessor extends MethodAccessor
       super(name, m, params);
    }
    
-   final int numArgsGet()
+   @Override
+  final int numArgsGet()
    {
       return 0;
    }
    
-   final int numArgsSet()
+   @Override
+  final int numArgsSet()
    {
       return 1;
    }
    
-   final Object get(final Object instance)
+   @Override
+  final Object get(final Object instance)
        throws PropertyException, NoSuchMethodException
    {
       return PropertyOperator.invoke(_getMethod, instance, null);
    }
    
-   final boolean set(final Object instance, final Object value)
+   @Override
+  final boolean set(final Object instance, final Object value)
        throws PropertyException, NoSuchMethodException
    {
       Object[] args =
@@ -1474,17 +1484,20 @@ final class BinaryMethodAccessor extends MethodAccessor
       super(name, m, params);
    }
    
-   final int numArgsGet()
+   @Override
+  final int numArgsGet()
    {
       return 1;
    }
    
-   final int numArgsSet()
+   @Override
+  final int numArgsSet()
    {
       return 2;
    }
    
-   final Object get(final Object instance, String prop)
+   @Override
+  final Object get(final Object instance, String prop)
        throws PropertyException, NoSuchMethodException
    {
       Object[] args =
@@ -1492,7 +1505,8 @@ final class BinaryMethodAccessor extends MethodAccessor
       return PropertyOperator.invoke(_getMethod, instance, args);
    }
    
-   final boolean set(final Object instance, String prop, Object value)
+   @Override
+  final boolean set(final Object instance, String prop, Object value)
        throws PropertyException, NoSuchMethodException
    {
       Object[] args =

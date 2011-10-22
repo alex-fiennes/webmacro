@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.engine.Block;
 import org.webmacro.util.Bag;
 
 import javax.servlet.http.Cookie;
@@ -96,6 +95,7 @@ public class WebContext extends Context
     /**
      * Clear a WebContext of it's non-shared data
      */
+    @Override
     public void clear ()
     {
         _request = null;

@@ -50,6 +50,7 @@ public class SubSettings extends Settings
         _prefix = (prefix == null) ? "" : prefix + ".";
     }
 
+    @Override
     public String[] getKeys ()
     {
         String[] underlyingKeys = _settings.getKeys();
@@ -74,6 +75,7 @@ public class SubSettings extends Settings
     /**
      * Find out if a setting is defined
      */
+    @Override
     public boolean containsKey (String key)
     {
         return _settings.containsKey(prefix(key));
@@ -82,6 +84,7 @@ public class SubSettings extends Settings
     /**
      * Get a setting
      */
+    @Override
     public String getSetting (String key)
     {
         return _settings.getSetting(prefix(key));

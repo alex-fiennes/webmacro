@@ -33,6 +33,7 @@ import org.webmacro.PropertyException;
  */
 public class CGITool extends ContextTool
 {
+    @Override
     public Object init (Context context)
             throws PropertyException
     {

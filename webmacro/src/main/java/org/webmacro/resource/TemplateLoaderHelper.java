@@ -175,6 +175,7 @@ public class TemplateLoaderHelper
             this.lastModified = lastModified;
         }
 
+        @Override
         public boolean shouldReload ()
         {
             return (lastModified != file.lastModified());
@@ -197,6 +198,7 @@ public class TemplateLoaderHelper
             this.lastModified = lastModified;
         }
 
+        @Override
         public boolean shouldReload ()
         {
             return (lastModified != UrlProvider.getUrlLastModified(url));

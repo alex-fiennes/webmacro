@@ -103,6 +103,7 @@ public class Context implements Map, Cloneable
      * See cloneContext(). Subclasses should override cloneContext()
      * rather than the clone() method.
      */
+    @Override
     public final Object clone ()
     {
         return cloneContext();
@@ -557,6 +558,7 @@ public class Context implements Map, Cloneable
      * Output is similiar to
      * <code>java.util.HashMap.toString()</code>
      */
+    @Override
     public String toString ()
     {
         return _variables.toString();

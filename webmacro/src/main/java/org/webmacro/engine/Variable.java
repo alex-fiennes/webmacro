@@ -306,6 +306,7 @@ public abstract class Variable implements Macro, Visitable
      * Return the String name of the variable prefixed with a string
      * representing its type. For example local:a.b.c
      */
+    @Override
     public abstract String toString ();
 
     /**

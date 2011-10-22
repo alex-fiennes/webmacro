@@ -186,6 +186,7 @@ final public class URLTemplateProvider extends CachingProvider
      * @exception InitException thrown when the provider fails to initialize
      */
 
+    @Override
     public void init (Broker b, Settings config) throws InitException
     {
         super.init(b, config);

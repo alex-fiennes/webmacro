@@ -66,6 +66,7 @@ public class RethrowableException extends Exception
         cause = e;
     }
 
+    @Override
     public void printStackTrace ()
     {
         super.printStackTrace();
@@ -76,6 +77,7 @@ public class RethrowableException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace (java.io.PrintStream ps)
     {
         super.printStackTrace(ps);
@@ -86,6 +88,7 @@ public class RethrowableException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace (java.io.PrintWriter pw)
     {
         super.printStackTrace(pw);
@@ -100,6 +103,7 @@ public class RethrowableException extends Exception
      * allow access to underlying exception
      * @deprecated you should use <code>getCause</code> instead
      */
+    @Deprecated
     public Throwable getCaught ()
     {
         return getCause();
@@ -111,6 +115,7 @@ public class RethrowableException extends Exception
      * @return underlying cause
      * @since 1.1
      */
+    @Override
     public Throwable getCause ()
     {
         return cause;

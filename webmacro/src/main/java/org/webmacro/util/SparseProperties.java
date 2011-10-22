@@ -81,6 +81,7 @@ public class SparseProperties extends Properties
     /**
      * Gets the object but returns the default value if not present.
      */
+    @Override
     public Object get (Object key)
     {
         Object o = super.get(key);

@@ -64,6 +64,7 @@ public class MacroDirective extends Directive
     {
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -84,6 +85,7 @@ public class MacroDirective extends Directive
     {
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
     }

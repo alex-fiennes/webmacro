@@ -48,6 +48,7 @@ public class ClassPathTemplateLoader extends AbstractTemplateLoader
     private ClassLoader loader;
     private String path;
 
+    @Override
     public void init (Broker broker, Settings config) throws InitException
     {
         super.init(broker, config);

@@ -127,6 +127,7 @@ abstract public class WMTemplate implements Template
      * from a file you might want to mention which it is--will be used to
      * produce error messages describing which template had a problem.
      */
+    @Override
     public abstract String toString ();
 
     /**

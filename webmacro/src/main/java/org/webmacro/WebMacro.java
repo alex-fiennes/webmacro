@@ -72,8 +72,9 @@ public interface WebMacro
      *
      * @throws java.io.UnsupportedEncodingException if the encoding type
      *         specified is not supported by your JVM.
-     * @deprecated
+     * @deprecated pending removal after cleanup
      */
+    @Deprecated
     public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException;
 

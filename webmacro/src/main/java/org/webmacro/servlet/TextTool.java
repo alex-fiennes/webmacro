@@ -403,6 +403,7 @@ public class TextTool extends ContextTool
      * interact with the context, so the <code>context</code>
      * parameter is ignored.
      */
+    @Override
     public Object init (Context context) throws PropertyException
     {
         return TextTool.getInstance();

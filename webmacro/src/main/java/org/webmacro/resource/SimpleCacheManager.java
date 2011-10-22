@@ -95,6 +95,7 @@ public class SimpleCacheManager implements CacheManager {
         _cache.remove(query);
     }
 
+    @Override
     public String toString() {
         return NAME + "(type = " + _resourceType + ")";
     }

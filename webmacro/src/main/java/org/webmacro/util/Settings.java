@@ -300,7 +300,7 @@ public class Settings
      */
     public String[] getKeys ()
     {
-        return (String[]) _props.keySet().toArray(stringArray);
+        return _props.keySet().toArray(stringArray);
     }
 
     /**

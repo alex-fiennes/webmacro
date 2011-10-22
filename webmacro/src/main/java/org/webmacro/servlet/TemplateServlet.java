@@ -120,7 +120,8 @@ public class TemplateServlet extends HttpServlet {
 	 * If defined, the global context is made available to every request as a
 	 * var specified in WebMacro.properties.
 	 */
-	public void init(ServletConfig conf) throws ServletException {
+	@Override
+  public void init(ServletConfig conf) throws ServletException {
 		super.init(conf);
 		// run the application template, Application.tml.
 		try {
@@ -157,7 +158,8 @@ public class TemplateServlet extends HttpServlet {
 	 * Calls locateTemplate() and then getTemplate(), a base method, to find the
 	 * template and render it.
 	 */
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	@Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, java.io.IOException {
 		try {
 			doResponse(req, resp);
@@ -172,7 +174,8 @@ public class TemplateServlet extends HttpServlet {
 	 * Calls locateTemplate() and then getTemplate(), a base method, to find the
 	 * template and render it.
 	 */
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+	@Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, java.io.IOException {
 		doGet(req, resp);
 	}

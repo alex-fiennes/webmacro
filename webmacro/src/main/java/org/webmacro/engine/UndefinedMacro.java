@@ -46,6 +46,7 @@ public final class UndefinedMacro implements Macro, Visitable
         return _singleton;
     }
 
+    @Override
     public final String toString ()
     {
         throw new UnsupportedOperationException(

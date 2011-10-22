@@ -43,6 +43,7 @@ public final class StringMacroAdapter implements Macro, Visitable
         _self = wrapMe;
     }
 
+    @Override
     public final String toString ()
     {
         return _self;

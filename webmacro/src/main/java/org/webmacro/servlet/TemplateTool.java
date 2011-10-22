@@ -48,6 +48,7 @@ public class TemplateTool extends ContextTool
      * @throws PropertyException From the ContextTool interface
      * @return a new MacroTemplateFactory for each request.
      */
+    @Override
     public Object init (Context c) throws PropertyException
     {
         _context = c;

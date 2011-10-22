@@ -68,6 +68,7 @@ public class ReloadDelayDecorator
             config.processListSetting("CheckForReloadDelay",
                     new Settings.ListSettingHandler()
                     {
+                        @Override
                         public void processSetting (String key, String value)
                         {
                             if (key == null || key.length() == 0)

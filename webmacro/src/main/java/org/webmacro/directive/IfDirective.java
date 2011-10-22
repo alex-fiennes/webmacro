@@ -95,6 +95,7 @@ class IfDirective extends Directive
         return myDescr;
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -223,6 +224,7 @@ class IfDirective extends Directive
             elseBlock.write(out, context);
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

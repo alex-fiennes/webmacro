@@ -103,6 +103,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * handing the ServletConfig object to the superclass.
      * @exception ServletException if it failed to initialize
      */
+    @Override
     public synchronized void init (ServletConfig sc)
             throws ServletException
     {
@@ -116,6 +117,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * of the broker--you can overide the start() method instead, which
      * is called just after the broker is initialized.
      */
+    @Override
     public synchronized void init ()
     {
 
@@ -179,6 +181,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * and then the parent destroy() method will be invoked.
      * @see WM#destroy()
      */
+    @Override
     public synchronized void destroy ()
     {
         stop();
@@ -203,6 +206,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * @exception ServletException if we can't get our configuration
      * @exception IOException if we can't write to the output stream
      */
+    @Override
     protected void doGet (HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException
     {
@@ -221,6 +225,7 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * @exception ServletException if we can't get our configuration
      * @exception IOException if we can't read/write to the streams we got
      */
+    @Override
     protected void doPost (HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException
     {
@@ -686,8 +691,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * NO LONGER USED
      * Exists only to catch implementations that use it.
      * Use newWebContext instead.
-     * @deprecated
+     * @deprecated pending removal
      */
+    @Deprecated
     public final WebContext initWebContext () throws InitException
     {
         return null;
@@ -725,8 +731,9 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
      * @param out The output stream the FastWriter should write to.  Typically
      *           this will be your ServletOutputStream
      * @param enctype the Encoding type to use
-     * @deprecated
+     * @deprecated pending removal after cleanup
      */
+    @Deprecated
     public FastWriter getFastWriter (OutputStream out, String enctype)
             throws UnsupportedEncodingException
     {

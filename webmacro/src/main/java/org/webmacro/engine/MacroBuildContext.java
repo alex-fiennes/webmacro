@@ -64,21 +64,25 @@ public class MacroBuildContext extends BuildContext
         return rootContext;
     }
 
+    @Override
     public void putMacro (String name, MacroDefinition macro)
     {
         rootContext.putMacro(name, macro);
     }
 
+    @Override
     public MacroDefinition getMacro (String name)
     {
         return rootContext.getMacro(name);
     }
 
+    @Override
     public boolean containsKey (Object name)
     {
         return macroArgs.containsKey(name) || chainedContext.containsKey(name);
     }
 
+    @Override
     protected Object internalGet (Object name) throws PropertyException
     {
         if (macroArgs.containsKey(name))

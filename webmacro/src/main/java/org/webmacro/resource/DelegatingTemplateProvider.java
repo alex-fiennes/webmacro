@@ -31,7 +31,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
-import org.webmacro.Context;
 import org.webmacro.InitException;
 import org.webmacro.NotFoundException;
 import org.webmacro.ResourceException;
@@ -79,6 +78,7 @@ public class DelegatingTemplateProvider extends CachingProvider
     private TemplateLoaderFactory factory;
     private TemplateLoader[] templateLoaders;
 
+    @Override
     public void init (Broker broker, Settings config) throws InitException
     {
         super.init(broker, config);

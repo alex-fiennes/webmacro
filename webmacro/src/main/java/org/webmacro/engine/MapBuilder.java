@@ -89,6 +89,7 @@ class MapMacro implements Macro
         out.write(evaluate(context).toString());
     }
 
+    @Override
     public String toString ()
     {
         return _map.toString();

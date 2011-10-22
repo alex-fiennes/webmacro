@@ -126,6 +126,7 @@ abstract public class CachingProvider implements Provider,
         return ((ResourceLoader) this).load((String) query, ce);
     }
 
+    @Override
     public String toString ()
     {
         return "CachingProvider(type = " + getType() + ")";

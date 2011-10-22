@@ -225,11 +225,13 @@ public abstract class Expression
             super(o);
         }
 
+        @Override
         public String getName ()
         {
             return "Not";
         }
 
+        @Override
         public Object operate (Object o)
         {
             return (!Expression.isTrue(o)) ? TRUE : FALSE;
@@ -245,11 +247,13 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "Add";
         }
 
+        @Override
         public Object operate (Object l, Object r) throws PropertyException
         {
             if (!isNumber(l) || !isNumber(r))
@@ -267,11 +271,13 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "Subtract";
         }
 
+        @Override
         public Object operate (Object l, Object r) throws PropertyException
         {
             if (!isNumber(l) || !isNumber(r))
@@ -289,11 +295,13 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "Multiply";
         }
 
+        @Override
         public Object operate (Object l, Object r) throws PropertyException
         {
             if (!isNumber(l) || !isNumber(r))
@@ -311,11 +319,13 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "Divide";
         }
 
+        @Override
         public Object operate (Object l, Object r) throws PropertyException
         {
             if (!isNumber(l) || !isNumber(r))
@@ -354,6 +364,7 @@ public abstract class Expression
             return null;
         }
 
+        @Override
         public Object operate (Object l, Object r) throws PropertyException
         {
             Boolean b = null;
@@ -395,26 +406,31 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareEq";
         }
 
+        @Override
         public Boolean compare (Object l, Object r)
         {
             return (l.equals(r)) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (l.equals(r)) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l == r) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compareNull (Object o)
         {
             return (o == null) ? TRUE : FALSE;
@@ -429,26 +445,31 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareNe";
         }
 
+        @Override
         public Boolean compare (Object l, Object r)
         {
             return (!l.equals(r)) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (!l.equals(r)) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l != r) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compareNull (Object o)
         {
             return (o != null) ? TRUE : FALSE;
@@ -463,16 +484,19 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareLe";
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (l.compareTo(r) <= 0) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l <= r) ? TRUE : FALSE;
@@ -487,16 +511,19 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareLt";
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (l.compareTo(r) < 0) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l < r) ? TRUE : FALSE;
@@ -511,16 +538,19 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareGe";
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (l.compareTo(r) >= 0) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l >= r) ? TRUE : FALSE;
@@ -535,16 +565,19 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public String getName ()
         {
             return "CompareGt";
         }
 
+        @Override
         public Boolean compare (String l, String r)
         {
             return (l.compareTo(r) > 0) ? TRUE : FALSE;
         }
 
+        @Override
         public Boolean compare (long l, long r)
         {
             return (l > r) ? TRUE : FALSE;
@@ -607,6 +640,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r)
         {
             if (l instanceof Macro)
@@ -634,6 +668,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r)
         {
             if (l instanceof Macro)
@@ -661,6 +696,7 @@ public abstract class Expression
             super(o);
         }
 
+        @Override
         public Object build (Object o)
         {
             if (o instanceof Macro)
@@ -679,6 +715,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             if (!(l instanceof Macro) && !(r instanceof Macro))
@@ -701,6 +738,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             if (!(l instanceof Macro) && !(r instanceof Macro))
@@ -723,6 +761,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             if (!(l instanceof Macro) && !(r instanceof Macro))
@@ -745,6 +784,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             if (!(l instanceof Macro) && !(r instanceof Macro))
@@ -773,6 +813,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareEq c = new CompareEq(l, r);
@@ -799,6 +840,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareNe c = new CompareNe(l, r);
@@ -825,6 +867,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareLe c = new CompareLe(l, r);
@@ -851,6 +894,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareLt c = new CompareLt(l, r);
@@ -877,6 +921,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareGe c = new CompareGe(l, r);
@@ -903,6 +948,7 @@ public abstract class Expression
             super(l, r);
         }
 
+        @Override
         public Object build (Object l, Object r) throws BuildException
         {
             CompareGt c = new CompareGt(l, r);

@@ -139,7 +139,8 @@ public class BeanDirective extends Directive
    {
    }
 
-   public Object build(DirectiveBuilder builder, BuildContext bc)
+   @Override
+  public Object build(DirectiveBuilder builder, BuildContext bc)
             throws BuildException
    {
       _broker = bc.getBroker();
@@ -315,7 +316,8 @@ public class BeanDirective extends Directive
 
    }
 
-   public void accept(TemplateVisitor v)
+   @Override
+  public void accept(TemplateVisitor v)
    {
       v.beginDirective(myDescr.name);
       v.visitDirectiveArg("BeanTarget", target);

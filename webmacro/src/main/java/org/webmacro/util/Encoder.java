@@ -250,17 +250,19 @@ public class Encoder implements ResourceLoader
             long strhash = 0;
             for (int i = 0; i < text.length; i++)
             {
-                strhash = (strhash + (long) text[i].hashCode()) %
+                strhash = (strhash + text[i].hashCode()) %
                         Integer.MAX_VALUE;
             }
             _hashCode = (int) strhash;
         }
 
+        @Override
         public int hashCode ()
         {
             return _hashCode;
         }
 
+        @Override
         public boolean equals (Object other)
         {
             // we try to be as efficient as possible about this, but to be

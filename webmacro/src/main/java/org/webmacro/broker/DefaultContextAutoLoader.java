@@ -48,6 +48,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
 
     private class AutoContextSettingsHandler extends Settings.ListSettingHandler
     {
+        @Override
         public void processSetting (String settingKey, String settingValue)
         {
             try

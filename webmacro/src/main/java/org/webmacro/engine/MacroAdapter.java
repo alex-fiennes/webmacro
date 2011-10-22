@@ -50,6 +50,7 @@ final public class MacroAdapter implements Macro, Visitable
         }
     }
 
+    @Override
     public final String toString ()
     {
         return _self.toString();

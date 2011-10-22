@@ -78,7 +78,8 @@ public class EvalDirective extends org.webmacro.directive.Directive
    {
    }
 
-   public Object build(DirectiveBuilder builder, BuildContext bc)
+   @Override
+  public Object build(DirectiveBuilder builder, BuildContext bc)
       throws BuildException
    {
       _evalTarget = builder.getArg(EVAL_EXPR, bc);
@@ -193,7 +194,8 @@ public class EvalDirective extends org.webmacro.directive.Directive
       }
    }
 
-   public void accept(TemplateVisitor v)
+   @Override
+  public void accept(TemplateVisitor v)
    {
       v.beginDirective(myDescr.name);
       v.visitDirectiveArg("EvalTarget", _evalTarget);

@@ -65,6 +65,7 @@ public class PropertyException extends ContextException
         _message = message;
     }
 
+    @Override
     public String getMessage ()
     {
         if (_message == null)
@@ -353,6 +354,7 @@ public class PropertyException extends ContextException
          * Overloaded to return the <code>reason</code> specified during construction
          * <b>plus</b> the context location, if any.
          */
+        @Override
         public String getMessage ()
         {
             String msg = _msg;
@@ -364,6 +366,7 @@ public class PropertyException extends ContextException
             return msg;
         }
 
+        @Override
         public void setMessage (String msg)
         {
             _msg = msg;

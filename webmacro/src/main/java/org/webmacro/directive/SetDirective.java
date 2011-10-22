@@ -70,6 +70,7 @@ public class SetDirective extends Directive
         this.result = result;
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -108,6 +109,7 @@ public class SetDirective extends Directive
         }
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

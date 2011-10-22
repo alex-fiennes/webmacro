@@ -180,6 +180,7 @@ public class FastWriter extends Writer
      * Write characters to the output stream performing slow unicode
      * conversion unless AsciiHack is on.
      */
+    @Override
     public void write (char[] cbuf) throws java.io.IOException
     {
         _bwriter.write(cbuf, 0, cbuf.length);
@@ -190,6 +191,7 @@ public class FastWriter extends Writer
      * Write characters to to the output stream performing slow unicode
      * conversion.
      */
+    @Override
     public void write (char[] cbuf, int offset, int len) throws java.io.IOException
     {
         _bwriter.write(cbuf, offset, len);
@@ -199,6 +201,7 @@ public class FastWriter extends Writer
     /**
      * Write a single character, performing slow unicode conversion
      */
+    @Override
     public void write (int c) throws java.io.IOException
     {
         _bwriter.write(c);
@@ -209,6 +212,7 @@ public class FastWriter extends Writer
      * Write a string to the underlying output stream, performing
      * unicode conversion.
      */
+    @Override
     public void write (final String s) throws java.io.IOException
     {
         final int len = s.length();
@@ -230,6 +234,7 @@ public class FastWriter extends Writer
 * Write a string to the underlying output stream, performing
 * unicode conversion.
 */
+    @Override
     public void write (final String s, final int off, final int len) throws java.io.IOException
     {
         try
@@ -317,6 +322,7 @@ public class FastWriter extends Writer
      * that you may actually encounter an IOException when using
      * the FastWriter class.
      */
+    @Override
     public void flush () throws IOException
     {
         if (_buffered)
@@ -361,6 +367,7 @@ public class FastWriter extends Writer
     /**
      * Copy the contents written so far into a String.
      */
+    @Override
     public String toString ()
     {
         if (_buffered)
@@ -450,6 +457,7 @@ public class FastWriter extends Writer
         }
     }
 
+    @Override
     public void close () throws IOException
     {
         flush();

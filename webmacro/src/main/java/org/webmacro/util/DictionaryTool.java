@@ -70,6 +70,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public Enumeration elements ()
     {
         return dict.elements();
@@ -78,6 +79,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public boolean isEmpty ()
     {
         return dict.isEmpty();
@@ -86,6 +88,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public Object get (final Object key)
     {
         return dict.get(key);
@@ -94,6 +97,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public Enumeration keys ()
     {
         return dict.keys();
@@ -102,6 +106,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public Object put (final Object newKey, final Object newValue)
     {
         return dict.put(newKey, newValue);
@@ -110,6 +115,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public Object remove (final Object key)
     {
         return dict.remove(key);
@@ -118,6 +124,7 @@ final public class DictionaryTool extends Dictionary
     /**
      * Forward call to Dictionary
      */
+    @Override
     final public int size ()
     {
         return dict.size();

@@ -51,6 +51,7 @@ public class VariableTool extends ContextTool
         context = newContext;
     }
 
+    @Override
     public Object init (Context c) throws PropertyException
     {
         return new VariableTool(c);

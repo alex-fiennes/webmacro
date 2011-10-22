@@ -36,6 +36,7 @@ import org.webmacro.ContextTool;
 public class ListTool extends ContextTool
 {
 
+    @Override
     public Object init (Context context)
     {
         return ListUtil.getInstance();

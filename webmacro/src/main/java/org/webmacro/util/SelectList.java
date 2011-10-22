@@ -81,6 +81,7 @@ public class SelectList implements Enumeration
         }
     }
 
+    @Override
     public String toString ()
     {
         try

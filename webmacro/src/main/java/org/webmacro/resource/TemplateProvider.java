@@ -96,6 +96,7 @@ final public class TemplateProvider extends CachingProvider
             this.lastModified = lastModified;
         }
 
+        @Override
         public boolean shouldReload ()
         {
             return (lastModified != file.lastModified());
@@ -108,6 +109,7 @@ final public class TemplateProvider extends CachingProvider
      * as the source for Template objects that it will return.
      * @exception InitException provider failed to initialize
      */
+    @Override
     public void init (Broker b, Settings config) throws InitException
     {
         super.init(b, config);

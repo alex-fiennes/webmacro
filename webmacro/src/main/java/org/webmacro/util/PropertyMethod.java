@@ -84,6 +84,7 @@ public class PropertyMethod implements Named
     /**
      * Return a signature of this method
      */
+    @Override
     final public String toString ()
     {
         if (_reference)

@@ -54,6 +54,7 @@ final public class ByteBufferOutputStream extends OutputStream
         _pos = 0;
     }
 
+    @Override
     public void write (int i)
     {
         write((byte) i);
@@ -62,6 +63,7 @@ final public class ByteBufferOutputStream extends OutputStream
     /**
      * Copy an array of bytes on to the end of the buffer
      */
+    @Override
     public void write (byte[] b)
     {
         int len = b.length;
@@ -73,6 +75,7 @@ final public class ByteBufferOutputStream extends OutputStream
     /**
      * Copy an array of bytes on to the end of the buffer
      */
+    @Override
     public void write (byte[] b, int offset, int len)
     {
         ensureCapacity(len);
@@ -145,6 +148,7 @@ final public class ByteBufferOutputStream extends OutputStream
     /**
      * Convert the bytes to a String using the default encoding
      */
+    @Override
     public String toString ()
     {
         return new String(_buf, 0, _pos);

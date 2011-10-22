@@ -208,6 +208,7 @@ public final class ASCII_CharStream
      * @see #getEndColumn
      */
 
+    @Deprecated
     public final int getColumn ()
     {
         return curBuf.bufcolumn[curBuf.curPos];
@@ -218,6 +219,7 @@ public final class ASCII_CharStream
      * @see #getEndLine
      */
 
+    @Deprecated
     public final int getLine ()
     {
         return curBuf.bufline[curBuf.curPos];

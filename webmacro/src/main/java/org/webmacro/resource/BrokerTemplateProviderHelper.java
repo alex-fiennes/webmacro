@@ -76,6 +76,7 @@ final public class BrokerTemplateProviderHelper
             this.lastModified = lastModified;
         }
 
+        @Override
         public boolean shouldReload ()
         {
             return (lastModified != UrlProvider.getUrlLastModified(url));

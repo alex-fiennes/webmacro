@@ -102,7 +102,8 @@ public class AlternateDirective extends Directive
 	{
 		return myDescr;
 	}
-	public Object build(DirectiveBuilder builder,
+	@Override
+  public Object build(DirectiveBuilder builder,
 	BuildContext bc)
 	throws BuildException
 	{
@@ -138,7 +139,8 @@ public class AlternateDirective extends Directive
 			return;
 		}
 	}
-	public void accept(TemplateVisitor v)
+	@Override
+  public void accept(TemplateVisitor v)
 	{
 		v.beginDirective(myDescr.name);
 		v.visitDirectiveArg("AlternateTarget", target);
@@ -167,7 +169,8 @@ class IteratorAlternator extends Alternator
 		this.itr = itr;
 		this.list = new ArrayList<Object>();
 	}
-	public Object evaluate(Context context)
+	@Override
+  public Object evaluate(Context context)
 	{
 		Object o;
 		if (index == -1 && itr.hasNext())

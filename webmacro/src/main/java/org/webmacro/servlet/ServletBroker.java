@@ -155,6 +155,7 @@ abstract public class ServletBroker extends Broker
             this.p = p;
         }
 
+        @Override
         public boolean equals (Object o)
         {
             if (this == o) return true;
@@ -168,6 +169,7 @@ abstract public class ServletBroker extends Broker
             return true;
         }
 
+        @Override
         public int hashCode ()
         {
             int result;

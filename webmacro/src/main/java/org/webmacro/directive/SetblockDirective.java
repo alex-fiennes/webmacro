@@ -69,6 +69,7 @@ public class SetblockDirective extends Directive
     {
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -109,6 +110,7 @@ public class SetblockDirective extends Directive
         }
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

@@ -46,6 +46,7 @@ public class LocaleTool extends ContextTool implements Bag
 
     private static HashMap cache = new HashMap();
 
+    @Override
     public Object init (Context context)
             throws PropertyException
     {

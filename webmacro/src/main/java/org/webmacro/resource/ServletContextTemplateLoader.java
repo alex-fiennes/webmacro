@@ -59,6 +59,7 @@ public class ServletContextTemplateLoader extends AbstractTemplateLoader
     private ServletContext loader;
     private String path;
 
+    @Override
     public void init (Broker broker, Settings config) throws InitException
     {
         super.init(broker, config);

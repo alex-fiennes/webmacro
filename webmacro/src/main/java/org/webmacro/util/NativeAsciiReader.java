@@ -60,6 +60,7 @@ public class NativeAsciiReader extends BufferedReader
      *  extending BufferedReader, it is efficient enough to read one character
      *  at a time
      */
+    @Override
     public int read (char cbuf[], int off, int len) throws IOException
     {
         int i = 0;

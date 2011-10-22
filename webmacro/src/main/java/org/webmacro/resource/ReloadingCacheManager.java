@@ -46,6 +46,7 @@ public class ReloadingCacheManager implements CacheManager {
 
         private CacheReloadContext reloadContext = null;
 
+        @Override
         public void setReloadContext (CacheReloadContext rc)
         {
             if (_delayReloadChecks && rc != null)
@@ -64,11 +65,13 @@ public class ReloadingCacheManager implements CacheManager {
 
         private SoftReference reference;
 
+        @Override
         public Object getObject ()
         {
             return reference.get();
         }
 
+        @Override
         public void setObject (Object o)
         {
             reference = new SoftReference(o);
@@ -80,11 +83,13 @@ public class ReloadingCacheManager implements CacheManager {
 
         private Object object;
 
+        @Override
         public Object getObject ()
         {
             return object;
         }
 
+        @Override
         public void setObject (Object o)
         {
             object = o;
@@ -264,6 +269,7 @@ public class ReloadingCacheManager implements CacheManager {
         _cache.remove(query);
     }
 
+    @Override
     public String toString ()
     {
         return NAME + "(type = " + _resourceType + ")";

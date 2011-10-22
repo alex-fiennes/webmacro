@@ -199,6 +199,7 @@ public class MathTool extends ContextTool
      * interact with the context, so the <code>context</code>
      * parameter is ignored.
      */
+    @Override
     public Object init (Context context) throws PropertyException
     {
         return MathTool.getInstance();

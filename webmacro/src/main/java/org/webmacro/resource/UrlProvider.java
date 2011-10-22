@@ -68,6 +68,7 @@ final public class UrlProvider extends CachingProvider
     }
 
 
+    @Override
     public void init (Broker b, Settings config) throws InitException
     {
         super.init(b, config);

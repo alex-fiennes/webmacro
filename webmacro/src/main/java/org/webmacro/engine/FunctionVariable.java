@@ -27,6 +27,7 @@ public class FunctionVariable extends Variable
      * supplied context.
      *
      */
+    @Override
     public Object getValue (Context context) throws PropertyException
     {
        return context.getProperty(_names);
@@ -37,6 +38,7 @@ public class FunctionVariable extends Variable
      * supplied context.
      *
      */
+    @Override
     public void setValue (Context c, Object v) throws PropertyException
     {
         throw new PropertyException("Cannot set the value of a function: " + getVariableName());
@@ -46,11 +48,13 @@ public class FunctionVariable extends Variable
      * Return the String name of the variable prefixed with a string
      * representing its type, in this case "function:".
      */
+    @Override
     public String toString ()
     {
         return "function:" + getVariableName();
     }
 
+    @Override
     public boolean isSimpleName ()
     {
         return false;

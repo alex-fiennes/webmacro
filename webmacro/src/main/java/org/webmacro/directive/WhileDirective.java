@@ -96,6 +96,7 @@ class WhileDirective extends Directive
      */
     protected String _directiveName;
 
+    @Override
     public Object build (DirectiveBuilder builder, BuildContext bc)
             throws BuildException
     {
@@ -169,6 +170,7 @@ class WhileDirective extends Directive
         }
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(_desc.name);

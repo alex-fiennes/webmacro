@@ -51,6 +51,7 @@ public class ConstantPropertyVariable extends Variable
      * and return it
      * @exception PropertyException If the property does not exist
      */
+    @Override
     public final Object getValue (Context context)
             throws PropertyException
     {
@@ -66,6 +67,7 @@ public class ConstantPropertyVariable extends Variable
      * using introspection, and set it to the supplied value.
      * @exception PropertyException If the property does not exist
      */
+    @Override
     public final void setValue (Context context, Object newValue)
             throws PropertyException
     {
@@ -76,6 +78,7 @@ public class ConstantPropertyVariable extends Variable
      * Return a string representation naming the variable for
      * debugging purposes.
      */
+    @Override
     public final String toString ()
     {
         return "constant-property:" + getVariableName();

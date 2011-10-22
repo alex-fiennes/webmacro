@@ -36,6 +36,7 @@ import org.webmacro.ContextTool;
 public class TypeTool extends ContextTool
 {
 
+    @Override
     public Object init (Context context)
     {
         return org.webmacro.util.CastUtil.getInstance();

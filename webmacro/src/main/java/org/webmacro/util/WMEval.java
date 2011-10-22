@@ -40,8 +40,6 @@ import org.webmacro.WM;
 import org.webmacro.WMConstants;
 import org.webmacro.WebMacro;
 import org.webmacro.engine.StreamTemplate;
-import org.webmacro.resource.AbstractTemplateLoader;
-import org.webmacro.servlet.WMServlet;
 import org.webmacro.servlet.WebContext;
 
 

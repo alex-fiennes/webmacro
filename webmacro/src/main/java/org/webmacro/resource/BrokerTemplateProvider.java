@@ -45,6 +45,7 @@ final public class BrokerTemplateProvider extends CachingProvider
     private BrokerTemplateProviderHelper _helper;
     static Logger _log =  LoggerFactory.getLogger(BrokerTemplateProvider.class);
 
+    @Override
     public void init (Broker b, Settings config) throws InitException
     {
         super.init(b, config);

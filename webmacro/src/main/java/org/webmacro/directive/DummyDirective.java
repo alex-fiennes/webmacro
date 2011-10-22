@@ -48,6 +48,7 @@ public class DummyDirective extends Directive
         return myDescr;
     }
 
+    @Override
     public Object build (DirectiveBuilder builder,
                          BuildContext bc)
             throws BuildException
@@ -60,6 +61,7 @@ public class DummyDirective extends Directive
     {
     }
 
+    @Override
     public void accept (TemplateVisitor v)
     {
         v.beginDirective(myDescr.name);

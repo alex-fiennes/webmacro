@@ -149,6 +149,7 @@ public final class ParserProvider implements Provider
     private class SettingHandler extends Settings.ListSettingHandler
     {
 
+        @Override
         public void processSetting (String settingKey, String settingValue)
         {
             try

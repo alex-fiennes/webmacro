@@ -158,6 +158,7 @@ public class Servlet20Broker extends ServletBroker
     }
 
     /** Get a resource (file) from the the Broker's class loader. */
+    @Override
     public URL getResource (String name)
     {
         URL u = _servletClassLoader.getResource(name);
@@ -169,6 +170,7 @@ public class Servlet20Broker extends ServletBroker
     /**
      * Get a resource (file) from the Broker's class loader.
      */
+    @Override
     public InputStream getResourceAsStream (String name)
     {
         InputStream is = _servletClassLoader.getResourceAsStream(name);
@@ -182,6 +184,7 @@ public class Servlet20Broker extends ServletBroker
      * class. If the class is not found uses the Broker classForName
      * implementation.
      */
+    @Override
     public Class classForName (String name) throws ClassNotFoundException
     {
         Class cls = null;

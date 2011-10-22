@@ -52,6 +52,7 @@ public class WebMacroException extends RethrowableException
      * Overloaded to return the <code>reason</code> specified during construction
      * <b>plus</b> the context location, if any.
      */
+    @Override
     public String getMessage ()
     {
         String msg = super.getMessage();

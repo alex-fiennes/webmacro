@@ -32,7 +32,6 @@ import org.webmacro.engine.MapBuilder;
 import org.webmacro.engine.PropertyMethodBuilder;
 import org.webmacro.engine.QuotedStringBuilder;
 import org.webmacro.engine.VariableBuilder;
-import org.webmacro.resource.DelegatingTemplateProvider;
 
 /**
  * WMParser_impl
@@ -761,7 +760,7 @@ public class WMParser_impl implements WMParser_implConstants {
       jj_consume_token(LPAREN);
       argList = ArgList();
       jj_consume_token(RPAREN);
-        element = new FunctionCallBuilder((String) t.image, argList);
+        element = new FunctionCallBuilder(t.image, argList);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case WORD:
