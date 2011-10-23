@@ -87,7 +87,7 @@ public class DelegatingTemplateProvider extends CachingProvider
         _log.info("DelegatingTemplateProvider: Using TemplateLoaderFactory " + factoryClass);
         factory = createFactory(factoryClass);
 
-        List loaders = new ArrayList();
+        List<TemplateLoader> loaders = new ArrayList<TemplateLoader>();
 
         // for compatability reasons, check old TemplatePath setting
         if (config.getBooleanSetting("DelegatingTemplateProvider.EmulateTemplatePath", false))
@@ -143,7 +143,7 @@ public class DelegatingTemplateProvider extends CachingProvider
      * at runtime if they have an appropriate method.
      * @return unmodifieable list of TemplateLoader objects
      */
-    public List getTemplateLoaders ()
+    public List<TemplateLoader> getTemplateLoaders ()
     {
         return Collections.unmodifiableList(Arrays.asList(templateLoaders));
     }

@@ -112,7 +112,7 @@ public class TypeDirective extends Directive
     private Variable _object;
 
     /** The Class instance that _object is requried to be. */
-    private Class _class;
+    private Class<?> _class;
 
     /** Is the Variable required to be in the Context? */
     private boolean _required;
@@ -225,9 +225,9 @@ public class TypeDirective extends Directive
      *    java.util.Data[][] -- a 2d array of Date objects
      * </pre>
      */
-    private static final Class getClass (final String classname) throws ClassNotFoundException
+    private static final Class<?> getClass (final String classname) throws ClassNotFoundException
     {
-        Class clazz;
+        Class<?> clazz;
 
         if (classname.endsWith("[]"))
         {

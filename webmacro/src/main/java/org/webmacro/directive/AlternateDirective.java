@@ -128,7 +128,7 @@ public class AlternateDirective extends Directive
 				l = ((Macro) list).evaluate(context);
 			else
 				l = list;
-			Iterator itr = context.getBroker()._propertyOperators
+			Iterator<?> itr = context.getBroker()._propertyOperators
 					.getIterator(l);
 			target.setValue(context, new IteratorAlternator(itr));
 		}
@@ -161,10 +161,10 @@ abstract class Alternator implements Macro
 }
 class IteratorAlternator extends Alternator
 {
-	private Iterator<Object> itr;
+	private Iterator<?> itr;
 	private List<Object> list;
 	private int index = -1;
-	public IteratorAlternator(Iterator<Object> itr)
+	public IteratorAlternator(Iterator<?> itr)
 	{
 		this.itr = itr;
 		this.list = new ArrayList<Object>();

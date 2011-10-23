@@ -91,17 +91,18 @@ public class Servlet22Broker extends ServletBroker
         init();
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadServletSettings (String prefix)
             throws InitException
     {
         Properties p = new Properties();
-        Enumeration e = _servletContext.getInitParameterNames();
+        Enumeration<String> e = (Enumeration<String>) _servletContext.getInitParameterNames();
         if (e != null)
         {
             String dotPrefix = (prefix == null) ? "" : prefix + ".";
             while (e.hasMoreElements())
             {
-                String key = (String) e.nextElement();
+                String key = e.nextElement();
                 if (prefix == null)
                     p.setProperty(key, _servletContext.getInitParameter(key));
                 else if (key.startsWith(dotPrefix))
@@ -137,9 +138,7 @@ public class Servlet22Broker extends ServletBroker
      * 
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
-     * @param additionalProperties
      * @return The broker for the servlet context.
-     * @throws InitException
      * @since 2.1 JSDK
      */
     public static Broker getBroker(ServletContext sc, ClassLoader cl,
@@ -286,9 +285,9 @@ public class Servlet22Broker extends ServletBroker
      * implementation.  
      */
     @Override
-    public Class classForName (String name) throws ClassNotFoundException
+    public Class<?> classForName (String name) throws ClassNotFoundException
     {
-        Class cls = null;
+        Class<?> cls = null;
         try
         {
             cls = _servletClassLoader.loadClass(name);

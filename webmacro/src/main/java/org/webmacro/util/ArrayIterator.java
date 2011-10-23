@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 /**
  * An Iterator interface to an array.
  */
-final public class ArrayIterator implements Iterator
+final public class ArrayIterator implements Iterator<Object>
 {
 
     final Object[] a;
@@ -83,7 +83,7 @@ final public class ArrayIterator implements Iterator
 
         try
         {
-            Iterator i = new ArrayIterator(arg);
+            Iterator<Object> i = new ArrayIterator(arg);
             while (i.hasNext())
             {
                 System.out.println("item: " + i.next());

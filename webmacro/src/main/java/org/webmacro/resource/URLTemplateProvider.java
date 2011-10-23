@@ -146,7 +146,7 @@ final public class URLTemplateProvider extends CachingProvider
      */
     private URL _baseURL = null;
 
-    private final HashMap templateNameCache = new HashMap();
+    private final HashMap<String,Template> templateNameCache = new HashMap<String,Template>();
 
 
     /**

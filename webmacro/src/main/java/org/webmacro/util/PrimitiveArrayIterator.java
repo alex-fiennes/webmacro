@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 /**
  * This provides an iterator interface to an array of primitives.
  */
-final public class PrimitiveArrayIterator implements Iterator
+final public class PrimitiveArrayIterator implements Iterator<Object>
 {
 
     private final Object a;
@@ -87,10 +87,9 @@ final public class PrimitiveArrayIterator implements Iterator
      */
     static public void main (String arg[])
     {
-
         try
         {
-            Iterator i = new PrimitiveArrayIterator(arg);
+            Iterator<Object> i = new PrimitiveArrayIterator(arg);
             while (i.hasNext())
             {
                 System.out.println("item: " + i.next());

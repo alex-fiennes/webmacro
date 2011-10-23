@@ -89,11 +89,12 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
     }
 
 
+    @SuppressWarnings("unchecked")
     private String handleError (Variable variable, Context context, Exception problem) throws PropertyException
     {
         String strError;
 
-        ArrayList arlErrors = null;
+        ArrayList<String> arlErrors = null;
         PropertyException propEx = null;
         if (problem instanceof PropertyException)
         {
@@ -106,13 +107,13 @@ public class DebugEvaluationExceptionHandler implements EvaluationExceptionHandl
         propEx.setContextLocation(context.getCurrentLocation());
         strError = propEx.getMessage();
 
-        if ((context.containsKey("WMERROR")) && (context.get("WMERROR") instanceof ArrayList))
+        if ((context.containsKey("WMERROR")) && (context.get("WMERROR") instanceof ArrayList<?>))
         {
-            arlErrors = (ArrayList) context.get("WMERROR");
+            arlErrors = (ArrayList<String>) context.get("WMERROR");
         }
         else
         {
-            arlErrors = new ArrayList();
+            arlErrors = new ArrayList<String>();
             context.put("WMERROR", arlErrors);
         }
 

@@ -39,7 +39,7 @@ import java.util.Vector;
  * returns a ListMacro.
  */
 
-public final class ListBuilder extends Vector implements Builder
+public final class ListBuilder extends Vector<Object> implements Builder
 {
 
     /**

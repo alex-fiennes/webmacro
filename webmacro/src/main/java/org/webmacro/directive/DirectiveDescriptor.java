@@ -53,7 +53,7 @@ public final class DirectiveDescriptor
 {
 
     public String name;
-    public Class dirClass;
+    public Class<?> dirClass;
     public ArgDescriptor[] args;
     public Subdirective[] subdirectives;
 
@@ -61,7 +61,7 @@ public final class DirectiveDescriptor
     hasBreakingSubdirectives = false;
 
     public DirectiveDescriptor (String name,
-                                Class dirClass,
+                                Class<?> dirClass,
                                 ArgDescriptor[] args,
                                 Subdirective[] subdirectives)
     {

@@ -104,7 +104,7 @@ public class SetpropsDirective extends Directive
                 // target doesn't exist. Must create.
                 // TODO check for class loading restrictions as per bean directive
                 try {
-                    Class c = Instantiator.getInstance(context.getBroker())
+                    Class<?> c = Instantiator.getInstance(context.getBroker())
                             .classForName(_className);
                     Object o = c.newInstance();
                     target.setValue(context, o);

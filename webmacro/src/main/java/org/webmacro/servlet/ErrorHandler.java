@@ -46,7 +46,6 @@ final class ErrorHandler implements Handler
 
     /**
      * The default error handler simply returns its template
-     * @see TemplateStore
      * @exception HandlerException if you don't want to handle the connect
      * @return A Template which can be used to interpret the connection
      */

@@ -89,12 +89,12 @@ abstract public class WMTemplate implements Template
     /**
      * Template parameters.
      */
-    private Map _parameters;
+    private Map<Object,Object> _parameters;
 
     /**
      * Template Macros.
      */
-    private Map _macros;
+    private Map<String,MacroDefinition> _macros;
 
 
     /**
@@ -171,8 +171,8 @@ abstract public class WMTemplate implements Template
         if (!_parsed)
         {
             Block newContent = null;
-            Map newParameters = null;
-            Map newMacros = null;
+            Map<Object,Object> newParameters = null;
+            Map<String,MacroDefinition> newMacros = null;
             Reader in = null;
             BuildContext bc = null;
             try
@@ -183,9 +183,9 @@ abstract public class WMTemplate implements Template
                 in.close();
                 bc = new BuildContext(_broker);
                 // put global macros from Broker into the BuildContext
-                Map globalMacros = _broker.getMacros();
-                for (Iterator i=globalMacros.entrySet().iterator(); i.hasNext(); ) {
-                    Map.Entry entry = (Map.Entry)i.next();
+                Map<String, MacroDefinition> globalMacros = _broker.getMacros();
+                for (Iterator<Map.Entry<String, MacroDefinition>> i=globalMacros.entrySet().iterator(); i.hasNext(); ) {
+                    Map.Entry<String,MacroDefinition> entry = i.next();
                     bc.putMacro((String)entry.getKey(),(MacroDefinition) entry.getValue());
                 }
                 newParameters = bc.getMap();
@@ -241,7 +241,7 @@ abstract public class WMTemplate implements Template
      * @return the #macro's defined for this template, or null if this template has
      * not yet been <code>parse()'d</code>.
      */
-    public Map getMacros ()
+    public Map<String,MacroDefinition> getMacros ()
     {
         return _macros;
     }
@@ -395,7 +395,7 @@ abstract public class WMTemplate implements Template
         }
     }
 
-    public Map getParameters ()
+    public Map<Object,Object> getParameters ()
     {
         return _parameters;
     }

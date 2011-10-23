@@ -270,7 +270,7 @@ public class PropertyException extends ContextException
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public InvalidTypeException (String variableName, Class clazz)
+		public InvalidTypeException (String variableName, Class<?> clazz)
         {
             super("$" + variableName + " is not a " + clazz.getName());
         }

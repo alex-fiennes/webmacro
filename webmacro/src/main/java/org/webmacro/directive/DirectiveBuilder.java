@@ -153,6 +153,7 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
      * Create a new subdirective of the specified id and create an ArgsHolder
      * for its arguments.  Not used by directives.
      */
+    @SuppressWarnings("unchecked")
     public DirectiveArgs newSubdirective (int subdId)
             throws BuildException
     {
@@ -166,10 +167,10 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
         }
         else
         {
-            Vector v;
+            Vector<ArgsHolder> v;
             if (subdirectives[index] == null)
-                subdirectives[index] = new Vector();
-            v = (Vector) subdirectives[index];
+                subdirectives[index] = new Vector<ArgsHolder>();
+            v = (Vector<ArgsHolder>) subdirectives[index];
             ah = new ArgsHolder(desc.subdirectives[index].args);
             v.addElement(ah);
         }
@@ -207,6 +208,7 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
      * so that the subdirective arguments can be retrieved.  Only valid
      * if the specified subdirective is repeating.
      */
+    @SuppressWarnings("unchecked")
     public ArgsHolder[] getRepeatingSubdirective (int subdId)
             throws BuildException
     {
@@ -216,7 +218,7 @@ public final class DirectiveBuilder implements Builder, DirectiveArgs
         if (subdirectives[index] == null)
             return null;
         else
-            return (ArgsHolder[]) ((Vector) subdirectives[index]).toArray(aha);
+            return (ArgsHolder[]) ((Vector<ArgsHolder>) subdirectives[index]).toArray(aha);
     }
 
     /**

@@ -42,7 +42,7 @@ import org.webmacro.ResourceException;
 public class EncoderProvider implements Provider
 {
 
-    private Map _encoders = new HashMap();
+    private Map<String, Encoder> _encoders = new HashMap<String, Encoder>();
     private Broker _broker;
     private Settings _config;
 

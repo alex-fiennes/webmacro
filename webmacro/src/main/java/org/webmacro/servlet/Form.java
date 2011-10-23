@@ -87,7 +87,7 @@ final public class Form implements Bag
         String strElement;
         Object obValue;
 
-        Enumeration obEnumeration;
+        Enumeration<?> obEnumeration;
 
         //--- end of var's declaration ---//
 
@@ -152,7 +152,7 @@ final public class Form implements Bag
     {
         StringBuffer sb = new StringBuffer();
         String eol = java.lang.System.getProperty("line.separator");
-        for (Enumeration params = _request.getParameterNames(); params.hasMoreElements(); )
+        for (Enumeration<?> params = _request.getParameterNames(); params.hasMoreElements(); )
         {
             String key = (String) params.nextElement();
             String[] value = _request.getParameterValues(key);

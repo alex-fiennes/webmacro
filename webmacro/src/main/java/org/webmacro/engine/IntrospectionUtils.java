@@ -34,7 +34,7 @@ public final class IntrospectionUtils
     {
     }
 
-    static boolean matches (Class[] sig, Class[] args)
+    static boolean matches (Class<?>[] sig, Class<?>[] args)
     {
         if (args.length != sig.length)
             return false;
@@ -43,8 +43,8 @@ public final class IntrospectionUtils
         {
             for (int i = 0; i < sig.length; i++)
             {
-                Class s = sig[i];
-                Class a = args[i];
+                Class<?> s = sig[i];
+                Class<?> a = args[i];
                 if (s.isPrimitive())
                 {
                     if ((s == Integer.TYPE && a == Integer.class) ||
@@ -73,9 +73,9 @@ public final class IntrospectionUtils
         return true;
     }
 
-    static public Class[] createTypesFromArgs (Object[] args)
+    static public Class<?>[] createTypesFromArgs (Object[] args)
     {
-        Class[] types = new Class[args.length];
+        Class<?>[] types = new Class[args.length];
         for (int i = 0; i < args.length; i++)
         {
             try
@@ -91,10 +91,11 @@ public final class IntrospectionUtils
     }
 
     /** Attempt to instantiate a class with the supplied args. */
-    static public Object instantiate (Class c, Object[] args)
+    @SuppressWarnings("unchecked")
+    static public <T> T instantiate (Class<T> c, Object[] args)
             throws Exception
     {
-        Object o = null;
+        T o = null;
         if (args == null || args.length == 0)
         {
             o = c.newInstance(); // no arg constructor
@@ -103,7 +104,7 @@ public final class IntrospectionUtils
         {
             // try each constructor with the right number of args,
             // until one works or all have failed
-            java.lang.reflect.Constructor[] cons = c.getConstructors();
+            java.lang.reflect.Constructor<?>[] cons = c.getConstructors();
             for (int i = 0; i < cons.length; i++)
             {
                 if (cons[i].getParameterTypes().length == args.length)
@@ -111,7 +112,7 @@ public final class IntrospectionUtils
                     // try to instantiate using this constructor
                     try
                     {
-                        o = cons[i].newInstance(args);
+                        o = (T) cons[i].newInstance(args);
                         break; // if successful, we're done!
                     }
                     catch (Exception e)

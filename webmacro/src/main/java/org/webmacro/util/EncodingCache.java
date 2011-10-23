@@ -71,7 +71,7 @@ final public class EncodingCache
     final private ArrayBucket[] _acache;
     final private int _size;
 
-    final static private Map _ecCache = new HashMap();
+    final static private Map<String, EncodingCache> _ecCache = new HashMap<String, EncodingCache>();
 
     public EncodingCache (String encoding)
             throws UnsupportedEncodingException

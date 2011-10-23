@@ -23,7 +23,7 @@ public class SimpleCacheManager implements CacheManager {
     static Logger _log =  LoggerFactory.getLogger(SimpleCacheManager.class);
 
     private static final String NAME = "SimpleCacheManager";
-    private final Map _cache = new ConcurrentHashMap();
+    private final Map<Object, Object> _cache = new ConcurrentHashMap<Object, Object>();
 
     private String _resourceType;
 

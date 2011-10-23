@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.webmacro.engine.MacroDefinition;
+
 
 /**
  * Defines the type of object which contains
@@ -85,7 +87,7 @@ public interface Template extends Visitable
 
     public void setParam (String key, Object value);
 
-    public Map getParameters ();
+    public Map<Object,Object> getParameters ();
 
     public String getName ();
 
@@ -98,7 +100,7 @@ public interface Template extends Visitable
      * parsed yet.
      * @return The map of macros defined.
      */
-    public Map getMacros ();
+    public Map<String, MacroDefinition> getMacros ();
 
     public void write (OutputStream out, Context context)
             throws PropertyException, IOException;

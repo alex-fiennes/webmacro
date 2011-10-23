@@ -54,7 +54,7 @@ public class SubSettings extends Settings
     public String[] getKeys ()
     {
         String[] underlyingKeys = _settings.getKeys();
-        ArrayList al = new ArrayList(underlyingKeys.length);
+        ArrayList<String> al = new ArrayList<String>(underlyingKeys.length);
         for (int i = 0; i < underlyingKeys.length; i++)
         {
             String key = underlyingKeys[i];

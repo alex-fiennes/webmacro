@@ -24,6 +24,7 @@ package org.webmacro.servlet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +68,7 @@ public final class ListUtil
     public boolean isList (Object o)
     {
         if (o == null) return false;
-        return o instanceof List;
+        return o instanceof List<?>;
     }
 
     /**
@@ -86,11 +87,11 @@ public final class ListUtil
     public static boolean isEmpty (Object arg)
     {
         if (arg == null) return true;
-        if (arg instanceof List) return ((List) arg).isEmpty();
+        if (arg instanceof List<?>) return ((List<?>) arg).isEmpty();
         if (arg instanceof Object[]) return ((Object[]) arg).length == 0;
-        if (arg instanceof Iterator) return ((Iterator) arg).hasNext();
-        if (arg instanceof Enumeration)
-            return ((Enumeration) arg).hasMoreElements();
+        if (arg instanceof Iterator<?>) return ((Iterator<?>) arg).hasNext();
+        if (arg instanceof Enumeration<?>)
+            return ((Enumeration<?>) arg).hasMoreElements();
         // check for primitive arrays
         if (arg.getClass().isArray())
         {
@@ -115,31 +116,30 @@ public final class ListUtil
      * <li>arg is null: a new empty List is returned</li>
      * <li>arg is anything else: it is added to a new list</li>
      * </ul>
-     *
-     * @param arg
      */
-    public static List toList (Object arg)
+    @SuppressWarnings("unchecked")
+    public static List<Object> toList (Object arg)
     {
-        List list = null;
-        if (arg instanceof List)
+        List<Object> list = null;
+        if (arg instanceof List<?>)
         {
-            list = (List) arg;
+            list = (List<Object>) arg;
         }
         else if (arg == null)
         { // return an empty list
-            list = Arrays.asList(new Object[0]);
+            list = Collections.emptyList();
         }
         else if (arg instanceof Object[])
         {
             list = Arrays.asList((Object[]) arg);
         }
-        else if (arg instanceof Iterator)
+        else if (arg instanceof Iterator<?>)
         {
-            list = iteratorToList((Iterator) arg);
+            list = iteratorToList((Iterator<Object>) arg);
         }
-        else if (arg instanceof Enumeration)
+        else if (arg instanceof Enumeration<?>)
         {
-            list = iteratorToList(new org.webmacro.util.EnumIterator((Enumeration) arg));
+            list = iteratorToList(new org.webmacro.util.EnumIterator((Enumeration<Object>) arg));
         }
         else if (arg.getClass().isArray())
         {
@@ -155,17 +155,17 @@ public final class ListUtil
         return list;
     }
 
-    static private List iteratorToList (Iterator iter)
+    static private <T> List<T> iteratorToList (Iterator<T> iter)
     {
-        List list = new ArrayList();
+        List<T> list = new ArrayList<T>();
         while (iter.hasNext())
         {
             list.add(iter.next());
         }
         // rewind the Iterator if it is a ListIterator
-        if (iter instanceof ListIterator)
+        if (iter instanceof ListIterator<?>)
         {
-            ListIterator li = (ListIterator) iter;
+            ListIterator<T> li = (ListIterator<T>) iter;
             while (li.hasPrevious()) li.previous();
         }
         return list;
@@ -186,7 +186,7 @@ public final class ListUtil
     /**
      * Allows access to elements in a List by position.  Index is zero based.
      */
-    public static Object getItem (List list, int pos)
+    public static <T> T getItem (List<T> list, int pos)
     {
         if (pos < 0 || (pos + 1) > list.size())
             throw new IndexOutOfBoundsException(
@@ -221,7 +221,7 @@ public final class ListUtil
     /**
      * @return number of elements in List argument
      */
-    public static int size (List list)
+    public static int size (List<?> list)
     {
         return list.size();
     }
@@ -237,7 +237,7 @@ public final class ListUtil
     /**
      * @return true if List argument contains the object argument, else false
      */
-    public static boolean contains (List list, Object o)
+    public static boolean contains (List<?> list, Object o)
     {
         return list.contains(o);
     }
@@ -272,7 +272,7 @@ public final class ListUtil
      * @param colCount Number of elements in each split.
      * @return List of list parts.
      */
-    public static List split (List arg, int colCount)
+    public static <T> List<List<T>> split (List<T> arg, int colCount)
     {
 
         return split(arg, colCount, true, null);
@@ -287,7 +287,7 @@ public final class ListUtil
      * @param pad Last split should be null padded?
      * @return List of list parts.
      */
-    public static List split (List arg, int colCount, boolean pad)
+    public static <T> List<List<T>> split (List<T> arg, int colCount, boolean pad)
     {
 
         return split(arg, colCount, pad, null);
@@ -301,9 +301,8 @@ public final class ListUtil
      * @param padValue Value that will be used for padding.
      * @return List of list parts.
      */
-    public static List split (List arg, int colCount, Object padValue)
+    public static <T> List<List<T>> split (List<T> arg, int colCount, T padValue)
     {
-
         return split(arg, colCount, true, padValue);
     }
 
@@ -317,22 +316,22 @@ public final class ListUtil
      * @param padValue Value that will be used for padding.
      * @return List of list parts.
      */
-    public static List split (List arg, int colCount, boolean pad,
-                              Object padValue)
+    public static <T> List<List<T>> split (List<T> arg, int colCount, boolean pad,
+                              T padValue)
     {
 
         int size = arg.size();
-        List rows = new ArrayList(size / colCount + 1);
+        List<List<T>> rows = new ArrayList<List<T>>(size / colCount + 1);
         int start = 0;
         int end = colCount;
         while (start < size)
         {
-            List row;
+            List<T> row;
             // check is this last and uncomplete row
             if (end > size)
             {
                 // using sublist directly can cause synchronization problems
-                row = new ArrayList(arg.subList(start, size));
+                row = new ArrayList<T>(arg.subList(start, size));
                 if (pad)
                 {
                     for (int i = size; i < end; ++i)
@@ -343,7 +342,7 @@ public final class ListUtil
             }
             else
             {
-                row = new ArrayList(arg.subList(start, end));
+                row = new ArrayList<T>(arg.subList(start, end));
             }
             rows.add(row);
             start = end;
@@ -565,7 +564,7 @@ public final class ListUtil
      * @param colCount Number of elements in each split.
      * @return List of list parts.
      */
-    public static List transposeSplit (List arg, int colCount)
+    public static <T> List<List<T>> transposeSplit (List<T> arg, int colCount)
     {
 
         return transposeSplit(arg, colCount, true, null);
@@ -579,7 +578,7 @@ public final class ListUtil
      * @param colCount Number of elements in each split.
      * @param pad Last split should be null padded?
      * @return List of list parts.  */
-    public static List transposeSplit (List arg, int colCount,
+    public static <T> List<List<T>> transposeSplit (List<T> arg, int colCount,
                                        boolean pad)
     {
 
@@ -594,8 +593,8 @@ public final class ListUtil
      * @param padValue Value that will be used for padding.
      * @return List of list parts.
      */
-    public static List transposeSplit (List arg, int colCount,
-                                       Object padValue)
+    public static <T> List<List<T>> transposeSplit (List<T> arg, int colCount,
+                                       T padValue)
     {
 
         return transposeSplit(arg, colCount, true, padValue);
@@ -610,8 +609,8 @@ public final class ListUtil
      * @param pad Last split should be null padded?
      * @param padValue Value that will be used for padding.
      * @return List of list parts.  */
-    public static List transposeSplit (List arg, int colCount,
-                                       boolean pad, Object padValue)
+    public static <T> List<List<T>> transposeSplit (List<T> arg, int colCount,
+                                       boolean pad, T padValue)
     {
 
         int size = arg.size();
@@ -620,17 +619,17 @@ public final class ListUtil
         {
             ++rowCount;
         }
-        List rows = new ArrayList(rowCount);
+        List<List<T>> rows = new ArrayList<List<T>>(rowCount);
         for (int rowNo = 0; rowNo < rowCount; ++rowNo)
         {
-            rows.add(new ArrayList(colCount));
+            rows.add(new ArrayList<T>(colCount));
         }
-        Iterator it = arg.iterator();
+        Iterator<T> it = arg.iterator();
         for (int colNo = 0; colNo < colCount; ++colNo)
         {
             for (int rowNo = 0; rowNo < rowCount; ++rowNo)
             {
-                List row = (List) rows.get(rowNo);
+                List<T> row = rows.get(rowNo);
                 if (it.hasNext())
                 {
                     row.add(it.next());
@@ -648,12 +647,12 @@ public final class ListUtil
         return rows;
     }
 
-    public static List createRange (int rangeBegin, int rangeEnd)
+    public static List<Integer> createRange (int rangeBegin, int rangeEnd)
     {
         return createRange(rangeBegin, rangeEnd, 1);
     }
 
-    public static List createRange (int rangeBegin, int rangeEnd, int incr)
+    public static List<Integer> createRange (int rangeBegin, int rangeEnd, int incr)
     {
         if (incr > 0)
         {
@@ -675,21 +674,21 @@ public final class ListUtil
         int i = 0;
         for (int num = rangeBegin; (incr > 0) ? num <= rangeEnd : num >= rangeEnd; num += incr)
         {
-            ia[i++] = new Integer(num);
+            ia[i++] = num;
         }
         return Arrays.asList(ia);
     }
 
     /** Create a new ArrayList. */
-    public static ArrayList create ()
+    public static <T> ArrayList<T> create ()
     {
-        return new ArrayList();
+        return new ArrayList<T>();
     }
 
     /** Create a new ArrayList with the specified capacity. */
-    public static ArrayList create (int capacity)
+    public static <T> ArrayList<T> create (int capacity)
     {
-        return new ArrayList(capacity);
+        return new ArrayList<T>(capacity);
     }
 
     /** 
@@ -697,10 +696,10 @@ public final class ListUtil
      * If the first list is not expandable, return a new expandable list
      * with the elements of each list appended
      */
-    public static List append (Object o1, Object o2)
+    public static List<Object> append (Object o1, Object o2)
     {
-        List l1 = toList(o1);
-        List l2 = toList(o2);
+        List<Object> l1 = toList(o1);
+        List<Object> l2 = toList(o2);
         try
         {
             l1.addAll(l2);
@@ -709,7 +708,7 @@ public final class ListUtil
         catch (Exception e)
         {
           // create a new list
-          List l = new ArrayList(((l1.size() + l2.size()) * 2) + 10);
+          List<Object> l = new ArrayList<Object>(((l1.size() + l2.size()) * 2) + 10);
           l.addAll(l1);
           l.addAll(l2);
           return l;
@@ -717,11 +716,11 @@ public final class ListUtil
     }
 
     /** Create a new list (ArrayList) with all the elements in the supplied list. */
-    public static List copy (Object o)
+    public static List<Object> copy (Object o)
     {
-        List l = toList(o);
-        if (l.isEmpty()) return new ArrayList(10);
-        return new ArrayList(l);
+        List<Object> l = toList(o);
+        if (l.isEmpty()) return new ArrayList<Object>(10);
+        return new ArrayList<Object>(l);
     }
 
     /** Test harness. */
@@ -739,7 +738,7 @@ public final class ListUtil
         Object[] arr = {
             "ant", "bird", "cat", "dog", "elephant", "ferret", "gopher"
         };
-        ArrayList l = new ArrayList(Arrays.asList(arr));
+        ArrayList<Object> l = new ArrayList<Object>(Arrays.asList(arr));
 
         out.println("List/Array results");
         out.print("toList(): ");
@@ -770,31 +769,31 @@ public final class ListUtil
 
         StringTokenizer st = new StringTokenizer(
                 "This is a bunch of words!");
-        List l2 = ListUtil.toList(st);
+        List<Object> l2 = ListUtil.toList(st);
         out.println("toList(Enumeration): " + l2);
-        Iterator iter = l2.listIterator();
-        List l3 = ListUtil.toList(iter);
+        Iterator<Object> iter = l2.listIterator();
+        List<Object> l3 = ListUtil.toList(iter);
         out.println("toList(Iterator): " + l3 + ", iter.hasNext(): " + iter.hasNext());
         // test split
         out.println("List split with fill");
-        List splitList1 = split(l, 3, true);
-        for (Iterator it1 = splitList1.iterator(); it1.hasNext(); )
+        List<List<Object>> splitList1 = split(l, 3, true);
+        for (Iterator<List<Object>> it1 = splitList1.iterator(); it1.hasNext(); )
         {
             out.print("-: ");
-            List part = (List) it1.next();
-            for (Iterator it2 = part.iterator(); it2.hasNext(); )
+            List<Object> part = (List<Object>) it1.next();
+            for (Iterator<Object> it2 = part.iterator(); it2.hasNext(); )
             {
                 out.print(it2.next() + ", ");
             }
             out.println("*");
         }
         out.println("List transposeSplit");
-        List splitList2 = transposeSplit(l, 3, false);
-        for (Iterator it1 = splitList2.iterator(); it1.hasNext(); )
+        List<List<Object>> splitList2 = transposeSplit(l, 3, false);
+        for (Iterator<List<Object>> it1 = splitList2.iterator(); it1.hasNext(); )
         {
             out.print("-: ");
-            List part = (List) it1.next();
-            for (Iterator it2 = part.iterator(); it2.hasNext(); )
+            List<Object> part = it1.next();
+            for (Iterator<Object> it2 = part.iterator(); it2.hasNext(); )
             {
                 out.print(it2.next() + ", ");
             }
@@ -837,7 +836,7 @@ public final class ListUtil
         out.println("toList=" + toList(chars));
         float[] f = new float[]{1.1f, 2.2f, 3.3f};
         out.println("getItem(floats, 0)=" + getItem(f, 0));
-        List appendList = append(f, chars);
+        List<Object> appendList = append(f, chars);
         out.println("append(f, chars)=" + appendList);
         append(appendList, "another thing");
         out.println("append(appendList, \"another thing\")=" + appendList);

@@ -18,17 +18,17 @@ public class MethodWrapper
 {
 
     private Object _instance;
-    private Class _class;
+    private Class<?> _class;
     private Method[] _methods;
 
     /** Creates a new instance of MethodWrapperMacro */
     public MethodWrapper (Object o, String methodName)
     {
-        if (o instanceof Class)
+        if (o instanceof Class<?>)
         {
             // static methods
             _instance = null;
-            _class = (Class) o;
+            _class = (Class<?>) o;
         }
         else
         {
@@ -37,7 +37,7 @@ public class MethodWrapper
         }
 
         Method[] mArr = _class.getMethods();
-        java.util.ArrayList mList = new java.util.ArrayList(mArr.length);
+        java.util.ArrayList<Method> mList = new java.util.ArrayList<Method>(mArr.length);
         int methCnt = 0;
         for (int i = 0; i < mArr.length; i++)
         {
@@ -68,11 +68,11 @@ public class MethodWrapper
     public Object invoke (Object[] args)
             throws PropertyException
     {
-        Class[] types = IntrospectionUtils.createTypesFromArgs(args);
+        Class<?>[] types = IntrospectionUtils.createTypesFromArgs(args);
         for (int i = 0; i < _methods.length; i++)
         {
             Method m = _methods[i];
-            Class[] sig = m.getParameterTypes();
+            Class<?>[] sig = m.getParameterTypes();
             if (IntrospectionUtils.matches(sig, types))
             {
                 try

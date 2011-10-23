@@ -29,7 +29,7 @@ public class ReloadingCacheManager implements CacheManager {
 
     private static final String NAME = "ReloadingCacheManager";
 
-    private final ConcurrentHashMap _cache = new ConcurrentHashMap();
+    private final ConcurrentHashMap<Object, MyCacheElement> _cache = new ConcurrentHashMap<Object, MyCacheElement>();
     private int _cacheDurationMilliseconds;
     private String _resourceType;
     private boolean _reloadOnChange = true, _useSoftReferences = true;
@@ -63,7 +63,7 @@ public class ReloadingCacheManager implements CacheManager {
     private final class SoftScmCacheElement extends MyCacheElement
     {
 
-        private SoftReference reference;
+        private SoftReference<Object> reference;
 
         @Override
         public Object getObject ()
@@ -74,7 +74,7 @@ public class ReloadingCacheManager implements CacheManager {
         @Override
         public void setObject (Object o)
         {
-            reference = new SoftReference(o);
+            reference = new SoftReference<Object>(o);
         }
     }
 

@@ -40,7 +40,7 @@ import org.webmacro.Visitable;
  * @since 19 Oct 1999
  *
  */
-public final class QuotedStringBuilder extends Vector implements Builder
+public final class QuotedStringBuilder extends Vector<Object> implements Builder
 {
 
   private static final long serialVersionUID = -7489766042268586054L;
@@ -50,7 +50,7 @@ public final class QuotedStringBuilder extends Vector implements Builder
         StringBuffer str = new StringBuffer(100);
         QuotedString qs = new QuotedString();
 
-        Enumeration elems = elements();
+        Enumeration<Object> elems = elements();
 
         while (elems.hasMoreElements())
         {
@@ -115,7 +115,7 @@ public final class QuotedStringBuilder extends Vector implements Builder
  *
  * </pre>Here the text inside the quotes is the QuotedString.
  */
-final class QuotedString extends Vector implements Macro, Visitable
+final class QuotedString extends Vector<Object> implements Macro, Visitable
 {
   private static final long serialVersionUID = 7578610597935217L;
 

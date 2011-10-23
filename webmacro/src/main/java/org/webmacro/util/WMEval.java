@@ -392,7 +392,6 @@ public class WMEval
      * @param append whether to apppend output
      * @param encoding the encoding to use, may be null
      * @return the String resulting from evaluating the template against the context
-     * @throws Exception
      */
     public String eval (Context context, String templateName,
             String outputFileName, boolean append, String encoding)

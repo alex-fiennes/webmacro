@@ -48,7 +48,7 @@ public class WMParser_impl implements WMParser_implConstants {
   static Logger _log =  LoggerFactory.getLogger(WMParser_impl.class);
   private Broker broker;
   private BackupCharStream stream;
-  private Stack blockStack = new Stack();
+  private Stack<Subdirective[]> blockStack = new Stack<Subdirective[]>();
   private String templateName;
 
   public WMParser_impl(Broker broker,
@@ -777,7 +777,7 @@ public class WMParser_impl implements WMParser_implConstants {
   }
 
 // Used by VariableReference; shouldn't be used outside it
-  final public void VariableReferenceGuts(ArrayList v) throws ParseException {
+  final public void VariableReferenceGuts(ArrayList<Object> v) throws ParseException {
   Token t;
   Object element;
   ListBuilder argList;
@@ -809,7 +809,7 @@ public class WMParser_impl implements WMParser_implConstants {
   }
 
   final public Builder VariableReference() throws ParseException {
-  ArrayList v = new ArrayList();
+  ArrayList<Object> v = new ArrayList<Object>();
   Token t;
     jj_consume_token(DOLLAR);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1365,7 +1365,7 @@ public class WMParser_impl implements WMParser_implConstants {
   }
 
   final public Object[] FormalArgList() throws ParseException {
-  ArrayList list=new ArrayList();
+  ArrayList<Object> list=new ArrayList<Object>();
   Token name;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LPAREN:
@@ -3066,7 +3066,7 @@ public class WMParser_impl implements WMParser_implConstants {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List jj_expentries = new java.util.ArrayList();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
@@ -3081,8 +3081,8 @@ public class WMParser_impl implements WMParser_implConstants {
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
-        int[] oldentry = (int[])(it.next());
+      jj_entries_loop: for (java.util.Iterator<int[]> it = jj_expentries.iterator(); it.hasNext();) {
+        int[] oldentry = it.next();
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {
             if (oldentry[i] != jj_expentry[i]) {

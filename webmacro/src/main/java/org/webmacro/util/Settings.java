@@ -174,7 +174,7 @@ public class Settings
      */
     public void load (Properties props, String prefix)
     {
-        Enumeration e = props.propertyNames();
+        Enumeration<?> e = props.propertyNames();
         String dotPrefix = (prefix == null) ? "" : prefix + ".";
         while (e.hasMoreElements())
         {
@@ -335,7 +335,7 @@ public class Settings
         String listNames = getSetting(settingName);
         if (listNames != null)
         {
-            Enumeration denum = new StringTokenizer(listNames);
+            Enumeration<Object> denum = new StringTokenizer(listNames);
             while (denum.hasMoreElements())
                 h.processSetting("", ((String) denum.nextElement()));
         }

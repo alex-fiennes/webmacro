@@ -46,6 +46,7 @@ import org.webmacro.broker.ContextAutoLoader;
 import org.webmacro.engine.DefaultEvaluationExceptionHandler;
 import org.webmacro.engine.EvaluationExceptionHandler;
 import org.webmacro.engine.IntrospectionUtils;
+import org.webmacro.engine.MacroDefinition;
 import org.webmacro.engine.MethodWrapper;
 import org.webmacro.engine.PropertyOperatorCache;
 import org.webmacro.util.Settings;
@@ -78,13 +79,13 @@ public class Broker
     public static final String WEBMACRO_PROPERTIES = "WebMacro.properties";
     public static final String SETTINGS_PREFIX = "org.webmacro";
 
-    public static final WeakHashMap BROKERS = new WeakHashMap();
+    public static final WeakHashMap<Object, WeakReference<Broker>> BROKERS = new WeakHashMap<Object, WeakReference<Broker>>();
 
     private static Settings _defaultSettings;
     protected static ClassLoader _myClassLoader = Broker.class.getClassLoader();
     protected static ClassLoader _systemClassLoader = ClassLoader.getSystemClassLoader();
 
-    final protected Hashtable _providers = new Hashtable();
+    final protected Hashtable<String,Provider> _providers = new Hashtable<String,Provider>();
     final protected Settings _config = new Settings();
     final protected String _name;
     final public PropertyOperatorCache _propertyOperators
@@ -95,16 +96,16 @@ public class Broker
     private EvaluationExceptionHandler _eeHandler;
 
     /** a local map for one to dump stuff into, specific to this Broker */
-    private Map _brokerLocal = new ConcurrentHashMap();
+    private Map<Object,Object> _brokerLocal = new ConcurrentHashMap<Object,Object>();
 
     /** a local map for "global functions" */
-    private Map _functionMap = new ConcurrentHashMap();
+    private Map<String,MethodWrapper> _functionMap = new ConcurrentHashMap<String, MethodWrapper>();
 
     /** a local map for context tools and other automatic context goodies */
-    private Map _toolLoader = new ConcurrentHashMap();
+    private Map<String, ContextAutoLoader> _toolLoader = new ConcurrentHashMap<String, ContextAutoLoader>();
 
     /** map of global macros */
-    private Map _macros = new ConcurrentHashMap();
+    private Map<String,MacroDefinition> _macros = new ConcurrentHashMap<String, MacroDefinition>();
 
     /*
 * Constructors.  Callers shouldn't use them; they should use the
@@ -207,7 +208,7 @@ public class Broker
         {
             try
             {
-                Class pClass = classForName(settingValue);
+                Class<?> pClass = classForName(settingValue);
                 Provider instance = (Provider) pClass.newInstance();
                 addProvider(instance, settingKey);
             }
@@ -225,7 +226,7 @@ public class Broker
         {
             try
             {
-                Class pClass = classForName(settingValue);
+                Class<?> pClass = classForName(settingValue);
                 ContextAutoLoader instance = (ContextAutoLoader) pClass.newInstance();
                 instance.init(Broker.this, settingKey);
             }
@@ -346,7 +347,7 @@ public class Broker
                 }
             }
 
-            Class c = null;
+            Class<?> c = null;
             try
             {
                 c = Class.forName(fnClassName);
@@ -524,7 +525,7 @@ public class Broker
      */
     protected static void register (Object key, Broker broker)
     {
-        BROKERS.put(key, new WeakReference(broker));
+        BROKERS.put(key, new WeakReference<Broker>(broker));
     }
 
     /**
@@ -534,7 +535,7 @@ public class Broker
      */
     protected static Broker findBroker (Object key)
     {
-        WeakReference ref = (WeakReference) BROKERS.get(key);
+        WeakReference<Broker> ref = BROKERS.get(key);
         if (ref != null)
         {
             Broker broker = (Broker) ref.get();
@@ -629,7 +630,7 @@ public class Broker
      * getProvider(type) to retrieve the registered Provider.
      * @return Iterator of String
      **/
-    public Iterator getProviderTypes() 
+    public Iterator<String> getProviderTypes() 
     {
         return _providers.keySet().iterator();
     }
@@ -641,9 +642,9 @@ public class Broker
      **/
     public void destroy() 
     {
-        Iterator providers = _providers.values().iterator();
+        Iterator<Provider> providers = _providers.values().iterator();
         while (providers.hasNext()) {
-            ((Provider) providers.next()).destroy();
+            providers.next().destroy();
         }
     }
 
@@ -688,7 +689,7 @@ public class Broker
      * add macros to the map, if you want to.
      * @return map of global macros.
      */
-    public Map getMacros() {
+    public Map<String,MacroDefinition> getMacros() {
         return _macros;
     }
     /**
@@ -761,7 +762,7 @@ public class Broker
      * Load a class through the broker's class loader.  Subclasses can
      * redefine or chain if they know of other ways to load a class.
      */
-    public Class classForName (String name) throws ClassNotFoundException
+    public Class<?> classForName (String name) throws ClassNotFoundException
     {
         return Class.forName(name);
     }
@@ -858,10 +859,10 @@ public class Broker
         buf.append("Broker:");
         buf.append(_name);
         buf.append("(");
-        Enumeration e = _providers.elements();
+        Enumeration<Provider> e = _providers.elements();
         while (e.hasMoreElements())
         {
-            Provider pr = (Provider) e.nextElement();
+            Provider pr = e.nextElement();
             buf.append(pr);
             if (e.hasMoreElements())
             {

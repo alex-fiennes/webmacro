@@ -43,7 +43,7 @@ public class BlockBuilder implements Builder
     private static Macro[] mArray = new Macro[0];
     private static String[] sArray = new String[0];
 
-    private ArrayList elements = new ArrayList();
+    private ArrayList<Object> elements = new ArrayList<Object>();
     private int[] lineNos = new int[INITIAL_SIZE];
     private int[] colNos = new int[INITIAL_SIZE];
 
@@ -59,7 +59,7 @@ public class BlockBuilder implements Builder
     }
 
     /** Iterate over a Block.   */
-    public interface BlockIterator extends Iterator
+    public interface BlockIterator extends Iterator<Object>
     {
 
         public String getName ();
@@ -114,11 +114,11 @@ public class BlockBuilder implements Builder
 
     final public Object build (BuildContext bc) throws BuildException
     {
-        ArrayList strings = new ArrayList((elements.size()));
-        ArrayList macros = new ArrayList((elements.size()));
+        ArrayList<String> strings = new ArrayList<String>((elements.size()));
+        ArrayList<Macro> macros = new ArrayList<Macro>((elements.size()));
         int[] ln = new int[elements.size()];
         int[] cn = new int[elements.size()];
-        Stack iterStack = new Stack();
+        Stack<BlockIterator> iterStack = new Stack<BlockIterator>();
         StringBuffer s = new StringBuffer();
         Context.TemplateEvaluationContext tec = bc.getTemplateEvaluationContext();
 
@@ -170,7 +170,7 @@ public class BlockBuilder implements Builder
                     s = new StringBuffer();
                     // do not reuse StringBuffer,
                     // otherwise all strings will contain char[] of max length!!
-                    macros.add(o);
+                    macros.add((Macro) o);
 
                     // Now deal with the line numbers
                     int size = macros.size();

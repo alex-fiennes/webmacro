@@ -29,7 +29,8 @@ import java.util.Enumeration;
 /**
  * A HashTool wraps a java.util.Dictionary and provides additional features
  */
-final public class DictionaryTool extends Dictionary
+@Deprecated
+final public class DictionaryTool<K,V> extends Dictionary<K,V>
 {
 
 
@@ -39,7 +40,7 @@ final public class DictionaryTool extends Dictionary
      */
     public final String keyString ()
     {
-        final Enumeration keys = dict.keys();
+        final Enumeration<K> keys = dict.keys();
         String key = null;
         StringBuffer buf = new StringBuffer(10 * dict.size());
         while (keys.hasMoreElements())
@@ -57,12 +58,12 @@ final public class DictionaryTool extends Dictionary
     /**
      * The dictionary being wrapped
      */
-    final private Dictionary dict;
+    final private Dictionary<K,V> dict;
 
     /**
      * Wrap the supplied dictionary.
      */
-    public DictionaryTool (final Dictionary dict)
+    public DictionaryTool (final Dictionary<K,V> dict)
     {
         this.dict = dict;
     }
@@ -71,7 +72,7 @@ final public class DictionaryTool extends Dictionary
      * Forward call to Dictionary
      */
     @Override
-    final public Enumeration elements ()
+    final public Enumeration<V> elements ()
     {
         return dict.elements();
     }
@@ -89,7 +90,7 @@ final public class DictionaryTool extends Dictionary
      * Forward call to Dictionary
      */
     @Override
-    final public Object get (final Object key)
+    final public V get (final Object key)
     {
         return dict.get(key);
     }
@@ -98,7 +99,7 @@ final public class DictionaryTool extends Dictionary
      * Forward call to Dictionary
      */
     @Override
-    final public Enumeration keys ()
+    final public Enumeration<K> keys ()
     {
         return dict.keys();
     }
@@ -107,7 +108,7 @@ final public class DictionaryTool extends Dictionary
      * Forward call to Dictionary
      */
     @Override
-    final public Object put (final Object newKey, final Object newValue)
+    final public V put (final K newKey, final V newValue)
     {
         return dict.put(newKey, newValue);
     }
@@ -116,7 +117,7 @@ final public class DictionaryTool extends Dictionary
      * Forward call to Dictionary
      */
     @Override
-    final public Object remove (final Object key)
+    final public V remove (final Object key)
     {
         return dict.remove(key);
     }
@@ -133,7 +134,7 @@ final public class DictionaryTool extends Dictionary
     static public void main (String arg[])
     {
 
-        Dictionary d = new java.util.Hashtable();
+        Dictionary<Object,Object> d = new java.util.Hashtable<Object,Object>();
 
         System.out.println("Adding arguments to hashtable.");
         for (int i = 0; i < arg.length; i++)
@@ -142,7 +143,7 @@ final public class DictionaryTool extends Dictionary
         }
 
         System.out.println("Wrapping hashtable");
-        DictionaryTool dt = new DictionaryTool(d);
+        DictionaryTool<Object,Object> dt = new DictionaryTool<Object,Object>(d);
 
         System.out.println("keyString: " + dt.keyString());
 

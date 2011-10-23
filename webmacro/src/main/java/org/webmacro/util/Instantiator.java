@@ -59,9 +59,9 @@ final public class Instantiator
 
    private static final String INSTANTIATOR_KEY = "org.webmacro.util.Instantiator";
 
-   private List _impliedPackages;
+   private List<String> _impliedPackages;
 
-   private List _allowedPackages;
+   private List<String> _allowedPackages;
 
    private Broker _broker;
 
@@ -83,7 +83,7 @@ final public class Instantiator
       }
       if (s == null)
       {
-         _impliedPackages = Collections.EMPTY_LIST;
+         _impliedPackages = Collections.emptyList();
       }
       else
       {
@@ -107,7 +107,7 @@ final public class Instantiator
       }
       if (s == null)
       {
-         _allowedPackages = Collections.EMPTY_LIST;
+         _allowedPackages = Collections.emptyList();
       }
       else
       {
@@ -116,19 +116,19 @@ final public class Instantiator
       }
    }
 
-   public List getImpliedPackages()
+   public List<String> getImpliedPackages()
    {
       return _impliedPackages;
    }
 
-   public List getAllowedPackages()
+   public List<String> getAllowedPackages()
    {
       return _allowedPackages;
    }
 
-   public Class classForName(String className) throws WebMacroException
+   public Class<?> classForName(String className) throws WebMacroException
    {
-      Class c = null;
+      Class<?> c = null;
       if (className.indexOf('.') >= 0) // it is a fully specified class name
       {
          try
@@ -184,7 +184,7 @@ final public class Instantiator
       return c;
    }
 
-   public Object instantiate(Class c, Object[] args) throws Exception
+   public Object instantiate(Class<?> c, Object[] args) throws Exception
    {
       Object o = null;
       if (args == null)
@@ -193,7 +193,7 @@ final public class Instantiator
       }
       else
       {
-         java.lang.reflect.Constructor[] cons = c.getConstructors();
+         java.lang.reflect.Constructor<?>[] cons = c.getConstructors();
          for (int i = 0; i < cons.length; i++)
          {
             if (cons[i].getParameterTypes().length == args.length)

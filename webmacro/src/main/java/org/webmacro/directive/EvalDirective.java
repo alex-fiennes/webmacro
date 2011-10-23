@@ -135,7 +135,7 @@ public class EvalDirective extends org.webmacro.directive.Directive
             {
                argmap = ((Macro) argmap).evaluate(context);
             }
-            if (!(argmap instanceof java.util.Map))
+            if (!(argmap instanceof java.util.Map<?,?>))
             {
                throw new PropertyException("The supplied expression did not evaluate to a java.util.Map instance.");
             }
@@ -160,12 +160,12 @@ public class EvalDirective extends org.webmacro.directive.Directive
 								+ MAX_RECURSION_DEPTH);
 					}
             }
-            java.util.Map outerVars = null;
+            java.util.Map<?,?> outerVars = null;
             if (context.containsKey("OuterVars"))
             { // check the value
                try
                {
-                  outerVars = (java.util.Map) context.get("OuterVars");
+                  outerVars = (java.util.Map<?,?>) context.get("OuterVars");
                }
                catch (Exception e)
                {
@@ -176,7 +176,7 @@ public class EvalDirective extends org.webmacro.directive.Directive
                outerVars = context.getMap();
             Context c = new Context(context.getBroker());
             // replace _variables map with supplied map
-            c.setMap((java.util.Map) argmap);
+            c.setMap((java.util.Map<Object,Object>) argmap);
             // put current depth into the new context
             c.put("EvalDepth", recursionDepth);
             // add a reference to parent context variables

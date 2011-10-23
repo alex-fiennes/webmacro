@@ -43,17 +43,17 @@ import java.util.Map;
  * @author e_ridge
  * @since May 13, 2003
  */
-public class MapBuilder extends HashMap implements Builder
+public class MapBuilder extends HashMap<Object,Object> implements Builder
 {
 	private static final long serialVersionUID = 1L;
 
 	public Object build (BuildContext pc) throws BuildException
     {
-        Map ret = new HashMap(size());
+        Map<Object,Object> ret = new HashMap<Object, Object>(size());
         boolean isMacro = false;
-        for (Iterator itr = entrySet().iterator(); itr.hasNext(); )
+        for (Iterator<Map.Entry<Object, Object>> itr = entrySet().iterator(); itr.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) itr.next();
+            Map.Entry<Object,Object> entry =  itr.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
 
@@ -77,9 +77,9 @@ public class MapBuilder extends HashMap implements Builder
 
 class MapMacro implements Macro
 {
-    private final Map _map;
+    private final Map<Object,Object> _map;
 
-    MapMacro (Map map)
+    MapMacro (Map<Object, Object> map)
     {
         _map = map;
     }
@@ -97,10 +97,10 @@ class MapMacro implements Macro
 
     public Object evaluate (Context context) throws PropertyException
     {
-        Map ret = new HashMap(_map.size());
-        for (Iterator itr = _map.entrySet().iterator(); itr.hasNext(); )
+        Map<Object, Object> ret = new HashMap<Object,Object>(_map.size());
+        for (Iterator<Map.Entry<Object, Object>> itr = _map.entrySet().iterator(); itr.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) itr.next();
+            Map.Entry<Object,Object> entry = itr.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
 

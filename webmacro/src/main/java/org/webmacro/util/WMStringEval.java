@@ -72,7 +72,6 @@ public class WMStringEval
    * Evaluate the template using the current context.
    * @param template The string template to evaluate.
    * @return The evaluation of the template against the context.
-   * @throws Exception
    */
   public String eval(String template) throws Exception
   {

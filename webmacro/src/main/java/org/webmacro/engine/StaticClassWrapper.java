@@ -27,18 +27,18 @@ package org.webmacro.engine;
  * @author  keats_kirsch
  * @since June 1, 2001
  */
-final public class StaticClassWrapper
+final public class StaticClassWrapper<T>
 {
 
-    private Class _wrappedClass;
+    private Class<T> _wrappedClass;
 
     /** Creates new StaticClassWrapper */
-    public StaticClassWrapper (final Class c)
+    public StaticClassWrapper (final Class<T> c)
     {
         _wrappedClass = c;
     }
 
-    final public Class get ()
+    final public Class<T> get ()
     {
         return _wrappedClass;
     }

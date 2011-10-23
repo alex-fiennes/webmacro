@@ -47,8 +47,8 @@ import org.webmacro.Template;
 public class BuildContext extends Context
 {
 
-    private final Map _types = new HashMap();
-    private final Map _macros = new HashMap();
+    private final Map<String,Object> _types = new HashMap<String,Object>();
+    private final Map<String, MacroDefinition> _macros = new HashMap<String,MacroDefinition>();
 
     public BuildContext (Broker b)
     {
@@ -124,8 +124,8 @@ public class BuildContext extends Context
      */
     public void mergeConstants (Template t)
     {
-        Map macros = t.getMacros();
-        Map params = t.getParameters();
+        Map<String,MacroDefinition> macros = t.getMacros();
+        Map<Object,Object> params = t.getParameters();
         if (macros != null)
             _macros.putAll(macros);
         if (params != null)
@@ -135,7 +135,7 @@ public class BuildContext extends Context
     /**
      * Return the map of MacroDefinitions.
      */
-    public Map getMacros ()
+    public Map<String,MacroDefinition> getMacros ()
     {
         return _macros;
     }

@@ -59,7 +59,7 @@ final public class PropertyOperatorCache
    
    private CacheManager _cache;
    static Logger _log =  LoggerFactory.getLogger(PropertyOperatorCache.class);
-   private HashMap _restrictedClasses;
+   private HashMap<Class<?>,List<String>> _restrictedClasses;
    
    public PropertyOperatorCache()
    {
@@ -92,7 +92,7 @@ final public class PropertyOperatorCache
          }
       }
       _cache.init(b, config, "PropertyOperator");
-      _restrictedClasses = new HashMap(11);
+      _restrictedClasses = new HashMap<Class<?>, List<String>>(11);
       String restrictList = b.getSetting("RestrictedClasses");
       if (restrictList != null)
       {
@@ -102,13 +102,13 @@ final public class PropertyOperatorCache
             String className = stok.nextToken();
             try
             {
-               Class c = Class.forName(className);
+               Class<?> c = Class.forName(className);
                String okMethList = b.getSetting(
                        "RestrictedClasses.AllowedMethods." + className);
-               ArrayList okMeths = null;
+               ArrayList<String> okMeths = null;
                if (okMethList != null)
                {
-                  okMeths = new ArrayList(20);
+                  okMeths = new ArrayList<String>(20);
                   StringTokenizer stok2 = new StringTokenizer(okMethList, ",");
                   while (stok2.hasMoreTokens())
                   {
@@ -126,12 +126,12 @@ final public class PropertyOperatorCache
       }
    }
    
-   Map getRestrictedClassMap()
+   Map<Class<?>, List<String>> getRestrictedClassMap()
    {
       return _restrictedClasses;
    }
    
-   final public PropertyOperator getOperator(final Class type)
+   final public PropertyOperator getOperator(final Class<?> type)
        throws PropertyException
    {
       Object o = _cache.get(type);
@@ -148,13 +148,13 @@ final public class PropertyOperatorCache
    final public PropertyOperator getOperator(final Object obj)
        throws PropertyException
    {
-      Class type = obj.getClass();
+      Class<?> type = obj.getClass();
       // added code to handle static classes.  Static classes must be wrapped
       // in a StaticClassWrapper
       // 1Jun2001 - Keats
       if (type == org.webmacro.engine.StaticClassWrapper.class)
       {
-         type = ((org.webmacro.engine.StaticClassWrapper) obj).get();
+         type = ((org.webmacro.engine.StaticClassWrapper<?>) obj).get();
       }
       return getOperator(type);
    }
@@ -256,17 +256,17 @@ final public class PropertyOperatorCache
     * @return an Iterator that iterates through that list
     * @exception PropertyException could not extract iterator from instance
     */
-   final public Iterator getIterator(Object instance)
+   final public Iterator<?> getIterator(Object instance)
        throws PropertyException
    {
       if (instance instanceof Object[])
          return new ArrayIterator((Object[]) instance);
       else if (instance.getClass().isArray())
          return new PrimitiveArrayIterator(instance);
-      else if (instance instanceof Iterator)
-         return (Iterator) instance;
-      else if (instance instanceof Enumeration)
-         return new EnumIterator((Enumeration) instance);
+      else if (instance instanceof Iterator<?>)
+         return (Iterator<?>) instance;
+      else if (instance instanceof Enumeration<?>)
+         return new EnumIterator<Object>((Enumeration<?>) instance);
       else
          return getOperator(instance).findIterator(instance);
    }
@@ -312,17 +312,17 @@ final class PropertyOperator
    /**
     * My accessors for fields, and binary methods.
     */
-   final private HashMap _unaryAccessors = new HashMap();
+   final private HashMap<String, Accessor> _unaryAccessors = new HashMap<String, Accessor>();
    
    /**
     * Accessors that require an additional property name.
     */
-   final private HashMap _binaryAccessors = new HashMap();
+   final private HashMap<String, Accessor> _binaryAccessors = new HashMap<String, Accessor>();
    
    /**
     * Accessors for direct method calls.
     */
-   final private HashMap _directAccessors = new HashMap();
+   final private HashMap<String, Accessor> _directAccessors = new HashMap<String, Accessor>();
    
    /**
     * Hash table accessor.
@@ -351,7 +351,7 @@ final class PropertyOperator
     * than one superclass or interface.
     * @exception SecurityException
     */
-   private void getAllMethods(HashMap meths, Class c)
+   private void getAllMethods(HashMap<String,Object> meths, Class<?> c)
    {
       if (Modifier.isPublic(c.getModifiers()))
       {
@@ -364,13 +364,13 @@ final class PropertyOperator
             }
          }
       }
-      Class iface[] = c.getInterfaces();
+      Class<?> iface[] = c.getInterfaces();
       for (int i = 0; i < iface.length; i++)
       {
          getAllMethods(meths, iface[i]);
       }
       
-      Class sup = c.getSuperclass();
+      Class<?> sup = c.getSuperclass();
       if (sup != null)
       {
          getAllMethods(meths, sup);
@@ -385,7 +385,7 @@ final class PropertyOperator
     * the rhs. If they have the same number of parameters but are not
     * related at all, put the lhs later.
     */
-   private int precedes(Class[] lhs, Class[] rhs)
+   private int precedes(Class<?>[] lhs, Class<?>[] rhs)
    {
       
       if (lhs.length == rhs.length)
@@ -423,21 +423,21 @@ final class PropertyOperator
    
    boolean isMethodAllowed(Method m)
    {
-      Class c = m.getDeclaringClass();
-      Map restrictedClasses = _cache.getRestrictedClassMap();
+      Class<?> c = m.getDeclaringClass();
+      Map<Class<?>, List<String>> restrictedClasses = _cache.getRestrictedClassMap();
       if (restrictedClasses.containsKey(c))
       {
          // this class is restricted, check if method is allowed
-         List okMeths = (List) restrictedClasses.get(c);
+         List<String> okMeths = restrictedClasses.get(c);
          return (okMeths != null && okMeths.contains(m.getName()));
       }
       return true;
    }
    
-   boolean isMethodRestricted(Class c, String name)
+   boolean isMethodRestricted(Class<?> c, String name)
    {
       // check if object is restricted
-      Map restrictedClassMap = _cache.getRestrictedClassMap();
+      Map<Class<?>, List<String>> restrictedClassMap = _cache.getRestrictedClassMap();
       if (!restrictedClassMap.containsKey(c))
       {
          return false; // there are no restrictions on this class
@@ -451,7 +451,7 @@ final class PropertyOperator
             if (meths[i].getName().equals(name))
             {
                // check if method is explicitly allowed
-               List l = (List) restrictedClassMap.get(c);
+               List<String> l = restrictedClassMap.get(c);
                if (l != null)
                   return !l.contains(name);
             }
@@ -460,7 +460,8 @@ final class PropertyOperator
       return false;
    }
    
-   private void addMethod(HashMap hm, Method m)
+   @SuppressWarnings("unchecked")
+  private void addMethod(HashMap<String,Object> hm, Method m)
    {
       if (!isMethodAllowed(m)) return;
       String name = m.getName();
@@ -471,22 +472,22 @@ final class PropertyOperator
          return;
       }
       
-      Vector v;
+      Vector<Object> v;
       if (o instanceof Method)
       {
-         v = new Vector();
-         v.addElement(o);
+         v = new Vector<Object>();
+         v.addElement((Method) o);
          hm.put(name, v);
       }
       else
       {
-         v = (Vector) o;
+         v = (Vector<Object>) o;
       }
       
-      Class ptypes[] = m.getParameterTypes();
+      Class<?> ptypes[] = m.getParameterTypes();
       for (int i = 0; i < v.size(); i++)
       {
-         Class curTypes[] = ((Method) v.elementAt(i)).getParameterTypes();
+         Class<?> curTypes[] = ((Method) v.elementAt(i)).getParameterTypes();
          
          int order = precedes(ptypes, curTypes);
          
@@ -511,23 +512,24 @@ final class PropertyOperator
     * order of precedence: least arguments first, and most specific
     * arguments before less specific arguments. See precedes().
     */
-   private Vector getMethods(Class c)
+   @SuppressWarnings("unchecked")
+  private Vector<Method> getMethods(Class<?> c)
    {
-      Vector v = new Vector();
-      HashMap h = new HashMap();
+      Vector<Method> v = new Vector<Method>();
+      HashMap<String,Object> h = new HashMap<String,Object>();
       getAllMethods(h, c);
-      Iterator iter = h.values().iterator();
+      Iterator<Object> iter = h.values().iterator();
       while (iter.hasNext())
       {
          Object elem = iter.next();
          
          if (elem instanceof Method)
          {
-            v.addElement(elem);
+            v.addElement((Method) elem);
          }
          else
          {
-            Vector v1 = (Vector) elem;
+            Vector<Method> v1 = (Vector<Method>) elem;
             for (int i = 0; i < v1.size(); i++)
             {
                v.addElement(v1.elementAt(i));
@@ -540,9 +542,9 @@ final class PropertyOperator
    
    /**
     * Construct a property operator for the target class.
-    * @exception SecurityException
+    * @exception SecurityException if the operation is not permitted
     */
-   public PropertyOperator(final Class target, PropertyOperatorCache cache)
+   public PropertyOperator(final Class<?> target, PropertyOperatorCache cache)
        throws PropertyException
    {
       
@@ -567,10 +569,10 @@ final class PropertyOperator
       
       // introspect methods second
       
-      Vector methods = getMethods(target);
+      Vector<Method> methods = getMethods(target);
       
       Method meth;
-      Class[] params;
+      Class<?>[] params;
       String name,propName;
       
       for (int i = 0; i < methods.size(); i++)
@@ -679,10 +681,10 @@ final class PropertyOperator
          {
             if (params.length == 0)
             {
-               Class returnType = meth.getReturnType();
+               Class<?> returnType = meth.getReturnType();
                
                // iterator supercedes enumeration supercedes Object[]
-               Class iterClass = Iterator.class;
+               Class<?> iterClass = Iterator.class;
                boolean iterA = iterClass.isAssignableFrom(returnType);
                if (
                iterA ||
@@ -991,19 +993,19 @@ final class PropertyOperator
     * @exception PropertyException current object is not any sort of list
     * @return an iterator representing the current object's list
     */
-   public Iterator findIterator(Object instance)
+   public Iterator<?> findIterator(Object instance)
        throws PropertyException
    {
       if (iteratorMethod != null)
       {
          Object ret = invoke(iteratorMethod, instance, null);
-         if (ret instanceof Iterator)
+         if (ret instanceof Iterator<?>)
          {
-            return (Iterator) ret;
+            return (Iterator<?>) ret;
          }
-         else if (ret instanceof Enumeration)
+         else if (ret instanceof Enumeration<?>)
          {
-            return new EnumIterator((Enumeration) ret);
+            return new EnumIterator<Object>((Enumeration<?>) ret);
          }
          else if (ret instanceof Object[])
          {
@@ -1247,15 +1249,15 @@ final class LengthAccessor extends Accessor
 final class DirectAccessor extends Accessor
 {
    
-   Vector _methods = new Vector();
+   Vector<Method> _methods = new Vector<Method>();
    
-   DirectAccessor(final String name, final Method m, final Class[] params)
+   DirectAccessor(final String name, final Method m, final Class<?>[] params)
    {
       super(name);
       addMethod(m, params);
    }
    
-   final void addMethod(final Method m, Class[] params)
+   final void addMethod(final Method m, Class<?>[] params)
    {
       _methods.addElement(m);
    }
@@ -1264,7 +1266,7 @@ final class DirectAccessor extends Accessor
   final Object get(Object instance, Object[] args)
        throws PropertyException, NoSuchMethodException
    {
-      Class[] types = new Class[args.length];
+      Class<?>[] types = new Class[args.length];
       for (int i = 0; i < args.length; i++)
       {
          try
@@ -1280,7 +1282,7 @@ final class DirectAccessor extends Accessor
       for (int i = 0; i < _methods.size(); i++)
       {
          Method m = (Method) _methods.elementAt(i);
-         Class[] sig = m.getParameterTypes();
+         Class<?>[] sig = m.getParameterTypes();
          if (IntrospectionUtils.matches(sig, types))
          {
             return PropertyOperator.invoke(m, instance, args);
@@ -1314,22 +1316,22 @@ abstract class MethodAccessor extends Accessor
    
    protected Method _getMethod;           // only one get method allowed
    private Method[] _setMethods = null; // may be multiple set methods
-   private Class[] _setParams = null;  // variable arg type for set meth N
-   private Class[] _setPrimitiveType = null;
+   private Class<?>[] _setParams = null;  // variable arg type for set meth N
+   private Class<?>[] _setPrimitiveType = null;
    private int setCount = 0;            // how many set methods do we have
    
    abstract int numArgsGet();
    
    abstract int numArgsSet();
    
-   MethodAccessor(final String name, final Method m, final Class[] params)
+   MethodAccessor(final String name, final Method m, final Class<?>[] params)
        throws PropertyException
    {
       super(name);
       addMethod(m, params);
    }
    
-   private Class getWrapperClass(Class s)
+   private Class<?> getWrapperClass(Class<?> s)
    {
       if (s == Integer.TYPE)
          return Integer.class;
@@ -1353,7 +1355,7 @@ abstract class MethodAccessor extends Accessor
          return null;
    }
    
-   final void addMethod(final Method m, Class[] params)
+   final void addMethod(final Method m, Class<?>[] params)
        throws PropertyException
    {
       
@@ -1376,8 +1378,8 @@ abstract class MethodAccessor extends Accessor
          else if (_setMethods.length <= setCount)
          {
             Method[] tmpMethods = new Method[(setCount + 1) * 2];
-            Class[] tmpParams = new Class[(setCount + 1) * 2];
-            Class[] tmpPrimitive = new Class[(setCount + 1) * 2];
+            Class<?>[] tmpParams = new Class[(setCount + 1) * 2];
+            Class<?>[] tmpPrimitive = new Class[(setCount + 1) * 2];
             System.arraycopy(_setMethods, 0, tmpMethods, 0, _setMethods.length);
             System.arraycopy(_setParams, 0, tmpParams, 0, _setParams.length);
             System.arraycopy(_setPrimitiveType, 0, tmpPrimitive, 0, _setParams.length);
@@ -1439,7 +1441,7 @@ abstract class MethodAccessor extends Accessor
 final class UnaryMethodAccessor extends MethodAccessor
 {
    
-   UnaryMethodAccessor(final String name, final Method m, final Class[] params)
+   UnaryMethodAccessor(final String name, final Method m, final Class<?>[] params)
        throws PropertyException
    {
       super(name, m, params);
@@ -1478,7 +1480,7 @@ final class UnaryMethodAccessor extends MethodAccessor
 final class BinaryMethodAccessor extends MethodAccessor
 {
    
-   BinaryMethodAccessor(String name, Method m, Class[] params)
+   BinaryMethodAccessor(String name, Method m, Class<?>[] params)
        throws PropertyException
    {
       super(name, m, params);

@@ -21,7 +21,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
 
     static Logger _log =  LoggerFactory.getLogger(DefaultContextAutoLoader.class);
     private Broker _broker;
-    private Map _factories = new ConcurrentHashMap();
+    private Map<String, ContextObjectFactory> _factories = new ConcurrentHashMap<String, ContextObjectFactory>();
 
     public void init(Broker b, String name) {
         _broker = b;
@@ -29,11 +29,8 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
     }
 
     public Object get(String name, Context context) throws PropertyException {
-        Object o = _factories.get(name);
-        if (o == null)
-            return null;
-        ContextObjectFactory f = (ContextObjectFactory) o;
-        return f.get(context);
+      ContextObjectFactory f = _factories.get(name);
+      return f == null ? null : f.get(context);
     }
 
     /**
@@ -79,7 +76,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
      * Abolished -- BG
      */
     private void addAutoVariable(String toolName, String className) {
-        Class c;
+        Class<?> c;
         try
         {
             c = _broker.classForName(className);
@@ -100,9 +97,9 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
             toolName = toolName.substring(start, end);
         }
 
-        Constructor ctor = null;
-        Constructor[] ctors = c.getConstructors();
-        Class[] parmTypes = null;
+        Constructor<?> ctor = null;
+        Constructor<?>[] ctors = c.getConstructors();
+        Class<?>[] parmTypes = null;
         Object instance = null;
 
         // check for 1 arg (String) constructor
@@ -139,7 +136,7 @@ public class DefaultContextAutoLoader implements ContextAutoLoader {
             }
         }
         if (instance instanceof ContextObjectFactory) {
-            _factories.put(toolName, instance);
+            _factories.put(toolName, (ContextObjectFactory) instance);
             _broker.registerAutoContextVariable(toolName, this);
             _log.info("Registered automatic variable factory " + toolName);
         }

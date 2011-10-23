@@ -31,16 +31,16 @@ import java.util.NoSuchElementException;
 /**
  * Allow a Java 1.1 enumeration to be used as a JDK 1.2 style Iterator.
  */
-final public class EnumIterator implements Iterator
+final public class EnumIterator<T> implements Iterator<T>
 {
 
-    final Enumeration wrappedEnum;
+    final Enumeration<? extends T> wrappedEnum;
     private boolean hasNext;
 
     /**
      * Construct an iterator given an enumeration.
      */
-    public EnumIterator (Enumeration e)
+    public EnumIterator (Enumeration<? extends T> e)
     {
         wrappedEnum = e;
         hasNext = e.hasMoreElements();
@@ -57,23 +57,21 @@ final public class EnumIterator implements Iterator
     /**
      * Advance the iterator and return the next value. Return null if we
      * reach the end of the enumeration.
-     * 
-     * @throws NoSuchElementException
      */
-    final public Object next ()
+    final public T next ()
     {
         if (!hasNext)
         {
             throw new NoSuchElementException("advanced past end of list");
         }
-        Object o = wrappedEnum.nextElement();
+        T o = wrappedEnum.nextElement();
         hasNext = wrappedEnum.hasMoreElements();
         return o;
     }
 
     /**
      * Unsupported.
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException Always
      */
     final public void remove () 
     {
@@ -85,7 +83,7 @@ final public class EnumIterator implements Iterator
      */
     static public void main (String arg[])
     {
-        java.util.Vector v = new java.util.Vector(arg.length);
+        java.util.Vector<String> v = new java.util.Vector<String>(arg.length);
         for (int i = 0; i < arg.length; i++)
         {
             v.addElement(arg[i]);
@@ -93,7 +91,7 @@ final public class EnumIterator implements Iterator
 
         try
         {
-            Iterator i = new EnumIterator(v.elements());
+            Iterator<String> i = new EnumIterator<String>(v.elements());
             while (i.hasNext())
             {
                 System.out.println("item: " + i.next());

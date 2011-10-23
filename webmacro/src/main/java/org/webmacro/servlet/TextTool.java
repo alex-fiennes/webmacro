@@ -75,7 +75,7 @@ public class TextTool extends ContextTool
         if (input == null || delimiter == null)
             return new String[0];
 
-        List l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         int delimlen = delimiter.length();
         int idx, lastidx = 0;
 

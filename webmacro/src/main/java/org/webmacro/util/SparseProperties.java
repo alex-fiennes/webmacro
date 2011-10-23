@@ -70,7 +70,7 @@ public class SparseProperties extends Properties
       {
         p = new SparseProperties(template);
       }
-      Enumeration e = p.keys();
+      Enumeration<Object> e = p.keys();
       while (e.hasMoreElements())
       {
         p.put(e.nextElement(), null);
@@ -103,7 +103,7 @@ public class SparseProperties extends Properties
     public void addRequestAttributes(ServletRequest request)
     {
       System.out.println("Setting Request Properties:");
-      Enumeration e = request.getParameterNames();
+      Enumeration<?> e = request.getParameterNames();
       while (e.hasMoreElements())
       {
         String k = (String) e.nextElement();

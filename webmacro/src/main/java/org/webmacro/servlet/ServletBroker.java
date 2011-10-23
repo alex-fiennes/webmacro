@@ -31,16 +31,15 @@
  */
 package org.webmacro.servlet;
 
+import java.util.Properties;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
 import org.webmacro.InitException;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import java.util.Map;
-import java.util.Properties;
-import java.util.WeakHashMap;
 
 /**
  * The base broker for Servlets and web applications. getBroker will
@@ -55,15 +54,6 @@ abstract public class ServletBroker extends Broker
 
     protected ServletContext _servletContext;
     protected Logger _log =  LoggerFactory.getLogger(ServletBroker.class);
-    
-
-    /**
-     * Tracks ServletContexts we have been instantiated for, to prevent
-     * duplicate log targets where multiple ServletBroker instances are
-     * created. We use WeakHashMap instead of Set because it does the
-     * key polled removal for us.
-     */
-    private static Map servletContextsWithLogTargets = new WeakHashMap();
 
     protected ServletBroker (ServletContext sc) throws InitException
     {
@@ -104,9 +94,7 @@ abstract public class ServletBroker extends Broker
      * @param sc The ServletContext of the web application
      * @param cl A class loader, hopefully that of the web application, to
      * use when loading resources or classes.
-     * @param additionalProperties
      * @return The broker for the servlet context.
-     * @throws InitException
      * @since 2.1 JSDK
      */
     public static Broker getBroker (ServletContext sc, ClassLoader cl,

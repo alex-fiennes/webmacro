@@ -91,7 +91,7 @@ public class BeanDirective extends Directive
    { BEAN_SCOPE_GLOBAL, BEAN_SCOPE_APPLICATION, BEAN_SCOPE_SESSION,
             BEAN_SCOPE_PAGE };
 
-   static Map globalBeans = new HashMap(20);
+   static Map<String, Object> globalBeans = new HashMap<String, Object>(20);
 
    private Variable target;
 
@@ -179,10 +179,11 @@ public class BeanDirective extends Directive
       return this;
    }
 
-   public void write(FastWriter out, Context context) throws PropertyException,
+   @SuppressWarnings("unchecked")
+  public void write(FastWriter out, Context context) throws PropertyException,
             IOException
    {
-      Map appBeans = (Map) _broker.getBrokerLocal(APP_BEANS_KEY);
+      Map<Object,Object> appBeans = (Map<Object,Object>) _broker.getBrokerLocal(APP_BEANS_KEY);
 
       // = beanConf.appBeans;
       boolean isNew = false;
@@ -204,7 +205,7 @@ public class BeanDirective extends Directive
          }
 
          Object o = null;
-         Class c = null;
+         Class<?> c = null;
          switch (scope)
          {
             case BEAN_SCOPE_GLOBAL:
@@ -277,7 +278,7 @@ public class BeanDirective extends Directive
                isNew = true;
                if (o != null)
                {
-                  Class[] paramTypes =
+                  Class<?>[] paramTypes =
                   { Context.class };
                   try
                   {
@@ -330,11 +331,11 @@ public class BeanDirective extends Directive
 
    private Object instantiate(String className, Object[] args) throws Exception
    {
-      Class c = classForName(className);
+      Class<?> c = classForName(className);
       return instantiate(c, args);
    }
 
-   private Object instantiate(Class c, Object[] args) throws Exception
+   private Object instantiate(Class<?> c, Object[] args) throws Exception
    {
       return Instantiator.getInstance(_broker).instantiate(c, args);
    }
@@ -358,14 +359,14 @@ public class BeanDirective extends Directive
       // get configuration parameters
       synchronized (b)
       {
-         b.setBrokerLocal(APP_BEANS_KEY, new HashMap(20));
+         b.setBrokerLocal(APP_BEANS_KEY, new HashMap<Object,Object>(20));
       }
    }
 
-   private Class classForName(String className) throws BuildException
+   private Class<?> classForName(String className) throws BuildException
    {
 
-      Class c;
+      Class<?> c;
       try
       {
          c = Instantiator.getInstance(_broker).classForName(className);

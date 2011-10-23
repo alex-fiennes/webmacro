@@ -48,12 +48,12 @@ public class ReloadDelayDecorator
     static Logger _log =  LoggerFactory.getLogger(ReloadDelayDecorator.class);
 
 	 /** maps protocol types to Long objects */
-    private Map reloadDelays;
+    private Map<String,Long> reloadDelays;
     private long defaultDelay;
 
     public ReloadDelayDecorator ()
     {
-        reloadDelays = new HashMap(11);
+        reloadDelays = new HashMap<String,Long>(11);
     }
 
     /**

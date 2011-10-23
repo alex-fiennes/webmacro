@@ -81,9 +81,7 @@ public class Servlet20Broker extends ServletBroker
     /**
      * Get a Servlet API 2.0 compatible broker for the Servlet specified.
      * @param s The servlet
-     * @param additionalProperties
      * @return The broker for the servlet context.
-     * @throws InitException
      */
     public static Broker getBroker (Servlet s, Properties additionalProperties) throws InitException
     {
@@ -97,9 +95,7 @@ public class Servlet20Broker extends ServletBroker
      * Get a Servlet API 2.0 compatible broker for the ServletContext specified.
      * @param sc The Servlet context
      * @param cl A ClassLoader to use, presumably the webapp classloader
-     * @param additionalProperties
      * @return The broker for the servlet context
-     * @throws InitException
      * @since 2.1 JSDK
      */
     public static Broker getBroker (ServletContext sc, ClassLoader cl,
@@ -185,9 +181,9 @@ public class Servlet20Broker extends ServletBroker
      * implementation.
      */
     @Override
-    public Class classForName (String name) throws ClassNotFoundException
+    public Class<?> classForName (String name) throws ClassNotFoundException
     {
-        Class cls = null;
+        Class<?> cls = null;
         try
         {
             cls = _servletClassLoader.loadClass(name);

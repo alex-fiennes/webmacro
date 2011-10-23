@@ -44,7 +44,7 @@ public final class DirectiveProvider implements Provider
 
     // BULDER CLASS MANAGEMENT
 
-    private final Hashtable _descriptors = new Hashtable();
+    private final Hashtable<String, DirectiveDescriptor> _descriptors = new Hashtable<String, DirectiveDescriptor>();
     private Broker _broker;
 
 
@@ -101,7 +101,7 @@ public final class DirectiveProvider implements Provider
     public final void registerDirective (String dirClassName, String dirName)
             throws IntrospectionException, InitException
     {
-        Class directive = null;
+        Class<?> directive = null;
         DirectiveDescriptor templateDesc, newDesc, oldDesc;
         try
         {
@@ -118,7 +118,7 @@ public final class DirectiveProvider implements Provider
             try
             {
                 templateDesc = (DirectiveDescriptor)
-                        directive.getMethod("getDescriptor", (Class[])null).invoke(null, (Object[])null);
+                        directive.getMethod("getDescriptor", (Class<?>[])null).invoke(null, (Object[])null);
                 newDesc = new DirectiveDescriptor(templateDesc.name,
                         templateDesc.dirClass,
                         templateDesc.args,
@@ -134,7 +134,7 @@ public final class DirectiveProvider implements Provider
 
             // added by Keats 5Jul01
             // use introspection to invoke the static init method of directive, if it exists
-            Class[] cArg = {Broker.class};
+            Class<?>[] cArg = {Broker.class};
             try
             {
                 java.lang.reflect.Method m = directive.getMethod("init", cArg);

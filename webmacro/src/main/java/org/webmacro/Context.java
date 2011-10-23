@@ -57,16 +57,16 @@ import org.webmacro.engine.MethodWrapper;
  *
  * @version	23-07-2002
  */
-public class Context implements Map, Cloneable
+public class Context implements Map<Object,Object>, Cloneable
 {
     static Logger _log =  LoggerFactory.getLogger(Context.class);
     
     private final Broker _broker;
-    private HashMap _funcs = null; // lazy initialization
+    private HashMap<String,MethodWrapper> _funcs = null; // lazy initialization
 
     private EvaluationExceptionHandler _eeHandler;
 
-    private Map _variables = new HashMap();
+    private Map<Object,Object> _variables = new HashMap<Object,Object>();
 
     private TemplateEvaluationContext _teContext
             = new TemplateEvaluationContext();
@@ -113,6 +113,7 @@ public class Context implements Map, Cloneable
      * Create a copy of this context. The underlying storage will
      * be copied and the local variables reset.
      */
+    @SuppressWarnings("unchecked")
     public Context cloneContext ()
     {
         Context c;
@@ -126,13 +127,13 @@ public class Context implements Map, Cloneable
             return null; // never going to happen
         }
         c._teContext = new TemplateEvaluationContext();
-        if (_variables instanceof HashMap)
+        if (_variables instanceof HashMap<?,?>)
         {
-            c._variables = (Map) ((HashMap) _variables).clone();
+            c._variables = (Map<Object,Object>) ((HashMap<Object,Object>) _variables).clone();
         }
         else
         {
-            c._variables = new HashMap(_variables);
+            c._variables = new HashMap<Object, Object>(_variables);
         }
         return c;
     }
@@ -231,7 +232,7 @@ public class Context implements Map, Cloneable
         if (name instanceof String) {
             Object var = _broker.getAutoContextVariable((String) name, this);
             if (var != null) {
-                put(name, var);
+                put((String) name, var);
                 return var;
             }
             else
@@ -243,7 +244,7 @@ public class Context implements Map, Cloneable
             String fname = fc.getName();
             MethodWrapper func = null;
             if (_funcs != null) {
-                func = (MethodWrapper) _funcs.get(fname);
+                func = _funcs.get(fname);
             }
             if (func == null)
             {
@@ -293,7 +294,7 @@ public class Context implements Map, Cloneable
      * Convenience method for putting static classes into the context, wraps the
      * class instance in a wrapper.
      */
-    public final Object put (Object name, Class c)
+    public final <T> Object put (String name, Class<T> c)
     {
         if (c == null)
         {
@@ -301,7 +302,7 @@ public class Context implements Map, Cloneable
         }
         else
         {
-            return _variables.put(name, new org.webmacro.engine.StaticClassWrapper(c));
+            return _variables.put(name, new org.webmacro.engine.StaticClassWrapper<T>(c));
         }
     }
    
@@ -314,7 +315,7 @@ public class Context implements Map, Cloneable
     {
         MethodWrapper func = wrapMethod(instance, methodName);
         if (_funcs == null)
-            _funcs = new HashMap();
+            _funcs = new HashMap<String,MethodWrapper>();
         _funcs.put(name, func);
     }
 
@@ -334,9 +335,9 @@ public class Context implements Map, Cloneable
         catch (Exception e)
         {
             String className = null;
-            if (instance instanceof Class)
+            if (instance instanceof Class<?>)
             {
-                className = ((Class) instance).getName();
+                className = ((Class<?>) instance).getName();
             }
             else if (instance != null)
             {
@@ -403,7 +404,7 @@ public class Context implements Map, Cloneable
     {
         if (names.length == 1)
         {
-            put(names[0], value);
+            put((String) names[0], value);
             return true;
         }
         else
@@ -465,7 +466,7 @@ public class Context implements Map, Cloneable
      * Set the underlying Map object. The supplied Map will subsequently
      * be used to resolve local variables.
      */
-    public final void setMap (Map m)
+    public final void setMap (Map<Object,Object> m)
     {
         _variables = m;
     }
@@ -473,7 +474,7 @@ public class Context implements Map, Cloneable
     /**
      * Get the underlying Map object.
      */
-    public final Map getMap ()
+    public final Map<Object,Object> getMap ()
     {
         return _variables;
     }
@@ -497,7 +498,7 @@ public class Context implements Map, Cloneable
     /**
      * Method from Map interface, operates on underlying Map.
      */
-    public final Set entrySet ()
+    public final Set<Map.Entry<Object,Object>> entrySet ()
     {
         return _variables.entrySet();
     }
@@ -513,7 +514,7 @@ public class Context implements Map, Cloneable
     /**
      * Method from Map interface, operates on underlying Map.
      */
-    public final Set keySet ()
+    public final Set<Object> keySet ()
     {
         return _variables.keySet();
     }
@@ -521,9 +522,10 @@ public class Context implements Map, Cloneable
     /**
      * Method from Map interface, operates on underlying Map.
      */
-    public final void putAll (Map t)
+    @Override
+    public void putAll(Map<? extends Object, ? extends Object> m)
     {
-        _variables.putAll(t);
+      _variables.putAll(m);
     }
 
     /**
@@ -545,7 +547,7 @@ public class Context implements Map, Cloneable
     /**
      * Method from Map interface, operates on underlying Map.
      */
-    public final Collection values ()
+    public final Collection<Object> values ()
     {
         return _variables.values();
     }
@@ -605,4 +607,5 @@ public class Context implements Map, Cloneable
     {
         put(o, new Boolean(b));
     }
+
 }

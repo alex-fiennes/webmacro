@@ -308,7 +308,7 @@ final public class Block implements Macro, Visitable
         return new BlockIterator(_strings, _macros, this);
     }
 
-    final void appendTo (List l)
+    final void appendTo (List<Object> l)
     {
         final int len = _macros.length;
         for (int i = 0; i < _macros.length; i++)

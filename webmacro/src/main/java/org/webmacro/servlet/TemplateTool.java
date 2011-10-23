@@ -61,7 +61,7 @@ public class TemplateTool extends ContextTool
     {
 
         private Context _contextLocal;
-        private ArrayList _macros = new ArrayList(10);
+        private ArrayList<MacroTemplate> _macros = new ArrayList<MacroTemplate>(10);
 
         /** Constructor
          * @param ctx the context for the current request
@@ -171,7 +171,7 @@ public class TemplateTool extends ContextTool
             return eval();
         }
 
-        public Object eval (Object[] args, Object[] names) throws PropertyException
+        public Object eval (Object[] args, String[] names) throws PropertyException
         {
             if (args == null || names == null || args.length != names.length)
                 throw new PropertyException(
@@ -184,7 +184,7 @@ public class TemplateTool extends ContextTool
             return eval();
         }
 
-        public Object eval (java.util.Map map) throws PropertyException
+        public Object eval (java.util.Map<?,?> map) throws PropertyException
         {
             _contextLocal.putAll(map);
             return eval();

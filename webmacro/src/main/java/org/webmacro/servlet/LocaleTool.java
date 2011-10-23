@@ -44,7 +44,7 @@ public class LocaleTool extends ContextTool implements Bag
 
     public static final String RCS = "$Id$";
 
-    private static HashMap cache = new HashMap();
+    private static HashMap<String, Locale> cache = new HashMap<String, Locale>();
 
     @Override
     public Object init (Context context)

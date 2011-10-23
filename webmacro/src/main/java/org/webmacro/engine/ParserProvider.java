@@ -46,10 +46,10 @@ public final class ParserProvider implements Provider
 
     // BULDER CLASS MANAGEMENT
 
-    private final Hashtable _parsers = new Hashtable();
+    private final Hashtable<String, Parser> _parsers = new Hashtable<String,Parser>();
 
     private Broker _broker = null;
-    private final Class[] _brokerParam = {Broker.class};
+    private final Class<?>[] _brokerParam = {Broker.class};
     private final Object[] _brokerArg = new Object[1];
 
     /**
@@ -60,7 +60,7 @@ public final class ParserProvider implements Provider
     public final void register (String pClassName, String pType)
             throws IntrospectionException, InitException
     {
-        Class pclass;
+        Class<?> pclass;
         String pname = extractName(pClassName);
         String name = (pType != null && !pType.equals(""))
                 ? pType : pname;
@@ -78,7 +78,7 @@ public final class ParserProvider implements Provider
             Parser p = (Parser) _parsers.get(name);
             if (p == null)
             {
-                Constructor ctor = pclass.getConstructor(_brokerParam);
+                Constructor<?> ctor = pclass.getConstructor(_brokerParam);
                 p = (Parser) ctor.newInstance(_brokerArg);
                 _parsers.put(name, p);
             }

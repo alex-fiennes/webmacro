@@ -73,7 +73,7 @@ public class URLTemplate extends WMTemplate
     /**
      * Cache for any per-directory encoding files.
      */
-    private final HashMap propertiesCache = new HashMap();
+    private final HashMap<URL,Object> propertiesCache = new HashMap<URL,Object>();
 
     private String _inputEncoding = null;
     private String _outputEncoding = null;

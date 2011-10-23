@@ -40,7 +40,7 @@ public class MacroBuildContext extends BuildContext
     private BuildContext chainedContext, rootContext;
     private MacroDefinition macro;
     private Object[] args;
-    private Map macroArgs = new HashMap();
+    private Map<String, Object> macroArgs = new HashMap<String, Object>();
 
     public MacroBuildContext (MacroDefinition macroP,
                               Object[] argsP,

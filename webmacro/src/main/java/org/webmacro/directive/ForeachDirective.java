@@ -152,7 +152,7 @@ public class ForeachDirective extends Directive
             }
         }
 
-        Iterator iter;
+        Iterator<?> iter;
         try
         {
             iter = context.getBroker()._propertyOperators.getIterator(l);
