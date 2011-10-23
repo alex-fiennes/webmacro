@@ -77,6 +77,7 @@ public class EvalDirective
     return this;
   }
 
+  @SuppressWarnings("unchecked")
   public void write(org.webmacro.FastWriter out,
                     org.webmacro.Context context)
       throws org.webmacro.PropertyException, java.io.IOException
