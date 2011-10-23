@@ -38,10 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.webmacro.Broker;
 import org.webmacro.Context;
-import org.webmacro.FastWriter;
 import org.webmacro.InitException;
 import org.webmacro.NotFoundException;
 import org.webmacro.PropertyException;
@@ -687,18 +685,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
         return new WM(this);
     }
 
-    /**
-     * NO LONGER USED
-     * Exists only to catch implementations that use it.
-     * Use newWebContext instead.
-     * @deprecated pending removal
-     */
-    @Deprecated
-    public final WebContext initWebContext () throws InitException
-    {
-        return null;
-    }
-
     public WebContext newWebContext(HttpServletRequest req, HttpServletResponse resp) {
         return new WebContext(_broker, req, resp);
     }
@@ -723,23 +709,6 @@ abstract public class WMServlet extends HttpServlet implements WebMacro
            _log.debug("Error set locale to " + locale + ": " + e.getClass());
         }
     }
-
-    /**
-     * Get a new FastWriter.
-     * A FastWriter is used when writing templates to an output stream
-     *
-     * @param out The output stream the FastWriter should write to.  Typically
-     *           this will be your ServletOutputStream
-     * @param enctype the Encoding type to use
-     * @deprecated pending removal after cleanup
-     */
-    @Deprecated
-    public FastWriter getFastWriter (OutputStream out, String enctype)
-            throws UnsupportedEncodingException
-    {
-        return _wm.getFastWriter(out, enctype);
-    }
-
 
     private static final String DEFAULT_ERROR_TEXT =
             "<HTML><HEAD><TITLE>Error</TITLE></HEAD>\n"

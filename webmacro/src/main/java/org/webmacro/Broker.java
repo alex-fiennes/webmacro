@@ -26,8 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -649,23 +647,6 @@ public class Broker
     }
 
     /**
-     * Get a new FastWriter
-     * A FastWriter is used when writing templates to an output stream
-     *
-     * @param out The output stream the FastWriter should write to.  Typically
-     *           this will be your ServletOutputStream.  It can be null if
-     *           only want the fast writer to buffer the output.
-     * @param enctype the Encoding type to use
-     * @deprecated pending deletion
-     */
-    @Deprecated
-    public final FastWriter getFastWriter (OutputStream out, String enctype)
-            throws UnsupportedEncodingException
-    {
-        return FastWriter.getInstance(this, out, enctype);
-    }
-
-    /**
      * Get the EvaluationExceptionHandler
      */
     public EvaluationExceptionHandler getEvaluationExceptionHandler ()
@@ -838,16 +819,6 @@ public class Broker
         _toolLoader.put(variableName, loader);
     }
 
-    /**
-     * Backwards compatible, calls get(String,String)
-     * @deprecated call get(String,String) instead
-     */
-    @Deprecated
-    public final Object getValue (String type, String query)
-            throws ResourceException
-    {
-        return get(type, query);
-    }
 
     /**
      * Explain myself

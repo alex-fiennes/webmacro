@@ -23,8 +23,6 @@
 
 package org.webmacro;
 
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * WebMacro Manager Interface
@@ -57,26 +55,6 @@ public interface WebMacro
      * be in a shutdown state or else null.
      */
     public Broker getBroker ();
-
-
-    /**
-     * Get a new FastWriter
-     * A FastWriter is used when writing templates to an output stream.<p>
-     *
-     * If using a FastWriter directly, <b>always</b> make sure to <code>flush()</code>
-     * and <code>close()</code> it when you're finished.  
-     *
-     * @param out The output stream the FastWriter should write to.  Typically
-     *            this will be your ServletOutputStream
-     * @param enctype the Encoding type to use
-     *
-     * @throws java.io.UnsupportedEncodingException if the encoding type
-     *         specified is not supported by your JVM.
-     * @deprecated pending removal after cleanup
-     */
-    @Deprecated
-    public FastWriter getFastWriter (OutputStream out, String enctype)
-            throws UnsupportedEncodingException;
 
     /**
      * Retrieve a template from the "template" provider. Equivalent to

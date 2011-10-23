@@ -23,8 +23,6 @@
 
 package org.webmacro;
 
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import javax.servlet.Servlet;
@@ -179,24 +177,6 @@ public class WM implements WebMacro
         // complaining that it has been shut down, or they'll get a null here.
         return _broker;
     }
-
-    /**
-     * Get a new FastWriter.
-     * A FastWriter is used when writing templates to an output stream
-     *
-     * @param out The output stream the FastWriter should write to.  Typically
-     *           this will be your ServletOutputStream.  It can be null if
-     *           only want the fast writer to buffer the output.
-     * @param enctype the Encoding type to use
-     * @deprecated pending removal
-     */
-    @Deprecated
-    final public FastWriter getFastWriter (OutputStream out, String enctype)
-            throws UnsupportedEncodingException
-    {
-        return FastWriter.getInstance(_broker, out, enctype);
-    }
-
 
     /**
      * Instantiate a new context.

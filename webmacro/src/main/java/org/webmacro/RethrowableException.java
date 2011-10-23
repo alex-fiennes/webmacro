@@ -100,16 +100,6 @@ public class RethrowableException extends Exception
     }
 
     /**
-     * allow access to underlying exception
-     * @deprecated you should use <code>getCause</code> instead
-     */
-    @Deprecated
-    public Throwable getCaught ()
-    {
-        return getCause();
-    }
-
-    /**
      * Return the underlying exception provided at construction time
      * or null if none was provided.
      * @return underlying cause

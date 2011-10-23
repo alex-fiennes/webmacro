@@ -203,27 +203,6 @@ public final class ASCII_CharStream
         return (c);
     }
 
-    /**
-     * @deprecated
-     * @see #getEndColumn
-     */
-
-    @Deprecated
-    public final int getColumn ()
-    {
-        return curBuf.bufcolumn[curBuf.curPos];
-    }
-
-    /**
-     * @deprecated
-     * @see #getEndLine
-     */
-
-    @Deprecated
-    public final int getLine ()
-    {
-        return curBuf.bufline[curBuf.curPos];
-    }
 
     public final int getEndColumn ()
     {
