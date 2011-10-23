@@ -1,23 +1,12 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted under the terms of either of the following
- * Open Source licenses:
- *
- * The GNU General Public License, version 2, or any later version, as
- * published by the Free Software Foundation
- * (http://www.fsf.org/copyleft/gpl.html);
- *
- *  or
- *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)
- *
- * This software is provided "as is", with NO WARRANTY, not even the
- * implied warranties of fitness to purpose, or merchantability. You
- * assume all risks and liabilities associated with its use.
- *
- * See www.webmacro.org for more information on the WebMacro project.
+ * Copyright (C) 1998-2000 Semiotek Inc. All Rights Reserved. Redistribution and use in source and
+ * binary forms, with or without modification, are permitted under the terms of either of the
+ * following Open Source licenses: The GNU General Public License, version 2, or any later version,
+ * as published by the Free Software Foundation (http://www.fsf.org/copyleft/gpl.html); or The
+ * Semiotek Public License (http://webmacro.org/LICENSE.) This software is provided "as is", with NO
+ * WARRANTY, not even the implied warranties of fitness to purpose, or merchantability. You assume
+ * all risks and liabilities associated with its use. See www.webmacro.org for more information on
+ * the WebMacro project.
  */
 
 package org.webmacro.engine;
@@ -32,938 +21,1034 @@ import org.webmacro.TemplateVisitor;
 import org.webmacro.Visitable;
 
 /**
- * All WM expressions derive from this base class.
- * All expression and expression builder classes are contained
- * in this file.
+ * All WM expressions derive from this base class. All expression and expression builder classes are
+ * contained in this file.
  */
 public abstract class Expression
 {
 
-    final private static org.webmacro.engine.UndefinedMacro UNDEF
-            = org.webmacro.engine.UndefinedMacro.getInstance();
+  final private static org.webmacro.engine.UndefinedMacro UNDEF =
+      org.webmacro.engine.UndefinedMacro.getInstance();
 
-    public abstract static class ExpressionBase implements Macro, Visitable
+  public abstract static class ExpressionBase
+    implements Macro, Visitable
+  {
+
+    protected ExpressionBase()
     {
-
-        protected ExpressionBase ()
-        {
-        }
-
-        // Macro methods
-        final public void write (FastWriter out, Context context)
-                throws PropertyException, IOException
-        {
-            out.write(evaluate(context).toString());
-        }
     }
 
-    final private static Boolean TRUE = Boolean.TRUE;
-    final private static Boolean FALSE = Boolean.FALSE;
-
-    public static boolean isTrue (Object o)
+    // Macro methods
+    final public void write(FastWriter out,
+                            Context context)
+        throws PropertyException, IOException
     {
-        if (o == null)
-            return false;
-        else if (o instanceof Boolean)
-            return ((Boolean) o).booleanValue();
-        //  added by Keats 30-Nov-01
-        else if (o == UNDEF)
-            return false;
+      out.write(evaluate(context).toString());
+    }
+  }
+
+  final private static Boolean TRUE = Boolean.TRUE;
+  final private static Boolean FALSE = Boolean.FALSE;
+
+  public static boolean isTrue(Object o)
+  {
+    if (o == null)
+      return false;
+    else if (o instanceof Boolean)
+      return ((Boolean) o).booleanValue();
+    // added by Keats 30-Nov-01
+    else if (o == UNDEF)
+      return false;
+    else
+      return true;
+  }
+
+  public static boolean isNumber(Object o)
+  {
+    return (o instanceof Number);
+  }
+
+  public static Object numberObject(long result,
+                                    Object op1,
+                                    Object op2)
+  {
+    if (op1.getClass() == Long.class || op2.getClass() == Long.class)
+      return new Long(result);
+    else
+      return new Integer((int) result);
+  }
+
+  public static long numberValue(Object o)
+  {
+    return ((Number) o).longValue();
+  }
+
+  public abstract static class BinaryOperation
+    extends ExpressionBase
+  {
+
+    private Object _l, _r;
+
+    BinaryOperation(Object l,
+                    Object r)
+    {
+      _l = l;
+      _r = r;
+    }
+
+    public abstract Object operate(Object l,
+                                   Object r)
+        throws PropertyException;
+
+    public Object evaluate(Context context)
+        throws PropertyException
+    {
+      Object l, r;
+
+      l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+
+      return operate(l, r);
+    }
+
+    public abstract String getName();
+
+    public void accept(TemplateVisitor v)
+    {
+      v.visitBinaryOperation(getName(), _l, _r);
+    }
+  }
+
+  public abstract static class UnaryOperation
+    extends ExpressionBase
+  {
+
+    private Object _o;
+
+    UnaryOperation(Object o)
+    {
+      _o = o;
+    }
+
+    public abstract Object operate(Object o);
+
+    public Object evaluate(Context context)
+        throws PropertyException
+    {
+      Object o = (_o instanceof Macro) ? ((Macro) _o).evaluate(context) : _o;
+
+      return operate(o);
+    }
+
+    public abstract String getName();
+
+    public void accept(TemplateVisitor v)
+    {
+      v.visitUnaryOperation(getName(), _o);
+    }
+  }
+
+  public static class AndOperation
+    extends ExpressionBase
+  {
+
+    private Object _l, _r;
+
+    public AndOperation(Object l,
+                        Object r)
+    {
+      _l = l;
+      _r = r;
+    }
+
+    public Object evaluate(Context context)
+        throws PropertyException
+    {
+      Object l, r;
+
+      l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      if (!isTrue(l))
+        return FALSE;
+
+      r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      if (!isTrue(r))
+        return FALSE;
+
+      return TRUE;
+    }
+
+    public void accept(TemplateVisitor v)
+    {
+      v.visitBinaryOperation("And", _l, _r);
+    }
+  }
+
+  public static class OrOperation
+    extends ExpressionBase
+  {
+
+    private Object _l, _r;
+
+    public OrOperation(Object l,
+                       Object r)
+    {
+      _l = l;
+      _r = r;
+    }
+
+    public Object evaluate(Context context)
+        throws PropertyException
+    {
+      Object l, r;
+
+      l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
+      if (isTrue(l))
+        return TRUE;
+
+      r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
+      if (isTrue(r))
+        return TRUE;
+
+      return FALSE;
+    }
+
+    public void accept(TemplateVisitor v)
+    {
+      v.visitBinaryOperation("Or", _l, _r);
+    }
+  }
+
+  public static class NotOperation
+    extends UnaryOperation
+  {
+
+    public NotOperation(Object o)
+    {
+      super(o);
+    }
+
+    @Override
+    public String getName()
+    {
+      return "Not";
+    }
+
+    @Override
+    public Object operate(Object o)
+    {
+      return (!Expression.isTrue(o)) ? TRUE : FALSE;
+    }
+  }
+
+  public static class AddOperation
+    extends BinaryOperation
+  {
+
+    public AddOperation(Object l,
+                        Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public String getName()
+    {
+      return "Add";
+    }
+
+    @Override
+    public Object operate(Object l,
+                          Object r)
+        throws PropertyException
+    {
+      if (!isNumber(l) || !isNumber(r))
+        throw new PropertyException("Add requires numeric operands");
+      else
+        return numberObject(numberValue(l) + numberValue(r), l, r);
+    }
+  }
+
+  public static class SubtractOperation
+    extends BinaryOperation
+  {
+
+    public SubtractOperation(Object l,
+                             Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public String getName()
+    {
+      return "Subtract";
+    }
+
+    @Override
+    public Object operate(Object l,
+                          Object r)
+        throws PropertyException
+    {
+      if (!isNumber(l) || !isNumber(r))
+        throw new PropertyException("Subtract requires numeric operands");
+      else
+        return numberObject(numberValue(l) - numberValue(r), l, r);
+    }
+  }
+
+  public static class MultiplyOperation
+    extends BinaryOperation
+  {
+
+    public MultiplyOperation(Object l,
+                             Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public String getName()
+    {
+      return "Multiply";
+    }
+
+    @Override
+    public Object operate(Object l,
+                          Object r)
+        throws PropertyException
+    {
+      if (!isNumber(l) || !isNumber(r))
+        throw new PropertyException("Multiply requires numeric operands");
+      else
+        return numberObject(numberValue(l) * numberValue(r), l, r);
+    }
+  }
+
+  public static class DivideOperation
+    extends BinaryOperation
+  {
+
+    public DivideOperation(Object l,
+                           Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public String getName()
+    {
+      return "Divide";
+    }
+
+    @Override
+    public Object operate(Object l,
+                          Object r)
+        throws PropertyException
+    {
+      if (!isNumber(l) || !isNumber(r))
+        throw new PropertyException("Divide requires numeric operands");
+      else {
+        long denom = numberValue(r);
+        if (denom == 0)
+          throw new PropertyException("Divide by zero");
         else
-            return true;
+          return numberObject(numberValue(l) / denom, l, r);
+      }
+    }
+  }
+
+  public abstract static class Compare
+    extends BinaryOperation
+  {
+
+    public Compare(Object l,
+                   Object r)
+    {
+      super(l,
+            r);
     }
 
-    public static boolean isNumber (Object o)
+    public abstract Boolean compare(String l,
+                                    String r);
+
+    public abstract Boolean compare(long l,
+                                    long r);
+
+    public Boolean compare(Object l,
+                           Object r)
     {
-        return (o instanceof Number);
+      return null;
     }
 
-    public static Object numberObject (long result, Object op1, Object op2)
+    public Boolean compareNull(Object o)
     {
-        if (op1.getClass() == Long.class || op2.getClass() == Long.class)
-            return new Long(result);
+      return null;
+    }
+
+    @Override
+    public Object operate(Object l,
+                          Object r)
+        throws PropertyException
+    {
+      Boolean b = null;
+      boolean lIsNumber = isNumber(l), rIsNumber = isNumber(r);
+
+      if (lIsNumber && rIsNumber)
+        b = compare(numberValue(l), numberValue(r));
+      else {
+        boolean lIsString = (l instanceof String), rIsString = (r instanceof String);
+
+        if (lIsString && rIsString)
+          b = compare((String) l, (String) r);
+        else if (lIsString && rIsNumber)
+          b = compare((String) l, Long.toString(numberValue(r)));
+        else if (lIsNumber && rIsString)
+          b = compare(Long.toString(numberValue(l)), (String) r);
+        else if (l == null)
+          b = compareNull(r);
+        else if (r == null)
+          b = compareNull(l);
         else
-            return new Integer((int) result);
-    }
+          b = compare(l, r);
+      }
 
-    public static long numberValue (Object o)
+      if (b == null)
+        throw new PropertyException("Objects not comparable");
+      else
+        return b;
+    }
+  }
+
+  public static class CompareEq
+    extends Compare
+  {
+
+    public CompareEq(Object l,
+                     Object r)
     {
-        return ((Number) o).longValue();
+      super(l,
+            r);
     }
 
-    public abstract static class BinaryOperation extends ExpressionBase
+    @Override
+    public String getName()
     {
-
-        private Object _l, _r;
-
-        BinaryOperation (Object l, Object r)
-        {
-            _l = l;
-            _r = r;
-        }
-
-        public abstract Object operate (Object l, Object r) throws PropertyException;
-
-        public Object evaluate (Context context)
-                throws PropertyException
-        {
-            Object l, r;
-
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-
-            return operate(l, r);
-        }
-
-        public abstract String getName ();
-
-        public void accept (TemplateVisitor v)
-        {
-            v.visitBinaryOperation(getName(), _l, _r);
-        }
+      return "CompareEq";
     }
 
-    public abstract static class UnaryOperation extends ExpressionBase
+    @Override
+    public Boolean compare(Object l,
+                           Object r)
     {
-
-        private Object _o;
-
-        UnaryOperation (Object o)
-        {
-            _o = o;
-        }
-
-        public abstract Object operate (Object o);
-
-        public Object evaluate (Context context)
-                throws PropertyException
-        {
-            Object o = (_o instanceof Macro) ? ((Macro) _o).evaluate(context) : _o;
-
-            return operate(o);
-        }
-
-        public abstract String getName ();
-
-        public void accept (TemplateVisitor v)
-        {
-            v.visitUnaryOperation(getName(), _o);
-        }
+      return (l.equals(r)) ? TRUE : FALSE;
     }
 
-    public static class AndOperation extends ExpressionBase
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        private Object _l, _r;
-
-        public AndOperation (Object l, Object r)
-        {
-            _l = l;
-            _r = r;
-        }
-
-        public Object evaluate (Context context)
-                throws PropertyException
-        {
-            Object l, r;
-
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-            if (!isTrue(l))
-                return FALSE;
-
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-            if (!isTrue(r))
-                return FALSE;
-
-            return TRUE;
-        }
-
-        public void accept (TemplateVisitor v)
-        {
-            v.visitBinaryOperation("And", _l, _r);
-        }
+      return (l.equals(r)) ? TRUE : FALSE;
     }
 
-    public static class OrOperation extends ExpressionBase
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        private Object _l, _r;
-
-        public OrOperation (Object l, Object r)
-        {
-            _l = l;
-            _r = r;
-        }
-
-        public Object evaluate (Context context)
-                throws PropertyException
-        {
-            Object l, r;
-
-            l = (_l instanceof Macro) ? ((Macro) _l).evaluate(context) : _l;
-            if (isTrue(l))
-                return TRUE;
-
-            r = (_r instanceof Macro) ? ((Macro) _r).evaluate(context) : _r;
-            if (isTrue(r))
-                return TRUE;
-
-            return FALSE;
-        }
-
-        public void accept (TemplateVisitor v)
-        {
-            v.visitBinaryOperation("Or", _l, _r);
-        }
+      return (l == r) ? TRUE : FALSE;
     }
 
-    public static class NotOperation extends UnaryOperation
+    @Override
+    public Boolean compareNull(Object o)
     {
-
-        public NotOperation (Object o)
-        {
-            super(o);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "Not";
-        }
-
-        @Override
-        public Object operate (Object o)
-        {
-            return (!Expression.isTrue(o)) ? TRUE : FALSE;
-        }
+      return (o == null) ? TRUE : FALSE;
     }
+  }
 
+  public static class CompareNe
+    extends Compare
+  {
 
-    public static class AddOperation extends BinaryOperation
+    public CompareNe(Object l,
+                     Object r)
     {
-
-        public AddOperation (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "Add";
-        }
-
-        @Override
-        public Object operate (Object l, Object r) throws PropertyException
-        {
-            if (!isNumber(l) || !isNumber(r))
-                throw new PropertyException("Add requires numeric operands");
-            else
-                return numberObject(numberValue(l) + numberValue(r), l, r);
-        }
+      super(l,
+            r);
     }
 
-    public static class SubtractOperation extends BinaryOperation
+    @Override
+    public String getName()
     {
-
-        public SubtractOperation (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "Subtract";
-        }
-
-        @Override
-        public Object operate (Object l, Object r) throws PropertyException
-        {
-            if (!isNumber(l) || !isNumber(r))
-                throw new PropertyException("Subtract requires numeric operands");
-            else
-                return numberObject(numberValue(l) - numberValue(r), l, r);
-        }
+      return "CompareNe";
     }
 
-    public static class MultiplyOperation extends BinaryOperation
+    @Override
+    public Boolean compare(Object l,
+                           Object r)
     {
-
-        public MultiplyOperation (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "Multiply";
-        }
-
-        @Override
-        public Object operate (Object l, Object r) throws PropertyException
-        {
-            if (!isNumber(l) || !isNumber(r))
-                throw new PropertyException("Multiply requires numeric operands");
-            else
-                return numberObject(numberValue(l) * numberValue(r), l, r);
-        }
+      return (!l.equals(r)) ? TRUE : FALSE;
     }
 
-    public static class DivideOperation extends BinaryOperation
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        public DivideOperation (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "Divide";
-        }
-
-        @Override
-        public Object operate (Object l, Object r) throws PropertyException
-        {
-            if (!isNumber(l) || !isNumber(r))
-                throw new PropertyException("Divide requires numeric operands");
-            else
-            {
-                long denom = numberValue(r);
-                if (denom == 0)
-                    throw new PropertyException("Divide by zero");
-                else
-                    return numberObject(numberValue(l) / denom, l, r);
-            }
-        }
+      return (!l.equals(r)) ? TRUE : FALSE;
     }
 
-
-    public abstract static class Compare extends BinaryOperation
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        public Compare (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        public abstract Boolean compare (String l, String r);
-
-        public abstract Boolean compare (long l, long r);
-
-        public Boolean compare (Object l, Object r)
-        {
-            return null;
-        }
-
-        public Boolean compareNull (Object o)
-        {
-            return null;
-        }
-
-        @Override
-        public Object operate (Object l, Object r) throws PropertyException
-        {
-            Boolean b = null;
-            boolean lIsNumber = isNumber(l), rIsNumber = isNumber(r);
-
-            if (lIsNumber && rIsNumber)
-                b = compare(numberValue(l), numberValue(r));
-            else
-            {
-                boolean lIsString = (l instanceof String),
-                        rIsString = (r instanceof String);
-
-                if (lIsString && rIsString)
-                    b = compare((String) l, (String) r);
-                else if (lIsString && rIsNumber)
-                    b = compare((String) l, Long.toString(numberValue(r)));
-                else if (lIsNumber && rIsString)
-                    b = compare(Long.toString(numberValue(l)), (String) r);
-                else if (l == null)
-                    b = compareNull(r);
-                else if (r == null)
-                    b = compareNull(l);
-                else
-                    b = compare(l, r);
-            }
-
-            if (b == null)
-                throw new PropertyException("Objects not comparable");
-            else
-                return b;
-        }
+      return (l != r) ? TRUE : FALSE;
     }
 
-    public static class CompareEq extends Compare
+    @Override
+    public Boolean compareNull(Object o)
     {
-
-        public CompareEq (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareEq";
-        }
-
-        @Override
-        public Boolean compare (Object l, Object r)
-        {
-            return (l.equals(r)) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (l.equals(r)) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l == r) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compareNull (Object o)
-        {
-            return (o == null) ? TRUE : FALSE;
-        }
+      return (o != null) ? TRUE : FALSE;
     }
+  }
 
-    public static class CompareNe extends Compare
+  public static class CompareLe
+    extends Compare
+  {
+
+    public CompareLe(Object l,
+                     Object r)
     {
-
-        public CompareNe (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareNe";
-        }
-
-        @Override
-        public Boolean compare (Object l, Object r)
-        {
-            return (!l.equals(r)) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (!l.equals(r)) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l != r) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compareNull (Object o)
-        {
-            return (o != null) ? TRUE : FALSE;
-        }
+      super(l,
+            r);
     }
 
-    public static class CompareLe extends Compare
+    @Override
+    public String getName()
     {
-
-        public CompareLe (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareLe";
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (l.compareTo(r) <= 0) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l <= r) ? TRUE : FALSE;
-        }
+      return "CompareLe";
     }
 
-    public static class CompareLt extends Compare
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        public CompareLt (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareLt";
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (l.compareTo(r) < 0) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l < r) ? TRUE : FALSE;
-        }
+      return (l.compareTo(r) <= 0) ? TRUE : FALSE;
     }
 
-    public static class CompareGe extends Compare
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        public CompareGe (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareGe";
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (l.compareTo(r) >= 0) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l >= r) ? TRUE : FALSE;
-        }
+      return (l <= r) ? TRUE : FALSE;
     }
+  }
 
-    public static class CompareGt extends Compare
+  public static class CompareLt
+    extends Compare
+  {
+
+    public CompareLt(Object l,
+                     Object r)
     {
-
-        public CompareGt (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public String getName ()
-        {
-            return "CompareGt";
-        }
-
-        @Override
-        public Boolean compare (String l, String r)
-        {
-            return (l.compareTo(r) > 0) ? TRUE : FALSE;
-        }
-
-        @Override
-        public Boolean compare (long l, long r)
-        {
-            return (l > r) ? TRUE : FALSE;
-        }
+      super(l,
+            r);
     }
 
-
-    public abstract static class BinaryOperationBuilder implements Builder
+    @Override
+    public String getName()
     {
-
-        private Object _l, _r;
-
-        public BinaryOperationBuilder (Object l, Object r)
-        {
-            _l = l;
-            _r = r;
-        }
-
-        public abstract Object build (Object l, Object r) throws BuildException;
-
-        public Object build (BuildContext pc)
-                throws BuildException
-        {
-            Object l, r;
-            l = (_l instanceof Builder) ? ((Builder) _l).build(pc) : _l;
-            r = (_r instanceof Builder) ? ((Builder) _r).build(pc) : _r;
-
-            return build(l, r);
-        }
+      return "CompareLt";
     }
 
-    public abstract static class UnaryOperationBuilder implements Builder
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        private Object _o;
-
-        public UnaryOperationBuilder (Object o)
-        {
-            _o = o;
-        }
-
-        public abstract Object build (Object o) throws BuildException;
-
-        public Object build (BuildContext pc)
-                throws BuildException
-        {
-            Object o;
-            o = (_o instanceof Builder) ? ((Builder) _o).build(pc) : _o;
-
-            return build(o);
-        }
+      return (l.compareTo(r) < 0) ? TRUE : FALSE;
     }
 
-
-    public static class AndBuilder extends BinaryOperationBuilder
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        public AndBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r)
-        {
-            if (l instanceof Macro)
-            {
-                if (r instanceof Macro)
-                    return new AndOperation(l, r);
-                else
-                    return isTrue(r) ? l : FALSE;
-            }
-            else
-            {
-                if (r instanceof Macro)
-                    return isTrue(l) ? r : FALSE;
-                else
-                    return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
-            }
-        }
+      return (l < r) ? TRUE : FALSE;
     }
+  }
 
-    public static class OrBuilder extends BinaryOperationBuilder
+  public static class CompareGe
+    extends Compare
+  {
+
+    public CompareGe(Object l,
+                     Object r)
     {
-
-        public OrBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r)
-        {
-            if (l instanceof Macro)
-            {
-                if (r instanceof Macro)
-                    return new OrOperation(l, r);
-                else
-                    return isTrue(r) ? TRUE : l;
-            }
-            else
-            {
-                if (r instanceof Macro)
-                    return isTrue(l) ? TRUE : r;
-                else
-                    return (isTrue(l) || isTrue(r)) ? TRUE : FALSE;
-            }
-        }
+      super(l,
+            r);
     }
 
-    public static class NotBuilder extends UnaryOperationBuilder
+    @Override
+    public String getName()
     {
-
-        public NotBuilder (Object o)
-        {
-            super(o);
-        }
-
-        @Override
-        public Object build (Object o)
-        {
-            if (o instanceof Macro)
-                return new NotOperation(o);
-            else
-                return !isTrue(o) ? TRUE : FALSE;
-        }
+      return "CompareGe";
     }
 
-
-    public static class AddBuilder extends BinaryOperationBuilder
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        public AddBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            if (!(l instanceof Macro) && !(r instanceof Macro))
-            {
-                if (isNumber(l) && isNumber(r))
-                    return numberObject(numberValue(l) + numberValue(r), l, r);
-                else
-                    throw new BuildException("Add requires numeric operands");
-            }
-            else
-                return new AddOperation(l, r);
-        }
+      return (l.compareTo(r) >= 0) ? TRUE : FALSE;
     }
 
-    public static class SubtractBuilder extends BinaryOperationBuilder
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        public SubtractBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            if (!(l instanceof Macro) && !(r instanceof Macro))
-            {
-                if (isNumber(l) && isNumber(r))
-                    return numberObject(numberValue(l) - numberValue(r), l, r);
-                else
-                    throw new BuildException("Subtract requires numeric operands");
-            }
-            else
-                return new SubtractOperation(l, r);
-        }
+      return (l >= r) ? TRUE : FALSE;
     }
+  }
 
-    public static class MultiplyBuilder extends BinaryOperationBuilder
+  public static class CompareGt
+    extends Compare
+  {
+
+    public CompareGt(Object l,
+                     Object r)
     {
-
-        public MultiplyBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            if (!(l instanceof Macro) && !(r instanceof Macro))
-            {
-                if (isNumber(l) && isNumber(r))
-                    return numberObject(numberValue(l) * numberValue(r), l, r);
-                else
-                    throw new BuildException("Multiply requires numeric operands");
-            }
-            else
-                return new MultiplyOperation(l, r);
-        }
+      super(l,
+            r);
     }
 
-    public static class DivideBuilder extends BinaryOperationBuilder
+    @Override
+    public String getName()
     {
-
-        public DivideBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            if (!(l instanceof Macro) && !(r instanceof Macro))
-            {
-                if (isNumber(l) && isNumber(r))
-                {
-                    long denom = numberValue(r);
-                    if (denom == 0)
-                        throw new BuildException("Divide by zero");
-                    else
-                        return numberObject(numberValue(l) / denom, l, r);
-                }
-                else
-                    throw new BuildException("Divide requires numeric operands");
-            }
-            else
-                return new DivideOperation(l, r);
-        }
+      return "CompareGt";
     }
 
-    public static class CompareEqBuilder extends BinaryOperationBuilder
+    @Override
+    public Boolean compare(String l,
+                           String r)
     {
-
-        public CompareEqBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareEq c = new CompareEq(l, r);
-
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
-        }
+      return (l.compareTo(r) > 0) ? TRUE : FALSE;
     }
 
-    public static class CompareNeBuilder extends BinaryOperationBuilder
+    @Override
+    public Boolean compare(long l,
+                           long r)
     {
-
-        public CompareNeBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareNe c = new CompareNe(l, r);
-
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
-        }
+      return (l > r) ? TRUE : FALSE;
     }
+  }
 
-    public static class CompareLeBuilder extends BinaryOperationBuilder
+  public abstract static class BinaryOperationBuilder
+    implements Builder
+  {
+
+    private Object _l, _r;
+
+    public BinaryOperationBuilder(Object l,
+                                  Object r)
     {
-
-        public CompareLeBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareLe c = new CompareLe(l, r);
-
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
-        }
+      _l = l;
+      _r = r;
     }
 
-    public static class CompareLtBuilder extends BinaryOperationBuilder
+    public abstract Object build(Object l,
+                                 Object r)
+        throws BuildException;
+
+    public Object build(BuildContext pc)
+        throws BuildException
     {
+      Object l, r;
+      l = (_l instanceof Builder) ? ((Builder) _l).build(pc) : _l;
+      r = (_r instanceof Builder) ? ((Builder) _r).build(pc) : _r;
 
-        public CompareLtBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareLt c = new CompareLt(l, r);
-
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
-        }
+      return build(l, r);
     }
+  }
 
-    public static class CompareGeBuilder extends BinaryOperationBuilder
+  public abstract static class UnaryOperationBuilder
+    implements Builder
+  {
+
+    private Object _o;
+
+    public UnaryOperationBuilder(Object o)
     {
-
-        public CompareGeBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
-
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareGe c = new CompareGe(l, r);
-
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
-        }
+      _o = o;
     }
 
-    public static class CompareGtBuilder extends BinaryOperationBuilder
+    public abstract Object build(Object o)
+        throws BuildException;
+
+    public Object build(BuildContext pc)
+        throws BuildException
     {
+      Object o;
+      o = (_o instanceof Builder) ? ((Builder) _o).build(pc) : _o;
 
-        public CompareGtBuilder (Object l, Object r)
-        {
-            super(l, r);
-        }
+      return build(o);
+    }
+  }
 
-        @Override
-        public Object build (Object l, Object r) throws BuildException
-        {
-            CompareGt c = new CompareGt(l, r);
+  public static class AndBuilder
+    extends BinaryOperationBuilder
+  {
 
-            if ((l instanceof Macro) || (r instanceof Macro))
-                return c;
-            else
-                try
-                {
-                    return c.operate(l, r);
-                }
-                catch (PropertyException e)
-                {
-                    throw new BuildException(e.toString());
-                }
+    public AndBuilder(Object l,
+                      Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+    {
+      if (l instanceof Macro) {
+        if (r instanceof Macro)
+          return new AndOperation(l, r);
+        else
+          return isTrue(r) ? l : FALSE;
+      } else {
+        if (r instanceof Macro)
+          return isTrue(l) ? r : FALSE;
+        else
+          return (isTrue(l) && isTrue(r)) ? TRUE : FALSE;
+      }
+    }
+  }
+
+  public static class OrBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public OrBuilder(Object l,
+                     Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+    {
+      if (l instanceof Macro) {
+        if (r instanceof Macro)
+          return new OrOperation(l, r);
+        else
+          return isTrue(r) ? TRUE : l;
+      } else {
+        if (r instanceof Macro)
+          return isTrue(l) ? TRUE : r;
+        else
+          return (isTrue(l) || isTrue(r)) ? TRUE : FALSE;
+      }
+    }
+  }
+
+  public static class NotBuilder
+    extends UnaryOperationBuilder
+  {
+
+    public NotBuilder(Object o)
+    {
+      super(o);
+    }
+
+    @Override
+    public Object build(Object o)
+    {
+      if (o instanceof Macro)
+        return new NotOperation(o);
+      else
+        return !isTrue(o) ? TRUE : FALSE;
+    }
+  }
+
+  public static class AddBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public AddBuilder(Object l,
+                      Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      if (!(l instanceof Macro) && !(r instanceof Macro)) {
+        if (isNumber(l) && isNumber(r))
+          return numberObject(numberValue(l) + numberValue(r), l, r);
+        else
+          throw new BuildException("Add requires numeric operands");
+      } else
+        return new AddOperation(l, r);
+    }
+  }
+
+  public static class SubtractBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public SubtractBuilder(Object l,
+                           Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      if (!(l instanceof Macro) && !(r instanceof Macro)) {
+        if (isNumber(l) && isNumber(r))
+          return numberObject(numberValue(l) - numberValue(r), l, r);
+        else
+          throw new BuildException("Subtract requires numeric operands");
+      } else
+        return new SubtractOperation(l, r);
+    }
+  }
+
+  public static class MultiplyBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public MultiplyBuilder(Object l,
+                           Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      if (!(l instanceof Macro) && !(r instanceof Macro)) {
+        if (isNumber(l) && isNumber(r))
+          return numberObject(numberValue(l) * numberValue(r), l, r);
+        else
+          throw new BuildException("Multiply requires numeric operands");
+      } else
+        return new MultiplyOperation(l, r);
+    }
+  }
+
+  public static class DivideBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public DivideBuilder(Object l,
+                         Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      if (!(l instanceof Macro) && !(r instanceof Macro)) {
+        if (isNumber(l) && isNumber(r)) {
+          long denom = numberValue(r);
+          if (denom == 0)
+            throw new BuildException("Divide by zero");
+          else
+            return numberObject(numberValue(l) / denom, l, r);
+        } else
+          throw new BuildException("Divide requires numeric operands");
+      } else
+        return new DivideOperation(l, r);
+    }
+  }
+
+  public static class CompareEqBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareEqBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareEq c = new CompareEq(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
         }
     }
+  }
+
+  public static class CompareNeBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareNeBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareNe c = new CompareNe(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
+        }
+    }
+  }
+
+  public static class CompareLeBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareLeBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareLe c = new CompareLe(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
+        }
+    }
+  }
+
+  public static class CompareLtBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareLtBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareLt c = new CompareLt(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
+        }
+    }
+  }
+
+  public static class CompareGeBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareGeBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareGe c = new CompareGe(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
+        }
+    }
+  }
+
+  public static class CompareGtBuilder
+    extends BinaryOperationBuilder
+  {
+
+    public CompareGtBuilder(Object l,
+                            Object r)
+    {
+      super(l,
+            r);
+    }
+
+    @Override
+    public Object build(Object l,
+                        Object r)
+        throws BuildException
+    {
+      CompareGt c = new CompareGt(l, r);
+
+      if ((l instanceof Macro) || (r instanceof Macro))
+        return c;
+      else
+        try {
+          return c.operate(l, r);
+        } catch (PropertyException e) {
+          throw new BuildException(e.toString());
+        }
+    }
+  }
 }

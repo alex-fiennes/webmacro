@@ -6,18 +6,22 @@ import org.webmacro.PropertyException;
 
 /**
  * ContextAutoLoader
- *
+ * 
  * @author Brian Goetz
  */
-public interface ContextAutoLoader { 
+public interface ContextAutoLoader
+{
 
-    /**
-     * Called once after construction.
-     */
-    void init(Broker b, String name);
+  /**
+   * Called once after construction.
+   */
+  void init(Broker b,
+            String name);
 
-    /**
-     * Return a new instance of the named automatic variable
-     */
-    Object get(String name, Context context) throws PropertyException;
+  /**
+   * Return a new instance of the named automatic variable
+   */
+  Object get(String name,
+             Context context)
+      throws PropertyException;
 }

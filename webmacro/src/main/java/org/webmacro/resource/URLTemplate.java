@@ -1,23 +1,12 @@
 /*
- * Copyright (C) 1998-2000 Semiotek Inc.  All Rights Reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted under the terms of either of the following
- * Open Source licenses:
- *
- * The GNU General Public License, version 2, or any later version, as
- * published by the Free Software Foundation
- * (http://www.fsf.org/copyleft/gpl.html);
- *
- *  or
- *
- * The Semiotek Public License (http://webmacro.org/LICENSE.)
- *
- * This software is provided "as is", with NO WARRANTY, not even the
- * implied warranties of fitness to purpose, or merchantability. You
- * assume all risks and liabilities associated with its use.
- *
- * See www.webmacro.org for more information on the WebMacro project.
+ * Copyright (C) 1998-2000 Semiotek Inc. All Rights Reserved. Redistribution and use in source and
+ * binary forms, with or without modification, are permitted under the terms of either of the
+ * following Open Source licenses: The GNU General Public License, version 2, or any later version,
+ * as published by the Free Software Foundation (http://www.fsf.org/copyleft/gpl.html); or The
+ * Semiotek Public License (http://webmacro.org/LICENSE.) This software is provided "as is", with NO
+ * WARRANTY, not even the implied warranties of fitness to purpose, or merchantability. You assume
+ * all risks and liabilities associated with its use. See www.webmacro.org for more information on
+ * the WebMacro project.
  */
 
 package org.webmacro.resource;
@@ -47,222 +36,197 @@ import org.webmacro.util.NativeAsciiReader;
  * FileTemplate objects read their template data from a text file.
  */
 
-public class URLTemplate extends WMTemplate
+public class URLTemplate
+  extends WMTemplate
 {
 
-    static Logger _log =  LoggerFactory.getLogger(URLTemplate.class);
+  static Logger _log = LoggerFactory.getLogger(URLTemplate.class);
 
-    /** CVS revision  */
-    public static final String RCS = "@(#) $Id$";
+  /** CVS revision */
+  public static final String RCS = "@(#) $Id$";
 
-    /**
-     * The location of the resourse (file) this template was read from.
-     */
-    private final URL _url;
+  /**
+   * The location of the resourse (file) this template was read from.
+   */
+  private final URL _url;
 
-    /**
-     * The physical file referred to by "file:" and "jar:" URLs.
-     */
-    private File underLyingFile = null;
+  /**
+   * The physical file referred to by "file:" and "jar:" URLs.
+   */
+  private File underLyingFile = null;
 
-    /**
-     * The time the underlying file was last modified.
-     */
-    private long underLyingFileLastModTime = 0;
+  /**
+   * The time the underlying file was last modified.
+   */
+  private long underLyingFileLastModTime = 0;
 
-    /**
-     * Cache for any per-directory encoding files.
-     */
-    private final HashMap<URL,Object> propertiesCache = new HashMap<URL,Object>();
+  /**
+   * Cache for any per-directory encoding files.
+   */
+  private final HashMap<URL, Object> propertiesCache = new HashMap<URL, Object>();
 
-    private String _inputEncoding = null;
-    private String _outputEncoding = null;
-    private Locale _outputLocale = null;
+  private String _inputEncoding = null;
+  private String _outputEncoding = null;
+  private Locale _outputLocale = null;
 
-    /**
-     * A dummy object used as a place holder in the encoding cache.
-     */
-    private static final Object dummy = new Object();
+  /**
+   * A dummy object used as a place holder in the encoding cache.
+   */
+  private static final Object dummy = new Object();
 
-    /**
-     * Instantiate a template based on the specified file.
-     * We use can use the special case or URLs like
-     * <pre>
-     *        file:xxxxxx
-     * or
-     *        jar:xxxxxx!yyyyyy
-     *</pre>
-     * extracting the xxxxxx.  
-     * In the latter case the reference is to the jar containing the
-     * template.
-     */
-    public URLTemplate (
-            Broker broker,
-            URL templateURL
-            )
-    {
-        super(broker);
-        _url = templateURL;
-        String _u = _url.toExternalForm();
+  /**
+   * Instantiate a template based on the specified file. We use can use the special case or URLs
+   * like
+   * 
+   * <pre>
+   *        file:xxxxxx
+   * or
+   *        jar:xxxxxx!yyyyyy
+   *</pre>
+   * 
+   * extracting the xxxxxx. In the latter case the reference is to the jar containing the template.
+   */
+  public URLTemplate(Broker broker,
+                     URL templateURL)
+  {
+    super(broker);
+    _url = templateURL;
+    String _u = _url.toExternalForm();
 
-        _log.debug("URLTemplate: " + _u);
+    _log.debug("URLTemplate: " + _u);
 
-        if (_u.startsWith("jar:"))
-        {
-            int p = _u.indexOf("!");
-            _u = _u.substring(4, p);
-        }
-
-        if (_u.startsWith("file:"))
-        {
-            underLyingFile = new File(_u.substring(5));
-            underLyingFileLastModTime = underLyingFile.lastModified();
-        }
-
-        setupLocalProperties();
+    if (_u.startsWith("jar:")) {
+      int p = _u.indexOf("!");
+      _u = _u.substring(4, p);
     }
 
-    /**
-     * URL based templates are difficult to detect as changed in general, but the two
-     * special cases can be determined for reloading.
-     * <pre>
-     * file:[path] and 
-     * jar:file:[jarpath]![path]
-     * </pre>
-     * Imply a reference to the actual file.
-     */
-    public boolean shouldReload ()
-    {
-        if (underLyingFile == null) return false;
-        long lastMod = underLyingFile.lastModified();
-
-        return ((lastMod > 0) && (lastMod > underLyingFileLastModTime));
+    if (_u.startsWith("file:")) {
+      underLyingFile = new File(_u.substring(5));
+      underLyingFileLastModTime = underLyingFile.lastModified();
     }
 
+    setupLocalProperties();
+  }
 
-    /**
-     * Look for TemplateEncoding in a file WebMacro.local in the same
-     * directory as the template
-     *
-     * TODO - should make the encoding cache a bit smarter- doesn't detect
-     * if the file changes
-     */
-    private void setupLocalProperties ()
-    {
-        InputStream is = null;
-        URL u = null;
+  /**
+   * URL based templates are difficult to detect as changed in general, but the two special cases
+   * can be determined for reloading.
+   * 
+   * <pre>
+   * file:[path] and 
+   * jar:file:[jarpath]![path]
+   * </pre>
+   * 
+   * Imply a reference to the actual file.
+   */
+  public boolean shouldReload()
+  {
+    if (underLyingFile == null)
+      return false;
+    long lastMod = underLyingFile.lastModified();
 
-        try
-        {
+    return ((lastMod > 0) && (lastMod > underLyingFileLastModTime));
+  }
 
-            u = new URL(_url, WMConstants.WEBMACRO_LOCAL_FILE);
-            _log.debug("Looking for encodings file: " + u);
-            Object obj = propertiesCache.get(u);
+  /**
+   * Look for TemplateEncoding in a file WebMacro.local in the same directory as the template TODO -
+   * should make the encoding cache a bit smarter- doesn't detect if the file changes
+   */
+  private void setupLocalProperties()
+  {
+    InputStream is = null;
+    URL u = null;
 
-            if (obj != null)
-            {
-                return;
-            }
+    try {
 
-            Properties p = new Properties();
-            is = u.openStream();
-            p.load(is);
-            _inputEncoding = p.getProperty(WMConstants.TEMPLATE_INPUT_ENCODING);
-            _outputEncoding = p.getProperty(WMConstants.TEMPLATE_OUTPUT_ENCODING);
+      u = new URL(_url, WMConstants.WEBMACRO_LOCAL_FILE);
+      _log.debug("Looking for encodings file: " + u);
+      Object obj = propertiesCache.get(u);
 
-            String loc = p.getProperty(WMConstants.TEMPLATE_LOCALE);
-            if (loc != null)
-            {
-                _outputLocale = LocaleTool.buildLocale(loc);
-            }
+      if (obj != null) {
+        return;
+      }
 
-            propertiesCache.put(u, dummy);
+      Properties p = new Properties();
+      is = u.openStream();
+      p.load(is);
+      _inputEncoding = p.getProperty(WMConstants.TEMPLATE_INPUT_ENCODING);
+      _outputEncoding = p.getProperty(WMConstants.TEMPLATE_OUTPUT_ENCODING);
 
+      String loc = p.getProperty(WMConstants.TEMPLATE_LOCALE);
+      if (loc != null) {
+        _outputLocale = LocaleTool.buildLocale(loc);
+      }
 
+      propertiesCache.put(u, dummy);
+
+    } catch (Exception e) {
+      // if there's an Exception here, put a dummy object here so
+      // we don't try to look for the file every time
+      //
+      propertiesCache.put(u, dummy);
+    } finally {
+      if (_inputEncoding == null) {
+        _inputEncoding = getDefaultEncoding();
+      }
+
+      if (is != null) {
+        try {
+          is.close();
+        } catch (Exception ignore) {
         }
-        catch (Exception e)
-        {
-            // if there's an Exception here, put a dummy object here so
-            // we don't try to look for the file every time
-            //
-            propertiesCache.put(u, dummy);
-        }
-        finally
-        {
-            if (_inputEncoding == null)
-            {
-                _inputEncoding = getDefaultEncoding();
-            }
-
-            if (is != null)
-            {
-                try
-                {
-                    is.close();
-                }
-                catch (Exception ignore)
-                {
-                }
-            }
-        }
+      }
     }
+  }
 
-    /**
-     * Get the stream the template should be read from. Parse will
-     * call this method in order to locate a stream.
-     *
-     */
-    @Override
-    protected Reader getReader () throws IOException
-    {
-        _log.debug("Using encoding " + _inputEncoding);
+  /**
+   * Get the stream the template should be read from. Parse will call this method in order to locate
+   * a stream.
+   */
+  @Override
+  protected Reader getReader()
+      throws IOException
+  {
+    _log.debug("Using encoding " + _inputEncoding);
 
-        if (_inputEncoding.equals("native_ascii"))
-        {
-            return new NativeAsciiReader(
-                    new InputStreamReader(_url.openStream(), "ASCII"));
-        }
-        else
-        {
-            return new BufferedReader(
-                    new InputStreamReader(_url.openStream(), _inputEncoding));
-        }
+    if (_inputEncoding.equals("native_ascii")) {
+      return new NativeAsciiReader(new InputStreamReader(_url.openStream(), "ASCII"));
+    } else {
+      return new BufferedReader(new InputStreamReader(_url.openStream(), _inputEncoding));
     }
+  }
 
-    /**
-     * @return the URL for the current template
-     */
-    public URL getURL ()
-    {
-        return _url;
-    }
+  /**
+   * @return the URL for the current template
+   */
+  public URL getURL()
+  {
+    return _url;
+  }
 
-    /**
-     * Return a name for this template. For example, if the template reads
-     * from a file you might want to mention which it is--will be used to
-     * produce error messages describing which template had a problem.
-     */
-    @Override
-    public String toString ()
-    {
-        return "URLTemplate:" + _url;
-    }
+  /**
+   * Return a name for this template. For example, if the template reads from a file you might want
+   * to mention which it is--will be used to produce error messages describing which template had a
+   * problem.
+   */
+  @Override
+  public String toString()
+  {
+    return "URLTemplate:" + _url;
+  }
 
-    @Override
-    public void parse () throws IOException, TemplateException
-    {
-        super.parse();
-        if ((_outputEncoding != null)
-                && (getParam(WMConstants.TEMPLATE_OUTPUT_ENCODING) == null))
-        {
-            _log.debug("Setting output encoding to " + _outputEncoding);
-            setParam(WMConstants.TEMPLATE_OUTPUT_ENCODING, _outputEncoding);
-        }
-        if ((_outputLocale != null)
-                && (getParam(WMConstants.TEMPLATE_LOCALE) == null))
-        {
-            _log.debug("Setting output locale to " + _outputLocale);
-            setParam(WMConstants.TEMPLATE_LOCALE, _outputLocale);
-        }
+  @Override
+  public void parse()
+      throws IOException, TemplateException
+  {
+    super.parse();
+    if ((_outputEncoding != null) && (getParam(WMConstants.TEMPLATE_OUTPUT_ENCODING) == null)) {
+      _log.debug("Setting output encoding to " + _outputEncoding);
+      setParam(WMConstants.TEMPLATE_OUTPUT_ENCODING, _outputEncoding);
     }
+    if ((_outputLocale != null) && (getParam(WMConstants.TEMPLATE_LOCALE) == null)) {
+      _log.debug("Setting output locale to " + _outputLocale);
+      setParam(WMConstants.TEMPLATE_LOCALE, _outputLocale);
+    }
+  }
 }
