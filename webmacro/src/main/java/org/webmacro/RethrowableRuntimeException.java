@@ -34,7 +34,7 @@ public class RethrowableRuntimeException
 
   private static final long serialVersionUID = 1L;
 
-  private Throwable cause;
+  private Throwable _cause;
 
   private final static String RETHROW_MESSAGE = "-- secondary stack trace --";
 
@@ -52,9 +52,9 @@ public class RethrowableRuntimeException
                                      Throwable e)
   {
     super(s + System.getProperty("line.separator") + e);
-    cause = e;
-    while (cause instanceof RethrowableRuntimeException) {
-      cause = ((RethrowableRuntimeException) cause).cause;
+    _cause = e;
+    while (_cause instanceof RethrowableRuntimeException) {
+      _cause = ((RethrowableRuntimeException) _cause)._cause;
     }
   }
 
@@ -62,9 +62,9 @@ public class RethrowableRuntimeException
   public void printStackTrace()
   {
     super.printStackTrace();
-    if (cause != null) {
+    if (_cause != null) {
       System.err.println(RETHROW_MESSAGE);
-      cause.printStackTrace();
+      _cause.printStackTrace();
     }
   }
 
@@ -72,9 +72,9 @@ public class RethrowableRuntimeException
   public void printStackTrace(java.io.PrintStream ps)
   {
     super.printStackTrace(ps);
-    if (cause != null) {
+    if (_cause != null) {
       ps.println(RETHROW_MESSAGE);
-      cause.printStackTrace(ps);
+      _cause.printStackTrace(ps);
     }
   }
 
@@ -82,9 +82,9 @@ public class RethrowableRuntimeException
   public void printStackTrace(java.io.PrintWriter pw)
   {
     super.printStackTrace(pw);
-    if (cause != null) {
+    if (_cause != null) {
       pw.println(RETHROW_MESSAGE);
-      cause.printStackTrace(pw);
+      _cause.printStackTrace(pw);
     }
   }
 
@@ -97,7 +97,7 @@ public class RethrowableRuntimeException
   @Override
   public Throwable getCause()
   {
-    return cause;
+    return _cause;
   }
 
   /**
@@ -109,9 +109,9 @@ public class RethrowableRuntimeException
    */
   public Throwable getRootCause()
   {
-    Throwable t = cause;
+    Throwable t = _cause;
     while (t != null && t instanceof RethrowableRuntimeException) {
-      t = ((RethrowableRuntimeException) t).cause;
+      t = ((RethrowableRuntimeException) t)._cause;
     }
     return t;
   }

@@ -30,15 +30,15 @@ public class URLTemplateLoader
   extends AbstractTemplateLoader
 {
 
-  static Logger _log = LoggerFactory.getLogger(URLTemplateLoader.class);
-  private URL baseURI;
+  static Logger LOGGER = LoggerFactory.getLogger(URLTemplateLoader.class);
+  private URL _baseURI;
 
   public void setConfig(String config)
   {
     try {
-      this.baseURI = new URL(config);
+      _baseURI = new URL(config);
     } catch (MalformedURLException e) {
-      _log.error("Cannot init url template loader, bad URL", e);
+      LOGGER.error("Cannot init url template loader, bad URL", e);
     }
   }
 
@@ -50,8 +50,8 @@ public class URLTemplateLoader
       throws ResourceException
   {
     try {
-      URL url = new URL(baseURI, query);
-      _log.debug("FileTemplateProvider: Found template " + url);
+      URL url = new URL(_baseURI, query);
+      LOGGER.debug("FileTemplateProvider: Found template " + url);
       return helper.load(url, ce);
     } catch (MalformedURLException e) {
       throw new ResourceException("Bad template URL", e);
