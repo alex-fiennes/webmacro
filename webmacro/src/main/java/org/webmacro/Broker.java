@@ -22,7 +22,6 @@ import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class Broker
   protected static ClassLoader _myClassLoader = Broker.class.getClassLoader();
   protected static ClassLoader _systemClassLoader = ClassLoader.getSystemClassLoader();
 
-  final protected Hashtable<String, Provider> _providers = new Hashtable<String, Provider>();
+  final protected Map<String, Provider> _providers = new Hashtable<String, Provider>();
   final protected Settings _config = new Settings();
   final protected String _name;
   final public PropertyOperatorCache _propertyOperators = new PropertyOperatorCache();
@@ -767,14 +766,13 @@ public class Broker
     buf.append("Broker:");
     buf.append(_name);
     buf.append("(");
-    Enumeration<Provider> e = _providers.elements();
-    while (e.hasMoreElements()) {
-      Provider pr = e.nextElement();
-      buf.append(pr);
-      if (e.hasMoreElements()) {
+    for (Iterator<Provider> i = _providers.values().iterator(); i.hasNext(); ) {
+      buf.append(i.next());
+      if (i.hasNext()) {
         buf.append(", ");
       }
     }
+    buf.append(")");
     return buf.toString();
   }
 
