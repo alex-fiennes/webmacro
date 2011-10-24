@@ -44,9 +44,9 @@ import org.webmacro.engine.MethodWrapper;
 public class Context
   implements Map<Object, Object>, Cloneable
 {
-  static Logger _log = LoggerFactory.getLogger(Context.class);
+  static Logger LOGGER = LoggerFactory.getLogger(Context.class);
 
-  private final Broker _broker;
+  private final Broker __broker;
   private HashMap<String, MethodWrapper> _funcs = null; // lazy initialization
 
   private EvaluationExceptionHandler _eeHandler;
@@ -71,7 +71,7 @@ public class Context
    */
   public Context(Broker broker)
   {
-    _broker = broker;
+    __broker = broker;
   }
 
   /** Holder for template place. */
@@ -133,7 +133,7 @@ public class Context
    */
   public final Broker getBroker()
   {
-    return _broker;
+    return __broker;
   }
 
   public final TemplateEvaluationContext getTemplateEvaluationContext()
@@ -156,7 +156,7 @@ public class Context
   public final Logger getLog(String type,
                              String description)
   {
-    return _log;
+    return LOGGER;
   }
 
   /**
@@ -165,7 +165,7 @@ public class Context
    */
   public final Logger getLog(String type)
   {
-    return _log;
+    return LOGGER;
   }
 
   /**
@@ -176,7 +176,7 @@ public class Context
     if (_eeHandler != null) {
       return _eeHandler;
     } else {
-      return _broker.getEvaluationExceptionHandler();
+      return __broker.getEvaluationExceptionHandler();
     }
   }
 
@@ -201,7 +201,7 @@ public class Context
       return ret;
 
     if (name instanceof String) {
-      Object var = _broker.getAutoContextVariable((String) name, this);
+      Object var = __broker.getAutoContextVariable((String) name, this);
       if (var != null) {
         put((String) name, var);
         return var;
@@ -215,13 +215,13 @@ public class Context
         func = _funcs.get(fname);
       }
       if (func == null) {
-        func = _broker.getFunction(fname);
+        func = __broker.getFunction(fname);
       }
       if (func != null) {
         Object[] args = fc.getArguments(this);
         ret = func.invoke(args);
       } else {
-        _log.error("Function " + fname + " was not loaded!");
+        LOGGER.error("Function " + fname + " was not loaded!");
       }
       return ret;
     } else {
@@ -281,7 +281,7 @@ public class Context
                                       String methodName)
   {
     MethodWrapper func = wrapMethod(instance, methodName);
-    _broker.putFunction(name, func);
+    __broker.putFunction(name, func);
   }
 
   private final MethodWrapper wrapMethod(Object instance,
@@ -297,7 +297,7 @@ public class Context
       } else if (instance != null) {
         className = instance.getClass().getName();
       }
-      _log.error("Unable to construct function from method: " + methodName + " of class "
+      LOGGER.error("Unable to construct function from method: " + methodName + " of class "
                  + className);
     }
     return func;
@@ -332,7 +332,7 @@ public class Context
     } else if (instance == null) {
       throw new PropertyException.NullValueException(names[0].toString());
     } else {
-      return _broker.__propertyOperators.getProperty(this, instance, names, 1);
+      return __broker.__propertyOperators.getProperty(this, instance, names, 1);
     }
   }
 
@@ -356,7 +356,7 @@ public class Context
       } catch (ArrayIndexOutOfBoundsException e) {
         return false;
       }
-      return _broker.__propertyOperators.setProperty(this, instance, names, 1, value);
+      return __broker.__propertyOperators.setProperty(this, instance, names, 1, value);
     }
   }
 
