@@ -108,7 +108,7 @@ public class AlternateDirective
         l = ((Macro) list).evaluate(context);
       else
         l = list;
-      Iterator<?> itr = context.getBroker()._propertyOperators.getIterator(l);
+      Iterator<?> itr = context.getBroker().__propertyOperators.getIterator(l);
       target.setValue(context, new IteratorAlternator(itr));
     } catch (Exception e) {
       String warning = "#alternate: list argument is not a list: " + l;

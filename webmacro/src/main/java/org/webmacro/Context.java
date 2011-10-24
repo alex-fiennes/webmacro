@@ -332,7 +332,7 @@ public class Context
     } else if (instance == null) {
       throw new PropertyException.NullValueException(names[0].toString());
     } else {
-      return _broker._propertyOperators.getProperty(this, instance, names, 1);
+      return _broker.__propertyOperators.getProperty(this, instance, names, 1);
     }
   }
 
@@ -356,7 +356,7 @@ public class Context
       } catch (ArrayIndexOutOfBoundsException e) {
         return false;
       }
-      return _broker._propertyOperators.setProperty(this, instance, names, 1, value);
+      return _broker.__propertyOperators.setProperty(this, instance, names, 1, value);
     }
   }
 

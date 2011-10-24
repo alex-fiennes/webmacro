@@ -92,7 +92,7 @@ public class Servlet22Broker
           p.setProperty(key, _servletContext.getInitParameter(key).substring(dotPrefix.length()));
       }
     }
-    _config.load(p, prefix);
+    __config.load(p, prefix);
   }
 
   @Override

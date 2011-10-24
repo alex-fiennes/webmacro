@@ -49,7 +49,7 @@ public class ConstantPropertyVariable
     if (value == null)
       throw new PropertyException.NullValueException(_names[0].toString());
     else
-      return context.getBroker()._propertyOperators.getProperty(context, value, _names, 1);
+      return context.getBroker().__propertyOperators.getProperty(context, value, _names, 1);
   }
 
   /**

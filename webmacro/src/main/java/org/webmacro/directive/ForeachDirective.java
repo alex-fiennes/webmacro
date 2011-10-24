@@ -128,7 +128,7 @@ public class ForeachDirective
 
     Iterator<?> iter;
     try {
-      iter = context.getBroker()._propertyOperators.getIterator(l);
+      iter = context.getBroker().__propertyOperators.getIterator(l);
     } catch (Exception e) {
       String warning = "#foreach: ";
       if (list instanceof Variable)

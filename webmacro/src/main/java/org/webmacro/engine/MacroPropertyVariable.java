@@ -52,7 +52,7 @@ public class MacroPropertyVariable
     if (v == null)
       throw new PropertyException.NullValueException(_names[0].toString());
     else
-      return context.getBroker()._propertyOperators.getProperty(context, v, _names, 1);
+      return context.getBroker().__propertyOperators.getProperty(context, v, _names, 1);
   }
 
   /**

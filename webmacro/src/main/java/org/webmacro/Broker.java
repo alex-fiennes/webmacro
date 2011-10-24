@@ -67,31 +67,33 @@ public class Broker
   public static final WeakHashMap<Object, WeakReference<Broker>> BROKERS =
       new WeakHashMap<Object, WeakReference<Broker>>();
 
-  private static Settings _defaultSettings;
-  protected static ClassLoader _myClassLoader = Broker.class.getClassLoader();
-  protected static ClassLoader _systemClassLoader = ClassLoader.getSystemClassLoader();
+  private static Settings DEFAULT_SETTINGS;
+  protected static ClassLoader MY_CLASSLOADER = Broker.class.getClassLoader();
+  protected static ClassLoader SYSTEM_CLASSLOADER = ClassLoader.getSystemClassLoader();
 
-  final protected Map<String, Provider> _providers = new Hashtable<String, Provider>();
-  final protected Settings _config = new Settings();
-  final protected String _name;
-  final public PropertyOperatorCache _propertyOperators = new PropertyOperatorCache();
+  final protected Map<String, Provider> __providers = new Hashtable<String, Provider>();
+  final protected Settings __config = new Settings();
+  final protected String __name;
+  final public PropertyOperatorCache __propertyOperators = new PropertyOperatorCache();
 
-  protected Logger _log = LoggerFactory.getLogger(Broker.class);
+  protected final Logger __log = LoggerFactory.getLogger(Broker.class);
 
   private EvaluationExceptionHandler _eeHandler;
 
   /** a local map for one to dump stuff into, specific to this Broker */
-  private Map<Object, Object> _brokerLocal = new ConcurrentHashMap<Object, Object>();
+  private final Map<Object, Object> __brokerLocal = new ConcurrentHashMap<Object, Object>();
 
   /** a local map for "global functions" */
-  private Map<String, MethodWrapper> _functionMap = new ConcurrentHashMap<String, MethodWrapper>();
+  private final Map<String, MethodWrapper> __functionMap =
+      new ConcurrentHashMap<String, MethodWrapper>();
 
   /** a local map for context tools and other automatic context goodies */
-  private Map<String, ContextAutoLoader> _toolLoader =
+  private final Map<String, ContextAutoLoader> __toolLoader =
       new ConcurrentHashMap<String, ContextAutoLoader>();
 
   /** map of global macros */
-  private Map<String, MacroDefinition> _macros = new ConcurrentHashMap<String, MacroDefinition>();
+  private final Map<String, MacroDefinition> __macros =
+      new ConcurrentHashMap<String, MacroDefinition>();
 
   /*
    * Constructors. Callers shouldn't use them; they should use the factory methods (getBroker).
@@ -117,7 +119,7 @@ public class Broker
     loadDefaultSettings();
     loadSettings(WEBMACRO_PROPERTIES, true);
     loadSystemSettings();
-    _log.info("Loaded settings from " + propertySource);
+    __log.info("Loaded settings from " + propertySource);
     init();
   }
 
@@ -136,7 +138,7 @@ public class Broker
     loadSettings(WEBMACRO_PROPERTIES, true);
     loadSettings(props);
     loadSystemSettings();
-    _log.info("Loaded settings from " + propertySource);
+    __log.info("Loaded settings from " + propertySource);
     init();
   }
 
@@ -158,7 +160,7 @@ public class Broker
     }
     loadSystemSettings();
     propertySource += ", " + "(System Properties)";
-    _log.info("Loaded settings from " + propertySource);
+    __log.info("Loaded settings from " + propertySource);
     init();
   }
 
@@ -175,7 +177,7 @@ public class Broker
   protected Broker(Broker dummy,
                    String name) throws InitException
   {
-    _name = name;
+    __name = name;
   }
 
   /**
@@ -183,7 +185,7 @@ public class Broker
    */
   public Logger getBrokerLog()
   {
-    return _log;
+    return __log;
   }
 
   private class ProviderSettingHandler
@@ -198,7 +200,7 @@ public class Broker
         Provider instance = (Provider) pClass.newInstance();
         addProvider(instance, settingKey);
       } catch (Exception e) {
-        _log.error("Provider (" + settingValue + ") failed to load", e);
+        __log.error("Provider (" + settingValue + ") failed to load", e);
       }
     }
   }
@@ -215,7 +217,7 @@ public class Broker
         ContextAutoLoader instance = (ContextAutoLoader) pClass.newInstance();
         instance.init(Broker.this, settingKey);
       } catch (Exception e) {
-        _log.error("ContextAutoLoader (" + settingValue + ") failed to load", e);
+        __log.error("ContextAutoLoader (" + settingValue + ") failed to load", e);
       }
     }
   }
@@ -230,43 +232,43 @@ public class Broker
     String eehClass;
 
     // Initialize the property operator cache
-    _propertyOperators.init(this, _config);
+    __propertyOperators.init(this, __config);
 
     // Write out our properties as debug records
-    if (_log.isDebugEnabled()) {
-      String[] properties = _config.getKeys();
+    if (__log.isDebugEnabled()) {
+      String[] properties = __config.getKeys();
       Arrays.sort(properties);
       for (int i = 0; i < properties.length; i++) {
-        _log.debug("Property " + properties[i] + ": " + _config.getSetting(properties[i]));
+        __log.debug("Property " + properties[i] + ": " + __config.getSetting(properties[i]));
       }
     }
 
     // set up providers
-    _config.processListSetting("Providers", new ProviderSettingHandler());
-    if (_providers.size() == 0) {
-      _log.error("No Providers specified");
+    __config.processListSetting("Providers", new ProviderSettingHandler());
+    if (__providers.size() == 0) {
+      __log.error("No Providers specified");
       throw new InitException("No Providers specified in configuration");
     }
 
-    _config.processListSetting("ContextAutoLoaders", new AutoLoaderSettingHandler());
+    __config.processListSetting("ContextAutoLoaders", new AutoLoaderSettingHandler());
     // @@@ load autoloaders
 
-    eehClass = _config.getSetting("ExceptionHandler");
+    eehClass = __config.getSetting("ExceptionHandler");
     if (eehClass != null && !eehClass.equals("")) {
       try {
         _eeHandler = (EvaluationExceptionHandler) classForName(eehClass).newInstance();
       } catch (Exception e) {
-        _log.warn("Unable to instantiate exception handler of class " + eehClass + "; " + e);
+        __log.warn("Unable to instantiate exception handler of class " + eehClass + "; " + e);
       }
     }
     if (_eeHandler == null) {
       _eeHandler = new DefaultEvaluationExceptionHandler();
     }
 
-    _eeHandler.init(this, _config);
+    _eeHandler.init(this, __config);
 
     // Initialize function map
-    SubSettings fnSettings = new SubSettings(_config, "Functions");
+    SubSettings fnSettings = new SubSettings(__config, "Functions");
     String[] fns = fnSettings.getKeys();
     for (int i = 0; fns != null && i < fns.length; i++) {
       String fn = fns[i];
@@ -282,7 +284,7 @@ public class Broker
       String fnClassName = fnSetting.substring(0, lastDot);
       String fnMethName = fnSetting.substring(lastDot + 1);
       // function type may be static, instance, or factory. Default is static
-      String fnType = _config.getSetting("Function." + fn + ".type", "static");
+      String fnType = __config.getSetting("Function." + fn + ".type", "static");
       Object[] args = null;
       if ("factory".equals(fnType)) {
         // TODO: implement this!!!
@@ -293,7 +295,7 @@ public class Broker
       }
       if (!"static".equals(fnType)) {
         // get arg string
-        String argString = _config.getSetting("Function." + fn + ".args");
+        String argString = __config.getSetting("Function." + fn + ".args");
         if (argString != null) {
           if (!argString.startsWith("[")) {
             argString = "[" + argString + "]";
@@ -304,11 +306,11 @@ public class Broker
           try {
             tmpl.evaluateAsString(argContext);
           } catch (Exception e) {
-            _log.error("Unable to evaluate arguments to function " + fn
-                       + ".  The specified string was " + argString + ".", e);
+            __log.error("Unable to evaluate arguments to function " + fn
+                        + ".  The specified string was " + argString + ".", e);
           }
           args = (Object[]) argContext.get("args");
-          _log.debug("Args for function " + fn + ": " + Arrays.asList(args));
+          __log.debug("Args for function " + fn + ": " + Arrays.asList(args));
         }
       }
 
@@ -316,7 +318,7 @@ public class Broker
       try {
         c = Class.forName(fnClassName);
       } catch (Exception e) {
-        _log.error("Unable to load class " + fnClassName + " for function " + fn, e);
+        __log.error("Unable to load class " + fnClassName + " for function " + fn, e);
       }
 
       Object o = c;
@@ -328,17 +330,17 @@ public class Broker
           }
         }
         MethodWrapper mw = new MethodWrapper(o, fnMethName);
-        _functionMap.put(fn, mw);
+        __functionMap.put(fn, mw);
       } catch (Exception e) {
-        _log.error("Unable to instantiate the function " + fn
-                   + " using the supplied configuration.", e);
+        __log.error("Unable to instantiate the function " + fn
+                    + " using the supplied configuration.", e);
       }
     }
 
     MacroIncludeSettingHandler macroHandler = new MacroIncludeSettingHandler();
 
     // parse all macro libraries
-    _config.processListSetting("Macros.Include", macroHandler);
+    __config.processListSetting("Macros.Include", macroHandler);
 
     // handle exceptions if any
     if (macroHandler.e != null) {
@@ -362,9 +364,9 @@ public class Broker
     {
       try {
         Template t = (Template) getProvider("template").get(settingValue);
-        _macros.putAll(t.getMacros());
+        __macros.putAll(t.getMacros());
       } catch (ResourceException e) {
-        _log.error("Error loading macro library '" + settingValue + "', ignoring it", e);
+        __log.error("Error loading macro library '" + settingValue + "', ignoring it", e);
         // store exception
         if (this.e == null)
           this.e = e;
@@ -418,15 +420,15 @@ public class Broker
   protected synchronized void loadDefaultSettings()
       throws InitException
   {
-    if (_defaultSettings == null) {
+    if (DEFAULT_SETTINGS == null) {
       try {
-        _defaultSettings = new Settings(WEBMACRO_DEFAULTS);
+        DEFAULT_SETTINGS = new Settings(WEBMACRO_DEFAULTS);
       } catch (IOException e) {
         throw new InitException("IO Error reading " + WEBMACRO_DEFAULTS, e);
       }
     }
     // _log.info("Loading properties file " + WEBMACRO_DEFAULTS);
-    _config.load(_defaultSettings);
+    __config.load(DEFAULT_SETTINGS);
   }
 
   protected boolean loadSettings(String name,
@@ -436,11 +438,11 @@ public class Broker
     URL u = getResource(name);
     if (u != null) {
       try {
-        _config.load(u);
+        __config.load(u);
         return true;
       } catch (IOException e) {
         if (optional) {
-          _log.info("Cannot find properties file " + name + ", continuing");
+          __log.info("Cannot find properties file " + name + ", continuing");
         }
         e.printStackTrace();
         if (!optional) {
@@ -457,13 +459,13 @@ public class Broker
 
   protected void loadSettings(Properties p)
   {
-    _config.load(p);
+    __config.load(p);
   }
 
   protected void loadSystemSettings()
   {
     // _log.info("Loading properties from system properties");
-    _config.load(System.getProperties(), SETTINGS_PREFIX);
+    __config.load(System.getProperties(), SETTINGS_PREFIX);
   }
 
   /**
@@ -498,7 +500,7 @@ public class Broker
    */
   public Settings getSettings()
   {
-    return _config;
+    return __config;
   }
 
   /**
@@ -506,7 +508,7 @@ public class Broker
    */
   public String getSetting(String key)
   {
-    return _config.getSetting(key);
+    return __config.getSetting(key);
   }
 
   /**
@@ -514,7 +516,7 @@ public class Broker
    */
   public boolean getBooleanSetting(String key)
   {
-    return _config.getBooleanSetting(key);
+    return __config.getBooleanSetting(key);
   }
 
   /**
@@ -522,7 +524,7 @@ public class Broker
    */
   public int getIntegerSetting(String key)
   {
-    return _config.getIntegerSetting(key);
+    return __config.getIntegerSetting(key);
   }
 
   /**
@@ -531,7 +533,7 @@ public class Broker
   public int getIntegerSetting(String key,
                                int defaultValue)
   {
-    return _config.getIntegerSetting(key, defaultValue);
+    return __config.getIntegerSetting(key, defaultValue);
   }
 
   /**
@@ -545,11 +547,11 @@ public class Broker
     if (pType == null || pType.equals("")) {
       pType = p.getType();
     }
-    p.init(this, _config);
-    _providers.put(pType, p);
-    _log.info("Loaded provider " + p);
+    p.init(this, __config);
+    __providers.put(pType, p);
+    __log.info("Loaded provider " + p);
     if (!pType.equals(p.getType())) {
-      _log.info("Provider name remapped from " + p.getType() + " to " + pType);
+      __log.info("Provider name remapped from " + p.getType() + " to " + pType);
     }
   }
 
@@ -559,7 +561,7 @@ public class Broker
   public Provider getProvider(String type)
       throws NotFoundException
   {
-    Provider p = (Provider) _providers.get(type);
+    Provider p = (Provider) __providers.get(type);
     if (p == null) {
       throw new NotFoundException("No provider for type " + type
                                   + ": perhaps WebMacro couldn't load its configuration?");
@@ -575,7 +577,7 @@ public class Broker
    **/
   public Iterator<String> getProviderTypes()
   {
-    return _providers.keySet().iterator();
+    return __providers.keySet().iterator();
   }
 
   /**
@@ -585,7 +587,7 @@ public class Broker
    **/
   public void destroy()
   {
-    Iterator<Provider> providers = _providers.values().iterator();
+    Iterator<Provider> providers = __providers.values().iterator();
     while (providers.hasNext()) {
       providers.next().destroy();
     }
@@ -615,7 +617,7 @@ public class Broker
    */
   public Map<String, MacroDefinition> getMacros()
   {
-    return _macros;
+    return __macros;
   }
   /**
    * Get a resource (file) from the the Broker's class loader. We look first with the Broker's class
@@ -623,9 +625,9 @@ public class Broker
    */
   public URL getResource(String name)
   {
-    URL u = _myClassLoader.getResource(name);
+    URL u = MY_CLASSLOADER.getResource(name);
     if (u == null) {
-      u = _systemClassLoader.getResource(name);
+      u = SYSTEM_CLASSLOADER.getResource(name);
     }
     if (u == null) {
       try {
@@ -635,7 +637,7 @@ public class Broker
           u = null;
         }
       } catch (MalformedURLException ignored) {
-        _log.error("MalformedURL", ignored);
+        __log.error("MalformedURL", ignored);
       }
     }
     return u;
@@ -646,15 +648,15 @@ public class Broker
    */
   public InputStream getResourceAsStream(String name)
   {
-    InputStream is = _myClassLoader.getResourceAsStream(name);
+    InputStream is = MY_CLASSLOADER.getResourceAsStream(name);
     if (is == null) {
-      is = _systemClassLoader.getResourceAsStream(name);
+      is = SYSTEM_CLASSLOADER.getResourceAsStream(name);
     }
     if (is == null) {
       try {
         is = new FileInputStream(name);
       } catch (FileNotFoundException ignored) {
-        _log.error("FileNotFound", ignored);
+        __log.error("FileNotFound", ignored);
       }
     }
     return is;
@@ -700,7 +702,7 @@ public class Broker
   public void setBrokerLocal(Object key,
                              Object value)
   {
-    _brokerLocal.put(key, value);
+    __brokerLocal.put(key, value);
   }
 
   /**
@@ -710,20 +712,20 @@ public class Broker
    */
   public Object getBrokerLocal(Object key)
   {
-    return _brokerLocal.get(key);
+    return __brokerLocal.get(key);
   }
 
   /** fetch a "global function" */
   public MethodWrapper getFunction(String fnName)
   {
-    return (MethodWrapper) _functionMap.get(fnName);
+    return (MethodWrapper) __functionMap.get(fnName);
   }
 
   /** store a "global function" */
   public void putFunction(String fnName,
                           MethodWrapper mw)
   {
-    _functionMap.put(fnName, mw);
+    __functionMap.put(fnName, mw);
   }
 
   /** store a "global function" by name */
@@ -739,7 +741,7 @@ public class Broker
   public Object getAutoContextVariable(String variableName,
                                        Context context)
   {
-    ContextAutoLoader loader = (ContextAutoLoader) _toolLoader.get(variableName);
+    ContextAutoLoader loader = (ContextAutoLoader) __toolLoader.get(variableName);
     try {
       if (loader == null)
         return null;
@@ -753,7 +755,7 @@ public class Broker
   public void registerAutoContextVariable(String variableName,
                                           ContextAutoLoader loader)
   {
-    _toolLoader.put(variableName, loader);
+    __toolLoader.put(variableName, loader);
   }
 
   /**
@@ -764,9 +766,9 @@ public class Broker
   {
     StringBuffer buf = new StringBuffer();
     buf.append("Broker:");
-    buf.append(_name);
+    buf.append(__name);
     buf.append("(");
-    for (Iterator<Provider> i = _providers.values().iterator(); i.hasNext(); ) {
+    for (Iterator<Provider> i = __providers.values().iterator(); i.hasNext();) {
       buf.append(i.next());
       if (i.hasNext()) {
         buf.append(", ");
@@ -778,12 +780,12 @@ public class Broker
 
   public String getName()
   {
-    return _name;
+    return __name;
   }
 
   public ClassLoader getClassLoader()
   {
-    return _myClassLoader;
+    return MY_CLASSLOADER;
   }
 
   /**
