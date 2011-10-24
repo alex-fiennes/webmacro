@@ -37,10 +37,10 @@ public class WM
 
   // INIT METHODS--MANAGE ACCESS TO THE BROKER
 
-  final private Broker _broker; // cache for rapid access
+  final private Broker __broker; // cache for rapid access
 
-  final private Provider _tmplProvider;
-  final private Provider _urlProvider;
+  final private Provider __tmplProvider;
+  final private Provider __urlProvider;
 
   /**
    * Constructs a WM which gets its properties (optionally) from the file WebMacro.properties, as
@@ -115,12 +115,12 @@ public class WM
     if (broker == null)
       throw new InitException("No Broker passed to WM()");
 
-    _broker = broker;
+    __broker = broker;
     _log.info("new " + this + " v" + WebMacro.VERSION);
 
     try {
-      _tmplProvider = _broker.getProvider("template");
-      _urlProvider = _broker.getProvider("url");
+      __tmplProvider = __broker.getProvider("template");
+      __urlProvider = __broker.getProvider("url");
     } catch (NotFoundException nfe) {
       _log.error("Could not load configuration", nfe);
       throw new InitException("Could not locate provider; "
@@ -135,7 +135,7 @@ public class WM
   @Override
   public String toString()
   {
-    return "WebMacro(" + _broker.getName() + ")";
+    return "WebMacro(" + __broker.getName() + ")";
   }
 
   /**
@@ -151,7 +151,7 @@ public class WM
     // is after the last servlet has shutdown--so why would anyone be
     // accessing us then? if they do the _broker will throw exceptions
     // complaining that it has been shut down, or they'll get a null here.
-    return _broker;
+    return __broker;
   }
 
   /**
@@ -159,7 +159,7 @@ public class WM
    */
   final public Context getContext()
   {
-    return new Context(_broker);
+    return new Context(__broker);
   }
 
   /**
@@ -168,7 +168,7 @@ public class WM
   final public WebContext getWebContext(HttpServletRequest req,
                                         HttpServletResponse resp)
   {
-    return new WebContext(_broker, req, resp);
+    return new WebContext(__broker, req, resp);
   }
 
   /**
@@ -182,7 +182,7 @@ public class WM
   final public Template getTemplate(String key)
       throws ResourceException
   {
-    return (Template) _tmplProvider.get(key);
+    return (Template) __tmplProvider.get(key);
   }
 
   /**
@@ -196,7 +196,7 @@ public class WM
   final public String getURL(String url)
       throws ResourceException
   {
-    return (String) _urlProvider.get(url);
+    return (String) __urlProvider.get(url);
   }
 
   /**
@@ -210,7 +210,7 @@ public class WM
       throws NotFoundException
   {
     try {
-      return (String) _broker.get("config", key);
+      return (String) __broker.get("config", key);
     } catch (NotFoundException e) {
       throw e;
     } catch (ResourceException e) {
