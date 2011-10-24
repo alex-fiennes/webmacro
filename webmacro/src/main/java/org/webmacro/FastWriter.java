@@ -60,11 +60,11 @@ public class FastWriter
     SAFE_UNICODE_ENCODING = encoding;
   }
 
-  private final int DEFAULT_BUFFER_SIZE;
-  private final String _encoding; // what encoding we use
-  private final Writer _bwriter;
-  private final ByteBufferOutputStream _bstream;
-  private final Encoder _encoder;
+  private final int __defaultBufferSize;
+  private final String __encoding; // what encoding we use
+  private final Writer __bwriter;
+  private final ByteBufferOutputStream __bstream;
+  private final Encoder __encoder;
 
   private OutputStream _out;
 
@@ -79,15 +79,15 @@ public class FastWriter
                     OutputStream out,
                     String encoding) throws UnsupportedEncodingException
   {
-    DEFAULT_BUFFER_SIZE =
+    __defaultBufferSize =
         broker.getSettings().getIntegerSetting("FastWriter.DefaultBufferSize", 4096);
-    _encoding = hackEncoding(encoding);
-    _bstream = new ByteBufferOutputStream(DEFAULT_BUFFER_SIZE);
-    _bwriter = new OutputStreamWriter(_bstream, _encoding);
+    __encoding = hackEncoding(encoding);
+    __bstream = new ByteBufferOutputStream(__defaultBufferSize);
+    __bwriter = new OutputStreamWriter(__bstream, __encoding);
 
     // fetch our encoder from the broker
     try {
-      _encoder = (Encoder) broker.get(EncoderProvider.TYPE, _encoding);
+      __encoder = (Encoder) broker.get(EncoderProvider.TYPE, __encoding);
     } catch (ResourceException re) {
       throw new UnsupportedEncodingException(re.getMessage());
     }
@@ -127,7 +127,7 @@ public class FastWriter
    */
   public String getEncoding()
   {
-    return _encoding;
+    return __encoding;
   }
 
   /**
@@ -135,7 +135,7 @@ public class FastWriter
    */
   public Encoder getEncoder()
   {
-    return _encoder;
+    return __encoder;
   }
 
   /**
@@ -155,7 +155,7 @@ public class FastWriter
   public void write(char[] cbuf)
       throws java.io.IOException
   {
-    _bwriter.write(cbuf, 0, cbuf.length);
+    __bwriter.write(cbuf, 0, cbuf.length);
     _buffered = true;
   }
 
@@ -168,7 +168,7 @@ public class FastWriter
                     int len)
       throws java.io.IOException
   {
-    _bwriter.write(cbuf, offset, len);
+    __bwriter.write(cbuf, offset, len);
     _buffered = true;
   }
 
@@ -179,7 +179,7 @@ public class FastWriter
   public void write(int c)
       throws java.io.IOException
   {
-    _bwriter.write(c);
+    __bwriter.write(c);
     _buffered = true;
   }
 
@@ -198,7 +198,7 @@ public class FastWriter
       s.getChars(0, len, _cbuf, 0);
     }
 
-    _bwriter.write(_cbuf, 0, len);
+    __bwriter.write(_cbuf, 0, len);
     _buffered = true;
   }
 
@@ -218,7 +218,7 @@ public class FastWriter
       s.getChars(off, off + len, _cbuf, 0);
     }
 
-    _bwriter.write(_cbuf, 0, len);
+    __bwriter.write(_cbuf, 0, len);
     _buffered = true;
   }
 
@@ -232,8 +232,8 @@ public class FastWriter
       bflush();
     }
     try {
-      byte[] b = _encoder.encode(s);
-      _bstream.write(b, 0, b.length);
+      byte[] b = __encoder.encode(s);
+      __bstream.write(b, 0, b.length);
     } catch (UnsupportedEncodingException uee) {
       // this should never happen
       uee.printStackTrace();
@@ -249,7 +249,7 @@ public class FastWriter
     if (_buffered) {
       bflush();
     }
-    _bstream.write(rawBytes);
+    __bstream.write(rawBytes);
   }
 
   /**
@@ -263,13 +263,13 @@ public class FastWriter
     if (_buffered) {
       bflush();
     }
-    _bstream.write(rawBytes, offset, len);
+    __bstream.write(rawBytes, offset, len);
   }
 
   private void bflush()
   {
     try {
-      _bwriter.flush();
+      __bwriter.flush();
       _buffered = false;
     } catch (IOException e) {
       e.printStackTrace();
@@ -294,7 +294,7 @@ public class FastWriter
       writeTo(_out);
       _out.flush();
     }
-    _bstream.reset();
+    __bstream.reset();
   }
 
   /**
@@ -307,7 +307,7 @@ public class FastWriter
       bflush();
     }
 
-    return _bstream.size();
+    return __bstream.size();
   }
 
   /**
@@ -318,7 +318,7 @@ public class FastWriter
     if (_buffered) {
       bflush();
     }
-    return _bstream.getBytes();
+    return __bstream.getBytes();
   }
 
   /**
@@ -331,7 +331,7 @@ public class FastWriter
       bflush();
     }
     try {
-      return _bstream.toString(_encoding);
+      return __bstream.toString(__encoding);
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace(); // never happen: we already used it
       return null;
@@ -347,7 +347,7 @@ public class FastWriter
     if (_buffered) {
       bflush();
     }
-    _bstream.writeTo(out);
+    __bstream.writeTo(out);
   }
 
   /**
@@ -358,7 +358,7 @@ public class FastWriter
     if (_buffered) {
       bflush();
     }
-    _bstream.reset();
+    __bstream.reset();
     _out = out;
   }
 
