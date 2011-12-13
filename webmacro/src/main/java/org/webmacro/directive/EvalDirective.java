@@ -12,6 +12,9 @@
 
 package org.webmacro.directive;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.webmacro.Context;
 import org.webmacro.Macro;
 import org.webmacro.PropertyException;
@@ -77,7 +80,6 @@ public class EvalDirective
     return this;
   }
 
-  @SuppressWarnings("unchecked")
   public void write(org.webmacro.FastWriter out,
                     org.webmacro.Context context)
       throws org.webmacro.PropertyException, java.io.IOException
@@ -108,11 +110,11 @@ public class EvalDirective
         // no map specified, use current context
         macro.write(out, context);
       } else {
-        Object argmap = _mapExpr;
-        if (argmap instanceof Macro) {
-          argmap = ((Macro) argmap).evaluate(context);
+        Object argMapObj = _mapExpr;
+        if (argMapObj instanceof Macro) {
+          argMapObj = ((Macro) argMapObj).evaluate(context);
         }
-        if (!(argmap instanceof java.util.Map<?, ?>)) {
+        if (!(argMapObj instanceof java.util.Map<?, ?>)) {
           throw new PropertyException("The supplied expression did not evaluate to a java.util.Map instance.");
         }
         // check for max recursion
@@ -140,8 +142,11 @@ public class EvalDirective
         if (outerVars == null)
           outerVars = context.getMap();
         Context c = new Context(context.getBroker());
-        // replace _variables map with supplied map
-        c.setMap((java.util.Map<Object, Object>) argmap);
+        // replace _variables map with a copy of the supplied map
+        Map<?, ?> argMap = (Map<?, ?>) argMapObj;
+        Map<Object, Object> argsMapCopy = new HashMap<Object, Object>(argMap.size() * 2);
+        argsMapCopy.putAll(argMap);
+        c.setMap(argsMapCopy);
         // put current depth into the new context
         c.put("EvalDepth", recursionDepth);
         // add a reference to parent context variables
