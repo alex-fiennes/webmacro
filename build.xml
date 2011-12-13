@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="webmacro" default="all">
+
+    <property name="project.deps" value="."/>
+	<property name="src.dir" value="webmacro/src/main/java" />
+    
+    <!-- Place any project-specific properties above this line -->
+    <import file="${basedir}/../build/build-common.xml" />
+
+</project>

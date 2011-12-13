@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+	xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="org.webmacro" module="webmacro" status="release" />
+	<configurations>
+		<include file="../build/ivy/configurations.ivy.xml" />
+	</configurations>
+
+	<dependencies defaultconf="compile">
+
+		<dependency org='org.slf4j' name='slf4j-api' rev='1.6.4' />
+
+		<dependency conf="compile" org="com.google.guava" name="guava"
+			rev="r09" />
+
+		<dependency conf="provided" org="javax.servlet" name="servlet-api"
+			rev="2.4" />
+
+		<override org="javax.servlet" module="servlet-api" rev="2.4" />
+
+
+	</dependencies>
+</ivy-module>
