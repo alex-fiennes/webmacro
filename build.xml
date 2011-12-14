@@ -3,7 +3,21 @@
 
     <property name="project.deps" value="."/>
 	<property name="src.dir" value="webmacro/src/main/java" />
-    
+    <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
+
+	<target name="makejar" depends="compile">
+		<jar jarfile="${build.dir}/${jarfile}" basedir="${classes.dir}" />
+	</target>
+
+	<target name="compile" depends="deps.compile, ivy-retrieve, classpath.define" description="Compile all the java sources">
+		<mkdir dir="${classes.dir}" />
+		<javac destdir="${classes.dir}" debug="true" encoding="utf-8">
+			<src path="${src.dir}" />
+			<classpath refid="classpath" />
+		</javac>
+        <copy file="webmacro/WebMacro.defaults.${wm-style}" tofile="${classes.dir}/WebMacro.defaults"/>
+	</target>
+
     <!-- Place any project-specific properties above this line -->
     <import file="${basedir}/../build/build-common.xml" />
 
