@@ -10,7 +10,7 @@
 
 	<dependencies defaultconf="compile">
 
-		<dependency org='org.slf4j' name='slf4j-api' rev='1.6.4' />
+		<dependency conf='runtime' org='org.slf4j' name='slf4j-api' rev='1.6.4' />
 
 		<dependency conf="compile" org="com.google.guava" name="guava"
 			rev="r09" />
