@@ -561,7 +561,7 @@ public class Broker
   public Provider getProvider(String type)
       throws NotFoundException
   {
-    Provider p = (Provider) __providers.get(type);
+    Provider p = __providers.get(type);
     if (p == null) {
       throw new NotFoundException("No provider for type " + type
                                   + ": perhaps WebMacro couldn't load its configuration?");
