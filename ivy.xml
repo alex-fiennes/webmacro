@@ -11,7 +11,7 @@
 	<dependencies defaultconf="compile">
 
 <!--		<dependency conf='runtime' org='org.slf4j' name='slf4j-api' rev='1.6.4' /> -->
-		<dependency conf='runtime' org='org.slf4j' name='slf4j-log4j12' rev='1.6.4' />
+		<dependency conf='compile' org='org.slf4j' name='slf4j-jdk14' rev='1.6.4' />
 
 		<dependency conf="compile" org="com.google.guava" name="guava"
 			rev="r09" />
