@@ -184,7 +184,7 @@ public class WM
   {
     return (Template) __tmplProvider.get(key);
   }
-
+  
   /**
    * Retrieve a URL from the "url" provider. Equivalent to getBroker().getValue("url",url)
    * 
