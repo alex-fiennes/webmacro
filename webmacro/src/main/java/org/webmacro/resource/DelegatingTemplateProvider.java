@@ -12,7 +12,6 @@
 package org.webmacro.resource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +65,8 @@ public class DelegatingTemplateProvider
   static Logger _log = LoggerFactory.getLogger(DelegatingTemplateProvider.class);
 
   private TemplateLoaderFactory factory;
-  private TemplateLoader[] templateLoaders;
+  
+  private List<TemplateLoader> _templateLoaders;
 
   @Override
   public void init(Broker broker,
@@ -98,9 +98,9 @@ public class DelegatingTemplateProvider
       i++;
       loader = config.getSetting("TemplateLoaderPath.".concat(String.valueOf(i + 1)));
     }
-    templateLoaders = new TemplateLoader[loaders.size()];
-    loaders.toArray(templateLoaders);
+    _templateLoaders = Collections.unmodifiableList(loaders);
   }
+  
 
   public String getType()
   {
@@ -116,8 +116,9 @@ public class DelegatingTemplateProvider
                      CacheElement ce)
       throws ResourceException
   {
-    for (int i = 0; i < templateLoaders.length; i++) {
-      Template t = templateLoaders[i].load(query, ce);
+    int s = _templateLoaders.size();
+    for (int i = 0; i < s; i++) {
+      Template t = _templateLoaders.get(i).load(query, ce);
       if (t != null) {
         return t;
       }
@@ -134,7 +135,7 @@ public class DelegatingTemplateProvider
    */
   public List<TemplateLoader> getTemplateLoaders()
   {
-    return Collections.unmodifiableList(Arrays.asList(templateLoaders));
+    return _templateLoaders;
   }
 
   protected TemplateLoaderFactory createFactory(String classname)
