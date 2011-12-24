@@ -1,6 +1,7 @@
 /.settings/
 /.project
 /.classpath
+/build/
 *.iml
 *.class
 *~
