@@ -54,7 +54,7 @@ abstract public class WMTemplate
   /**
    * The resource broker used to resolve things in this template.
    */
-  final protected Broker _broker;
+  final protected Broker __broker;
 
   /**
    * Whether template has already been parsed.
@@ -96,7 +96,7 @@ abstract public class WMTemplate
   protected WMTemplate(String parserName,
                        Broker broker)
   {
-    _broker = broker;
+    __broker = broker;
     _parserName = parserName;
   }
 
@@ -141,7 +141,7 @@ abstract public class WMTemplate
       throws TemplateException
   {
     try {
-      return (Parser) _broker.get("parser", "wm");
+      return (Parser) __broker.get("parser", "wm");
     } catch (Exception e) {
       throw new TemplateException("Could not load parser type " + _parserName, e);
     }
@@ -164,9 +164,9 @@ abstract public class WMTemplate
         in = getReader();
         BlockBuilder bb = parser.parseBlock(getName(), in);
         in.close();
-        bc = new BuildContext(_broker);
+        bc = new BuildContext(__broker);
         // put global macros from Broker into the BuildContext
-        Map<String, MacroDefinition> globalMacros = _broker.getMacros();
+        Map<String, MacroDefinition> globalMacros = __broker.getMacros();
         for (Iterator<Map.Entry<String, MacroDefinition>> i = globalMacros.entrySet().iterator(); i.hasNext();) {
           Map.Entry<String, MacroDefinition> entry = i.next();
           bc.putMacro((String) entry.getKey(), (MacroDefinition) entry.getValue());
@@ -225,7 +225,7 @@ abstract public class WMTemplate
       throws PropertyException
   {
     try {
-      FastWriter fw = FastWriter.getInstance(_broker);
+      FastWriter fw = FastWriter.getInstance(__broker);
       write(fw, context);
       String ret = fw.toString();
       fw.close();
@@ -246,7 +246,7 @@ abstract public class WMTemplate
       throws PropertyException
   {
     try {
-      FastWriter fw = FastWriter.getInstance(_broker, encoding);
+      FastWriter fw = FastWriter.getInstance(__broker, encoding);
       write(fw, context);
       byte[] ret = fw.toByteArray();
       fw.close();
@@ -261,7 +261,7 @@ abstract public class WMTemplate
                     Context context)
       throws PropertyException, IOException
   {
-    FastWriter fw = FastWriter.getInstance(_broker, out);
+    FastWriter fw = FastWriter.getInstance(__broker, out);
     write(fw, context);
     fw.flush();
     fw.close();
@@ -272,7 +272,7 @@ abstract public class WMTemplate
                     Context context)
       throws PropertyException, IOException
   {
-    FastWriter fw = FastWriter.getInstance(_broker, out, encoding);
+    FastWriter fw = FastWriter.getInstance(__broker, out, encoding);
     write(fw, context);
     fw.flush();
     fw.close();
@@ -323,7 +323,7 @@ abstract public class WMTemplate
   protected final String getDefaultEncoding()
   {
     try {
-      return (String) _broker.get("config", WMConstants.TEMPLATE_INPUT_ENCODING);
+      return (String) __broker.get("config", WMConstants.TEMPLATE_INPUT_ENCODING);
     } catch (Exception e) {
       return System.getProperty("file.encoding");
     }
