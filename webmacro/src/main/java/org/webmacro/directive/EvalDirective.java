@@ -12,7 +12,6 @@
 
 package org.webmacro.directive;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.webmacro.Context;
@@ -80,6 +79,7 @@ public class EvalDirective
     return this;
   }
 
+  @SuppressWarnings("unchecked")
   public void write(org.webmacro.FastWriter out,
                     org.webmacro.Context context)
       throws org.webmacro.PropertyException, java.io.IOException
@@ -141,12 +141,7 @@ public class EvalDirective
         }
         if (outerVars == null)
           outerVars = context.getMap();
-        Context c = new Context(context.getBroker());
-        // replace _variables map with a copy of the supplied map
-        Map<?, ?> argMap = (Map<?, ?>) argMapObj;
-        Map<Object, Object> argsMapCopy = new HashMap<Object, Object>(argMap.size() * 2);
-        argsMapCopy.putAll(argMap);
-        c.setMap(argsMapCopy);
+        Context c = new Context(context.getBroker(), (Map<Object, Object>) argMapObj);
         // put current depth into the new context
         c.put("EvalDepth", recursionDepth);
         // add a reference to parent context variables
