@@ -10,15 +10,15 @@
  */
 package org.webmacro.engine;
 
-import org.webmacro.Context;
-import org.webmacro.FastWriter;
-import org.webmacro.Macro;
-import org.webmacro.PropertyException;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.webmacro.Context;
+import org.webmacro.FastWriter;
+import org.webmacro.Macro;
+import org.webmacro.PropertyException;
 
 /**
  * MapBuilder is used during the parsing/building phase of a template to create user defined Map
@@ -64,8 +64,34 @@ public class MapBuilder
     if (isMacro)
       return new MapMacro(ret);
     else
-      return ret;
+      return new MapClone(ret);
   }
+}
+
+class MapClone
+  implements Macro
+{
+  private final Map<Object, Object> __map;
+  
+  MapClone(Map<Object,Object> map) {
+    __map = map;
+  }
+
+  @Override
+  public Object evaluate(Context context)
+      throws PropertyException
+  {
+    return new HashMap<Object,Object>(__map);
+  }
+
+  @Override
+  public void write(FastWriter out,
+                    Context context)
+      throws PropertyException, IOException
+  {
+    out.write(__map.toString());
+  }
+
 }
 
 class MapMacro
