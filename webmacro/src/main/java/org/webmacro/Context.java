@@ -51,7 +51,7 @@ public class Context
 
   private EvaluationExceptionHandler _eeHandler;
 
-  private Map<Object, Object> _variables = new HashMap<Object, Object>();
+  private Map<Object, Object> _variables = null;
 
   private TemplateEvaluationContext _teContext = new TemplateEvaluationContext();
 
@@ -71,7 +71,13 @@ public class Context
    */
   public Context(Broker broker)
   {
+    this(broker, new HashMap<Object, Object>());
+  }
+  
+  public Context(Broker broker, Map<Object,Object> variables)
+  {
     __broker = broker;
+    _variables = variables;
   }
 
   /** Holder for template place. */
