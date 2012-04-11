@@ -493,7 +493,7 @@ public class IncludeDirective
 
         // open a URLConnection...
         URLConnection conn = url.openConnection();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         InputStream in = conn.getInputStream();
         String enc = conn.getContentEncoding();
         if (enc == null)

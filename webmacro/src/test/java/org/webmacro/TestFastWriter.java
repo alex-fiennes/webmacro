@@ -58,7 +58,7 @@ public class TestFastWriter extends TestCase
 
     private String makeData (int size)
     {
-        StringBuffer sb = new StringBuffer(size);
+        StringBuilder sb = new StringBuilder(size);
         for (int x = 0; x < size; x++)
             sb.append('x');
 

@@ -85,7 +85,7 @@ public class PropertyMethod
       return _name + _args.toString();
     }
     Object[] argList = (Object[]) _args;
-    StringBuffer vname = new StringBuffer();
+    StringBuilder vname = new StringBuilder();
     vname.append(_name);
     vname.append("(");
     for (int i = 0; i < argList.length; i++) {

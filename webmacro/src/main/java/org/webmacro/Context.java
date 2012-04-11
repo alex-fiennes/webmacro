@@ -149,7 +149,7 @@ public class Context
 
   public final String getCurrentLocation()
   {
-    StringBuffer loc = new StringBuffer();
+    StringBuilder loc = new StringBuilder();
     loc.append(_teContext._templateName == null ? "(unknown)" : _teContext._templateName);
     loc.append(":").append(_teContext._lineNo).append(".").append(_teContext._columnNo);
     return loc.toString();

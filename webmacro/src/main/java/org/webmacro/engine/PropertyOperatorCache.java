@@ -741,7 +741,7 @@ final class PropertyOperator
   private static final String fillInName(Object[] names,
                                          int end)
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int x = 0; x < end; x++) {
       if (x > 0)
         sb.append(".");
@@ -1119,7 +1119,7 @@ final class DirectAccessor
 
     // not found
 
-    StringBuffer arglist = new StringBuffer();
+    StringBuilder arglist = new StringBuilder();
     Method m = (Method) _methods.firstElement();
     for (int i = 0; i < args.length; i++) {
       if (i > 0) {

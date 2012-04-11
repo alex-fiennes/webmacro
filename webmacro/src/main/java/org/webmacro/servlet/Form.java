@@ -125,7 +125,7 @@ final public class Form
   @Override
   final public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     String eol = java.lang.System.getProperty("line.separator");
     for (Enumeration<?> params = _request.getParameterNames(); params.hasMoreElements();) {
       String key = (String) params.nextElement();

@@ -33,7 +33,7 @@ public class TextParser
   {
     BlockBuilder bb = new BlockBuilder();
     char buf[] = new char[512];
-    StringBuffer sb = new StringBuffer(512);
+    StringBuilder sb = new StringBuilder(512);
     int num;
     while ((num = in.read(buf)) != -1) {
       sb.append(buf, 0, num);

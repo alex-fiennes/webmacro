@@ -36,7 +36,7 @@ public class HTMLEscaper
     if (nonHTMLsrc == null)
       return null;
 
-    StringBuffer res = new StringBuffer();
+    StringBuilder res = new StringBuilder();
     int l = nonHTMLsrc.length();
     int idx;
     char c;
@@ -113,7 +113,7 @@ public class HTMLEscaper
   static {
     // Initialize some local mappings to speed it all up
     int l = ENTITIES.length;
-    StringBuffer temp = new StringBuffer();
+    StringBuilder temp = new StringBuilder();
 
     quickEntities = new String[l];
     for (int i = 0; i < l; i++) {

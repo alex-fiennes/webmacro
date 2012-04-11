@@ -239,7 +239,7 @@ public abstract class Variable
    */
   final static String makeName(Object[] names)
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     for (int i = 0; i < names.length; i++) {
       if (i != 0) {
         buf.append(".");

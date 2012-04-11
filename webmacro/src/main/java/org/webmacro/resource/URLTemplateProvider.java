@@ -461,7 +461,7 @@ final public class URLTemplateProvider
                                  String mid,
                                  String post)
   {
-    StringBuffer sb = new StringBuffer(pre);
+    StringBuilder sb = new StringBuilder(pre);
     String stripped = stripLast(mid);
     if (stripped != null) {
       sb.append(_OPEN);

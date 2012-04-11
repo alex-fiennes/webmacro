@@ -43,7 +43,7 @@ public class TokenMgrError
    */
   protected static final String addEscapes(String str)
   {
-    StringBuffer retval = new StringBuffer();
+    StringBuilder retval = new StringBuilder();
     char ch;
     for (int i = 0; i < str.length(); i++) {
       switch (str.charAt(i)) {

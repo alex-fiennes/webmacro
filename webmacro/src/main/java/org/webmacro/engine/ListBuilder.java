@@ -88,7 +88,7 @@ class ListMacro
   @Override
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append("(");
     for (int i = 0; i < _content.length; i++) {
       if (i != 0) {

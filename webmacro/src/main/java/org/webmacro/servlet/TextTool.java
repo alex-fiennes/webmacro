@@ -89,7 +89,7 @@ public class TextTool
     if (input == null || delimiter == null)
       return null;
 
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int x = 0; x < input.length; x++) {
       if (x > 0)
         sb.append(delimiter);
@@ -119,7 +119,7 @@ public class TextTool
     int fromlen = from.length();
     int idx, lastidx = 0;
 
-    StringBuffer newstr = new StringBuffer();
+    StringBuilder newstr = new StringBuilder();
 
     while ((idx = src.indexOf(from, lastidx)) > -1) {
       newstr.append(src.substring(lastidx, idx));
@@ -230,7 +230,7 @@ public class TextTool
   {
     if (in == null)
       return null;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     try {
       int cnt;
       byte[] buff = new byte[4096];
@@ -322,7 +322,7 @@ public class TextTool
       return null;
     if (lines.length == 1)
       return lines[0];
-    StringBuffer sb = new StringBuffer(lines[0]);
+    StringBuilder sb = new StringBuilder(lines[0]);
     for (int i = 1; i < lines.length; i++) {
       sb.append('\r').append('\n').append(lines[i]);
     }

@@ -111,7 +111,7 @@ public class BlockBuilder
     int[] ln = new int[elements.size()];
     int[] cn = new int[elements.size()];
     Stack<BlockIterator> iterStack = new Stack<BlockIterator>();
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     Context.TemplateEvaluationContext tec = bc.getTemplateEvaluationContext();
 
     // flatten everything and view the content as being:
@@ -150,8 +150,8 @@ public class BlockBuilder
       } else {
         if (o instanceof Macro) {
           strings.add(s.toString());
-          s = new StringBuffer();
-          // do not reuse StringBuffer,
+          s = new StringBuilder();
+          // do not reuse StringBuilder,
           // otherwise all strings will contain char[] of max length!!
           macros.add((Macro) o);
 

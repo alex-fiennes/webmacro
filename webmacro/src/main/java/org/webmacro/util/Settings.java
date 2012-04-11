@@ -107,7 +107,7 @@ public class Settings
     ;
 
     if (u == null) {
-      StringBuffer error = new StringBuffer();
+      StringBuilder error = new StringBuilder();
       error.append("Unable to load the properties file: ");
       error.append(fileName);
       error.append(" via the class path\n");

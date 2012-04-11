@@ -27,7 +27,6 @@ import java.io.StringReader;
 public class StringTemplate
   extends WMTemplate
 {
-
   /** The text associated with this template */
   private final String templateText;
 
@@ -94,7 +93,7 @@ public class StringTemplate
   @Override
   public String toString()
   {
-    StringBuffer b = new StringBuffer();
+    StringBuilder b = new StringBuilder();
     b.append("StringTemplate(\"");
     b.append(templateName);
     if (templateText != null) {

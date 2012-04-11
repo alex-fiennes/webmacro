@@ -36,7 +36,7 @@ public final class QuotedStringBuilder
   final public Object build(BuildContext bc)
       throws BuildException
   {
-    StringBuffer str = new StringBuffer(100);
+    StringBuilder str = new StringBuilder(100);
     QuotedString qs = new QuotedString();
 
     Enumeration<Object> elems = elements();
@@ -120,7 +120,7 @@ final class QuotedString
       throws PropertyException
   {
     Object o;
-    StringBuffer str = new StringBuffer(96);
+    StringBuilder str = new StringBuilder(96);
     for (int i = 0; i < elementCount; i++) {
       o = elementData[i];
       if (!(o instanceof Macro)) {

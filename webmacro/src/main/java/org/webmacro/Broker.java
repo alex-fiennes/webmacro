@@ -764,7 +764,7 @@ public class Broker
   @Override
   public String toString()
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("Broker:");
     buf.append(__name);
     buf.append("(");

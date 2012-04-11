@@ -196,7 +196,7 @@ public class Servlet22Broker
       if (name.startsWith("/")) {
         name = name.substring(1);
       } else {
-        StringBuffer b = new StringBuffer(name.length() + 1);
+        StringBuilder b = new StringBuilder(name.length() + 1);
         b.append("/");
         b.append(name);
         contextName = b.toString();
