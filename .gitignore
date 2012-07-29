@@ -2,6 +2,7 @@
 /.project
 /.classpath
 /build/
+/tmp/
 *.iml
 *.class
 *~
