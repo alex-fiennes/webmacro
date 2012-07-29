@@ -87,14 +87,19 @@ public abstract class Directive
   /**
    * Convenience method for directives to write HTML warnings into the output stream. Eventually
    * this will be parameterizable so that HTML is not assumed to be the only underlying language.
+   * 
+   * @param exception
+   *          optional cause of the warning
    */
 
   protected static String getWarningText(String warning,
-                                         Context context)
+                                         Context context,
+                                         Exception exception)
       throws IOException, PropertyException
   {
-    return context.getEvaluationExceptionHandler().warningString("WARNING: " + warning + " at "
-                                                                 + context.getCurrentLocation());
+    return context.getEvaluationExceptionHandler()
+                  .warningString("WARNING: " + warning + " at " + context.getCurrentLocation(),
+                                 exception);
   }
 
   /**
@@ -105,11 +110,12 @@ public abstract class Directive
    */
   protected static void writeWarning(String warning,
                                      Context context,
-                                     FastWriter writer)
+                                     FastWriter writer,
+                                     Exception exception)
       throws IOException, PropertyException
   {
     context.getLog("directive").warn(warning + " at " + context.getCurrentLocation());
-    writer.write(getWarningText(warning, context));
+    writer.write(getWarningText(warning, context, exception));
   }
 
   public void accept(TemplateVisitor v)

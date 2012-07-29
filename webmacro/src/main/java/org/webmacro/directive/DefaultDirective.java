@@ -91,7 +91,7 @@ public class DefaultDirective
       throw e;
     } catch (Exception e) {
       String errorText = "#default: Unable to set default value for " + target;
-      writeWarning(errorText, context, out);
+      writeWarning(errorText, context, out, e);
     }
   }
 

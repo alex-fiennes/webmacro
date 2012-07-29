@@ -289,7 +289,7 @@ abstract public class WMTemplate
     } catch (TemplateException e) {
       _log.error("Template: Unable to parse template: " + this, e);
       out.write(context.getEvaluationExceptionHandler()
-                       .errorString("Template failed to parse. Reason: \n" + e.toString()));
+                       .errorString("Template failed to parse. Reason: \n" + e.toString(), e));
     }
 
     try {
@@ -305,7 +305,8 @@ abstract public class WMTemplate
 
       out.write(context.getEvaluationExceptionHandler()
                        .warningString("Could not interpret template. Reason: \n" + warning + "\n"
-                                      + e.toString()));
+                                          + e.toString(),
+                                      e));
     }
   }
 

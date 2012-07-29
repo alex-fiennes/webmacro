@@ -120,15 +120,17 @@ public class DebugEvaluationExceptionHandler
     throw propEx;
   }
 
-  public String warningString(String strText)
+  public String warningString(String strText,
+                              Exception exception)
       throws PropertyException
   {
-    throw new PropertyException("Evaluation warning: " + strText);
+    throw new PropertyException("Evaluation warning: " + strText, exception);
   }
 
-  public String errorString(String strText)
+  public String errorString(String strText,
+                            Exception exception)
       throws PropertyException
   {
-    throw new PropertyException("Evaluation error: " + strText);
+    throw new PropertyException("Evaluation error: " + strText, exception);
   }
 }

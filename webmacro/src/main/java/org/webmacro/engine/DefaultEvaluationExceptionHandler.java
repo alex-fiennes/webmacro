@@ -111,19 +111,21 @@ public class DefaultEvaluationExceptionHandler
         || problem instanceof PropertyException.NullValueException
         || problem instanceof PropertyException.NullToStringException) {
 
-      return errorString(problem.getMessage());
+      return errorString(problem.getMessage(), problem);
     } else {
       // but we need to complain about anything else
       throw (PropertyException) problem;
     }
   }
 
-  public String warningString(String warningText)
+  public String warningString(String warningText,
+                              Exception exception)
   {
     return "<!-- " + warningText + " -->";
   }
 
-  public String errorString(String errorText)
+  public String errorString(String errorText,
+                            Exception exception)
   {
     return "<!-- " + errorText + " -->";
   }

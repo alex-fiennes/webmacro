@@ -258,7 +258,7 @@ public class BeanDirective
       this._broker.getEvaluationExceptionHandler().evaluate(target, context, e);
     } catch (Exception e) {
       String errorText = "BeanDirective: Unable to load bean " + target + " of type " + _className;
-      writeWarning(errorText, context, out);
+      writeWarning(errorText, context, out, e);
     }
     if (isNew && onNewBlock != null)
       onNewBlock.write(out, context);

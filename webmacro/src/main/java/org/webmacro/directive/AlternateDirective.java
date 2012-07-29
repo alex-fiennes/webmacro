@@ -112,7 +112,7 @@ public class AlternateDirective
       target.setValue(context, new IteratorAlternator(itr));
     } catch (Exception e) {
       String warning = "#alternate: list argument is not a list: " + l;
-      writeWarning(warning, context, out);
+      writeWarning(warning, context, out, e);
       return;
     }
   }

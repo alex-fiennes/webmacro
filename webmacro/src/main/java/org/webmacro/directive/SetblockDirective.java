@@ -85,7 +85,7 @@ public class SetblockDirective
       throw e;
     } catch (Exception e) {
       String errorText = "#setblock: Unable to set " + target;
-      writeWarning(errorText, context, out);
+      writeWarning(errorText, context, out, e);
     }
   }
 

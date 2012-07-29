@@ -123,7 +123,7 @@ public class SetpropsDirective
       throw e;
     } catch (Exception e) {
       String errorText = "#setprops: Unable to set " + target + " as " + e.getMessage();
-      writeWarning(errorText, context, out);
+      writeWarning(errorText, context, out, e);
     }
   }
 

@@ -86,7 +86,7 @@ public class SetDirective
       throw e;
     } catch (Exception e) {
       String errorText = "#set: Unable to set value: " + target;
-      writeWarning(errorText, context, out);
+      writeWarning(errorText, context, out, e);
     }
   }
 

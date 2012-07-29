@@ -131,7 +131,7 @@ class WhileDirective
         loopLimit = (int) Expression.numberValue(limit);
       } else {
         String warning = "#" + _directiveName + ": Cannot evaluate limit";
-        writeWarning(warning, context, out);
+        writeWarning(warning, context, out, null);
       }
     }
 
@@ -153,7 +153,7 @@ class WhileDirective
     if (loopIndex >= loopLimit) {
       // exeeded the limit!
       String warning = "#" + _directiveName + ": exeeded the limit of " + loopLimit;
-      writeWarning(warning, context, out);
+      writeWarning(warning, context, out, null);
     }
   }
 

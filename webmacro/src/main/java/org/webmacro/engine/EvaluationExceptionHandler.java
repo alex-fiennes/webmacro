@@ -61,10 +61,18 @@ public interface EvaluationExceptionHandler
                        Exception problem)
       throws PropertyException;
 
-  public String warningString(String warningText)
+  /**
+   * 
+   * @param exception
+   *          optional cause of the warning
+   */
+  public String warningString(String warningText,
+                              Exception exception)
       throws PropertyException;
 
-  public String errorString(String errorText)
+  
+  public String errorString(String errorText,
+                            Exception exception)
       throws PropertyException;
 
 }

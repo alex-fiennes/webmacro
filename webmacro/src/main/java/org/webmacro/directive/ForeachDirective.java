@@ -110,7 +110,7 @@ public class ForeachDirective
         loopLimit = (int) Expression.numberValue(limit);
       else {
         String warning = "#foreach: Cannot evaluate limit";
-        writeWarning(warning, context, out);
+        writeWarning(warning, context, out, null);
       }
     }
 
@@ -122,7 +122,7 @@ public class ForeachDirective
         loopStart = (int) Expression.numberValue(from);
       else {
         String warning = "#foreach: Cannot evaluate loop start";
-        writeWarning(warning, context, out);
+        writeWarning(warning, context, out, null);
       }
     }
 
@@ -137,7 +137,7 @@ public class ForeachDirective
         warning += list;
 
       warning += ": " + e.getMessage();
-      writeWarning(warning, context, out);
+      writeWarning(warning, context, out, e);
       return;
     }
     while (iter.hasNext() && ((loopLimit == -1) || (loopLimit > loopIndex))) {
@@ -147,7 +147,7 @@ public class ForeachDirective
           index.setValue(context, new Integer(loopIndex + loopStart));
       } catch (PropertyException e) {
         String errorText = "#foreach: Unable to set list index";
-        writeWarning(errorText, context, out);
+        writeWarning(errorText, context, out, e);
       } catch (Exception e) {
         throw new PropertyException("Unable to iterate list", e);
       }

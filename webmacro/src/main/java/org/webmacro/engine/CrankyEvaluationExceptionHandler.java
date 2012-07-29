@@ -98,15 +98,17 @@ public class CrankyEvaluationExceptionHandler
 
   }
 
-  public String warningString(String warningText)
+  public String warningString(String warningText,
+                              Exception exception)
       throws PropertyException
   {
-    throw new PropertyException("Evaluation warning: " + warningText);
+    throw new PropertyException("Evaluation warning: " + warningText, exception);
   }
 
-  public String errorString(String errorText)
+  public String errorString(String errorText,
+                            Exception exception)
       throws PropertyException
   {
-    throw new PropertyException("Evaluation error: " + errorText);
+    throw new PropertyException("Evaluation error: " + errorText, exception);
   }
 }
