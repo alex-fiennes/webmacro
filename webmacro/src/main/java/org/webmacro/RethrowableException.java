@@ -49,7 +49,7 @@ public class RethrowableException
   public RethrowableException(String s,
                               Throwable e)
   {
-    super(s + System.getProperty("line.separator") + e);
+    super(s + System.getProperty("line.separator") + e, e);
     _cause = e;
   }
 
