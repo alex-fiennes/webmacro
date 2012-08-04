@@ -104,7 +104,12 @@ public class EvalDirective
         macro = (Macro) targ;
       } else {
         // throw and exception ... we don't know what to do with this!
-        throw new PropertyException("Invalid argument to #eval directive.  First arg must be a Macro or a String.");
+        if (targ == null) {
+          throw new PropertyException("null is an invalid argument to #eval directive.");
+        }
+        throw new PropertyException(String.format("Invalid argument to #eval directive.  \"%s\" is a %s and must be a Macro or a String.",
+                                                  targ,
+                                                  targ.getClass()));
       }
       if (_mapExpr == null) {
         // no map specified, use current context
