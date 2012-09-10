@@ -5,6 +5,22 @@
 	<property name="src.dir" value="webmacro/src/main/java" />
     <property name="wm-style"       value="classic" /> <!-- can be "minimal" to get webmacro.defaults.minimal into build-->
 
+    <property environment="ENV" />
+    <property name="javacc.home"    value="tmp" />
+
+    <target name="prepare">
+        <available property="javacc.present" classname="org.javacc.parser.Main"
+            classpath="${javacc.home}/javacc.jar" />
+        <!-- <available property="javacc.present" classname="COM.sun.labs.javacc.Main" classpath="${javacc.home}/JavaCC.zip" /> -->
+    </target>
+
+	<target name='javacc' depends='prepare' if='javacc.present'>
+        <javacc target="webmacro/src/main/java/org/webmacro/parser/WMParser_impl.jj" 
+        	javacchome="${javacc.home}"
+        	buildparser="true"
+        	buildtokenmanager="true"/>
+    </target>
+
 	<target name="makejar" depends="compile">
 		<jar jarfile="${build.dir}/${jarfile}" basedir="${classes.dir}" />
 	</target>
