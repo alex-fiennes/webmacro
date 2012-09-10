@@ -16,13 +16,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -421,30 +421,30 @@ final class PropertyOperator
       return;
     }
 
-    Vector<Object> v;
+    List<Object> v;
     if (o instanceof Method) {
-      v = new Vector<Object>();
-      v.addElement((Method) o);
+      v = new ArrayList<Object>();
+      v.add((Method) o);
       hm.put(name, v);
     } else {
-      v = (Vector<Object>) o;
+      v = (List<Object>) o;
     }
 
     Class<?> ptypes[] = m.getParameterTypes();
     for (int i = 0; i < v.size(); i++) {
-      Class<?> curTypes[] = ((Method) v.elementAt(i)).getParameterTypes();
+      Class<?> curTypes[] = ((Method) v.get(i)).getParameterTypes();
 
       int order = precedes(ptypes, curTypes);
 
       if (order < 0) {
-        v.insertElementAt(m, i);
+        v.add(i, m);
         return;
       } else if (order == 0) {
         // ignore duplicate method
         return;
       }
     }
-    v.addElement(m);
+    v.add(m);
   }
 
   /**
@@ -454,9 +454,9 @@ final class PropertyOperator
    * specific arguments. See precedes().
    */
   @SuppressWarnings("unchecked")
-  private Vector<Method> getMethods(Class<?> c)
+  private List<Method> getMethods(Class<?> c)
   {
-    Vector<Method> v = new Vector<Method>();
+    List<Method> v = new ArrayList<Method>();
     HashMap<String, Object> h = new HashMap<String, Object>();
     getAllMethods(h, c);
     Iterator<Object> iter = h.values().iterator();
@@ -464,16 +464,18 @@ final class PropertyOperator
       Object elem = iter.next();
 
       if (elem instanceof Method) {
-        v.addElement((Method) elem);
+        v.add((Method) elem);
       } else {
-        Vector<Method> v1 = (Vector<Method>) elem;
+        List<Method> v1 = (List<Method>) elem;
         for (int i = 0; i < v1.size(); i++) {
-          v.addElement(v1.elementAt(i));
+          v.add(v1.get(i));
         }
       }
     }
     return v;
   }
+  
+  private final Class<?> __target;
 
   /**
    * Construct a property operator for the target class.
@@ -484,6 +486,7 @@ final class PropertyOperator
   public PropertyOperator(final Class<?> target,
                           PropertyOperatorCache cache) throws PropertyException
   {
+    __target = target;
 
     Accessor acc;
 
@@ -504,14 +507,14 @@ final class PropertyOperator
 
     // introspect methods second
 
-    Vector<Method> methods = getMethods(target);
+    List<Method> methods = getMethods(target);
 
     Method meth;
     Class<?>[] params;
     String name, propName;
 
     for (int i = 0; i < methods.size(); i++) {
-      meth = ((Method) methods.elementAt(i));
+      meth = ((Method) methods.get(i));
       if (!isMethodAllowed(meth))
         continue;
       name = meth.getName();
@@ -1079,7 +1082,7 @@ final class DirectAccessor
   extends Accessor
 {
 
-  Vector<Method> _methods = new Vector<Method>();
+  List<Method> _methods = new ArrayList<Method>();
 
   DirectAccessor(final String name,
                  final Method m,
@@ -1092,7 +1095,7 @@ final class DirectAccessor
   final void addMethod(final Method m,
                        Class<?>[] params)
   {
-    _methods.addElement(m);
+    _methods.add(m);
   }
 
   @Override
@@ -1110,7 +1113,7 @@ final class DirectAccessor
     }
 
     for (int i = 0; i < _methods.size(); i++) {
-      Method m = (Method) _methods.elementAt(i);
+      Method m = (Method) _methods.get(i);
       Class<?>[] sig = m.getParameterTypes();
       if (IntrospectionUtils.matches(sig, types)) {
         return PropertyOperator.invoke(m, instance, args);
@@ -1120,7 +1123,7 @@ final class DirectAccessor
     // not found
 
     StringBuilder arglist = new StringBuilder();
-    Method m = (Method) _methods.firstElement();
+    Method m = (Method) _methods.get(0);
     for (int i = 0; i < args.length; i++) {
       if (i > 0) {
         arglist.append(", ");
