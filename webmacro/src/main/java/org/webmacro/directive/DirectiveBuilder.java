@@ -11,11 +11,13 @@
 
 package org.webmacro.directive;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.webmacro.engine.BuildContext;
 import org.webmacro.engine.BuildException;
 import org.webmacro.engine.Builder;
 
-import java.util.Vector;
 
 /**
  * DirectiveBuilder manages the building of directives. It is created by the parser, which populates
@@ -36,7 +38,7 @@ public final class DirectiveBuilder
   private ArgsHolder buildArgs;
 
   // This is an array of either ArgsHolders (for nonrepeating subdirectives)
-  // or Vectors of ArgsHolders (for repeating subdirectives)
+  // or Lists of ArgsHolders (for repeating subdirectives)
   private Object[] subdirectives;
 
   private static final ArgsHolder[] aha = new ArgsHolder[0];
@@ -149,12 +151,12 @@ public final class DirectiveBuilder
         subdirectives[index] = new ArgsHolder(desc.subdirectives[index].args);
       ah = (ArgsHolder) subdirectives[index];
     } else {
-      Vector<ArgsHolder> v;
+      List<ArgsHolder> v;
       if (subdirectives[index] == null)
-        subdirectives[index] = new Vector<ArgsHolder>();
-      v = (Vector<ArgsHolder>) subdirectives[index];
+        subdirectives[index] = new ArrayList<ArgsHolder>();
+      v = (List<ArgsHolder>) subdirectives[index];
       ah = new ArgsHolder(desc.subdirectives[index].args);
-      v.addElement(ah);
+      v.add(ah);
     }
 
     return ah;
@@ -198,7 +200,7 @@ public final class DirectiveBuilder
     if (subdirectives[index] == null)
       return null;
     else
-      return (ArgsHolder[]) ((Vector<ArgsHolder>) subdirectives[index]).toArray(aha);
+      return (ArgsHolder[]) ((List<ArgsHolder>) subdirectives[index]).toArray(aha);
   }
 
   /**
