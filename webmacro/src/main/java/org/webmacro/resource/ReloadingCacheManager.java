@@ -209,7 +209,7 @@ public class ReloadingCacheManager
     Object o = null;
     boolean reload = false;
 
-    r = (MyCacheElement) _cache.get(query);
+    r = _cache.get(query);
     if (r != null) {
       o = r.getObject();
 
@@ -243,7 +243,7 @@ public class ReloadingCacheManager
    */
   public Object get(final Object query)
   {
-    MyCacheElement r = (MyCacheElement) _cache.get(query);
+    MyCacheElement r = _cache.get(query);
     if (r != null)
       return r.getObject();
     else

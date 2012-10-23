@@ -63,7 +63,7 @@ public final class ParserProvider
     }
     try {
       _log.info("Registering parser: " + name + " (" + pClassName + ")");
-      Parser p = (Parser) _parsers.get(name);
+      Parser p = _parsers.get(name);
       if (p == null) {
         Constructor<?> ctor = pclass.getConstructor(_brokerParam);
         p = (Parser) ctor.newInstance(_brokerArg);
@@ -86,7 +86,7 @@ public final class ParserProvider
   public final Parser getParser(String pname)
       throws NotFoundException
   {
-    Parser p = (Parser) _parsers.get(pname);
+    Parser p = _parsers.get(pname);
     if (p == null) {
       throw new NotFoundException("No parser registered for type " + pname);
     }

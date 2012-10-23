@@ -136,7 +136,7 @@ public final class DirectiveProvider
       }
 
       newDesc.name = (dirName != null && !dirName.equals("")) ? dirName : templateDesc.name;
-      oldDesc = (DirectiveDescriptor) _descriptors.get(newDesc.name);
+      oldDesc = _descriptors.get(newDesc.name);
       if (oldDesc == null) {
         _descriptors.put(newDesc.name, newDesc);
         _log.info("Registered directive: " + newDesc.name);
@@ -153,7 +153,7 @@ public final class DirectiveProvider
    */
   private final DirectiveDescriptor getDescriptor(String directiveName)
   {
-    return (DirectiveDescriptor) _descriptors.get(directiveName);
+    return _descriptors.get(directiveName);
   }
 
   // RESOURCE PROVIDER API

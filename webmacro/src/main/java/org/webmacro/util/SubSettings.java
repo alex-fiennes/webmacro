@@ -47,7 +47,7 @@ public class SubSettings
       if (key.startsWith(_prefix))
         al.add(key.substring(_prefix.length()));
     }
-    return (String[]) al.toArray(stringArray);
+    return al.toArray(stringArray);
   }
 
   /**

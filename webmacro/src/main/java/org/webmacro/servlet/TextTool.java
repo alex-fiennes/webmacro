@@ -74,7 +74,7 @@ public class TextTool
     if (lastidx < input.length())
       l.add(input.substring(lastidx));
 
-    return (String[]) l.toArray(new String[0]);
+    return l.toArray(new String[0]);
   }
 
   /**

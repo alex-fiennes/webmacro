@@ -209,7 +209,7 @@ public class Context
     if (name instanceof String) {
       Object var = __broker.getAutoContextVariable((String) name, this);
       if (var != null) {
-        put((String) name, var);
+        put(name, var);
         return var;
       } else
         return UNDEF;
@@ -353,7 +353,7 @@ public class Context
       throws PropertyException
   {
     if (names.length == 1) {
-      put((String) names[0], value);
+      put(names[0], value);
       return true;
     } else {
       Object instance;

@@ -168,12 +168,12 @@ public class BlockBuilder
         }
       }
       while (!iter.hasNext() && !iterStack.empty())
-        iter = (BlockIterator) iterStack.pop();
+        iter = iterStack.pop();
     }
     strings.add(s.toString());
 
-    Macro finalMacros[] = (Macro[]) macros.toArray(mArray);
-    String finalStrings[] = (String[]) strings.toArray(sArray);
+    Macro finalMacros[] = macros.toArray(mArray);
+    String finalStrings[] = strings.toArray(sArray);
     int finalLines[] = resizeIntArray(ln, macros.size());
     int finalCols[] = resizeIntArray(cn, macros.size());
     return new Block(name, finalStrings, finalMacros, finalLines, finalCols);

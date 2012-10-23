@@ -211,7 +211,7 @@ final public class EncodingCache
       throws UnsupportedEncodingException
   {
     synchronized (_ecCache) {
-      EncodingCache ec = (EncodingCache) _ecCache.get(encoding);
+      EncodingCache ec = _ecCache.get(encoding);
       if (ec == null) {
         ec = new EncodingCache(encoding);
         _ecCache.put(encoding, ec);

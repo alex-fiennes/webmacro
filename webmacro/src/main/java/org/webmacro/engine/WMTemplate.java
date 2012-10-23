@@ -169,7 +169,7 @@ abstract public class WMTemplate
         Map<String, MacroDefinition> globalMacros = __broker.getMacros();
         for (Iterator<Map.Entry<String, MacroDefinition>> i = globalMacros.entrySet().iterator(); i.hasNext();) {
           Map.Entry<String, MacroDefinition> entry = i.next();
-          bc.putMacro((String) entry.getKey(), (MacroDefinition) entry.getValue());
+          bc.putMacro(entry.getKey(), entry.getValue());
         }
         newParameters = bc.getMap();
         newMacros = bc.getMacros();

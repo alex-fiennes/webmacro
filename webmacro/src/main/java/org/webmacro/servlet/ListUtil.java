@@ -790,7 +790,7 @@ public final class ListUtil
     List<List<Object>> splitList1 = split(l, 3, true);
     for (Iterator<List<Object>> it1 = splitList1.iterator(); it1.hasNext();) {
       out.print("-: ");
-      List<Object> part = (List<Object>) it1.next();
+      List<Object> part = it1.next();
       for (Iterator<Object> it2 = part.iterator(); it2.hasNext();) {
         out.print(it2.next() + ", ");
       }

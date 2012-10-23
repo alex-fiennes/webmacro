@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -424,7 +423,7 @@ final class PropertyOperator
     List<Object> v;
     if (o instanceof Method) {
       v = new ArrayList<Object>();
-      v.add((Method) o);
+      v.add(o);
       hm.put(name, v);
     } else {
       v = (List<Object>) o;
@@ -514,7 +513,7 @@ final class PropertyOperator
     String name, propName;
 
     for (int i = 0; i < methods.size(); i++) {
-      meth = ((Method) methods.get(i));
+      meth = methods.get(i);
       if (!isMethodAllowed(meth))
         continue;
       name = meth.getName();
@@ -522,7 +521,7 @@ final class PropertyOperator
       int plength = params.length;
 
       // add direct accessor
-      acc = (Accessor) _directAccessors.get(name);
+      acc = _directAccessors.get(name);
       if (acc != null) {
         ((DirectAccessor) acc).addMethod(meth, params);
       } else {
@@ -539,7 +538,7 @@ final class PropertyOperator
             || ((plength == 1) && name.startsWith("set"))) {
 
           // unary get/set method
-          acc = (Accessor) _unaryAccessors.get(propName);
+          acc = _unaryAccessors.get(propName);
           if (acc != null) {
             if (acc instanceof MethodAccessor) {
               ((MethodAccessor) acc).addMethod(meth, params);
@@ -560,7 +559,7 @@ final class PropertyOperator
                    && (params[0].isInstance("string"))
                    && (((plength == 1) && name.startsWith("get")) || ((plength == 2) && name.startsWith("set")))) {
           // binary get/set method
-          acc = (Accessor) _binaryAccessors.get(propName);
+          acc = _binaryAccessors.get(propName);
           if (acc != null) {
             ((MethodAccessor) acc).addMethod(meth, params);
           } else {
@@ -572,7 +571,7 @@ final class PropertyOperator
         if (plength == 0) {
           // unary accessor method
           propName = name.substring(2);
-          acc = (Accessor) _unaryAccessors.get(propName);
+          acc = _unaryAccessors.get(propName);
           if (acc != null) {
             if (acc instanceof MethodAccessor) {
               ((MethodAccessor) acc).addMethod(meth, params);
@@ -634,7 +633,7 @@ final class PropertyOperator
     } else if (names[start] instanceof PropertyMethod) {
       PropertyMethod pm = (PropertyMethod) names[start];
       propName = pm.getName();
-      acc = (Accessor) _directAccessors.get(propName);
+      acc = _directAccessors.get(propName);
       Object[] args = pm.getArguments(context);
       if (acc == null) {
         if (isMethodRestricted(instance.getClass(), propName))
@@ -660,7 +659,7 @@ final class PropertyOperator
 
     // unary?
     if (acc == null) {
-      acc = (Accessor) _unaryAccessors.get(propName);
+      acc = _unaryAccessors.get(propName);
       if (acc != null) {
         try {
           nextPropValue = acc.get(instance);
@@ -673,7 +672,7 @@ final class PropertyOperator
 
     // binary?
     if (acc == null) {
-      acc = (Accessor) _binaryAccessors.get(propName);
+      acc = _binaryAccessors.get(propName);
       // if ((acc != null) && ((start + 1) <= end))
       if ((acc != null) && ((start + 1) <= names.length)) {
         try {
@@ -807,7 +806,7 @@ final class PropertyOperator
       }
 
       // if direct failed, try binary
-      Accessor binOp = (Accessor) _binaryAccessors.get(names[pos]);
+      Accessor binOp = _binaryAccessors.get(names[pos]);
       if (binOp != null) {
         try {
           return binOp.set(instance, (String) names[pos + 1], value);
@@ -823,7 +822,7 @@ final class PropertyOperator
     }
 
     // we're the direct parent, use unaryOp or hash method
-    Accessor unaryOp = (Accessor) _unaryAccessors.get(names[pos]);
+    Accessor unaryOp = _unaryAccessors.get(names[pos]);
     try {
       if ((unaryOp != null) && unaryOp.set(instance, value)) {
         return true;
@@ -1113,7 +1112,7 @@ final class DirectAccessor
     }
 
     for (int i = 0; i < _methods.size(); i++) {
-      Method m = (Method) _methods.get(i);
+      Method m = _methods.get(i);
       Class<?>[] sig = m.getParameterTypes();
       if (IntrospectionUtils.matches(sig, types)) {
         return PropertyOperator.invoke(m, instance, args);
@@ -1123,7 +1122,7 @@ final class DirectAccessor
     // not found
 
     StringBuilder arglist = new StringBuilder();
-    Method m = (Method) _methods.get(0);
+    Method m = _methods.get(0);
     for (int i = 0; i < args.length; i++) {
       if (i > 0) {
         arglist.append(", ");

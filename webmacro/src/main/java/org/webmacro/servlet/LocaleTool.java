@@ -72,7 +72,7 @@ public class LocaleTool
                                 String variant)
   {
     String key = country + "_" + language + "_" + variant; // language.toUpperCase() ?
-    Locale locale = (Locale) cache.get(key);
+    Locale locale = cache.get(key);
     if (locale == null) {
       locale = new Locale(country, language, "");
       cache.put(key, locale);
@@ -99,7 +99,7 @@ public class LocaleTool
   final public static Locale buildLocale(String field)
   {
 
-    Locale locale = (Locale) cache.get(field);
+    Locale locale = cache.get(field);
     if (locale == null) {
       try {
         Field f = Locale.class.getField(field);

@@ -84,7 +84,7 @@ public class ReloadDelayDecorator
     long delay;
     Long l;
     synchronized (reloadDelays) {
-      l = (Long) reloadDelays.get(protocol);
+      l = reloadDelays.get(protocol);
     }
     delay = (l != null) ? l.longValue() : defaultDelay;
     if (delay > 0) {

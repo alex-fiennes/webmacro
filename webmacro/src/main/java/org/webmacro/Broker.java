@@ -486,7 +486,7 @@ public class Broker
   {
     WeakReference<Broker> ref = BROKERS.get(key);
     if (ref != null) {
-      Broker broker = (Broker) ref.get();
+      Broker broker = ref.get();
       if (broker == null)
         BROKERS.remove(key);
       return broker;
@@ -718,7 +718,7 @@ public class Broker
   /** fetch a "global function" */
   public MethodWrapper getFunction(String fnName)
   {
-    return (MethodWrapper) __functionMap.get(fnName);
+    return __functionMap.get(fnName);
   }
 
   /** store a "global function" */
@@ -741,7 +741,7 @@ public class Broker
   public Object getAutoContextVariable(String variableName,
                                        Context context)
   {
-    ContextAutoLoader loader = (ContextAutoLoader) __toolLoader.get(variableName);
+    ContextAutoLoader loader = __toolLoader.get(variableName);
     try {
       if (loader == null)
         return null;

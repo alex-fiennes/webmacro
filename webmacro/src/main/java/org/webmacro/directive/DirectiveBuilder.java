@@ -200,7 +200,7 @@ public final class DirectiveBuilder
     if (subdirectives[index] == null)
       return null;
     else
-      return (ArgsHolder[]) ((List<ArgsHolder>) subdirectives[index]).toArray(aha);
+      return ((List<ArgsHolder>) subdirectives[index]).toArray(aha);
   }
 
   /**

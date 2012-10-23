@@ -108,7 +108,7 @@ final public class Instantiator
       ClassNotFoundException exception = null;
 
       for (int i = 0; i < _impliedPackages.size(); i++) {
-        String s = (String) _impliedPackages.get(i);
+        String s = _impliedPackages.get(i);
         try {
           c = _broker.classForName(s + "." + className);
           break;

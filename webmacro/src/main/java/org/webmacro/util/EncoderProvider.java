@@ -111,7 +111,7 @@ public class EncoderProvider
     // make sure we're not inadvertently being called after we've
     // already been destroy()ed
     if (_encoders != null) {
-      encoder = (Encoder) _encoders.get(encoding);
+      encoder = _encoders.get(encoding);
 
       if (encoder == null) {
         try {

@@ -93,7 +93,7 @@ public class BuildContext
    */
   public MacroDefinition getMacro(String name)
   {
-    return (MacroDefinition) _macros.get(name);
+    return _macros.get(name);
   }
 
   /**

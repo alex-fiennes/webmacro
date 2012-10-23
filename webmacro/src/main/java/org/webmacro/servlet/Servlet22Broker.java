@@ -81,7 +81,7 @@ public class Servlet22Broker
       throws InitException
   {
     Properties p = new Properties();
-    Enumeration<String> e = (Enumeration<String>) _servletContext.getInitParameterNames();
+    Enumeration<String> e = _servletContext.getInitParameterNames();
     if (e != null) {
       String dotPrefix = (prefix == null) ? "" : prefix + ".";
       while (e.hasMoreElements()) {
