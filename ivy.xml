@@ -14,7 +14,7 @@
 		<dependency conf='compile' org='org.slf4j' name='slf4j-jdk14' rev='1.6.4' />
 
 		<dependency conf="compile" org="com.google.guava" name="guava"
-			rev="14.0-rc3" />
+			rev="14.0.1" />
 
 		<dependency conf="provided" org="javax.servlet" name="servlet-api"
 			rev="2.4" />
