@@ -246,6 +246,7 @@ abstract public class WMServlet
       }
     }
 
+    preDoRequest(req, resp);
     context = newWebContext(req, resp);
     try {
       Template t;
@@ -269,7 +270,19 @@ abstract public class WMServlet
                          + "for this application. Here are the details:<p>" + "<pre>" + e
                          + "</pre>");
       execute(tmpl, context);
+    } finally {
+      postDoRequest(req, resp);
     }
+  }
+
+  protected void preDoRequest(HttpServletRequest req,
+                              HttpServletResponse resp)
+  {
+  }
+
+  protected void postDoRequest(HttpServletRequest req,
+                               HttpServletResponse resp)
+  {
   }
 
   // CONVENIENCE METHODS & ACCESS TO THE BROKER
