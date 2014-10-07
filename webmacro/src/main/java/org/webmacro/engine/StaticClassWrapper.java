@@ -19,6 +19,10 @@ package org.webmacro.engine;
  */
 final public class StaticClassWrapper<T>
 {
+  public static <T> StaticClassWrapper<T> getInstance(Class<T> klass)
+  {
+    return new StaticClassWrapper<T>(klass);
+  }
 
   private Class<T> _wrappedClass;
 
