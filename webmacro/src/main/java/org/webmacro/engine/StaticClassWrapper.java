@@ -37,4 +37,9 @@ final public class StaticClassWrapper<T>
     return _wrappedClass;
   }
 
+  @Override
+  public String toString()
+  {
+    return "StaticClassWrapper(" + _wrappedClass.getName() + ")";
+  }
 }
