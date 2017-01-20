@@ -146,12 +146,12 @@ public class CountDirective
 
       if (step > 0) {
         for (; start <= end; start += step) {
-          _iterator.setValue(context, new Integer(start));
+          _iterator.setValue(context, Integer.valueOf(start));
           _body.write(out, context);
         }
       } else if (step < 0) {
         for (; start >= end; start += step) {
-          _iterator.setValue(context, new Integer(start));
+          _iterator.setValue(context, Integer.valueOf(start));
           _body.write(out, context);
         }
       } else {
