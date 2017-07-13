@@ -35,7 +35,7 @@ public class SetpropsDirective
   extends Directive
 {
 
-  private static final String DEFAULT_CLASS_NAME = "java.util.Hashtable";
+  private static final String DEFAULT_CLASS_NAME = "java.util.HashMap";
 
   private static final int PROPS_TARGET = 1;
 
