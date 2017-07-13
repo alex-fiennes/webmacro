@@ -11,6 +11,9 @@
 
 package org.webmacro.directive;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.webmacro.Broker;
@@ -18,8 +21,6 @@ import org.webmacro.InitException;
 import org.webmacro.Provider;
 import org.webmacro.engine.IntrospectionException;
 import org.webmacro.util.Settings;
-
-import java.util.Hashtable;
 
 /**
  * Utility class to assist in the creation of directives.
@@ -34,8 +35,8 @@ public final class DirectiveProvider
 
   // BULDER CLASS MANAGEMENT
 
-  private final Hashtable<String, DirectiveDescriptor> _descriptors =
-      new Hashtable<String, DirectiveDescriptor>();
+  private final Map<String, DirectiveDescriptor> _descriptors =
+      new ConcurrentHashMap<String, DirectiveDescriptor>();
   private Broker _broker;
 
   /**

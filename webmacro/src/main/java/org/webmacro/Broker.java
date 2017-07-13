@@ -22,7 +22,6 @@ import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -71,7 +70,7 @@ public class Broker
   protected static ClassLoader MY_CLASSLOADER = Broker.class.getClassLoader();
   protected static ClassLoader SYSTEM_CLASSLOADER = ClassLoader.getSystemClassLoader();
 
-  final protected Map<String, Provider> __providers = new Hashtable<String, Provider>();
+  final protected Map<String, Provider> __providers = new ConcurrentHashMap<String, Provider>();
   final protected Settings __config = new Settings();
   final protected String __name;
   final public PropertyOperatorCache __propertyOperators = new PropertyOperatorCache();

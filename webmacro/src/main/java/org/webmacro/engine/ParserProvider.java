@@ -13,11 +13,11 @@ package org.webmacro.engine;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.webmacro.Broker;
 import org.webmacro.InitException;
 import org.webmacro.NotFoundException;
@@ -35,7 +35,7 @@ public final class ParserProvider
 
   // BULDER CLASS MANAGEMENT
 
-  private final Hashtable<String, Parser> _parsers = new Hashtable<String, Parser>();
+  private final Map<String, Parser> _parsers = new ConcurrentHashMap<String, Parser>();
 
   private Broker _broker = null;
   private final Class<?>[] _brokerParam = { Broker.class };
