@@ -69,7 +69,7 @@ final public class ByteBufferOutputStream
                     int len)
   {
     ensureCapacity(len);
-    System.arraycopy(b, 0, _buf, _pos, len);
+    System.arraycopy(b, offset, _buf, _pos, len);
     _pos += len;
   }
 
