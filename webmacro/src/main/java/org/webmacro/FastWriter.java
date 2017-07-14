@@ -276,6 +276,42 @@ public class FastWriter
     }
   }
 
+  public boolean isEmptyOrWhitespaceBuffer()
+  {
+    if (_buffered) {
+      bflush();
+    }
+    final int s = __bstream.size();
+    final byte[] bytes = __bstream.getBuffer();
+    for (int i = 0; i < s; i++) {
+      if (bytes[i] > 32) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public int writeTrimmedBufferTo(FastWriter out)
+  {
+    if (_buffered) {
+      bflush();
+    }
+    final byte[] bytes = __bstream.getBuffer();
+    int end = __bstream.size();
+    int start = 0;
+    while ((start < end) && (bytes[start] <= ' ')) {
+      start++;
+    }
+    while ((start < end) && (bytes[end - 1] <= ' ')) {
+      end--;
+    }
+    int len = end - start;
+    if (len > 0) {
+      out.write(bytes, start, len);
+    }
+    return len;
+  }
+  
   /**
    * Flush all data out to the OutputStream, if any, clearing the internal buffers. Note that data
    * is ONLY written to the output stream on a flush() operation, and never at any other time.
