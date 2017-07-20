@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.Arrays;
 
 import org.webmacro.util.ByteBufferOutputStream;
 import org.webmacro.util.Encoder;
@@ -276,6 +277,11 @@ public class FastWriter
     }
   }
 
+  private boolean isWhitespace(byte b)
+  {
+    return b > 0 & b <= 32;
+  }
+
   public boolean isEmptyOrWhitespaceBuffer()
   {
     if (_buffered) {
@@ -284,7 +290,7 @@ public class FastWriter
     final int s = __bstream.size();
     final byte[] bytes = __bstream.getBuffer();
     for (int i = 0; i < s; i++) {
-      if (bytes[i] > 32) {
+      if (!isWhitespace(bytes[i])) {
         return false;
       }
     }
@@ -299,10 +305,10 @@ public class FastWriter
     final byte[] bytes = __bstream.getBuffer();
     int end = __bstream.size();
     int start = 0;
-    while ((start < end) && (bytes[start] <= ' ')) {
+    while ((start < end) && (isWhitespace(bytes[start]))) {
       start++;
     }
-    while ((start < end) && (bytes[end - 1] <= ' ')) {
+    while ((start < end) && (isWhitespace(bytes[end - 1]))) {
       end--;
     }
     int len = end - start;
@@ -311,7 +317,7 @@ public class FastWriter
     }
     return len;
   }
-  
+
   /**
    * Flush all data out to the OutputStream, if any, clearing the internal buffers. Note that data
    * is ONLY written to the output stream on a flush() operation, and never at any other time.
