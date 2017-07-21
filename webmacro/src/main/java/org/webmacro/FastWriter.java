@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Arrays;
 
 import org.webmacro.util.ByteBufferOutputStream;
 import org.webmacro.util.Encoder;
@@ -57,7 +56,7 @@ public class FastWriter
 
   private OutputStream _out;
 
-  private char[] _cbuf = new char[512];
+  private char[] _cbuf = null;
   private boolean _buffered;
 
   /**
@@ -180,15 +179,25 @@ public class FastWriter
       throws java.io.IOException
   {
     final int len = s.length();
-    try {
-      s.getChars(0, len, _cbuf, 0);
-    } catch (IndexOutOfBoundsException e) {
-      _cbuf = new char[len + (len - _cbuf.length)];
-      s.getChars(0, len, _cbuf, 0);
+    if (len > 0) {
+      char[] cbuf = getCharBuf(len);
+      s.getChars(0, len, cbuf, 0);
+      __bwriter.write(cbuf, 0, len);
+      _buffered = true;
     }
+  }
 
-    __bwriter.write(_cbuf, 0, len);
-    _buffered = true;
+  private char[] getCharBuf(int size)
+  {
+    if (_cbuf == null) {
+      _cbuf = new char[size * 3 / 2];
+      return _cbuf;
+    }
+    if (size <= _cbuf.length) {
+      return _cbuf;
+    }
+    _cbuf = new char[size * 3 / 2];
+    return _cbuf;
   }
 
   /*
@@ -200,15 +209,12 @@ public class FastWriter
                     final int len)
       throws java.io.IOException
   {
-    try {
-      s.getChars(off, off + len, _cbuf, 0);
-    } catch (IndexOutOfBoundsException e) {
-      _cbuf = new char[len + (len - _cbuf.length)];
-      s.getChars(off, off + len, _cbuf, 0);
+    if (len > 0) {
+      char[] cbuf = getCharBuf(len);
+      s.getChars(off, off + len, cbuf, 0);
+      __bwriter.write(cbuf, 0, len);
+      _buffered = true;
     }
-
-    __bwriter.write(_cbuf, 0, len);
-    _buffered = true;
   }
 
   /**
