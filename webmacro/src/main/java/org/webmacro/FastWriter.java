@@ -45,21 +45,9 @@ public class FastWriter
 {
 
   /**
-   * This encoding is either UTF16-BE or, if the platform does not support it, UTF8. It is a Unicode
-   * encoding which can have encoded strings concatenated together.
+   * UTF8 for compactness and ASCII compatibility
    */
-  public static final String SAFE_UNICODE_ENCODING;
-
-  // find the safe encoding
-  static {
-    String encoding = "UTF16-BE";
-    try {
-      encoding.getBytes(encoding);
-    } catch (Exception e) {
-      encoding = "UTF8";
-    }
-    SAFE_UNICODE_ENCODING = encoding;
-  }
+  public static final String SAFE_UNICODE_ENCODING = "UTF8";
 
   private final int __defaultBufferSize;
   private final String __encoding; // what encoding we use
