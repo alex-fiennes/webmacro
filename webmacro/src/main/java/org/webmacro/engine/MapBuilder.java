@@ -40,6 +40,7 @@ public class MapBuilder
 {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public Object build(BuildContext pc)
       throws BuildException
   {
@@ -104,6 +105,7 @@ class MapMacro
     _map = map;
   }
 
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException
@@ -117,6 +119,7 @@ class MapMacro
     return _map.toString();
   }
 
+  @Override
   public Object evaluate(Context context)
       throws PropertyException
   {

@@ -27,6 +27,7 @@ public class BrokerTemplateLoader
 
   static Logger _log = LoggerFactory.getLogger(BrokerTemplateLoader.class);
 
+  @Override
   public void setConfig(String config)
   {
     // ignore config
@@ -35,6 +36,7 @@ public class BrokerTemplateLoader
     }
   }
 
+  @Override
   public final Template load(String query,
                              CacheElement ce)
       throws ResourceException

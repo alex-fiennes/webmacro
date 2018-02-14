@@ -43,11 +43,13 @@ public class DefaultEvaluationExceptionHandler
     init(b, b.getSettings());
   }
 
+  @Override
   public void init(Broker b,
                    Settings config)
   {
   }
 
+  @Override
   public void evaluate(Variable variable,
                        Context context,
                        Exception problem)
@@ -83,6 +85,7 @@ public class DefaultEvaluationExceptionHandler
     }
   }
 
+  @Override
   public String expand(Variable variable,
                        Context context,
                        Exception problem)
@@ -118,12 +121,14 @@ public class DefaultEvaluationExceptionHandler
     }
   }
 
+  @Override
   public String warningString(String warningText,
                               Exception exception)
   {
     return "<!-- " + warningText + " -->";
   }
 
+  @Override
   public String errorString(String errorText,
                             Exception exception)
   {

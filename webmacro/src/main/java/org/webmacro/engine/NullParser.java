@@ -27,6 +27,7 @@ public class NullParser
   {
   }
 
+  @Override
   public BlockBuilder parseBlock(String name,
                                  Reader in)
       throws ParseException, IOException

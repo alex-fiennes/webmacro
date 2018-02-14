@@ -59,6 +59,7 @@ public class GlobalDirective
     return null;
   }
 
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException

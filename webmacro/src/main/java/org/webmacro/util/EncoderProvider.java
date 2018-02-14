@@ -44,6 +44,7 @@ public class EncoderProvider
   /**
    * Return an array representing the types this provider serves up
    */
+  @Override
   public String getType()
   {
     return TYPE;
@@ -54,6 +55,7 @@ public class EncoderProvider
    * implementations may override this method to obtain initialization parameters of their own
    * devising, but they must be sure to call super.init() in their overridden methods.
    */
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException
@@ -84,6 +86,7 @@ public class EncoderProvider
   /**
    * Clear any cache this provider may be maintaining.
    */
+  @Override
   public synchronized void flush()
   {
     // clean out the encoder cache
@@ -93,6 +96,7 @@ public class EncoderProvider
   /**
    * Close down this provider, freeing any allocated resources.
    */
+  @Override
   public synchronized void destroy()
   {
     // clear out our reference to the encoder cache to allow it to be
@@ -103,6 +107,7 @@ public class EncoderProvider
   /**
    * Get the object associated with the specified query.
    */
+  @Override
   public synchronized Object get(String encoding)
       throws ResourceException
   {

@@ -27,11 +27,13 @@ public class ConfigProvider
 
   private Settings _config;
 
+  @Override
   public String getType()
   {
     return "config";
   }
 
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException
@@ -42,15 +44,18 @@ public class ConfigProvider
     }
   }
 
+  @Override
   public void flush()
   {
   }
 
+  @Override
   public void destroy()
   {
     _config = null;
   }
 
+  @Override
   public Object get(String key)
       throws NotFoundException
   {

@@ -108,6 +108,7 @@ public final class ParserProvider
     return parName;
   }
 
+  @Override
   public String getType()
   {
     return "parser";
@@ -129,6 +130,7 @@ public final class ParserProvider
     }
   }
 
+  @Override
   public void init(Broker broker,
                    Settings p)
       throws InitException
@@ -143,11 +145,13 @@ public final class ParserProvider
     }
   }
 
+  @Override
   public void destroy()
   {
     _parsers.clear();
   }
 
+  @Override
   public Object get(String name)
       throws NotFoundException
   {
@@ -158,6 +162,7 @@ public final class ParserProvider
     }
   }
 
+  @Override
   public void flush()
   {
   }

@@ -77,6 +77,7 @@ final public class Block
    * @exception IOException
    *              if we could not successfully write to out
    */
+  @Override
   final public void write(final FastWriter out,
                           final Context context)
       throws PropertyException, IOException
@@ -252,31 +253,37 @@ final public class Block
       this.block = b;
     }
 
+    @Override
     public boolean hasNext()
     {
       return !done;
     }
 
+    @Override
     public String getName()
     {
       return block.getTemplateName();
     }
 
+    @Override
     public int getLineNo()
     {
       return block.getLineNo(i - 1);
     }
 
+    @Override
     public int getColNo()
     {
       return block.getColNo(i - 1);
     }
 
+    @Override
     public void remove()
     {
       throw new UnsupportedOperationException();
     }
 
+    @Override
     public Object next()
     {
       if (doneString) {
@@ -306,6 +313,7 @@ final public class Block
     l.add(_strings[len]);
   }
 
+  @Override
   final public void accept(TemplateVisitor v)
   {
     v.beginBlock();
@@ -322,6 +330,7 @@ final public class Block
    * @exception PropertyException
    *              if required data was missing from context
    */
+  @Override
   final public Object evaluate(Context context)
       throws PropertyException
   {

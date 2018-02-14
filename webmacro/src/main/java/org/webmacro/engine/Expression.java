@@ -39,6 +39,7 @@ public abstract class Expression
     }
 
     // Macro methods
+    @Override
     final public void write(FastWriter out,
                             Context context)
         throws PropertyException, IOException
@@ -100,6 +101,7 @@ public abstract class Expression
                                    Object r)
         throws PropertyException;
 
+    @Override
     public Object evaluate(Context context)
         throws PropertyException
     {
@@ -113,6 +115,7 @@ public abstract class Expression
 
     public abstract String getName();
 
+    @Override
     public void accept(TemplateVisitor v)
     {
       v.visitBinaryOperation(getName(), _l, _r);
@@ -132,6 +135,7 @@ public abstract class Expression
 
     public abstract Object operate(Object o);
 
+    @Override
     public Object evaluate(Context context)
         throws PropertyException
     {
@@ -142,6 +146,7 @@ public abstract class Expression
 
     public abstract String getName();
 
+    @Override
     public void accept(TemplateVisitor v)
     {
       v.visitUnaryOperation(getName(), _o);
@@ -161,6 +166,7 @@ public abstract class Expression
       _r = r;
     }
 
+    @Override
     public Object evaluate(Context context)
         throws PropertyException
     {
@@ -177,6 +183,7 @@ public abstract class Expression
       return TRUE;
     }
 
+    @Override
     public void accept(TemplateVisitor v)
     {
       v.visitBinaryOperation("And", _l, _r);
@@ -196,6 +203,7 @@ public abstract class Expression
       _r = r;
     }
 
+    @Override
     public Object evaluate(Context context)
         throws PropertyException
     {
@@ -212,6 +220,7 @@ public abstract class Expression
       return FALSE;
     }
 
+    @Override
     public void accept(TemplateVisitor v)
     {
       v.visitBinaryOperation("Or", _l, _r);
@@ -658,6 +667,7 @@ public abstract class Expression
                                  Object r)
         throws BuildException;
 
+    @Override
     public Object build(BuildContext pc)
         throws BuildException
     {
@@ -683,6 +693,7 @@ public abstract class Expression
     public abstract Object build(Object o)
         throws BuildException;
 
+    @Override
     public Object build(BuildContext pc)
         throws BuildException
     {

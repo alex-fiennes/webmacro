@@ -65,6 +65,7 @@ public class ServletContextTemplateLoader
     }
   }
 
+  @Override
   public void setConfig(String config)
   {
     // as we'll later use this as a prefix, it should end with a slash
@@ -81,6 +82,7 @@ public class ServletContextTemplateLoader
     this.path = config;
   }
 
+  @Override
   public Template load(String query,
                        CacheElement ce)
       throws ResourceException

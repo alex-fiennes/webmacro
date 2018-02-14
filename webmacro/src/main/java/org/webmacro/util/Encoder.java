@@ -80,6 +80,7 @@ public class Encoder
     _encoding = encoding;
   }
 
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException
@@ -109,6 +110,7 @@ public class Encoder
   /**
    * Load an object from permanent storage (or construct it) on demand.
    */
+  @Override
   public Object load(Object query,
                      CacheElement ce)
       throws ResourceException
@@ -135,6 +137,7 @@ public class Encoder
     }
   }
 
+  @Override
   public Object load(String query,
                      CacheElement ce)
       throws ResourceException

@@ -40,6 +40,7 @@ final public class PrimitiveArrayIterator
   /**
    * Return true if we have not yet reached the end of the enumeration.
    */
+  @Override
   final public boolean hasNext()
   {
     return (pos < _size);
@@ -49,6 +50,7 @@ final public class PrimitiveArrayIterator
    * Advance the iterator and return the next value. Return null if we reach the end of the
    * enumeration.
    */
+  @Override
   final public Object next()
   {
     if (pos < _size) {
@@ -61,6 +63,7 @@ final public class PrimitiveArrayIterator
   /**
    * Unsupported.
    */
+  @Override
   final public void remove()
   {
     throw new UnsupportedOperationException();

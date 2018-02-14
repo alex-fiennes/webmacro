@@ -128,6 +128,7 @@ final public class TemplateProvider
   /**
    * Supports the "template" type.
    */
+  @Override
   final public String getType()
   {
     return "template";
@@ -136,6 +137,7 @@ final public class TemplateProvider
   /**
    * Grab a template based on its name.
    */
+  @Override
   final public Object load(String name,
                            CacheElement ce)
       throws ResourceException

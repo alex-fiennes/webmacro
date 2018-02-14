@@ -44,6 +44,7 @@ abstract public class CachingProvider
   /**
    * If you override this method be sure and call super.init(...)
    */
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException
@@ -73,6 +74,7 @@ abstract public class CachingProvider
   /**
    * Clear the cache. If you override this method be sure and call super.flush().
    */
+  @Override
   public void flush()
   {
     _cache.flush();
@@ -81,6 +83,7 @@ abstract public class CachingProvider
   /**
    * Close down the provider. If you override this method be sure and call super.destroy().
    */
+  @Override
   public void destroy()
   {
     _cache.destroy();
@@ -89,6 +92,7 @@ abstract public class CachingProvider
   /**
    * Get the object associated with the specific query, using the specified cache manager.
    */
+  @Override
   public Object get(String query)
       throws ResourceException
   {
@@ -99,6 +103,7 @@ abstract public class CachingProvider
    * Delegates to ResourceLoader implementers the load operation by casting the query as a string
    * and invoking the implemented method.
    */
+  @Override
   public Object load(Object query,
                      CacheElement ce)
       throws ResourceException

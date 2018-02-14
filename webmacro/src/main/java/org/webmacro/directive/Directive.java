@@ -71,6 +71,7 @@ public abstract class Directive
       throws BuildException;
 
   /* Convenience implementation of evaluate() which Directives can inherit */
+  @Override
   public Object evaluate(Context context)
       throws PropertyException
   {
@@ -118,6 +119,7 @@ public abstract class Directive
     writer.write(getWarningText(warning, context, exception));
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     v.visitUnknownMacro(this.getClass().getName(), this);

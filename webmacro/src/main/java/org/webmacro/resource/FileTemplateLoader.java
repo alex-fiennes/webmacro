@@ -33,6 +33,7 @@ public class FileTemplateLoader
 
   private String path;
 
+  @Override
   public void setConfig(String config)
   {
     // leading slash isn't needed, because
@@ -51,6 +52,7 @@ public class FileTemplateLoader
   /**
    * Tries to load a template by interpreting query as a path relative to the path set by setPath.
    */
+  @Override
   public final Template load(String query,
                              CacheElement ce)
       throws ResourceException

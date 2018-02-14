@@ -128,6 +128,7 @@ public class Context
    * Subclasses may override the clear method and add functionality but they must call super.clear()
    * if they do so.
    */
+  @Override
   public void clear()
   {
     _variables.clear();
@@ -239,6 +240,7 @@ public class Context
   /**
    * Get the named object/property from the Context; returns null if not found.
    */
+  @Override
   public final Object get(Object name)
   {
     try {
@@ -313,6 +315,7 @@ public class Context
    * Add an object to the context returning the object that was there previously under the same
    * name, if any.
    */
+  @Override
   public final Object put(Object name,
                           Object value)
   {
@@ -428,6 +431,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public boolean containsKey(Object key)
   {
     return _variables.containsKey(key);
@@ -436,6 +440,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final boolean containsValue(Object value)
   {
     return _variables.containsValue(value);
@@ -444,6 +449,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final Set<Map.Entry<Object, Object>> entrySet()
   {
     return _variables.entrySet();
@@ -452,6 +458,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final boolean isEmpty()
   {
     return _variables.isEmpty();
@@ -460,6 +467,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final Set<Object> keySet()
   {
     return _variables.keySet();
@@ -477,6 +485,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final Object remove(Object key)
   {
     return _variables.remove(key);
@@ -485,6 +494,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final int size()
   {
     return _variables.size();
@@ -493,6 +503,7 @@ public class Context
   /**
    * Method from Map interface, operates on underlying Map.
    */
+  @Override
   public final Collection<Object> values()
   {
     return _variables.values();

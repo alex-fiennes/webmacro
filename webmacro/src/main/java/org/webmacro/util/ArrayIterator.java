@@ -36,6 +36,7 @@ final public class ArrayIterator
   /**
    * @return true if we have not yet reached the end of the enumeration.
    */
+  @Override
   final public boolean hasNext()
   {
     return (pos < a.length);
@@ -45,6 +46,7 @@ final public class ArrayIterator
    * Advance the iterator and return the next value. Return null if we reach the end of the
    * enumeration.
    */
+  @Override
   final public Object next()
   {
     if (pos < a.length) {
@@ -57,6 +59,7 @@ final public class ArrayIterator
   /**
    * Unsupported.
    */
+  @Override
   final public void remove()
   {
     throw new UnsupportedOperationException();

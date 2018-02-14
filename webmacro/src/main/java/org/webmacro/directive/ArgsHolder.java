@@ -55,6 +55,7 @@ public final class ArgsHolder
    * Get the argument at the specified <code>index</code>. This is different than getting an
    * argument by it's <code>id</code>
    */
+  @Override
   public Object getExactArg(int idx)
       throws BuildException
   {
@@ -64,6 +65,7 @@ public final class ArgsHolder
   /**
    * How many arguments does this ArgsHolder have?
    */
+  @Override
   public final int getArgCount()
   {
     return buildArgs.length;
@@ -72,6 +74,7 @@ public final class ArgsHolder
   /**
    * Retrieve the argument whose id is the specified id.
    */
+  @Override
   public final Object getArg(int id)
       throws BuildException
   {
@@ -83,6 +86,7 @@ public final class ArgsHolder
    * Retrieve the argument whose id is the specified id, and if it is a Builder, build it with the
    * specified build context.
    */
+  @Override
   public final Object getArg(int id,
                              BuildContext bc)
       throws BuildException
@@ -98,6 +102,7 @@ public final class ArgsHolder
    * overwritten. Generally not used by directives, only used by the parser.
    */
 
+  @Override
   public final void setArg(int id,
                            Object o)
       throws BuildException

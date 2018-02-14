@@ -42,11 +42,13 @@ public class CrankyEvaluationExceptionHandler
     init(b, b.getSettings());
   }
 
+  @Override
   public void init(Broker b,
                    Settings config)
   {
   }
 
+  @Override
   public void evaluate(Variable variable,
                        Context context,
                        Exception problem)
@@ -72,6 +74,7 @@ public class CrankyEvaluationExceptionHandler
     throw (PropertyException) problem;
   }
 
+  @Override
   public String expand(Variable variable,
                        Context context,
                        Exception problem)
@@ -98,6 +101,7 @@ public class CrankyEvaluationExceptionHandler
 
   }
 
+  @Override
   public String warningString(String warningText,
                               Exception exception)
       throws PropertyException
@@ -105,6 +109,7 @@ public class CrankyEvaluationExceptionHandler
     throw new PropertyException("Evaluation warning: " + warningText, exception);
   }
 
+  @Override
   public String errorString(String errorText,
                             Exception exception)
       throws PropertyException

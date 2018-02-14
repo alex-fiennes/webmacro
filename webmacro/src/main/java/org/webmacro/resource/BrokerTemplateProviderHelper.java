@@ -79,6 +79,7 @@ final public class BrokerTemplateProviderHelper
    * @exception InitException
    *              provider failed to initialize
    */
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException
@@ -92,6 +93,7 @@ final public class BrokerTemplateProviderHelper
   /**
    * Grab a template based on its name.
    */
+  @Override
   final public Object load(String name,
                            CacheElement ce)
       throws ResourceException
@@ -147,6 +149,7 @@ final public class BrokerTemplateProviderHelper
   }
 
   /** We don't implement this one. */
+  @Override
   public Object load(Object query,
                      CacheElement ce)
       throws ResourceException

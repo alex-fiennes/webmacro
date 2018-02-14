@@ -133,6 +133,7 @@ final public class URLTemplateProvider
    * @return the template type. Always the String "template"
    */
 
+  @Override
   final public String getType()
   {
     return _TYPE;
@@ -185,6 +186,7 @@ final public class URLTemplateProvider
    * @return the requested resource
    */
 
+  @Override
   final public Object load(String name,
                            CacheElement ce)
       throws ResourceException

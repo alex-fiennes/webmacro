@@ -168,6 +168,7 @@ public class TypeDirective
   /**
    * The #type directive does not produce output.
    */
+  @Override
   public void write(FastWriter fw,
                     Context context)
       throws IOException, PropertyException

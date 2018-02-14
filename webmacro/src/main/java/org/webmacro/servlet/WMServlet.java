@@ -328,6 +328,7 @@ abstract public class WMServlet
    * is initialized, and deleted when the last instance is shut down. If you attempt to access it
    * after the last servlet has been shutdown, it will either be in a shutdown state or else null.
    */
+  @Override
   public Broker getBroker()
   {
     // this method can be unsynch. because the broker manages its own
@@ -347,6 +348,7 @@ abstract public class WMServlet
    * @exception ResourceException
    *              if the template coult not be loaded
    */
+  @Override
   public Template getTemplate(String key)
       throws ResourceException
   {
@@ -358,6 +360,7 @@ abstract public class WMServlet
    * though it will sit in WebMacro's cache rather than re-requesting each time. The content will be
    * returned as an Object.
    */
+  @Override
   public String getURL(String url)
       throws ResourceException
   {
@@ -371,6 +374,7 @@ abstract public class WMServlet
    * @exception NotFoundException
    *              could not locate requested information
    */
+  @Override
   public String getConfig(String key)
       throws NotFoundException
   {
@@ -394,6 +398,7 @@ abstract public class WMServlet
   /**
    * Create a new Context object.
    */
+  @Override
   public Context getContext()
   {
     return _wm.getContext();
@@ -402,6 +407,7 @@ abstract public class WMServlet
   /**
    * Create a new WebContext object; can be overridden.
    */
+  @Override
   public WebContext getWebContext(HttpServletRequest req,
                                   HttpServletResponse res)
   {
@@ -428,6 +434,7 @@ abstract public class WMServlet
    * @throws PropertyException
    *           if a fatal error occured during the Template evaluation phase
    */
+  @Override
   public void writeTemplate(String templateName,
                             java.io.OutputStream out,
                             Context context)
@@ -457,6 +464,7 @@ abstract public class WMServlet
    * @throws PropertyException
    *           if a fatal error occured during the Template evaluation phase
    */
+  @Override
   public void writeTemplate(String templateName,
                             java.io.OutputStream out,
                             String encoding,

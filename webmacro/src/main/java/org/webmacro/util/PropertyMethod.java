@@ -70,6 +70,7 @@ public class PropertyMethod
   /**
    * Return the name of this PropertyMethod
    */
+  @Override
   final public String getName()
   {
     return _name;

@@ -33,6 +33,7 @@ public final class QuotedStringBuilder
 
   private static final long serialVersionUID = -7489766042268586054L;
 
+  @Override
   final public Object build(BuildContext bc)
       throws BuildException
   {
@@ -116,6 +117,7 @@ final class QuotedString
    * @exception PropertyException
    *              is required data is missing
    */
+  @Override
   public Object evaluate(Context data)
       throws PropertyException
   {
@@ -147,6 +149,7 @@ final class QuotedString
    * @exception IOException
    *              if could not write to output stream
    */
+  @Override
   final public void write(FastWriter out,
                           Context data)
       throws PropertyException, IOException
@@ -154,6 +157,7 @@ final class QuotedString
     out.write(evaluate(data).toString()); // evaluate never returns null
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     v.beginBlock();

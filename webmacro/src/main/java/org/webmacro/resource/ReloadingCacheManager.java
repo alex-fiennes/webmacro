@@ -106,6 +106,7 @@ public class ReloadingCacheManager
   {
   }
 
+  @Override
   public void init(Broker b,
                    Settings config,
                    String resourceType)
@@ -114,6 +115,7 @@ public class ReloadingCacheManager
     Settings ourSettings, defaultSettings;
 
     _clockDaemon = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+      @Override
       public Thread newThread(Runnable runnable)
       {
         _log.info("Creating new ClockDaemon thread");
@@ -167,6 +169,7 @@ public class ReloadingCacheManager
   /**
    * Clear the cache.
    */
+  @Override
   public void flush()
   {
     _cache.clear();
@@ -175,12 +178,14 @@ public class ReloadingCacheManager
   /**
    * Close down the provider.
    */
+  @Override
   public void destroy()
   {
     _cache.clear();
     _clockDaemon.shutdown();
   }
 
+  @Override
   public boolean supportsReload()
   {
     return _reloadOnChange;
@@ -189,6 +194,7 @@ public class ReloadingCacheManager
   private final void scheduleRemoval(final Object key)
   {
     _clockDaemon.schedule(new Runnable() {
+      @Override
       public void run()
       {
         _cache.remove(key);
@@ -201,6 +207,7 @@ public class ReloadingCacheManager
    * Get the object associated with the specific query, first trying to look it up in a cache. If
    * it's not there, then call load(String) to load it into the cache.
    */
+  @Override
   public Object get(final Object query,
                     ResourceLoader helper)
       throws ResourceException
@@ -241,6 +248,7 @@ public class ReloadingCacheManager
    * Get the object associated with the specific query, trying to look it up in a cache. If it's not
    * there, return null.
    */
+  @Override
   public Object get(final Object query)
   {
     MyCacheElement r = _cache.get(query);
@@ -253,6 +261,7 @@ public class ReloadingCacheManager
   /**
    * Put an object in the cache
    */
+  @Override
   public void put(final Object query,
                   Object resource)
   {
@@ -267,6 +276,7 @@ public class ReloadingCacheManager
   }
 
   /** Removes a specific entry from the cache. */
+  @Override
   public void invalidate(final Object query)
   {
     _cache.remove(query);

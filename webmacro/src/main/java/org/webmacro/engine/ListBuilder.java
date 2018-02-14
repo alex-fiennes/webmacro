@@ -47,6 +47,7 @@ public final class ListBuilder
     return c;
   }
 
+  @Override
   public final Object build(BuildContext bc)
       throws BuildException
   {
@@ -78,6 +79,7 @@ class ListMacro
     _content = content;
   }
 
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException
@@ -100,6 +102,7 @@ class ListMacro
     return sb.toString();
   }
 
+  @Override
   public Object evaluate(Context context)
       throws PropertyException
   {

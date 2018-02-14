@@ -39,6 +39,7 @@ public final class StringMacroAdapter
     return _self;
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     v.visitString(toString());
@@ -47,6 +48,7 @@ public final class StringMacroAdapter
   /**
    * Returns the wrapped object, context is ignored.
    */
+  @Override
   public final Object evaluate(Context context)
   {
     return _self;
@@ -55,6 +57,7 @@ public final class StringMacroAdapter
   /**
    * Just calls toString() and writes that, context is ignored.
    */
+  @Override
   public final void write(FastWriter out,
                           Context context)
       throws IOException

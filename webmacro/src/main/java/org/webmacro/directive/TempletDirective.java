@@ -101,6 +101,7 @@ public class TempletDirective
    * @throws IOException
    *           N/A
    */
+  @Override
   public void write(org.webmacro.FastWriter out,
                     org.webmacro.Context context)
       throws org.webmacro.PropertyException, IOException

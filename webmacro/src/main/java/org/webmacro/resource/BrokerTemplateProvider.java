@@ -46,11 +46,13 @@ final public class BrokerTemplateProvider
     _helper.setReload(_cacheSupportsReload);
   }
 
+  @Override
   final public String getType()
   {
     return "template";
   }
 
+  @Override
   final public Object load(String name,
                            CacheElement ce)
       throws ResourceException

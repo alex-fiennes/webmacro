@@ -58,11 +58,13 @@ public class DebugEvaluationExceptionHandler
     init(b, b.getSettings());
   }
 
+  @Override
   public void init(Broker b,
                    Settings config)
   {
   }
 
+  @Override
   public void evaluate(Variable variable,
                        Context context,
                        Exception problem)
@@ -71,6 +73,7 @@ public class DebugEvaluationExceptionHandler
     handleError(variable, context, problem);
   }
 
+  @Override
   public String expand(Variable variable,
                        Context context,
                        Exception problem)
@@ -120,6 +123,7 @@ public class DebugEvaluationExceptionHandler
     throw propEx;
   }
 
+  @Override
   public String warningString(String strText,
                               Exception exception)
       throws PropertyException
@@ -127,6 +131,7 @@ public class DebugEvaluationExceptionHandler
     throw new PropertyException("Evaluation warning: " + strText, exception);
   }
 
+  @Override
   public String errorString(String strText,
                             Exception exception)
       throws PropertyException

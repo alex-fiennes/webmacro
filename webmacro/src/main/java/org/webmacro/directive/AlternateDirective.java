@@ -98,6 +98,7 @@ public class AlternateDirective
     list = builder.getArg(ALTERNATE_LIST, bc);
     return this;
   }
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException
@@ -129,7 +130,9 @@ public class AlternateDirective
 abstract class Alternator
   implements Macro
 {
+  @Override
   public abstract Object evaluate(Context context);
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException

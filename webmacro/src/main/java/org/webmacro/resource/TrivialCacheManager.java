@@ -28,6 +28,7 @@ public class TrivialCacheManager
   {
   }
 
+  @Override
   public void init(Broker b,
                    Settings config,
                    String resourceType)
@@ -35,14 +36,17 @@ public class TrivialCacheManager
   {
   }
 
+  @Override
   public void flush()
   {
   }
 
+  @Override
   public void destroy()
   {
   }
 
+  @Override
   public Object get(final Object query,
                     ResourceLoader helper)
       throws ResourceException
@@ -50,21 +54,25 @@ public class TrivialCacheManager
     return helper.load(query, null);
   }
 
+  @Override
   public Object get(final Object query)
   {
     return null;
   }
 
+  @Override
   public void put(final Object query,
                   Object resource)
   {
   }
 
+  @Override
   public boolean supportsReload()
   {
     return false;
   }
 
+  @Override
   public void invalidate(final Object query)
   {
   }

@@ -72,37 +72,44 @@ public class BlockBuilder
       i = 0;
     }
 
+    @Override
     public String getName()
     {
       return name;
     }
 
+    @Override
     public boolean hasNext()
     {
       return (i < size);
     }
 
+    @Override
     public Object next()
     {
       return elements.get(i++);
     }
 
+    @Override
     public int getLineNo()
     {
       return lineNos[i - 1];
     }
 
+    @Override
     public int getColNo()
     {
       return colNos[i - 1];
     }
 
+    @Override
     public void remove()
     {
       throw new UnsupportedOperationException();
     }
   }
 
+  @Override
   final public Object build(BuildContext bc)
       throws BuildException
   {

@@ -102,6 +102,7 @@ public class DelegatingTemplateProvider
   }
   
 
+  @Override
   public String getType()
   {
     return "template";
@@ -112,6 +113,7 @@ public class DelegatingTemplateProvider
    * provider, that returns a non-null value or throws a NotFoundException, if all providers return
    * null.
    */
+  @Override
   public Object load(String query,
                      CacheElement ce)
       throws ResourceException

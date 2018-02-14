@@ -52,6 +52,7 @@ public class ClassPathTemplateLoader
     loader = broker.getClassLoader();
   }
 
+  @Override
   public void setConfig(String config)
   {
     // as we'll later use this as a prefix, it should end with a slash
@@ -70,6 +71,7 @@ public class ClassPathTemplateLoader
     this.path = config;
   }
 
+  @Override
   public Template load(String query,
                        CacheElement ce)
       throws ResourceException

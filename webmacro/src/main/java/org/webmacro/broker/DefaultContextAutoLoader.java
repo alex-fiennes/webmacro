@@ -25,6 +25,7 @@ public class DefaultContextAutoLoader
   private Map<String, ContextObjectFactory> _factories =
       new ConcurrentHashMap<String, ContextObjectFactory>();
 
+  @Override
   public void init(Broker b,
                    String name)
   {
@@ -32,6 +33,7 @@ public class DefaultContextAutoLoader
     loadFactories(name);
   }
 
+  @Override
   public Object get(String name,
                     Context context)
       throws PropertyException

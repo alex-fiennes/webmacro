@@ -29,6 +29,7 @@ public class DefaultTemplateLoaderFactory
   implements TemplateLoaderFactory
 {
 
+  @Override
   public TemplateLoader getTemplateLoader(Broker b,
                                           String config)
       throws InitException

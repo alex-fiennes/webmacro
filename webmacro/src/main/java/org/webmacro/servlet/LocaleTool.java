@@ -83,6 +83,7 @@ public class LocaleTool
   /**
    * access method used by $Locale.xxxxx => LocaleTool.get("xxxxx")
    */
+  @Override
   final public Object get(String field)
   {
     return buildLocale(field);
@@ -126,6 +127,7 @@ public class LocaleTool
   /**
    * Unsupported
    */
+  @Override
   final public void put(String key,
                         Object value)
       throws UnsettableException
@@ -136,6 +138,7 @@ public class LocaleTool
   /**
    * Unsupported
    */
+  @Override
   final public void remove(String key)
       throws UnsettableException
   {

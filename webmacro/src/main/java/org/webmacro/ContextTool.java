@@ -29,6 +29,7 @@ public abstract class ContextTool
   public abstract Object init(Context c)
       throws PropertyException;
 
+  @Override
   public Object get(Context c)
       throws PropertyException
   {

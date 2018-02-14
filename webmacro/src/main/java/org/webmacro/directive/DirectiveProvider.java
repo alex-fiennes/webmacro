@@ -159,11 +159,13 @@ public final class DirectiveProvider
 
   // RESOURCE PROVIDER API
 
+  @Override
   public String getType()
   {
     return DIRECTIVE_KEY;
   }
 
+  @Override
   public void init(Broker broker,
                    Settings config)
       throws InitException
@@ -177,6 +179,7 @@ public final class DirectiveProvider
     }
   }
 
+  @Override
   public void destroy()
   {
     _descriptors.clear();
@@ -186,11 +189,13 @@ public final class DirectiveProvider
    * The DirectiveProvider doesn't throw an exception when it can't find the directive -- it just
    * returns null.
    */
+  @Override
   public Object get(String name)
   {
     return getDescriptor(name);
   }
 
+  @Override
   public void flush()
   {
   }

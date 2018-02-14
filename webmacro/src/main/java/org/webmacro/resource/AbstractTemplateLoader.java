@@ -39,6 +39,7 @@ public abstract class AbstractTemplateLoader
    * Sets up broker, reloadDelayDecorator and log. Don't forget to call super.init() if you override
    * this method.
    */
+  @Override
   public void init(Broker b,
                    Settings config)
       throws InitException

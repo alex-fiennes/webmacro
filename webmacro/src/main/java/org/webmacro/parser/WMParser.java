@@ -51,6 +51,7 @@ public class WMParser
    * Parse a block that appears on the supplied input Reader. The name supplied is used in error
    * messages to identify the source being parsed.
    */
+  @Override
   public BlockBuilder parseBlock(String name,
                                  Reader in)
       throws org.webmacro.engine.ParseException, IOException

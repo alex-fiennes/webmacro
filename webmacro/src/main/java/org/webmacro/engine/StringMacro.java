@@ -30,6 +30,7 @@ public class StringMacro
    * (non-Javadoc)
    * @see org.webmacro.Macro#evaluate(org.webmacro.Context)
    */
+  @Override
   public Object evaluate(Context context)
       throws org.webmacro.PropertyException
   {
@@ -42,6 +43,7 @@ public class StringMacro
    * (non-Javadoc)
    * @see org.webmacro.Macro#write(org.webmacro.FastWriter, org.webmacro.Context)
    */
+  @Override
   public void write(org.webmacro.FastWriter fw,
                     Context context)
       throws org.webmacro.PropertyException, IOException

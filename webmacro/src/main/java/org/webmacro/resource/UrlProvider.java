@@ -50,6 +50,7 @@ final public class UrlProvider
   /**
    * We serve up "url" type resources.
    */
+  @Override
   final public String getType()
   {
     return "url";
@@ -73,6 +74,7 @@ final public class UrlProvider
    * which do not specify a timeout, and files from the filesystem, will be cached for AVG_TIMEOUT
    * milliseconds.
    */
+  @Override
   final public Object load(String name,
                            CacheElement ce)
       throws ResourceException

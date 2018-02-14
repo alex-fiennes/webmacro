@@ -133,6 +133,7 @@ public abstract class Variable
    * 
    * @return String
    */
+  @Override
   final public Object evaluate(Context context)
       throws PropertyException
   {
@@ -180,6 +181,7 @@ public abstract class Variable
    * @exception IOException
    *              if could not write to output stream
    */
+  @Override
   final public void write(FastWriter out,
                           Context context)
       throws PropertyException, IOException
@@ -280,6 +282,7 @@ public abstract class Variable
     return _vname;
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     v.visitVariable(this, _names);

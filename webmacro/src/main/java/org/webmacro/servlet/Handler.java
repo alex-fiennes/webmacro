@@ -71,6 +71,7 @@ public interface Handler
    * will help you out in logging and debugging messages if for some reason WebMacro needs to
    * identify the handler in a log message.
    */
+  @Override
   public String toString();
 
   /**

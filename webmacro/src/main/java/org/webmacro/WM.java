@@ -144,6 +144,7 @@ public class WM
    * is initialized, and deleted when the last instance is shut down. If you attempt to access it
    * after the last servlet has been shutdown, it will either be in a shutdown state or else null.
    */
+  @Override
   final public Broker getBroker()
   {
     // this method can be unsynch. because the broker manages its own
@@ -157,6 +158,7 @@ public class WM
   /**
    * Instantiate a new context.
    */
+  @Override
   final public Context getContext()
   {
     return new Context(__broker);
@@ -165,6 +167,7 @@ public class WM
   /**
    * Instantiate a new webcontext.
    */
+  @Override
   final public WebContext getWebContext(HttpServletRequest req,
                                         HttpServletResponse resp)
   {
@@ -179,6 +182,7 @@ public class WM
    * @exception ResourceException
    *              if the template could not be loaded
    */
+  @Override
   final public Template getTemplate(String key)
       throws ResourceException
   {
@@ -193,6 +197,7 @@ public class WM
    * @exception ResourceException
    *              if the template could not be loaded
    */
+  @Override
   final public String getURL(String url)
       throws ResourceException
   {
@@ -206,6 +211,7 @@ public class WM
    * @exception NotFoundException
    *              could not locate requested information
    */
+  @Override
   final public String getConfig(String key)
       throws NotFoundException
   {
@@ -257,6 +263,7 @@ public class WM
    * @throws PropertyException
    *           if a fatal error occured during the Template evaluation phase
    */
+  @Override
   final public void writeTemplate(String templateName,
                                   java.io.OutputStream out,
                                   Context context)
@@ -286,6 +293,7 @@ public class WM
    * @throws PropertyException
    *           if a fatal error occured during the Template evaluation phase
    */
+  @Override
   final public void writeTemplate(String templateName,
                                   java.io.OutputStream out,
                                   String encoding,
@@ -313,6 +321,7 @@ public class WM
    * 
    * @see Broker#destroy()
    **/
+  @Override
   public void destroy()
   {
     getBroker().destroy();

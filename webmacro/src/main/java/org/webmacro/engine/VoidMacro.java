@@ -29,6 +29,7 @@ public final class VoidMacro
 
   public static final VoidMacro instance = new VoidMacro();
 
+  @Override
   public void write(FastWriter out,
                     Context context)
       throws PropertyException, IOException
@@ -39,6 +40,7 @@ public final class VoidMacro
   /**
    * Always throws a new <code>PropertyException.VoidValueException</code>
    */
+  @Override
   public Object evaluate(Context context)
       throws PropertyException
   {

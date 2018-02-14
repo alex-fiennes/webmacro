@@ -33,6 +33,7 @@ public class SimpleCacheManager
   {
   }
 
+  @Override
   public void init(Broker b,
                    Settings config,
                    String resourceType)
@@ -47,6 +48,7 @@ public class SimpleCacheManager
   /**
    * Clear the cache.
    */
+  @Override
   public void flush()
   {
     _cache.clear();
@@ -55,11 +57,13 @@ public class SimpleCacheManager
   /**
    * Close down the provider.
    */
+  @Override
   public void destroy()
   {
     _cache.clear();
   }
 
+  @Override
   public boolean supportsReload()
   {
     return false;
@@ -69,6 +73,7 @@ public class SimpleCacheManager
    * Get the object associated with the specific query, first trying to look it up in a cache. If
    * it's not there, then call load(String) to load it into the cache.
    */
+  @Override
   public Object get(final Object query,
                     ResourceLoader helper)
       throws ResourceException
@@ -87,6 +92,7 @@ public class SimpleCacheManager
    * Get the object associated with the specific query, trying to look it up in a cache. If it's not
    * there, return null.
    */
+  @Override
   public Object get(final Object query)
   {
     return _cache.get(query);
@@ -95,6 +101,7 @@ public class SimpleCacheManager
   /**
    * Put an object in the cache.
    */
+  @Override
   public void put(final Object query,
                   Object resource)
   {
@@ -104,6 +111,7 @@ public class SimpleCacheManager
   /**
    * Remove an element.
    */
+  @Override
   public void invalidate(final Object query)
   {
     _cache.remove(query);

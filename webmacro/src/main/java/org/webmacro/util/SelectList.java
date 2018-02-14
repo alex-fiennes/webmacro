@@ -33,11 +33,13 @@ public class SelectList
     _values = elements;
   }
 
+  @Override
   public boolean hasMoreElements()
   {
     return ((_current + 1) < _values.length);
   }
 
+  @Override
   public Object nextElement()
   {
     _current++;

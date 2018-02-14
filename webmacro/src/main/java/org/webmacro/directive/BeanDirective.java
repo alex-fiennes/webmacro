@@ -159,6 +159,7 @@ public class BeanDirective
     return this;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public void write(FastWriter out,
                     Context context)

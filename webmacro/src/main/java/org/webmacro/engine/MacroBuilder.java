@@ -43,6 +43,7 @@ public class MacroBuilder
   /**
    * Expand the macro. Gets the macro definition from the build context.
    */
+  @Override
   public Object build(BuildContext bc)
       throws BuildException
   {

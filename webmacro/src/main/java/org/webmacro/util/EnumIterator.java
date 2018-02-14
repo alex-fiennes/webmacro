@@ -37,6 +37,7 @@ final public class EnumIterator<T>
   /**
    * @return true if we have not yet reached the end of the enumeration.
    */
+  @Override
   final public boolean hasNext()
   {
     return hasNext;
@@ -46,6 +47,7 @@ final public class EnumIterator<T>
    * Advance the iterator and return the next value. Return null if we reach the end of the
    * enumeration.
    */
+  @Override
   final public T next()
   {
     if (!hasNext) {
@@ -62,6 +64,7 @@ final public class EnumIterator<T>
    * @throws UnsupportedOperationException
    *           Always
    */
+  @Override
   final public void remove()
   {
     throw new UnsupportedOperationException();

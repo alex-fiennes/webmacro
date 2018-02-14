@@ -120,6 +120,7 @@ public final class BackupCharStream
     }
   }
 
+  @Override
   public final char BeginToken()
       throws java.io.IOException
   {
@@ -165,6 +166,7 @@ public final class BackupCharStream
     curBuf.bufcolumn[curBuf.curPos] = column;
   }
 
+  @Override
   public final char readChar()
       throws java.io.IOException
   {
@@ -191,26 +193,31 @@ public final class BackupCharStream
     return (c);
   }
 
+  @Override
   public final int getEndColumn()
   {
     return curBuf.bufcolumn[curBuf.curPos];
   }
 
+  @Override
   public final int getEndLine()
   {
     return curBuf.bufline[curBuf.curPos];
   }
 
+  @Override
   public final int getBeginColumn()
   {
     return tokenBeginBuf.bufcolumn[tokenBeginPos];
   }
 
+  @Override
   public final int getBeginLine()
   {
     return tokenBeginBuf.bufline[tokenBeginPos];
   }
 
+  @Override
   public final void backup(int amount)
   {
     backupChars += amount;
@@ -323,6 +330,7 @@ public final class BackupCharStream
     ReInit(dstream, startline, startcolumn, 4096);
   }
 
+  @Override
   public final String GetImage()
   {
     String ret;
@@ -338,6 +346,7 @@ public final class BackupCharStream
     return ret;
   }
 
+  @Override
   public final char[] GetSuffix(int len)
   {
     char[] ret = new char[len];
@@ -357,6 +366,7 @@ public final class BackupCharStream
     return null;
   }
 
+  @Override
   public void Done()
   {
     bufA = bufB = curBuf = otherBuf = null;

@@ -37,6 +37,7 @@ final class ErrorHandler
    *              if you don't want to handle the connect
    * @return A Template which can be used to interpret the connection
    */
+  @Override
   public Template accept(WebContext c)
       throws HandlerException
   {
@@ -62,6 +63,7 @@ final class ErrorHandler
   /**
    * Does nothing
    */
+  @Override
   public void destroy()
   {
   }
@@ -69,6 +71,7 @@ final class ErrorHandler
   /**
    * Does nothing
    */
+  @Override
   public void init()
   {
   }

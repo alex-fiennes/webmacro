@@ -33,6 +33,7 @@ public class URLTemplateLoader
   static Logger LOGGER = LoggerFactory.getLogger(URLTemplateLoader.class);
   private URL _baseURI;
 
+  @Override
   public void setConfig(String config)
   {
     try {
@@ -45,6 +46,7 @@ public class URLTemplateLoader
   /**
    * Tries to load a template by interpreting query as a path relative to the path set by setPath.
    */
+  @Override
   public final Template load(String query,
                              CacheElement ce)
       throws ResourceException

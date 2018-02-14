@@ -36,6 +36,7 @@ public class TemplatePathTemplateLoader
 
   private TemplateLoader[] loaders;
 
+  @Override
   public void setConfig(String config)
       throws InitException
   {
@@ -55,6 +56,7 @@ public class TemplatePathTemplateLoader
     }
   }
 
+  @Override
   public final Template load(String query,
                              CacheElement ce)
       throws ResourceException

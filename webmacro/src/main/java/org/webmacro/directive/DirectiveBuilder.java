@@ -66,6 +66,7 @@ public final class DirectiveBuilder
     throw new BuildException("Invalid argument ID " + id + " requested for directive " + desc.name);
   }
 
+  @Override
   public Object getExactArg(int idx)
       throws BuildException
   {
@@ -78,6 +79,7 @@ public final class DirectiveBuilder
   /**
    * How many arguments does this builder have?
    */
+  @Override
   public int getArgCount()
   {
     if (buildArgs == null)
@@ -89,6 +91,7 @@ public final class DirectiveBuilder
   /**
    * Retrieve the argument whose id is the specified id.
    */
+  @Override
   public Object getArg(int argId)
       throws BuildException
   {
@@ -102,6 +105,7 @@ public final class DirectiveBuilder
    * Retrieve the argument whose id is the specified id, and if it is a Builder, build it with the
    * specified build context.
    */
+  @Override
   public Object getArg(int argId,
                        BuildContext bc)
       throws BuildException
@@ -129,6 +133,7 @@ public final class DirectiveBuilder
    * Set the argument whose id is the specified id. If the argument has already been set, it is
    * overwritten. Generally not used by directives, only used by the parser.
    */
+  @Override
   public void setArg(int argId,
                      Object arg)
       throws BuildException
@@ -206,6 +211,7 @@ public final class DirectiveBuilder
   /**
    * Build the directive. Calls the build() method of the directive.
    */
+  @Override
   public Object build(BuildContext bc)
       throws BuildException
   {

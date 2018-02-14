@@ -32,6 +32,7 @@ public class PropertyMethodBuilder
     _args = args;
   }
 
+  @Override
   public Object build(BuildContext bc)
       throws BuildException
   {

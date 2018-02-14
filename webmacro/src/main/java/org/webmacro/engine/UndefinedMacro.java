@@ -42,6 +42,7 @@ public final class UndefinedMacro
     throw new UnsupportedOperationException("Cannot invoke toString() on an undefined variable.");
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     v.visitString(toString());
@@ -50,6 +51,7 @@ public final class UndefinedMacro
   /**
    * Returns the wrapped object, context is ignored.
    */
+  @Override
   public final Object evaluate(Context context)
   {
     return _singleton;
@@ -63,6 +65,7 @@ public final class UndefinedMacro
   /**
    * Throws an exception -- cannot write an undefined.
    */
+  @Override
   public final void write(FastWriter out,
                           Context context)
       throws PropertyException

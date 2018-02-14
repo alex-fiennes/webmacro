@@ -121,6 +121,7 @@ abstract public class WMTemplate
   /**
    * Return a name for this template. If not overridden, uses toString().
    */
+  @Override
   public String getName()
   {
     return toString();
@@ -129,6 +130,7 @@ abstract public class WMTemplate
   /**
    * Set the name for this template. Default implementation does nothing.
    */
+  @Override
   public void setName(String name)
   {
   }
@@ -150,6 +152,7 @@ abstract public class WMTemplate
   /**
    * Template API.
    */
+  @Override
   public void parse()
       throws IOException, TemplateException
   {
@@ -211,6 +214,7 @@ abstract public class WMTemplate
    * @return the #macro's defined for this template, or null if this template has not yet been <code>parse()'d</code>
    *         .
    */
+  @Override
   public Map<String, MacroDefinition> getMacros()
   {
     return _macros;
@@ -221,6 +225,7 @@ abstract public class WMTemplate
    * operation fails for some reason, such as unable to read template or unable to introspect the
    * context then this method will return a null string.
    */
+  @Override
   public final String evaluateAsString(Context context)
       throws PropertyException
   {
@@ -241,6 +246,7 @@ abstract public class WMTemplate
    * operation fails for some reason, such as unable to read template or unable to introspect the
    * context then this method will return a null string.
    */
+  @Override
   public final byte[] evaluateAsBytes(String encoding,
                                       Context context)
       throws PropertyException
@@ -257,6 +263,7 @@ abstract public class WMTemplate
     }
   }
 
+  @Override
   public void write(OutputStream out,
                     Context context)
       throws PropertyException, IOException
@@ -267,6 +274,7 @@ abstract public class WMTemplate
     fw.close();
   }
 
+  @Override
   public void write(OutputStream out,
                     String encoding,
                     Context context)
@@ -278,6 +286,7 @@ abstract public class WMTemplate
     fw.close();
   }
 
+  @Override
   public final void write(FastWriter out,
                           Context context)
       throws IOException, PropertyException
@@ -310,6 +319,7 @@ abstract public class WMTemplate
     }
   }
 
+  @Override
   public void accept(TemplateVisitor v)
   {
     _content.accept(v);
@@ -333,6 +343,7 @@ abstract public class WMTemplate
   /**
    * Template API.
    */
+  @Override
   public Object getParam(String key)
       throws IOException, TemplateException
   {
@@ -344,11 +355,13 @@ abstract public class WMTemplate
     }
   }
 
+  @Override
   public Map<Object, Object> getParameters()
   {
     return _parameters;
   }
 
+  @Override
   public void setParam(String key,
                        Object value)
   {
