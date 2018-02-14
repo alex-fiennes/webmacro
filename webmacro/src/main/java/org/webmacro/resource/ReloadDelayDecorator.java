@@ -87,12 +87,9 @@ public class ReloadDelayDecorator
       l = reloadDelays.get(protocol);
     }
     delay = (l != null) ? l.longValue() : defaultDelay;
-    if (delay > 0) {
-      _log.debug("Returning timed reload context with delay " + delay);
-      return new TimedReloadContext(reloadContext, delay);
-    } else {
-      _log.debug("Returning unmodified reload context");
+    if (delay == 0) {
       return reloadContext;
     }
+    return new TimedReloadContext(reloadContext, delay);
   }
 }

@@ -26,10 +26,9 @@ package org.webmacro.resource;
 public class TimedReloadContext
   extends CacheReloadContext
 {
-
-  private CacheReloadContext reloadContext;
+  private final CacheReloadContext reloadContext;
   private long nextCheck;
-  private long checkInterval;
+  private final long checkInterval;
 
   /**
    * Construct a new TimedReloadContext decorator. This is just a wrapper object for another
@@ -61,12 +60,19 @@ public class TimedReloadContext
   @Override
   public boolean shouldReload()
   {
-    long time = System.currentTimeMillis();
-    if (time >= nextCheck) {
-      nextCheck = time + checkInterval;
-      return reloadContext.shouldReload();
-    } else {
+    if (checkInterval < 0) {
       return false;
     }
+    if (checkInterval == 0) {
+      return reloadContext.shouldReload();
+    }
+    if (checkInterval > 0) {
+      long time = System.currentTimeMillis();
+      if (time > nextCheck) {
+        nextCheck = time + checkInterval;
+        return reloadContext.shouldReload();
+      }
+    }
+    return false;
   }
 }
