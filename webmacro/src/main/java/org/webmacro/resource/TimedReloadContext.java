@@ -11,8 +11,6 @@
 
 package org.webmacro.resource;
 
-import org.webmacro.util.Clock;
-
 /**
  * TimedReloadContext acts as an Decorator for Reload context to support cache resources that are
  * expensive to check for change. An example is a resource fetch via the network, but could also be
@@ -49,7 +47,7 @@ public class TimedReloadContext
     super();
     this.reloadContext = reloadContext;
     this.checkInterval = checkInterval;
-    this.nextCheck = Clock.TIME + checkInterval;
+    this.nextCheck = System.currentTimeMillis() + checkInterval;
   }
 
   /**
@@ -63,9 +61,9 @@ public class TimedReloadContext
   @Override
   public boolean shouldReload()
   {
-    // long time = System.currentTimeMillis();
-    if (Clock.TIME >= nextCheck) {
-      nextCheck = Clock.TIME + checkInterval;
+    long time = System.currentTimeMillis();
+    if (time >= nextCheck) {
+      nextCheck = time + checkInterval;
       return reloadContext.shouldReload();
     } else {
       return false;
