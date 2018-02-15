@@ -119,7 +119,7 @@ public final class ListUtil
     } else if (arg instanceof Iterator<?>) {
       list = iteratorToList((Iterator<Object>) arg);
     } else if (arg instanceof Enumeration<?>) {
-      list = iteratorToList(new org.webmacro.util.EnumIterator((Enumeration<Object>) arg));
+      list = iteratorToList(new org.webmacro.util.EnumIterator<Object>((Enumeration<Object>) arg));
     } else if (arg.getClass().isArray()) {
       // array of primitives
       list = iteratorToList(new org.webmacro.util.PrimitiveArrayIterator(arg));
