@@ -694,7 +694,7 @@ public final class ListUtil
     Integer[] ia = new Integer[size];
     int i = 0;
     for (int num = rangeBegin; (incr > 0) ? num <= rangeEnd : num >= rangeEnd; num += incr) {
-      ia[i++] = num;
+      ia[i++] = Integer.valueOf(num);
     }
     return Arrays.asList(ia);
   }

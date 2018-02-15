@@ -149,7 +149,7 @@ public class EvalDirective
           outerVars = context.getMap();
         Context c = new Context(context.getBroker(), (Map<Object, Object>) argMapObj);
         // put current depth into the new context
-        c.put("EvalDepth", recursionDepth);
+        c.put("EvalDepth", Integer.valueOf(recursionDepth));
         // add a reference to parent context variables
         c.put("OuterVars", outerVars);
         // add a reference to this macro
