@@ -535,7 +535,7 @@ abstract public class WMServlet
                      + ((tmpl != null)
                          ? (tmpl + ": ")
                          : ("The template failed to load; double check the "
-                            + "TemplatePath in your webmacro.properties file.")) + "\n<pre>" + e
+                            + "TemplatePath in your webmacro.properties file.")) + "\n<pre>" + noHtml(e.toString())
                      + "</pre>\n");
 
         String err = errorTemplate.evaluateAsString(c);
@@ -544,6 +544,11 @@ abstract public class WMServlet
         _log.error("Error writing error template!", errExcept);
       }
     }
+  }
+  
+  public static String noHtml(String source)
+  {
+    return source.replace("<", "&lt;").replace(">", "&gt;");
   }
 
   /**
