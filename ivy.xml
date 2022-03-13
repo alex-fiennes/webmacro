@@ -13,7 +13,7 @@
 <!--		<dependency conf='runtime' org='org.slf4j' name='slf4j-api' rev='1.6.4' /> -->
 		<dependency conf='compile' org='org.slf4j' name='slf4j-jdk14' rev='1.6.4' />
 
-		<dependency org="com.google.guava" name="guava" rev="18.0"/>
+		<dependency org="com.google.guava" name="guava" rev="31.0.1-jre"/>
 
 		<dependency conf="provided" org="javax.servlet" name="servlet-api"
 			rev="2.4" />
