@@ -159,9 +159,7 @@ final public class ByteBufferOutputStream
 
   public static void main(String arg[])
   {
-    try {
-
-      ByteBufferOutputStream bb = new ByteBufferOutputStream(5);
+    try (ByteBufferOutputStream bb = new ByteBufferOutputStream(5)) {
 
       bb.write((byte) 'T');
       bb.write((byte) 'h');
